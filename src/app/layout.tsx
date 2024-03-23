@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 
+import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 
 import './globals.css';
@@ -21,11 +22,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' className='dark'>
-      <body className={inter.className}>
-        <Providers>
-          <Navbar />
-          {children}
-        </Providers>
+      <body
+        className={`${inter.className} min-h-screen flex flex-col justify-between`}
+      >
+        <Navbar />
+        <main className='flex-grow flex flex-col max-w-5xl p-6 mx-auto w-full'>
+          <Providers>{children}</Providers>
+        </main>
+        <Footer />
       </body>
     </html>
   );
