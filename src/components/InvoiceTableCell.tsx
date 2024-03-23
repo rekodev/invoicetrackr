@@ -1,58 +1,49 @@
-import {
-  Button,
-  Chip,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  User,
-} from '@nextui-org/react';
+import { Chip, Tooltip, User } from '@nextui-org/react';
 import { Key } from 'react';
 
-import { UserModel, UserStatus } from '@/types/models/user';
+import { InvoiceModel, InvoiceStatus } from '@/types/models/invoice';
 
-import { VerticalDotsIcon } from './icons/VerticalDotsIcon';
+import DocumentText from './icons/DocumentText';
+import DeleteIcon from '../components/icons/DeleteIcon';
+import EditIcon from '../components/icons/EditIcon';
+import EyeIcon from '../components/icons/EyeIcon';
 
-const statusColorMap: Record<UserStatus, 'success' | 'danger' | 'warning'> = {
-  active: 'success',
-  paused: 'danger',
-  vacation: 'warning',
-};
+const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
+  {
+    paid: 'success',
+    pending: 'warning',
+    canceled: 'danger',
+  };
 
 type Props = {
-  user: UserModel;
+  invoice: InvoiceModel;
   columnKey: Key;
 };
 
-const InvoiceTableCell = ({ user, columnKey }: Props) => {
+const InvoiceTableCell = ({ invoice, columnKey }: Props) => {
   const cellValue =
-    columnKey !== 'actions' && user[columnKey as keyof UserModel];
+    columnKey !== 'actions' && invoice[columnKey as keyof InvoiceModel];
 
   switch (columnKey) {
     case 'name':
       return (
-        <User
-          avatarProps={{ radius: 'lg', src: user.avatar }}
-          description={user.email}
-          name={cellValue}
-        >
-          {user.email}
-        </User>
+        <div className='flex'>
+          <DocumentText />
+          &nbsp;
+          <p className='text-bold text-small capitalize'>{cellValue}</p>
+        </div>
       );
-    case 'role':
+    case 'company':
       return (
         <div className='flex flex-col'>
           <p className='text-bold text-small capitalize'>{cellValue}</p>
-          <p className='text-bold text-tiny capitalize text-default-400'>
-            {user.team}
-          </p>
         </div>
       );
     case 'status':
       return (
         <Chip
           className='capitalize'
-          color={statusColorMap[user.status]}
+          color={statusColorMap[invoice.status]}
           size='sm'
           variant='flat'
         >
@@ -61,23 +52,22 @@ const InvoiceTableCell = ({ user, columnKey }: Props) => {
       );
     case 'actions':
       return (
-        <div className='relative flex justify-end items-center gap-2'>
-          <Dropdown>
-            <DropdownTrigger>
-              <Button isIconOnly size='sm' variant='light'>
-                <VerticalDotsIcon
-                  className='text-default-300'
-                  width={16}
-                  height={16}
-                />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownItem>View</DropdownItem>
-              <DropdownItem>Edit</DropdownItem>
-              <DropdownItem>Delete</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+        <div className='relative flex items-center gap-2'>
+          <Tooltip disableAnimation content='Details'>
+            <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
+              <EyeIcon />
+            </span>
+          </Tooltip>
+          <Tooltip disableAnimation content='Edit user'>
+            <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
+              <EditIcon />
+            </span>
+          </Tooltip>
+          <Tooltip disableAnimation color='danger' content='Delete user'>
+            <span className='text-lg text-danger cursor-pointer active:opacity-50'>
+              <DeleteIcon />
+            </span>
+          </Tooltip>
         </div>
       );
     default:

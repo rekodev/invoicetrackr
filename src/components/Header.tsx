@@ -1,10 +1,11 @@
+'use client';
+
 import {
-  Navbar as NextUINavbar,
+  Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
   Link,
-  Input,
   DropdownItem,
   DropdownTrigger,
   Dropdown,
@@ -14,9 +15,9 @@ import {
 
 import AcmeLogo from './icons/AcmeLogo.jsx';
 
-export default function Navbar() {
+export default function Header() {
   return (
-    <NextUINavbar isBordered>
+    <Navbar isBordered>
       <NavbarBrand>
         <AcmeLogo />
         <p className='font-bold text-inherit'>ACME</p>
@@ -70,6 +71,6 @@ export default function Navbar() {
           </DropdownMenu>
         </Dropdown>
       </NavbarContent>
-    </NextUINavbar>
+    </Navbar>
   );
 }

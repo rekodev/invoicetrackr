@@ -1,5 +1,5 @@
 import { Button, Pagination } from '@nextui-org/react';
-import React, { Dispatch, SetStateAction, useCallback } from 'react';
+import { Dispatch, SetStateAction, useCallback } from 'react';
 
 type Props = {
   page: number;
@@ -16,6 +16,8 @@ const InvoiceTableBottomContent = ({
   selectedKeys,
   filteredItemsLength,
 }: Props) => {
+  const isDisabled = pages === 0 || pages === 1;
+
   const onNextPage = useCallback(() => {
     if (page < pages) {
       setPage(page + 1);
@@ -46,7 +48,7 @@ const InvoiceTableBottomContent = ({
       />
       <div className='hidden sm:flex w-[30%] justify-end gap-2'>
         <Button
-          isDisabled={pages === 1}
+          isDisabled={isDisabled}
           size='sm'
           variant='flat'
           onPress={onPreviousPage}
@@ -54,7 +56,7 @@ const InvoiceTableBottomContent = ({
           Previous
         </Button>
         <Button
-          isDisabled={pages === 1}
+          isDisabled={isDisabled}
           size='sm'
           variant='flat'
           onPress={onNextPage}

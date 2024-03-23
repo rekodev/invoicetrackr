@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  SortDescriptor,
   Table,
   TableBody,
   TableCell,
@@ -10,17 +11,22 @@ import {
 } from '@nextui-org/react';
 import { Key, useCallback, useMemo, useState } from 'react';
 
-import { UserModel } from '@/types/models/user';
-import { SortDirection } from '@/types/table';
+import { InvoiceModel } from '@/types/models/invoice';
 
 import InvoiceTableBottomContent from './InvoiceTableBottomContent';
 import InvoiceTableCell from './InvoiceTableCell';
 import InvoiceTableTopContent from './InvoiceTableTopContent';
-import { columns, statusOptions, users } from '../data';
+import { columns, invoices, statusOptions } from '../data';
 
-const INITIAL_VISIBLE_COLUMNS = ['name', 'role', 'status', 'actions'];
-const ROWS_PER_PAGE = 8;
-const TABLE_HEIGHT = '568px';
+const INITIAL_VISIBLE_COLUMNS = [
+  'name',
+  'date',
+  'company',
+  'status',
+  'actions',
+];
+const ROWS_PER_PAGE = 10;
+const TABLE_HEIGHT = '480px';
 
 const InvoiceTable = () => {
   const [filterValue, setFilterValue] = useState('');
@@ -32,11 +38,8 @@ const InvoiceTable = () => {
   );
   const [statusFilter, setStatusFilter] = useState('all');
   const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE);
-  const [sortDescriptor, setSortDescriptor] = useState<{
-    column: string;
-    direction: SortDirection;
-  }>({
-    column: 'age',
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: 'date',
     direction: 'ascending',
   });
   const [page, setPage] = useState(1);
@@ -52,23 +55,23 @@ const InvoiceTable = () => {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredInvoices = [...invoices];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredInvoices = filteredInvoices.filter((invoice) =>
+        invoice.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
       statusFilter !== 'all' &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
+      filteredInvoices = filteredInvoices.filter((invoice) =>
+        Array.from(statusFilter).includes(invoice.status)
       );
     }
 
-    return filteredUsers;
+    return filteredInvoices;
   }, [filterValue, statusFilter, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
@@ -82,8 +85,8 @@ const InvoiceTable = () => {
 
   const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column as 'age'];
-      const second = b[sortDescriptor.column as 'age'];
+      const first = a[sortDescriptor.column as 'date'];
+      const second = b[sortDescriptor.column as 'date'];
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === 'descending' ? -cmp : cmp;
@@ -91,8 +94,8 @@ const InvoiceTable = () => {
   }, [sortDescriptor, items]);
 
   const renderCell = useCallback(
-    (user: UserModel, columnKey: Key) => (
-      <InvoiceTableCell user={user} columnKey={columnKey} />
+    (invoice: InvoiceModel, columnKey: Key) => (
+      <InvoiceTableCell invoice={invoice} columnKey={columnKey} />
     ),
     []
   );
@@ -108,7 +111,7 @@ const InvoiceTable = () => {
         setStatusFilter={setStatusFilter}
         setVisibleColumns={setVisibleColumns}
         statusFilter={statusFilter}
-        usersLength={users.length}
+        invoicesLength={invoices.length}
       />
     ),
     [statusFilter, visibleColumns, filterValue]
@@ -134,10 +137,9 @@ const InvoiceTable = () => {
       bottomContent={bottomContent}
       bottomContentPlacement='outside'
       classNames={{
-        wrapper: `max-h-[${TABLE_HEIGHT}] min-h-[${TABLE_HEIGHT}]`,
+        wrapper: `min-h-[${TABLE_HEIGHT}]`,
       }}
       selectedKeys={selectedKeys}
-      selectionMode='multiple'
       sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement='outside'
@@ -155,7 +157,7 @@ const InvoiceTable = () => {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={'No users found'} items={sortedItems}>
+      <TableBody emptyContent={'No invoices found'} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (
