@@ -3,6 +3,7 @@ export type InvoiceModel = {
   name: string;
   date: string;
   company: string;
+  price: number;
   status: InvoiceStatus;
 };
 

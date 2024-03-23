@@ -4,6 +4,7 @@ const columns = [
   { name: 'ID', uid: 'id', sortable: true },
   { name: 'NAME', uid: 'name', sortable: true },
   { name: 'COMPANY', uid: 'company', sortable: true },
+  { name: 'PRICE', uid: 'price', sortable: true },
   { name: 'DATE', uid: 'date', sortable: true },
   { name: 'STATUS', uid: 'status', sortable: true },
   { name: 'ACTIONS', uid: 'actions' },
@@ -22,6 +23,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-03-17',
     company: 'Company 1',
     status: 'canceled',
+    price: 200,
   },
   {
     id: 2,
@@ -29,6 +31,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-02-24',
     company: 'Company 2',
     status: 'paid',
+    price: 300,
   },
   {
     id: 3,
@@ -36,6 +39,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-03-07',
     company: 'Company 3',
     status: 'canceled',
+    price: 1200,
   },
   {
     id: 4,
@@ -43,6 +47,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-02-24',
     company: 'Company 4',
     status: 'canceled',
+    price: 1300,
   },
   {
     id: 5,
@@ -50,6 +55,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-03-04',
     company: 'Company 5',
     status: 'paid',
+    price: 2200,
   },
   {
     id: 6,
@@ -57,6 +63,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-03-17',
     company: 'Company 1',
     status: 'canceled',
+    price: 6200,
   },
   {
     id: 7,
@@ -64,6 +71,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-02-24',
     company: 'Company 2',
     status: 'paid',
+    price: 200,
   },
   {
     id: 8,
@@ -71,6 +79,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-03-07',
     company: 'Company 3',
     status: 'canceled',
+    price: 200,
   },
   {
     id: 9,
@@ -78,6 +87,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-02-24',
     company: 'Company 4',
     status: 'canceled',
+    price: 200,
   },
   {
     id: 10,
@@ -85,6 +95,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-03-04',
     company: 'Company 5',
     status: 'paid',
+    price: 200,
   },
   {
     id: 11,
@@ -92,6 +103,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-03-17',
     company: 'Company 1',
     status: 'canceled',
+    price: 200,
   },
   {
     id: 12,
@@ -99,6 +111,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-02-24',
     company: 'Company 2',
     status: 'paid',
+    price: 200,
   },
   {
     id: 13,
@@ -106,6 +119,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-03-07',
     company: 'Company 3',
     status: 'canceled',
+    price: 200,
   },
   {
     id: 14,
@@ -113,6 +127,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-02-24',
     company: 'Company 4',
     status: 'canceled',
+    price: 300,
   },
   {
     id: 15,
@@ -120,6 +135,7 @@ const invoices: Array<InvoiceModel> = [
     date: '2024-03-04',
     company: 'Company 5',
     status: 'paid',
+    price: 2050,
   },
 ];
 

@@ -13,6 +13,8 @@ import {
   Avatar,
 } from '@nextui-org/react';
 
+import { INVOICES_PAGE } from '@/constants/pages';
+
 import AcmeLogo from './icons/AcmeLogo.jsx';
 
 export default function Header() {
@@ -30,8 +32,8 @@ export default function Header() {
           </Link>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link href='#' aria-current='page' color='secondary'>
-            Customers
+          <Link href={INVOICES_PAGE} aria-current='page' color='secondary'>
+            Invoices
           </Link>
         </NavbarItem>
         <NavbarItem>
