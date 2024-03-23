@@ -6,14 +6,7 @@ import {
   DropdownTrigger,
   Input,
 } from '@nextui-org/react';
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 
 import { columns, statusOptions } from '@/data';
 import { capitalize } from '@/utils';
@@ -31,7 +24,7 @@ type Props = {
   setVisibleColumns: Dispatch<SetStateAction<Set<string> | 'all'>>;
   setPage: Dispatch<SetStateAction<number>>;
   setRowsPerPage: Dispatch<SetStateAction<number>>;
-  usersLength: number;
+  invoicesLength: number;
 };
 
 const InvoiceTableTopContent = ({
@@ -43,7 +36,7 @@ const InvoiceTableTopContent = ({
   setStatusFilter,
   setPage,
   setRowsPerPage,
-  usersLength,
+  invoicesLength,
 }: Props) => {
   const onSearchChange = useCallback(
     (value: string) => {
@@ -141,7 +134,7 @@ const InvoiceTableTopContent = ({
       </div>
       <div className='flex justify-between items-center'>
         <span className='text-default-400 text-small'>
-          Total {usersLength} users
+          Total {invoicesLength} invoices
         </span>
         <label className='flex items-center text-default-400 text-small'>
           Rows per page:
@@ -150,7 +143,9 @@ const InvoiceTableTopContent = ({
             onChange={onRowsPerPageChange}
           >
             <option value='5'>5</option>
-            <option value='10'>10</option>
+            <option value='10' selected>
+              10
+            </option>
             <option value='15'>15</option>
           </select>
         </label>

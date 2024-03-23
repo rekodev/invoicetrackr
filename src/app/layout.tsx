@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 
+import Breadcrumbs from '@/components/Breadcrumbs';
 import Footer from '@/components/Footer';
-import Navbar from '@/components/Navbar';
+import Header from '@/components/Header';
 
 import './globals.css';
 import { Providers } from './providers';
@@ -25,9 +26,12 @@ export default function RootLayout({
       <body
         className={`${inter.className} min-h-screen flex flex-col justify-between`}
       >
-        <Navbar />
+        <Header />
         <main className='flex-grow flex flex-col max-w-5xl p-6 mx-auto w-full'>
-          <Providers>{children}</Providers>
+          <Providers>
+            <Breadcrumbs />
+            {children}
+          </Providers>
         </main>
         <Footer />
       </body>
