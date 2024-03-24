@@ -1,4 +1,4 @@
-import { Chip, Tooltip, User } from '@nextui-org/react';
+import { Chip, Tooltip } from '@nextui-org/react';
 import { Key } from 'react';
 
 import { InvoiceModel, InvoiceStatus } from '@/types/models/invoice';
@@ -18,25 +18,45 @@ const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
 type Props = {
   invoice: InvoiceModel;
   columnKey: Key;
+  onViewClick: (invoice: InvoiceModel) => void;
 };
 
-const InvoiceTableCell = ({ invoice, columnKey }: Props) => {
-  const cellValue =
-    columnKey !== 'actions' && invoice[columnKey as keyof InvoiceModel];
+const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
+  const handleViewIconClick = () => {
+    onViewClick(invoice);
+  };
 
-  switch (columnKey) {
-    case 'name':
+  const cellValue =
+    invoice[
+      columnKey as keyof Omit<
+        InvoiceModel,
+        'actions' | 'sender' | 'receiver' | 'services'
+      >
+    ];
+
+  switch (columnKey as keyof InvoiceModel | 'actions') {
+    case 'sender':
+      return;
+    case 'receiver':
+      return;
+    case 'services':
+      return;
+    case 'id':
       return (
         <div className='flex'>
           <DocumentText />
           &nbsp;
-          <p className='text-bold text-small capitalize'>{cellValue}</p>
+          <p className='text-bold text-small capitalize'>
+            {cellValue as string}
+          </p>
         </div>
       );
     case 'company':
       return (
         <div className='flex flex-col'>
-          <p className='text-bold text-small capitalize'>{cellValue}</p>
+          <p className='text-bold text-small capitalize'>
+            {cellValue as string}
+          </p>
         </div>
       );
     case 'status':
@@ -47,14 +67,17 @@ const InvoiceTableCell = ({ invoice, columnKey }: Props) => {
           size='sm'
           variant='flat'
         >
-          {cellValue}
+          {cellValue as string}
         </Chip>
       );
     case 'actions':
       return (
         <div className='relative flex items-center gap-2'>
           <Tooltip disableAnimation content='Details'>
-            <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
+            <span
+              onClick={handleViewIconClick}
+              className='text-lg text-default-400 cursor-pointer active:opacity-50'
+            >
               <EyeIcon />
             </span>
           </Tooltip>

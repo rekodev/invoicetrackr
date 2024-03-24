@@ -8,20 +8,23 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  useDisclosure,
 } from '@nextui-org/react';
 import { Key, useCallback, useMemo, useState } from 'react';
 
 import { InvoiceModel } from '@/types/models/invoice';
 
+import InvoiceModal from './InvoiceModal';
 import InvoiceTableBottomContent from './InvoiceTableBottomContent';
 import InvoiceTableCell from './InvoiceTableCell';
 import InvoiceTableTopContent from './InvoiceTableTopContent';
 import { columns, invoices, statusOptions } from '../data';
 
 const INITIAL_VISIBLE_COLUMNS = [
-  'name',
+  'id',
   'date',
   'company',
+  'totalAmount',
   'status',
   'actions',
 ];
@@ -29,6 +32,9 @@ const ROWS_PER_PAGE = 10;
 const TABLE_HEIGHT = '480px';
 
 const InvoiceTable = () => {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
+
   const [filterValue, setFilterValue] = useState('');
   const [selectedKeys, setSelectedKeys] = useState<Set<never> | 'all'>(
     new Set([])
@@ -40,7 +46,7 @@ const InvoiceTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'date',
-    direction: 'ascending',
+    direction: 'descending',
   });
   const [page, setPage] = useState(1);
 
@@ -59,7 +65,7 @@ const InvoiceTable = () => {
 
     if (hasSearchFilter) {
       filteredInvoices = filteredInvoices.filter((invoice) =>
-        invoice.name.toLowerCase().includes(filterValue.toLowerCase())
+        invoice.id.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -93,11 +99,23 @@ const InvoiceTable = () => {
     });
   }, [sortDescriptor, items]);
 
+  const handleViewClick = useCallback(
+    (invoice: InvoiceModel) => {
+      setCurrentInvoice(invoice);
+      onOpen();
+    },
+    [onOpen]
+  );
+
   const renderCell = useCallback(
     (invoice: InvoiceModel, columnKey: Key) => (
-      <InvoiceTableCell invoice={invoice} columnKey={columnKey} />
+      <InvoiceTableCell
+        invoice={invoice}
+        columnKey={columnKey}
+        onViewClick={handleViewClick}
+      />
     ),
-    []
+    [handleViewClick]
   );
 
   const topContent = useMemo(
@@ -131,42 +149,52 @@ const InvoiceTable = () => {
   );
 
   return (
-    <Table
-      aria-label='Example table with custom cells, pagination and sorting'
-      isHeaderSticky
-      bottomContent={bottomContent}
-      bottomContentPlacement='outside'
-      classNames={{
-        wrapper: `min-h-[${TABLE_HEIGHT}]`,
-      }}
-      selectedKeys={selectedKeys}
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement='outside'
-      onSelectionChange={setSelectedKeys as any}
-      onSortChange={setSortDescriptor as any}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === 'actions' ? 'center' : 'start'}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={'No invoices found'} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Table
+        aria-label='Example table with custom cells, pagination and sorting'
+        isHeaderSticky
+        bottomContent={bottomContent}
+        bottomContentPlacement='outside'
+        classNames={{
+          wrapper: `min-h-[${TABLE_HEIGHT}]`,
+        }}
+        selectedKeys={selectedKeys}
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement='outside'
+        onSelectionChange={setSelectedKeys as any}
+        onSortChange={setSortDescriptor as any}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === 'actions' ? 'center' : 'start'}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={'No invoices found'} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+
+      {currentInvoice && (
+        <InvoiceModal
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          invoiceData={currentInvoice}
+        />
+      )}
+    </>
   );
 };
 

@@ -6,8 +6,10 @@ import {
   DropdownTrigger,
   Input,
 } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 
+import { ADD_NEW_INVOICE_PAGE } from '@/constants/pages';
 import { columns, statusOptions } from '@/data';
 import { capitalize } from '@/utils';
 
@@ -38,6 +40,12 @@ const InvoiceTableTopContent = ({
   setRowsPerPage,
   invoicesLength,
 }: Props) => {
+  const router = useRouter();
+
+  const handleAddNewInvoice = () => {
+    router.push(ADD_NEW_INVOICE_PAGE);
+  };
+
   const onSearchChange = useCallback(
     (value: string) => {
       if (value) {
@@ -127,6 +135,7 @@ const InvoiceTableTopContent = ({
           <Button
             color='secondary'
             endContent={<PlusIcon width={16} height={16} />}
+            onClick={handleAddNewInvoice}
           >
             Add New
           </Button>
@@ -141,11 +150,10 @@ const InvoiceTableTopContent = ({
           <select
             className='bg-transparent outline-none text-default-400 text-small'
             onChange={onRowsPerPageChange}
+            defaultValue={10}
           >
             <option value='5'>5</option>
-            <option value='10' selected>
-              10
-            </option>
+            <option value='10'>10</option>
             <option value='15'>15</option>
           </select>
         </label>
