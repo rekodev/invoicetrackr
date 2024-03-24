@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 
 import { ADD_NEW_INVOICE_PAGE } from '@/constants/pages';
-import { columns, statusOptions } from '@/data';
+import { columns, statusOptions } from '@/constants/table';
 import { capitalize } from '@/utils';
 
 import { ChevronDownIcon } from './icons/ChevronDownIcon';
@@ -26,7 +26,7 @@ type Props = {
   setVisibleColumns: Dispatch<SetStateAction<Set<string> | 'all'>>;
   setPage: Dispatch<SetStateAction<number>>;
   setRowsPerPage: Dispatch<SetStateAction<number>>;
-  invoicesLength: number;
+  invoicesLength: number | undefined;
 };
 
 const InvoiceTableTopContent = ({
