@@ -2,22 +2,7 @@ import {
   InvoiceModel,
   InvoiceParty,
   InvoiceService,
-} from '@/types/models/invoice';
-
-const columns = [
-  { name: 'ID', uid: 'id', sortable: true },
-  { name: 'COMPANY', uid: 'company', sortable: true },
-  { name: 'AMOUNT', uid: 'totalAmount', sortable: true },
-  { name: 'DATE', uid: 'date', sortable: true },
-  { name: 'STATUS', uid: 'status', sortable: true },
-  { name: 'ACTIONS', uid: 'actions' },
-];
-
-const statusOptions = [
-  { name: 'Paid', uid: 'paid' },
-  { name: 'Canceled', uid: 'canceled' },
-  { name: 'Pending', uid: 'pending' },
-];
+} from '../types/models/invoice';
 
 export const testSender: InvoiceParty = {
   address: '21 Jump St.',
@@ -36,7 +21,7 @@ export const testService: InvoiceService = {
   unit: 'project',
 };
 
-const invoices: Array<InvoiceModel> = [
+export const invoices: Array<InvoiceModel> = [
   {
     id: 'PRO123',
     date: '2024-03-24',
@@ -93,7 +78,7 @@ const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO124',
+    id: 'PRO1247',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -203,5 +188,3 @@ const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
 ];
-
-export { columns, invoices, statusOptions };

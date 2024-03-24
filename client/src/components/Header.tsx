@@ -12,12 +12,21 @@ import {
   DropdownMenu,
   Avatar,
 } from '@nextui-org/react';
+import { usePathname } from 'next/navigation.js';
 
-import { INVOICES_PAGE } from '@/constants/pages';
+import { CLIENTS_PAGE, CONTRACTS_PAGE, INVOICES_PAGE } from '@/constants/pages';
 
 import AcmeLogo from './icons/AcmeLogo.jsx';
 
+const navbarItems = [
+  { name: 'Invoices', href: INVOICES_PAGE },
+  { name: 'Contracts', href: CONTRACTS_PAGE },
+  { name: 'Clients', href: CLIENTS_PAGE },
+];
+
 export default function Header() {
+  const pathname = usePathname();
+
   return (
     <Navbar isBordered>
       <NavbarBrand>
@@ -26,21 +35,21 @@ export default function Header() {
       </NavbarBrand>
 
       <NavbarContent className='hidden sm:flex gap-4' justify='center'>
-        <NavbarItem>
-          <Link color='foreground' href='#'>
-            Features
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link href={INVOICES_PAGE} aria-current='page' color='secondary'>
-            Invoices
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color='foreground' href='#'>
-            Integrations
-          </Link>
-        </NavbarItem>
+        {navbarItems.map((item, index) => {
+          const isActive = pathname.includes(item.href);
+
+          return (
+            <NavbarItem key={index} isActive={isActive}>
+              <Link
+                href={item.href}
+                aria-current='page'
+                color={isActive ? 'secondary' : 'foreground'}
+              >
+                {item.name}
+              </Link>
+            </NavbarItem>
+          );
+        })}
       </NavbarContent>
 
       <NavbarContent as='div' justify='end'>

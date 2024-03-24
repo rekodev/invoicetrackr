@@ -6,7 +6,7 @@ type Props = {
   setPage: Dispatch<SetStateAction<number>>;
   pages: number;
   selectedKeys: Set<never> | 'all';
-  filteredItemsLength: number;
+  filteredItemsLength: number | undefined;
 };
 
 const InvoiceTableBottomContent = ({
@@ -16,7 +16,8 @@ const InvoiceTableBottomContent = ({
   selectedKeys,
   filteredItemsLength,
 }: Props) => {
-  const isDisabled = pages === 0 || pages === 1;
+  const prevButtonDisabled = page === 1;
+  const nextButtonDisabled = page === pages;
 
   const onNextPage = useCallback(() => {
     if (page < pages) {
@@ -45,10 +46,11 @@ const InvoiceTableBottomContent = ({
         page={page}
         total={pages}
         onChange={setPage}
+        isDisabled={!filteredItemsLength || filteredItemsLength === 0}
       />
       <div className='hidden sm:flex w-[30%] justify-end gap-2'>
         <Button
-          isDisabled={isDisabled}
+          isDisabled={prevButtonDisabled}
           size='sm'
           variant='flat'
           onPress={onPreviousPage}
@@ -56,7 +58,7 @@ const InvoiceTableBottomContent = ({
           Previous
         </Button>
         <Button
-          isDisabled={isDisabled}
+          isDisabled={nextButtonDisabled}
           size='sm'
           variant='flat'
           onPress={onNextPage}

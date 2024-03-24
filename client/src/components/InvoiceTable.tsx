@@ -2,6 +2,7 @@
 
 import {
   SortDescriptor,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -12,14 +13,16 @@ import {
 } from '@nextui-org/react';
 import { Key, useCallback, useMemo, useState } from 'react';
 
+import { columns, statusOptions } from '@/constants/table';
+import useGetInvoices from '@/hooks/useGetInvoices';
 import { InvoiceModel } from '@/types/models/invoice';
 
 import InvoiceModal from './InvoiceModal';
 import InvoiceTableBottomContent from './InvoiceTableBottomContent';
 import InvoiceTableCell from './InvoiceTableCell';
 import InvoiceTableTopContent from './InvoiceTableTopContent';
-import { columns, invoices, statusOptions } from '../data';
 
+const ROWS_PER_PAGE = 10;
 const INITIAL_VISIBLE_COLUMNS = [
   'id',
   'date',
@@ -28,10 +31,10 @@ const INITIAL_VISIBLE_COLUMNS = [
   'status',
   'actions',
 ];
-const ROWS_PER_PAGE = 10;
-const TABLE_HEIGHT = '480px';
 
 const InvoiceTable = () => {
+  const { invoices, isInvoicesLoading } = useGetInvoices();
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
 
@@ -60,7 +63,10 @@ const InvoiceTable = () => {
     );
   }, [visibleColumns]);
 
+  // TODO: Fix search
   const filteredItems = useMemo(() => {
+    if (!invoices) return [];
+
     let filteredInvoices = [...invoices];
 
     if (hasSearchFilter) {
@@ -78,18 +84,23 @@ const InvoiceTable = () => {
     }
 
     return filteredInvoices;
-  }, [filterValue, statusFilter, hasSearchFilter]);
+  }, [filterValue, statusFilter, hasSearchFilter, invoices]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  const pages =
+    filteredItems.length === 0 || !filteredItems
+      ? 1
+      : Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return filteredItems.slice(start, end);
+    return filteredItems?.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
+    if (!items) return [];
+
     return [...items].sort((a, b) => {
       const first = a[sortDescriptor.column as 'date'];
       const second = b[sortDescriptor.column as 'date'];
@@ -129,10 +140,10 @@ const InvoiceTable = () => {
         setStatusFilter={setStatusFilter}
         setVisibleColumns={setVisibleColumns}
         statusFilter={statusFilter}
-        invoicesLength={invoices.length}
+        invoicesLength={invoices?.length}
       />
     ),
-    [statusFilter, visibleColumns, filterValue]
+    [statusFilter, visibleColumns, filterValue, invoices?.length]
   );
 
   const bottomContent = useMemo(
@@ -141,11 +152,11 @@ const InvoiceTable = () => {
         page={page}
         setPage={setPage}
         pages={pages}
-        filteredItemsLength={filteredItems.length}
+        filteredItemsLength={filteredItems?.length}
         selectedKeys={selectedKeys}
       />
     ),
-    [page, pages, selectedKeys, filteredItems.length]
+    [page, pages, selectedKeys, filteredItems?.length]
   );
 
   return (
@@ -156,9 +167,10 @@ const InvoiceTable = () => {
         bottomContent={bottomContent}
         bottomContentPlacement='outside'
         classNames={{
-          wrapper: `min-h-[${TABLE_HEIGHT}]`,
+          wrapper: 'min-h-[480px]',
         }}
         selectedKeys={selectedKeys}
+        selectionMode='multiple'
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement='outside'
@@ -176,7 +188,12 @@ const InvoiceTable = () => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody emptyContent={'No invoices found'} items={sortedItems}>
+        <TableBody
+          isLoading={isInvoicesLoading}
+          loadingContent={<Spinner color='secondary' />}
+          emptyContent={!isInvoicesLoading && 'No invoices found'}
+          items={sortedItems}
+        >
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
