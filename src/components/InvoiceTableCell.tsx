@@ -27,21 +27,36 @@ const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
   };
 
   const cellValue =
-    columnKey !== 'actions' && invoice[columnKey as keyof InvoiceModel];
+    invoice[
+      columnKey as keyof Omit<
+        InvoiceModel,
+        'actions' | 'sender' | 'receiver' | 'services'
+      >
+    ];
 
-  switch (columnKey) {
-    case 'name':
+  switch (columnKey as keyof InvoiceModel | 'actions') {
+    case 'sender':
+      return;
+    case 'receiver':
+      return;
+    case 'services':
+      return;
+    case 'id':
       return (
         <div className='flex'>
           <DocumentText />
           &nbsp;
-          <p className='text-bold text-small capitalize'>{cellValue}</p>
+          <p className='text-bold text-small capitalize'>
+            {cellValue as string}
+          </p>
         </div>
       );
     case 'company':
       return (
         <div className='flex flex-col'>
-          <p className='text-bold text-small capitalize'>{cellValue}</p>
+          <p className='text-bold text-small capitalize'>
+            {cellValue as string}
+          </p>
         </div>
       );
     case 'status':
@@ -52,7 +67,7 @@ const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
           size='sm'
           variant='flat'
         >
-          {cellValue}
+          {cellValue as string}
         </Chip>
       );
     case 'actions':

@@ -21,10 +21,10 @@ import InvoiceTableTopContent from './InvoiceTableTopContent';
 import { columns, invoices, statusOptions } from '../data';
 
 const INITIAL_VISIBLE_COLUMNS = [
-  'name',
+  'id',
   'date',
   'company',
-  'price',
+  'totalAmount',
   'status',
   'actions',
 ];
@@ -33,14 +33,7 @@ const TABLE_HEIGHT = '480px';
 
 const InvoiceTable = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [currentItem, setCurrentItem] = useState<InvoiceModel>({
-    company: '',
-    date: '',
-    id: 0,
-    name: '',
-    price: 0,
-    status: 'pending',
-  });
+  const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
 
   const [filterValue, setFilterValue] = useState('');
   const [selectedKeys, setSelectedKeys] = useState<Set<never> | 'all'>(
@@ -72,7 +65,7 @@ const InvoiceTable = () => {
 
     if (hasSearchFilter) {
       filteredInvoices = filteredInvoices.filter((invoice) =>
-        invoice.name.toLowerCase().includes(filterValue.toLowerCase())
+        invoice.id.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -108,7 +101,7 @@ const InvoiceTable = () => {
 
   const handleViewClick = useCallback(
     (invoice: InvoiceModel) => {
-      setCurrentItem(invoice);
+      setCurrentInvoice(invoice);
       onOpen();
     },
     [onOpen]
@@ -194,11 +187,13 @@ const InvoiceTable = () => {
         </TableBody>
       </Table>
 
-      <InvoiceModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        invoiceContent={currentItem}
-      />
+      {currentInvoice && (
+        <InvoiceModal
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          invoiceData={currentInvoice}
+        />
+      )}
     </>
   );
 };

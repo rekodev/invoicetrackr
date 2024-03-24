@@ -8,11 +8,11 @@ import Pdf from './Pdf';
 type Props = {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  invoiceContent: InvoiceModel;
+  invoiceData: InvoiceModel;
 };
 
-const InvoiceModal = ({ isOpen, onOpenChange, invoiceContent }: Props) => {
-  const { name } = invoiceContent;
+const InvoiceModal = ({ isOpen, onOpenChange, invoiceData }: Props) => {
+  const { id } = invoiceData;
 
   return (
     <Modal
@@ -21,11 +21,11 @@ const InvoiceModal = ({ isOpen, onOpenChange, invoiceContent }: Props) => {
       onOpenChange={onOpenChange}
     >
       <ModalContent>
-        <ModalHeader className='flex flex-col gap-1 pb-2'>{name}</ModalHeader>
+        <ModalHeader className='flex flex-col gap-1 pb-2'>{id}</ModalHeader>
         <ModalBody>
           <div className='w-full h-full'>
             <PDFViewer className='h-full w-full'>
-              <Pdf />
+              <Pdf invoiceData={invoiceData} />
             </PDFViewer>
           </div>
         </ModalBody>

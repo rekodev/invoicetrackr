@@ -1,17 +1,39 @@
 import { Document, Page, View, Text } from '@react-pdf/renderer';
 
+import { InvoiceModel } from '@/types/models/invoice';
+import { getDaysUntilDueDate, splitInvoiceId } from '@/utils';
+
 import styles from './styles';
 import { registerFont } from './utils';
 
 registerFont();
 
-const Pdf = () => {
+type Props = {
+  invoiceData: InvoiceModel;
+};
+
+const Pdf = ({ invoiceData }: Props) => {
+  const {
+    company,
+    date,
+    dueDate,
+    id,
+    receiver,
+    sender,
+    services,
+    totalAmount,
+  } = invoiceData;
+
+  const splitId = splitInvoiceId(id);
+  const series = splitId[0];
+  const number = splitId[1];
+
   const renderHeader = () => (
     <>
       <Text style={styles.title}>PVM SĄSKAITA FAKTŪRA</Text>
       <Text style={styles.subtitle}>
-        Sąskaitos serija <Text style={styles.boldText}>AAA</Text> Nr.{' '}
-        <Text style={styles.boldText}>1</Text>
+        Sąskaitos serija <Text style={styles.boldText}>{series}</Text> Nr.&nbsp;
+        <Text style={styles.boldText}>{number}</Text>
       </Text>
     </>
   );
@@ -21,34 +43,61 @@ const Pdf = () => {
       <View style={styles.row}>
         <View style={styles.leftColumn}>
           <Text style={styles.detailItemTitle}>Tiekėjas:</Text>
-          <Text style={styles.detailItem}>UAB Pavyzdys</Text>
-          <Text style={styles.detailItem}>Įmonės kodas: 123456789</Text>
-          <Text style={styles.detailItem}>PVM kodas: LT123456789</Text>
           <Text style={styles.detailItem}>
-            Adresas: Pavyzdžio g. 1, Vilnius
+            {sender.firstName} {sender.lastName}
           </Text>
+          <Text style={styles.detailItem}>
+            Įmonės kodas: {sender.businessNumber}
+          </Text>
+          <Text style={styles.detailItem}>Adresas: {sender.address}</Text>
         </View>
         <View style={styles.rightColumn}>
           <Text style={[styles.detailItem, styles.boldText]}>
             Sąskaitos išrašymo data:
           </Text>
-          <Text style={styles.detailItem}>2024 m. kovo 24 d.</Text>
+          <Text style={styles.detailItem}>{date}</Text>
         </View>
       </View>
 
       <View style={styles.row}>
         <View style={styles.leftColumn}>
           <Text style={styles.detailItemTitle}>Mokėtojas:</Text>
-          <Text style={styles.detailItem}>UAB Pavyzdys</Text>
-          <Text style={styles.detailItem}>Įmonės kodas: 123456789</Text>
-          <Text style={styles.detailItem}>PVM kodas: LT123456789</Text>
+          <Text style={styles.detailItem}>{company}</Text>
           <Text style={styles.detailItem}>
-            Adresas: Pavyzdžio g. 1, Vilnius
+            Įmonės kodas: {receiver.businessNumber}
           </Text>
+          <Text style={styles.detailItem}>Adresas: {receiver.address}</Text>
         </View>
       </View>
     </>
   );
+
+  const renderTableRow = (
+    index: number,
+    description: string,
+    unit: string,
+    quantity: number,
+    amount: number
+  ) => (
+    <View style={styles.tableRow} key={index}>
+      <View style={[styles.tableCol, styles.tableCol1]}>
+        <Text style={styles.tableCell}>{index + 1}</Text>
+      </View>
+      <View style={[styles.tableCol, styles.tableCol2]}>
+        <Text style={styles.tableCell}>{description}</Text>
+      </View>
+      <View style={[styles.tableCol, styles.tableCol3]}>
+        <Text style={styles.tableCell}>{unit}</Text>
+      </View>
+      <View style={[styles.tableCol, styles.tableCol4]}>
+        <Text style={styles.tableCell}>{quantity}</Text>
+      </View>
+      <View style={[styles.tableCol, styles.tableCol5]}>
+        <Text style={styles.tableCell}>{amount} EUR</Text>
+      </View>
+    </View>
+  );
+
   const renderTableSection = () => (
     <View style={styles.table}>
       <View style={styles.tableRow}>
@@ -69,27 +118,15 @@ const Pdf = () => {
         </View>
       </View>
 
-      <View style={styles.tableRow}>
-        <View style={[styles.tableCol, styles.tableCol1]}>
-          <Text style={styles.tableCell}>1</Text>
-        </View>
-        <View style={[styles.tableCol, styles.tableCol2]}>
-          <Text style={styles.tableCell}>
-            Front-end programavimo paslauga Front-end programavimo paslauga
-            Front-end programavimo paslauga Front-end programavimo paslauga
-            Front-end programavimo paslauga
-          </Text>
-        </View>
-        <View style={[styles.tableCol, styles.tableCol3]}>
-          <Text style={styles.tableCell}>projektas</Text>
-        </View>
-        <View style={[styles.tableCol, styles.tableCol4]}>
-          <Text style={styles.tableCell}>1</Text>
-        </View>
-        <View style={[styles.tableCol, styles.tableCol5]}>
-          <Text style={styles.tableCell}>800.00 EUR</Text>
-        </View>
-      </View>
+      {services.map((service, index) =>
+        renderTableRow(
+          index,
+          service.description,
+          service.unit,
+          service.quantity,
+          service.amount
+        )
+      )}
     </View>
   );
 
@@ -130,7 +167,7 @@ const Pdf = () => {
   const renderFooter = () => (
     <View style={styles.footer}>
       <Text style={[styles.footerItem, styles.boldText]}>
-        Apmokėjimo sąlygos: 7 kalendorinės dienos
+        Apmokėjimo sąlygos: {getDaysUntilDueDate(date, dueDate)} d.
       </Text>
       <Text style={styles.footerItem}>
         AB &quot;Swedbank&quot;, banko kodas 73000; Atsiskaitomoji sąskaita:
@@ -147,7 +184,7 @@ const Pdf = () => {
         {renderTableSection()}
         <View style={styles.midSection}>
           <Text style={[styles.detailItem, styles.boldText]}>
-            Aštuoni šimtai EUR 00 ct.
+            {totalAmount} EUR
           </Text>
           {renderSignatureSection()}
         </View>
