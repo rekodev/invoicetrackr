@@ -1,21 +1,17 @@
-import cors from '@fastify/cors';
 import fastify from 'fastify';
 import dotenv from 'dotenv';
 
-import { InvoiceModel } from './types/models/invoice';
-import { invoices } from './data';
+import cors from '@fastify/cors';
+
+import invoiceRoutes from './routes/invoice';
 
 dotenv.config();
+
 const port = parseInt(process.env.PORT);
 const server = fastify();
 server.register(cors);
 
-server.get<{ Reply: Array<InvoiceModel> }>(
-  '/api/invoices',
-  async (request, reply) => {
-    return invoices;
-  }
-);
+server.register(invoiceRoutes);
 
 server.listen({ port }, (err, address) => {
   if (err) {
