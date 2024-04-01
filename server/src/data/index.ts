@@ -23,7 +23,8 @@ export const testService: InvoiceService = {
 
 export const invoices: Array<InvoiceModel> = [
   {
-    id: 'PRO123',
+    id: 1,
+    invoiceId: 'PRO123',
     date: '2024-03-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -34,7 +35,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService, testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO175923',
+    id: 2,
+    invoiceId: 'PRO175923',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -45,7 +47,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO1853',
+    id: 3,
+    invoiceId: 'PRO1853',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -56,7 +59,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO175',
+    id: 4,
+    invoiceId: 'PRO175',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -67,7 +71,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO1245',
+    id: 5,
+    invoiceId: 'PRO1245',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -78,7 +83,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO1247',
+    id: 6,
+    invoiceId: 'PRO1247',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -89,7 +95,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO173',
+    id: 7,
+    invoiceId: 'PRO173',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -100,7 +107,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO18124',
+    id: 8,
+    invoiceId: 'PRO18124',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -111,7 +119,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO103',
+    id: 9,
+    invoiceId: 'PRO103',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -122,7 +131,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO183',
+    id: 10,
+    invoiceId: 'PRO183',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -133,7 +143,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO153',
+    id: 11,
+    invoiceId: 'PRO153',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -144,7 +155,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO1623',
+    id: 12,
+    invoiceId: 'PRO1623',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -155,7 +167,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO1213',
+    id: 13,
+    invoiceId: 'PRO1213',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -166,7 +179,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO1233',
+    id: 14,
+    invoiceId: 'PRO1233',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price
@@ -177,7 +191,8 @@ export const invoices: Array<InvoiceModel> = [
     services: [testService], // Assuming this is an array of ser
   },
   {
-    id: 'PRO124',
+    id: 15,
+    invoiceId: 'PRO124',
     date: '2024-02-24',
     company: 'Company 2',
     totalAmount: 300, // Assuming totalAmount corresponds to price

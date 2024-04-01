@@ -160,7 +160,7 @@ const InvoiceTable = () => {
   );
 
   return (
-    <>
+    <section>
       <Table
         aria-label='Example table with custom cells, pagination and sorting'
         isHeaderSticky
@@ -211,7 +211,7 @@ const InvoiceTable = () => {
           invoiceData={currentInvoice}
         />
       )}
-    </>
+    </section>
   );
 };
 

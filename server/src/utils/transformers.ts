@@ -7,6 +7,7 @@ export const transformInvoiceDto = (invoiceDto: InvoiceDto): InvoiceModel => {
     date,
     due_date,
     id,
+    invoice_id,
     receiver,
     sender,
     services,
@@ -16,6 +17,7 @@ export const transformInvoiceDto = (invoiceDto: InvoiceDto): InvoiceModel => {
 
   return {
     id,
+    invoiceId: invoice_id,
     company,
     date,
     dueDate: due_date,

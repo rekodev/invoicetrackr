@@ -17,7 +17,8 @@ type InvoiceService = {
 type InvoiceStatus = 'paid' | 'pending' | 'canceled';
 
 export type InvoiceDto = {
-  id: string;
+  id: number;
+  invoice_id: string;
   date: string;
   company: string;
   sender: InvoiceParty;

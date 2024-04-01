@@ -15,7 +15,8 @@ export type InvoiceService = {
 };
 
 export type InvoiceModel = {
-  id: string;
+  id: number;
+  invoiceId: string;
   date: string;
   company: string;
   sender: InvoiceParty;
