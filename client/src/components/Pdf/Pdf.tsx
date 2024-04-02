@@ -17,14 +17,14 @@ const Pdf = ({ invoiceData }: Props) => {
     company,
     date,
     dueDate,
-    id,
+    invoiceId,
     receiver,
     sender,
     services,
     totalAmount,
   } = invoiceData;
 
-  const splitId = splitInvoiceId(id);
+  const splitId = splitInvoiceId(invoiceId);
   const series = splitId[0];
   const number = splitId[1];
 
@@ -43,9 +43,7 @@ const Pdf = ({ invoiceData }: Props) => {
       <View style={styles.row}>
         <View style={styles.leftColumn}>
           <Text style={styles.detailItemTitle}>Tiekėjas:</Text>
-          <Text style={styles.detailItem}>
-            {sender.firstName} {sender.lastName}
-          </Text>
+          <Text style={styles.detailItem}>{sender.name}</Text>
           <Text style={styles.detailItem}>
             Įmonės kodas: {sender.businessNumber}
           </Text>

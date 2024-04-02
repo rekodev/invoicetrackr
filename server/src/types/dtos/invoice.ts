@@ -1,6 +1,5 @@
 type InvoiceParty = {
-  first_name: string;
-  last_name: string;
+  name: string;
   type: string;
   business_number: string;
   address: string;

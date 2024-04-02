@@ -71,7 +71,7 @@ const InvoiceTable = () => {
 
     if (hasSearchFilter) {
       filteredInvoices = filteredInvoices.filter((invoice) =>
-        invoice.id.toLowerCase().includes(filterValue.toLowerCase())
+        invoice.id.toString().toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (

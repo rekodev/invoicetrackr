@@ -1,3 +1,4 @@
+import { ClientModel } from '../types/models/client';
 import {
   InvoiceModel,
   InvoiceParty,
@@ -7,8 +8,7 @@ import {
 export const testSender: InvoiceParty = {
   address: '21 Jump St.',
   businessNumber: '123456789',
-  firstName: 'John',
-  lastName: 'Doe',
+  name: 'John Doe',
   type: 'Irrelevant for now',
 };
 
@@ -201,5 +201,89 @@ export const invoices: Array<InvoiceModel> = [
     receiver: testReceiver,
     dueDate: '2024-03-26', // Example due date, adjust as necessary
     services: [testService], // Assuming this is an array of ser
+  },
+];
+
+export const clients: Array<ClientModel> = [
+  {
+    id: 1,
+    address: '21 Jump St.',
+    businessNumber: '123456789',
+    businessType: 'business',
+    name: 'John Doe',
+
+    type: 'receiver',
+  },
+  {
+    id: 2,
+    address: '47 Elm St.',
+    businessNumber: '987654321',
+    businessType: 'individual',
+    name: 'Jane',
+    type: 'receiver',
+  },
+  {
+    id: 3,
+    address: '84 Oak Ave.',
+    businessNumber: '192837465',
+    businessType: 'business',
+    name: 'Alice',
+    type: 'receiver',
+  },
+  {
+    id: 4,
+    address: '32 Maple Rd.',
+    businessNumber: '564738291',
+    businessType: 'individual',
+    name: 'Bob',
+    type: 'receiver',
+  },
+  {
+    id: 5,
+    address: '98 Pine St.',
+    businessNumber: '374829165',
+    businessType: 'business',
+    name: 'Charlie',
+    type: 'receiver',
+  },
+  {
+    id: 6,
+    address: '98 Pine St.',
+    businessNumber: '372359165',
+    businessType: 'business',
+    name: 'Charlize',
+    type: 'receiver',
+  },
+  {
+    id: 7,
+    address: '98 Pine St.',
+    businessNumber: '374829165',
+    businessType: 'business',
+    name: 'Charlie',
+    type: 'receiver',
+  },
+  {
+    id: 8,
+    address: '98 Pine St.',
+    businessNumber: '374829165',
+    businessType: 'business',
+    name: 'EDIGINO',
+    type: 'receiver',
+  },
+  {
+    id: 9,
+    address: '98 Pine St.',
+    businessNumber: '374829165',
+    businessType: 'business',
+    name: 'Charlie Hello',
+    type: 'receiver',
+  },
+  {
+    id: 10,
+    address: '98 Pine St.',
+    businessNumber: '374829165',
+    businessType: 'business',
+    name: 'Charlie Whatever',
+    type: 'receiver',
   },
 ];

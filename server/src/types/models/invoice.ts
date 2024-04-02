@@ -1,6 +1,5 @@
 export type InvoiceParty = {
-  firstName: string;
-  lastName: string;
+  name: string;
   type: string;
   businessNumber: string;
   address: string;
@@ -28,3 +27,7 @@ export type InvoiceModel = {
 };
 
 export type InvoiceStatus = 'paid' | 'pending' | 'canceled';
+
+export type InvoicePartyBusinessType = 'business' | 'individual';
+
+export type InvoicePartyType = 'sender' | 'receiver';

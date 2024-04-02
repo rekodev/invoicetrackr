@@ -17,8 +17,7 @@ const Receiver = {
     address: { type: 'string' },
     businessNumber: { type: 'string' },
     email: { type: 'string' },
-    firstName: { type: 'string' },
-    lastName: { type: 'string' },
+    name: { type: 'string' },
     type: { type: 'string' },
   },
 };
@@ -43,7 +42,8 @@ const Invoice = {
       { type: string } | typeof Receiver | typeof Service
     >
   >{
-    id: { type: 'string' },
+    id: { type: 'number' },
+    invoiceId: { type: 'string' },
     company: { type: 'string' },
     date: { type: 'string' },
     dueDate: { type: 'string' },
