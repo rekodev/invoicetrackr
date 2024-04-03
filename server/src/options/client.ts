@@ -1,3 +1,4 @@
+import { Type } from '@sinclair/typebox';
 import {
   deleteClient,
   getClient,
@@ -5,28 +6,14 @@ import {
   postClient,
   updateClient,
 } from '../controllers/client';
-import { ClientModel } from '../types/models/client';
-
-const Client = {
-  type: 'object',
-  properties: <Record<keyof ClientModel, { type: string }>>{
-    id: { type: 'number' },
-    address: { type: 'string' },
-    businessNumber: { type: 'string' },
-    businessType: { type: 'string' },
-    email: { type: 'string' },
-    name: { type: 'string' },
-    type: { type: 'string' },
-  },
-};
+import { Client } from '../types/models/client';
 
 export const getClientsOptions = {
   schema: {
     response: {
-      200: {
-        type: 'array',
-        clients: Client,
-      },
+      200: Type.Object({
+        clients: Type.Array(Client),
+      }),
     },
   },
   handler: getClients,
@@ -43,26 +30,7 @@ export const getClientOptions = {
 
 export const postClientOptions = {
   schema: {
-    body: {
-      type: 'object',
-      required: <Array<keyof ClientModel>>[
-        'id',
-        'name',
-        'businessNumber',
-        'businessType',
-        'address',
-        'type',
-      ],
-      properties: <Record<keyof ClientModel, { type: string }>>{
-        id: { type: 'string' },
-        name: { type: 'string' },
-        businessNumber: { type: 'string' },
-        businessType: { type: 'string' },
-        address: { type: 'string' },
-        type: { type: 'string' },
-        email: { type: 'string' },
-      },
-    },
+    body: Client,
     response: {
       201: Client,
     },
@@ -82,12 +50,7 @@ export const updateClientOptions = {
 export const deleteClientOptions = {
   schema: {
     response: {
-      200: {
-        type: 'object',
-        properties: {
-          message: { type: 'string' },
-        },
-      },
+      200: Type.Object({ message: Type.String() }),
     },
   },
   handler: deleteClient,

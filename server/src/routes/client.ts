@@ -1,4 +1,10 @@
 import {
+  DoneFuncWithErrOrRes,
+  FastifyInstance,
+  FastifyPluginOptions,
+} from 'fastify';
+
+import {
   getClientsOptions,
   getClientOptions,
   postClientOptions,
@@ -6,7 +12,11 @@ import {
   deleteClientOptions,
 } from '../options/client';
 
-const clientRoutes = (fastify, _options, done) => {
+const clientRoutes = (
+  fastify: FastifyInstance,
+  _options: FastifyPluginOptions,
+  done: DoneFuncWithErrOrRes
+) => {
   fastify.get('/api/clients', getClientsOptions);
 
   fastify.get('/api/clients/:id', getClientOptions);
