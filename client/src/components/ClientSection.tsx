@@ -1,21 +1,53 @@
 'use client';
 
 import { Spinner } from '@nextui-org/react';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 
 import useGetClients from '@/hooks/useGetClients';
 import { ClientModel } from '@/types/models/client';
+import { InvoicePartyBusinessType } from '@/types/models/invoice';
 
 import ClientSectionBottomContent from './ClientSectionBottomContent';
 import ClientSectionTopContent from './ClientSectionTopContent';
 import InvoicePartyCard from './InvoicePartyCard';
 
 const PER_PAGE = 8;
+const INVOICE_PARTY_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
+  'individual',
+  'business',
+];
 
 const ClientSection = () => {
   const { clients, isClientsLoading } = useGetClients();
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
+  const [typeFilters, setTypeFilters] = useState<Set<InvoicePartyBusinessType>>(
+    new Set(INVOICE_PARTY_BUSINESS_TYPES)
+  );
+
+  const hasSearchFilter = Boolean(searchTerm);
+
+  const filteredItems = useMemo(() => {
+    if (!clients) return [];
+
+    let filteredClients = [...clients];
+
+    if (hasSearchFilter) {
+      filteredClients = filteredClients.filter((client) =>
+        client.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    filteredClients = filteredClients.filter((client) =>
+      Array.from(typeFilters).includes(client.businessType)
+    );
+
+    return filteredClients;
+  }, [clients, hasSearchFilter, searchTerm, typeFilters]);
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+  };
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -23,14 +55,8 @@ const ClientSection = () => {
   };
 
   const renderClient = (client: ClientModel, index: number) => {
-    const { name } = client;
-
-    const normalizedName = name.toLowerCase();
-    const normalizedSearchTerm = searchTerm.toLowerCase();
     const isItemInCurrentPageRange =
       index >= (page - 1) * PER_PAGE && index < page * PER_PAGE;
-
-    if (!normalizedName.includes(normalizedSearchTerm)) return;
 
     if (!isItemInCurrentPageRange) return;
 
@@ -57,7 +83,7 @@ const ClientSection = () => {
     return (
       <div className='min-h-[480px]'>
         <div className='grid gap-4 grid-cols-1 sm:grid-cols-2'>
-          {clients?.map((client, index) => renderClient(client, index))}
+          {filteredItems?.map((client, index) => renderClient(client, index))}
         </div>
       </div>
     );
@@ -66,15 +92,18 @@ const ClientSection = () => {
   return (
     <section className='flex flex-col gap-4'>
       <ClientSectionTopContent
-        clients={clients}
+        clients={filteredItems}
         searchTerm={searchTerm}
         onSearch={handleSearch}
+        onClear={handleClearSearch}
+        typeFilters={typeFilters}
+        setTypeFilters={setTypeFilters}
       />
       {renderSectionContent()}
       <ClientSectionBottomContent
         page={page}
         setPage={setPage}
-        clientsLength={clients?.length}
+        clientsLength={filteredItems?.length}
       />
     </section>
   );

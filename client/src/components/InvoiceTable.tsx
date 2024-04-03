@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
+  Selection,
 } from '@nextui-org/react';
 import { Key, useCallback, useMemo, useState } from 'react';
 
@@ -174,8 +175,8 @@ const InvoiceTable = () => {
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement='outside'
-        onSelectionChange={setSelectedKeys as any}
-        onSortChange={setSortDescriptor as any}
+        onSelectionChange={setSelectedKeys as (keys: Selection) => any}
+        onSortChange={setSortDescriptor as (descriptor: SortDescriptor) => any}
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
