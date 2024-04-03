@@ -6,11 +6,12 @@ import cors from '@fastify/cors';
 import invoiceRoutes from './routes/invoice';
 import { getPgVersion } from '../database/db';
 import clientRoutes from './routes/client';
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 dotenv.config();
 
 const port = parseInt(process.env.PORT);
-const server = fastify();
+const server = fastify().withTypeProvider<TypeBoxTypeProvider>();
 server.register(cors);
 
 server.register(invoiceRoutes);

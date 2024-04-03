@@ -1,33 +1,52 @@
-export type InvoiceParty = {
-  name: string;
-  type: string;
-  businessNumber: string;
-  address: string;
-  email?: string;
-};
+import { Static, Type } from '@sinclair/typebox';
 
-export type InvoiceService = {
-  description: string;
-  unit: string;
-  quantity: number;
-  amount: number;
-};
+export const InvoiceParty = Type.Object({
+  name: Type.String(),
+  type: Type.String(),
+  businessNumber: Type.String(),
+  address: Type.String(),
+  email: Type.Optional(Type.String()),
+});
 
-export type InvoiceModel = {
-  id: number;
-  invoiceId: string;
-  date: string;
-  company: string;
-  sender: InvoiceParty;
-  receiver: InvoiceParty;
-  totalAmount: number;
-  status: InvoiceStatus;
-  services: Array<InvoiceService>;
-  dueDate: string;
-};
+export const InvoiceService = Type.Object({
+  description: Type.String(),
+  unit: Type.String(),
+  quantity: Type.Number(),
+  amount: Type.Number(),
+});
 
-export type InvoiceStatus = 'paid' | 'pending' | 'canceled';
+export const InvoiceStatus = Type.Union([
+  Type.Literal('paid'),
+  Type.Literal('pending'),
+  Type.Literal('canceled'),
+]);
 
-export type InvoicePartyBusinessType = 'business' | 'individual';
+export const Invoice = Type.Object({
+  id: Type.Number(),
+  invoiceId: Type.String(),
+  date: Type.String(),
+  company: Type.String(),
+  sender: InvoiceParty,
+  receiver: InvoiceParty,
+  totalAmount: Type.Number(),
+  status: InvoiceStatus,
+  services: Type.Array(InvoiceService),
+  dueDate: Type.String(),
+});
 
-export type InvoicePartyType = 'sender' | 'receiver';
+export const InvoicePartyBusinessType = Type.Union([
+  Type.Literal('business'),
+  Type.Literal('individual'),
+]);
+
+export const InvoicePartyType = Type.Union([
+  Type.Literal('sender'),
+  Type.Literal('receiver'),
+]);
+
+export type InvoiceModel = Static<typeof Invoice>;
+export type InvoiceStatus = Static<typeof InvoiceStatus>;
+export type InvoiceService = Static<typeof InvoiceService>;
+export type InvoiceParty = Static<typeof InvoiceParty>;
+export type InvoicePartyBusinessType = Static<typeof InvoicePartyBusinessType>;
+export type InvoicePartyType = Static<typeof InvoicePartyType>;

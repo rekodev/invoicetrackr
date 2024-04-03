@@ -1,11 +1,14 @@
-import { InvoicePartyBusinessType, InvoicePartyType } from '../models/invoice';
+import { Static, Type } from '@sinclair/typebox';
+import { InvoicePartyBusinessType, InvoicePartyType } from './invoice';
 
-export type ClientModel = {
-  id: number;
-  name: string;
-  type: InvoicePartyType;
-  businessType: InvoicePartyBusinessType;
-  businessNumber: string;
-  address: string;
-  email?: string;
-};
+export const Client = Type.Object({
+  id: Type.Number(),
+  type: InvoicePartyType,
+  name: Type.String(),
+  businessType: InvoicePartyBusinessType,
+  businessNumber: Type.String(),
+  address: Type.String(),
+  email: Type.Optional(Type.String()),
+});
+
+export type ClientModel = Static<typeof Client>;

@@ -1,4 +1,9 @@
 import {
+  DoneFuncWithErrOrRes,
+  FastifyInstance,
+  FastifyPluginOptions,
+} from 'fastify';
+import {
   getInvoicesOptions,
   getInvoiceOptions,
   postInvoiceOptions,
@@ -6,7 +11,11 @@ import {
   deleteInvoiceOptions,
 } from '../options/invoice';
 
-const invoiceRoutes = (fastify, _options, done) => {
+const invoiceRoutes = (
+  fastify: FastifyInstance,
+  _options: FastifyPluginOptions,
+  done: DoneFuncWithErrOrRes
+) => {
   fastify.get('/api/invoices', getInvoicesOptions);
 
   fastify.get('/api/invoices/:id', getInvoiceOptions);
