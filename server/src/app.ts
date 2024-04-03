@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import cors from '@fastify/cors';
 
 import invoiceRoutes from './routes/invoice';
+import { getPgVersion } from '../database/db';
+import clientRoutes from './routes/client';
 
 dotenv.config();
 
@@ -12,6 +14,9 @@ const server = fastify();
 server.register(cors);
 
 server.register(invoiceRoutes);
+server.register(clientRoutes);
+
+getPgVersion();
 
 server.listen({ port }, (err, address) => {
   if (err) {

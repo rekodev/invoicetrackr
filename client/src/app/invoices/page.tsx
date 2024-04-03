@@ -1,11 +1,7 @@
 import InvoiceTable from '@/components/InvoiceTable';
 
 const InvoicesPage = () => {
-  return (
-    <section>
-      <InvoiceTable />
-    </section>
-  );
+  return <InvoiceTable />;
 };
 
 export default InvoicesPage;

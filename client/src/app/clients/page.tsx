@@ -1,5 +1,7 @@
+import ClientSection from '@/components/ClientSection';
+
 const ClientsPage = () => {
-  return <div>ClientsPage</div>;
+  return <ClientSection />;
 };
 
 export default ClientsPage;

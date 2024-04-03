@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
+  Selection,
 } from '@nextui-org/react';
 import { Key, useCallback, useMemo, useState } from 'react';
 
@@ -71,7 +72,7 @@ const InvoiceTable = () => {
 
     if (hasSearchFilter) {
       filteredInvoices = filteredInvoices.filter((invoice) =>
-        invoice.id.toLowerCase().includes(filterValue.toLowerCase())
+        invoice.id.toString().toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -160,7 +161,7 @@ const InvoiceTable = () => {
   );
 
   return (
-    <>
+    <section>
       <Table
         aria-label='Example table with custom cells, pagination and sorting'
         isHeaderSticky
@@ -174,8 +175,8 @@ const InvoiceTable = () => {
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement='outside'
-        onSelectionChange={setSelectedKeys as any}
-        onSortChange={setSortDescriptor as any}
+        onSelectionChange={setSelectedKeys as (keys: Selection) => any}
+        onSortChange={setSortDescriptor as (descriptor: SortDescriptor) => any}
       >
         <TableHeader columns={headerColumns}>
           {(column) => (
@@ -211,7 +212,7 @@ const InvoiceTable = () => {
           invoiceData={currentInvoice}
         />
       )}
-    </>
+    </section>
   );
 };
 
