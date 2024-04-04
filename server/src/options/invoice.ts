@@ -11,9 +11,7 @@ import { Invoice } from '../types/models/invoice';
 export const getInvoicesOptions = {
   schema: {
     response: {
-      200: Type.Object({
-        invoices: Type.Array(Invoice),
-      }),
+      200: Type.Array(Invoice),
     },
   },
   handler: getInvoices,

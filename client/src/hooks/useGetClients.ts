@@ -8,7 +8,7 @@ import SWRKeys from '../constants/swrKeys';
 const useGetClients = () => {
   const { data, isLoading, mutate, error, isValidating } = useSWR<
     Array<ClientModel>
-  >(SWRKeys.clients);
+  >(SWRKeys.clients(1));
 
   return useMemo(
     () => ({

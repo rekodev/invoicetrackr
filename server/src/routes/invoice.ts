@@ -3,6 +3,7 @@ import {
   FastifyInstance,
   FastifyPluginOptions,
 } from 'fastify';
+
 import {
   getInvoicesOptions,
   getInvoiceOptions,

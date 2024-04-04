@@ -11,10 +11,17 @@ import {
   Dropdown,
   DropdownMenu,
   Avatar,
+  useUser,
 } from '@nextui-org/react';
-import { usePathname } from 'next/navigation.js';
+import { usePathname, useRouter } from 'next/navigation.js';
 
-import { CLIENTS_PAGE, CONTRACTS_PAGE, INVOICES_PAGE } from '@/constants/pages';
+import {
+  CLIENTS_PAGE,
+  CONTRACTS_PAGE,
+  INVOICES_PAGE,
+  PROFILE_PAGE,
+} from '@/constants/pages';
+import useGetUser from '@/hooks/useGetUser';
 
 import AcmeLogo from './icons/AcmeLogo.jsx';
 
@@ -26,6 +33,12 @@ const navbarItems = [
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user } = useGetUser();
+
+  const navigateToProfilePage = () => {
+    router.push(PROFILE_PAGE);
+  };
 
   return (
     <Navbar isBordered>
@@ -60,7 +73,7 @@ export default function Header() {
               as='button'
               className='transition-transform'
               color='secondary'
-              name='Jason Hughes'
+              name={user?.name}
               size='sm'
               src='https://i.pravatar.cc/150?u=a042581f4e29026704d'
             />
@@ -68,14 +81,11 @@ export default function Header() {
           <DropdownMenu aria-label='Profile Actions' variant='flat'>
             <DropdownItem key='profile' className='h-14 gap-2'>
               <p className='font-semibold'>Signed in as</p>
-              <p className='font-semibold'>zoey@example.com</p>
+              <p className='font-semibold'>{user?.email}</p>
             </DropdownItem>
-            <DropdownItem key='settings'>My Settings</DropdownItem>
-            <DropdownItem key='team_settings'>Team Settings</DropdownItem>
-            <DropdownItem key='analytics'>Analytics</DropdownItem>
-            <DropdownItem key='system'>System</DropdownItem>
-            <DropdownItem key='configurations'>Configurations</DropdownItem>
-            <DropdownItem key='help_and_feedback'>Help & Feedback</DropdownItem>
+            <DropdownItem key='profile' onClick={navigateToProfilePage}>
+              My Profile
+            </DropdownItem>
             <DropdownItem key='logout' color='danger'>
               Log Out
             </DropdownItem>

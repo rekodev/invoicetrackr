@@ -23,17 +23,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' className='dark'>
-      <body
-        className={`${inter.className} min-h-screen flex flex-col justify-between`}
-      >
-        <Header />
-        <main className='flex-grow flex flex-col max-w-5xl p-6 mx-auto w-full'>
-          <Providers>
+      <body className={inter.className}>
+        <Providers>
+          <Header />
+          <main className='flex-grow flex flex-col max-w-5xl p-6 mx-auto w-full'>
             <Breadcrumbs />
             {children}
-          </Providers>
-        </main>
-        <Footer />
+          </main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
