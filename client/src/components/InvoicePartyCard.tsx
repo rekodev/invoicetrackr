@@ -3,42 +3,36 @@
 import { Button, Card, CardBody, CardHeader } from '@nextui-org/react';
 import { ReactNode } from 'react';
 
-import {
-  InvoicePartyBusinessType,
-  InvoicePartyType,
-} from '@/types/models/invoice';
+import { ClientModel } from '@/types/models/client';
+import { InvoiceParty } from '@/types/models/invoice';
 
 import TrashIcon from './icons/TrashIcon';
 
 type Props = {
-  address: string;
-  businessNumber: string;
-  name: string;
-  email?: string;
-  type: InvoicePartyType;
-  businessType: InvoicePartyBusinessType;
+  partyData: InvoiceParty;
   insideForm?: boolean;
   actions?: ReactNode;
+  onEdit: (partyData: InvoiceParty) => void;
+  onDelete: (partyData: InvoiceParty) => void;
 };
 
 const InvoicePartyCard = ({
-  address,
-  businessNumber,
-  name,
-  type,
-  businessType,
-  email,
+  partyData,
   insideForm = false,
   actions,
+  onEdit,
+  onDelete,
 }: Props) => {
+  const { id, address, businessNumber, businessType, name, type, email } =
+    partyData;
   const smallText = type === 'receiver' ? 'From:' : 'To:';
 
   const handleEditClient = () => {
-    alert('editing');
+    onEdit(partyData);
   };
 
   const handleDeleteClient = () => {
-    alert('deletion');
+    onDelete(partyData);
   };
 
   const renderActions = () => (
@@ -50,7 +44,7 @@ const InvoicePartyCard = ({
           <Button
             className='min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer'
             variant='bordered'
-            onClick={handleEditClient}
+            onPress={handleEditClient}
           >
             Edit
           </Button>
@@ -59,7 +53,7 @@ const InvoicePartyCard = ({
             variant='bordered'
             color='danger'
             className='min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer'
-            onClick={handleDeleteClient}
+            onPress={handleDeleteClient}
           >
             <TrashIcon height={4} width={4} />
           </Button>

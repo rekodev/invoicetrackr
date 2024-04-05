@@ -12,142 +12,132 @@ import {
 } from '@nextui-org/react';
 import { ChangeEvent, useState } from 'react';
 
-import { addClient } from '@/api';
+import { updateClient } from '@/api';
 import { UiState } from '@/constants/uiState';
 import useGetClients from '@/hooks/useGetClients';
 import useGetUser from '@/hooks/useGetUser';
 import { ClientModel } from '@/types/models/client';
-import {
-  InvoicePartyBusinessType,
-  InvoicePartyType,
-} from '@/types/models/invoice';
+import { InvoicePartyBusinessType } from '@/types/models/invoice';
 import { capitalize } from '@/utils';
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  clientData: ClientModel;
 };
 
-const CLIENT_TYPE: InvoicePartyType = 'receiver';
 const CLIENT_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
   'business',
   'individual',
 ];
 
-type ClientFormData = Omit<ClientModel, 'id'>;
+type ClientFormData = ClientModel;
 
-const AddNewClientModal = ({ isOpen, onClose }: Props) => {
+const EditClientModal = ({ isOpen, onClose, clientData }: Props) => {
   const { user } = useGetUser();
   const { mutateClients } = useGetClients();
 
-  const [clientData, setClientData] = useState<ClientFormData>({
-    name: '',
-    type: CLIENT_TYPE,
-    businessType: 'individual',
-    businessNumber: '',
-    address: '',
-    email: '',
-  });
-  const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
+  const [uiState, setUiState] = useState(UiState.Idle);
+  const [newClientData, setNewClientData] =
+    useState<ClientFormData>(clientData);
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     field: keyof Omit<ClientModel, 'id' | 'type'>
   ) => {
-    setClientData((prev) => ({ ...prev, [field]: event.target.value }));
+    setNewClientData((prev) => ({ ...prev, [field]: event.target.value }));
   };
 
   const handleSubmit = async () => {
     if (!user?.id) return;
 
     setUiState(UiState.Pending);
+    setSubmissionMessage('');
 
-    const result = await addClient(user.id, clientData);
-    setSubmissionMessage(result.data.message);
+    const response = await updateClient(user.id, newClientData);
+    setSubmissionMessage(response.data.message);
 
-    if ('error' in result) {
+    if ('error' in response.data) {
       setUiState(UiState.Failure);
 
       return;
     }
 
     setUiState(UiState.Success);
+
     mutateClients();
   };
-
-  const renderModalFooter = () => (
-    <ModalFooter>
-      <div className='flex w-full items-center justify-between'>
-        {submissionMessage && (
-          <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-            {submissionMessage}
-          </Chip>
-        )}
-        <div className='flex gap-1 justify-end w-full'>
-          <Button color='danger' variant='light' onPress={onClose}>
-            Cancel
-          </Button>
-          <Button
-            isLoading={uiState === UiState.Pending}
-            color='secondary'
-            onPress={handleSubmit}
-          >
-            Save
-          </Button>
-        </div>
-      </div>
-    </ModalFooter>
-  );
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
-        <ModalHeader>Add New Client</ModalHeader>
+        <ModalHeader>Edit Client</ModalHeader>
         <ModalBody>
           <Input
-            value={clientData.name}
+            value={newClientData.name}
             onChange={(event) => handleChange(event, 'name')}
             type='text'
             label='Name'
             variant='bordered'
           />
           <Select
-            value=''
+            value={newClientData.businessType}
             onChange={(event) => handleChange(event, 'businessType')}
             label='Business Type'
             variant='bordered'
+            defaultSelectedKeys={[newClientData.businessType]}
           >
             {CLIENT_BUSINESS_TYPES.map((type) => (
               <SelectItem key={type}>{capitalize(type)}</SelectItem>
             ))}
           </Select>
           <Input
-            value={clientData.businessNumber}
+            value={newClientData.businessNumber}
             onChange={(event) => handleChange(event, 'businessNumber')}
             type='text'
             label='Business Number'
             variant='bordered'
           />
           <Input
-            value={clientData.address}
+            value={newClientData.address}
             onChange={(event) => handleChange(event, 'address')}
             type='text'
             label='Address'
             variant='bordered'
           />
           <Input
-            value={clientData.email}
+            value={newClientData.email}
             onChange={(event) => handleChange(event, 'email')}
             type='email'
             label='Email'
             variant='bordered'
           />
         </ModalBody>
-        {renderModalFooter()}
+        <ModalFooter>
+          <div className='flex w-full items-center justify-between'>
+            {submissionMessage && (
+              <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
+                {submissionMessage}
+              </Chip>
+            )}
+            <div className='flex gap-1 justify-end w-full'>
+              <Button color='danger' variant='light' onPress={onClose}>
+                Cancel
+              </Button>
+              <Button
+                isLoading={uiState === UiState.Pending}
+                color='secondary'
+                onPress={handleSubmit}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );
 };
 
-export default AddNewClientModal;
+export default EditClientModal;

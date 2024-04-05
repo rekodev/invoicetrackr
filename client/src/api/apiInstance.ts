@@ -63,6 +63,7 @@ class ApiInstance {
       return {
         ...error,
         data: {
+          error,
           message: 'Unable to access the network',
         },
       };
