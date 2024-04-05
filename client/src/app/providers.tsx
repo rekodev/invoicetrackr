@@ -20,7 +20,9 @@ const fetcher = async (url: string) => {
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SWRConfig value={{ fetcher }}>
-      <NextUIProvider>{children}</NextUIProvider>
+      <NextUIProvider className='flex flex-col min-h-screen justify-between'>
+        {children}
+      </NextUIProvider>
     </SWRConfig>
   );
 }

@@ -8,11 +8,17 @@ import {
   ModalHeader,
   Select,
   SelectItem,
+  useUser,
 } from '@nextui-org/react';
 import { ChangeEvent, useState } from 'react';
 
+import { postClient } from '@/api';
+import useGetUser from '@/hooks/useGetUser';
 import { ClientModel } from '@/types/models/client';
-import { InvoicePartyBusinessType } from '@/types/models/invoice';
+import {
+  InvoicePartyBusinessType,
+  InvoicePartyType,
+} from '@/types/models/invoice';
 import { capitalize } from '@/utils';
 
 type Props = {
@@ -20,20 +26,25 @@ type Props = {
   onClose: () => void;
 };
 
-const clientBusinessTypes: Array<InvoicePartyBusinessType> = [
+const CLIENT_TYPE: InvoicePartyType = 'receiver';
+const CLIENT_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
   'business',
   'individual',
 ];
 
-type ClientFormData = Record<keyof Omit<ClientModel, 'id' | 'type'>, string>;
+type ClientFormData = Omit<ClientModel, 'id'>;
 
 const AddNewClientModal = ({ isOpen, onClose }: Props) => {
+  const { user } = useGetUser();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [clientData, setClientData] = useState<ClientFormData>({
-    address: '',
-    businessNumber: '',
-    businessType: '',
-    email: '',
     name: '',
+    type: CLIENT_TYPE,
+    businessType: 'individual',
+    businessNumber: '',
+    address: '',
+    email: '',
   });
 
   const handleChange = (
@@ -41,6 +52,23 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
     field: keyof Omit<ClientModel, 'id' | 'type'>
   ) => {
     setClientData((prev) => ({ ...prev, [field]: event.target.value }));
+  };
+
+  const handleSubmit = async () => {
+    if (!user?.id) return;
+
+    setIsSubmitting(true);
+    const result = await postClient(user.id, clientData);
+    setIsSubmitting(false);
+
+    if (result.data) {
+      console.log(result.data);
+      console.log('success');
+
+      return;
+    }
+
+    console.log('failure');
   };
 
   return (
@@ -59,7 +87,7 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
             label='Business Type'
             variant='bordered'
           >
-            {clientBusinessTypes.map((type) => (
+            {CLIENT_BUSINESS_TYPES.map((type) => (
               <SelectItem key={type}>{capitalize(type)}</SelectItem>
             ))}
           </Select>
@@ -86,7 +114,12 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
           <Button color='danger' variant='light' onPress={onClose}>
             Cancel
           </Button>
-          <Button color='secondary' onPress={onClose}>
+          <Button
+            isLoading={isSubmitting}
+            color='secondary'
+            onClick={handleSubmit}
+            onPress={onClose}
+          >
             Save
           </Button>
         </ModalFooter>

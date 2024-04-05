@@ -1,7 +1,9 @@
 import { ClientDto } from '../types/dtos/client';
 import { InvoiceDto } from '../types/dtos/invoice';
+import { UserDto } from '../types/dtos/user';
 import { ClientModel } from '../types/models/client';
 import { InvoiceModel } from '../types/models/invoice';
+import { UserModel } from '../types/models/user';
 
 export const transformInvoiceDto = (invoiceDto: InvoiceDto): InvoiceModel => {
   const {
@@ -46,6 +48,21 @@ export const transformInvoiceDto = (invoiceDto: InvoiceDto): InvoiceModel => {
 export const transformClientDto = (clientDto: ClientDto): ClientModel => {
   const { id, name, business_type, business_number, address, type, email } =
     clientDto;
+
+  return {
+    id,
+    name,
+    businessType: business_type,
+    businessNumber: business_number,
+    address,
+    type,
+    email,
+  };
+};
+
+export const transformUserDto = (userDto: UserDto): UserModel => {
+  const { id, name, business_type, business_number, address, type, email } =
+    userDto;
 
   return {
     id,

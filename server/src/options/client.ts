@@ -11,9 +11,7 @@ import { Client } from '../types/models/client';
 export const getClientsOptions = {
   schema: {
     response: {
-      200: Type.Object({
-        clients: Type.Array(Client),
-      }),
+      200: Type.Array(Client),
     },
   },
   handler: getClients,
@@ -30,7 +28,7 @@ export const getClientOptions = {
 
 export const postClientOptions = {
   schema: {
-    body: Client,
+    body: Type.Partial(Type.Omit(Client, ['id'])),
     response: {
       201: Client,
     },
