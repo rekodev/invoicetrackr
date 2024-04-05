@@ -1,57 +1,53 @@
 'use client';
 
 import { Spinner } from '@nextui-org/react';
-import { ChangeEvent, useMemo, useState } from 'react';
+import { useState } from 'react';
 
+import useClientSearchAndFilter from '@/hooks/useClientSearchAndFilter';
 import useGetClients from '@/hooks/useGetClients';
 import { ClientModel } from '@/types/models/client';
-import { InvoicePartyBusinessType } from '@/types/models/invoice';
 
 import ClientSectionBottomContent from './ClientSectionBottomContent';
 import ClientSectionTopContent from './ClientSectionTopContent';
+import DeleteClientModal from './DeleteClientModal';
+import EditClientModal from './EditClientModal';
 import InvoicePartyCard from './InvoicePartyCard';
 
 const PER_PAGE = 8;
-const INVOICE_PARTY_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
-  'individual',
-  'business',
-];
 
 const ClientSection = () => {
   const { clients, isClientsLoading } = useGetClients();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [page, setPage] = useState(1);
-  const [typeFilters, setTypeFilters] = useState<Set<InvoicePartyBusinessType>>(
-    new Set(INVOICE_PARTY_BUSINESS_TYPES)
-  );
+  const {
+    page,
+    setPage,
+    filteredItems,
+    searchTerm,
+    typeFilters,
+    setTypeFilters,
+    handleSearch,
+    handleClearSearch,
+  } = useClientSearchAndFilter(clients);
 
-  const hasSearchFilter = Boolean(searchTerm);
+  const [currentClientData, setCurrentClientData] = useState<ClientModel>();
+  const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false);
+  const [isDeleteClientModalOpen, setIsDeleteClientModalOpen] = useState(false);
 
-  const filteredItems = useMemo(() => {
-    if (!clients) return [];
-
-    let filteredClients = [...clients];
-
-    if (hasSearchFilter) {
-      filteredClients = filteredClients.filter((client) =>
-        client.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    filteredClients = filteredClients.filter((client) =>
-      Array.from(typeFilters).includes(client.businessType)
-    );
-
-    return filteredClients;
-  }, [clients, hasSearchFilter, searchTerm, typeFilters]);
-
-  const handleClearSearch = () => {
-    setSearchTerm('');
+  const handleCloseEditClientModal = () => {
+    setIsEditClientModalOpen(false);
   };
 
-  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-    setPage(1);
+  const handleOpenDeleteClientModal = (clientData: ClientModel) => {
+    setCurrentClientData(clientData);
+    setIsDeleteClientModalOpen(true);
+  };
+
+  const handleCloseDeleteClientModal = () => {
+    setIsDeleteClientModalOpen(false);
+  };
+
+  const handleEditClient = (clientData: ClientModel) => {
+    setCurrentClientData(clientData);
+    setIsEditClientModalOpen(true);
   };
 
   const renderClient = (client: ClientModel, index: number) => {
@@ -63,11 +59,9 @@ const ClientSection = () => {
     return (
       <InvoicePartyCard
         key={client.id}
-        type='receiver'
-        address={client.address}
-        businessNumber={client.businessNumber}
-        businessType={client.businessType}
-        name={client.name}
+        partyData={client}
+        onEdit={handleEditClient}
+        onDelete={handleOpenDeleteClientModal}
       />
     );
   };
@@ -105,6 +99,21 @@ const ClientSection = () => {
         setPage={setPage}
         clientsLength={filteredItems?.length}
       />
+      {currentClientData && isEditClientModalOpen && (
+        <EditClientModal
+          isOpen={isEditClientModalOpen}
+          onClose={handleCloseEditClientModal}
+          clientData={currentClientData}
+        />
+      )}
+      {currentClientData && isDeleteClientModalOpen && (
+        <DeleteClientModal
+          clientData={currentClientData}
+          isOpen={isDeleteClientModalOpen}
+          onClose={handleCloseDeleteClientModal}
+          onSuccess={handleCloseDeleteClientModal}
+        />
+      )}
     </section>
   );
 };

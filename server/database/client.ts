@@ -14,14 +14,14 @@ export const getClientsFromDb = async (userId: number) => {
       created_at,
       updated_at
     from clients
-    where user_id = ${userId}
+    where user_id = ${userId} order by id desc
   `;
 
   return clients;
 };
 
-export const getClientFromDb = async (id: number) => {
-  const client = await sql`
+export const getClientFromDb = async (userId: number, clientId: number) => {
+  const clients = await sql`
       select
         id,
         name,
@@ -33,10 +33,10 @@ export const getClientFromDb = async (id: number) => {
         created_at,
         updated_at
       from clients
-      where id = ${id}
+      where user_id = ${userId} AND id = ${clientId}
     `;
 
-  return client;
+  return clients;
 };
 
 export const insertClientToDb = async (
@@ -50,6 +50,37 @@ export const insertClientToDb = async (
           (${name}, ${type}, ${businessType}, ${businessNumber}, ${address}, ${email}, ${userId})
         returning name, type, business_type, business_number, address, email
       `;
+
+  return clients;
+};
+
+export const updateClientInDb = async (
+  userId: number,
+  clientId: number,
+  { name, address, businessNumber, businessType, type, email }: ClientModel
+) => {
+  const clients = await sql`
+  update clients
+  set
+    name = ${name},
+    address = ${address},
+    business_number = ${businessNumber},
+    business_type = ${businessType},
+    type = ${type},
+    email = ${email}
+  where id = ${clientId} and user_id = ${userId}
+  returning id, name, type, business_type, business_number, address, email
+`;
+
+  return clients;
+};
+
+export const deleteClientFromDb = async (userId: number, clientId: number) => {
+  const clients = await sql`
+  delete from clients
+  where id = ${clientId} and user_id = ${userId}
+  returning *
+`;
 
   return clients;
 };

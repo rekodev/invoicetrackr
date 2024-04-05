@@ -3,8 +3,9 @@ export type InvoicePartyBusinessType = 'business' | 'individual';
 export type InvoicePartyType = 'sender' | 'receiver';
 
 export type InvoiceParty = {
+  id: number;
   name: string;
-  businessType: string;
+  businessType: InvoicePartyBusinessType;
   businessNumber: string;
   address: string;
   email?: string;
