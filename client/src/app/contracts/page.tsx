@@ -1,5 +1,7 @@
+import UnderConstruction from '@/pages/UnderConstruction';
+
 const ContractsPage = () => {
-  return <div>ContractsPage</div>;
+  return <UnderConstruction />;
 };
 
 export default ContractsPage;

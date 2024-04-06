@@ -41,6 +41,11 @@ const InvoiceTableTopContent = ({
   invoicesLength,
 }: Props) => {
   const router = useRouter();
+  const totalInvoicesText = invoicesLength
+    ? invoicesLength === 1
+      ? 'Total 1 invoice'
+      : `Total ${invoicesLength} invoices`
+    : 'Total 0 invoices';
 
   const handleAddNewInvoice = () => {
     router.push(ADD_NEW_INVOICE_PAGE);
@@ -142,9 +147,7 @@ const InvoiceTableTopContent = ({
         </div>
       </div>
       <div className='flex justify-between items-center'>
-        <span className='text-default-400 text-small'>
-          Total {invoicesLength} invoices
-        </span>
+        <span className='text-default-400 text-small'>{totalInvoicesText}</span>
         <label className='flex items-center text-default-400 text-small'>
           Rows per page:
           <select

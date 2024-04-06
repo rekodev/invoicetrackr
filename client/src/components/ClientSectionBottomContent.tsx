@@ -1,4 +1,4 @@
-import { Pagination } from '@nextui-org/react';
+import { Button, Pagination } from '@nextui-org/react';
 import { Dispatch, SetStateAction } from 'react';
 
 const PER_PAGE = 8;
@@ -18,6 +18,8 @@ const ClientSectionBottomContent = ({
   const pages = clientsLength
     ? Math.ceil(clientsLength / PER_PAGE)
     : INITIAL_PAGE;
+  const prevButtonDisabled = page === 1;
+  const nextButtonDisabled = page === pages;
 
   const onNextPage = () => {
     if (page < pages) {
@@ -32,7 +34,7 @@ const ClientSectionBottomContent = ({
   };
 
   return (
-    <div className='w-full mt-2'>
+    <div className='mt-2 flex justify-center items-center relative'>
       <Pagination
         isCompact
         showControls
@@ -43,6 +45,24 @@ const ClientSectionBottomContent = ({
         onChange={setPage}
         isDisabled={!clientsLength}
       />
+      <div className='hidden sm:flex w-[30%] justify-end gap-2 absolute right-2'>
+        <Button
+          isDisabled={prevButtonDisabled}
+          size='sm'
+          variant='flat'
+          onPress={onPreviousPage}
+        >
+          Previous
+        </Button>
+        <Button
+          isDisabled={nextButtonDisabled}
+          size='sm'
+          variant='flat'
+          onPress={onNextPage}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };
