@@ -1,9 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { invoices } from '../data';
 import { InvoiceModel } from '../types/models/invoice';
 
 export const getInvoices = (req: FastifyRequest, reply: FastifyReply) => {
-  reply.send(invoices);
+  reply.send([]);
 };
 
 export const getInvoice = (

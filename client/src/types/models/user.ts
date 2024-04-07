@@ -7,5 +7,5 @@ export type UserModel = {
   businessType: InvoicePartyBusinessType;
   businessNumber: string;
   address: string;
-  email?: string;
+  email: string;
 };

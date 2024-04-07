@@ -16,17 +16,12 @@ import { addClient } from '@/api';
 import { UiState } from '@/constants/uiState';
 import useGetClients from '@/hooks/useGetClients';
 import useGetUser from '@/hooks/useGetUser';
-import { ClientModel } from '@/types/models/client';
+import { ClientFormData, ClientModel } from '@/types/models/client';
 import {
   InvoicePartyBusinessType,
   InvoicePartyType,
 } from '@/types/models/invoice';
 import { capitalize } from '@/utils';
-
-type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-};
 
 const CLIENT_TYPE: InvoicePartyType = 'receiver';
 const CLIENT_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
@@ -36,13 +31,16 @@ const CLIENT_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
 const INITIAL_CLIENT_DATA: ClientFormData = {
   name: '',
   type: CLIENT_TYPE,
-  businessType: 'individual',
+  businessType: null,
   businessNumber: '',
   address: '',
   email: '',
 };
 
-type ClientFormData = Omit<ClientModel, 'id'>;
+type Props = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 
 const AddNewClientModal = ({ isOpen, onClose }: Props) => {
   const { user } = useGetUser();
@@ -87,7 +85,7 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
 
   const renderModalFooter = () => (
     <ModalFooter>
-      <div className='flex w-full items-center justify-between'>
+      <div className='flex flex-col w-full items-start gap-5 justify-between overflow-x-hidden'>
         {submissionMessage && (
           <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
             {submissionMessage}

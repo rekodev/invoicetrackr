@@ -120,7 +120,7 @@ const EditClientModal = ({ isOpen, onClose, clientData }: Props) => {
           />
         </ModalBody>
         <ModalFooter>
-          <div className='flex w-full items-center justify-between'>
+          <div className='flex flex-col w-full items-start gap-5 justify-between overflow-x-hidden'>
             {submissionMessage && (
               <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
                 {submissionMessage}

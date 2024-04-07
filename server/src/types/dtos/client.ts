@@ -7,7 +7,7 @@ export type ClientDto = {
   business_type: InvoicePartyBusinessType;
   business_number: string;
   address: string;
-  email?: string;
+  email: string;
   updated_at: string;
   created_at: string;
 };

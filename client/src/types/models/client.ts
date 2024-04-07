@@ -7,5 +7,9 @@ export type ClientModel = {
   businessType: InvoicePartyBusinessType;
   businessNumber: string;
   address: string;
-  email?: string;
+  email: string;
+};
+
+export type ClientFormData = Omit<ClientModel, 'id' | 'businessType'> & {
+  businessType: InvoicePartyBusinessType | null;
 };
