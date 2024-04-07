@@ -1,5 +1,11 @@
+import AddNewInvoiceForm from '@/components/AddNewInvoiceForm';
+
 const AddNewInvoicePage = () => {
-  return <div>AddNewInvoicePage</div>;
+  return (
+    <section className='w-full'>
+      <AddNewInvoiceForm />
+    </section>
+  );
 };
 
 export default AddNewInvoicePage;

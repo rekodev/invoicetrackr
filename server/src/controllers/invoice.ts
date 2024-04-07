@@ -9,10 +9,8 @@ export const getInvoices = async (
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
-  console.log(userId);
-  const invoices = await getInvoicesFromDb(userId);
 
-  console.log(invoices);
+  const invoices = await getInvoicesFromDb(userId);
   reply.send(
     invoices.map((invoice) => transformInvoiceDto(invoice as InvoiceDto))
   );

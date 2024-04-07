@@ -1,69 +1,51 @@
 'use client';
 
-import { Button, Card, CardBody, CardHeader } from '@nextui-org/react';
+import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import { ReactNode } from 'react';
 
 import { ClientModel } from '@/types/models/client';
-import { InvoiceParty } from '@/types/models/invoice';
+import { InvoicePartyType } from '@/types/models/invoice';
+import { UserModel } from '@/types/models/user';
 
-import TrashIcon from './icons/TrashIcon';
+/* 
+  InvoicePartyCard accepts a renderActions prop which renders actions on the top right of the card
+  The renderActions can have either UserModel or ClientModel as args if at least one action depends on the data inside of the card
+  Or it can have no actions at all if all the logic can be handled outside
+*/
+
+type PartyData = UserModel | ClientModel;
 
 type Props = {
-  partyData: InvoiceParty;
+  partyType: InvoicePartyType;
+  partyData: PartyData | undefined;
   insideForm?: boolean;
-  actions?: ReactNode;
-  onEdit: (partyData: InvoiceParty) => void;
-  onDelete: (partyData: InvoiceParty) => void;
+  renderActions?: (partyData: PartyData | undefined) => ReactNode;
 };
 
 const InvoicePartyCard = ({
+  partyType,
   partyData,
   insideForm = false,
-  actions,
-  onEdit,
-  onDelete,
+  renderActions,
 }: Props) => {
-  const { id, address, businessNumber, businessType, name, type, email } =
-    partyData;
-  const smallText = type === 'receiver' ? 'From:' : 'To:';
+  const smallText = partyType === 'receiver' ? 'From:' : 'To:';
 
-  const handleEditClient = () => {
-    onEdit(partyData);
-  };
+  if (!partyData)
+    return (
+      <Card className='p-2 w-full'>
+        <CardHeader>
+          {insideForm && (
+            <small className='text-default-500'>{smallText}</small>
+          )}
+        </CardHeader>
+        {renderActions?.(partyData)}
+      </Card>
+    );
 
-  const handleDeleteClient = () => {
-    onDelete(partyData);
-  };
-
-  const renderActions = () => (
-    <div className='absolute right-2 top-2 flex gap-1.5 z-10'>
-      {actions ? (
-        actions
-      ) : (
-        <>
-          <Button
-            className='min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer'
-            variant='bordered'
-            onPress={handleEditClient}
-          >
-            Edit
-          </Button>
-          <Button
-            isIconOnly
-            variant='bordered'
-            color='danger'
-            className='min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer'
-            onPress={handleDeleteClient}
-          >
-            <TrashIcon height={4} width={4} />
-          </Button>
-        </>
-      )}
-    </div>
-  );
+  const { address, businessNumber, businessType, name, email } = partyData;
 
   return (
-    <Card className='p-2 relative'>
+    <Card className='p-2 relative w-full'>
       <CardHeader className='pb-0 flex-col items-start'>
         {insideForm && <small className='text-default-500'>{smallText}</small>}
         <h4 className='font-bold text-large'>{name}</h4>
@@ -75,7 +57,7 @@ const InvoicePartyCard = ({
         <small className='text-default-500'>{address}</small>
         {email && <small className='text-default-500'>{email}</small>}
       </CardBody>
-      {renderActions()}
+      {renderActions?.(partyData)}
     </Card>
   );
 };

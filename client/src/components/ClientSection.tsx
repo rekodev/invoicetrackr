@@ -1,6 +1,6 @@
 'use client';
 
-import { Spinner } from '@nextui-org/react';
+import { Button, Spinner } from '@nextui-org/react';
 import { useState } from 'react';
 
 import useClientSearchAndFilter from '@/hooks/useClientSearchAndFilter';
@@ -12,6 +12,7 @@ import ClientSectionTopContent from './ClientSectionTopContent';
 import DeleteClientModal from './DeleteClientModal';
 import EditClientModal from './EditClientModal';
 import InvoicePartyCard from './InvoicePartyCard';
+import TrashIcon from '../components/icons/TrashIcon';
 
 const PER_PAGE = 8;
 
@@ -50,6 +51,27 @@ const ClientSection = () => {
     setIsEditClientModalOpen(true);
   };
 
+  const renderClientCardActions = (clientData: ClientModel) => (
+    <div className='absolute right-2 top-2 flex gap-1.5 z-10'>
+      <Button
+        className='min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer'
+        variant='bordered'
+        onPress={() => handleEditClient(clientData)}
+      >
+        Edit
+      </Button>
+      <Button
+        isIconOnly
+        variant='bordered'
+        color='danger'
+        className='min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer'
+        onPress={() => handleOpenDeleteClientModal(clientData)}
+      >
+        <TrashIcon height={4} width={4} />
+      </Button>
+    </div>
+  );
+
   const renderClient = (client: ClientModel, index: number) => {
     const isItemInCurrentPageRange =
       index >= (page - 1) * PER_PAGE && index < page * PER_PAGE;
@@ -58,10 +80,10 @@ const ClientSection = () => {
 
     return (
       <InvoicePartyCard
+        partyType={client.type}
         key={client.id}
         partyData={client}
-        onEdit={handleEditClient}
-        onDelete={handleOpenDeleteClientModal}
+        renderActions={() => renderClientCardActions(client)}
       />
     );
   };
