@@ -4,6 +4,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
+  ModalFooter,
   ModalHeader,
 } from '@nextui-org/react';
 import { useState } from 'react';
@@ -52,8 +53,8 @@ const DeleteClientModal = ({
     mutateClients();
   };
 
-  const renderModalBody = () => (
-    <ModalBody>
+  const renderModalFooter = () => (
+    <ModalFooter>
       <div className='flex w-full items-center justify-between'>
         {submissionMessage && (
           <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
@@ -61,7 +62,7 @@ const DeleteClientModal = ({
           </Chip>
         )}
         <div className='flex gap-1 justify-end w-full'>
-          <Button color='danger' variant='light' onPress={onClose}>
+          <Button color='danger' onPress={onClose}>
             Cancel
           </Button>
           <Button
@@ -69,20 +70,24 @@ const DeleteClientModal = ({
             color='secondary'
             onPress={handleSubmit}
           >
-            Save
+            Delete
           </Button>
         </div>
       </div>
-    </ModalBody>
+    </ModalFooter>
   );
 
   return (
-    <Modal isOpen={isOpen}>
-      <ModalContent className='flex flex-col items-center justify-center'>
-        <ModalHeader className='text-center'>
-          Are you sure you want to delete ?
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalContent>
+        <ModalHeader>
+          Are you sure you want to delete {clientData.name}?
         </ModalHeader>
-        {renderModalBody()}
+        <ModalBody>
+          This client will be deleted immediately. You can&apos;t undo this
+          action.
+        </ModalBody>
+        {renderModalFooter()}
       </ModalContent>
     </Modal>
   );

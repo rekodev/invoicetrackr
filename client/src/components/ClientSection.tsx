@@ -74,6 +74,9 @@ const ClientSection = () => {
         </div>
       );
 
+    if (!isClientsLoading && !clients?.length)
+      return <div className='min-h-[480px]'>No clients found</div>;
+
     return (
       <div className='min-h-[480px]'>
         <div className='grid gap-4 grid-cols-1 sm:grid-cols-2'>

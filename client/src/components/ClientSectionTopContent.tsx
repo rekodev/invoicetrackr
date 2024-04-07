@@ -103,8 +103,10 @@ const ClientSectionTopContent = ({
         <div className='flex justify-between items-center'>
           <span className='text-default-400 text-small'>
             {clients
-              ? `Total ${clients.length} clients`
-              : 'No clients to display'}
+              ? clients.length === 1
+                ? `Total 1 client`
+                : `Total ${clients.length} clients`
+              : 'Total 0 clients'}
           </span>
         </div>
       </div>

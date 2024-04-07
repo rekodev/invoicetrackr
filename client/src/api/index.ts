@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 
-import { ClientModel } from '@/types/models/client';
+import { ClientFormData, ClientModel } from '@/types/models/client';
 import {
   AddClientResp,
   DeleteClientResp,
@@ -14,7 +14,7 @@ export const getInvoices = async (userId: number) =>
 
 export const addClient = async (
   userId: number,
-  clientData: Omit<ClientModel, 'id'>
+  clientData: ClientFormData
 ): Promise<AxiosResponse<AddClientResp>> =>
   await api.post(`/api/${userId}/clients`, clientData);
 

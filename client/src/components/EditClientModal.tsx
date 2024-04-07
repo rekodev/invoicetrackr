@@ -80,6 +80,7 @@ const EditClientModal = ({ isOpen, onClose, clientData }: Props) => {
             type='text'
             label='Name'
             variant='bordered'
+            isRequired
           />
           <Select
             value={newClientData.businessType}
@@ -87,6 +88,7 @@ const EditClientModal = ({ isOpen, onClose, clientData }: Props) => {
             label='Business Type'
             variant='bordered'
             defaultSelectedKeys={[newClientData.businessType]}
+            isRequired
           >
             {CLIENT_BUSINESS_TYPES.map((type) => (
               <SelectItem key={type}>{capitalize(type)}</SelectItem>
@@ -98,6 +100,7 @@ const EditClientModal = ({ isOpen, onClose, clientData }: Props) => {
             type='text'
             label='Business Number'
             variant='bordered'
+            isRequired
           />
           <Input
             value={newClientData.address}
@@ -105,6 +108,7 @@ const EditClientModal = ({ isOpen, onClose, clientData }: Props) => {
             type='text'
             label='Address'
             variant='bordered'
+            isRequired
           />
           <Input
             value={newClientData.email}
@@ -112,10 +116,11 @@ const EditClientModal = ({ isOpen, onClose, clientData }: Props) => {
             type='email'
             label='Email'
             variant='bordered'
+            isRequired
           />
         </ModalBody>
         <ModalFooter>
-          <div className='flex w-full items-center justify-between'>
+          <div className='flex flex-col w-full items-start gap-5 justify-between overflow-x-hidden'>
             {submissionMessage && (
               <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
                 {submissionMessage}

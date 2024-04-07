@@ -28,7 +28,7 @@ export const getClientOptions = {
 
 export const postClientOptions = {
   schema: {
-    body: Type.Partial(Type.Omit(Client, ['id'])),
+    body: Type.Omit(Client, ['id']),
     response: {
       201: Type.Object({ client: Client, message: Type.String() }),
     },

@@ -1,6 +1,17 @@
 import { ClientModel } from '../src/types/models/client';
 import { sql } from './db';
 
+export const findClientByEmail = async (userId: number, email: string) => {
+  const clients = await sql`
+    select
+      email
+    from clients
+    where user_id = ${userId} and email = ${email}
+  `;
+
+  return clients;
+};
+
 export const getClientsFromDb = async (userId: number) => {
   const clients = await sql`
     select

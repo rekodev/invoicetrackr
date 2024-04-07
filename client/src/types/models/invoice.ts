@@ -8,7 +8,7 @@ export type InvoiceParty = {
   businessType: InvoicePartyBusinessType;
   businessNumber: string;
   address: string;
-  email?: string;
+  email: string;
   type: InvoicePartyType;
 };
 

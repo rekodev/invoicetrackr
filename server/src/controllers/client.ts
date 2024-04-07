@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { ClientModel } from '../types/models/client';
 import {
   deleteClientFromDb,
+  findClientByEmail,
   getClientFromDb,
   getClientsFromDb,
   insertClientToDb,
@@ -16,20 +17,8 @@ export const getClients = async (
 ) => {
   const { userId } = req.params;
 
-  try {
-    const result = await getClientsFromDb(userId);
-
-    const clients = Array.isArray(result) ? result : null;
-
-    if (!clients) reply.status(400).send({ message: 'Clients not found' });
-
-    reply.send(
-      clients.map((client) => transformClientDto(client as ClientDto))
-    );
-  } catch (error) {
-    console.error(error);
-    return reply.status(500).send({ message: 'Internal server error' });
-  }
+  const clients = await getClientsFromDb(userId);
+  reply.send(clients.map((client) => transformClientDto(client as ClientDto)));
 };
 
 export const getClient = async (
@@ -38,19 +27,13 @@ export const getClient = async (
 ) => {
   const { userId, id } = req.params;
 
-  try {
-    const result = await getClientFromDb(userId, id);
+  const queryResult = await getClientFromDb(userId, id);
 
-    const client =
-      Array.isArray(result) && result.length > 0 ? result[0] : null;
+  if (!queryResult.length)
+    return reply.status(400).send({ message: 'Client not found' });
 
-    if (!client) reply.status(400).send({ message: 'Client not found' });
-
-    reply.send(transformClientDto(client as ClientDto));
-  } catch (error) {
-    console.error(error);
-    return reply.status(500).send({ message: 'Internal server error' });
-  }
+  const client = queryResult[0];
+  reply.send(transformClientDto(client as ClientDto));
 };
 
 export const postClient = async (
@@ -60,50 +43,46 @@ export const postClient = async (
   const { userId } = req.params;
   const clientData = req.body;
 
-  try {
-    const result = await insertClientToDb(userId, clientData);
+  const findClientByEmailQueryResult = await findClientByEmail(
+    userId,
+    clientData.email
+  );
 
-    const client =
-      Array.isArray(result) && result.length > 0 ? result[0] : null;
+  if (findClientByEmailQueryResult.length)
+    return reply.status(400).send({ message: 'Client already exists' });
 
-    if (!client) reply.status(400).send({ message: 'Unable to add client' });
+  const insertionResult = await insertClientToDb(userId, clientData);
 
-    reply.send({
-      client: transformClientDto(client as ClientDto),
-      message: 'Client added successfully',
-    });
-  } catch (error) {
-    console.error(error);
-    return reply.status(500).send({ message: 'Internal server error' });
-  }
+  if (!insertionResult.length)
+    return reply.status(400).send({ message: 'Unable to add client' });
+
+  const client = insertionResult[0];
+  reply.send({
+    client: transformClientDto(client as ClientDto),
+    message: 'Client added successfully',
+  });
 };
 
 export const updateClient = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: number; id: number };
     Body: ClientModel;
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const { userId, id } = req.params;
   const clientData = req.body;
 
-  try {
-    const result = await updateClientInDb(userId, clientData.id, clientData);
+  const queryResult = await updateClientInDb(userId, id, clientData);
 
-    const client =
-      Array.isArray(result) && result.length > 0 ? result[0] : null;
+  if (!queryResult.length)
+    return reply.status(400).send({ message: 'Unable to update client' });
 
-    if (!client) reply.status(400).send({ message: 'Unable to update client' });
-
-    reply.send({
-      message: 'Client updated successfully',
-      client: transformClientDto(client as ClientDto),
-    });
-  } catch (error) {
-    console.error(error);
-    return reply.status(500).send({ message: 'Internal server error' });
-  }
+  const client = queryResult[0];
+  reply.send({
+    message: 'Client updated successfully',
+    client: transformClientDto(client as ClientDto),
+  });
 };
 
 export const deleteClient = async (
@@ -112,17 +91,10 @@ export const deleteClient = async (
 ) => {
   const { userId, id } = req.params;
 
-  try {
-    const result = await deleteClientFromDb(userId, id);
+  const queryResult = await deleteClientFromDb(userId, id);
 
-    const client =
-      Array.isArray(result) && result.length > 0 ? result[0] : null;
+  if (!queryResult.length)
+    return reply.status(400).send({ message: 'Unable to delete client' });
 
-    if (!client) reply.status(400).send({ message: 'Unable to delete client' });
-
-    reply.send({ message: 'Client deleted successfully' });
-  } catch (error) {
-    console.error(error);
-    return reply.status(500).send({ message: 'Internal server error' });
-  }
+  reply.send({ message: 'Client deleted successfully' });
 };

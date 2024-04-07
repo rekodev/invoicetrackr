@@ -16,38 +16,38 @@ import { addClient } from '@/api';
 import { UiState } from '@/constants/uiState';
 import useGetClients from '@/hooks/useGetClients';
 import useGetUser from '@/hooks/useGetUser';
-import { ClientModel } from '@/types/models/client';
+import { ClientFormData, ClientModel } from '@/types/models/client';
 import {
   InvoicePartyBusinessType,
   InvoicePartyType,
 } from '@/types/models/invoice';
 import { capitalize } from '@/utils';
 
-type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-};
-
 const CLIENT_TYPE: InvoicePartyType = 'receiver';
 const CLIENT_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
   'business',
   'individual',
 ];
+const INITIAL_CLIENT_DATA: ClientFormData = {
+  name: '',
+  type: CLIENT_TYPE,
+  businessType: null,
+  businessNumber: '',
+  address: '',
+  email: '',
+};
 
-type ClientFormData = Omit<ClientModel, 'id'>;
+type Props = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 
 const AddNewClientModal = ({ isOpen, onClose }: Props) => {
   const { user } = useGetUser();
   const { mutateClients } = useGetClients();
 
-  const [clientData, setClientData] = useState<ClientFormData>({
-    name: '',
-    type: CLIENT_TYPE,
-    businessType: 'individual',
-    businessNumber: '',
-    address: '',
-    email: '',
-  });
+  const [clientData, setClientData] =
+    useState<ClientFormData>(INITIAL_CLIENT_DATA);
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
 
@@ -66,7 +66,7 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
     const result = await addClient(user.id, clientData);
     setSubmissionMessage(result.data.message);
 
-    if ('error' in result) {
+    if ('error' in result.data) {
       setUiState(UiState.Failure);
 
       return;
@@ -74,18 +74,25 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
 
     setUiState(UiState.Success);
     mutateClients();
+    console.log('something');
+  };
+
+  const handleCloseAndClear = () => {
+    onClose();
+    setSubmissionMessage('');
+    setClientData(INITIAL_CLIENT_DATA);
   };
 
   const renderModalFooter = () => (
     <ModalFooter>
-      <div className='flex w-full items-center justify-between'>
+      <div className='flex flex-col w-full items-start gap-5 justify-between overflow-x-hidden'>
         {submissionMessage && (
           <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
             {submissionMessage}
           </Chip>
         )}
         <div className='flex gap-1 justify-end w-full'>
-          <Button color='danger' variant='light' onPress={onClose}>
+          <Button color='danger' variant='light' onPress={handleCloseAndClear}>
             Cancel
           </Button>
           <Button
@@ -101,7 +108,7 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleCloseAndClear}>
       <ModalContent>
         <ModalHeader>Add New Client</ModalHeader>
         <ModalBody>
@@ -111,12 +118,14 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
             type='text'
             label='Name'
             variant='bordered'
+            isRequired
           />
           <Select
             value=''
             onChange={(event) => handleChange(event, 'businessType')}
             label='Business Type'
             variant='bordered'
+            isRequired
           >
             {CLIENT_BUSINESS_TYPES.map((type) => (
               <SelectItem key={type}>{capitalize(type)}</SelectItem>
@@ -128,6 +137,7 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
             type='text'
             label='Business Number'
             variant='bordered'
+            isRequired
           />
           <Input
             value={clientData.address}
@@ -135,6 +145,7 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
             type='text'
             label='Address'
             variant='bordered'
+            isRequired
           />
           <Input
             value={clientData.email}
@@ -142,6 +153,7 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
             type='email'
             label='Email'
             variant='bordered'
+            isRequired
           />
         </ModalBody>
         {renderModalFooter()}
