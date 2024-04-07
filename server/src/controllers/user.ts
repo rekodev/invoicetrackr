@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UserModel } from '../types/models/user';
 import { getUserFromDb } from '../../database/user';
-import { transformUserDto } from '../utils/transformers';
 import { UserDto } from '../types/dtos/user';
+import { transformUserDto } from '../types/transformers';
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { id: number } }>,

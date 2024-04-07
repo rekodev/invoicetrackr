@@ -1,16 +1,9 @@
+import { ClientModel } from './client';
+import { UserModel } from './user';
+
 export type InvoicePartyBusinessType = 'business' | 'individual';
 
 export type InvoicePartyType = 'sender' | 'receiver';
-
-export type InvoiceParty = {
-  id: number;
-  name: string;
-  businessType: InvoicePartyBusinessType;
-  businessNumber: string;
-  address: string;
-  email: string;
-  type: InvoicePartyType;
-};
 
 export type InvoiceStatus = 'paid' | 'pending' | 'canceled';
 
@@ -26,8 +19,8 @@ export type InvoiceModel = {
   invoiceId: string;
   date: string;
   company: string;
-  sender: InvoiceParty;
-  receiver: InvoiceParty;
+  sender: UserModel;
+  receiver: ClientModel;
   totalAmount: number;
   status: InvoiceStatus;
   services: Array<InvoiceService>;

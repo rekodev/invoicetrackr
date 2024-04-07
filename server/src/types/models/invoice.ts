@@ -1,14 +1,9 @@
 import { Static, Type } from '@sinclair/typebox';
-
-export const InvoiceParty = Type.Object({
-  name: Type.String(),
-  type: Type.String(),
-  businessNumber: Type.String(),
-  address: Type.String(),
-  email: Type.Optional(Type.String()),
-});
+import { User } from './user';
+import { Client } from './client';
 
 export const InvoiceService = Type.Object({
+  id: Type.Number(),
   description: Type.String(),
   unit: Type.String(),
   quantity: Type.Number(),
@@ -26,8 +21,8 @@ export const Invoice = Type.Object({
   invoiceId: Type.String(),
   date: Type.String(),
   company: Type.String(),
-  sender: InvoiceParty,
-  receiver: InvoiceParty,
+  sender: User,
+  receiver: Client,
   totalAmount: Type.Number(),
   status: InvoiceStatus,
   services: Type.Array(InvoiceService),
@@ -47,6 +42,5 @@ export const InvoicePartyType = Type.Union([
 export type InvoiceModel = Static<typeof Invoice>;
 export type InvoiceStatus = Static<typeof InvoiceStatus>;
 export type InvoiceService = Static<typeof InvoiceService>;
-export type InvoiceParty = Static<typeof InvoiceParty>;
 export type InvoicePartyBusinessType = Static<typeof InvoicePartyBusinessType>;
 export type InvoicePartyType = Static<typeof InvoicePartyType>;

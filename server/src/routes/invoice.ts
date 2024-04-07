@@ -17,15 +17,15 @@ const invoiceRoutes = (
   _options: FastifyPluginOptions,
   done: DoneFuncWithErrOrRes
 ) => {
-  fastify.get('/api/invoices', getInvoicesOptions);
+  fastify.get('/api/:userId/invoices', getInvoicesOptions);
 
-  fastify.get('/api/invoices/:id', getInvoiceOptions);
+  fastify.get('/api/:userId/invoices/:id', getInvoiceOptions);
 
-  fastify.post('/api/invoices', postInvoiceOptions);
+  fastify.post('/api/:userId/invoices', postInvoiceOptions);
 
-  fastify.put('/api/invoices/:id', updateInvoiceOptions);
+  fastify.put('/api/:userId/invoices/:id', updateInvoiceOptions);
 
-  fastify.delete('/api/invoices/:id', deleteInvoiceOptions);
+  fastify.delete('/api/:userId/invoices/:id', deleteInvoiceOptions);
 
   done();
 };

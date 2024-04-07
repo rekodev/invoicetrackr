@@ -1,8 +1,21 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { InvoiceModel } from '../types/models/invoice';
+import { getInvoicesFromDb } from '../../database/invoice';
+import { transformInvoiceDto } from '../types/transformers/invoice';
+import { InvoiceDto } from '../types/dtos/invoice';
 
-export const getInvoices = (req: FastifyRequest, reply: FastifyReply) => {
-  reply.send([]);
+export const getInvoices = async (
+  req: FastifyRequest<{ Params: { userId: number } }>,
+  reply: FastifyReply
+) => {
+  const { userId } = req.params;
+  console.log(userId);
+  const invoices = await getInvoicesFromDb(userId);
+
+  console.log(invoices);
+  reply.send(
+    invoices.map((invoice) => transformInvoiceDto(invoice as InvoiceDto))
+  );
 };
 
 export const getInvoice = (

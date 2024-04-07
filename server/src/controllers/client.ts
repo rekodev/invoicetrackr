@@ -8,8 +8,8 @@ import {
   insertClientToDb,
   updateClientInDb,
 } from '../../database/client';
-import { transformClientDto } from '../utils/transformers';
 import { ClientDto } from '../types/dtos/client';
+import { transformClientDto } from '../types/transformers';
 
 export const getClients = async (
   req: FastifyRequest<{ Params: { userId: number } }>,

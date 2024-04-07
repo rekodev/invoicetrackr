@@ -8,7 +8,7 @@ import SWRKeys from '../constants/swrKeys';
 const useGetInvoices = () => {
   const { data, isLoading, mutate, error, isValidating } = useSWR<
     Array<InvoiceModel>
-  >(SWRKeys.invoices);
+  >(SWRKeys.invoices(1));
 
   return useMemo(
     () => ({
