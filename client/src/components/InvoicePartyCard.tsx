@@ -28,7 +28,7 @@ const InvoicePartyCard = ({
   insideForm = false,
   renderActions,
 }: Props) => {
-  const smallText = partyType === 'receiver' ? 'From:' : 'To:';
+  const smallText = partyType === 'receiver' ? 'To:' : 'From:';
 
   if (!partyData)
     return (
@@ -48,7 +48,7 @@ const InvoicePartyCard = ({
     <Card className='p-2 relative w-full'>
       <CardHeader className='pb-0 flex-col items-start'>
         {insideForm && <small className='text-default-500'>{smallText}</small>}
-        <h4 className='font-bold text-large'>{name}</h4>
+        <h4 className='font-bold text-large uppercase'>{name}</h4>
       </CardHeader>
       <CardBody className='overflow-visible py-2'>
         <p className='text-tiny uppercase font-bold'>
