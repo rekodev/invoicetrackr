@@ -1,17 +1,25 @@
 'use client';
 
-import { Button, Input, Spinner } from '@nextui-org/react';
+import { Button, Input, Select, SelectItem, Spinner } from '@nextui-org/react';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+// import { z } from 'zod';
 
+import { statusOptions } from '@/constants/table';
 import useGetUser from '@/hooks/useGetUser';
 import { ClientModel } from '@/types/models/client';
 
 import InvoiceFormReceiverModal from './InvoiceFormReceiverModal';
 import InvoicePartyCard from './InvoicePartyCard';
+import InvoiceServicesTable from './InvoiceServicesTable';
 import PencilIcon from '../components/icons/PencilIcon';
 import { PlusIcon } from '../components/icons/PlusIcon';
 
+// const addNewInvoiceSchema = z.object({});
+// ^[A-Za-z]{3}(?!000)\d{3}$
+
 const AddNewInvoiceForm = () => {
+  const { register } = useForm();
   const [invoiceData, setInvoiceData] = useState();
   const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
   const { user, isUserLoading } = useGetUser();
@@ -55,6 +63,29 @@ const AddNewInvoiceForm = () => {
     </div>
   );
 
+  const renderSenderAndReceiverCards = () => (
+    <div className='col-span-1 flex gap-4 w-full flex-col md:col-span-2 lg:col-span-4 md:flex-row'>
+      {user && (
+        <InvoicePartyCard insideForm partyType='sender' partyData={user} />
+      )}
+      <InvoicePartyCard
+        insideForm
+        partyType='receiver'
+        partyData={receiverData}
+        renderActions={renderReceiverActions}
+      />
+    </div>
+  );
+
+  const renderInvoiceServices = () => {
+    return (
+      <div className='flex gap-4 flex-col col-span-1 md:col-span-2 lg:col-span-4'>
+        <h4>Services</h4>
+        <InvoiceServicesTable />
+      </div>
+    );
+  };
+
   if (isUserLoading)
     return (
       <div className='w-full flex items-center justify-center pt-8'>
@@ -64,20 +95,18 @@ const AddNewInvoiceForm = () => {
 
   return (
     <>
-      <div className='w-full flex flex-col gap-4'>
-        <Input />
-        <div className='flex gap-4 w-full'>
-          {user && (
-            <InvoicePartyCard insideForm partyType='sender' partyData={user} />
-          )}
-          <InvoicePartyCard
-            insideForm
-            partyType='receiver'
-            partyData={receiverData}
-            renderActions={renderReceiverActions}
-          />
-        </div>
-      </div>
+      <form className='w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
+        <Input label='Invoice ID' placeholder='e.g., INV001' />
+        <Select label='Status' placeholder='Select status'>
+          {statusOptions.map((option) => (
+            <SelectItem key={option.uid}>{option.name}</SelectItem>
+          ))}
+        </Select>
+        <Input type='date' label='Date' />
+        <Input type='date' label='Due Date' />
+        {renderSenderAndReceiverCards()}
+        {renderInvoiceServices()}
+      </form>
 
       <InvoiceFormReceiverModal
         isOpen={isReceiverModalOpen}

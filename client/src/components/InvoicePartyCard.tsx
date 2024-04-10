@@ -32,7 +32,7 @@ const InvoicePartyCard = ({
 
   if (!partyData)
     return (
-      <Card className='p-2 w-full'>
+      <Card className='p-2 w-full min-h-36'>
         <CardHeader>
           {insideForm && (
             <small className='text-default-500'>{smallText}</small>
