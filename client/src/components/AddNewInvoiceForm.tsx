@@ -3,7 +3,7 @@
 import { Button, Input, Select, SelectItem, Spinner } from '@nextui-org/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-// import { z } from 'zod';
+import { z } from 'zod';
 
 import { statusOptions } from '@/constants/table';
 import useGetUser from '@/hooks/useGetUser';
@@ -15,11 +15,46 @@ import InvoiceServicesTable from './InvoiceServicesTable';
 import PencilIcon from '../components/icons/PencilIcon';
 import { PlusIcon } from '../components/icons/PlusIcon';
 
-// const addNewInvoiceSchema = z.object({});
-// ^[A-Za-z]{3}(?!000)\d{3}$
+const senderSchema = z.object({
+  name: z.string(),
+  type: z.literal('sender'),
+  businessType: z.union([z.literal('individual'), z.literal('business')]),
+  businessNumber: z.string(),
+  address: z.string(),
+  email: z.string(),
+});
+
+const receiverSchema = z.object({
+  name: z.string(),
+  type: z.literal('receiver'),
+  businessType: z.union([z.literal('individual'), z.literal('business')]),
+  businessNumber: z.string(),
+  address: z.string(),
+  email: z.string(),
+});
+
+const serviceSchema = z.object({
+  description: z.string(),
+  amount: z.number(),
+  quantity: z.number(),
+  unit: z.string(),
+});
+
+const addNewInvoiceSchema = z.object({
+  invoiceId: z.string().regex(new RegExp('^[A-Za-z]{3}(?!000)\\d{3}$')),
+  status: z.string(),
+  date: z.date(),
+  dueDate: z.date(),
+  sender: senderSchema,
+  receiver: receiverSchema,
+  services: z.array(serviceSchema),
+  totalAmount: z.number(),
+});
+
+type InvoiceFormValues = z.infer<typeof addNewInvoiceSchema>;
 
 const AddNewInvoiceForm = () => {
-  const { register } = useForm();
+  const { register } = useForm<InvoiceFormValues>();
   const [invoiceData, setInvoiceData] = useState();
   const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
   const { user, isUserLoading } = useGetUser();
@@ -96,14 +131,22 @@ const AddNewInvoiceForm = () => {
   return (
     <>
       <form className='w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
-        <Input label='Invoice ID' placeholder='e.g., INV001' />
-        <Select label='Status' placeholder='Select status'>
+        <Input
+          {...register('invoiceId')}
+          label='Invoice ID'
+          placeholder='e.g., INV001'
+        />
+        <Select
+          {...register('status')}
+          label='Status'
+          placeholder='Select status'
+        >
           {statusOptions.map((option) => (
             <SelectItem key={option.uid}>{option.name}</SelectItem>
           ))}
         </Select>
-        <Input type='date' label='Date' />
-        <Input type='date' label='Due Date' />
+        <Input {...register('date')} type='date' label='Date' />
+        <Input {...register('dueDate')} type='date' label='Due Date' />
         {renderSenderAndReceiverCards()}
         {renderInvoiceServices()}
       </form>
