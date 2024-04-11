@@ -9,92 +9,143 @@ import {
   TableRow,
   Tooltip,
 } from '@nextui-org/react';
-import { Key } from 'react';
+import { Key, useMemo } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { InvoiceService } from '@/types/models/invoice';
-
+import { InvoiceFormValues } from './AddNewInvoiceForm';
 import DeleteIcon from './icons/DeleteIcon';
 import { PlusIcon } from './icons/PlusIcon';
 
 const INVOICE_SERVICE_COLUMNS = [
   { name: '#', uid: 'no' },
-  { name: 'DESCRIPTION', uid: 'description', sortable: true },
-  { name: 'UNIT', uid: 'unit', sortable: true },
-  { name: 'QUANTITY', uid: 'quantity', sortable: true },
-  { name: 'AMOUNT', uid: 'amount', sortable: true },
+  { name: 'DESCRIPTION', uid: 'description' },
+  { name: 'UNIT', uid: 'unit' },
+  { name: 'QUANTITY', uid: 'quantity' },
+  { name: 'AMOUNT', uid: 'amount' },
   { name: 'ACTION', uid: 'actions' },
 ];
 
-const indexedMockItems: Array<InvoiceService & { id: number }> = [
-  {
-    id: 1,
-    description:
-      'nothing nothing nothing nothing nothing nothing nothingnothing',
-    unit: 'project',
-    quantity: 2,
-    amount: 400,
-  },
-];
+const INITIAL_GRAND_TOTAL = 0;
 
 const InvoiceServicesTable = () => {
-  const renderCell = (
-    service: InvoiceService & { id: number },
-    columnKey: Key
-  ) => {
-    const numberCell = columnKey === 'amount' || columnKey === 'quantity';
-    const cellValue =
-      service[columnKey as keyof Omit<InvoiceService, 'actions'>];
+  const { register, control, watch } = useFormContext<InvoiceFormValues>();
+  const { fields, append, remove } = useFieldArray({
+    name: 'services',
+    control,
+  });
 
-    if (columnKey === 'actions') {
-      return (
-        <div className='relative flex items-center gap-2'>
-          <Tooltip disableAnimation color='danger' content='Delete service'>
-            <span className='text-lg text-danger cursor-pointer active:opacity-50'>
-              <DeleteIcon />
-            </span>
-          </Tooltip>
-        </div>
-      );
-    }
-
-    if (columnKey === 'no') return <span>{service.id}</span>;
-
-    return (
-      <Input
-        type={numberCell ? 'number' : 'text'}
-        variant='bordered'
-        value={cellValue.toString()}
-      />
-    );
+  const handleAddService = () => {
+    append({ amount: 0, description: '', quantity: 0, unit: '' });
   };
+
+  const handleRemoveService = (index: number) => {
+    remove(index);
+  };
+
+  // watching the entire services array doesn't work, individual services have to be selected
+  const serviceAmounts = fields.map((_field, index) =>
+    watch(`services.${index}.amount`)
+  );
+
+  const totalAmount = useMemo(
+    () =>
+      serviceAmounts.reduce(
+        (acc, amount) => acc + (Number(amount) || 0),
+        INITIAL_GRAND_TOTAL
+      ),
+    [serviceAmounts]
+  );
 
   const renderBottomContent = () => (
     <div className='flex justify-between items-center'>
-      <Button variant='bordered' color='secondary'>
+      <Button variant='bordered' color='secondary' onPress={handleAddService}>
         <PlusIcon height={2} width={2} />
         Add Service
       </Button>
       <div className='flex gap-6 pr-3'>
         <p>Grand Total:</p>
-        <p>$3.00</p>
+        <p>${totalAmount}</p>
       </div>
     </div>
   );
 
+  const renderCell = (columnKey: Key, index: number) => {
+    switch (columnKey as (typeof INVOICE_SERVICE_COLUMNS)[number]['uid']) {
+      case 'no':
+        return <div aria-label='Number'>{index + 1}</div>;
+      case 'description':
+        return (
+          <Input
+            aria-label='Description'
+            type='text'
+            defaultValue=''
+            {...register(`services.${index}.description`)}
+          />
+        );
+      case 'unit':
+        return (
+          <Input
+            aria-label='Unit'
+            type='text'
+            defaultValue=''
+            {...register(`services.${index}.unit`)}
+          />
+        );
+      case 'quantity':
+        return (
+          <Input
+            aria-label='Quantity'
+            type='number'
+            defaultValue=''
+            {...register(`services.${index}.quantity`)}
+          />
+        );
+      case 'amount':
+        return (
+          <Input
+            aria-label='Amount'
+            type='number'
+            defaultValue=''
+            {...register(`services.${index}.amount`)}
+          />
+        );
+      case 'actions':
+        return (
+          <div
+            aria-label='Actions'
+            className='relative flex items-center gap-2'
+          >
+            <Tooltip disableAnimation color='danger' content='Delete service'>
+              <Button
+                onPress={() => handleRemoveService(index)}
+                variant='light'
+                className='text-lg text-danger cursor-pointer active:opacity-50 min-w-min'
+              >
+                <DeleteIcon />
+              </Button>
+            </Tooltip>
+          </div>
+        );
+      default:
+        return;
+    }
+  };
+
   return (
-    <Table bottomContent={renderBottomContent()}>
+    <Table
+      aria-label='Invoice Services Table'
+      bottomContent={renderBottomContent()}
+    >
       <TableHeader columns={INVOICE_SERVICE_COLUMNS}>
-        {(column) => (
-          <TableColumn key={column.uid} allowsSorting={column.sortable}>
-            {column.name}
-          </TableColumn>
-        )}
+        {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
       </TableHeader>
-      <TableBody items={indexedMockItems}>
-        {(item) => (
-          <TableRow key={item.id}>
+      <TableBody items={fields}>
+        {(field) => (
+          <TableRow key={field.id}>
             {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
+              <TableCell>
+                {renderCell(columnKey, fields.indexOf(field))}
+              </TableCell>
             )}
           </TableRow>
         )}

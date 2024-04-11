@@ -2,7 +2,7 @@
 
 import { Button, Input, Select, SelectItem, Spinner } from '@nextui-org/react';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { statusOptions } from '@/constants/table';
@@ -43,19 +43,19 @@ const serviceSchema = z.object({
 const addNewInvoiceSchema = z.object({
   invoiceId: z.string().regex(new RegExp('^[A-Za-z]{3}(?!000)\\d{3}$')),
   status: z.string(),
-  date: z.date(),
-  dueDate: z.date(),
+  date: z.string(),
+  dueDate: z.string(),
   sender: senderSchema,
   receiver: receiverSchema,
   services: z.array(serviceSchema),
   totalAmount: z.number(),
 });
 
-type InvoiceFormValues = z.infer<typeof addNewInvoiceSchema>;
+export type InvoiceFormValues = z.infer<typeof addNewInvoiceSchema>;
 
 const AddNewInvoiceForm = () => {
-  const { register } = useForm<InvoiceFormValues>();
-  const [invoiceData, setInvoiceData] = useState();
+  const methods = useForm<InvoiceFormValues>();
+  const { register, handleSubmit } = methods;
   const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
   const { user, isUserLoading } = useGetUser();
 
@@ -73,6 +73,8 @@ const AddNewInvoiceForm = () => {
     setReceiverData(receiver);
     setIsReceiverModalOpen(false);
   };
+
+  const onSubmit = () => {};
 
   const renderReceiverActions = () => (
     <div className='absolute right-2 top-2 flex gap-1.5 z-10'>
@@ -130,26 +132,47 @@ const AddNewInvoiceForm = () => {
 
   return (
     <>
-      <form className='w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
-        <Input
-          {...register('invoiceId')}
-          label='Invoice ID'
-          placeholder='e.g., INV001'
-        />
-        <Select
-          {...register('status')}
-          label='Status'
-          placeholder='Select status'
+      <FormProvider {...methods}>
+        <form
+          aria-label='Add New Invoice Form'
+          className='w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'
+          onSubmit={handleSubmit(onSubmit)}
         >
-          {statusOptions.map((option) => (
-            <SelectItem key={option.uid}>{option.name}</SelectItem>
-          ))}
-        </Select>
-        <Input {...register('date')} type='date' label='Date' />
-        <Input {...register('dueDate')} type='date' label='Due Date' />
-        {renderSenderAndReceiverCards()}
-        {renderInvoiceServices()}
-      </form>
+          <Input
+            aria-label='Invoice ID'
+            {...register('invoiceId')}
+            label='Invoice ID'
+            placeholder='e.g., INV001'
+            defaultValue=''
+          />
+          <Select
+            aria-label='Status'
+            {...register('status')}
+            label='Status'
+            placeholder='Select status'
+          >
+            {statusOptions.map((option) => (
+              <SelectItem key={option.uid}>{option.name}</SelectItem>
+            ))}
+          </Select>
+          <Input
+            aria-label='Date'
+            {...register('date')}
+            type='date'
+            label='Date'
+            defaultValue=''
+          />
+          <Input
+            aria-label='Due Date'
+            {...register('dueDate')}
+            type='date'
+            label='Due Date'
+            defaultValue=''
+          />
+          {renderSenderAndReceiverCards()}
+          {renderInvoiceServices()}
+        </form>
+      </FormProvider>
 
       <InvoiceFormReceiverModal
         isOpen={isReceiverModalOpen}
