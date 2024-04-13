@@ -1,9 +1,9 @@
-import { InvoicePartyBusinessType, InvoicePartyType } from './invoice';
+import { InvoicePartyBusinessType } from './invoice';
 
 export type ClientModel = {
   id: number;
   name: string;
-  type: InvoicePartyType;
+  type: 'receiver';
   businessType: InvoicePartyBusinessType;
   businessNumber: string;
   address: string;

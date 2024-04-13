@@ -27,7 +27,7 @@ const ROWS_PER_PAGE = 10;
 const INITIAL_VISIBLE_COLUMNS = [
   'id',
   'date',
-  'company',
+  'receiver',
   'totalAmount',
   'status',
   'actions',

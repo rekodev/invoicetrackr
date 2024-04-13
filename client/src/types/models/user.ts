@@ -3,7 +3,7 @@ import { InvoicePartyBusinessType, InvoicePartyType } from './invoice';
 export type UserModel = {
   id: number;
   name: string;
-  type: InvoicePartyType;
+  type: 'sender';
   businessType: InvoicePartyBusinessType;
   businessNumber: string;
   address: string;

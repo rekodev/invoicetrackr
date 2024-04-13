@@ -5,7 +5,7 @@ import {
   findClientByEmail,
   getClientFromDb,
   getClientsFromDb,
-  insertClientToDb,
+  insertClientInDb,
   updateClientInDb,
 } from '../../database/client';
 import { ClientDto } from '../types/dtos/client';
@@ -51,7 +51,7 @@ export const postClient = async (
   if (findClientByEmailQueryResult.length)
     return reply.status(400).send({ message: 'Client already exists' });
 
-  const insertionResult = await insertClientToDb(userId, clientData);
+  const insertionResult = await insertClientInDb(userId, clientData);
 
   if (!insertionResult.length)
     return reply.status(400).send({ message: 'Unable to add client' });

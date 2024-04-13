@@ -9,7 +9,6 @@ export type InvoiceDto = {
   id: number;
   invoice_id: string;
   date: string;
-  company: string;
   total_amount: number;
   status: InvoiceStatus;
   due_date: string;

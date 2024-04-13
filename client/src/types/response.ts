@@ -7,6 +7,10 @@ export type GetInvoicesResp = Message & {
   invoices: Array<InvoiceModel>;
 };
 
+export type AddInvoiceResp = Message & {
+  invoice: InvoiceModel;
+};
+
 export type AddClientResp = Message & {
   client: ClientModel;
 };

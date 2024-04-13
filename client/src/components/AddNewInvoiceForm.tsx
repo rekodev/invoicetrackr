@@ -1,11 +1,23 @@
 'use client';
 
-import { Button, Input, Select, SelectItem, Spinner } from '@nextui-org/react';
+import {
+  Button,
+  Chip,
+  Input,
+  Select,
+  SelectItem,
+  Spinner,
+} from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { addInvoice } from '@/api';
+import { INVOICES_PAGE } from '@/constants/pages';
 import { statusOptions } from '@/constants/table';
+import { UiState } from '@/constants/uiState';
+import useGetInvoices from '@/hooks/useGetInvoices';
 import useGetUser from '@/hooks/useGetUser';
 import { ClientModel } from '@/types/models/client';
 
@@ -16,6 +28,7 @@ import PencilIcon from '../components/icons/PencilIcon';
 import { PlusIcon } from '../components/icons/PlusIcon';
 
 const senderSchema = z.object({
+  id: z.number(),
   name: z.string(),
   type: z.literal('sender'),
   businessType: z.union([z.literal('individual'), z.literal('business')]),
@@ -25,6 +38,7 @@ const senderSchema = z.object({
 });
 
 const receiverSchema = z.object({
+  id: z.number(),
   name: z.string(),
   type: z.literal('receiver'),
   businessType: z.union([z.literal('individual'), z.literal('business')]),
@@ -51,14 +65,27 @@ const addNewInvoiceSchema = z.object({
   totalAmount: z.number(),
 });
 
-export type InvoiceFormValues = z.infer<typeof addNewInvoiceSchema>;
+type ServiceType = z.infer<typeof serviceSchema>;
+
+export type InvoiceFormData = z.infer<typeof addNewInvoiceSchema>;
+
+const calculateServiceTotal = (services: Array<ServiceType>) => {
+  return services.reduce(
+    (acc, currentValue) => acc + Number(currentValue.amount),
+    0
+  );
+};
 
 const AddNewInvoiceForm = () => {
-  const methods = useForm<InvoiceFormValues>();
+  const router = useRouter();
+  const methods = useForm<InvoiceFormData>();
   const { register, handleSubmit } = methods;
-  const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
+  const { mutateInvoices } = useGetInvoices();
   const { user, isUserLoading } = useGetUser();
 
+  const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
+  const [uiState, setUiState] = useState(UiState.Idle);
+  const [submissionMessage, setSubmissionMessage] = useState('');
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
 
   const handleOpenReceiverModal = () => {
@@ -74,7 +101,34 @@ const AddNewInvoiceForm = () => {
     setIsReceiverModalOpen(false);
   };
 
-  const onSubmit = () => {};
+  const onSubmit: SubmitHandler<InvoiceFormData> = async (data) => {
+    if (!user || !receiverData) return;
+
+    setSubmissionMessage('');
+    const dataWithSenderAndReceiverAndTotal: typeof data = {
+      ...data,
+      receiver: receiverData,
+      sender: user,
+      totalAmount: calculateServiceTotal(data.services),
+    };
+
+    console.log({ dataWithSenderAndReceiverAndTotal });
+    const response = await addInvoice(
+      user.id,
+      dataWithSenderAndReceiverAndTotal
+    );
+    setSubmissionMessage(response.data.message);
+
+    if ('error' in response.data) {
+      setUiState(UiState.Failure);
+
+      return;
+    }
+
+    setUiState(UiState.Success);
+    mutateInvoices();
+    router.push(INVOICES_PAGE);
+  };
 
   const renderReceiverActions = () => (
     <div className='absolute right-2 top-2 flex gap-1.5 z-10'>
@@ -122,6 +176,28 @@ const AddNewInvoiceForm = () => {
       </div>
     );
   };
+
+  const renderSubmissionMessageAndActions = () => (
+    <div className='col-span-full flex w-full items-center gap-5 justify-between overflow-x-hidden'>
+      {submissionMessage && (
+        <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
+          {submissionMessage}
+        </Chip>
+      )}
+      <div className='flex gap-1 justify-end w-full'>
+        <Button color='danger' variant='light'>
+          Cancel
+        </Button>
+        <Button
+          type='submit'
+          isLoading={uiState === UiState.Pending}
+          color='secondary'
+        >
+          Save
+        </Button>
+      </div>
+    </div>
+  );
 
   if (isUserLoading)
     return (
@@ -171,6 +247,7 @@ const AddNewInvoiceForm = () => {
           />
           {renderSenderAndReceiverCards()}
           {renderInvoiceServices()}
+          {renderSubmissionMessageAndActions()}
         </form>
       </FormProvider>
 

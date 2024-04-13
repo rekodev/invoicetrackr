@@ -12,7 +12,7 @@ import {
 import { Key, useMemo } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { InvoiceFormValues } from './AddNewInvoiceForm';
+import { InvoiceFormData } from './AddNewInvoiceForm';
 import DeleteIcon from './icons/DeleteIcon';
 import { PlusIcon } from './icons/PlusIcon';
 
@@ -28,7 +28,7 @@ const INVOICE_SERVICE_COLUMNS = [
 const INITIAL_GRAND_TOTAL = 0;
 
 const InvoiceServicesTable = () => {
-  const { register, control, watch } = useFormContext<InvoiceFormValues>();
+  const { register, control, watch } = useFormContext<InvoiceFormData>();
   const { fields, append, remove } = useFieldArray({
     name: 'services',
     control,

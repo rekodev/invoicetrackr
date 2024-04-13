@@ -46,16 +46,14 @@ const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
         <div className='flex'>
           <DocumentText />
           &nbsp;
-          <p className='text-bold text-small capitalize'>
-            {cellValue as string}
-          </p>
+          <p className='text-bold text-small capitalize'>{invoice.invoiceId}</p>
         </div>
       );
-    case 'company':
+    case 'receiver':
       return (
         <div className='flex flex-col'>
           <p className='text-bold text-small capitalize'>
-            {cellValue as string}
+            {invoice.receiver.name}
           </p>
         </div>
       );

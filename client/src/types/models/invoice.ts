@@ -18,7 +18,6 @@ export type InvoiceModel = {
   id: number;
   invoiceId: string;
   date: string;
-  company: string;
   sender: UserModel;
   receiver: ClientModel;
   totalAmount: number;

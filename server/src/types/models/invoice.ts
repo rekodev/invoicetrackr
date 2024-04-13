@@ -20,7 +20,6 @@ export const Invoice = Type.Object({
   id: Type.Number(),
   invoiceId: Type.String(),
   date: Type.String(),
-  company: Type.String(),
   sender: User,
   receiver: Client,
   totalAmount: Type.Number(),

@@ -74,7 +74,6 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
 
     setUiState(UiState.Success);
     mutateClients();
-    console.log('something');
   };
 
   const handleCloseAndClear = () => {
