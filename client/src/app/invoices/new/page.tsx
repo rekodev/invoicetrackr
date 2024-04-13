@@ -1,4 +1,4 @@
-import AddNewInvoiceForm from '@/components/AddNewInvoiceForm';
+import AddNewInvoiceForm from '@/components/invoice/AddNewInvoiceForm';
 
 const AddNewInvoicePage = () => {
   return (

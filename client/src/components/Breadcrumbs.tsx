@@ -17,6 +17,8 @@ const Breadcrumbs = () => {
   const pathname = usePathname();
 
   const renderBreadcrumbs = () => {
+    if (!pathname) return null;
+
     if (pathname === HOME_PAGE) {
       return <BreadcrumbItem>Home</BreadcrumbItem>;
     }

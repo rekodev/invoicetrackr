@@ -11,8 +11,8 @@ import ClientSectionBottomContent from './ClientSectionBottomContent';
 import ClientSectionTopContent from './ClientSectionTopContent';
 import DeleteClientModal from './DeleteClientModal';
 import EditClientModal from './EditClientModal';
-import InvoicePartyCard from './InvoicePartyCard';
-import TrashIcon from '../components/icons/TrashIcon';
+import InvoicePartyCard from '../invoice/InvoicePartyCard';
+import TrashIcon from '../icons/TrashIcon';
 
 const PER_PAGE = 8;
 

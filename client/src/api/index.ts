@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 
-import { InvoiceFormData } from '@/components/AddNewInvoiceForm';
+import { InvoiceFormData } from '@/components/invoice/AddNewInvoiceForm';
 import { ClientFormData, ClientModel } from '@/types/models/client';
 import {
   AddClientResp,

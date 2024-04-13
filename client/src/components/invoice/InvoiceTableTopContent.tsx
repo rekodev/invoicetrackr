@@ -13,9 +13,9 @@ import { ADD_NEW_INVOICE_PAGE } from '@/constants/pages';
 import { columns, statusOptions } from '@/constants/table';
 import { capitalize } from '@/utils';
 
-import { ChevronDownIcon } from './icons/ChevronDownIcon';
-import { PlusIcon } from './icons/PlusIcon';
-import SearchIcon from './icons/SearchIcon';
+import { ChevronDownIcon } from '../icons/ChevronDownIcon';
+import { PlusIcon } from '../icons/PlusIcon';
+import SearchIcon from '../icons/SearchIcon';
 
 type Props = {
   filterValue: string;

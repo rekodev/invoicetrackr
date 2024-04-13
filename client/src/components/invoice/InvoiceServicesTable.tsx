@@ -14,8 +14,8 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { InvoiceFormData } from '@/types/models/invoice';
 
-import DeleteIcon from './icons/DeleteIcon';
-import { PlusIcon } from './icons/PlusIcon';
+import DeleteIcon from '../icons/DeleteIcon';
+import { PlusIcon } from '../icons/PlusIcon';
 
 const INVOICE_SERVICE_COLUMNS = [
   { name: '#', uid: 'no' },

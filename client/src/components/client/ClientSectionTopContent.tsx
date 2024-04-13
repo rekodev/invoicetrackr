@@ -16,9 +16,9 @@ import { InvoicePartyBusinessType } from '@/types/models/invoice';
 import { capitalize } from '@/utils';
 
 import AddNewClientModal from './AddNewClientModal';
-import { ChevronDownIcon } from './icons/ChevronDownIcon';
-import { PlusIcon } from './icons/PlusIcon';
-import SearchIcon from './icons/SearchIcon';
+import { ChevronDownIcon } from '../icons/ChevronDownIcon';
+import { PlusIcon } from '../icons/PlusIcon';
+import SearchIcon from '../icons/SearchIcon';
 
 const filters = ['business', 'individual'];
 

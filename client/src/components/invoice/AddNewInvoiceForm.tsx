@@ -25,8 +25,8 @@ import { InvoiceFormData, InvoiceService } from '@/types/models/invoice';
 import InvoiceFormReceiverModal from './InvoiceFormReceiverModal';
 import InvoicePartyCard from './InvoicePartyCard';
 import InvoiceServicesTable from './InvoiceServicesTable';
-import PencilIcon from '../components/icons/PencilIcon';
-import { PlusIcon } from '../components/icons/PlusIcon';
+import PencilIcon from '../icons/PencilIcon';
+import { PlusIcon } from '../icons/PlusIcon';
 
 const calculateServiceTotal = (services: Array<InvoiceService>) => {
   return services.reduce(

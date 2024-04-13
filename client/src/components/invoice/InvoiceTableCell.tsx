@@ -3,10 +3,10 @@ import { Key } from 'react';
 
 import { InvoiceModel, InvoiceStatus } from '@/types/models/invoice';
 
-import DocumentText from './icons/DocumentText';
-import DeleteIcon from '../components/icons/DeleteIcon';
-import EditIcon from '../components/icons/EditIcon';
-import EyeIcon from '../components/icons/EyeIcon';
+import DeleteIcon from '../icons/DeleteIcon';
+import DocumentText from '../icons/DocumentText';
+import EditIcon from '../icons/EditIcon';
+import EyeIcon from '../icons/EyeIcon';
 
 const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
   {

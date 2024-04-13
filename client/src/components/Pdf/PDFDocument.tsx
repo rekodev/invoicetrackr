@@ -12,7 +12,7 @@ type Props = {
   invoiceData: InvoiceModel;
 };
 
-const Pdf = ({ invoiceData }: Props) => {
+const PDFDocument = ({ invoiceData }: Props) => {
   const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
     invoiceData;
 
@@ -184,4 +184,4 @@ const Pdf = ({ invoiceData }: Props) => {
   );
 };
 
-export default Pdf;
+export default PDFDocument;
