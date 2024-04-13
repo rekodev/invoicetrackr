@@ -12,7 +12,8 @@ import {
 import { Key, useMemo } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { InvoiceFormData } from './AddNewInvoiceForm';
+import { InvoiceFormData } from '@/types/models/invoice';
+
 import DeleteIcon from './icons/DeleteIcon';
 import { PlusIcon } from './icons/PlusIcon';
 
@@ -79,6 +80,7 @@ const InvoiceServicesTable = () => {
             aria-label='Description'
             type='text'
             defaultValue=''
+            variant='bordered'
             {...register(`services.${index}.description`)}
           />
         );
@@ -88,6 +90,7 @@ const InvoiceServicesTable = () => {
             aria-label='Unit'
             type='text'
             defaultValue=''
+            variant='bordered'
             {...register(`services.${index}.unit`)}
           />
         );
@@ -97,6 +100,7 @@ const InvoiceServicesTable = () => {
             aria-label='Quantity'
             type='number'
             defaultValue=''
+            variant='bordered'
             {...register(`services.${index}.quantity`)}
           />
         );
@@ -106,6 +110,7 @@ const InvoiceServicesTable = () => {
             aria-label='Amount'
             type='number'
             defaultValue=''
+            variant='bordered'
             {...register(`services.${index}.amount`)}
           />
         );
@@ -119,7 +124,7 @@ const InvoiceServicesTable = () => {
               <Button
                 onPress={() => handleRemoveService(index)}
                 variant='light'
-                className='text-lg text-danger cursor-pointer active:opacity-50 min-w-min'
+                className='text-lg text-danger cursor-pointer active:opacity-50 min-w-min p-3'
               >
                 <DeleteIcon />
               </Button>

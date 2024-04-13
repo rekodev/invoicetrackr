@@ -4,7 +4,6 @@ import { Card, CardBody, CardHeader } from '@nextui-org/react';
 import { ReactNode } from 'react';
 
 import { ClientModel } from '@/types/models/client';
-import { InvoicePartyType } from '@/types/models/invoice';
 import { UserModel } from '@/types/models/user';
 
 /* 
@@ -16,7 +15,7 @@ import { UserModel } from '@/types/models/user';
 type PartyData = UserModel | ClientModel;
 
 type Props = {
-  partyType: InvoicePartyType;
+  partyType: 'sender' | 'receiver';
   partyData: PartyData | undefined;
   insideForm?: boolean;
   renderActions?: (partyData: PartyData | undefined) => ReactNode;

@@ -17,20 +17,16 @@ import { UiState } from '@/constants/uiState';
 import useGetClients from '@/hooks/useGetClients';
 import useGetUser from '@/hooks/useGetUser';
 import { ClientFormData, ClientModel } from '@/types/models/client';
-import {
-  InvoicePartyBusinessType,
-  InvoicePartyType,
-} from '@/types/models/invoice';
+import { InvoicePartyBusinessType } from '@/types/models/invoice';
 import { capitalize } from '@/utils';
 
-const CLIENT_TYPE: InvoicePartyType = 'receiver';
 const CLIENT_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
   'business',
   'individual',
 ];
 const INITIAL_CLIENT_DATA: ClientFormData = {
   name: '',
-  type: CLIENT_TYPE,
+  type: 'receiver',
   businessType: null,
   businessNumber: '',
   address: '',

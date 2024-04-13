@@ -2,6 +2,7 @@
 
 import {
   Button,
+  Card,
   Chip,
   Input,
   Select,
@@ -11,7 +12,6 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { addInvoice } from '@/api';
 import { INVOICES_PAGE } from '@/constants/pages';
@@ -20,6 +20,7 @@ import { UiState } from '@/constants/uiState';
 import useGetInvoices from '@/hooks/useGetInvoices';
 import useGetUser from '@/hooks/useGetUser';
 import { ClientModel } from '@/types/models/client';
+import { InvoiceFormData, InvoiceService } from '@/types/models/invoice';
 
 import InvoiceFormReceiverModal from './InvoiceFormReceiverModal';
 import InvoicePartyCard from './InvoicePartyCard';
@@ -27,49 +28,7 @@ import InvoiceServicesTable from './InvoiceServicesTable';
 import PencilIcon from '../components/icons/PencilIcon';
 import { PlusIcon } from '../components/icons/PlusIcon';
 
-const senderSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  type: z.literal('sender'),
-  businessType: z.union([z.literal('individual'), z.literal('business')]),
-  businessNumber: z.string(),
-  address: z.string(),
-  email: z.string(),
-});
-
-const receiverSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  type: z.literal('receiver'),
-  businessType: z.union([z.literal('individual'), z.literal('business')]),
-  businessNumber: z.string(),
-  address: z.string(),
-  email: z.string(),
-});
-
-const serviceSchema = z.object({
-  description: z.string(),
-  amount: z.number(),
-  quantity: z.number(),
-  unit: z.string(),
-});
-
-const addNewInvoiceSchema = z.object({
-  invoiceId: z.string().regex(new RegExp('^[A-Za-z]{3}(?!000)\\d{3}$')),
-  status: z.string(),
-  date: z.string(),
-  dueDate: z.string(),
-  sender: senderSchema,
-  receiver: receiverSchema,
-  services: z.array(serviceSchema),
-  totalAmount: z.number(),
-});
-
-type ServiceType = z.infer<typeof serviceSchema>;
-
-export type InvoiceFormData = z.infer<typeof addNewInvoiceSchema>;
-
-const calculateServiceTotal = (services: Array<ServiceType>) => {
+const calculateServiceTotal = (services: Array<InvoiceService>) => {
   return services.reduce(
     (acc, currentValue) => acc + Number(currentValue.amount),
     0
@@ -80,7 +39,7 @@ const AddNewInvoiceForm = () => {
   const router = useRouter();
   const methods = useForm<InvoiceFormData>();
   const { register, handleSubmit } = methods;
-  const { mutateInvoices } = useGetInvoices();
+  const { mutateInvoices, isInvoicesLoading } = useGetInvoices();
   const { user, isUserLoading } = useGetUser();
 
   const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
@@ -101,22 +60,22 @@ const AddNewInvoiceForm = () => {
     setIsReceiverModalOpen(false);
   };
 
+  const redirectToInvoicesPage = () => {
+    router.push(INVOICES_PAGE);
+  };
+
   const onSubmit: SubmitHandler<InvoiceFormData> = async (data) => {
     if (!user || !receiverData) return;
 
     setSubmissionMessage('');
-    const dataWithSenderAndReceiverAndTotal: typeof data = {
+    const fullData: typeof data = {
       ...data,
       receiver: receiverData,
       sender: user,
       totalAmount: calculateServiceTotal(data.services),
     };
 
-    console.log({ dataWithSenderAndReceiverAndTotal });
-    const response = await addInvoice(
-      user.id,
-      dataWithSenderAndReceiverAndTotal
-    );
+    const response = await addInvoice(user.id, fullData);
     setSubmissionMessage(response.data.message);
 
     if ('error' in response.data) {
@@ -127,7 +86,7 @@ const AddNewInvoiceForm = () => {
 
     setUiState(UiState.Success);
     mutateInvoices();
-    router.push(INVOICES_PAGE);
+    redirectToInvoicesPage();
   };
 
   const renderReceiverActions = () => (
@@ -185,7 +144,7 @@ const AddNewInvoiceForm = () => {
         </Chip>
       )}
       <div className='flex gap-1 justify-end w-full'>
-        <Button color='danger' variant='light'>
+        <Button color='danger' variant='light' onPress={redirectToInvoicesPage}>
           Cancel
         </Button>
         <Button
@@ -199,7 +158,7 @@ const AddNewInvoiceForm = () => {
     </div>
   );
 
-  if (isUserLoading)
+  if (isUserLoading || isInvoicesLoading)
     return (
       <div className='w-full flex items-center justify-center pt-8'>
         <Spinner className='m-auto' color='secondary' />
@@ -209,46 +168,52 @@ const AddNewInvoiceForm = () => {
   return (
     <>
       <FormProvider {...methods}>
-        <form
-          aria-label='Add New Invoice Form'
-          className='w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Input
-            aria-label='Invoice ID'
-            {...register('invoiceId')}
-            label='Invoice ID'
-            placeholder='e.g., INV001'
-            defaultValue=''
-          />
-          <Select
-            aria-label='Status'
-            {...register('status')}
-            label='Status'
-            placeholder='Select status'
+        <Card className='p-8'>
+          <form
+            aria-label='Add New Invoice Form'
+            className='w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'
+            onSubmit={handleSubmit(onSubmit)}
           >
-            {statusOptions.map((option) => (
-              <SelectItem key={option.uid}>{option.name}</SelectItem>
-            ))}
-          </Select>
-          <Input
-            aria-label='Date'
-            {...register('date')}
-            type='date'
-            label='Date'
-            defaultValue=''
-          />
-          <Input
-            aria-label='Due Date'
-            {...register('dueDate')}
-            type='date'
-            label='Due Date'
-            defaultValue=''
-          />
-          {renderSenderAndReceiverCards()}
-          {renderInvoiceServices()}
-          {renderSubmissionMessageAndActions()}
-        </form>
+            <Input
+              aria-label='Invoice ID'
+              {...register('invoiceId')}
+              label='Invoice ID'
+              placeholder='e.g., INV001'
+              defaultValue=''
+              variant='bordered'
+            />
+            <Select
+              aria-label='Status'
+              {...register('status')}
+              label='Status'
+              placeholder='Select status'
+              variant='bordered'
+            >
+              {statusOptions.map((option) => (
+                <SelectItem key={option.uid}>{option.name}</SelectItem>
+              ))}
+            </Select>
+            <Input
+              aria-label='Date'
+              {...register('date')}
+              type='date'
+              label='Date'
+              defaultValue=''
+              variant='bordered'
+            />
+            <Input
+              aria-label='Due Date'
+              {...register('dueDate')}
+              type='date'
+              label='Due Date'
+              defaultValue=''
+              variant='bordered'
+            />
+            {renderSenderAndReceiverCards()}
+            {renderInvoiceServices()}
+            {renderSubmissionMessageAndActions()}
+          </form>
+        </Card>
       </FormProvider>
 
       <InvoiceFormReceiverModal
