@@ -15,9 +15,11 @@ import {
 import { Key, useCallback, useMemo, useState } from 'react';
 
 import { columns, statusOptions } from '@/constants/table';
+import useInvoiceTableActionHandlers from '@/hooks/invoice/useInvoiceTableActionHandlers';
 import useGetInvoices from '@/hooks/useGetInvoices';
 import { InvoiceModel } from '@/types/models/invoice';
 
+import DeleteInvoiceModal from './DeleteInvoiceModal';
 import InvoiceModal from './InvoiceModal';
 import InvoiceTableBottomContent from './InvoiceTableBottomContent';
 import InvoiceTableCell from './InvoiceTableCell';
@@ -53,6 +55,14 @@ const InvoiceTable = () => {
     direction: 'descending',
   });
   const [page, setPage] = useState(1);
+
+  const {
+    handleViewInvoice,
+    handleEditInvoice,
+    handleDeleteInvoice,
+    isDeleteInvoiceModalOpen,
+    handleCloseDeleteInvoiceModal,
+  } = useInvoiceTableActionHandlers({ setCurrentInvoice, onOpen });
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -111,53 +121,41 @@ const InvoiceTable = () => {
     });
   }, [sortDescriptor, items]);
 
-  const handleViewClick = useCallback(
-    (invoice: InvoiceModel) => {
-      setCurrentInvoice(invoice);
-      onOpen();
-    },
-    [onOpen]
-  );
-
   const renderCell = useCallback(
     (invoice: InvoiceModel, columnKey: Key) => (
       <InvoiceTableCell
         invoice={invoice}
         columnKey={columnKey}
-        onViewClick={handleViewClick}
+        onView={handleViewInvoice}
+        onEdit={handleEditInvoice}
+        onDelete={handleDeleteInvoice}
       />
     ),
-    [handleViewClick]
+    [handleViewInvoice, handleDeleteInvoice, handleEditInvoice]
   );
 
-  const topContent = useMemo(
-    () => (
-      <InvoiceTableTopContent
-        filterValue={filterValue}
-        setFilterValue={setFilterValue}
-        visibleColumns={visibleColumns}
-        setPage={setPage}
-        setRowsPerPage={setRowsPerPage}
-        setStatusFilter={setStatusFilter}
-        setVisibleColumns={setVisibleColumns}
-        statusFilter={statusFilter}
-        invoicesLength={invoices?.length}
-      />
-    ),
-    [statusFilter, visibleColumns, filterValue, invoices?.length]
+  const renderTopContent = () => (
+    <InvoiceTableTopContent
+      filterValue={filterValue}
+      setFilterValue={setFilterValue}
+      visibleColumns={visibleColumns}
+      setPage={setPage}
+      setRowsPerPage={setRowsPerPage}
+      setStatusFilter={setStatusFilter}
+      setVisibleColumns={setVisibleColumns}
+      statusFilter={statusFilter}
+      invoicesLength={invoices?.length}
+    />
   );
 
-  const bottomContent = useMemo(
-    () => (
-      <InvoiceTableBottomContent
-        page={page}
-        setPage={setPage}
-        pages={pages}
-        filteredItemsLength={filteredItems?.length}
-        selectedKeys={selectedKeys}
-      />
-    ),
-    [page, pages, selectedKeys, filteredItems?.length]
+  const renderBottomContent = () => (
+    <InvoiceTableBottomContent
+      page={page}
+      setPage={setPage}
+      pages={pages}
+      filteredItemsLength={filteredItems?.length}
+      selectedKeys={selectedKeys}
+    />
   );
 
   return (
@@ -165,17 +163,14 @@ const InvoiceTable = () => {
       <Table
         aria-label='Example table with custom cells, pagination and sorting'
         isHeaderSticky
-        bottomContent={bottomContent}
+        bottomContent={renderBottomContent()}
         bottomContentPlacement='outside'
         classNames={{
           wrapper: 'min-h-[480px]',
         }}
-        selectedKeys={selectedKeys}
-        selectionMode='multiple'
         sortDescriptor={sortDescriptor}
-        topContent={topContent}
+        topContent={renderTopContent()}
         topContentPlacement='outside'
-        onSelectionChange={setSelectedKeys as (keys: Selection) => any}
         onSortChange={setSortDescriptor as (descriptor: SortDescriptor) => any}
       >
         <TableHeader columns={headerColumns}>
@@ -210,6 +205,13 @@ const InvoiceTable = () => {
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           invoiceData={currentInvoice}
+        />
+      )}
+      {currentInvoice && (
+        <DeleteInvoiceModal
+          invoiceData={currentInvoice}
+          isOpen={isDeleteInvoiceModalOpen}
+          onClose={handleCloseDeleteInvoiceModal}
         />
       )}
     </section>

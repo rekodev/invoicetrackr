@@ -9,31 +9,31 @@ import {
 } from '@nextui-org/react';
 import { useState } from 'react';
 
-import { deleteClient } from '@/api';
+import { deleteInvoice } from '@/api';
 import { UiState } from '@/constants/uiState';
-import useGetClients from '@/hooks/useGetClients';
+import useGetInvoices from '@/hooks/useGetInvoices';
 import useGetUser from '@/hooks/useGetUser';
-import { ClientModel } from '@/types/models/client';
+import { InvoiceModel } from '@/types/models/invoice';
 
 type Props = {
-  clientData: ClientModel;
+  invoiceData: InvoiceModel;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const DeleteClientModal = ({ isOpen, onClose, clientData }: Props) => {
-  const { mutateClients } = useGetClients();
+const DeleteInvoiceModal = ({ isOpen, onClose, invoiceData }: Props) => {
+  const { mutateInvoices } = useGetInvoices();
   const { user } = useGetUser();
 
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
 
   const handleSubmit = async () => {
-    if (!user?.id || !clientData) return;
+    if (!user?.id || !invoiceData) return;
 
     setUiState(UiState.Pending);
 
-    const response = await deleteClient(user.id, clientData.id);
+    const response = await deleteInvoice(user.id, invoiceData.id);
     setSubmissionMessage(response.data.message);
 
     if ('error' in response.data) {
@@ -44,7 +44,7 @@ const DeleteClientModal = ({ isOpen, onClose, clientData }: Props) => {
 
     setUiState(UiState.Success);
     onClose();
-    mutateClients();
+    mutateInvoices();
   };
 
   const renderModalFooter = () => (
@@ -75,10 +75,10 @@ const DeleteClientModal = ({ isOpen, onClose, clientData }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         <ModalHeader>
-          Are you sure you want to delete {clientData.name}?
+          Are you sure you want to delete {invoiceData.invoiceId}?
         </ModalHeader>
         <ModalBody>
-          This client will be deleted immediately. You can&apos;t undo this
+          This invoice will be deleted immediately. You can&apos;t undo this
           action.
         </ModalBody>
         {renderModalFooter()}
@@ -87,4 +87,4 @@ const DeleteClientModal = ({ isOpen, onClose, clientData }: Props) => {
   );
 };
 
-export default DeleteClientModal;
+export default DeleteInvoiceModal;

@@ -18,13 +18,21 @@ const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
 type Props = {
   invoice: InvoiceModel;
   columnKey: Key;
-  onViewClick: (invoice: InvoiceModel) => void;
+  onView: (invoice: InvoiceModel) => void;
+  onEdit: (invoice: InvoiceModel) => void;
+  onDelete: (invoice: InvoiceModel) => void;
 };
 
-const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
-  const handleViewIconClick = () => {
-    onViewClick(invoice);
-  };
+const InvoiceTableCell = ({
+  invoice,
+  columnKey,
+  onView,
+  onEdit,
+  onDelete,
+}: Props) => {
+  const handleViewIconClick = () => onView(invoice);
+  const handleEditInvoiceClick = () => onEdit(invoice);
+  const handleDeleteInvoiceClick = () => onDelete(invoice);
 
   const cellValue =
     invoice[
@@ -36,8 +44,6 @@ const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
 
   switch (columnKey as keyof InvoiceModel | 'actions') {
     case 'sender':
-      return;
-    case 'receiver':
       return;
     case 'services':
       return;
@@ -61,7 +67,8 @@ const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
       return (
         <Chip
           className='capitalize'
-          color={statusColorMap[invoice.status]}
+          // FIX TYPE
+          color={statusColorMap[invoice.status as InvoiceStatus]}
           size='sm'
           variant='flat'
         >
@@ -79,13 +86,20 @@ const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
               <EyeIcon />
             </span>
           </Tooltip>
-          <Tooltip disableAnimation content='Edit user'>
+          <Tooltip
+            disableAnimation
+            content='Edit invoice'
+            onClick={handleEditInvoiceClick}
+          >
             <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
               <EditIcon />
             </span>
           </Tooltip>
-          <Tooltip disableAnimation color='danger' content='Delete user'>
-            <span className='text-lg text-danger cursor-pointer active:opacity-50'>
+          <Tooltip disableAnimation color='danger' content='Delete invoice'>
+            <span
+              className='text-lg text-danger cursor-pointer active:opacity-50'
+              onClick={handleDeleteInvoiceClick}
+            >
               <DeleteIcon />
             </span>
           </Tooltip>

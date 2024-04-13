@@ -1,19 +1,19 @@
 import { InvoiceDto } from '../src/types/dtos/invoice';
-import { InvoiceModel } from '../src/types/models/invoice';
+import { InvoiceModel, InvoiceService } from '../src/types/models/invoice';
 import { sql } from './db';
 
-export const findClientByInvoiceId = async (
+export const findInvoiceByInvoiceId = async (
   userId: number,
   invoiceId: string
 ) => {
-  const invoices = await sql`
+  const [invoice] = await sql`
     select
       invoice_id
     from invoices
     where user_id = ${userId} and invoice_id = ${invoiceId}
   `;
 
-  return invoices;
+  return invoice;
 };
 
 export const getInvoicesFromDb = async (userId: number) => {
@@ -58,11 +58,60 @@ export const getInvoicesFromDb = async (userId: number) => {
     order by id desc
   `;
 
-  return invoices;
+  const result = invoices;
+
+  return result;
+};
+
+export const getInvoiceFromDb = async (userId: number, invoiceId: number) => {
+  const [invoice] = await sql`
+    select
+      invoices.id,
+      invoices.invoice_id,
+      invoices.date,
+      invoices.total_amount,
+      invoices.status,
+      invoices.due_date,
+      users.id as sender_id,
+      users.name as sender_name,
+      users.type as sender_type,
+      users.business_type as sender_business_type,
+      users.business_number as sender_business_number,
+      users.address as sender_address,
+      users.email as sender_email,
+      clients.id as receiver_id,
+      clients.name as receiver_name,
+      clients.type as receiver_type,
+      clients.business_type as receiver_business_type,
+      clients.business_number as receiver_business_number,
+      clients.address as receiver_address,
+      clients.email as receiver_email,
+      json_agg(
+        json_build_object(
+          'id', invoice_services.id,
+          'description', invoice_services.description,
+          'amount', invoice_services.amount,
+          'quantity', invoice_services.quantity,
+          'unit', invoice_services.unit
+        )
+      ) as services
+    from 
+      invoices
+    left join users on invoices.sender_id = users.id
+    left join clients on invoices.receiver_id = clients.id
+    left join invoice_services on invoice_services.invoice_id = invoices.id
+    where invoices.sender_id = ${userId} and invoices.id = ${invoiceId}
+    group by invoices.id, users.id, clients.id
+    order by id desc
+  `;
+
+  const result = invoice;
+
+  return result;
 };
 
 export const insertInvoiceInDb = async (invoiceData: InvoiceModel) => {
-  const invoiceDto = await sql.begin<InvoiceDto>(async (sql) => {
+  const result = await sql.begin<InvoiceDto>(async (sql) => {
     const [invoice] = await sql`
       insert into invoices (
         date, invoice_id, total_amount, status, due_date, sender_id, receiver_id
@@ -126,5 +175,37 @@ export const insertInvoiceInDb = async (invoiceData: InvoiceModel) => {
     return insertedInvoice;
   });
 
-  return invoiceDto;
+  return result;
+};
+
+export const updateInvoiceInDb = async (
+  userId: number,
+  invoiceData: InvoiceModel
+) => {};
+
+export const deleteInvoiceFromDb = async (
+  userId: number,
+  invoiceId: number
+) => {
+  const result = await sql.begin<{ id: number }>(async (sql) => {
+    const services: Array<InvoiceService> = await sql`
+      delete from invoice_services
+      where invoice_id = ${invoiceId}
+      returning id
+    `;
+
+    if (!services.length) return;
+
+    const [invoice] = await sql`
+      delete from invoices
+      where id = ${invoiceId} and sender_id = ${userId}
+      returning id
+    `;
+
+    if (!invoice) return;
+
+    return invoice.id;
+  });
+
+  return result;
 };

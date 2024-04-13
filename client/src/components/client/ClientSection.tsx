@@ -11,8 +11,8 @@ import ClientSectionBottomContent from './ClientSectionBottomContent';
 import ClientSectionTopContent from './ClientSectionTopContent';
 import DeleteClientModal from './DeleteClientModal';
 import EditClientModal from './EditClientModal';
-import InvoicePartyCard from '../invoice/InvoicePartyCard';
 import TrashIcon from '../icons/TrashIcon';
+import InvoicePartyCard from '../invoice/InvoicePartyCard';
 
 const PER_PAGE = 8;
 
@@ -136,7 +136,6 @@ const ClientSection = () => {
           clientData={currentClientData}
           isOpen={isDeleteClientModalOpen}
           onClose={handleCloseDeleteClientModal}
-          onSuccess={handleCloseDeleteClientModal}
         />
       )}
     </section>

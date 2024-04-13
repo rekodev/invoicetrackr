@@ -1,6 +1,11 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { InvoiceModel } from '../types/models/invoice';
-import { getInvoicesFromDb, insertInvoiceInDb } from '../../database/invoice';
+import {
+  deleteInvoiceFromDb,
+  findInvoiceByInvoiceId,
+  getInvoicesFromDb,
+  insertInvoiceInDb,
+} from '../../database/invoice';
 import { transformInvoiceDto } from '../types/transformers/invoice';
 import { InvoiceDto } from '../types/dtos/invoice';
 
@@ -28,13 +33,24 @@ export const postInvoice = async (
   reply: FastifyReply
 ) => {
   const invoiceData = req.body;
-  const insertionResult = await insertInvoiceInDb(invoiceData);
 
-  if (!insertionResult)
+  const foundInvoice = await findInvoiceByInvoiceId(
+    invoiceData.sender.id,
+    invoiceData.invoiceId
+  );
+
+  if (foundInvoice)
+    return reply
+      .status(403)
+      .send({ message: 'Invoice with provided invoice ID already exists' });
+
+  const insertedInvoice = await insertInvoiceInDb(invoiceData);
+
+  if (!insertedInvoice)
     return reply.status(400).send({ message: 'Unable to add invoice' });
 
   reply.send({
-    invoice: transformInvoiceDto(insertionResult),
+    invoice: transformInvoiceDto(insertedInvoice),
     message: 'Invoice added successfully',
   });
 };
@@ -46,9 +62,16 @@ export const updateInvoice = (
   const { id } = req.params;
 };
 
-export const deleteInvoice = (
-  req: FastifyRequest<{ Params: { id: number } }>,
+export const deleteInvoice = async (
+  req: FastifyRequest<{ Params: { userId: number; id: number } }>,
   reply: FastifyReply
 ) => {
-  const { id } = req.params;
+  const { userId, id } = req.params;
+
+  const deletedInvoice = await deleteInvoiceFromDb(userId, id);
+
+  if (!deletedInvoice)
+    return reply.status(400).send({ message: 'Unable to delete invoice' });
+
+  reply.send({ message: 'Invoice deleted successfully' });
 };
