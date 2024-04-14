@@ -11,8 +11,8 @@ import { useState } from 'react';
 
 import { deleteInvoice } from '@/api';
 import { UiState } from '@/constants/uiState';
-import useGetInvoices from '@/hooks/useGetInvoices';
-import useGetUser from '@/hooks/useGetUser';
+import useGetInvoices from '@/hooks/invoice/useGetInvoices';
+import useGetUser from '@/hooks/user/useGetUser';
 import { InvoiceModel } from '@/types/models/invoice';
 
 type Props = {

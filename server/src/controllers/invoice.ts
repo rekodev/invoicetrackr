@@ -3,8 +3,10 @@ import { InvoiceModel } from '../types/models/invoice';
 import {
   deleteInvoiceFromDb,
   findInvoiceByInvoiceId,
+  getInvoiceFromDb,
   getInvoicesFromDb,
   insertInvoiceInDb,
+  updateInvoiceInDb,
 } from '../../database/invoice';
 import { transformInvoiceDto } from '../types/transformers/invoice';
 import { InvoiceDto } from '../types/dtos/invoice';
@@ -21,11 +23,17 @@ export const getInvoices = async (
   );
 };
 
-export const getInvoice = (
-  req: FastifyRequest<{ Params: { id: number } }>,
+export const getInvoice = async (
+  req: FastifyRequest<{ Params: { userId: number; id: number } }>,
   reply: FastifyReply
 ) => {
-  const { id } = req.params;
+  const { userId, id } = req.params;
+
+  const invoice = await getInvoiceFromDb(userId, id);
+
+  if (!invoice) reply.status(404).send({ message: 'Invoice not found' });
+
+  reply.send(transformInvoiceDto(invoice));
 };
 
 export const postInvoice = async (
@@ -36,7 +44,7 @@ export const postInvoice = async (
 
   const foundInvoice = await findInvoiceByInvoiceId(
     invoiceData.sender.id,
-    invoiceData.invoiceId
+    invoiceData.id
   );
 
   if (foundInvoice)
@@ -55,11 +63,30 @@ export const postInvoice = async (
   });
 };
 
-export const updateInvoice = (
-  req: FastifyRequest<{ Params: { id: number } }>,
+export const updateInvoice = async (
+  req: FastifyRequest<{
+    Params: { userId: number; id: number };
+    Body: InvoiceModel;
+  }>,
   reply: FastifyReply
 ) => {
-  const { id } = req.params;
+  const { userId, id } = req.params;
+  const invoiceData = req.body;
+
+  const foundInvoice = await findInvoiceByInvoiceId(userId, id);
+
+  if (!foundInvoice)
+    return reply.status(404).send({ message: 'Invoice not found' });
+
+  const updatedInvoice = await updateInvoiceInDb(userId, invoiceData);
+
+  if (!updatedInvoice)
+    return reply.status(400).send({ message: 'Unable to update invoice' });
+
+  reply.send({
+    invoice: transformInvoiceDto(updatedInvoice),
+    message: 'Invoice updated successfully',
+  });
 };
 
 export const deleteInvoice = async (

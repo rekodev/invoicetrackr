@@ -9,7 +9,7 @@ import {
   ModalHeader,
 } from '@nextui-org/react';
 
-import useGetClients from '@/hooks/useGetClients';
+import useGetClients from '@/hooks/client/useGetClients';
 import { ClientModel } from '@/types/models/client';
 
 type Props = {

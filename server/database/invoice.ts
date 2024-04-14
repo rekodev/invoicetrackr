@@ -4,13 +4,13 @@ import { sql } from './db';
 
 export const findInvoiceByInvoiceId = async (
   userId: number,
-  invoiceId: string
+  invoiceId: number
 ) => {
   const [invoice] = await sql`
     select
       invoice_id
     from invoices
-    where user_id = ${userId} and invoice_id = ${invoiceId}
+    where sender_id = ${userId} and id = ${invoiceId}
   `;
 
   return invoice;
@@ -58,13 +58,11 @@ export const getInvoicesFromDb = async (userId: number) => {
     order by id desc
   `;
 
-  const result = invoices;
-
-  return result;
+  return invoices;
 };
 
 export const getInvoiceFromDb = async (userId: number, invoiceId: number) => {
-  const [invoice] = await sql`
+  const [invoice] = await sql<Array<InvoiceDto>>`
     select
       invoices.id,
       invoices.invoice_id,
@@ -105,13 +103,11 @@ export const getInvoiceFromDb = async (userId: number, invoiceId: number) => {
     order by id desc
   `;
 
-  const result = invoice;
-
-  return result;
+  return invoice;
 };
 
 export const insertInvoiceInDb = async (invoiceData: InvoiceModel) => {
-  const result = await sql.begin<InvoiceDto>(async (sql) => {
+  const invoice = await sql.begin<InvoiceDto>(async (sql) => {
     const [invoice] = await sql`
       insert into invoices (
         date, invoice_id, total_amount, status, due_date, sender_id, receiver_id
@@ -175,19 +171,81 @@ export const insertInvoiceInDb = async (invoiceData: InvoiceModel) => {
     return insertedInvoice;
   });
 
-  return result;
+  return invoice;
 };
 
 export const updateInvoiceInDb = async (
   userId: number,
   invoiceData: InvoiceModel
-) => {};
+) => {
+  const invoice = await sql.begin<InvoiceDto>(async (sql) => {
+    const [invoice] = await sql`
+      update invoices
+      set
+        invoice_id = ${invoiceData.invoiceId},
+        sender_id = ${invoiceData.sender.id},
+        receiver_id = ${invoiceData.receiver.id},
+        date = ${invoiceData.date},
+        due_date = ${invoiceData.dueDate},
+        status = ${invoiceData.status},
+        total_amount = ${invoiceData.totalAmount}
+      where sender_id = ${userId} and id = ${invoiceData.id}
+      returning id
+    `;
+
+    if (!invoice) return null;
+
+    const existingServices = await sql`
+      select 
+        id
+      from invoice_services
+      where invoice_id = ${invoiceData.id}
+    `;
+
+    const existingServiceIds = existingServices.map((service) => service.id);
+    const newServiceIds = invoiceData.services.map((service) => service.id);
+
+    const servicesToDelete = existingServiceIds.filter(
+      (id) => !newServiceIds.includes(id)
+    );
+    if (servicesToDelete.length) {
+      await sql`
+        delete from invoice_services where id = ANY(${servicesToDelete})
+      `;
+    }
+
+    for (const service of invoiceData.services) {
+      if (existingServiceIds.includes(service.id)) {
+        await sql`
+          update invoice_services
+          set
+            description = ${service.description},
+            amount = ${service.amount},
+            quantity = ${service.quantity},
+            unit = ${service.unit}
+          where id = ${service.id}
+        `;
+      } else {
+        await sql`
+          insert into invoice_services
+            (description, amount, quantity, unit, invoice_id)
+          values
+            (${service.description}, ${service.amount}, ${service.quantity}, ${service.unit}, ${invoiceData.id})
+        `;
+      }
+    }
+
+    return getInvoiceFromDb(userId, invoiceData.id);
+  });
+
+  return invoice;
+};
 
 export const deleteInvoiceFromDb = async (
   userId: number,
   invoiceId: number
 ) => {
-  const result = await sql.begin<{ id: number }>(async (sql) => {
+  const invoice = await sql.begin<{ id: number }>(async (sql) => {
     const services: Array<InvoiceService> = await sql`
       delete from invoice_services
       where invoice_id = ${invoiceId}
@@ -207,5 +265,5 @@ export const deleteInvoiceFromDb = async (
     return invoice.id;
   });
 
-  return result;
+  return invoice;
 };

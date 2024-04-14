@@ -1,10 +1,11 @@
 import { AxiosResponse } from 'axios';
 
 import { ClientFormData, ClientModel } from '@/types/models/client';
-import { InvoiceFormData } from '@/types/models/invoice';
+import { InvoiceFormData, InvoiceModel } from '@/types/models/invoice';
 import {
   AddClientResp,
   AddInvoiceResp,
+  UpdateInvoiceResp,
   DeleteInvoiceResp,
   DeleteClientResp,
   UpdateClientResp,
@@ -12,14 +13,17 @@ import {
 
 import api from './apiInstance';
 
-export const getInvoices = async (userId: number) =>
-  await api.get(`/api/${userId}invoices`);
-
 export const addInvoice = async (
   userId: number,
   invoiceData: InvoiceFormData
 ): Promise<AxiosResponse<AddInvoiceResp>> =>
   await api.post(`/api/${userId}/invoices`, invoiceData);
+
+export const updateInvoice = async (
+  userId: number,
+  invoiceData: InvoiceModel
+): Promise<AxiosResponse<UpdateInvoiceResp>> =>
+  api.put(`/api/${userId}/invoices/${invoiceData.id}`, invoiceData);
 
 export const deleteInvoice = async (
   userId: number,

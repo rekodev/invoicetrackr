@@ -15,8 +15,8 @@ import {
 import { Key, useCallback, useMemo, useState } from 'react';
 
 import { columns, statusOptions } from '@/constants/table';
+import useGetInvoices from '@/hooks/invoice/useGetInvoices';
 import useInvoiceTableActionHandlers from '@/hooks/invoice/useInvoiceTableActionHandlers';
-import useGetInvoices from '@/hooks/useGetInvoices';
 import { InvoiceModel } from '@/types/models/invoice';
 
 import DeleteInvoiceModal from './DeleteInvoiceModal';

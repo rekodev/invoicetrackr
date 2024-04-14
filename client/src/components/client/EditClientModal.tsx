@@ -14,8 +14,8 @@ import { ChangeEvent, useState } from 'react';
 
 import { updateClient } from '@/api';
 import { UiState } from '@/constants/uiState';
-import useGetClients from '@/hooks/useGetClients';
-import useGetUser from '@/hooks/useGetUser';
+import useGetClients from '@/hooks/client/useGetClients';
+import useGetUser from '@/hooks/user/useGetUser';
 import { ClientModel } from '@/types/models/client';
 import { InvoicePartyBusinessType } from '@/types/models/invoice';
 import { capitalize } from '@/utils';

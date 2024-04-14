@@ -3,7 +3,7 @@ import useSWR from 'swr';
 
 import { UserModel } from '@/types/models/user';
 
-import SWRKeys from '../constants/swrKeys';
+import SWRKeys from '../../constants/swrKeys';
 
 const useGetUser = () => {
   const { data, isLoading, mutate, error, isValidating } = useSWR<UserModel>(

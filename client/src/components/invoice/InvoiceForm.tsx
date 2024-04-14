@@ -9,18 +9,16 @@ import {
   SelectItem,
   Spinner,
 } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 
-import { addInvoice } from '@/api';
-import { INVOICES_PAGE } from '@/constants/pages';
 import { statusOptions } from '@/constants/table';
 import { UiState } from '@/constants/uiState';
-import useGetInvoices from '@/hooks/useGetInvoices';
-import useGetUser from '@/hooks/useGetUser';
+import useInvoiceFormSubmissionHandler from '@/hooks/invoice/useInvoiceFormSubmissionHandler';
+import useGetUser from '@/hooks/user/useGetUser';
 import { ClientModel } from '@/types/models/client';
-import { InvoiceFormData, InvoiceService } from '@/types/models/invoice';
+import { InvoiceModel } from '@/types/models/invoice';
+import { formatDate } from '@/utils/formatDate';
 
 import InvoiceFormReceiverModal from './InvoiceFormReceiverModal';
 import InvoicePartyCard from './InvoicePartyCard';
@@ -28,24 +26,33 @@ import InvoiceServicesTable from './InvoiceServicesTable';
 import PencilIcon from '../icons/PencilIcon';
 import { PlusIcon } from '../icons/PlusIcon';
 
-const calculateServiceTotal = (services: Array<InvoiceService>) => {
-  return services.reduce(
-    (acc, currentValue) => acc + Number(currentValue.amount),
-    0
-  );
+type Props = {
+  invoiceData?: InvoiceModel;
 };
 
-const AddNewInvoiceForm = () => {
-  const router = useRouter();
-  const methods = useForm<InvoiceFormData>();
-  const { register, handleSubmit } = methods;
-  const { mutateInvoices, isInvoicesLoading } = useGetInvoices();
+const InvoiceForm = ({ invoiceData }: Props) => {
   const { user, isUserLoading } = useGetUser();
+  const methods = useForm<InvoiceModel>({ defaultValues: invoiceData });
+  const { register, handleSubmit } = methods;
 
   const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
+
+  const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({
+    invoiceData,
+    user,
+    receiverData,
+    setUiState,
+    setSubmissionMessage,
+  });
+
+  useEffect(() => {
+    if (!invoiceData) return;
+
+    setReceiverData(invoiceData.receiver);
+  }, [invoiceData]);
 
   const handleOpenReceiverModal = () => {
     setIsReceiverModalOpen(true);
@@ -58,35 +65,6 @@ const AddNewInvoiceForm = () => {
   const handleSelectReceiver = (receiver: ClientModel) => {
     setReceiverData(receiver);
     setIsReceiverModalOpen(false);
-  };
-
-  const redirectToInvoicesPage = () => {
-    router.push(INVOICES_PAGE);
-  };
-
-  const onSubmit: SubmitHandler<InvoiceFormData> = async (data) => {
-    if (!user || !receiverData) return;
-
-    setSubmissionMessage('');
-    const fullData: typeof data = {
-      ...data,
-      receiver: receiverData,
-      sender: user,
-      totalAmount: calculateServiceTotal(data.services),
-    };
-
-    const response = await addInvoice(user.id, fullData);
-    setSubmissionMessage(response.data.message);
-
-    if ('error' in response.data) {
-      setUiState(UiState.Failure);
-
-      return;
-    }
-
-    setUiState(UiState.Success);
-    mutateInvoices();
-    redirectToInvoicesPage();
   };
 
   const renderReceiverActions = () => (
@@ -115,9 +93,7 @@ const AddNewInvoiceForm = () => {
 
   const renderSenderAndReceiverCards = () => (
     <div className='col-span-1 flex gap-4 w-full flex-col md:col-span-2 lg:col-span-4 md:flex-row'>
-      {user && (
-        <InvoicePartyCard insideForm partyType='sender' partyData={user} />
-      )}
+      <InvoicePartyCard insideForm partyType='sender' partyData={user} />
       <InvoicePartyCard
         insideForm
         partyType='receiver'
@@ -131,7 +107,7 @@ const AddNewInvoiceForm = () => {
     return (
       <div className='flex gap-4 flex-col col-span-1 md:col-span-2 lg:col-span-4'>
         <h4>Services</h4>
-        <InvoiceServicesTable />
+        <InvoiceServicesTable invoiceServices={invoiceData?.services} />
       </div>
     );
   };
@@ -158,7 +134,7 @@ const AddNewInvoiceForm = () => {
     </div>
   );
 
-  if (isUserLoading || isInvoicesLoading)
+  if (isUserLoading)
     return (
       <div className='w-full flex items-center justify-center pt-8'>
         <Spinner className='m-auto' color='secondary' />
@@ -179,7 +155,7 @@ const AddNewInvoiceForm = () => {
               {...register('invoiceId')}
               label='Invoice ID'
               placeholder='e.g., INV001'
-              defaultValue=''
+              defaultValue={invoiceData?.invoiceId || ''}
               variant='bordered'
             />
             <Select
@@ -188,6 +164,9 @@ const AddNewInvoiceForm = () => {
               label='Status'
               placeholder='Select status'
               variant='bordered'
+              defaultSelectedKeys={
+                invoiceData?.status ? [`${invoiceData.status}`] : undefined
+              }
             >
               {statusOptions.map((option) => (
                 <SelectItem key={option.uid}>{option.name}</SelectItem>
@@ -198,7 +177,9 @@ const AddNewInvoiceForm = () => {
               {...register('date')}
               type='date'
               label='Date'
-              defaultValue=''
+              defaultValue={
+                invoiceData?.date ? formatDate(invoiceData.date) : ''
+              }
               variant='bordered'
             />
             <Input
@@ -206,7 +187,9 @@ const AddNewInvoiceForm = () => {
               {...register('dueDate')}
               type='date'
               label='Due Date'
-              defaultValue=''
+              defaultValue={
+                invoiceData?.dueDate ? formatDate(invoiceData.dueDate) : ''
+              }
               variant='bordered'
             />
             {renderSenderAndReceiverCards()}
@@ -225,4 +208,4 @@ const AddNewInvoiceForm = () => {
   );
 };
 
-export default AddNewInvoiceForm;
+export default InvoiceForm;

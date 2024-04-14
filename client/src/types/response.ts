@@ -11,6 +11,10 @@ export type AddInvoiceResp = Message & {
   invoice: InvoiceModel;
 };
 
+export type UpdateInvoiceResp = Message & {
+  invoice: InvoiceModel;
+};
+
 export type DeleteInvoiceResp = Message;
 
 export type AddClientResp = Message & {

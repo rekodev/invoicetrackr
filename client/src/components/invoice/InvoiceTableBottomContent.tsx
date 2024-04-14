@@ -32,23 +32,20 @@ const InvoiceTableBottomContent = ({
   }, [page, setPage]);
 
   return (
-    <div className='py-2 px-2 flex justify-between items-center'>
-      <span className='w-[30%] text-small text-default-400'>
-        {selectedKeys === 'all'
-          ? 'All items selected'
-          : `${selectedKeys.size} of ${filteredItemsLength} selected`}
-      </span>
-      <Pagination
-        isCompact
-        showControls
-        showShadow
-        color='secondary'
-        page={page}
-        total={pages}
-        onChange={setPage}
-        isDisabled={!filteredItemsLength || filteredItemsLength === 0}
-      />
-      <div className='hidden sm:flex w-[30%] justify-end gap-2'>
+    <div className='py-2 flex justify-between items-center'>
+      <div className='absolute w-full flex items-center justify-center'>
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          color='secondary'
+          page={page}
+          total={pages}
+          onChange={setPage}
+          isDisabled={!filteredItemsLength || filteredItemsLength === 0}
+        />
+      </div>
+      <div className='w-full hidden sm:flex justify-end gap-2'>
         <Button
           isDisabled={prevButtonDisabled}
           size='sm'

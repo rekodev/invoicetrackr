@@ -2,6 +2,7 @@ import { Chip, Tooltip } from '@nextui-org/react';
 import { Key } from 'react';
 
 import { InvoiceModel, InvoiceStatus } from '@/types/models/invoice';
+import { formatDate } from '@/utils/formatDate';
 
 import DeleteIcon from '../icons/DeleteIcon';
 import DocumentText from '../icons/DocumentText';
@@ -63,11 +64,12 @@ const InvoiceTableCell = ({
           </p>
         </div>
       );
+    case 'date':
+      return formatDate(cellValue as string) || '';
     case 'status':
       return (
         <Chip
           className='capitalize'
-          // FIX TYPE
           color={statusColorMap[invoice.status as InvoiceStatus]}
           size='sm'
           variant='flat'
@@ -86,12 +88,11 @@ const InvoiceTableCell = ({
               <EyeIcon />
             </span>
           </Tooltip>
-          <Tooltip
-            disableAnimation
-            content='Edit invoice'
-            onClick={handleEditInvoiceClick}
-          >
-            <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
+          <Tooltip disableAnimation content='Edit invoice'>
+            <span
+              className='text-lg text-default-400 cursor-pointer active:opacity-50'
+              onClick={handleEditInvoiceClick}
+            >
               <EditIcon />
             </span>
           </Tooltip>

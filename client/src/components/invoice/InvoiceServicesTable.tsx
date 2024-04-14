@@ -9,10 +9,10 @@ import {
   TableRow,
   Tooltip,
 } from '@nextui-org/react';
-import { Key, useMemo } from 'react';
+import { Key, useEffect, useMemo } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { InvoiceFormData } from '@/types/models/invoice';
+import { InvoiceFormData, InvoiceService } from '@/types/models/invoice';
 
 import DeleteIcon from '../icons/DeleteIcon';
 import { PlusIcon } from '../icons/PlusIcon';
@@ -28,12 +28,22 @@ const INVOICE_SERVICE_COLUMNS = [
 
 const INITIAL_GRAND_TOTAL = 0;
 
-const InvoiceServicesTable = () => {
+type Props = {
+  invoiceServices?: Array<InvoiceService>;
+};
+
+const InvoiceServicesTable = ({ invoiceServices }: Props) => {
   const { register, control, watch } = useFormContext<InvoiceFormData>();
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     name: 'services',
     control,
   });
+
+  useEffect(() => {
+    if (!invoiceServices?.length) return;
+
+    replace(invoiceServices);
+  }, [invoiceServices, replace]);
 
   const handleAddService = () => {
     append({ amount: 0, description: '', quantity: 0, unit: '' });
@@ -79,7 +89,7 @@ const InvoiceServicesTable = () => {
           <Input
             aria-label='Description'
             type='text'
-            defaultValue=''
+            defaultValue={fields[index].description || ''}
             variant='bordered'
             {...register(`services.${index}.description`)}
           />
@@ -89,7 +99,7 @@ const InvoiceServicesTable = () => {
           <Input
             aria-label='Unit'
             type='text'
-            defaultValue=''
+            defaultValue={fields[index].unit || ''}
             variant='bordered'
             {...register(`services.${index}.unit`)}
           />
@@ -99,7 +109,7 @@ const InvoiceServicesTable = () => {
           <Input
             aria-label='Quantity'
             type='number'
-            defaultValue=''
+            defaultValue={fields[index].quantity.toString() || ''}
             variant='bordered'
             {...register(`services.${index}.quantity`)}
           />
@@ -109,7 +119,7 @@ const InvoiceServicesTable = () => {
           <Input
             aria-label='Amount'
             type='number'
-            defaultValue=''
+            defaultValue={fields[index].amount.toString() || ''}
             variant='bordered'
             {...register(`services.${index}.amount`)}
           />

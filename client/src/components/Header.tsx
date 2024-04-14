@@ -11,7 +11,6 @@ import {
   Dropdown,
   DropdownMenu,
   Avatar,
-  useUser,
 } from '@nextui-org/react';
 import { usePathname, useRouter } from 'next/navigation.js';
 
@@ -21,7 +20,7 @@ import {
   INVOICES_PAGE,
   PROFILE_PAGE,
 } from '@/constants/pages';
-import useGetUser from '@/hooks/useGetUser';
+import useGetUser from '@/hooks/user/useGetUser';
 
 import AcmeLogo from './icons/AcmeLogo.jsx';
 
@@ -49,7 +48,7 @@ export default function Header() {
 
       <NavbarContent className='hidden sm:flex gap-4' justify='center'>
         {navbarItems.map((item, index) => {
-          const isActive = pathname.includes(item.href);
+          const isActive = pathname?.includes(item.href);
 
           return (
             <NavbarItem key={index} isActive={isActive}>

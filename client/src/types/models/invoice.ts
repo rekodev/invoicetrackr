@@ -34,7 +34,10 @@ export const invoiceSchema = z.object({
 
 export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
 export type InvoiceFormData = z.infer<typeof invoiceSchema>;
-export type InvoiceModel = z.infer<typeof invoiceSchema> & { id: number };
+export type InvoiceModel = z.infer<typeof invoiceSchema> & {
+  id: number;
+  services: Array<{ id: number }>;
+};
 export type InvoiceService = z.infer<typeof invoiceServiceSchema>;
 export type InvoicePartyBusinessType = z.infer<
   typeof invoicePartyBusinessSchema

@@ -1,5 +1,7 @@
+import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
+import { EDIT_INVOICE_PAGE } from '@/constants/pages';
 import { InvoiceModel } from '@/types/models/invoice';
 
 type Props = {
@@ -11,6 +13,7 @@ const useInvoiceTableActionHandlers = ({
   setCurrentInvoice,
   onOpen,
 }: Props) => {
+  const router = useRouter();
   const [isDeleteInvoiceModalOpen, setIsDeleteInvoiceModalOpen] =
     useState(false);
 
@@ -25,9 +28,9 @@ const useInvoiceTableActionHandlers = ({
   const handleEditInvoice = useCallback(
     (invoice: InvoiceModel) => {
       setCurrentInvoice(invoice);
-      // TODO: Finish implementing
+      router.push(EDIT_INVOICE_PAGE(invoice.id));
     },
-    [setCurrentInvoice]
+    [router, setCurrentInvoice]
   );
 
   const handleCloseDeleteInvoiceModal = () => {

@@ -11,8 +11,8 @@ import { useState } from 'react';
 
 import { deleteClient } from '@/api';
 import { UiState } from '@/constants/uiState';
-import useGetClients from '@/hooks/useGetClients';
-import useGetUser from '@/hooks/useGetUser';
+import useGetClients from '@/hooks/client/useGetClients';
+import useGetUser from '@/hooks/user/useGetUser';
 import { ClientModel } from '@/types/models/client';
 
 type Props = {
