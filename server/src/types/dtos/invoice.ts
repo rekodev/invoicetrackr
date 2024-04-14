@@ -1,16 +1,30 @@
-import { InvoiceService, InvoiceStatus } from '../models/invoice';
-import { ClientDto } from './client';
-import { UserDto } from './user';
+import {
+  InvoicePartyBusinessType,
+  InvoicePartyType,
+  InvoiceService,
+  InvoiceStatus,
+} from '../models/invoice';
 
 export type InvoiceDto = {
   id: number;
   invoice_id: string;
   date: string;
-  company: string;
-  sender: ClientDto;
-  receiver: UserDto;
   total_amount: number;
   status: InvoiceStatus;
-  services: Array<InvoiceService>;
   due_date: string;
+  sender_id: number;
+  sender_name: string;
+  sender_type: InvoicePartyType;
+  sender_business_type: InvoicePartyBusinessType;
+  sender_business_number: string;
+  sender_address: string;
+  sender_email: string;
+  receiver_id: number;
+  receiver_name: string;
+  receiver_type: InvoicePartyType;
+  receiver_business_type: InvoicePartyBusinessType;
+  receiver_business_number: string;
+  receiver_address: string;
+  receiver_email: string;
+  services: Array<InvoiceService>;
 };

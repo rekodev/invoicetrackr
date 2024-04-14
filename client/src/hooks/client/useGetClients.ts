@@ -3,7 +3,7 @@ import useSWR from 'swr';
 
 import { ClientModel } from '@/types/models/client';
 
-import SWRKeys from '../constants/swrKeys';
+import SWRKeys from '../../constants/swrKeys';
 
 const useGetClients = () => {
   const { data, isLoading, mutate, error, isValidating } = useSWR<

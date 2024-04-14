@@ -34,18 +34,20 @@ const ClientSectionBottomContent = ({
   };
 
   return (
-    <div className='mt-2 flex justify-center items-center relative'>
-      <Pagination
-        isCompact
-        showControls
-        color='secondary'
-        total={pages}
-        page={page}
-        className='flex justify-center'
-        onChange={setPage}
-        isDisabled={!clientsLength}
-      />
-      <div className='hidden sm:flex w-[30%] justify-end gap-2 absolute right-2'>
+    <div className='py-2 flex justify-center items-center relative'>
+      <div className='absolute flex items-center justify-center w-full'>
+        <Pagination
+          isCompact
+          showControls
+          color='secondary'
+          total={pages}
+          page={page}
+          className='flex justify-center'
+          onChange={setPage}
+          isDisabled={!clientsLength}
+        />
+      </div>
+      <div className='hidden sm:flex w-full justify-end gap-2'>
         <Button
           isDisabled={prevButtonDisabled}
           size='sm'

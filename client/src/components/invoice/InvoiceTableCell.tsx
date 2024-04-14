@@ -2,11 +2,12 @@ import { Chip, Tooltip } from '@nextui-org/react';
 import { Key } from 'react';
 
 import { InvoiceModel, InvoiceStatus } from '@/types/models/invoice';
+import { formatDate } from '@/utils/formatDate';
 
-import DocumentText from './icons/DocumentText';
-import DeleteIcon from '../components/icons/DeleteIcon';
-import EditIcon from '../components/icons/EditIcon';
-import EyeIcon from '../components/icons/EyeIcon';
+import DeleteIcon from '../icons/DeleteIcon';
+import DocumentText from '../icons/DocumentText';
+import EditIcon from '../icons/EditIcon';
+import EyeIcon from '../icons/EyeIcon';
 
 const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
   {
@@ -18,13 +19,21 @@ const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
 type Props = {
   invoice: InvoiceModel;
   columnKey: Key;
-  onViewClick: (invoice: InvoiceModel) => void;
+  onView: (invoice: InvoiceModel) => void;
+  onEdit: (invoice: InvoiceModel) => void;
+  onDelete: (invoice: InvoiceModel) => void;
 };
 
-const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
-  const handleViewIconClick = () => {
-    onViewClick(invoice);
-  };
+const InvoiceTableCell = ({
+  invoice,
+  columnKey,
+  onView,
+  onEdit,
+  onDelete,
+}: Props) => {
+  const handleViewIconClick = () => onView(invoice);
+  const handleEditInvoiceClick = () => onEdit(invoice);
+  const handleDeleteInvoiceClick = () => onDelete(invoice);
 
   const cellValue =
     invoice[
@@ -37,8 +46,6 @@ const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
   switch (columnKey as keyof InvoiceModel | 'actions') {
     case 'sender':
       return;
-    case 'receiver':
-      return;
     case 'services':
       return;
     case 'id':
@@ -46,24 +53,24 @@ const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
         <div className='flex'>
           <DocumentText />
           &nbsp;
-          <p className='text-bold text-small capitalize'>
-            {cellValue as string}
-          </p>
+          <p className='text-bold text-small capitalize'>{invoice.invoiceId}</p>
         </div>
       );
-    case 'company':
+    case 'receiver':
       return (
         <div className='flex flex-col'>
           <p className='text-bold text-small capitalize'>
-            {cellValue as string}
+            {invoice.receiver.name}
           </p>
         </div>
       );
+    case 'date':
+      return formatDate(cellValue as string) || '';
     case 'status':
       return (
         <Chip
           className='capitalize'
-          color={statusColorMap[invoice.status]}
+          color={statusColorMap[invoice.status as InvoiceStatus]}
           size='sm'
           variant='flat'
         >
@@ -81,13 +88,19 @@ const InvoiceTableCell = ({ invoice, columnKey, onViewClick }: Props) => {
               <EyeIcon />
             </span>
           </Tooltip>
-          <Tooltip disableAnimation content='Edit user'>
-            <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
+          <Tooltip disableAnimation content='Edit invoice'>
+            <span
+              className='text-lg text-default-400 cursor-pointer active:opacity-50'
+              onClick={handleEditInvoiceClick}
+            >
               <EditIcon />
             </span>
           </Tooltip>
-          <Tooltip disableAnimation color='danger' content='Delete user'>
-            <span className='text-lg text-danger cursor-pointer active:opacity-50'>
+          <Tooltip disableAnimation color='danger' content='Delete invoice'>
+            <span
+              className='text-lg text-danger cursor-pointer active:opacity-50'
+              onClick={handleDeleteInvoiceClick}
+            >
               <DeleteIcon />
             </span>
           </Tooltip>

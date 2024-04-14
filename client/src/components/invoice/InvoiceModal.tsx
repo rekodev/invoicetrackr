@@ -3,7 +3,7 @@ import { PDFViewer } from '@react-pdf/renderer';
 
 import { InvoiceModel } from '@/types/models/invoice';
 
-import Pdf from './Pdf';
+import PDFDocument from '../pdf/PDFDocument';
 
 type Props = {
   isOpen: boolean;
@@ -25,7 +25,7 @@ const InvoiceModal = ({ isOpen, onOpenChange, invoiceData }: Props) => {
         <ModalBody>
           <div className='w-full h-full'>
             <PDFViewer className='h-full w-full'>
-              <Pdf invoiceData={invoiceData} />
+              <PDFDocument invoiceData={invoiceData} />
             </PDFViewer>
           </div>
         </ModalBody>

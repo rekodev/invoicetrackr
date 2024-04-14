@@ -1,6 +1,6 @@
 export const columns = [
   { name: 'ID', uid: 'id', sortable: true },
-  { name: 'COMPANY', uid: 'company', sortable: true },
+  { name: 'RECEIVER', uid: 'receiver', sortable: true },
   { name: 'AMOUNT', uid: 'totalAmount', sortable: true },
   { name: 'DATE', uid: 'date', sortable: true },
   { name: 'STATUS', uid: 'status', sortable: true },

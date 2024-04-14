@@ -1,35 +1,44 @@
-export type InvoicePartyBusinessType = 'business' | 'individual';
+import { z } from 'zod';
 
-export type InvoicePartyType = 'sender' | 'receiver';
+import { clientSchema } from './client';
+import { userSchema } from './user';
 
-export type InvoiceParty = {
+export const invoiceStatusSchema = z.union([
+  z.literal('paid'),
+  z.literal('pending'),
+  z.literal('canceled'),
+]);
+
+export const invoicePartyBusinessSchema = z.union([
+  z.literal('business'),
+  z.literal('individual'),
+]);
+
+export const invoiceServiceSchema = z.object({
+  description: z.string(),
+  amount: z.number(),
+  quantity: z.number(),
+  unit: z.string(),
+});
+
+export const invoiceSchema = z.object({
+  invoiceId: z.string().regex(new RegExp('^[A-Za-z]{3}(?!000)\\d{3}$')),
+  status: z.string(),
+  date: z.string(),
+  dueDate: z.string(),
+  sender: userSchema,
+  receiver: clientSchema,
+  services: z.array(invoiceServiceSchema),
+  totalAmount: z.number(),
+});
+
+export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
+export type InvoiceFormData = z.infer<typeof invoiceSchema>;
+export type InvoiceModel = z.infer<typeof invoiceSchema> & {
   id: number;
-  name: string;
-  businessType: InvoicePartyBusinessType;
-  businessNumber: string;
-  address: string;
-  email: string;
-  type: InvoicePartyType;
+  services: Array<{ id: number }>;
 };
-
-export type InvoiceStatus = 'paid' | 'pending' | 'canceled';
-
-export type InvoiceService = {
-  description: string;
-  unit: string;
-  quantity: number;
-  amount: number;
-};
-
-export type InvoiceModel = {
-  id: number;
-  invoiceId: string;
-  date: string;
-  company: string;
-  sender: InvoiceParty;
-  receiver: InvoiceParty;
-  totalAmount: number;
-  status: InvoiceStatus;
-  services: Array<InvoiceService>;
-  dueDate: string;
-};
+export type InvoiceService = z.infer<typeof invoiceServiceSchema>;
+export type InvoicePartyBusinessType = z.infer<
+  typeof invoicePartyBusinessSchema
+>;

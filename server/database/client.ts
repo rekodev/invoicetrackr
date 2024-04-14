@@ -50,7 +50,7 @@ export const getClientFromDb = async (userId: number, clientId: number) => {
   return clients;
 };
 
-export const insertClientToDb = async (
+export const insertClientInDb = async (
   userId: number,
   { name, address, businessNumber, businessType, type, email }: ClientModel
 ) => {

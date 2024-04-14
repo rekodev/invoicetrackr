@@ -1,14 +1,18 @@
-import { InvoicePartyBusinessType, InvoicePartyType } from './invoice';
+import { z } from 'zod';
 
-export type ClientModel = {
-  id: number;
-  name: string;
-  type: InvoicePartyType;
-  businessType: InvoicePartyBusinessType;
-  businessNumber: string;
-  address: string;
-  email: string;
-};
+import { InvoicePartyBusinessType } from './invoice';
+
+export const clientSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  type: z.literal('receiver'),
+  businessType: z.union([z.literal('individual'), z.literal('business')]),
+  businessNumber: z.string(),
+  address: z.string(),
+  email: z.string(),
+});
+
+export type ClientModel = z.infer<typeof clientSchema>;
 
 export type ClientFormData = Omit<ClientModel, 'id' | 'businessType'> & {
   businessType: InvoicePartyBusinessType | null;

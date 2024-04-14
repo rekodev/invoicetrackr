@@ -12,17 +12,9 @@ type Props = {
   invoiceData: InvoiceModel;
 };
 
-const Pdf = ({ invoiceData }: Props) => {
-  const {
-    company,
-    date,
-    dueDate,
-    invoiceId,
-    receiver,
-    sender,
-    services,
-    totalAmount,
-  } = invoiceData;
+const PDFDocument = ({ invoiceData }: Props) => {
+  const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
+    invoiceData;
 
   const splitId = splitInvoiceId(invoiceId);
   const series = splitId[0];
@@ -60,7 +52,7 @@ const Pdf = ({ invoiceData }: Props) => {
       <View style={styles.row}>
         <View style={styles.leftColumn}>
           <Text style={styles.detailItemTitle}>Mokėtojas:</Text>
-          <Text style={styles.detailItem}>{company}</Text>
+          <Text style={styles.detailItem}>{receiver.name}</Text>
           <Text style={styles.detailItem}>
             Įmonės kodas: {receiver.businessNumber}
           </Text>
@@ -192,4 +184,4 @@ const Pdf = ({ invoiceData }: Props) => {
   );
 };
 
-export default Pdf;
+export default PDFDocument;
