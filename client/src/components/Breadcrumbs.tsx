@@ -23,9 +23,20 @@ const Breadcrumbs = () => {
       return <BreadcrumbItem>Home</BreadcrumbItem>;
     }
 
-    return splitPathnameToSegments(pathname).map((segment) => (
-      <BreadcrumbItem key={segment}>{capitalize(segment)}</BreadcrumbItem>
-    ));
+    return splitPathnameToSegments(pathname).map((segment) => {
+      const splitSegments = segment.split('-');
+      const joinedSegments = splitSegments
+        .map((segment) => capitalize(segment))
+        .join(' ');
+
+      if (splitSegments.length > 1) {
+        return <BreadcrumbItem key={segment}>{joinedSegments}</BreadcrumbItem>;
+      }
+
+      return (
+        <BreadcrumbItem key={segment}>{capitalize(segment)}</BreadcrumbItem>
+      );
+    });
   };
 
   return (

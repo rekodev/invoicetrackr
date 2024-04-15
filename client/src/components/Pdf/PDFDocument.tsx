@@ -2,6 +2,7 @@ import { Document, Page, View, Text } from '@react-pdf/renderer';
 
 import { InvoiceModel } from '@/types/models/invoice';
 import { getDaysUntilDueDate, splitInvoiceId } from '@/utils';
+import { formatDate } from '@/utils/formatDate';
 
 import styles from './styles';
 import { registerFont } from './utils';
@@ -45,7 +46,7 @@ const PDFDocument = ({ invoiceData }: Props) => {
           <Text style={[styles.detailItem, styles.boldText]}>
             Sąskaitos išrašymo data:
           </Text>
-          <Text style={styles.detailItem}>{date}</Text>
+          <Text style={styles.detailItem}>{formatDate(date)}</Text>
         </View>
       </View>
 

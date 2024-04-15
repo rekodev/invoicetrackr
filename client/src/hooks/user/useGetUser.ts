@@ -5,9 +5,9 @@ import { UserModel } from '@/types/models/user';
 
 import SWRKeys from '../../constants/swrKeys';
 
+// TODO: Update temp user id
 const useGetUser = () => {
   const { data, isLoading, mutate, error, isValidating } = useSWR<UserModel>(
-    // TODO: Update temp user id
     SWRKeys.user(1)
   );
 
