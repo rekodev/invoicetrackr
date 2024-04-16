@@ -23,7 +23,7 @@ import {
   CHANGE_PASSWORD_PAGE,
   PERSONAL_INFORMATION_PAGE,
 } from '@/constants/pages';
-import useGetUser from '@/hooks/user/useGetUser';
+import { UserModel } from '@/types/models/user';
 
 enum UserNavKeys {
   PersonalInformation = 'personal-information',
@@ -32,9 +32,12 @@ enum UserNavKeys {
   AccountSettings = 'account-settings',
 }
 
-const UserCard = () => {
+type Props = {
+  user: UserModel | undefined;
+};
+
+const UserCard = ({ user }: Props) => {
   const pathname = usePathname();
-  const { user } = useGetUser();
 
   const currentPath = pathname?.split('/')[2];
 

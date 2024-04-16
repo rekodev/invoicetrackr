@@ -1,3 +1,5 @@
+'use client';
+
 const BankingInformationForm = () => {
   return <div>BankingInformationForm</div>;
 };
