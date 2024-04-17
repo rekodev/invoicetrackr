@@ -42,7 +42,10 @@ const UserCard = ({ user }: Props) => {
   const currentPath = pathname?.split('/')[2];
 
   return (
-    <Card className='flex flex-col justify-between min-w-56 min-h-80 max-h-80 sm:max-w-56 pt-3'>
+    <Card
+      as='aside'
+      className='flex flex-col justify-between min-w-56 min-h-80 max-h-80 sm:max-w-56 pt-3 border border-neutral-800 bg-transparent'
+    >
       <CardHeader className='flex-col'>
         <Avatar size='lg' className='mb-2' />
         <p className='text-md'>{user?.name}</p>

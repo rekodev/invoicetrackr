@@ -5,6 +5,8 @@ import {
   Card,
   CardBody,
   CardFooter,
+  CardHeader,
+  Divider,
   Input,
   Select,
   SelectItem,
@@ -27,47 +29,53 @@ const PersonalInformationForm = ({ user }: Props) => {
   const onSubmit = () => {};
 
   return (
-    <Card className='p-3 w-full'>
-      <CardBody className=''>
-        <form
-          aria-label='Personal Information Form'
-          onSubmit={handleSubmit(onSubmit)}
-          className='grid grid-cols-1 gap-4 sm:grid-cols-2'
+    <Card
+      as='form'
+      aria-label='Personal Information Form'
+      onSubmit={handleSubmit(onSubmit)}
+      className='w-full bg-transparent border border-neutral-800'
+    >
+      <CardHeader className='p-4 px-6'>Personal Information</CardHeader>
+      <Divider />
+      <CardBody className='p-6 grid grid-cols-1 gap-4 sm:grid-cols-2'>
+        <Input
+          {...register('name')}
+          label='Name'
+          labelPlacement='outside'
+          defaultValue={user?.name || ''}
+        />
+        <Select
+          {...register('businessType')}
+          label='Business Type'
+          labelPlacement='outside'
+          defaultSelectedKeys={
+            user?.businessType ? [`${user?.businessType}`] : undefined
+          }
         >
-          <Input
-            {...register('name')}
-            label='Name'
-            defaultValue={user?.name || ''}
-          />
-          <Select
-            {...register('businessType')}
-            label='Business Type'
-            defaultSelectedKeys={
-              user?.businessType ? [`${user?.businessType}`] : undefined
-            }
-          >
-            {CLIENT_BUSINESS_TYPES.map((type) => (
-              <SelectItem key={type}>{capitalize(type)}</SelectItem>
-            ))}
-          </Select>
-          <Input
-            {...register('businessNumber')}
-            label='Business Number'
-            defaultValue={user?.businessNumber || ''}
-          />
-          <Input
-            {...register('address')}
-            label='Address'
-            defaultValue={user?.address || ''}
-          />
-          <Input
-            {...register('email')}
-            label='Email'
-            defaultValue={user?.email || ''}
-          />
-        </form>
+          {CLIENT_BUSINESS_TYPES.map((type) => (
+            <SelectItem key={type}>{capitalize(type)}</SelectItem>
+          ))}
+        </Select>
+        <Input
+          {...register('businessNumber')}
+          label='Business Number'
+          labelPlacement='outside'
+          defaultValue={user?.businessNumber || ''}
+        />
+        <Input
+          {...register('address')}
+          label='Address'
+          labelPlacement='outside'
+          defaultValue={user?.address || ''}
+        />
+        <Input
+          {...register('email')}
+          label='Email'
+          labelPlacement='outside'
+          defaultValue={user?.email || ''}
+        />
       </CardBody>
-      <CardFooter className='justify-end'>
+      <CardFooter className='justify-end p-6'>
         <Button isDisabled={!formState.isDirty} color='secondary'>
           Save
         </Button>

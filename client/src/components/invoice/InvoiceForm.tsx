@@ -144,7 +144,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
   return (
     <>
       <FormProvider {...methods}>
-        <Card className='p-8'>
+        <Card className='p-8 border border-neutral-800 bg-transparent'>
           <form
             aria-label='Add New Invoice Form'
             className='w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'
@@ -156,14 +156,14 @@ const InvoiceForm = ({ invoiceData }: Props) => {
               label='Invoice ID'
               placeholder='e.g., INV001'
               defaultValue={invoiceData?.invoiceId || ''}
-              variant='bordered'
+              // variant='bordered'
             />
             <Select
               aria-label='Status'
               {...register('status')}
               label='Status'
               placeholder='Select status'
-              variant='bordered'
+              // variant='bordered'
               defaultSelectedKeys={
                 invoiceData?.status ? [`${invoiceData.status}`] : undefined
               }
@@ -180,7 +180,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
               defaultValue={
                 invoiceData?.date ? formatDate(invoiceData.date) : ''
               }
-              variant='bordered'
+              // variant='bordered'
             />
             <Input
               aria-label='Due Date'
@@ -190,7 +190,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
               defaultValue={
                 invoiceData?.dueDate ? formatDate(invoiceData.dueDate) : ''
               }
-              variant='bordered'
+              // variant='bordered'
             />
             {renderSenderAndReceiverCards()}
             {renderInvoiceServices()}
