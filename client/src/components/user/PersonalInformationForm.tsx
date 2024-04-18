@@ -42,12 +42,14 @@ const PersonalInformationForm = ({ user }: Props) => {
           {...register('name')}
           label='Name'
           labelPlacement='outside'
+          variant='faded'
           defaultValue={user?.name || ''}
         />
         <Select
           {...register('businessType')}
           label='Business Type'
           labelPlacement='outside'
+          variant='faded'
           defaultSelectedKeys={
             user?.businessType ? [`${user?.businessType}`] : undefined
           }
@@ -60,18 +62,21 @@ const PersonalInformationForm = ({ user }: Props) => {
           {...register('businessNumber')}
           label='Business Number'
           labelPlacement='outside'
+          variant='faded'
           defaultValue={user?.businessNumber || ''}
         />
         <Input
           {...register('address')}
           label='Address'
           labelPlacement='outside'
+          variant='faded'
           defaultValue={user?.address || ''}
         />
         <Input
           {...register('email')}
           label='Email'
           labelPlacement='outside'
+          variant='faded'
           defaultValue={user?.email || ''}
         />
       </CardBody>

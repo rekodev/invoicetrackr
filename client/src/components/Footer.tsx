@@ -1,3 +1,5 @@
+'use client';
+
 import { Link } from '@nextui-org/react';
 
 import GitHubLogo from '../components/icons/GitHubLogo';

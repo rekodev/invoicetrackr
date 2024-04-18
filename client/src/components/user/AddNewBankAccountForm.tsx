@@ -43,17 +43,23 @@ const AddNewBankAccountForm = ({ onCancel }: Props) => {
           <Input
             {...register('bankName')}
             label='Bank Name'
-            variant='underlined'
+            variant='faded'
+            labelPlacement='outside'
+            placeholder='e.g., Swedbank'
           />
           <Input
             {...register('bankCode')}
             label='Bank Code'
-            variant='underlined'
+            variant='faded'
+            labelPlacement='outside'
+            placeholder='e.g., HABALT22'
           />
           <Input
             {...register('bankAccountNumber')}
             label='Bank Account Number'
-            variant='underlined'
+            variant='faded'
+            labelPlacement='outside'
+            placeholder='e.g., LT12 1000 0111 0100 1000'
           />
         </CardBody>
         <CardFooter className='justify-end p-6 gap-2'>
