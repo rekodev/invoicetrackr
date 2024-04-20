@@ -13,11 +13,11 @@ import {
 import { ChangeEvent, useState } from 'react';
 
 import { updateClient } from '@/api';
+import { CLIENT_BUSINESS_TYPES } from '@/constants/client';
 import { UiState } from '@/constants/uiState';
 import useGetClients from '@/hooks/client/useGetClients';
 import useGetUser from '@/hooks/user/useGetUser';
 import { ClientModel } from '@/types/models/client';
-import { InvoicePartyBusinessType } from '@/types/models/invoice';
 import { capitalize } from '@/utils';
 
 type Props = {
@@ -25,11 +25,6 @@ type Props = {
   onClose: () => void;
   clientData: ClientModel;
 };
-
-const CLIENT_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
-  'business',
-  'individual',
-];
 
 type ClientFormData = ClientModel;
 

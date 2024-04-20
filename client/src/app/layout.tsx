@@ -21,9 +21,12 @@ export default function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const bgGradient =
+    'bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-purple-900 from-[-35%] via-black to-black';
+
   return (
     <html lang='en' className='dark'>
-      <body className={inter.className}>
+      <body className={(inter.className, bgGradient)}>
         <Providers>
           <Header />
           <main className='flex-grow flex flex-col max-w-5xl p-6 mx-auto w-full'>

@@ -13,17 +13,13 @@ import {
 import { ChangeEvent, useState } from 'react';
 
 import { addClient } from '@/api';
+import { CLIENT_BUSINESS_TYPES } from '@/constants/client';
 import { UiState } from '@/constants/uiState';
 import useGetClients from '@/hooks/client/useGetClients';
 import useGetUser from '@/hooks/user/useGetUser';
 import { ClientFormData, ClientModel } from '@/types/models/client';
-import { InvoicePartyBusinessType } from '@/types/models/invoice';
 import { capitalize } from '@/utils';
 
-const CLIENT_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
-  'business',
-  'individual',
-];
 const INITIAL_CLIENT_DATA: ClientFormData = {
   name: '',
   type: 'receiver',

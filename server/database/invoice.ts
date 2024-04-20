@@ -4,13 +4,13 @@ import { sql } from './db';
 
 export const findInvoiceByInvoiceId = async (
   userId: number,
-  invoiceId: number
+  invoiceId: string
 ) => {
   const [invoice] = await sql`
     select
       invoice_id
     from invoices
-    where sender_id = ${userId} and id = ${invoiceId}
+    where sender_id = ${userId} and invoice_id = ${invoiceId}
   `;
 
   return invoice;
@@ -176,6 +176,7 @@ export const insertInvoiceInDb = async (invoiceData: InvoiceModel) => {
 
 export const updateInvoiceInDb = async (
   userId: number,
+  id: number,
   invoiceData: InvoiceModel
 ) => {
   const invoice = await sql.begin<InvoiceDto>(async (sql) => {
@@ -189,7 +190,7 @@ export const updateInvoiceInDb = async (
         due_date = ${invoiceData.dueDate},
         status = ${invoiceData.status},
         total_amount = ${invoiceData.totalAmount}
-      where sender_id = ${userId} and id = ${invoiceData.id}
+      where sender_id = ${userId} and id = ${id}
       returning id
     `;
 

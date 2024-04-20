@@ -1,5 +1,7 @@
 import UnderConstruction from '@/pages/UnderConstruction';
 
-export default function Home() {
+const ChangePasswordPage = () => {
   return <UnderConstruction />;
-}
+};
+
+export default ChangePasswordPage;

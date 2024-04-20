@@ -42,9 +42,10 @@ export const postInvoice = async (
 ) => {
   const invoiceData = req.body;
 
+  console.log(invoiceData);
   const foundInvoice = await findInvoiceByInvoiceId(
     invoiceData.sender.id,
-    invoiceData.id
+    invoiceData.invoiceId
   );
 
   if (foundInvoice)
@@ -73,12 +74,15 @@ export const updateInvoice = async (
   const { userId, id } = req.params;
   const invoiceData = req.body;
 
-  const foundInvoice = await findInvoiceByInvoiceId(userId, id);
+  const foundInvoice = await findInvoiceByInvoiceId(
+    userId,
+    invoiceData.invoiceId
+  );
 
   if (!foundInvoice)
     return reply.status(404).send({ message: 'Invoice not found' });
 
-  const updatedInvoice = await updateInvoiceInDb(userId, invoiceData);
+  const updatedInvoice = await updateInvoiceInDb(userId, id, invoiceData);
 
   if (!updatedInvoice)
     return reply.status(400).send({ message: 'Unable to update invoice' });

@@ -1,5 +1,7 @@
 import UnderConstruction from '@/pages/UnderConstruction';
 
-export default function Home() {
+const AccountSettingsPage = () => {
   return <UnderConstruction />;
-}
+};
+
+export default AccountSettingsPage;

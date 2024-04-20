@@ -18,7 +18,7 @@ import {
   CLIENTS_PAGE,
   CONTRACTS_PAGE,
   INVOICES_PAGE,
-  PROFILE_PAGE,
+  PERSONAL_INFORMATION_PAGE,
 } from '@/constants/pages';
 import useGetUser from '@/hooks/user/useGetUser';
 
@@ -36,7 +36,7 @@ export default function Header() {
   const { user } = useGetUser();
 
   const navigateToProfilePage = () => {
-    router.push(PROFILE_PAGE);
+    router.push(PERSONAL_INFORMATION_PAGE);
   };
 
   return (
@@ -68,7 +68,7 @@ export default function Header() {
         <Dropdown placement='bottom-end'>
           <DropdownTrigger>
             <Avatar
-              isBordered
+              isBordered={pathname?.includes('profile')}
               as='button'
               className='transition-transform'
               color='secondary'

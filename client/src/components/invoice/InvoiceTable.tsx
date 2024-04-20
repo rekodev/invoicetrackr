@@ -166,7 +166,7 @@ const InvoiceTable = () => {
         bottomContent={renderBottomContent()}
         bottomContentPlacement='outside'
         classNames={{
-          wrapper: 'min-h-[480px]',
+          wrapper: 'min-h-[480px] bg-transparent border border-neutral-800',
         }}
         sortDescriptor={sortDescriptor}
         topContent={renderTopContent()}

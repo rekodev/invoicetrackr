@@ -39,7 +39,7 @@ const useInvoiceFormSubmissionHandler = ({
   };
 
   const onSubmit: SubmitHandler<InvoiceModel> = async (data) => {
-    if (!user || !receiverData) return;
+    if (!user?.id || !receiverData) return;
 
     setSubmissionMessage('');
     const fullData: typeof data = {
