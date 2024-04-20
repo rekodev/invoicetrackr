@@ -1,4 +1,4 @@
-import { Static, TSchema, Type } from '@sinclair/typebox';
+import { Static, Type } from '@sinclair/typebox';
 import { User } from './user';
 import { Client } from './client';
 

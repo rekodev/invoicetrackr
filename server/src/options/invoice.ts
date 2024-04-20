@@ -5,8 +5,8 @@ import {
   getInvoices,
   postInvoice,
   updateInvoice,
-} from '../controllers/invoice';
-import { Invoice } from '../types/models/invoice';
+} from '../controllers';
+import { Invoice } from '../types/models';
 
 export const getInvoicesOptions = {
   schema: {

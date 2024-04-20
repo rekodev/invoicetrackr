@@ -1,4 +1,4 @@
-import { UserModel } from '../src/types/models/user';
+import { UserModel } from '../types/models';
 import { sql } from './db';
 
 export const getUserFromDb = async (id: number) => {

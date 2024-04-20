@@ -1,4 +1,4 @@
-import { ClientModel } from '../src/types/models/client';
+import { ClientModel } from '../types/models';
 import { sql } from './db';
 
 export const findClientByEmail = async (userId: number, email: string) => {

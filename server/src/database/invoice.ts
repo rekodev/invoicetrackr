@@ -1,5 +1,5 @@
-import { InvoiceDto } from '../src/types/dtos/invoice';
-import { InvoiceModel, InvoiceService } from '../src/types/models/invoice';
+import { InvoiceDto } from '../types/dtos';
+import { InvoiceModel, InvoiceService } from '../types/models';
 import { sql } from './db';
 
 export const findInvoiceByInvoiceId = async (

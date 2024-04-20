@@ -10,7 +10,7 @@ import {
   postInvoiceOptions,
   updateInvoiceOptions,
   deleteInvoiceOptions,
-} from '../options/invoice';
+} from '../options';
 
 const invoiceRoutes = (
   fastify: FastifyInstance,
