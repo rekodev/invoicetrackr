@@ -1,5 +1,5 @@
-import { InvoiceDto } from '../dtos/invoice';
-import { InvoiceModel } from '../models/invoice';
+import { InvoiceDto } from '../dtos';
+import { InvoiceModel } from '../models';
 
 export const transformInvoiceDto = (invoiceDto: InvoiceDto): InvoiceModel => {
   const {

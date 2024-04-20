@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ClientModel } from '../types/models/client';
+import { ClientModel } from '../types/models';
 import {
   deleteClientFromDb,
   findClientByEmail,
@@ -7,8 +7,8 @@ import {
   getClientsFromDb,
   insertClientInDb,
   updateClientInDb,
-} from '../../database/client';
-import { ClientDto } from '../types/dtos/client';
+} from '../database';
+import { ClientDto } from '../types/dtos';
 import { transformClientDto } from '../types/transformers';
 
 export const getClients = async (
@@ -30,7 +30,7 @@ export const getClient = async (
   const queryResult = await getClientFromDb(userId, id);
 
   if (!queryResult.length)
-    return reply.status(400).send({ message: 'Client not found' });
+    return reply.status(404).send({ message: 'Client not found' });
 
   const client = queryResult[0];
   reply.send(transformClientDto(client as ClientDto));

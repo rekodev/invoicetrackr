@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { InvoiceModel } from '../types/models/invoice';
+import { InvoiceModel } from '../types/models';
 import {
   deleteInvoiceFromDb,
   findInvoiceByInvoiceId,
@@ -7,9 +7,9 @@ import {
   getInvoicesFromDb,
   insertInvoiceInDb,
   updateInvoiceInDb,
-} from '../../database/invoice';
-import { transformInvoiceDto } from '../types/transformers/invoice';
-import { InvoiceDto } from '../types/dtos/invoice';
+} from '../database';
+import { transformInvoiceDto } from '../types/transformers';
+import { InvoiceDto } from '../types/dtos';
 
 export const getInvoices = async (
   req: FastifyRequest<{ Params: { userId: number } }>,

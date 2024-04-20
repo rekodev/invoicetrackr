@@ -9,7 +9,7 @@ import {
   postUserOptions,
   updateUserOptions,
   deleteUserOptions,
-} from '../options/user';
+} from '../options';
 
 const userRoutes = (
   fastify: FastifyInstance,

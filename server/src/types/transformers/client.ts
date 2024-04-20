@@ -1,5 +1,5 @@
-import { ClientDto } from '../dtos/client';
-import { ClientModel } from '../models/client';
+import { ClientDto } from '../dtos';
+import { ClientModel } from '../models';
 
 export const transformClientDto = (clientDto: ClientDto): ClientModel => {
   const { id, name, business_type, business_number, address, type, email } =

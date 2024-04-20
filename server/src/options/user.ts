@@ -1,6 +1,6 @@
 import { Type } from '@sinclair/typebox';
-import { deleteUser, getUser, postUser, updateUser } from '../controllers/user';
-import { User } from '../types/models/user';
+import { deleteUser, getUser, postUser, updateUser } from '../controllers';
+import { User } from '../types/models';
 
 export const getUserOptions = {
   schema: {

@@ -5,8 +5,8 @@ import {
   getClients,
   postClient,
   updateClient,
-} from '../controllers/client';
-import { Client } from '../types/models/client';
+} from '../controllers';
+import { Client } from '../types/models';
 
 export const getClientsOptions = {
   schema: {

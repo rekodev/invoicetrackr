@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { UserModel } from '../types/models/user';
-import { getUserFromDb } from '../../database/user';
-import { UserDto } from '../types/dtos/user';
+import { UserModel } from '../types/models';
+import { getUserFromDb } from '../database';
+import { UserDto } from '../types/dtos';
 import { transformUserDto } from '../types/transformers';
 
 export const getUser = async (

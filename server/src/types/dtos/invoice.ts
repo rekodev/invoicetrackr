@@ -3,7 +3,7 @@ import {
   InvoicePartyType,
   InvoiceService,
   InvoiceStatus,
-} from '../models/invoice';
+} from '../models';
 
 export type InvoiceDto = {
   id: number;
