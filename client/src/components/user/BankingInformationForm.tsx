@@ -46,6 +46,10 @@ const mockBankingInformation: Array<BankingInformation> = [
   },
 ];
 
+const defaultValue = mockBankingInformation.find(
+  (entry) => entry.id === SELECTED_BANK_ID
+)?.bankName;
+
 type Props = {
   user: UserModel;
 };
@@ -78,7 +82,7 @@ const BankingInformationForm = ({ user }: Props) => {
   }: BankingInformation) => (
     <Card key={id} className='col-span-1'>
       <CardBody className='flex flex-row gap-2 items-center'>
-        <Radio color='secondary' value={id.toString()} />
+        <Radio color='secondary' value={bankName} />
         <div>
           <h4 className='font-bold text-large'>{bankName}</h4>
           <p className='text-tiny uppercase font-bold'>{bankCode}</p>
@@ -109,7 +113,7 @@ const BankingInformationForm = ({ user }: Props) => {
         >
           Add New
         </Button>
-        <RadioGroup className='w-full'>
+        <RadioGroup className='w-full' defaultValue={defaultValue}>
           <div className='grid grid-cols-2 gap-4'>
             {bankingInformation.map((entry) => {
               const { id, bankName, bankCode, bankAccountNumber } = entry;

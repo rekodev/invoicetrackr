@@ -68,7 +68,7 @@ export default function Header() {
         <Dropdown placement='bottom-end'>
           <DropdownTrigger>
             <Avatar
-              isBordered
+              isBordered={pathname?.includes('profile')}
               as='button'
               className='transition-transform'
               color='secondary'

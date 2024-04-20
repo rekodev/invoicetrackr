@@ -1,9 +1,9 @@
-import { Static, Type } from '@sinclair/typebox';
+import { Static, TSchema, Type } from '@sinclair/typebox';
 import { User } from './user';
 import { Client } from './client';
 
 export const InvoiceService = Type.Object({
-  id: Type.Number(),
+  id: Type.Optional(Type.Number()),
   description: Type.String(),
   unit: Type.String(),
   quantity: Type.Number(),
@@ -17,7 +17,7 @@ export const InvoiceStatus = Type.Union([
 ]);
 
 export const Invoice = Type.Object({
-  id: Type.Number(),
+  id: Type.Optional(Type.Number()),
   invoiceId: Type.String(),
   date: Type.String(),
   sender: User,
