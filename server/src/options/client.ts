@@ -1,4 +1,5 @@
 import { Type } from '@sinclair/typebox';
+import { RouteShorthandOptionsWithHandler } from 'fastify';
 import {
   deleteClient,
   getClient,
@@ -8,7 +9,7 @@ import {
 } from '../controllers';
 import { Client } from '../types/models';
 
-export const getClientsOptions = {
+export const getClientsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: Type.Array(Client),
@@ -17,7 +18,7 @@ export const getClientsOptions = {
   handler: getClients,
 };
 
-export const getClientOptions = {
+export const getClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: Client,
@@ -26,7 +27,7 @@ export const getClientOptions = {
   handler: getClient,
 };
 
-export const postClientOptions = {
+export const postClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Type.Omit(Client, ['id']),
     response: {
@@ -36,7 +37,7 @@ export const postClientOptions = {
   handler: postClient,
 };
 
-export const updateClientOptions = {
+export const updateClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Client,
     response: {
@@ -46,7 +47,7 @@ export const updateClientOptions = {
   handler: updateClient,
 };
 
-export const deleteClientOptions = {
+export const deleteClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: Type.Object({ message: Type.String() }),

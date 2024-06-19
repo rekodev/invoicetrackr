@@ -1,4 +1,4 @@
-import { Static, Type } from '@sinclair/typebox';
+import { Static, Type, ValueGuard } from '@sinclair/typebox';
 import { User } from './user';
 import { Client } from './client';
 
@@ -28,10 +28,10 @@ export const Invoice = Type.Object({
   dueDate: Type.String(),
 });
 
-export const InvoicePartyBusinessType = Type.Union([
-  Type.Literal('business'),
-  Type.Literal('individual'),
-]);
+export const InvoicePartyBusinessType = Type.Union(
+  [Type.Literal('business'), Type.Literal('individual')],
+  { errorMessage: 'Must be either "Business" or "Individual"' }
+);
 
 export const InvoicePartyType = Type.Union([
   Type.Literal('sender'),
