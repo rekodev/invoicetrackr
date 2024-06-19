@@ -42,12 +42,22 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
     useState<ClientFormData>(INITIAL_CLIENT_DATA);
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     field: keyof Omit<ClientModel, 'id' | 'type'>
   ) => {
     setClientData((prev) => ({ ...prev, [field]: event.target.value }));
+
+    if (validationErrors[field]) {
+      setValidationErrors((prev) => {
+        const { [field]: _, ...rest } = prev;
+        return rest;
+      });
+    }
   };
 
   const handleSubmit = async () => {
@@ -58,8 +68,16 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
     const result = await addClient(user.id, clientData);
     setSubmissionMessage(result.data.message);
 
-    if ('error' in result.data) {
+    if ('errors' in result.data) {
       setUiState(UiState.Failure);
+      // TODO: Move this to a helper function
+      const validationErrors = result.data.errors.reduce((acc, error) => {
+        acc[error.key] = error.value;
+        return acc;
+      }, {});
+
+      console.log(validationErrors);
+      setValidationErrors(validationErrors);
 
       return;
     }
@@ -71,6 +89,7 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
   const handleCloseAndClear = () => {
     onClose();
     setSubmissionMessage('');
+    setValidationErrors({});
     setClientData(INITIAL_CLIENT_DATA);
   };
 
@@ -109,14 +128,16 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
             type='text'
             label='Name'
             variant='bordered'
-            isRequired
+            isInvalid={!!validationErrors['name']}
+            errorMessage={validationErrors['name']}
           />
           <Select
             value=''
             onChange={(event) => handleChange(event, 'businessType')}
             label='Business Type'
             variant='bordered'
-            isRequired
+            isInvalid={!!validationErrors['businessType']}
+            errorMessage={validationErrors['businessType']}
           >
             {CLIENT_BUSINESS_TYPES.map((type) => (
               <SelectItem key={type}>{capitalize(type)}</SelectItem>
@@ -128,7 +149,8 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
             type='text'
             label='Business Number'
             variant='bordered'
-            isRequired
+            isInvalid={!!validationErrors['businessNumber']}
+            errorMessage={validationErrors['businessNumber']}
           />
           <Input
             value={clientData.address}
@@ -136,7 +158,8 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
             type='text'
             label='Address'
             variant='bordered'
-            isRequired
+            isInvalid={!!validationErrors['address']}
+            errorMessage={validationErrors['address']}
           />
           <Input
             value={clientData.email}
@@ -144,7 +167,8 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
             type='email'
             label='Email'
             variant='bordered'
-            isRequired
+            isInvalid={!!validationErrors['email']}
+            errorMessage={validationErrors['email']}
           />
         </ModalBody>
         {renderModalFooter()}
