@@ -28,7 +28,7 @@ export const getInvoiceOptions = {
 
 export const postInvoiceOptions = {
   schema: {
-    body: Type.Omit(Invoice, ['id']),
+    body: Invoice,
     response: {
       201: Type.Object({ invoice: Invoice, message: Type.String() }),
     },

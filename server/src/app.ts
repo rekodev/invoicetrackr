@@ -22,15 +22,18 @@ const server = fastify({
 server.setErrorHandler(function (error, _request, reply) {
   if (error.validation) {
     return reply.status(400).send({
-      message: 'There are some validation errors',
+      message: 'Review fields and retry',
       errors: error.validation.map((err) => ({
         key: err.instancePath.substring(1),
         value: err.message,
       })),
+      code: error.code,
     });
   }
 
-  return reply.status(500).send(error);
+  return reply
+    .status(500)
+    .send({ errors: [], message: error.message, code: error.code });
 });
 
 server.register(cors);

@@ -1,5 +1,6 @@
 import {
   Button,
+  Chip,
   Input,
   Table,
   TableBody,
@@ -30,10 +31,17 @@ const INITIAL_GRAND_TOTAL = 0;
 
 type Props = {
   invoiceServices?: Array<InvoiceService>;
+  isInvalid?: boolean;
+  errorMessage?: string;
 };
 
-const InvoiceServicesTable = ({ invoiceServices }: Props) => {
-  const { register, control, watch } = useFormContext<InvoiceFormData>();
+const InvoiceServicesTable = ({
+  invoiceServices,
+  isInvalid,
+  errorMessage,
+}: Props) => {
+  const { register, control, watch, clearErrors } =
+    useFormContext<InvoiceFormData>();
   const { fields, append, remove, replace } = useFieldArray({
     name: 'services',
     control,
@@ -47,6 +55,7 @@ const InvoiceServicesTable = ({ invoiceServices }: Props) => {
 
   const handleAddService = () => {
     append({ amount: 0, description: '', quantity: 0, unit: '' });
+    clearErrors('services');
   };
 
   const handleRemoveService = (index: number) => {
@@ -147,25 +156,34 @@ const InvoiceServicesTable = ({ invoiceServices }: Props) => {
   };
 
   return (
-    <Table
-      aria-label='Invoice Services Table'
-      bottomContent={renderBottomContent()}
-    >
-      <TableHeader columns={INVOICE_SERVICE_COLUMNS}>
-        {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
-      </TableHeader>
-      <TableBody items={fields}>
-        {(field) => (
-          <TableRow key={field.id}>
-            {(columnKey) => (
-              <TableCell>
-                {renderCell(columnKey, fields.indexOf(field))}
-              </TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Table
+        aria-label='Invoice Services Table'
+        bottomContent={renderBottomContent()}
+      >
+        <TableHeader columns={INVOICE_SERVICE_COLUMNS}>
+          {(column) => (
+            <TableColumn key={column.uid}>{column.name}</TableColumn>
+          )}
+        </TableHeader>
+        <TableBody items={fields}>
+          {(field) => (
+            <TableRow key={field.id}>
+              {(columnKey) => (
+                <TableCell>
+                  {renderCell(columnKey, fields.indexOf(field))}
+                </TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      {isInvalid && (
+        <Chip className='mt-[-1rem]' variant='light' color='danger'>
+          {errorMessage}
+        </Chip>
+      )}
+    </>
   );
 };
 

@@ -42,7 +42,6 @@ export const postInvoice = async (
 ) => {
   const invoiceData = req.body;
 
-  console.log(invoiceData);
   const foundInvoice = await findInvoiceByInvoiceId(
     invoiceData.sender.id,
     invoiceData.invoiceId

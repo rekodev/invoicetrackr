@@ -1,28 +1,28 @@
+import { ApiError } from '@/api/apiInstance';
+
 import { ClientModel } from './models/client';
 import { InvoiceModel } from './models/invoice';
 
-export type Message = { message: string };
-
-export type GetInvoicesResp = Message & {
+export type GetInvoicesResp = ApiError & {
   invoices: Array<InvoiceModel>;
 };
 
-export type AddInvoiceResp = Message & {
+export type AddInvoiceResp = ApiError & {
   invoice: InvoiceModel;
 };
 
-export type UpdateInvoiceResp = Message & {
+export type UpdateInvoiceResp = ApiError & {
   invoice: InvoiceModel;
 };
 
-export type DeleteInvoiceResp = Message;
+export type DeleteInvoiceResp = ApiError;
 
-export type AddClientResp = Message & {
+export type AddClientResp = ApiError & {
   client: ClientModel;
 };
 
-export type UpdateClientResp = Message & {
+export type UpdateClientResp = ApiError & {
   client: ClientModel;
 };
 
-export type DeleteClientResp = Message;
+export type DeleteClientResp = ApiError;

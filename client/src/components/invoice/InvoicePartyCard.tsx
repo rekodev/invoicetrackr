@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardBody, CardHeader } from '@nextui-org/react';
+import { Card, CardBody, CardHeader, Chip } from '@nextui-org/react';
 import { ReactNode } from 'react';
 
 import { ClientModel } from '@/types/models/client';
@@ -19,6 +19,8 @@ type Props = {
   partyData: PartyData | undefined;
   insideForm?: boolean;
   renderActions?: (partyData: PartyData | undefined) => ReactNode;
+  isInvalid?: boolean;
+  errorMessage?: string;
 };
 
 const InvoicePartyCard = ({
@@ -26,38 +28,51 @@ const InvoicePartyCard = ({
   partyData,
   insideForm = false,
   renderActions,
+  isInvalid,
+  errorMessage,
 }: Props) => {
   const smallText = partyType === 'receiver' ? 'To:' : 'From:';
 
   if (!partyData)
     return (
-      <Card className='p-2 w-full min-h-36'>
-        <CardHeader>
-          {insideForm && (
-            <small className='text-default-500'>{smallText}</small>
-          )}
-        </CardHeader>
-        {renderActions?.(partyData)}
-      </Card>
+      <div className='w-full'>
+        <Card className='p-2 min-h-36'>
+          <CardHeader>
+            {insideForm && (
+              <small className='text-default-500'>{smallText}</small>
+            )}
+          </CardHeader>
+          {renderActions?.(partyData)}
+        </Card>
+        {isInvalid && (
+          <Chip variant='light' color='danger'>
+            {errorMessage}
+          </Chip>
+        )}
+      </div>
     );
 
   const { address, businessNumber, businessType, name, email } = partyData;
 
   return (
-    <Card className='p-2 relative w-full'>
-      <CardHeader className='pb-0 flex-col items-start'>
-        {insideForm && <small className='text-default-500'>{smallText}</small>}
-        <h4 className='font-bold text-large uppercase'>{name}</h4>
-      </CardHeader>
-      <CardBody className='overflow-visible py-2'>
-        <p className='text-tiny uppercase font-bold'>
-          {businessType} No. {businessNumber}
-        </p>
-        <small className='text-default-500'>{address}</small>
-        {email && <small className='text-default-500'>{email}</small>}
-      </CardBody>
-      {renderActions?.(partyData)}
-    </Card>
+    <div className='w-full'>
+      <Card className='p-2 relative'>
+        <CardHeader className='pb-0 flex-col items-start'>
+          {insideForm && (
+            <small className='text-default-500'>{smallText}</small>
+          )}
+          <h4 className='font-bold text-large uppercase'>{name}</h4>
+        </CardHeader>
+        <CardBody className='overflow-visible py-2'>
+          <p className='text-tiny uppercase font-bold'>
+            {businessType} No. {businessNumber}
+          </p>
+          <small className='text-default-500'>{address}</small>
+          {email && <small className='text-default-500'>{email}</small>}
+        </CardBody>
+        {renderActions?.(partyData)}
+      </Card>
+    </div>
   );
 };
 

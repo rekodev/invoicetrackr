@@ -33,7 +33,12 @@ type Props = {
 const InvoiceForm = ({ invoiceData }: Props) => {
   const { user, isUserLoading } = useGetUser();
   const methods = useForm<InvoiceModel>({ defaultValues: invoiceData });
-  const { register, handleSubmit } = methods;
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = methods;
 
   const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
   const [uiState, setUiState] = useState(UiState.Idle);
@@ -46,6 +51,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     receiverData,
     setUiState,
     setSubmissionMessage,
+    setError,
   });
 
   useEffect(() => {
@@ -99,6 +105,8 @@ const InvoiceForm = ({ invoiceData }: Props) => {
         partyType='receiver'
         partyData={receiverData}
         renderActions={renderReceiverActions}
+        isInvalid={!!errors.receiver}
+        errorMessage={errors.receiver?.message}
       />
     </div>
   );
@@ -107,7 +115,11 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     return (
       <div className='flex gap-4 flex-col col-span-1 md:col-span-2 lg:col-span-4'>
         <h4>Services</h4>
-        <InvoiceServicesTable invoiceServices={invoiceData?.services} />
+        <InvoiceServicesTable
+          invoiceServices={invoiceData?.services}
+          isInvalid={!!errors.services}
+          errorMessage={errors.services?.message}
+        />
       </div>
     );
   };
@@ -156,6 +168,8 @@ const InvoiceForm = ({ invoiceData }: Props) => {
               label='Invoice ID'
               placeholder='e.g., INV001'
               defaultValue={invoiceData?.invoiceId || ''}
+              isInvalid={!!errors.invoiceId}
+              errorMessage={errors.invoiceId?.message}
               // variant='bordered'
             />
             <Select
@@ -167,6 +181,8 @@ const InvoiceForm = ({ invoiceData }: Props) => {
               defaultSelectedKeys={
                 invoiceData?.status ? [`${invoiceData.status}`] : undefined
               }
+              isInvalid={!!errors.status}
+              errorMessage={errors.status?.message}
             >
               {statusOptions.map((option) => (
                 <SelectItem key={option.uid}>{option.name}</SelectItem>
@@ -181,6 +197,8 @@ const InvoiceForm = ({ invoiceData }: Props) => {
                 invoiceData?.date ? formatDate(invoiceData.date) : ''
               }
               // variant='bordered'
+              errorMessage={errors.date?.message}
+              isInvalid={!!errors.date}
             />
             <Input
               aria-label='Due Date'
@@ -190,6 +208,8 @@ const InvoiceForm = ({ invoiceData }: Props) => {
               defaultValue={
                 invoiceData?.dueDate ? formatDate(invoiceData.dueDate) : ''
               }
+              isInvalid={!!errors.dueDate}
+              errorMessage={errors.dueDate?.message}
               // variant='bordered'
             />
             {renderSenderAndReceiverCards()}

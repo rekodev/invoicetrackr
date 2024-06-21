@@ -19,6 +19,7 @@ import useGetClients from '@/hooks/client/useGetClients';
 import useGetUser from '@/hooks/user/useGetUser';
 import { ClientFormData, ClientModel } from '@/types/models/client';
 import { capitalize } from '@/utils';
+import { mapValidationErrors } from '@/utils/validation';
 
 const INITIAL_CLIENT_DATA: ClientFormData = {
   name: '',
@@ -70,13 +71,11 @@ const AddNewClientModal = ({ isOpen, onClose }: Props) => {
 
     if ('errors' in result.data) {
       setUiState(UiState.Failure);
-      // TODO: Move this to a helper function
-      const validationErrors = result.data.errors.reduce((acc, error) => {
-        acc[error.key] = error.value;
-        return acc;
-      }, {});
 
-      console.log(validationErrors);
+      const validationErrors = mapValidationErrors(
+        result.data.errors as Record<string, string>[]
+      );
+
       setValidationErrors(validationErrors);
 
       return;
