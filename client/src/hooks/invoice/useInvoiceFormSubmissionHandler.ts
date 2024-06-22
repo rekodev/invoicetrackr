@@ -1,7 +1,11 @@
 import { AxiosResponse } from 'axios';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
-import { SubmitHandler, UseFormSetError } from 'react-hook-form';
+import {
+  SubmitHandler,
+  UseFormSetError,
+  UseFormTrigger,
+} from 'react-hook-form';
 
 import { addInvoice, updateInvoice } from '@/api';
 import { INVOICES_PAGE } from '@/constants/pages';
@@ -44,6 +48,8 @@ const useInvoiceFormSubmissionHandler = ({
     if (!user?.id) return;
 
     setSubmissionMessage('');
+    setUiState(UiState.Pending);
+
     const fullData: typeof data = {
       ...data,
       sender: user,

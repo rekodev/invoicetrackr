@@ -1,23 +1,38 @@
 import { Static, Type } from '@sinclair/typebox';
 import { User } from './user';
-import { Client } from './client';
 
 export const InvoiceService = Type.Object({
   id: Type.Optional(Type.Number()),
-  description: Type.String(),
-  unit: Type.String(),
-  quantity: Type.Number(),
-  amount: Type.Number(),
+  description: Type.String({
+    minLength: 1,
+    maxLength: 200,
+    errorMessage: 'Description up to 200 characters is required',
+  }),
+  unit: Type.String({
+    minLength: 1,
+    maxLength: 20,
+    errorMessage: 'Unit up to 10 characters is required',
+  }),
+  quantity: Type.Number({
+    minimum: 0.0001,
+    maximum: 10000,
+    errorMessage: 'Quantity between 0.0001 and 10,000 is required',
+  }),
+  amount: Type.Number({
+    minimum: 0.01,
+    maximum: 1000000,
+    errorMessage: 'Amount between 0.01 and 1,000,000 is required',
+  }),
 });
 
 export const InvoiceStatus = Type.Union(
   [Type.Literal('paid'), Type.Literal('pending'), Type.Literal('canceled')],
-  { errorMessage: 'Must select a valid status' }
+  { errorMessage: 'Valid status is required' }
 );
 
 export const InvoicePartyBusinessType = Type.Union(
   [Type.Literal('business'), Type.Literal('individual')],
-  { errorMessage: 'Must be either "Business" or "Individual"' }
+  { errorMessage: '"Business" or "Individual" required' }
 );
 
 export const InvoicePartyType = Type.Union([
@@ -30,12 +45,11 @@ export const Invoice = Type.Object({
   invoiceId: Type.String({
     format: 'regex',
     pattern: '^[A-Za-z]{3}(0[0-9]{2}|[1-9][0-9]{2}|[1-9]0{2})$',
-    minLength: 1,
-    errorMessage: 'Must match format "ABC123"',
+    errorMessage: 'Required to match format "ABC123"',
   }),
   date: Type.String({
-    format: 'date-time',
-    errorMessage: 'Must select a valid date',
+    format: 'date',
+    errorMessage: 'Valid date is required',
   }),
   sender: User,
   receiver: Type.Object(
@@ -46,15 +60,15 @@ export const Invoice = Type.Object({
       businessType: InvoicePartyBusinessType,
       businessNumber: Type.String({
         minLength: 1,
-        errorMessage: 'Business number is required',
+        errorMessage: 'Business number up to 15 characters is required',
       }),
       address: Type.String({
         minLength: 1,
-        errorMessage: 'Address is required',
+        errorMessage: 'Address up to 255 characters is required',
       }),
       email: Type.String({
         format: 'email',
-        errorMessage: 'Must be a valid email address',
+        errorMessage: 'Valid email is required',
       }),
     },
     {
@@ -66,11 +80,12 @@ export const Invoice = Type.Object({
   status: InvoiceStatus,
   services: Type.Array(InvoiceService, {
     minItems: 1,
+    maxItems: 100,
     errorMessage: 'At least one service is required',
   }),
   dueDate: Type.String({
-    format: 'date-time',
-    errorMessage: 'Must select a valid date',
+    format: 'date',
+    errorMessage: 'Valid date is required',
   }),
 });
 

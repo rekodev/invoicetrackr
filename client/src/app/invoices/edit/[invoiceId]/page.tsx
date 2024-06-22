@@ -1,10 +1,10 @@
 'use client';
 
-import { Spinner } from '@nextui-org/react';
 import { useParams } from 'next/navigation';
 
 import InvoiceForm from '@/components/invoice/InvoiceForm';
 import ErrorAlert from '@/components/ui/ErrorAlert';
+import Loader from '@/components/ui/Loader';
 import useGetInvoice from '@/hooks/invoice/useGetInvoice';
 
 const EditInvoicePage = () => {
@@ -13,12 +13,7 @@ const EditInvoicePage = () => {
     Number(params!.invoiceId)
   );
 
-  if (isInvoiceLoading)
-    return (
-      <div className='w-full flex items-center justify-center pt-8'>
-        <Spinner className='m-auto' color='secondary' />
-      </div>
-    );
+  if (isInvoiceLoading) return <Loader />;
 
   if (invoiceError) return <ErrorAlert />;
 

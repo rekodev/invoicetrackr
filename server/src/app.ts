@@ -6,6 +6,7 @@ import cors from '@fastify/cors';
 import { getPgVersion } from './database/db';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { clientRoutes, invoiceRoutes, userRoutes } from './routes';
+import { transformErrors } from './utils/validation';
 
 dotenv.config();
 
@@ -23,10 +24,7 @@ server.setErrorHandler(function (error, _request, reply) {
   if (error.validation) {
     return reply.status(400).send({
       message: 'Review fields and retry',
-      errors: error.validation.map((err) => ({
-        key: err.instancePath.substring(1),
-        value: err.message,
-      })),
+      errors: transformErrors(error.validation),
       code: error.code,
     });
   }

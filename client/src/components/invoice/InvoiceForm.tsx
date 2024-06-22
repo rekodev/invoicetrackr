@@ -7,7 +7,6 @@ import {
   Input,
   Select,
   SelectItem,
-  Spinner,
 } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -25,19 +24,22 @@ import InvoicePartyCard from './InvoicePartyCard';
 import InvoiceServicesTable from './InvoiceServicesTable';
 import PencilIcon from '../icons/PencilIcon';
 import { PlusIcon } from '../icons/PlusIcon';
+import ErrorAlert from '../ui/ErrorAlert';
+import Loader from '../ui/Loader';
 
 type Props = {
   invoiceData?: InvoiceModel;
 };
 
 const InvoiceForm = ({ invoiceData }: Props) => {
-  const { user, isUserLoading } = useGetUser();
+  const { user, isUserLoading, userError } = useGetUser();
   const methods = useForm<InvoiceModel>({ defaultValues: invoiceData });
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
+    clearErrors,
   } = methods;
 
   const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
@@ -71,6 +73,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
   const handleSelectReceiver = (receiver: ClientModel) => {
     setReceiverData(receiver);
     setIsReceiverModalOpen(false);
+    clearErrors('receiver');
   };
 
   const renderReceiverActions = () => (
@@ -111,18 +114,16 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     </div>
   );
 
-  const renderInvoiceServices = () => {
-    return (
-      <div className='flex gap-4 flex-col col-span-1 md:col-span-2 lg:col-span-4'>
-        <h4>Services</h4>
-        <InvoiceServicesTable
-          invoiceServices={invoiceData?.services}
-          isInvalid={!!errors.services}
-          errorMessage={errors.services?.message}
-        />
-      </div>
-    );
-  };
+  const renderInvoiceServices = () => (
+    <div className='flex gap-4 flex-col col-span-1 md:col-span-2 lg:col-span-4'>
+      <h4>Services</h4>
+      <InvoiceServicesTable
+        invoiceServices={invoiceData?.services}
+        isInvalid={!!errors.services}
+        errorMessage={errors.services?.message}
+      />
+    </div>
+  );
 
   const renderSubmissionMessageAndActions = () => (
     <div className='col-span-full flex w-full items-center gap-5 justify-between overflow-x-hidden'>
@@ -146,12 +147,9 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     </div>
   );
 
-  if (isUserLoading)
-    return (
-      <div className='w-full flex items-center justify-center pt-8'>
-        <Spinner className='m-auto' color='secondary' />
-      </div>
-    );
+  if (isUserLoading) return <Loader />;
+
+  if (userError) return <ErrorAlert />;
 
   return (
     <>
@@ -170,14 +168,12 @@ const InvoiceForm = ({ invoiceData }: Props) => {
               defaultValue={invoiceData?.invoiceId || ''}
               isInvalid={!!errors.invoiceId}
               errorMessage={errors.invoiceId?.message}
-              // variant='bordered'
             />
             <Select
               aria-label='Status'
               {...register('status')}
               label='Status'
               placeholder='Select status'
-              // variant='bordered'
               defaultSelectedKeys={
                 invoiceData?.status ? [`${invoiceData.status}`] : undefined
               }
@@ -196,7 +192,6 @@ const InvoiceForm = ({ invoiceData }: Props) => {
               defaultValue={
                 invoiceData?.date ? formatDate(invoiceData.date) : ''
               }
-              // variant='bordered'
               errorMessage={errors.date?.message}
               isInvalid={!!errors.date}
             />
@@ -210,7 +205,6 @@ const InvoiceForm = ({ invoiceData }: Props) => {
               }
               isInvalid={!!errors.dueDate}
               errorMessage={errors.dueDate?.message}
-              // variant='bordered'
             />
             {renderSenderAndReceiverCards()}
             {renderInvoiceServices()}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Spinner } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { useState } from 'react';
 
 import useClientSearchAndFilter from '@/hooks/client/useClientSearchAndFilter';
@@ -13,6 +13,7 @@ import DeleteClientModal from './DeleteClientModal';
 import EditClientModal from './EditClientModal';
 import TrashIcon from '../icons/TrashIcon';
 import InvoicePartyCard from '../invoice/InvoicePartyCard';
+import Loader from '../ui/Loader';
 
 const PER_PAGE = 8;
 
@@ -89,12 +90,7 @@ const ClientSection = () => {
   };
 
   const renderSectionContent = () => {
-    if (isClientsLoading)
-      return (
-        <div className='min-h-[480px] h-0'>
-          <Spinner color='secondary' className='m-auto w-full h-full' />
-        </div>
-      );
+    if (isClientsLoading) return <Loader />;
 
     if (!isClientsLoading && !clients?.length)
       return <div className='min-h-[480px]'>No clients found</div>;

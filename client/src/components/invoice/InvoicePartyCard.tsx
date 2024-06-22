@@ -36,7 +36,7 @@ const InvoicePartyCard = ({
   if (!partyData)
     return (
       <div className='w-full'>
-        <Card className='p-2 min-h-36'>
+        <Card className={`p-2 min-h-36 ${isInvalid && 'bg-[#F3126040]'}`}>
           <CardHeader>
             {insideForm && (
               <small className='text-default-500'>{smallText}</small>
@@ -45,7 +45,7 @@ const InvoicePartyCard = ({
           {renderActions?.(partyData)}
         </Card>
         {isInvalid && (
-          <Chip variant='light' color='danger'>
+          <Chip variant='light' size='sm' color='danger'>
             {errorMessage}
           </Chip>
         )}
