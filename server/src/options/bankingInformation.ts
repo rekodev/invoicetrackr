@@ -7,8 +7,9 @@ import {
   postBankAccount,
   updateBankAccount,
 } from '../controllers';
+import { RouteShorthandOptionsWithHandler } from 'fastify';
 
-export const getBankAccountsOptions = {
+export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: Type.Array(BankAccount),
@@ -17,7 +18,7 @@ export const getBankAccountsOptions = {
   handler: getBankAccounts,
 };
 
-export const getBankAccountOptions = {
+export const getBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: BankAccount,
@@ -26,9 +27,9 @@ export const getBankAccountOptions = {
   handler: getBankAccount,
 };
 
-export const postBankAccountOptions = {
+export const postBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Type.Omit(BankAccount, ['id']),
+    body: BankAccount,
     response: {
       201: Type.Object({ bankAccount: BankAccount, message: Type.String() }),
     },
@@ -36,7 +37,7 @@ export const postBankAccountOptions = {
   handler: postBankAccount,
 };
 
-export const updateBankAccountOptions = {
+export const updateBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: BankAccount,
     response: {
@@ -46,7 +47,7 @@ export const updateBankAccountOptions = {
   handler: updateBankAccount,
 };
 
-export const deleteBankAccountOptions = {
+export const deleteBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: Type.Object({ message: Type.String() }),
