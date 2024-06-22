@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { InvoiceModel } from '../types/models';
 import {
   deleteInvoiceFromDb,
-  findInvoiceByInvoiceId,
+  findInvoiceById,
   getInvoiceFromDb,
   getInvoicesFromDb,
   insertInvoiceInDb,
@@ -42,10 +42,9 @@ export const postInvoice = async (
 ) => {
   const invoiceData = req.body;
 
-  console.log(invoiceData);
-  const foundInvoice = await findInvoiceByInvoiceId(
+  const foundInvoice = await findInvoiceById(
     invoiceData.sender.id,
-    invoiceData.invoiceId
+    invoiceData.id
   );
 
   if (foundInvoice)
@@ -74,10 +73,7 @@ export const updateInvoice = async (
   const { userId, id } = req.params;
   const invoiceData = req.body;
 
-  const foundInvoice = await findInvoiceByInvoiceId(
-    userId,
-    invoiceData.invoiceId
-  );
+  const foundInvoice = await findInvoiceById(userId, invoiceData.id);
 
   if (!foundInvoice)
     return reply.status(404).send({ message: 'Invoice not found' });

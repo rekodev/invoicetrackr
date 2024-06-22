@@ -10,7 +10,6 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
-  Selection,
 } from '@nextui-org/react';
 import { Key, useCallback, useMemo, useState } from 'react';
 

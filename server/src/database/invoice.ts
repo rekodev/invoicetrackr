@@ -2,15 +2,12 @@ import { InvoiceDto } from '../types/dtos';
 import { InvoiceModel, InvoiceService } from '../types/models';
 import { sql } from './db';
 
-export const findInvoiceByInvoiceId = async (
-  userId: number,
-  invoiceId: string
-) => {
+export const findInvoiceById = async (userId: number, id: number) => {
   const [invoice] = await sql`
     select
-      invoice_id
+      id
     from invoices
-    where sender_id = ${userId} and invoice_id = ${invoiceId}
+    where sender_id = ${userId} and id = ${id}
   `;
 
   return invoice;

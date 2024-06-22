@@ -7,8 +7,9 @@ import {
   updateInvoice,
 } from '../controllers';
 import { Invoice } from '../types/models';
+import { RouteShorthandOptionsWithHandler } from 'fastify';
 
-export const getInvoicesOptions = {
+export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: Type.Array(Invoice),
@@ -17,7 +18,7 @@ export const getInvoicesOptions = {
   handler: getInvoices,
 };
 
-export const getInvoiceOptions = {
+export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: Invoice,
@@ -26,9 +27,9 @@ export const getInvoiceOptions = {
   handler: getInvoice,
 };
 
-export const postInvoiceOptions = {
+export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Type.Omit(Invoice, ['id']),
+    body: Invoice,
     response: {
       201: Type.Object({ invoice: Invoice, message: Type.String() }),
     },
@@ -36,8 +37,9 @@ export const postInvoiceOptions = {
   handler: postInvoice,
 };
 
-export const updateInvoiceOptions = {
+export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
+    body: Invoice,
     response: {
       200: Type.Object({ invoice: Invoice, message: Type.String() }),
     },
@@ -45,7 +47,7 @@ export const updateInvoiceOptions = {
   handler: updateInvoice,
 };
 
-export const deleteInvoiceOptions = {
+export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: Type.Object({ message: Type.String() }),

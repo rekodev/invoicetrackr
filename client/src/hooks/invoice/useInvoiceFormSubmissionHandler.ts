@@ -1,7 +1,11 @@
 import { AxiosResponse } from 'axios';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
-import { SubmitHandler } from 'react-hook-form';
+import {
+  SubmitHandler,
+  UseFormSetError,
+  UseFormTrigger,
+} from 'react-hook-form';
 
 import { addInvoice, updateInvoice } from '@/api';
 import { INVOICES_PAGE } from '@/constants/pages';
@@ -22,6 +26,7 @@ type Props = {
   receiverData: ClientModel | undefined;
   setUiState: Dispatch<SetStateAction<UiState>>;
   setSubmissionMessage: Dispatch<SetStateAction<string>>;
+  setError: UseFormSetError<InvoiceModel>;
 };
 
 const useInvoiceFormSubmissionHandler = ({
@@ -30,6 +35,7 @@ const useInvoiceFormSubmissionHandler = ({
   receiverData,
   setUiState,
   setSubmissionMessage,
+  setError,
 }: Props) => {
   const router = useRouter();
   const { mutateInvoices } = useGetInvoices();
@@ -39,17 +45,19 @@ const useInvoiceFormSubmissionHandler = ({
   };
 
   const onSubmit: SubmitHandler<InvoiceModel> = async (data) => {
-    if (!user?.id || !receiverData) return;
+    if (!user?.id) return;
 
     setSubmissionMessage('');
+    setUiState(UiState.Pending);
+
     const fullData: typeof data = {
       ...data,
       sender: user,
-      receiver: receiverData || invoiceData?.receiver,
+      receiver: receiverData || invoiceData?.receiver || ({} as ClientModel),
       totalAmount: calculateServiceTotal(data.services),
     };
 
-    let response: AxiosResponse<UpdateInvoiceResp | AddInvoiceResp, any>;
+    let response: AxiosResponse<UpdateInvoiceResp | AddInvoiceResp>;
 
     if (invoiceData) {
       response = await updateInvoice(user.id, fullData);
@@ -58,8 +66,12 @@ const useInvoiceFormSubmissionHandler = ({
     }
     setSubmissionMessage(response.data.message);
 
-    if ('error' in response.data) {
+    if ('errors' in response.data) {
       setUiState(UiState.Failure);
+
+      response.data.errors.forEach((error) => {
+        setError(error.key, { message: error.value });
+      });
 
       return;
     }

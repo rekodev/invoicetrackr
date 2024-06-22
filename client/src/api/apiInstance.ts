@@ -1,9 +1,22 @@
 import axios, {
+  AxiosError,
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
   Method,
 } from 'axios';
+
+export type ApiResponse<T = any> = {
+  data: T;
+  errors?: Record<string, string>;
+  message?: string;
+};
+
+export type ApiError = {
+  error: AxiosError;
+  errors: Array<Record<string, any>>;
+  message: string;
+};
 
 class ApiInstance {
   private httpClient: AxiosInstance;
@@ -40,13 +53,13 @@ class ApiInstance {
     url: string,
     data: any = {},
     config: AxiosRequestConfig = {}
-  ): Promise<AxiosResponse> {
+  ): Promise<AxiosResponse<ApiResponse<T>> | AxiosResponse<ApiError>> {
     try {
       if (data instanceof FormData) {
         config.headers = { ...config.headers, 'Content-Type': undefined };
       }
 
-      const response = await this.httpClient.request<T>({
+      const response = await this.httpClient.request<ApiResponse<T>>({
         method,
         url,
         data: method === 'get' ? undefined : data,
@@ -64,7 +77,8 @@ class ApiInstance {
         ...error,
         data: {
           error,
-          message: 'Unable to access the network',
+          errors: [],
+          message: 'Service unavailable. Try again later',
         },
       };
     }

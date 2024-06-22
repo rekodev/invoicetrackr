@@ -1,5 +1,6 @@
 import {
   Button,
+  Chip,
   Input,
   Table,
   TableBody,
@@ -30,28 +31,26 @@ const INITIAL_GRAND_TOTAL = 0;
 
 type Props = {
   invoiceServices?: Array<InvoiceService>;
+  isInvalid?: boolean;
+  errorMessage?: string;
 };
 
-const InvoiceServicesTable = ({ invoiceServices }: Props) => {
-  const { register, control, watch } = useFormContext<InvoiceFormData>();
+const InvoiceServicesTable = ({
+  invoiceServices,
+  isInvalid,
+  errorMessage,
+}: Props) => {
+  const {
+    register,
+    control,
+    watch,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext<InvoiceFormData>();
   const { fields, append, remove, replace } = useFieldArray({
     name: 'services',
     control,
   });
-
-  useEffect(() => {
-    if (!invoiceServices?.length) return;
-
-    replace(invoiceServices);
-  }, [invoiceServices, replace]);
-
-  const handleAddService = () => {
-    append({ amount: 0, description: '', quantity: 0, unit: '' });
-  };
-
-  const handleRemoveService = (index: number) => {
-    remove(index);
-  };
 
   // watching the entire services array doesn't work, individual services have to be selected
   const serviceAmounts = fields.map((_field, index) =>
@@ -67,6 +66,23 @@ const InvoiceServicesTable = ({ invoiceServices }: Props) => {
     [serviceAmounts]
   );
 
+  useEffect(() => {
+    if (!invoiceServices?.length) return;
+
+    replace(invoiceServices);
+  }, [invoiceServices, replace]);
+
+  const handleAddService = () => {
+    append({ amount: 0, description: '', quantity: 0, unit: '' });
+
+    // Clear errors if there are no services
+    if (!serviceAmounts.length) clearErrors('services');
+  };
+
+  const handleRemoveService = (index: number) => {
+    remove(index);
+  };
+
   const renderBottomContent = () => (
     <div className='flex justify-between items-center'>
       <Button variant='bordered' color='secondary' onPress={handleAddService}>
@@ -75,7 +91,7 @@ const InvoiceServicesTable = ({ invoiceServices }: Props) => {
       </Button>
       <div className='flex gap-6 pr-3'>
         <p>Grand Total:</p>
-        <p>${totalAmount}</p>
+        <p>${totalAmount >= 0.01 ? totalAmount : 0}</p>
       </div>
     </div>
   );
@@ -89,9 +105,12 @@ const InvoiceServicesTable = ({ invoiceServices }: Props) => {
           <Input
             aria-label='Description'
             type='text'
+            maxLength={200}
             defaultValue={fields[index].description || ''}
             variant='bordered'
             {...register(`services.${index}.description`)}
+            isInvalid={!!errors.services?.[index]?.description}
+            errorMessage={errors.services?.[index]?.description?.message}
           />
         );
       case 'unit':
@@ -99,9 +118,12 @@ const InvoiceServicesTable = ({ invoiceServices }: Props) => {
           <Input
             aria-label='Unit'
             type='text'
+            maxLength={20}
             defaultValue={fields[index].unit || ''}
             variant='bordered'
             {...register(`services.${index}.unit`)}
+            isInvalid={!!errors.services?.[index]?.unit}
+            errorMessage={errors.services?.[index]?.unit?.message}
           />
         );
       case 'quantity':
@@ -109,9 +131,11 @@ const InvoiceServicesTable = ({ invoiceServices }: Props) => {
           <Input
             aria-label='Quantity'
             type='number'
-            defaultValue={fields[index].quantity.toString() || ''}
+            defaultValue={fields[index].quantity?.toString() || ''}
             variant='bordered'
             {...register(`services.${index}.quantity`)}
+            isInvalid={!!errors.services?.[index]?.quantity}
+            errorMessage={errors.services?.[index]?.quantity?.message}
           />
         );
       case 'amount':
@@ -119,9 +143,11 @@ const InvoiceServicesTable = ({ invoiceServices }: Props) => {
           <Input
             aria-label='Amount'
             type='number'
-            defaultValue={fields[index].amount.toString() || ''}
+            defaultValue={fields[index].amount?.toString() || ''}
             variant='bordered'
             {...register(`services.${index}.amount`)}
+            isInvalid={!!errors.services?.[index]?.amount}
+            errorMessage={errors.services?.[index]?.amount?.message}
           />
         );
       case 'actions':
@@ -147,25 +173,39 @@ const InvoiceServicesTable = ({ invoiceServices }: Props) => {
   };
 
   return (
-    <Table
-      aria-label='Invoice Services Table'
-      bottomContent={renderBottomContent()}
-    >
-      <TableHeader columns={INVOICE_SERVICE_COLUMNS}>
-        {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
-      </TableHeader>
-      <TableBody items={fields}>
-        {(field) => (
-          <TableRow key={field.id}>
-            {(columnKey) => (
-              <TableCell>
-                {renderCell(columnKey, fields.indexOf(field))}
-              </TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Table
+        aria-label='Invoice Services Table'
+        bottomContent={renderBottomContent()}
+      >
+        <TableHeader columns={INVOICE_SERVICE_COLUMNS}>
+          {(column) => (
+            <TableColumn key={column.uid}>{column.name}</TableColumn>
+          )}
+        </TableHeader>
+        <TableBody items={fields} className='bg-red-500'>
+          {fields.map((field) => (
+            <TableRow key={field.id}>
+              {(columnKey) => (
+                <TableCell>
+                  {renderCell(columnKey, fields.indexOf(field))}
+                </TableCell>
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {isInvalid && (
+        <Chip
+          className='mt-[-0.75rem]'
+          size='sm'
+          variant='light'
+          color='danger'
+        >
+          {errorMessage}
+        </Chip>
+      )}
+    </>
   );
 };
 
