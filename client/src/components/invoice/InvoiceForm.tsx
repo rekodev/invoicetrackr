@@ -34,7 +34,11 @@ type Props = {
 
 const InvoiceForm = ({ invoiceData }: Props) => {
   const { user, isUserLoading, userError } = useGetUser();
-  const methods = useForm<InvoiceModel>({ defaultValues: invoiceData });
+  const methods = useForm<InvoiceModel>({
+    defaultValues: invoiceData || {
+      services: [{ amount: 0, quantity: 0, description: '', unit: '' }],
+    },
+  });
   const {
     register,
     handleSubmit,

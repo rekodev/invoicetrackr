@@ -107,14 +107,14 @@ const SignaturePad = () => {
             />
           </ModalBody>
           <ModalFooter>
-            <Button color='success' onPress={saveSignature}>
-              Save
-            </Button>
             <Button
               color='danger'
               onPress={() => signatureRef.current?.clear()}
             >
               Clear
+            </Button>
+            <Button color='secondary' onPress={saveSignature}>
+              Save
             </Button>
           </ModalFooter>
         </ModalContent>
