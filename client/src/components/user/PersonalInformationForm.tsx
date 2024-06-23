@@ -17,6 +17,8 @@ import { CLIENT_BUSINESS_TYPES } from '@/constants/client';
 import { UserModel } from '@/types/models/user';
 import { capitalize } from '@/utils';
 
+import SignaturePad from '../SignaturePad';
+
 type Props = {
   user: UserModel | undefined;
 };
@@ -79,6 +81,7 @@ const PersonalInformationForm = ({ user }: Props) => {
           variant='faded'
           defaultValue={user?.email || ''}
         />
+        <SignaturePad />
       </CardBody>
       <CardFooter className='justify-end p-6'>
         <Button isDisabled={!formState.isDirty} color='secondary'>

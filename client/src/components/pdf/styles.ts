@@ -170,6 +170,15 @@ const styles = StyleSheet.create({
   boldText: {
     fontWeight: 700,
   },
+  signatureImageContainer: {
+    left: '-20px',
+    bottom: '-20px',
+    width: '45%',
+    position: 'absolute',
+  },
+  signatureImage: {
+    objectFit: 'contain',
+  },
 });
 
 export default styles;

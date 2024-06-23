@@ -23,6 +23,7 @@ import InvoiceModal from './InvoiceModal';
 import InvoiceTableBottomContent from './InvoiceTableBottomContent';
 import InvoiceTableCell from './InvoiceTableCell';
 import InvoiceTableTopContent from './InvoiceTableTopContent';
+import SignaturePad from '../SignaturePad';
 
 const ROWS_PER_PAGE = 10;
 const INITIAL_VISIBLE_COLUMNS = [
@@ -41,7 +42,7 @@ const InvoiceTable = () => {
   const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
 
   const [filterValue, setFilterValue] = useState('');
-  const [selectedKeys, setSelectedKeys] = useState<Set<never> | 'all'>(
+  const [selectedKeys, _setSelectedKeys] = useState<Set<never> | 'all'>(
     new Set([])
   );
   const [visibleColumns, setVisibleColumns] = useState<Set<string> | 'all'>(
@@ -134,17 +135,21 @@ const InvoiceTable = () => {
   );
 
   const renderTopContent = () => (
-    <InvoiceTableTopContent
-      filterValue={filterValue}
-      setFilterValue={setFilterValue}
-      visibleColumns={visibleColumns}
-      setPage={setPage}
-      setRowsPerPage={setRowsPerPage}
-      setStatusFilter={setStatusFilter}
-      setVisibleColumns={setVisibleColumns}
-      statusFilter={statusFilter}
-      invoicesLength={invoices?.length}
-    />
+    <>
+      <InvoiceTableTopContent
+        filterValue={filterValue}
+        setFilterValue={setFilterValue}
+        visibleColumns={visibleColumns}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
+        setStatusFilter={setStatusFilter}
+        setVisibleColumns={setVisibleColumns}
+        statusFilter={statusFilter}
+        invoicesLength={invoices?.length}
+      />
+      {/* TODO: Remove SignaturePad once integrated signature is integrated with DB */}
+      <SignaturePad />
+    </>
   );
 
   const renderBottomContent = () => (
