@@ -1,12 +1,16 @@
-import { PencilIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, CheckCircleIcon } from '@heroicons/react/16/solid';
 import {
   Button,
+  Card,
+  CardBody,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
   useDisclosure,
+  Image,
+  Chip,
 } from '@nextui-org/react';
 import { useContext, useEffect, useRef } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
@@ -15,8 +19,12 @@ import { SignatureContext } from '@/contexts/SignatureContextProvider';
 
 const SignaturePad = () => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-  const { signatureImage, setSignatureImage, setTrimmedSignatureImage } =
-    useContext(SignatureContext);
+  const {
+    signatureImage,
+    setSignatureImage,
+    trimmedSignatureImage,
+    setTrimmedSignatureImage,
+  } = useContext(SignatureContext);
   const signatureRef = useRef<SignatureCanvas>(null);
 
   const saveSignature = () => {
@@ -39,7 +47,7 @@ const SignaturePad = () => {
     if (!isOpen || !signatureImage) return;
 
     signatureRef.current?.fromDataURL(signatureImage, {
-      width: 528,
+      width: 532,
       height: 400,
     });
   }, [isOpen, signatureImage]);
@@ -47,16 +55,41 @@ const SignaturePad = () => {
   return (
     <>
       <div className='flex flex-col gap-1.5'>
-        <small className='text-white'>Signature</small>
-        <Button
-          variant='bordered'
-          className='p-0'
-          color='default'
-          startContent={<PencilIcon className='size-5' />}
+        <Card
+          radius='lg'
+          className='flex justify-center items-center relative aspect-4/3 overflow-hidden'
           onPress={onOpen}
+          isPressable
         >
-          {signatureImage ? 'Edit Signature' : 'Add Signature'}
-        </Button>
+          <CardBody className='p-0 w-full h-full flex flex-col gap-2 justify-center items-center overflow-visible group'>
+            {trimmedSignatureImage ? (
+              <>
+                <Image
+                  src={trimmedSignatureImage}
+                  alt='Signature'
+                  className='z-0 rounded-none'
+                />
+                <div className='absolute w-full h-full bg-black bg-opacity-75 flex-col justify-center items-center gap-2 hidden group-hover:flex'>
+                  <PencilSquareIcon className='h-10 w-10' />
+                  <p className='font-medium'>Edit Signature</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <PencilSquareIcon className='h-8 w-8' />
+                <p className='font-medium'>Add a Signature</p>
+              </>
+            )}
+          </CardBody>
+        </Card>
+        <Chip
+          onClose={() => {}}
+          endContent={<CheckCircleIcon className='w-4 h-4 mr-0.5' />}
+          color='secondary'
+          variant='faded'
+        >
+          Use Profile Signature
+        </Chip>
       </div>
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='xl'>
@@ -66,7 +99,7 @@ const SignaturePad = () => {
             <SignatureCanvas
               ref={signatureRef}
               canvasProps={{
-                width: 528,
+                width: 532,
                 height: 400,
                 style: { backgroundColor: 'white' },
               }}
@@ -82,12 +115,6 @@ const SignaturePad = () => {
               onPress={() => signatureRef.current?.clear()}
             >
               Clear
-            </Button>
-            <Button
-              color='secondary'
-              onPress={() => signatureRef.current?.fromDataURL(signatureImage)}
-            >
-              Show
             </Button>
           </ModalFooter>
         </ModalContent>

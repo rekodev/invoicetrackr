@@ -11,9 +11,11 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
+import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { CLIENT_BUSINESS_TYPES } from '@/constants/client';
+import { SignatureContext } from '@/contexts/SignatureContextProvider';
 import { UserModel } from '@/types/models/user';
 import { capitalize } from '@/utils';
 
@@ -27,6 +29,10 @@ const PersonalInformationForm = ({ user }: Props) => {
   const { register, handleSubmit, formState } = useForm<UserModel>({
     defaultValues: user,
   });
+  const { trimmedSignatureImage } = useContext(SignatureContext);
+  const [formSignature, _setFormSignature] = useState(trimmedSignatureImage);
+
+  const hasSignatureChanged = trimmedSignatureImage !== formSignature;
 
   const onSubmit = () => {};
 
@@ -81,10 +87,16 @@ const PersonalInformationForm = ({ user }: Props) => {
           variant='faded'
           defaultValue={user?.email || ''}
         />
-        <SignaturePad />
+        <div className='flex flex-col gap-2 mt-[-0.25rem]'>
+          <label className='text-sm self-start '>Signature</label>
+          <SignaturePad />
+        </div>
       </CardBody>
       <CardFooter className='justify-end p-6'>
-        <Button isDisabled={!formState.isDirty} color='secondary'>
+        <Button
+          isDisabled={!formState.isDirty && !hasSignatureChanged}
+          color='secondary'
+        >
           Save
         </Button>
       </CardFooter>

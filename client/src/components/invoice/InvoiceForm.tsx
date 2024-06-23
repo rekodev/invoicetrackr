@@ -24,6 +24,7 @@ import InvoicePartyCard from './InvoicePartyCard';
 import InvoiceServicesTable from './InvoiceServicesTable';
 import PencilIcon from '../icons/PencilIcon';
 import { PlusIcon } from '../icons/PlusIcon';
+import SignaturePad from '../SignaturePad';
 import ErrorAlert from '../ui/ErrorAlert';
 import Loader from '../ui/Loader';
 
@@ -125,6 +126,13 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     </div>
   );
 
+  const renderInvoiceSignature = () => (
+    <div className='flex gap-4 flex-col'>
+      <h4>Signature</h4>
+      <SignaturePad />
+    </div>
+  );
+
   const renderSubmissionMessageAndActions = () => (
     <div className='col-span-full flex w-full items-center gap-5 justify-between overflow-x-hidden'>
       {submissionMessage && (
@@ -208,6 +216,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
             />
             {renderSenderAndReceiverCards()}
             {renderInvoiceServices()}
+            {renderInvoiceSignature()}
             {renderSubmissionMessageAndActions()}
           </form>
         </Card>

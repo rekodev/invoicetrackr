@@ -135,21 +135,17 @@ const InvoiceTable = () => {
   );
 
   const renderTopContent = () => (
-    <>
-      <InvoiceTableTopContent
-        filterValue={filterValue}
-        setFilterValue={setFilterValue}
-        visibleColumns={visibleColumns}
-        setPage={setPage}
-        setRowsPerPage={setRowsPerPage}
-        setStatusFilter={setStatusFilter}
-        setVisibleColumns={setVisibleColumns}
-        statusFilter={statusFilter}
-        invoicesLength={invoices?.length}
-      />
-      {/* TODO: Remove SignaturePad once integrated signature is integrated with DB */}
-      <SignaturePad />
-    </>
+    <InvoiceTableTopContent
+      filterValue={filterValue}
+      setFilterValue={setFilterValue}
+      visibleColumns={visibleColumns}
+      setPage={setPage}
+      setRowsPerPage={setRowsPerPage}
+      setStatusFilter={setStatusFilter}
+      setVisibleColumns={setVisibleColumns}
+      statusFilter={statusFilter}
+      invoicesLength={invoices?.length}
+    />
   );
 
   const renderBottomContent = () => (
