@@ -1,4 +1,8 @@
-export const base64ToBlob = (base64: string, mimeType: string) => {
+export const base64ToFile = (
+  base64: string,
+  fileName: string,
+  mimeType: string
+): File => {
   const byteCharacters = atob(base64.split(',')[1]);
   const byteNumbers = new Array(byteCharacters.length);
 
@@ -7,7 +11,7 @@ export const base64ToBlob = (base64: string, mimeType: string) => {
   }
 
   const byteArray = new Uint8Array(byteNumbers);
-  const blob = new Blob([byteArray], { type: mimeType });
+  const file = new File([byteArray], fileName, { type: mimeType });
 
-  return blob;
+  return file;
 };

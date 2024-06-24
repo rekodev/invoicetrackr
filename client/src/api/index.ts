@@ -23,7 +23,9 @@ export const updateInvoice = async (
   userId: number,
   invoiceData: InvoiceModel
 ): Promise<AxiosResponse<UpdateInvoiceResp>> =>
-  api.put(`/api/${userId}/invoices/${invoiceData.id}`, invoiceData);
+  api.put(`/api/${userId}/invoices/${invoiceData.id}`, invoiceData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
 
 export const deleteInvoice = async (
   userId: number,

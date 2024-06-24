@@ -1,5 +1,4 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { InvoiceModel } from '../types/models';
 import {
   deleteInvoiceFromDb,
   findInvoiceById,
@@ -8,8 +7,10 @@ import {
   insertInvoiceInDb,
   updateInvoiceInDb,
 } from '../database';
-import { transformInvoiceDto } from '../types/transformers';
 import { InvoiceDto } from '../types/dtos';
+import { InvoiceModel } from '../types/models';
+import { transformInvoiceDto } from '../types/transformers';
+import { File } from 'fastify-multer/lib/interfaces';
 
 export const getInvoices = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -37,7 +38,7 @@ export const getInvoice = async (
 };
 
 export const postInvoice = async (
-  req: FastifyRequest<{ Body: InvoiceModel }>,
+  req: FastifyRequest<{ Body: InvoiceModel }> & { file: File },
   reply: FastifyReply
 ) => {
   const invoiceData = req.body;
@@ -67,11 +68,15 @@ export const updateInvoice = async (
   req: FastifyRequest<{
     Params: { userId: number; id: number };
     Body: InvoiceModel;
-  }>,
+  }> & { file: File },
   reply: FastifyReply
 ) => {
   const { userId, id } = req.params;
   const invoiceData = req.body;
+
+  const file = req.file;
+
+  // TODO: Implement file upload
 
   const foundInvoice = await findInvoiceById(userId, invoiceData.id);
 

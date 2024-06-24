@@ -82,7 +82,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     clearErrors('receiver');
   };
 
-  const handleSignatureChange = (signature: string | Blob) => {
+  const handleSignatureChange = (signature: string | File) => {
     setValue('senderSignature', signature);
     clearErrors('senderSignature');
   };
@@ -183,6 +183,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
             aria-label='Add New Invoice Form'
             className='w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'
             onSubmit={handleSubmit(onSubmit)}
+            encType='multipart/form-data'
           >
             <Input
               aria-label='Invoice ID'

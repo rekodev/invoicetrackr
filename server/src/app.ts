@@ -1,10 +1,11 @@
-import fastify from 'fastify';
 import dotenv from 'dotenv';
+import fastify from 'fastify';
+import multer from 'fastify-multer';
 
 import cors from '@fastify/cors';
 
-import { getPgVersion } from './database/db';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { getPgVersion } from './database/db';
 import { clientRoutes, invoiceRoutes, userRoutes } from './routes';
 import { transformErrors } from './utils/validation';
 
@@ -20,6 +21,12 @@ const server = fastify({
   },
 }).withTypeProvider<TypeBoxTypeProvider>();
 
+server.register(cors);
+server.register(multer.contentParser);
+server.register(invoiceRoutes);
+server.register(clientRoutes);
+server.register(userRoutes);
+
 server.setErrorHandler(function (error, _request, reply) {
   if (error.validation) {
     return reply.status(400).send({
@@ -33,11 +40,6 @@ server.setErrorHandler(function (error, _request, reply) {
     .status(500)
     .send({ errors: [], message: error.message, code: error.code });
 });
-
-server.register(cors);
-server.register(invoiceRoutes);
-server.register(clientRoutes);
-server.register(userRoutes);
 
 getPgVersion();
 

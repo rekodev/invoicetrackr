@@ -16,12 +16,12 @@ import { useContext, useEffect, useRef } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
 import { SignatureContext } from '@/contexts/SignatureContextProvider';
-import { base64ToBlob } from '@/utils/base64ToBlob';
+import { base64ToFile } from '@/utils/base64ToFile';
 
 type Props = {
-  signature?: Blob | string;
+  signature?: File | string;
   profileSignature?: string;
-  onSignatureChange: (signature: Blob | string) => void;
+  onSignatureChange: (signature: File | string) => void;
   isInvalid?: boolean;
   errorMessage?: string;
 };
@@ -61,7 +61,9 @@ const SignaturePad = ({
 
     if (trimmedSignatureImage) {
       setTrimmedSignatureImage(trimmedSignatureImage);
-      onSignatureChange(base64ToBlob(trimmedSignatureImage, 'image/png'));
+      onSignatureChange(
+        base64ToFile(trimmedSignatureImage, 'sender_signature.png', 'image/png')
+      );
     }
 
     onClose();

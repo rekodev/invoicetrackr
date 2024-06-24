@@ -1,4 +1,7 @@
 import { Type } from '@sinclair/typebox';
+import { RouteShorthandOptionsWithHandler } from 'fastify';
+import multer from 'fastify-multer';
+
 import {
   deleteInvoice,
   getInvoice,
@@ -7,7 +10,6 @@ import {
   updateInvoice,
 } from '../controllers';
 import { Invoice } from '../types/models';
-import { RouteShorthandOptionsWithHandler } from 'fastify';
 
 export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -44,6 +46,9 @@ export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ invoice: Invoice, message: Type.String() }),
     },
   },
+  preValidation: multer({
+    storage: multer.memoryStorage(),
+  }).single('senderSignature'),
   handler: updateInvoice,
 };
 
