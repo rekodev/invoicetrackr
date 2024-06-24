@@ -45,6 +45,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     setError,
     formState: { errors },
     clearErrors,
+    setValue,
   } = methods;
 
   const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
@@ -79,6 +80,11 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     setReceiverData(receiver);
     setIsReceiverModalOpen(false);
     clearErrors('receiver');
+  };
+
+  const handleSignatureChange = (signature: string | Blob) => {
+    setValue('senderSignature', signature);
+    clearErrors('senderSignature');
   };
 
   const renderReceiverActions = () => (
@@ -133,7 +139,13 @@ const InvoiceForm = ({ invoiceData }: Props) => {
   const renderInvoiceSignature = () => (
     <div className='flex gap-4 flex-col'>
       <h4>Signature</h4>
-      <SignaturePad />
+      <SignaturePad
+        signature={invoiceData?.senderSignature}
+        profileSignature={user?.signature as string | undefined}
+        onSignatureChange={handleSignatureChange}
+        isInvalid={!!errors.senderSignature}
+        errorMessage={errors.senderSignature?.message}
+      />
     </div>
   );
 

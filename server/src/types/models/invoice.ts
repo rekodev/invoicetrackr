@@ -52,6 +52,13 @@ export const Invoice = Type.Object({
     errorMessage: 'Valid date is required',
   }),
   sender: User,
+  senderSignature: Type.Union(
+    [
+      Type.String({ minLength: 1 }),
+      Type.Object({ size: Type.Number(), type: Type.String() }),
+    ],
+    { errorMessage: 'Signature is required' }
+  ),
   receiver: Type.Object(
     {
       id: Type.Number(),

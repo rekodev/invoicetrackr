@@ -1,23 +1,38 @@
-import { PencilSquareIcon, CheckCircleIcon } from '@heroicons/react/16/solid';
+import { CheckCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import {
   Button,
   Card,
   CardBody,
+  Chip,
+  Image,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
   useDisclosure,
-  Image,
-  Chip,
 } from '@nextui-org/react';
 import { useContext, useEffect, useRef } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
 import { SignatureContext } from '@/contexts/SignatureContextProvider';
+import { base64ToBlob } from '@/utils/base64ToBlob';
 
-const SignaturePad = () => {
+type Props = {
+  signature?: Blob | string;
+  profileSignature?: string;
+  onSignatureChange: (signature: Blob | string) => void;
+  isInvalid?: boolean;
+  errorMessage?: string;
+};
+
+const SignaturePad = ({
+  signature,
+  profileSignature,
+  onSignatureChange,
+  isInvalid,
+  errorMessage,
+}: Props) => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const {
     signatureImage,
@@ -26,6 +41,12 @@ const SignaturePad = () => {
     setTrimmedSignatureImage,
   } = useContext(SignatureContext);
   const signatureRef = useRef<SignatureCanvas>(null);
+
+  const signatureImgUrl = signature
+    ? typeof signature === 'string'
+      ? signature
+      : URL.createObjectURL(signature)
+    : trimmedSignatureImage;
 
   const saveSignature = () => {
     const dataURL = signatureRef.current
@@ -38,7 +59,10 @@ const SignaturePad = () => {
       ?.getTrimmedCanvas()
       .toDataURL('image/png');
 
-    if (trimmedSignatureImage) setTrimmedSignatureImage(trimmedSignatureImage);
+    if (trimmedSignatureImage) {
+      setTrimmedSignatureImage(trimmedSignatureImage);
+      onSignatureChange(base64ToBlob(trimmedSignatureImage, 'image/png'));
+    }
 
     onClose();
   };
@@ -57,15 +81,17 @@ const SignaturePad = () => {
       <div className='flex flex-col gap-1.5'>
         <Card
           radius='lg'
-          className='flex justify-center items-center relative aspect-4/3 overflow-hidden'
+          className={`flex justify-center items-center relative aspect-4/3 overflow-hidden ${
+            isInvalid && 'bg-[#F3126040]'
+          }`}
           onPress={onOpen}
           isPressable
         >
           <CardBody className='p-0 w-full h-full flex flex-col gap-2 justify-center items-center overflow-visible group'>
-            {trimmedSignatureImage ? (
+            {signatureImgUrl ? (
               <>
                 <Image
-                  src={trimmedSignatureImage}
+                  src={signatureImgUrl}
                   alt='Signature'
                   className='z-0 rounded-none'
                 />
@@ -82,14 +108,21 @@ const SignaturePad = () => {
             )}
           </CardBody>
         </Card>
-        <Chip
-          onClose={() => {}}
-          endContent={<CheckCircleIcon className='w-4 h-4 mr-0.5' />}
-          color='secondary'
-          variant='faded'
-        >
-          Use Profile Signature
-        </Chip>
+        {profileSignature && (
+          <Chip
+            onClose={() => onSignatureChange(profileSignature)}
+            endContent={<CheckCircleIcon className='w-4 h-4 mr-0.5' />}
+            color='secondary'
+            variant='faded'
+          >
+            Use Profile Signature
+          </Chip>
+        )}
+        {isInvalid && (
+          <Chip variant='light' className='mt-[-4px]' size='sm' color='danger'>
+            {errorMessage}
+          </Chip>
+        )}
       </div>
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='xl'>

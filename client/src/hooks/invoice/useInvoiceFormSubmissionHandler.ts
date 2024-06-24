@@ -53,6 +53,7 @@ const useInvoiceFormSubmissionHandler = ({
     const fullData: typeof data = {
       ...data,
       sender: user,
+      senderSignature: data.senderSignature || '',
       receiver: receiverData || invoiceData?.receiver || ({} as ClientModel),
       totalAmount: calculateServiceTotal(data.services),
     };

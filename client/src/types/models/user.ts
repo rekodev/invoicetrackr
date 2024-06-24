@@ -11,6 +11,7 @@ export const userSchema = z.object({
   id: z.number().optional(),
   name: z.string(),
   type: z.literal('sender'),
+  signature: z.string(),
   businessType: z.union([z.literal('individual'), z.literal('business')]),
   businessNumber: z.string(),
   address: z.string(),
