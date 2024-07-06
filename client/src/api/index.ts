@@ -2,13 +2,15 @@ import { AxiosResponse } from 'axios';
 
 import { ClientFormData, ClientModel } from '@/types/models/client';
 import { InvoiceFormData, InvoiceModel } from '@/types/models/invoice';
+import { UserModel } from '@/types/models/user';
 import {
   AddClientResp,
   AddInvoiceResp,
-  UpdateInvoiceResp,
-  DeleteInvoiceResp,
   DeleteClientResp,
+  DeleteInvoiceResp,
   UpdateClientResp,
+  UpdateInvoiceResp,
+  UpdateUserResp,
 } from '@/types/response';
 
 import api from './apiInstance';
@@ -50,3 +52,11 @@ export const deleteClient = async (
   clientId: number
 ): Promise<AxiosResponse<DeleteClientResp>> =>
   await api.delete(`/api/${userId}/clients/${clientId}`);
+
+export const updateUser = async (
+  id: number,
+  userData: UserModel
+): Promise<AxiosResponse<UpdateUserResp>> =>
+  await api.put(`/api/users/${id}`, userData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });

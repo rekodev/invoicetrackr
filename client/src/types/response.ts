@@ -2,6 +2,7 @@ import { ApiError } from '@/api/apiInstance';
 
 import { ClientModel } from './models/client';
 import { InvoiceModel } from './models/invoice';
+import { UserModel } from './models/user';
 
 export type GetInvoicesResp = ApiError & {
   invoices: Array<InvoiceModel>;
@@ -26,3 +27,7 @@ export type UpdateClientResp = ApiError & {
 };
 
 export type DeleteClientResp = ApiError;
+
+export type UpdateUserResp = ApiError & {
+  user: UserModel;
+};

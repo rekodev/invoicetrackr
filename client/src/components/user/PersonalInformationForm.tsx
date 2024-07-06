@@ -11,11 +11,13 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
-import { useContext, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
+import { updateUser } from '@/api';
 import { CLIENT_BUSINESS_TYPES } from '@/constants/client';
-import { SignatureContext } from '@/contexts/SignatureContextProvider';
+import { UiState } from '@/constants/uiState';
+import useGetUser from '@/hooks/user/useGetUser';
 import { UserModel } from '@/types/models/user';
 import { capitalize } from '@/utils';
 
@@ -25,16 +27,54 @@ type Props = {
   user: UserModel | undefined;
 };
 
+// TODO: Improve form and add validation
+
 const PersonalInformationForm = ({ user }: Props) => {
-  const { register, handleSubmit, formState } = useForm<UserModel>({
+  const { mutateUser } = useGetUser();
+  const {
+    register,
+    handleSubmit,
+    formState: { isLoading },
+  } = useForm<UserModel>({
     defaultValues: user,
   });
-  const { trimmedSignatureImage } = useContext(SignatureContext);
-  const [formSignature, _setFormSignature] = useState(trimmedSignatureImage);
+  const [formSignature, setFormSignature] = useState<
+    File | string | undefined
+  >();
+  const [submissionMessage, setSubmissionMessage] = useState('');
+  const [uiState, setUiState] = useState(UiState.Idle);
 
-  const hasSignatureChanged = trimmedSignatureImage !== formSignature;
+  // const hasSignatureChanged = trimmedSignatureImage !== formSignature;
 
-  const onSubmit = () => {};
+  // const handleSignatureChange = (signature: File | string) => {
+  //   setFormSignature(signature);
+  // };
+
+  const onSubmit: SubmitHandler<UserModel> = async (data) => {
+    if (!user?.id) return;
+
+    setSubmissionMessage('');
+    setUiState(UiState.Pending);
+
+    const response = await updateUser(user.id, {
+      ...data,
+      signature: formSignature || user.signature,
+    });
+    setSubmissionMessage(response.data.message);
+
+    if ('errors' in response.data) {
+      setUiState(UiState.Failure);
+
+      // response.data.errors.forEach((error) => {
+      //   setError(error.key, { message: error.value });
+      // });
+
+      return;
+    }
+
+    setUiState(UiState.Success);
+    mutateUser();
+  };
 
   return (
     <Card
@@ -42,6 +82,7 @@ const PersonalInformationForm = ({ user }: Props) => {
       aria-label='Personal Information Form'
       onSubmit={handleSubmit(onSubmit)}
       className='w-full bg-transparent border border-neutral-800'
+      encType='multipart/form-data'
     >
       <CardHeader className='p-4 px-6'>Personal Information</CardHeader>
       <Divider />
@@ -89,12 +130,17 @@ const PersonalInformationForm = ({ user }: Props) => {
         />
         <div className='flex flex-col gap-2 mt-[-0.25rem]'>
           <label className='text-sm self-start '>Signature</label>
-          <SignaturePad />
+          <SignaturePad
+            signature={formSignature || user?.signature}
+            onSignatureChange={setFormSignature}
+          />
         </div>
       </CardBody>
       <CardFooter className='justify-end p-6'>
         <Button
-          isDisabled={!formState.isDirty && !hasSignatureChanged}
+          // isDisabled={!formState.isDirty && !hasSignatureChanged}
+          type='submit'
+          isLoading={isLoading}
           color='secondary'
         >
           Save
