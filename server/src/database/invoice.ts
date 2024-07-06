@@ -22,6 +22,7 @@ export const getInvoicesFromDb = async (userId: number) => {
       invoices.total_amount,
       invoices.status,
       invoices.due_date,
+      invoices.sender_signature,
       users.id as sender_id,
       users.name as sender_name,
       users.type as sender_type,
@@ -67,6 +68,7 @@ export const getInvoiceFromDb = async (userId: number, invoiceId: number) => {
       invoices.total_amount,
       invoices.status,
       invoices.due_date,
+      invoices.sender_signature,
       users.id as sender_id,
       users.name as sender_name,
       users.type as sender_type,
@@ -174,7 +176,8 @@ export const insertInvoiceInDb = async (invoiceData: InvoiceModel) => {
 export const updateInvoiceInDb = async (
   userId: number,
   id: number,
-  invoiceData: InvoiceModel
+  invoiceData: InvoiceModel,
+  senderSignature: string
 ) => {
   const invoice = await sql.begin<InvoiceDto>(async (sql) => {
     const [invoice] = await sql`
@@ -186,7 +189,8 @@ export const updateInvoiceInDb = async (
         date = ${invoiceData.date},
         due_date = ${invoiceData.dueDate},
         status = ${invoiceData.status},
-        total_amount = ${invoiceData.totalAmount}
+        total_amount = ${invoiceData.totalAmount},
+        sender_signature = ${senderSignature}
       where sender_id = ${userId} and id = ${id}
       returning id
     `;

@@ -1,4 +1,6 @@
+import { v2 as cloudinary } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { File } from 'fastify-multer/lib/interfaces';
 import {
   deleteInvoiceFromDb,
   findInvoiceById,
@@ -10,7 +12,6 @@ import {
 import { InvoiceDto } from '../types/dtos';
 import { InvoiceModel } from '../types/models';
 import { transformInvoiceDto } from '../types/transformers';
-import { File } from 'fastify-multer/lib/interfaces';
 
 export const getInvoices = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -74,16 +75,26 @@ export const updateInvoice = async (
   const { userId, id } = req.params;
   const invoiceData = req.body;
 
-  const file = req.file;
+  const signature = req.file;
 
-  // TODO: Implement file upload
+  const uploadedSignature = await cloudinary.uploader.upload(
+    `data:${signature.mimetype};base64,${signature.buffer.toString('base64')}`
+  );
+
+  if (!uploadedSignature)
+    return reply.status(400).send({ message: 'Unable to upload signature' });
 
   const foundInvoice = await findInvoiceById(userId, invoiceData.id);
 
   if (!foundInvoice)
     return reply.status(404).send({ message: 'Invoice not found' });
 
-  const updatedInvoice = await updateInvoiceInDb(userId, id, invoiceData);
+  const updatedInvoice = await updateInvoiceInDb(
+    userId,
+    id,
+    invoiceData,
+    uploadedSignature.url
+  );
 
   if (!updatedInvoice)
     return reply.status(400).send({ message: 'Unable to update invoice' });

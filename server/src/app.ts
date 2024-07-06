@@ -1,15 +1,17 @@
 import dotenv from 'dotenv';
 import fastify from 'fastify';
 import multer from 'fastify-multer';
-
 import cors from '@fastify/cors';
 
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { getPgVersion } from './database/db';
 import { clientRoutes, invoiceRoutes, userRoutes } from './routes';
 import { transformErrors } from './utils/validation';
+import { v2 as cloudinary } from 'cloudinary';
+import { cloudinaryConfig } from './config/cloudinary';
 
 dotenv.config();
+cloudinary.config(cloudinaryConfig);
 
 const port = parseInt(process.env.PORT);
 const server = fastify({
