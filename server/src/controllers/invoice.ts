@@ -1,9 +1,10 @@
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { File } from 'fastify-multer/lib/interfaces';
 import {
   deleteInvoiceFromDb,
   findInvoiceById,
+  findInvoiceByInvoiceId,
   getInvoiceFromDb,
   getInvoicesFromDb,
   insertInvoiceInDb,
@@ -39,14 +40,31 @@ export const getInvoice = async (
 };
 
 export const postInvoice = async (
-  req: FastifyRequest<{ Body: InvoiceModel }> & { file: File },
+  req: FastifyRequest<{ Params: { userId: number }; Body: InvoiceModel }> & {
+    file: File;
+  },
   reply: FastifyReply
 ) => {
+  const { userId } = req.params;
   const invoiceData = req.body;
+  const signatureFile = req.file;
 
-  const foundInvoice = await findInvoiceById(
-    invoiceData.sender.id,
-    invoiceData.id
+  let uploadedSignature: UploadApiResponse;
+
+  if (signatureFile) {
+    uploadedSignature = await cloudinary.uploader.upload(
+      `data:${signatureFile.mimetype};base64,${signatureFile.buffer.toString(
+        'base64'
+      )}`
+    );
+
+    if (!uploadedSignature)
+      return reply.status(400).send({ message: 'Unable to upload signature' });
+  }
+
+  const foundInvoice = await findInvoiceByInvoiceId(
+    userId,
+    invoiceData.invoiceId
   );
 
   if (foundInvoice)
@@ -54,7 +72,10 @@ export const postInvoice = async (
       .status(403)
       .send({ message: 'Invoice with provided invoice ID already exists' });
 
-  const insertedInvoice = await insertInvoiceInDb(invoiceData);
+  const insertedInvoice = await insertInvoiceInDb(
+    invoiceData,
+    uploadedSignature ? uploadedSignature.url : invoiceData.senderSignature
+  );
 
   if (!insertedInvoice)
     return reply.status(400).send({ message: 'Unable to add invoice' });
@@ -74,15 +95,20 @@ export const updateInvoice = async (
 ) => {
   const { userId, id } = req.params;
   const invoiceData = req.body;
+  const signatureFile = req.file;
 
-  const signature = req.file;
+  let uploadedSignature: UploadApiResponse;
 
-  const uploadedSignature = await cloudinary.uploader.upload(
-    `data:${signature.mimetype};base64,${signature.buffer.toString('base64')}`
-  );
+  if (signatureFile) {
+    uploadedSignature = await cloudinary.uploader.upload(
+      `data:${signatureFile.mimetype};base64,${signatureFile.buffer.toString(
+        'base64'
+      )}`
+    );
 
-  if (!uploadedSignature)
-    return reply.status(400).send({ message: 'Unable to upload signature' });
+    if (!uploadedSignature)
+      return reply.status(400).send({ message: 'Unable to upload signature' });
+  }
 
   const foundInvoice = await findInvoiceById(userId, invoiceData.id);
 
@@ -93,7 +119,7 @@ export const updateInvoice = async (
     userId,
     id,
     invoiceData,
-    uploadedSignature.url
+    signatureFile ? uploadedSignature.url : invoiceData.senderSignature
   );
 
   if (!updatedInvoice)

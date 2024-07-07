@@ -4,8 +4,6 @@ import { NextUIProvider } from '@nextui-org/react';
 import axios from 'axios';
 import { SWRConfig } from 'swr';
 
-import SignatureContextProvider from '@/contexts/SignatureContextProvider';
-
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const fetcher = async (url: string) => {
@@ -23,7 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SWRConfig value={{ fetcher }}>
       <NextUIProvider className='flex flex-col min-h-screen justify-between'>
-        <SignatureContextProvider>{children}</SignatureContextProvider>
+        {children}
       </NextUIProvider>
     </SWRConfig>
   );

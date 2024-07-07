@@ -6,6 +6,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Chip,
   Divider,
   Input,
   Select,
@@ -34,7 +35,7 @@ const PersonalInformationForm = ({ user }: Props) => {
   const {
     register,
     handleSubmit,
-    formState: { isLoading },
+    formState: { isDirty },
   } = useForm<UserModel>({
     defaultValues: user,
   });
@@ -43,12 +44,6 @@ const PersonalInformationForm = ({ user }: Props) => {
   >();
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [uiState, setUiState] = useState(UiState.Idle);
-
-  // const hasSignatureChanged = trimmedSignatureImage !== formSignature;
-
-  // const handleSignatureChange = (signature: File | string) => {
-  //   setFormSignature(signature);
-  // };
 
   const onSubmit: SubmitHandler<UserModel> = async (data) => {
     if (!user?.id) return;
@@ -136,11 +131,16 @@ const PersonalInformationForm = ({ user }: Props) => {
           />
         </div>
       </CardBody>
-      <CardFooter className='justify-end p-6'>
+      <CardFooter className='justify-between p-6 w-full'>
+        {submissionMessage && (
+          <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
+            {submissionMessage}
+          </Chip>
+        )}
         <Button
-          // isDisabled={!formState.isDirty && !hasSignatureChanged}
+          isDisabled={!isDirty && !Boolean(formSignature)}
           type='submit'
-          isLoading={isLoading}
+          isLoading={uiState === UiState.Pending}
           color='secondary'
         >
           Save

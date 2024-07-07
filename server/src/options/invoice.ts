@@ -36,6 +36,9 @@ export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
       201: Type.Object({ invoice: Invoice, message: Type.String() }),
     },
   },
+  preValidation: multer({
+    storage: multer.memoryStorage(),
+  }).single('senderSignature'),
   handler: postInvoice,
 };
 

@@ -52,6 +52,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
+  const [senderSignature, setSenderSignature] = useState<string | File>();
 
   const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({
     invoiceData,
@@ -66,6 +67,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     if (!invoiceData) return;
 
     setReceiverData(invoiceData.receiver);
+    setSenderSignature(invoiceData.senderSignature);
   }, [invoiceData]);
 
   const handleOpenReceiverModal = () => {
@@ -83,6 +85,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
   };
 
   const handleSignatureChange = (signature: string | File) => {
+    setSenderSignature(signature);
     setValue('senderSignature', signature);
     clearErrors('senderSignature');
   };
@@ -140,11 +143,12 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     <div className='flex gap-4 flex-col'>
       <h4>Signature</h4>
       <SignaturePad
-        signature={invoiceData?.senderSignature}
+        signature={senderSignature}
         profileSignature={user?.signature as string | undefined}
         onSignatureChange={handleSignatureChange}
         isInvalid={!!errors.senderSignature}
         errorMessage={errors.senderSignature?.message}
+        isChipVisible={user?.signature !== senderSignature}
       />
     </div>
   );

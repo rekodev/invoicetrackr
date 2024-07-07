@@ -13,6 +13,20 @@ export const findInvoiceById = async (userId: number, id: number) => {
   return invoice;
 };
 
+export const findInvoiceByInvoiceId = async (
+  userId: number,
+  invoiceId: string
+) => {
+  const [invoice] = await sql`
+    select
+      id
+    from invoices
+    where sender_id = ${userId} and invoice_id = ${invoiceId}
+  `;
+
+  return invoice;
+};
+
 export const getInvoicesFromDb = async (userId: number) => {
   const invoices = await sql`
     select
@@ -105,14 +119,17 @@ export const getInvoiceFromDb = async (userId: number, invoiceId: number) => {
   return invoice;
 };
 
-export const insertInvoiceInDb = async (invoiceData: InvoiceModel) => {
+export const insertInvoiceInDb = async (
+  invoiceData: InvoiceModel,
+  senderSignature: string
+) => {
   const invoice = await sql.begin<InvoiceDto>(async (sql) => {
     const [invoice] = await sql`
       insert into invoices (
-        date, invoice_id, total_amount, status, due_date, sender_id, receiver_id
+        date, invoice_id, total_amount, status, due_date, sender_id, receiver_id, sender_signature
       ) values (
         ${invoiceData.date}, ${invoiceData.invoiceId}, ${invoiceData.totalAmount}, ${invoiceData.status}, 
-        ${invoiceData.dueDate}, ${invoiceData.sender.id}, ${invoiceData.receiver.id}
+        ${invoiceData.dueDate}, ${invoiceData.sender.id}, ${invoiceData.receiver.id}, ${senderSignature}
       ) returning id
     `;
 

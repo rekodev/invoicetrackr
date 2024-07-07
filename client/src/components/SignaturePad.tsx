@@ -12,11 +12,10 @@ import {
   ModalHeader,
   useDisclosure,
 } from '@nextui-org/react';
-import { useContext, useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
-import { SignatureContext } from '@/contexts/SignatureContextProvider';
-import { base64ToFile } from '@/utils/base64ToFile';
+import { base64ToFile, imageUrlToBase64 } from '@/utils/base64';
 
 type Props = {
   signature?: File | string;
@@ -24,6 +23,7 @@ type Props = {
   onSignatureChange: (signature: File | string) => void;
   isInvalid?: boolean;
   errorMessage?: string;
+  isChipVisible?: boolean;
 };
 
 const SignaturePad = ({
@@ -32,21 +32,49 @@ const SignaturePad = ({
   onSignatureChange,
   isInvalid,
   errorMessage,
+  isChipVisible = false,
 }: Props) => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-  const {
-    signatureImage,
-    setSignatureImage,
-    trimmedSignatureImage,
-    setTrimmedSignatureImage,
-  } = useContext(SignatureContext);
+  const [signatureImage, setSignatureImage] = useState('');
+
   const signatureRef = useRef<SignatureCanvas>(null);
 
-  const signatureImgUrl = signature
-    ? typeof signature === 'string'
-      ? signature
-      : URL.createObjectURL(signature)
-    : trimmedSignatureImage;
+  const signatureImgUrl = useMemo(
+    () =>
+      signature
+        ? typeof signature === 'string'
+          ? signature
+          : URL.createObjectURL(signature)
+        : '',
+    [signature]
+  );
+
+  useEffect(() => {
+    if (!signature || signatureImage) return;
+
+    const setInitialSignatureImage = async () => {
+      if (typeof signature !== 'string') {
+        setSignatureImage(URL.createObjectURL(signature));
+
+        return;
+      }
+
+      const base64 = await imageUrlToBase64(signature);
+
+      setSignatureImage(base64);
+    };
+
+    setInitialSignatureImage();
+  }, [signatureImage, signature]);
+
+  useEffect(() => {
+    if (!isOpen || !signatureImage) return;
+
+    signatureRef.current?.fromDataURL(signatureImage, {
+      width: 532,
+      height: 400,
+    });
+  }, [isOpen, signatureImage]);
 
   const saveSignature = () => {
     const dataURL = signatureRef.current
@@ -60,7 +88,7 @@ const SignaturePad = ({
       .toDataURL('image/png');
 
     if (trimmedSignatureImage) {
-      setTrimmedSignatureImage(trimmedSignatureImage);
+      setSignatureImage(trimmedSignatureImage);
       onSignatureChange(
         base64ToFile(trimmedSignatureImage, 'sender_signature.png', 'image/png')
       );
@@ -69,14 +97,14 @@ const SignaturePad = ({
     onClose();
   };
 
-  useEffect(() => {
-    if (!isOpen || !signatureImage) return;
+  const setProfileSignature = async () => {
+    if (!profileSignature) return;
 
-    signatureRef.current?.fromDataURL(signatureImage, {
-      width: 532,
-      height: 400,
-    });
-  }, [isOpen, signatureImage]);
+    onSignatureChange(profileSignature);
+
+    const base64 = await imageUrlToBase64(profileSignature);
+    setSignatureImage(base64);
+  };
 
   return (
     <>
@@ -110,9 +138,9 @@ const SignaturePad = ({
             )}
           </CardBody>
         </Card>
-        {profileSignature && (
+        {profileSignature && isChipVisible && (
           <Chip
-            onClose={() => onSignatureChange(profileSignature)}
+            onClose={setProfileSignature}
             endContent={<CheckCircleIcon className='w-4 h-4 mr-0.5' />}
             color='secondary'
             variant='faded'

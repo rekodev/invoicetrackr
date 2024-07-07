@@ -2,7 +2,6 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
 import { PDFViewer } from '@react-pdf/renderer';
 import { useContext } from 'react';
 
-import { SignatureContext } from '@/contexts/SignatureContextProvider';
 import { InvoiceModel } from '@/types/models/invoice';
 
 import PDFDocument from '../pdf/PDFDocument';
@@ -11,11 +10,16 @@ type Props = {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   invoiceData: InvoiceModel;
+  senderSignatureImage: string;
 };
 
-const InvoiceModal = ({ isOpen, onOpenChange, invoiceData }: Props) => {
+const InvoiceModal = ({
+  isOpen,
+  onOpenChange,
+  invoiceData,
+  senderSignatureImage,
+}: Props) => {
   const { id } = invoiceData;
-  const { trimmedSignatureImage } = useContext(SignatureContext);
 
   return (
     <Modal
@@ -30,7 +34,7 @@ const InvoiceModal = ({ isOpen, onOpenChange, invoiceData }: Props) => {
             <PDFViewer className='h-full w-full'>
               <PDFDocument
                 invoiceData={invoiceData}
-                senderSignatureImage={trimmedSignatureImage}
+                senderSignatureImage={senderSignatureImage}
               />
             </PDFViewer>
           </div>
