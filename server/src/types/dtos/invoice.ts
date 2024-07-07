@@ -19,6 +19,7 @@ export type InvoiceDto = {
   sender_business_number: string;
   sender_address: string;
   sender_email: string;
+  sender_signature: string;
   receiver_id: number;
   receiver_name: string;
   receiver_type: InvoicePartyType;

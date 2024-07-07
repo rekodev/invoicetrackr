@@ -27,6 +27,7 @@ export const invoiceSchema = z.object({
   date: z.string(),
   dueDate: z.string(),
   sender: userSchema,
+  senderSignature: z.string().or(z.instanceof(File)),
   receiver: clientSchema,
   services: z.array(invoiceServiceSchema),
   totalAmount: z.number(),

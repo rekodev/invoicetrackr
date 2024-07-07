@@ -1,5 +1,6 @@
 import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
 import { PDFViewer } from '@react-pdf/renderer';
+import { useContext } from 'react';
 
 import { InvoiceModel } from '@/types/models/invoice';
 
@@ -9,9 +10,15 @@ type Props = {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   invoiceData: InvoiceModel;
+  senderSignatureImage: string;
 };
 
-const InvoiceModal = ({ isOpen, onOpenChange, invoiceData }: Props) => {
+const InvoiceModal = ({
+  isOpen,
+  onOpenChange,
+  invoiceData,
+  senderSignatureImage,
+}: Props) => {
   const { id } = invoiceData;
 
   return (
@@ -25,7 +32,10 @@ const InvoiceModal = ({ isOpen, onOpenChange, invoiceData }: Props) => {
         <ModalBody>
           <div className='w-full h-full'>
             <PDFViewer className='h-full w-full'>
-              <PDFDocument invoiceData={invoiceData} />
+              <PDFDocument
+                invoiceData={invoiceData}
+                senderSignatureImage={senderSignatureImage}
+              />
             </PDFViewer>
           </div>
         </ModalBody>

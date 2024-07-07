@@ -1,5 +1,6 @@
 import { Type } from '@sinclair/typebox';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
+import multer from 'fastify-multer';
 import { deleteUser, getUser, postUser, updateUser } from '../controllers';
 import { User } from '../types/models';
 
@@ -26,9 +27,12 @@ export const updateUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: User,
     response: {
-      200: User,
+      200: Type.Object({ user: User, message: Type.String() }),
     },
   },
+  preValidation: multer({
+    storage: multer.memoryStorage(),
+  }).single('signature'),
   handler: updateUser,
 };
 

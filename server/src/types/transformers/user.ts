@@ -2,8 +2,16 @@ import { UserDto } from '../dtos';
 import { UserModel } from '../models';
 
 export const transformUserDto = (userDto: UserDto): UserModel => {
-  const { id, name, business_type, business_number, address, type, email } =
-    userDto;
+  const {
+    id,
+    name,
+    business_type,
+    business_number,
+    address,
+    type,
+    email,
+    signature,
+  } = userDto;
 
   return {
     id,
@@ -13,5 +21,6 @@ export const transformUserDto = (userDto: UserDto): UserModel => {
     address,
     type,
     email,
+    signature,
   };
 };

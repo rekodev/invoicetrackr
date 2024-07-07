@@ -24,6 +24,7 @@ import InvoicePartyCard from './InvoicePartyCard';
 import InvoiceServicesTable from './InvoiceServicesTable';
 import PencilIcon from '../icons/PencilIcon';
 import { PlusIcon } from '../icons/PlusIcon';
+import SignaturePad from '../SignaturePad';
 import ErrorAlert from '../ui/ErrorAlert';
 import Loader from '../ui/Loader';
 
@@ -33,19 +34,25 @@ type Props = {
 
 const InvoiceForm = ({ invoiceData }: Props) => {
   const { user, isUserLoading, userError } = useGetUser();
-  const methods = useForm<InvoiceModel>({ defaultValues: invoiceData });
+  const methods = useForm<InvoiceModel>({
+    defaultValues: invoiceData || {
+      services: [{ amount: 0, quantity: 0, description: '', unit: '' }],
+    },
+  });
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
     clearErrors,
+    setValue,
   } = methods;
 
   const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
+  const [senderSignature, setSenderSignature] = useState<string | File>();
 
   const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({
     invoiceData,
@@ -60,6 +67,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     if (!invoiceData) return;
 
     setReceiverData(invoiceData.receiver);
+    setSenderSignature(invoiceData.senderSignature);
   }, [invoiceData]);
 
   const handleOpenReceiverModal = () => {
@@ -74,6 +82,12 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     setReceiverData(receiver);
     setIsReceiverModalOpen(false);
     clearErrors('receiver');
+  };
+
+  const handleSignatureChange = (signature: string | File) => {
+    setSenderSignature(signature);
+    setValue('senderSignature', signature);
+    clearErrors('senderSignature');
   };
 
   const renderReceiverActions = () => (
@@ -125,6 +139,20 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     </div>
   );
 
+  const renderInvoiceSignature = () => (
+    <div className='flex gap-4 flex-col'>
+      <h4>Signature</h4>
+      <SignaturePad
+        signature={senderSignature}
+        profileSignature={user?.signature as string | undefined}
+        onSignatureChange={handleSignatureChange}
+        isInvalid={!!errors.senderSignature}
+        errorMessage={errors.senderSignature?.message}
+        isChipVisible={user?.signature !== senderSignature}
+      />
+    </div>
+  );
+
   const renderSubmissionMessageAndActions = () => (
     <div className='col-span-full flex w-full items-center gap-5 justify-between overflow-x-hidden'>
       {submissionMessage && (
@@ -159,6 +187,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
             aria-label='Add New Invoice Form'
             className='w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'
             onSubmit={handleSubmit(onSubmit)}
+            encType='multipart/form-data'
           >
             <Input
               aria-label='Invoice ID'
@@ -208,6 +237,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
             />
             {renderSenderAndReceiverCards()}
             {renderInvoiceServices()}
+            {renderInvoiceSignature()}
             {renderSubmissionMessageAndActions()}
           </form>
         </Card>

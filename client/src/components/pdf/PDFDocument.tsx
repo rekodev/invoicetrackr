@@ -1,4 +1,10 @@
-import { Document, Page, View, Text } from '@react-pdf/renderer';
+import {
+  Document,
+  Page,
+  Image as PDFImage,
+  Text,
+  View,
+} from '@react-pdf/renderer';
 
 import { InvoiceModel } from '@/types/models/invoice';
 import { getDaysUntilDueDate, splitInvoiceId } from '@/utils';
@@ -11,9 +17,10 @@ registerFont();
 
 type Props = {
   invoiceData: InvoiceModel;
+  senderSignatureImage: string;
 };
 
-const PDFDocument = ({ invoiceData }: Props) => {
+const PDFDocument = ({ invoiceData, senderSignatureImage }: Props) => {
   const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
     invoiceData;
 
@@ -127,7 +134,15 @@ const PDFDocument = ({ invoiceData }: Props) => {
         <Text style={styles.signatureTitle}>Sąskaitą išrašė:</Text>
         <View style={styles.signatureBox}>
           <View style={styles.signatureAndName}>
-            <Text style={styles.nameWithSubtext}>Signature</Text>
+            <Text></Text>
+            {senderSignatureImage && (
+              <View style={styles.signatureImageContainer}>
+                <PDFImage
+                  style={styles.signatureImage}
+                  src={senderSignatureImage}
+                />
+              </View>
+            )}
             <Text style={styles.nameWithSubtext}>John Doe</Text>
           </View>
           <View style={styles.signatureLine}></View>
@@ -142,7 +157,8 @@ const PDFDocument = ({ invoiceData }: Props) => {
         <Text style={styles.signatureTitle}>Sąskaitą gavo:</Text>
         <View style={styles.signatureBox}>
           <View style={styles.signatureAndName}>
-            <Text style={styles.nameWithSubtext}>Signature</Text>
+            <Text></Text>
+            {/* TODO: Add ability for receiver to sign */}
             <Text style={styles.nameWithSubtext}>John Doe</Text>
           </View>
           <View style={styles.signatureLine}></View>

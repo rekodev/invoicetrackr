@@ -15,9 +15,17 @@ const config: Config = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      aspectRatio: {
+        '4/3': '4 / 3',
+      },
     },
   },
   darkMode: 'class',
+  variants: {
+    extend: {
+      display: ['group-hover'],
+    },
+  },
   plugins: [nextui()],
 };
 export default config;

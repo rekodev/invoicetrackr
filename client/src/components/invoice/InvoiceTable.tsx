@@ -23,6 +23,7 @@ import InvoiceModal from './InvoiceModal';
 import InvoiceTableBottomContent from './InvoiceTableBottomContent';
 import InvoiceTableCell from './InvoiceTableCell';
 import InvoiceTableTopContent from './InvoiceTableTopContent';
+import SignaturePad from '../SignaturePad';
 
 const ROWS_PER_PAGE = 10;
 const INITIAL_VISIBLE_COLUMNS = [
@@ -41,7 +42,7 @@ const InvoiceTable = () => {
   const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
 
   const [filterValue, setFilterValue] = useState('');
-  const [selectedKeys, setSelectedKeys] = useState<Set<never> | 'all'>(
+  const [selectedKeys, _setSelectedKeys] = useState<Set<never> | 'all'>(
     new Set([])
   );
   const [visibleColumns, setVisibleColumns] = useState<Set<string> | 'all'>(
