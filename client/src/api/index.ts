@@ -62,3 +62,6 @@ export const updateUser = async (
   await api.put(`/api/users/${id}`, userData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
+
+export const getUser = async (id: number): Promise<AxiosResponse<UserModel>> =>
+  await api.get(`/api/users/${id}`);

@@ -1,8 +1,10 @@
-import ProfilePageLayout from '@/components/layouts/ProfilePageLayout';
+import { getUser } from '@/api';
 import BankingInformationForm from '@/components/user/BankingInformationForm';
 
-const BankingInformationPage = () => {
-  return <ProfilePageLayout ProfileComponent={BankingInformationForm} />;
-};
+async function BankingInformationPage() {
+  const user = await getUser(1);
+
+  return <BankingInformationForm user={user.data} />;
+}
 
 export default BankingInformationPage;
