@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 import { getUser } from '@/api';
-import UserNavCard from '@/components/user/UserNavCard';
+import UserNavCard from '@/components/profile/UserNavCard';
 
 export async function ProfilePageLayout({ children }: { children: ReactNode }) {
   const user = await getUser(1);

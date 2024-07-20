@@ -1,5 +1,5 @@
 import { getUser } from '@/api';
-import PersonalInformationForm from '@/components/user/PersonalInformationForm';
+import PersonalInformationForm from '@/components/profile/PersonalInformationForm';
 
 async function PersonalInformationPage() {
   const user = await getUser(1);
