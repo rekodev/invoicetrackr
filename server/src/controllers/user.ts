@@ -1,6 +1,10 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UserModel } from '../types/models';
-import { getUserFromDb, updateUserInDb } from '../database';
+import {
+  getUserByEmailFromDb,
+  getUserFromDb,
+  updateUserInDb,
+} from '../database';
 import { UserDto } from '../types/dtos';
 import { transformUserDto } from '../types/transformers';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
@@ -18,7 +22,28 @@ export const getUser = async (
     const userDto =
       Array.isArray(result) && result.length > 0 ? result[0] : null;
 
-    if (!userDto) reply.status(400).send({ message: 'User not found' });
+    if (!userDto) return reply.status(400).send({ message: 'User not found' });
+
+    reply.send(transformUserDto(userDto as UserDto));
+  } catch (error) {
+    console.error(error);
+    return reply.status(500).send({ message: 'Internal server error' });
+  }
+};
+
+export const getUserByEmail = async (
+  req: FastifyRequest<{ Params: { email: string } }>,
+  reply: FastifyReply
+) => {
+  const { email } = req.params;
+
+  try {
+    const result = await getUserByEmailFromDb(email);
+
+    const userDto =
+      Array.isArray(result) && result.length > 0 ? result[0] : null;
+
+    if (!userDto) return reply.status(400).send({ message: 'User not found' });
 
     reply.send(transformUserDto(userDto as UserDto));
   } catch (error) {
@@ -59,7 +84,7 @@ export const updateUser = async (
 
   const foundUser = await getUserFromDb(id);
 
-  if (!foundUser) reply.status(400).send({ message: 'User not found' });
+  if (!foundUser) return reply.status(400).send({ message: 'User not found' });
 
   const updatedUser = await updateUserInDb(
     id,

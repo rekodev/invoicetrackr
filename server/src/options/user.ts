@@ -1,7 +1,13 @@
 import { Type } from '@sinclair/typebox';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import multer from 'fastify-multer';
-import { deleteUser, getUser, postUser, updateUser } from '../controllers';
+import {
+  deleteUser,
+  getUser,
+  getUserByEmail,
+  postUser,
+  updateUser,
+} from '../controllers';
 import { User } from '../types/models';
 
 export const getUserOptions: RouteShorthandOptionsWithHandler = {
@@ -11,6 +17,14 @@ export const getUserOptions: RouteShorthandOptionsWithHandler = {
     },
   },
   handler: getUser,
+};
+export const getUserByEmailOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    response: {
+      200: User,
+    },
+  },
+  handler: getUserByEmail,
 };
 
 export const postUserOptions: RouteShorthandOptionsWithHandler = {

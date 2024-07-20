@@ -9,8 +9,8 @@ import {
   ModalHeader,
 } from '@nextui-org/react';
 
-import useGetClients from '@/hooks/client/useGetClients';
-import { ClientModel } from '@/types/models/client';
+import useGetClients from '@/lib/hooks/client/useGetClients';
+import { ClientModel } from '@/lib/types/models/client';
 
 type Props = {
   isOpen: boolean;

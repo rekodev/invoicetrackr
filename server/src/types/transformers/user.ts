@@ -11,6 +11,7 @@ export const transformUserDto = (userDto: UserDto): UserModel => {
     type,
     email,
     signature,
+    password,
   } = userDto;
 
   return {
@@ -22,5 +23,6 @@ export const transformUserDto = (userDto: UserDto): UserModel => {
     type,
     email,
     signature,
+    password,
   };
 };

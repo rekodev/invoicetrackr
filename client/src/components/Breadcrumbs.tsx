@@ -6,8 +6,8 @@ import {
 } from '@nextui-org/react';
 import { usePathname } from 'next/navigation';
 
-import { HOME_PAGE } from '@/constants/pages';
-import { capitalize } from '@/utils';
+import { HOME_PAGE } from '@/lib/constants/pages';
+import { capitalize } from '@/lib/utils';
 
 const splitPathnameToSegments = (pathname: string): Array<string> => {
   return pathname.slice(1).split('/');

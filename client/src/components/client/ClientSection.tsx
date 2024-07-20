@@ -3,9 +3,9 @@
 import { Button } from '@nextui-org/react';
 import { useState } from 'react';
 
-import useClientSearchAndFilter from '@/hooks/client/useClientSearchAndFilter';
-import useGetClients from '@/hooks/client/useGetClients';
-import { ClientModel } from '@/types/models/client';
+import useClientSearchAndFilter from '@/lib/hooks/client/useClientSearchAndFilter';
+import useGetClients from '@/lib/hooks/client/useGetClients';
+import { ClientModel } from '@/lib/types/models/client';
 
 import ClientSectionBottomContent from './ClientSectionBottomContent';
 import ClientSectionTopContent from './ClientSectionTopContent';

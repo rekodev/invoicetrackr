@@ -10,10 +10,10 @@ import {
 import { useState } from 'react';
 
 import { deleteClient } from '@/api';
-import { UiState } from '@/constants/uiState';
-import useGetClients from '@/hooks/client/useGetClients';
-import useGetUser from '@/hooks/user/useGetUser';
-import { ClientModel } from '@/types/models/client';
+import { UiState } from '@/lib/constants/uiState';
+import useGetClients from '@/lib/hooks/client/useGetClients';
+import useGetUser from '@/lib/hooks/user/useGetUser';
+import { ClientModel } from '@/lib/types/models/client';
 
 type Props = {
   clientData: ClientModel;

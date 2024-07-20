@@ -15,7 +15,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
-import { base64ToFile, imageUrlToBase64 } from '@/utils/base64';
+import { base64ToFile, imageUrlToBase64 } from '@/lib/utils/base64';
 
 type Props = {
   signature?: File | string;

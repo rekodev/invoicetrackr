@@ -1,8 +1,8 @@
 import { Chip, Tooltip } from '@nextui-org/react';
 import { Key } from 'react';
 
-import { InvoiceModel, InvoiceStatus } from '@/types/models/invoice';
-import { formatDate } from '@/utils/formatDate';
+import { InvoiceModel, InvoiceStatus } from '@/lib/types/models/invoice';
+import { formatDate } from '@/lib/utils/formatDate';
 
 import DeleteIcon from '../icons/DeleteIcon';
 import DocumentText from '../icons/DocumentText';

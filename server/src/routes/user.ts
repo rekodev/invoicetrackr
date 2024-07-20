@@ -9,6 +9,7 @@ import {
   postUserOptions,
   updateUserOptions,
   deleteUserOptions,
+  getUserByEmailOptions,
 } from '../options';
 
 const userRoutes = (
@@ -17,6 +18,8 @@ const userRoutes = (
   done: DoneFuncWithErrOrRes
 ) => {
   fastify.get('/api/users/:id', getUserOptions);
+
+  fastify.get('/api/users/email/:email', getUserByEmailOptions);
 
   fastify.post('/api/users', postUserOptions);
 

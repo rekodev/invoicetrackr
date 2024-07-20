@@ -6,9 +6,9 @@ import {
   View,
 } from '@react-pdf/renderer';
 
-import { InvoiceModel } from '@/types/models/invoice';
-import { getDaysUntilDueDate, splitInvoiceId } from '@/utils';
-import { formatDate } from '@/utils/formatDate';
+import { InvoiceModel } from '@/lib/types/models/invoice';
+import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
+import { formatDate } from '@/lib/utils/formatDate';
 
 import styles from './styles';
 import { registerFont } from './utils';

@@ -13,7 +13,7 @@ import {
 import { Key, useEffect, useMemo } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { InvoiceFormData, InvoiceService } from '@/types/models/invoice';
+import { InvoiceFormData, InvoiceService } from '@/lib/types/models/invoice';
 
 import DeleteIcon from '../icons/DeleteIcon';
 import { PlusIcon } from '../icons/PlusIcon';

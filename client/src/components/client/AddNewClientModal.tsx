@@ -13,13 +13,13 @@ import {
 import { ChangeEvent, useState } from 'react';
 
 import { addClient } from '@/api';
-import { CLIENT_BUSINESS_TYPES } from '@/constants/client';
-import { UiState } from '@/constants/uiState';
-import useGetClients from '@/hooks/client/useGetClients';
-import useGetUser from '@/hooks/user/useGetUser';
-import { ClientFormData, ClientModel } from '@/types/models/client';
-import { capitalize } from '@/utils';
-import { mapValidationErrors } from '@/utils/validation';
+import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
+import { UiState } from '@/lib/constants/uiState';
+import useGetClients from '@/lib/hooks/client/useGetClients';
+import useGetUser from '@/lib/hooks/user/useGetUser';
+import { ClientFormData, ClientModel } from '@/lib/types/models/client';
+import { capitalize } from '@/lib/utils';
+import { mapValidationErrors } from '@/lib/utils/validation';
 
 const INITIAL_CLIENT_DATA: ClientFormData = {
   name: '',
