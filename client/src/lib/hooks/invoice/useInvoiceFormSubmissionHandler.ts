@@ -4,12 +4,12 @@ import { Dispatch, SetStateAction } from 'react';
 import { SubmitHandler, UseFormSetError } from 'react-hook-form';
 
 import { addInvoice, updateInvoice } from '@/api';
-import { INVOICES_PAGE } from '@/constants/pages';
-import { UiState } from '@/constants/uiState';
-import { ClientModel } from '@/types/models/client';
-import { InvoiceModel, InvoiceService } from '@/types/models/invoice';
-import { UserModel } from '@/types/models/user';
-import { AddInvoiceResp, UpdateInvoiceResp } from '@/types/response';
+import { INVOICES_PAGE } from '@/lib/constants/pages';
+import { UiState } from '@/lib/constants/uiState';
+import { ClientModel } from '@/lib/types/models/client';
+import { InvoiceModel, InvoiceService } from '@/lib/types/models/invoice';
+import { UserModel } from '@/lib/types/models/user';
+import { AddInvoiceResp, UpdateInvoiceResp } from '@/lib/types/response';
 
 import useGetInvoices from './useGetInvoices';
 

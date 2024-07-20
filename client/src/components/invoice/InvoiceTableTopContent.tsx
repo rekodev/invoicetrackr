@@ -9,9 +9,9 @@ import {
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 
-import { ADD_NEW_INVOICE_PAGE } from '@/constants/pages';
-import { columns, statusOptions } from '@/constants/table';
-import { capitalize } from '@/utils';
+import { ADD_NEW_INVOICE_PAGE } from '@/lib/constants/pages';
+import { columns, statusOptions } from '@/lib/constants/table';
+import { capitalize } from '@/lib/utils';
 
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import { PlusIcon } from '../icons/PlusIcon';

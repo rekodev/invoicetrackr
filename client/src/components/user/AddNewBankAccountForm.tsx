@@ -15,7 +15,7 @@ import { useForm } from 'react-hook-form';
 import {
   BankingInformation,
   bankingInformationSchema,
-} from '@/types/models/user';
+} from '@/lib/types/models/user';
 
 const SELECTED_BANK_ID = 1;
 

@@ -11,4 +11,5 @@ export type UserDto = {
   updated_at: string;
   created_at: string;
   signature: string;
+  password?: string;
 };

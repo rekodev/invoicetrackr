@@ -10,6 +10,7 @@ export const User = Type.Object({
   address: Type.String(),
   email: Type.Optional(Type.String()),
   signature: Type.Optional(Type.String()),
+  password: Type.Optional(Type.String()),
 });
 
 export type UserModel = Static<typeof User>;

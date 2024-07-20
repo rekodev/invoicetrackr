@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import useSWR from 'swr';
 
-import { InvoiceModel } from '@/types/models/invoice';
+import { InvoiceModel } from '@/lib/types/models/invoice';
 
 import SWRKeys from '../../constants/swrKeys';
 

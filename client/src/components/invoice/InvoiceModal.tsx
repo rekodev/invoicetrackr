@@ -2,7 +2,7 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
 import { PDFViewer } from '@react-pdf/renderer';
 import { useContext } from 'react';
 
-import { InvoiceModel } from '@/types/models/invoice';
+import { InvoiceModel } from '@/lib/types/models/invoice';
 
 import PDFDocument from '../pdf/PDFDocument';
 

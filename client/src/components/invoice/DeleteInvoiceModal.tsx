@@ -10,10 +10,10 @@ import {
 import { useState } from 'react';
 
 import { deleteInvoice } from '@/api';
-import { UiState } from '@/constants/uiState';
-import useGetInvoices from '@/hooks/invoice/useGetInvoices';
-import useGetUser from '@/hooks/user/useGetUser';
-import { InvoiceModel } from '@/types/models/invoice';
+import { UiState } from '@/lib/constants/uiState';
+import useGetInvoices from '@/lib/hooks/invoice/useGetInvoices';
+import useGetUser from '@/lib/hooks/user/useGetUser';
+import { InvoiceModel } from '@/lib/types/models/invoice';
 
 type Props = {
   invoiceData: InvoiceModel;

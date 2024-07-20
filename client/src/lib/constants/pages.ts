@@ -1,4 +1,9 @@
+export const LOGIN_PAGE = '/login';
+export const SIGN_UP_PAGE = '/sign-up';
+export const FORGOT_PASSWORD_PAGE = '/forgot-password';
+
 export const HOME_PAGE = '/';
+export const DASHBOARD_PAGE = '/dashboard';
 export const INVOICES_PAGE = '/invoices';
 export const ADD_NEW_INVOICE_PAGE = '/invoices/new';
 export const EDIT_INVOICE_PAGE = (invoiceId: number) =>

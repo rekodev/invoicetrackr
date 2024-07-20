@@ -1,7 +1,7 @@
 import { ChangeEvent, useMemo, useState } from 'react';
 
-import { ClientModel } from '@/types/models/client';
-import { InvoicePartyBusinessType } from '@/types/models/invoice';
+import { ClientModel } from '@/lib/types/models/client';
+import { InvoicePartyBusinessType } from '@/lib/types/models/invoice';
 
 const INVOICE_PARTY_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
   'individual',

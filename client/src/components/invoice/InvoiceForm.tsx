@@ -11,13 +11,13 @@ import {
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { statusOptions } from '@/constants/table';
-import { UiState } from '@/constants/uiState';
-import useInvoiceFormSubmissionHandler from '@/hooks/invoice/useInvoiceFormSubmissionHandler';
-import useGetUser from '@/hooks/user/useGetUser';
-import { ClientModel } from '@/types/models/client';
-import { InvoiceModel } from '@/types/models/invoice';
-import { formatDate } from '@/utils/formatDate';
+import { statusOptions } from '@/lib/constants/table';
+import { UiState } from '@/lib/constants/uiState';
+import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/useInvoiceFormSubmissionHandler';
+import useGetUser from '@/lib/hooks/user/useGetUser';
+import { ClientModel } from '@/lib/types/models/client';
+import { InvoiceModel } from '@/lib/types/models/invoice';
+import { formatDate } from '@/lib/utils/formatDate';
 
 import InvoiceFormReceiverModal from './InvoiceFormReceiverModal';
 import InvoicePartyCard from './InvoicePartyCard';

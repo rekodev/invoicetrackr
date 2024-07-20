@@ -20,5 +20,11 @@ export const userSchema = z.object({
   selectedBankId: z.number().nullable(),
 });
 
+export const userSchemaWithPassword = userSchema.extend({
+  password: z.string(),
+});
+
 export type UserModel = z.infer<typeof userSchema>;
+export type UserModelWithPassword = z.infer<typeof userSchema>;
+
 export type BankingInformation = z.infer<typeof bankingInformationSchema>;

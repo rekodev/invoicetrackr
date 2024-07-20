@@ -1,8 +1,8 @@
 import { AxiosResponse } from 'axios';
 
-import { ClientFormData, ClientModel } from '@/types/models/client';
-import { InvoiceFormData, InvoiceModel } from '@/types/models/invoice';
-import { UserModel } from '@/types/models/user';
+import { ClientFormData, ClientModel } from '@/lib/types/models/client';
+import { InvoiceFormData, InvoiceModel } from '@/lib/types/models/invoice';
+import { UserModel } from '@/lib/types/models/user';
 import {
   AddClientResp,
   AddInvoiceResp,
@@ -11,9 +11,11 @@ import {
   UpdateClientResp,
   UpdateInvoiceResp,
   UpdateUserResp,
-} from '@/types/response';
+} from '@/lib/types/response';
 
 import api from './apiInstance';
+
+type UserModelWithPassword = UserModel & { password: string };
 
 export const addInvoice = async (
   userId: number,
@@ -65,3 +67,8 @@ export const updateUser = async (
 
 export const getUser = async (id: number): Promise<AxiosResponse<UserModel>> =>
   await api.get(`/api/users/${id}`);
+
+export const getUserByEmail = async (
+  email: string
+): Promise<AxiosResponse<UserModelWithPassword>> =>
+  await api.get(`/api/users/email/${email}`);

@@ -22,6 +22,27 @@ export const getUserFromDb = async (id: number) => {
   return user;
 };
 
+export const getUserByEmailFromDb = async (email: string) => {
+  const user = await sql`
+    select
+      id,
+      name,
+      password,
+      type,
+      business_type,
+      business_number,
+      address,
+      email,
+      created_at,
+      updated_at,
+      signature
+    from users
+    where email = ${email}
+  `;
+
+  return user;
+};
+
 export const insertUser = async ({
   name,
   address,

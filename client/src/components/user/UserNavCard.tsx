@@ -11,8 +11,8 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { profileMenuTabs } from '@/constants/profile';
-import { UserModel } from '@/types/models/user';
+import { profileMenuTabs } from '@/lib/constants/profile';
+import { UserModel } from '@/lib/types/models/user';
 
 enum UserNavKeys {
   PersonalInformation = 'personal-information',

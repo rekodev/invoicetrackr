@@ -13,12 +13,12 @@ import {
 import { ChangeEvent, useState } from 'react';
 
 import { updateClient } from '@/api';
-import { CLIENT_BUSINESS_TYPES } from '@/constants/client';
-import { UiState } from '@/constants/uiState';
-import useGetClients from '@/hooks/client/useGetClients';
-import useGetUser from '@/hooks/user/useGetUser';
-import { ClientModel } from '@/types/models/client';
-import { capitalize } from '@/utils';
+import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
+import { UiState } from '@/lib/constants/uiState';
+import useGetClients from '@/lib/hooks/client/useGetClients';
+import useGetUser from '@/lib/hooks/user/useGetUser';
+import { ClientModel } from '@/lib/types/models/client';
+import { capitalize } from '@/lib/utils';
 
 type Props = {
   isOpen: boolean;

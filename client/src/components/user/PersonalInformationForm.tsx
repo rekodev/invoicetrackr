@@ -16,11 +16,11 @@ import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateUser } from '@/api';
-import { CLIENT_BUSINESS_TYPES } from '@/constants/client';
-import { UiState } from '@/constants/uiState';
-import useGetUser from '@/hooks/user/useGetUser';
-import { UserModel } from '@/types/models/user';
-import { capitalize } from '@/utils';
+import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
+import { UiState } from '@/lib/constants/uiState';
+import useGetUser from '@/lib/hooks/user/useGetUser';
+import { UserModel } from '@/lib/types/models/user';
+import { capitalize } from '@/lib/utils';
 
 import SignaturePad from '../SignaturePad';
 

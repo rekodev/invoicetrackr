@@ -11,9 +11,9 @@ import {
 } from '@nextui-org/react';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 
-import { ClientModel } from '@/types/models/client';
-import { InvoicePartyBusinessType } from '@/types/models/invoice';
-import { capitalize } from '@/utils';
+import { ClientModel } from '@/lib/types/models/client';
+import { InvoicePartyBusinessType } from '@/lib/types/models/invoice';
+import { capitalize } from '@/lib/utils';
 
 import AddNewClientModal from './AddNewClientModal';
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';

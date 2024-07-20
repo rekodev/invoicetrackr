@@ -1,8 +1,8 @@
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
-import { EDIT_INVOICE_PAGE } from '@/constants/pages';
-import { InvoiceModel } from '@/types/models/invoice';
+import { EDIT_INVOICE_PAGE } from '@/lib/constants/pages';
+import { InvoiceModel } from '@/lib/types/models/invoice';
 
 type Props = {
   setCurrentInvoice: Dispatch<SetStateAction<InvoiceModel | undefined>>;

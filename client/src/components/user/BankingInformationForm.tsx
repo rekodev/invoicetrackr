@@ -19,7 +19,7 @@ import {
   BankingInformation,
   bankingInformationSchema,
   UserModel,
-} from '@/types/models/user';
+} from '@/lib/types/models/user';
 
 import AddNewBankAccountForm from './AddNewBankAccountForm';
 

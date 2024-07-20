@@ -7,7 +7,7 @@ import {
   Link,
 } from '@nextui-org/react';
 
-import { HOME_PAGE } from '@/constants/pages';
+import { HOME_PAGE } from '@/lib/constants/pages';
 
 const ErrorAlert = () => {
   return (

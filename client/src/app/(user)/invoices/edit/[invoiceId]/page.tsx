@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import InvoiceForm from '@/components/invoice/InvoiceForm';
 import ErrorAlert from '@/components/ui/ErrorAlert';
 import Loader from '@/components/ui/Loader';
-import useGetInvoice from '@/hooks/invoice/useGetInvoice';
+import useGetInvoice from '@/lib/hooks/invoice/useGetInvoice';
 
 const EditInvoicePage = () => {
   const params = useParams<{ invoiceId: string }>();

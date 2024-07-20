@@ -3,8 +3,8 @@
 import { Card, CardBody, CardHeader, Chip } from '@nextui-org/react';
 import { ReactNode } from 'react';
 
-import { ClientModel } from '@/types/models/client';
-import { UserModel } from '@/types/models/user';
+import { ClientModel } from '@/lib/types/models/client';
+import { UserModel } from '@/lib/types/models/user';
 
 /* 
   InvoicePartyCard accepts a renderActions prop which renders actions on the top right of the card
