@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { InvoicePartyBusinessType } from './invoice';
 
 export const clientSchema = z.object({
-  id: z.number(),
+  id: z.number().optional(),
   name: z.string(),
   type: z.literal('receiver'),
   businessType: z.union([z.literal('individual'), z.literal('business')]),

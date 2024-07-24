@@ -19,7 +19,7 @@ const InvoiceModal = ({
   invoiceData,
   senderSignatureImage,
 }: Props) => {
-  const { id } = invoiceData;
+  const { invoiceId } = invoiceData;
 
   return (
     <Modal
@@ -28,7 +28,9 @@ const InvoiceModal = ({
       onOpenChange={onOpenChange}
     >
       <ModalContent>
-        <ModalHeader className='flex flex-col gap-1 pb-2'>{id}</ModalHeader>
+        <ModalHeader className='flex flex-col gap-1 pb-2'>
+          {invoiceId}
+        </ModalHeader>
         <ModalBody>
           <div className='w-full h-full'>
             <PDFViewer className='h-full w-full'>

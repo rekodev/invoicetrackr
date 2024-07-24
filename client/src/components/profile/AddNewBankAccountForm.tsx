@@ -7,32 +7,57 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Chip,
   Divider,
   Input,
 } from '@nextui-org/react';
-import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
+import { addBankingInformation } from '@/api';
+import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
+import useGetUser from '@/lib/hooks/user/useGetUser';
 import {
   BankingInformation,
   bankingInformationSchema,
 } from '@/lib/types/models/user';
 
-const SELECTED_BANK_ID = 1;
-
-type Props = {
-  onCancel: () => void;
-};
-
-const AddNewBankAccountForm = ({ onCancel }: Props) => {
-  const { register, handleSubmit } = useForm<BankingInformation>({
+const AddNewBankAccountForm = () => {
+  const router = useRouter();
+  const { user } = useGetUser();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { isSubmitSuccessful, isSubmitting },
+  } = useForm<BankingInformation>({
     defaultValues: {},
     resolver: zodResolver(bankingInformationSchema),
   });
 
-  const onSubmit = () => {};
+  const [submissionMessage, setSubmissionMessage] = useState('');
+
+  const onSubmit: SubmitHandler<BankingInformation> = async (data) => {
+    console.log('hello');
+    if (!user?.id) return;
+
+    const response = await addBankingInformation(user.id, data);
+    setSubmissionMessage(response.data.message);
+
+    if ('errors' in response.data) {
+      response.data.errors.forEach((error) => {
+        setError(error.key, { message: error.value });
+      });
+
+      return;
+    }
+
+    router.push(BANKING_INFORMATION_PAGE);
+  };
 
   return (
-    <Card className='w-full border border-neutral-800 bg-transparent max-h-80'>
+    <Card className='w-full border border-neutral-800 bg-transparent'>
       <form
         aria-label='Banking Information Form'
         onSubmit={handleSubmit(onSubmit)}
@@ -41,21 +66,21 @@ const AddNewBankAccountForm = ({ onCancel }: Props) => {
         <Divider />
         <CardBody className='p-6 grid grid-cols-1 gap-4 sm:grid-cols-2'>
           <Input
-            {...register('bankName')}
+            {...register('name')}
             label='Bank Name'
             variant='faded'
             labelPlacement='outside'
             placeholder='e.g., Swedbank'
           />
           <Input
-            {...register('bankCode')}
+            {...register('code')}
             label='Bank Code'
             variant='faded'
             labelPlacement='outside'
             placeholder='e.g., HABALT22'
           />
           <Input
-            {...register('bankAccountNumber')}
+            {...register('accountNumber')}
             label='Bank Account Number'
             variant='faded'
             labelPlacement='outside'
@@ -63,10 +88,23 @@ const AddNewBankAccountForm = ({ onCancel }: Props) => {
           />
         </CardBody>
         <CardFooter className='justify-end p-6 gap-2'>
-          <Button color='danger' variant='light' onPress={onCancel}>
-            Cancel
-          </Button>
-          <Button color='secondary'>Save</Button>
+          {submissionMessage && (
+            <Chip color={isSubmitSuccessful ? 'success' : 'danger'}>
+              {submissionMessage}
+            </Chip>
+          )}
+          <div className='flex gap-2'>
+            <Button
+              color='danger'
+              variant='light'
+              onPress={() => router.push(BANKING_INFORMATION_PAGE)}
+            >
+              Cancel
+            </Button>
+            <Button type='submit' color='secondary' isLoading={isSubmitting}>
+              Save
+            </Button>
+          </div>
         </CardFooter>
       </form>
     </Card>

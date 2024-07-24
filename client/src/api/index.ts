@@ -2,8 +2,9 @@ import { AxiosResponse } from 'axios';
 
 import { ClientFormData, ClientModel } from '@/lib/types/models/client';
 import { InvoiceFormData, InvoiceModel } from '@/lib/types/models/invoice';
-import { UserModel } from '@/lib/types/models/user';
+import { BankingInformation, UserModel } from '@/lib/types/models/user';
 import {
+  AddBankingInformationResp,
   AddClientResp,
   AddInvoiceResp,
   DeleteClientResp,
@@ -72,3 +73,9 @@ export const getUserByEmail = async (
   email: string
 ): Promise<AxiosResponse<UserModelWithPassword>> =>
   await api.get(`/api/users/email/${email}`);
+
+export const addBankingInformation = async (
+  userId: number,
+  bankingInformation: BankingInformation
+): Promise<AxiosResponse<AddBankingInformationResp>> =>
+  await api.post(`/api/${userId}/banking-information`, bankingInformation);

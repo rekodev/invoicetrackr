@@ -23,7 +23,6 @@ import InvoiceModal from './InvoiceModal';
 import InvoiceTableBottomContent from './InvoiceTableBottomContent';
 import InvoiceTableCell from './InvoiceTableCell';
 import InvoiceTableTopContent from './InvoiceTableTopContent';
-import SignaturePad from '../SignaturePad';
 
 const ROWS_PER_PAGE = 10;
 const INITIAL_VISIBLE_COLUMNS = [
@@ -205,6 +204,7 @@ const InvoiceTable = () => {
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           invoiceData={currentInvoice}
+          senderSignatureImage={currentInvoice.senderSignature as string}
         />
       )}
       {currentInvoice && (

@@ -143,7 +143,7 @@ const PDFDocument = ({ invoiceData, senderSignatureImage }: Props) => {
                 />
               </View>
             )}
-            <Text style={styles.nameWithSubtext}>John Doe</Text>
+            <Text style={styles.nameWithSubtext}>{sender.name}</Text>
           </View>
           <View style={styles.signatureLine}></View>
           <View style={styles.signatureAndName}>
@@ -159,7 +159,7 @@ const PDFDocument = ({ invoiceData, senderSignatureImage }: Props) => {
           <View style={styles.signatureAndName}>
             <Text></Text>
             {/* TODO: Add ability for receiver to sign */}
-            <Text style={styles.nameWithSubtext}>John Doe</Text>
+            <Text style={styles.nameWithSubtext}></Text>
           </View>
           <View style={styles.signatureLine}></View>
           <View style={styles.signatureAndName}>

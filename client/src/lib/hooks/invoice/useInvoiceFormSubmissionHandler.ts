@@ -16,6 +16,15 @@ import useGetInvoices from './useGetInvoices';
 const calculateServiceTotal = (services: Array<InvoiceService>) =>
   services.reduce((acc, currentValue) => acc + Number(currentValue.amount), 0);
 
+const INITIAL_RECEIVER_DATA: ClientModel = {
+  businessNumber: '',
+  businessType: 'business',
+  address: '',
+  email: '',
+  name: '',
+  type: 'receiver',
+};
+
 type Props = {
   invoiceData: InvoiceModel | undefined;
   user: UserModel | undefined;
@@ -50,7 +59,7 @@ const useInvoiceFormSubmissionHandler = ({
       ...data,
       sender: user,
       senderSignature: data.senderSignature || '',
-      receiver: receiverData || invoiceData?.receiver || ({} as ClientModel),
+      receiver: receiverData || invoiceData?.receiver || INITIAL_RECEIVER_DATA,
       totalAmount: calculateServiceTotal(data.services),
     };
 

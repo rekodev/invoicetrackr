@@ -25,17 +25,9 @@ const InvoiceFormPartyModal = ({
 }: Props) => {
   const { clients } = useGetClients();
 
-  const handleClick = () => {
-    console.log('clickerino');
-  };
-
   const renderClientOption = (client: ClientModel) => (
     <div key={client.id} onClick={() => onReceiverSelect(client)}>
-      <Card
-        isHoverable
-        className='cursor-pointer'
-        onClick={() => console.log('HAAAWW')}
-      >
+      <Card isHoverable className='cursor-pointer'>
         <CardHeader className='pb-0.5 uppercase font-bold'>
           {client.name}
         </CardHeader>
@@ -53,9 +45,7 @@ const InvoiceFormPartyModal = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         <ModalHeader>Select Client</ModalHeader>
-        <ModalBody onClick={() => console.log('YEET')}>
-          {clients?.map((client) => renderClientOption(client))}
-        </ModalBody>
+        <ModalBody>{clients?.map(renderClientOption)}</ModalBody>
         <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
