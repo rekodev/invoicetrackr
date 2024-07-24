@@ -1,7 +1,8 @@
 import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
 import { PDFViewer } from '@react-pdf/renderer';
-import { useContext } from 'react';
 
+import useGetBankAccount from '@/lib/hooks/banking-information/useGetBankAccount';
+import useGetUser from '@/lib/hooks/user/useGetUser';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 
 import PDFDocument from '../pdf/PDFDocument';
@@ -20,6 +21,12 @@ const InvoiceModal = ({
   senderSignatureImage,
 }: Props) => {
   const { invoiceId } = invoiceData;
+  const { user } = useGetUser();
+  const { bankAccount } = useGetBankAccount({
+    bankAccountId: user?.selectedBankAccountId,
+  });
+
+  if (!user || !bankAccount) return null;
 
   return (
     <Modal
@@ -37,6 +44,7 @@ const InvoiceModal = ({
               <PDFDocument
                 invoiceData={invoiceData}
                 senderSignatureImage={senderSignatureImage}
+                bankAccount={bankAccount}
               />
             </PDFViewer>
           </div>

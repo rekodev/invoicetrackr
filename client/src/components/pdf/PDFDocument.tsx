@@ -7,6 +7,7 @@ import {
 } from '@react-pdf/renderer';
 
 import { InvoiceModel } from '@/lib/types/models/invoice';
+import { BankingInformation } from '@/lib/types/models/user';
 import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/formatDate';
 
@@ -18,9 +19,14 @@ registerFont();
 type Props = {
   invoiceData: InvoiceModel;
   senderSignatureImage: string;
+  bankAccount: BankingInformation;
 };
 
-const PDFDocument = ({ invoiceData, senderSignatureImage }: Props) => {
+const PDFDocument = ({
+  invoiceData,
+  senderSignatureImage,
+  bankAccount,
+}: Props) => {
   const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
     invoiceData;
 
@@ -177,8 +183,9 @@ const PDFDocument = ({ invoiceData, senderSignatureImage }: Props) => {
         Apmokėjimo sąlygos: {getDaysUntilDueDate(date, dueDate)} d.
       </Text>
       <Text style={styles.footerItem}>
-        AB &quot;Swedbank&quot;, banko kodas 73000; Atsiskaitomoji sąskaita:
-        LT12345678010111213
+        AB &quot;{bankAccount.name}&quot;, banko kodas {bankAccount.code};
+        Atsiskaitomoji sąskaita:
+        {bankAccount.accountNumber}
       </Text>
     </View>
   );

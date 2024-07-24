@@ -9,6 +9,7 @@ import {
   AddInvoiceResp,
   DeleteClientResp,
   DeleteInvoiceResp,
+  GetBankAccountResp,
   GetBankingInformationResp,
   UpdateClientResp,
   UpdateInvoiceResp,
@@ -74,6 +75,12 @@ export const getUserByEmail = async (
   email: string
 ): Promise<AxiosResponse<UserModelWithPassword>> =>
   await api.get(`/api/users/email/${email}`);
+
+export const getBankAccount = async (
+  userId: number,
+  bankAccountId: number
+): Promise<AxiosResponse<GetBankAccountResp>> =>
+  await api.get(`/api/${userId}/banking-information/${bankAccountId}`);
 
 export const getBankingInformation = async (
   userId: number
