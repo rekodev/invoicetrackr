@@ -11,6 +11,7 @@ export const transformUserDto = (userDto: UserDto): UserModel => {
     type,
     email,
     signature,
+    selected_bank_account_id,
     password,
   } = userDto;
 
@@ -19,6 +20,7 @@ export const transformUserDto = (userDto: UserDto): UserModel => {
     name,
     businessType: business_type,
     businessNumber: business_number,
+    selectedBankAccountId: selected_bank_account_id,
     address,
     type,
     email,

@@ -39,7 +39,6 @@ const AddNewBankAccountForm = () => {
   const [submissionMessage, setSubmissionMessage] = useState('');
 
   const onSubmit: SubmitHandler<BankingInformation> = async (data) => {
-    console.log('hello');
     if (!user?.id) return;
 
     const response = await addBankingInformation(user.id, data);

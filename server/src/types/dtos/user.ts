@@ -11,5 +11,6 @@ export type UserDto = {
   updated_at: string;
   created_at: string;
   signature: string;
+  selected_bank_account_id?: number;
   password?: string;
 };

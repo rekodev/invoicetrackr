@@ -17,7 +17,7 @@ export const userSchema = z.object({
   address: z.string(),
   email: z.string(),
   bankingInformation: z.array(bankingInformationSchema),
-  selectedBankId: z.number().nullable(),
+  selectedBankAccountId: z.number(),
 });
 
 export const userSchemaWithPassword = userSchema.extend({

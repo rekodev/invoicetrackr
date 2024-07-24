@@ -32,6 +32,8 @@ export type UpdateUserResp = ApiError & {
   user: UserModel;
 };
 
+export type GetBankingInformationResp = ApiError & Array<BankingInformation>;
+
 export type AddBankingInformationResp = ApiError & {
   bankingInformation: BankingInformation;
 };

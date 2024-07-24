@@ -10,6 +10,7 @@ export const User = Type.Object({
   address: Type.String(),
   email: Type.Optional(Type.String()),
   signature: Type.Optional(Type.String()),
+  selectedBankAccountId: Type.Optional(Type.Number()),
   password: Type.Optional(Type.String()),
 });
 
