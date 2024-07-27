@@ -45,7 +45,7 @@ server.setErrorHandler(function (error, _request, reply) {
   }
 
   return reply
-    .status(500)
+    .status(error.statusCode || 500)
     .send({ errors: [], message: error.message, code: error.code });
 });
 

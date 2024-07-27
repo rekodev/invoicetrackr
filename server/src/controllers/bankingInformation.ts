@@ -5,10 +5,13 @@ import {
   findBankAccountByAccountNumber,
   getBankAccountFromDb,
   getBankAccountsFromDb,
+  getUserFromDb,
   insertBankAccountInDb,
   updateBankAccountInDb,
 } from '../database';
 import { transformBankAccountDto } from '../types/transformers';
+import { UserDto } from '../types/dtos';
+import { BadRequestError } from '../utils/errors';
 
 export const getBankAccounts = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -94,6 +97,11 @@ export const deleteBankAccount = async (
   reply: FastifyReply
 ) => {
   const { userId, id } = req.params;
+
+  const [user] = await getUserFromDb(userId);
+
+  if ((user as UserDto)?.selected_bank_account_id === Number(id))
+    throw new BadRequestError('Cannot delete selected bank account');
 
   const bankAccount = await deleteBankAccountFromDb(userId, id);
 

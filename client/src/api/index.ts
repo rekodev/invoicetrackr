@@ -93,6 +93,11 @@ export const addBankingInformation = async (
 ): Promise<AxiosResponse<AddBankingInformationResp>> =>
   await api.post(`/api/${userId}/banking-information`, bankingInformation);
 
+export const deleteBankingInformation = async (
+  userId: number,
+  bankAccountId: number
+) => await api.delete(`/api/${userId}/banking-information/${bankAccountId}`);
+
 export const updateUserSelectedBankAccount = async (
   userId: number,
   selectedBankAccountId: number

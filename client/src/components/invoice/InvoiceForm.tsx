@@ -19,6 +19,7 @@ import { ClientModel } from '@/lib/types/models/client';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import { formatDate } from '@/lib/utils/formatDate';
 
+import BankingInformationSelect from './BankingInformationSelect';
 import InvoiceFormReceiverModal from './InvoiceFormReceiverModal';
 import InvoicePartyCard from './InvoicePartyCard';
 import InvoiceServicesTable from './InvoiceServicesTable';
@@ -139,6 +140,13 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     </div>
   );
 
+  const renderBankingInformation = () => (
+    <div className='flex gap-4 flex-col col-span-full'>
+      <h4>Banking Details</h4>
+      <BankingInformationSelect />
+    </div>
+  );
+
   const renderInvoiceSignature = () => (
     <div className='flex gap-4 flex-col'>
       <h4>Signature</h4>
@@ -237,6 +245,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
             />
             {renderSenderAndReceiverCards()}
             {renderInvoiceServices()}
+            {renderBankingInformation()}
             {renderInvoiceSignature()}
             {renderSubmissionMessageAndActions()}
           </form>

@@ -1,3 +1,4 @@
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   Card,
@@ -11,22 +12,24 @@ import { HOME_PAGE } from '@/lib/constants/pages';
 
 const ErrorAlert = () => {
   return (
-    <Card
-      className='bg-rose-300 border-rose-500 border-large text-rose-700 px-4 py-3'
-      role='alert'
-    >
-      <CardHeader className='font-bold'>Oops! Something Went Wrong</CardHeader>
-      <CardBody>
-        We encountered an unexpected issue. We apologize for any inconvenience
-        and appreciate your patience.
+    <Card className='mx-auto max-w-md gap-4'>
+      <CardHeader className='font-bold flex-col justify-center text-2xl p-6 pb-0 gap-2 text-center text-foreground'>
+        <ExclamationTriangleIcon className='size-12 text-danger-400' />
+        Oops! Something Went Wrong
+      </CardHeader>
+      <CardBody className='px-6 pt-0 text-center'>
+        <p className='text-muted-foreground'>
+          We encountered an unexpected issue. We apologize for any inconvenience
+          and appreciate your patience.
+        </p>
       </CardBody>
-      <CardFooter>
+      <CardFooter className='text-center p-6 pt-2'>
         <Button
           href={HOME_PAGE}
           as={Link}
           color='danger'
           showAnchorIcon
-          variant='solid'
+          className='w-full'
         >
           Go Back Home
         </Button>
