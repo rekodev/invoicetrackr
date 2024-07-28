@@ -93,6 +93,18 @@ export const Invoice = Type.Object({
     format: 'date',
     errorMessage: 'Valid date is required',
   }),
+  bankingInformation: Type.Object(
+    {
+      id: Type.Number(),
+      name: Type.String(),
+      code: Type.String(),
+      accountNumber: Type.String(),
+    },
+    {
+      minProperties: 1,
+      errorMessage: 'Banking information is required',
+    }
+  ),
 });
 
 export type InvoiceModel = Static<typeof Invoice>;

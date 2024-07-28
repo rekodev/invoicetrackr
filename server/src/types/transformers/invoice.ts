@@ -25,6 +25,10 @@ export const transformInvoiceDto = (invoiceDto: InvoiceDto): InvoiceModel => {
     services,
     status,
     total_amount,
+    bank_account_id,
+    bank_account_name,
+    bank_account_number,
+    bank_account_code,
   } = invoiceDto;
 
   return {
@@ -54,5 +58,11 @@ export const transformInvoiceDto = (invoiceDto: InvoiceDto): InvoiceModel => {
     services,
     status,
     totalAmount: total_amount,
+    bankingInformation: {
+      id: bank_account_id,
+      name: bank_account_name,
+      accountNumber: bank_account_number,
+      code: bank_account_code,
+    },
   };
 };

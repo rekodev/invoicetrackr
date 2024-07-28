@@ -5,9 +5,9 @@ import { InvoiceModel } from '@/lib/types/models/invoice';
 
 import SWRKeys from '../../constants/swrKeys';
 
-const useGetInvoice = (invoiceId: number) => {
+const useGetInvoice = (invoiceId?: number) => {
   const { data, isLoading, mutate, error, isValidating } = useSWR<InvoiceModel>(
-    SWRKeys.invoice(1, invoiceId)
+    invoiceId ? SWRKeys.invoice(1, invoiceId) : null
   );
 
   return useMemo(

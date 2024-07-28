@@ -28,4 +28,8 @@ export type InvoiceDto = {
   receiver_address: string;
   receiver_email: string;
   services: Array<InvoiceService>;
+  bank_account_id: number;
+  bank_account_number: string;
+  bank_account_name: string;
+  bank_account_code: string;
 };

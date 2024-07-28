@@ -9,7 +9,7 @@ import {
 } from '@nextui-org/react';
 import { useState } from 'react';
 
-import { deleteBankingInformation, updateUserSelectedBankAccount } from '@/api';
+import { deleteBankingInformation } from '@/api';
 import { UiState } from '@/lib/constants/uiState';
 import useGetBankAccounts from '@/lib/hooks/banking-information/useGetBankAccounts';
 import useGetUser from '@/lib/hooks/user/useGetUser';
@@ -36,11 +36,8 @@ const DeleteBankAccountModal = ({ isOpen, onClose, bankAccount }: Props) => {
     const response = await deleteBankingInformation(user.id, bankAccount.id);
     setSubmissionMessage(response.data.message);
 
-    console.log(response.data);
-
     if ('errors' in response.data) {
       setUiState(UiState.Failure);
-      alert('w');
 
       return;
     }

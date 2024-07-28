@@ -1,17 +1,52 @@
 'use client';
 
 import { BuildingLibraryIcon } from '@heroicons/react/24/outline';
-import { Select, SelectItem } from '@nextui-org/react';
+import { Select, Selection, SelectItem } from '@nextui-org/react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import useGetBankAccounts from '@/lib/hooks/banking-information/useGetBankAccounts';
+import useGetUser from '@/lib/hooks/user/useGetUser';
+import { BankingInformation } from '@/lib/types/models/user';
 
-// TODO: Add default value
+type Props = {
+  setSelectedBankAccount: Dispatch<
+    SetStateAction<BankingInformation | undefined>
+  >;
+  existingBankAccountId?: number;
+};
 
-export default function App() {
+export default function BankingInformationSelect({
+  setSelectedBankAccount,
+  existingBankAccountId,
+}: Props) {
+  const { user } = useGetUser();
   const { bankAccounts, isBankAccountsLoading } = useGetBankAccounts();
+  const [value, setValue] = useState(
+    existingBankAccountId
+      ? new Set([existingBankAccountId.toString()])
+      : new Set([])
+  );
+
+  useEffect(() => {
+    if (existingBankAccountId || !user) return;
+
+    setValue(new Set([user.selectedBankAccountId.toString()]));
+  }, [existingBankAccountId, user]);
+
+  useEffect(() => {
+    const newBankAccount = bankAccounts?.find(
+      (account) => account.id === Number(value.values().next().value)
+    );
+
+    setSelectedBankAccount(newBankAccount);
+  }, [bankAccounts, value, setSelectedBankAccount]);
 
   return (
     <Select
+      selectedKeys={value}
+      onSelectionChange={setValue as (selection: Selection) => void}
+      selectionMode='single'
+      aria-label='Bank Account'
       isLoading={isBankAccountsLoading}
       items={bankAccounts || []}
       className='max-w-xs'
