@@ -1,137 +1,187 @@
 'use client';
 
-import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  PlusIcon,
+  TrashIcon,
+  LockClosedIcon,
+} from '@heroicons/react/24/outline';
 import {
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
+  Chip,
   Divider,
   Radio,
   RadioGroup,
+  useDisclosure,
 } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 
-import {
-  BankingInformation,
-  bankingInformationSchema,
-  UserModel,
-} from '@/lib/types/models/user';
+import { updateUserSelectedBankAccount } from '@/api';
+import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
+import { UiState } from '@/lib/constants/uiState';
+import useGetBankAccounts from '@/lib/hooks/banking-information/useGetBankAccounts';
+import useGetUser from '@/lib/hooks/user/useGetUser';
+import { BankingInformation } from '@/lib/types/models/user';
 
-import AddNewBankAccountForm from './AddNewBankAccountForm';
+import DeleteBankAccountModal from './DeleteBankAccountModal';
+import ErrorAlert from '../ui/ErrorAlert';
+import Loader from '../ui/Loader';
 
-const SELECTED_BANK_ID = 1;
+const BankingInformationForm = () => {
+  const router = useRouter();
+  const { bankAccounts, bankAccountsError, isBankAccountsLoading } =
+    useGetBankAccounts();
+  const { user, isUserLoading, userError, mutateUser } = useGetUser();
 
-const mockBankingInformation: Array<BankingInformation> = [
-  {
-    id: 1,
-    bankName: 'Swedbank',
-    bankCode: 'HABALT22',
-    bankAccountNumber: 'LT55 7300 0100 0000 0036',
-  },
-  {
-    id: 2,
-    bankName: 'Luminor',
-    bankCode: 'AGBLLT2X',
-    bankAccountNumber: 'LT55 7300 0100 0000 0037',
-  },
-  {
-    id: 3,
-    bankName: 'Luminor',
-    bankCode: 'AGBLLT2X',
-    bankAccountNumber: 'LT55 7300 0100 0000 0037',
-  },
-];
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
-const defaultValue = mockBankingInformation.find(
-  (entry) => entry.id === SELECTED_BANK_ID
-)?.bankName;
+  const [selectedBankAccountId, setSelectedBankAccountId] = useState(
+    String(user?.selectedBankAccountId)
+  );
+  const [submissionMessage, setSubmissionMessage] = useState('');
+  const [uiState, setUiState] = useState(UiState.Idle);
 
-type Props = {
-  user: UserModel;
-};
-
-const BankingInformationForm = ({ user }: Props) => {
-  let bankingInformation = user.bankingInformation;
-  bankingInformation = mockBankingInformation;
-  const [isAddingNew, setIsAddingNew] = useState(!bankingInformation.length);
-
-  const { register, handleSubmit } = useForm<BankingInformation>({
-    defaultValues: {},
-    resolver: zodResolver(bankingInformationSchema),
-  });
-
-  const onSubmit = () => {};
+  const [bankAccountToDelete, setBankAccountToDelete] =
+    useState<BankingInformation>();
 
   const handleAddNewBankAccount = () => {
-    setIsAddingNew(true);
+    router.push(ADD_NEW_BANK_ACCOUNT_PAGE);
   };
 
-  const handleCancel = () => {
-    setIsAddingNew(false);
+  const handleSave = async () => {
+    if (!user?.id || !selectedBankAccountId) return;
+
+    setUiState(UiState.Pending);
+    const response = await updateUserSelectedBankAccount(
+      user.id,
+      Number(selectedBankAccountId)
+    );
+    setSubmissionMessage(response.data.message);
+
+    if ('errors' in response.data) {
+      setUiState(UiState.Failure);
+
+      return;
+    }
+
+    setUiState(UiState.Success);
+    mutateUser();
   };
+
+  const handleTrashIconClick = (bankAccount: BankingInformation) => {
+    setBankAccountToDelete(bankAccount);
+    onOpen();
+  };
+
+  if (bankAccountsError || userError) return <ErrorAlert />;
 
   const renderBankingInformationCard = ({
     id,
-    bankName,
-    bankCode,
-    bankAccountNumber,
+    name,
+    code,
+    accountNumber,
   }: BankingInformation) => (
     <Card key={id} className='col-span-1'>
       <CardBody className='flex flex-row gap-2 items-center'>
-        <Radio color='secondary' value={bankName} />
+        <Radio color='secondary' value={String(id || 0)} />
         <div>
-          <h4 className='font-bold text-large'>{bankName}</h4>
-          <p className='text-tiny uppercase font-bold'>{bankCode}</p>
-          <small className='text-default-500'>{bankAccountNumber}</small>
+          <h4 className='font-bold text-large'>{name}</h4>
+          <p className='text-tiny uppercase font-bold'>{code}</p>
+          <small className='text-default-500'>{accountNumber}</small>
         </div>
         <Button
           isIconOnly
+          isDisabled={id === user?.selectedBankAccountId}
           variant='light'
-          color='danger'
+          color={id === user?.selectedBankAccountId ? 'default' : 'danger'}
           className='min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer absolute right-4'
-          startContent={<TrashIcon className='w-5 h-5' />}
+          startContent={
+            id === user?.selectedBankAccountId ? (
+              <LockClosedIcon className='w-5 h-5' />
+            ) : (
+              <TrashIcon
+                onClick={() =>
+                  handleTrashIconClick({ id, name, code, accountNumber })
+                }
+                className='w-5 h-5'
+              />
+            )
+          }
         />
       </CardBody>
     </Card>
   );
 
-  if (isAddingNew) return <AddNewBankAccountForm onCancel={handleCancel} />;
-
   return (
-    <Card className='w-full bg-transparent border border-neutral-800'>
-      <CardHeader className='p-4 px-6'>Banking Information</CardHeader>
-      <Divider />
-      <CardBody className='p-6 flex flex-col items-end gap-6'>
-        <Button
-          color={'secondary'}
-          endContent={<PlusIcon className='w-4 h-4' />}
-          onPress={handleAddNewBankAccount}
-        >
-          Add New
-        </Button>
-        <RadioGroup className='w-full' defaultValue={defaultValue}>
-          <div className='grid grid-cols-2 gap-4'>
-            {bankingInformation.map((entry) => {
-              const { id, bankName, bankCode, bankAccountNumber } = entry;
+    <>
+      <Card className='w-full bg-transparent border border-neutral-800'>
+        <CardHeader className='p-4 px-6'>Banking Information</CardHeader>
+        <Divider />
+        <CardBody className='p-6 flex flex-col items-end gap-6'>
+          <Button
+            color={'secondary'}
+            endContent={<PlusIcon className='w-4 h-4' />}
+            onPress={handleAddNewBankAccount}
+          >
+            Add New
+          </Button>
+          {isBankAccountsLoading || isUserLoading ? (
+            <Loader />
+          ) : (
+            <RadioGroup
+              className='w-full'
+              value={String(selectedBankAccountId)}
+              onValueChange={setSelectedBankAccountId}
+            >
+              <div className='grid grid-cols-2 gap-4'>
+                {bankAccounts?.map((account) => {
+                  const { id, name, code, accountNumber } = account;
 
-              return renderBankingInformationCard({
-                id,
-                bankName,
-                bankCode,
-                bankAccountNumber,
-              });
-            })}
-          </div>
-        </RadioGroup>
-      </CardBody>
-      <CardFooter className='justify-end p-6'>
-        <Button color='secondary'>Save</Button>
-      </CardFooter>
-    </Card>
+                  return renderBankingInformationCard({
+                    id,
+                    name,
+                    code,
+                    accountNumber,
+                  });
+                })}
+              </div>
+            </RadioGroup>
+          )}
+        </CardBody>
+        <CardFooter className='justify-end p-6'>
+          {submissionMessage && (
+            <Chip
+              color={uiState === UiState.Failure ? 'danger' : 'success'}
+              className='mb-4'
+            >
+              {submissionMessage}
+            </Chip>
+          )}
+          <Button
+            isDisabled={
+              selectedBankAccountId === String(user?.selectedBankAccountId)
+            }
+            isLoading={uiState === UiState.Pending}
+            color='secondary'
+            onPress={handleSave}
+          >
+            Save
+          </Button>
+        </CardFooter>
+      </Card>
+
+      {bankAccountToDelete && isOpen && (
+        <DeleteBankAccountModal
+          isOpen={isOpen}
+          onClose={onClose}
+          bankAccount={bankAccountToDelete}
+        />
+      )}
+    </>
   );
 };
 

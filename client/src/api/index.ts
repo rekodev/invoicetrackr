@@ -2,12 +2,15 @@ import { AxiosResponse } from 'axios';
 
 import { ClientFormData, ClientModel } from '@/lib/types/models/client';
 import { InvoiceFormData, InvoiceModel } from '@/lib/types/models/invoice';
-import { UserModel } from '@/lib/types/models/user';
+import { BankingInformation, UserModel } from '@/lib/types/models/user';
 import {
+  AddBankingInformationResp,
   AddClientResp,
   AddInvoiceResp,
   DeleteClientResp,
   DeleteInvoiceResp,
+  GetBankAccountResp,
+  GetBankingInformationResp,
   UpdateClientResp,
   UpdateInvoiceResp,
   UpdateUserResp,
@@ -72,3 +75,33 @@ export const getUserByEmail = async (
   email: string
 ): Promise<AxiosResponse<UserModelWithPassword>> =>
   await api.get(`/api/users/email/${email}`);
+
+export const getBankAccount = async (
+  userId: number,
+  bankAccountId: number
+): Promise<AxiosResponse<GetBankAccountResp>> =>
+  await api.get(`/api/${userId}/banking-information/${bankAccountId}`);
+
+export const getBankingInformation = async (
+  userId: number
+): Promise<AxiosResponse<GetBankingInformationResp>> =>
+  await api.get(`/api/${userId}/banking-information`);
+
+export const addBankingInformation = async (
+  userId: number,
+  bankingInformation: BankingInformation
+): Promise<AxiosResponse<AddBankingInformationResp>> =>
+  await api.post(`/api/${userId}/banking-information`, bankingInformation);
+
+export const deleteBankingInformation = async (
+  userId: number,
+  bankAccountId: number
+) => await api.delete(`/api/${userId}/banking-information/${bankAccountId}`);
+
+export const updateUserSelectedBankAccount = async (
+  userId: number,
+  selectedBankAccountId: number
+): Promise<AxiosResponse<UpdateUserResp>> =>
+  await api.put(`/api/users/${userId}/selected-bank-account`, {
+    selectedBankAccountId,
+  });

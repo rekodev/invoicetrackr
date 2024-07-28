@@ -8,7 +8,7 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { statusOptions } from '@/lib/constants/table';
@@ -17,8 +17,10 @@ import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/useInvoiceFormS
 import useGetUser from '@/lib/hooks/user/useGetUser';
 import { ClientModel } from '@/lib/types/models/client';
 import { InvoiceModel } from '@/lib/types/models/invoice';
+import { BankingInformation } from '@/lib/types/models/user';
 import { formatDate } from '@/lib/utils/formatDate';
 
+import BankingInformationSelect from './BankingInformationSelect';
 import InvoiceFormReceiverModal from './InvoiceFormReceiverModal';
 import InvoicePartyCard from './InvoicePartyCard';
 import InvoiceServicesTable from './InvoiceServicesTable';
@@ -48,27 +50,28 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     setValue,
   } = methods;
 
-  const [receiverData, setReceiverData] = useState<ClientModel | undefined>();
+  const [receiverData, setReceiverData] = useState<ClientModel | undefined>(
+    invoiceData?.receiver
+  );
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
-  const [senderSignature, setSenderSignature] = useState<string | File>();
+  const [senderSignature, setSenderSignature] = useState<
+    string | File | undefined
+  >(invoiceData?.senderSignature);
+  const [bankingInformation, setBankingInformation] = useState<
+    BankingInformation | undefined
+  >(invoiceData?.bankingInformation);
 
   const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({
     invoiceData,
     user,
     receiverData,
+    bankingInformation,
     setUiState,
     setSubmissionMessage,
     setError,
   });
-
-  useEffect(() => {
-    if (!invoiceData) return;
-
-    setReceiverData(invoiceData.receiver);
-    setSenderSignature(invoiceData.senderSignature);
-  }, [invoiceData]);
 
   const handleOpenReceiverModal = () => {
     setIsReceiverModalOpen(true);
@@ -135,6 +138,16 @@ const InvoiceForm = ({ invoiceData }: Props) => {
         invoiceServices={invoiceData?.services}
         isInvalid={!!errors.services}
         errorMessage={errors.services?.message}
+      />
+    </div>
+  );
+
+  const renderBankingInformation = () => (
+    <div className='flex gap-4 flex-col col-span-full'>
+      <h4>Banking Details</h4>
+      <BankingInformationSelect
+        setSelectedBankAccount={setBankingInformation}
+        existingBankAccountId={invoiceData?.bankingInformation?.id}
       />
     </div>
   );
@@ -237,6 +250,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
             />
             {renderSenderAndReceiverCards()}
             {renderInvoiceServices()}
+            {renderBankingInformation()}
             {renderInvoiceSignature()}
             {renderSubmissionMessageAndActions()}
           </form>

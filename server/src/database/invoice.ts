@@ -37,6 +37,10 @@ export const getInvoicesFromDb = async (userId: number) => {
       invoices.status,
       invoices.due_date,
       invoices.sender_signature,
+      banking_information.id as bank_account_id,
+      banking_information.name as bank_account_name,
+      banking_information.account_number as bank_account_number,
+      banking_information.code as bank_account_code,
       users.id as sender_id,
       users.name as sender_name,
       users.type as sender_type,
@@ -64,9 +68,10 @@ export const getInvoicesFromDb = async (userId: number) => {
       invoices
     left join users on invoices.sender_id = users.id
     left join clients on invoices.receiver_id = clients.id
+    left join banking_information on invoices.bank_account_id = banking_information.id
     left join invoice_services on invoice_services.invoice_id = invoices.id
     where invoices.sender_id = ${userId}
-    group by invoices.id, users.id, clients.id
+    group by invoices.id, users.id, clients.id, banking_information.id
     order by id desc
   `;
 
@@ -83,6 +88,10 @@ export const getInvoiceFromDb = async (userId: number, invoiceId: number) => {
       invoices.status,
       invoices.due_date,
       invoices.sender_signature,
+      banking_information.id as bank_account_id,
+      banking_information.name as bank_account_name,
+      banking_information.account_number as bank_account_number,
+      banking_information.code as bank_account_code,
       users.id as sender_id,
       users.name as sender_name,
       users.type as sender_type,
@@ -110,9 +119,10 @@ export const getInvoiceFromDb = async (userId: number, invoiceId: number) => {
       invoices
     left join users on invoices.sender_id = users.id
     left join clients on invoices.receiver_id = clients.id
+    left join banking_information on invoices.bank_account_id = banking_information.id
     left join invoice_services on invoice_services.invoice_id = invoices.id
     where invoices.sender_id = ${userId} and invoices.id = ${invoiceId}
-    group by invoices.id, users.id, clients.id
+    group by invoices.id, users.id, clients.id, banking_information.id
     order by id desc
   `;
 
@@ -126,10 +136,10 @@ export const insertInvoiceInDb = async (
   const invoice = await sql.begin<InvoiceDto>(async (sql) => {
     const [invoice] = await sql`
       insert into invoices (
-        date, invoice_id, total_amount, status, due_date, sender_id, receiver_id, sender_signature
+        date, invoice_id, total_amount, status, due_date, sender_id, receiver_id, sender_signature, bank_account_id
       ) values (
         ${invoiceData.date}, ${invoiceData.invoiceId}, ${invoiceData.totalAmount}, ${invoiceData.status}, 
-        ${invoiceData.dueDate}, ${invoiceData.sender.id}, ${invoiceData.receiver.id}, ${senderSignature}
+        ${invoiceData.dueDate}, ${invoiceData.sender.id}, ${invoiceData.receiver.id}, ${senderSignature}, ${invoiceData.bankingInformation.id}
       ) returning id
     `;
 
@@ -152,6 +162,10 @@ export const insertInvoiceInDb = async (
         invoices.total_amount,
         invoices.status,
         invoices.due_date,
+        banking_information.id as bank_account_id,
+        banking_information.name as bank_account_name,
+        banking_information.account_number as bank_account_number,
+        banking_information.code as bank_account_code,
         users.id as sender_id,
         users.name as sender_name,
         users.type as sender_type,
@@ -179,9 +193,10 @@ export const insertInvoiceInDb = async (
         invoices
       left join users on invoices.sender_id = users.id
       left join clients on invoices.receiver_id = clients.id
+      left join banking_information on invoices.bank_account_id = banking_information.id
       left join invoice_services on invoice_services.invoice_id = invoices.id
       where invoices.id = ${invoice.id}
-      group by invoices.id, users.id, clients.id
+      group by invoices.id, users.id, clients.id, banking_information.id
     `;
 
     return insertedInvoice;
@@ -207,7 +222,8 @@ export const updateInvoiceInDb = async (
         due_date = ${invoiceData.dueDate},
         status = ${invoiceData.status},
         total_amount = ${invoiceData.totalAmount},
-        sender_signature = ${senderSignature}
+        sender_signature = ${senderSignature},
+        bank_account_id = ${invoiceData.bankingInformation.id}
       where sender_id = ${userId} and id = ${id}
       returning id
     `;

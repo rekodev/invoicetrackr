@@ -39,11 +39,20 @@ const InvoiceTableCell = ({
     invoice[
       columnKey as keyof Omit<
         InvoiceModel,
-        'actions' | 'sender' | 'receiver' | 'services'
+        | 'actions'
+        | 'sender'
+        | 'receiver'
+        | 'services'
+        | 'senderSignature'
+        | 'bankAccount'
       >
     ];
 
   switch (columnKey as keyof InvoiceModel | 'actions') {
+    case 'bankingInformation':
+      return;
+    case 'senderSignature':
+      return;
     case 'sender':
       return;
     case 'services':

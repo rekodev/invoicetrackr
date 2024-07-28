@@ -19,9 +19,9 @@ export const findBankAccountByAccountNumber = async (
 export const getBankAccountsFromDb = async (userId: number) => {
   const bankAccounts = await sql<Array<BankAccountDto>>`
         select 
-            id
-            name
-            code
+            id,
+            name,
+            code,
             account_number
         from
             banking_information
@@ -37,9 +37,9 @@ export const getBankAccountFromDb = async (
 ) => {
   const [bankAccount] = await sql<Array<BankAccountDto>>`
     select 
-        id
-        name
-        code
+        id,
+        name,
+        code,
         account_number
     from
         banking_information

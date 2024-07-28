@@ -131,17 +131,19 @@ const PersonalInformationForm = ({ user }: Props) => {
           />
         </div>
       </CardBody>
-      <CardFooter className='justify-between p-6 w-full'>
+      <CardFooter className='justify-between p-6 w-full flex-col'>
         {submissionMessage && (
           <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
             {submissionMessage}
           </Chip>
         )}
+
         <Button
           isDisabled={!isDirty && !Boolean(formSignature)}
           type='submit'
           isLoading={uiState === UiState.Pending}
           color='secondary'
+          className='self-end'
         >
           Save
         </Button>

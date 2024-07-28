@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { clientSchema } from './client';
-import { userSchema } from './user';
+import { bankingInformationSchema, userSchema } from './user';
 
 export const invoiceStatusSchema = z.union([
   z.literal('paid'),
@@ -31,6 +31,7 @@ export const invoiceSchema = z.object({
   receiver: clientSchema,
   services: z.array(invoiceServiceSchema),
   totalAmount: z.number(),
+  bankingInformation: bankingInformationSchema,
 });
 
 export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;

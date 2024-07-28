@@ -7,6 +7,7 @@ import {
   getUserByEmail,
   postUser,
   updateUser,
+  updateUserSelectedBankAccount,
 } from '../controllers';
 import { User } from '../types/models';
 
@@ -58,3 +59,13 @@ export const deleteUserOptions: RouteShorthandOptionsWithHandler = {
   },
   handler: deleteUser,
 };
+
+export const updateUserSelectedBankAccountOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      response: {
+        200: Type.Object({ message: Type.String() }),
+      },
+    },
+    handler: updateUserSelectedBankAccount,
+  };

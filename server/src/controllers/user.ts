@@ -4,6 +4,7 @@ import {
   getUserByEmailFromDb,
   getUserFromDb,
   updateUserInDb,
+  updateUserSelectedBankAccountInDb,
 } from '../database';
 import { UserDto } from '../types/dtos';
 import { transformUserDto } from '../types/transformers';
@@ -108,4 +109,31 @@ export const deleteUser = (
   reply: FastifyReply
 ) => {
   const { id } = req.params;
+};
+
+export const updateUserSelectedBankAccount = async (
+  req: FastifyRequest<{
+    Params: { id: number };
+    Body: { selectedBankAccountId: number };
+  }>,
+  reply: FastifyReply
+) => {
+  const { id } = req.params;
+  const { selectedBankAccountId } = req.body;
+
+  const foundUser = await getUserFromDb(id);
+
+  if (!foundUser) return reply.status(400).send({ message: 'User not found' });
+
+  const updatedUserSelectedBankAccount =
+    await updateUserSelectedBankAccountInDb(id, selectedBankAccountId);
+
+  if (!updatedUserSelectedBankAccount)
+    return reply
+      .status(400)
+      .send({ message: 'Unable to update user bank account selection' });
+
+  reply.send({
+    message: 'User bank account selection updated successfully',
+  });
 };

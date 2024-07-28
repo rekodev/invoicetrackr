@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
 export const bankingInformationSchema = z.object({
-  id: z.number(),
-  bankName: z.string(),
-  bankCode: z.string(),
-  bankAccountNumber: z.string(),
+  id: z.number().optional(),
+  name: z.string(),
+  code: z.string(),
+  accountNumber: z.string(),
 });
 
 export const userSchema = z.object({
@@ -17,7 +17,7 @@ export const userSchema = z.object({
   address: z.string(),
   email: z.string(),
   bankingInformation: z.array(bankingInformationSchema),
-  selectedBankId: z.number().nullable(),
+  selectedBankAccountId: z.number(),
 });
 
 export const userSchemaWithPassword = userSchema.extend({

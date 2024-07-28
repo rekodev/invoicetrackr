@@ -21,6 +21,7 @@ export const getInvoices = async (
   const { userId } = req.params;
 
   const invoices = await getInvoicesFromDb(userId);
+
   reply.send(
     invoices.map((invoice) => transformInvoiceDto(invoice as InvoiceDto))
   );

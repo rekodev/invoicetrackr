@@ -10,6 +10,7 @@ import {
   updateUserOptions,
   deleteUserOptions,
   getUserByEmailOptions,
+  updateUserSelectedBankAccountOptions,
 } from '../options';
 
 const userRoutes = (
@@ -26,6 +27,11 @@ const userRoutes = (
   fastify.put('/api/users/:id', updateUserOptions);
 
   fastify.delete('/api/users/:id', deleteUserOptions);
+
+  fastify.put(
+    '/api/users/:id/selected-bank-account',
+    updateUserSelectedBankAccountOptions
+  );
 
   done();
 };

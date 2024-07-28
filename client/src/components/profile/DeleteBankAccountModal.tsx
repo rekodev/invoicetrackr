@@ -9,42 +9,42 @@ import {
 } from '@nextui-org/react';
 import { useState } from 'react';
 
-import { deleteClient } from '@/api';
+import { deleteBankingInformation } from '@/api';
 import { UiState } from '@/lib/constants/uiState';
-import useGetClients from '@/lib/hooks/client/useGetClients';
+import useGetBankAccounts from '@/lib/hooks/banking-information/useGetBankAccounts';
 import useGetUser from '@/lib/hooks/user/useGetUser';
-import { ClientModel } from '@/lib/types/models/client';
+import { BankingInformation } from '@/lib/types/models/user';
 
 type Props = {
-  clientData: ClientModel;
+  bankAccount: BankingInformation;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const DeleteClientModal = ({ isOpen, onClose, clientData }: Props) => {
-  const { mutateClients } = useGetClients();
+const DeleteBankAccountModal = ({ isOpen, onClose, bankAccount }: Props) => {
+  const { mutateBankAccounts } = useGetBankAccounts();
   const { user } = useGetUser();
 
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
 
   const handleSubmit = async () => {
-    if (!user?.id || !clientData?.id) return;
+    if (!user?.id || !bankAccount?.id) return;
 
     setUiState(UiState.Pending);
 
-    const response = await deleteClient(user.id, clientData.id);
+    const response = await deleteBankingInformation(user.id, bankAccount.id);
     setSubmissionMessage(response.data.message);
 
-    if ('error' in response.data) {
+    if ('errors' in response.data) {
       setUiState(UiState.Failure);
 
       return;
     }
 
     setUiState(UiState.Success);
+    mutateBankAccounts();
     onClose();
-    mutateClients();
   };
 
   const renderModalFooter = () => (
@@ -75,11 +75,11 @@ const DeleteClientModal = ({ isOpen, onClose, clientData }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         <ModalHeader>
-          Are you sure you want to delete {clientData.name}?
+          Are you sure you want to delete {bankAccount.accountNumber}?
         </ModalHeader>
         <ModalBody>
-          This client will be deleted immediately. You can&apos;t undo this
-          action.
+          This banking information will be deleted immediately. You can&apos;t
+          undo this action.
         </ModalBody>
         {renderModalFooter()}
       </ModalContent>
@@ -87,4 +87,4 @@ const DeleteClientModal = ({ isOpen, onClose, clientData }: Props) => {
   );
 };
 
-export default DeleteClientModal;
+export default DeleteBankAccountModal;

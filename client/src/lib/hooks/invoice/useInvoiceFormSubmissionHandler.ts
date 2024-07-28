@@ -8,18 +8,29 @@ import { INVOICES_PAGE } from '@/lib/constants/pages';
 import { UiState } from '@/lib/constants/uiState';
 import { ClientModel } from '@/lib/types/models/client';
 import { InvoiceModel, InvoiceService } from '@/lib/types/models/invoice';
-import { UserModel } from '@/lib/types/models/user';
+import { BankingInformation, UserModel } from '@/lib/types/models/user';
 import { AddInvoiceResp, UpdateInvoiceResp } from '@/lib/types/response';
 
+import useGetInvoice from './useGetInvoice';
 import useGetInvoices from './useGetInvoices';
 
 const calculateServiceTotal = (services: Array<InvoiceService>) =>
   services.reduce((acc, currentValue) => acc + Number(currentValue.amount), 0);
 
+const INITIAL_RECEIVER_DATA: ClientModel = {
+  businessNumber: '',
+  businessType: 'business',
+  address: '',
+  email: '',
+  name: '',
+  type: 'receiver',
+};
+
 type Props = {
   invoiceData: InvoiceModel | undefined;
   user: UserModel | undefined;
   receiverData: ClientModel | undefined;
+  bankingInformation?: BankingInformation;
   setUiState: Dispatch<SetStateAction<UiState>>;
   setSubmissionMessage: Dispatch<SetStateAction<string>>;
   setError: UseFormSetError<InvoiceModel>;
@@ -29,12 +40,14 @@ const useInvoiceFormSubmissionHandler = ({
   invoiceData,
   user,
   receiverData,
+  bankingInformation,
   setUiState,
   setSubmissionMessage,
   setError,
 }: Props) => {
   const router = useRouter();
   const { mutateInvoices } = useGetInvoices();
+  const { mutateInvoice } = useGetInvoice(invoiceData?.id);
 
   const redirectToInvoicesPage = () => {
     router.push(INVOICES_PAGE);
@@ -50,8 +63,9 @@ const useInvoiceFormSubmissionHandler = ({
       ...data,
       sender: user,
       senderSignature: data.senderSignature || '',
-      receiver: receiverData || invoiceData?.receiver || ({} as ClientModel),
+      receiver: receiverData || invoiceData?.receiver || INITIAL_RECEIVER_DATA,
       totalAmount: calculateServiceTotal(data.services),
+      bankingInformation: bankingInformation || data.bankingInformation,
     };
 
     let response: AxiosResponse<UpdateInvoiceResp | AddInvoiceResp>;
@@ -75,6 +89,7 @@ const useInvoiceFormSubmissionHandler = ({
 
     setUiState(UiState.Success);
     mutateInvoices();
+    mutateInvoice();
     redirectToInvoicesPage();
   };
 
