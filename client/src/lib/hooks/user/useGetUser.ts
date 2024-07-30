@@ -5,10 +5,13 @@ import { UserModel } from '@/lib/types/models/user';
 
 import SWRKeys from '../../constants/swrKeys';
 
-// TODO: Update temp user id
-const useGetUser = () => {
+type Props = {
+  userId: number;
+};
+
+const useGetUser = ({ userId }: Props) => {
   const { data, isLoading, mutate, error, isValidating } = useSWR<UserModel>(
-    SWRKeys.user(1)
+    SWRKeys.user(userId)
   );
 
   return useMemo(

@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { profileMenuTabs } from '@/lib/constants/profile';
-import { UserModel } from '@/lib/types/models/user';
+import useGetUser from '@/lib/hooks/user/useGetUser';
 
 enum UserNavKeys {
   PersonalInformation = 'personal-information',
@@ -22,11 +22,12 @@ enum UserNavKeys {
 }
 
 type Props = {
-  user: UserModel | undefined;
+  userId: number;
 };
 
-const UserCard = ({ user }: Props) => {
+const UserCard = ({ userId }: Props) => {
   const pathname = usePathname();
+  const { user } = useGetUser({ userId });
 
   const currentPath = pathname?.split('/')[2];
 

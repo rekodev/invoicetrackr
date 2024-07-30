@@ -6,13 +6,14 @@ import { BankingInformation } from '@/lib/types/models/user';
 import SWRKeys from '../../constants/swrKeys';
 
 type Props = {
+  userId: number;
   bankAccountId: number | undefined;
 };
 
-const useGetBankAccount = ({ bankAccountId }: Props) => {
+const useGetBankAccount = ({ userId, bankAccountId }: Props) => {
   const { data, isLoading, mutate, error, isValidating } =
     useSWR<BankingInformation>(
-      bankAccountId ? SWRKeys.bankAccount(1, bankAccountId) : null
+      bankAccountId ? SWRKeys.bankAccount(userId, bankAccountId) : null
     );
 
   return useMemo(

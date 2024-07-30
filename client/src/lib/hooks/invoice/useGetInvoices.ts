@@ -5,10 +5,14 @@ import { InvoiceModel } from '@/lib/types/models/invoice';
 
 import SWRKeys from '../../constants/swrKeys';
 
-const useGetInvoices = () => {
+type Props = {
+  userId: number;
+};
+
+const useGetInvoices = ({ userId }: Props) => {
   const { data, isLoading, mutate, error, isValidating } = useSWR<
     Array<InvoiceModel>
-  >(SWRKeys.invoices(1));
+  >(SWRKeys.invoices(userId));
 
   return useMemo(
     () => ({

@@ -4,11 +4,11 @@ import GuestHeader from './ui/guest-header';
 import UserHeader from './ui/user-header';
 
 const Header = async () => {
-  const user = await auth();
+  const session = await auth();
 
-  if (!user) return <GuestHeader />;
+  if (!session?.user?.id) return <GuestHeader />;
 
-  return <UserHeader />;
+  return <UserHeader userId={Number(session.user.id)} />;
 };
 
 export default Header;

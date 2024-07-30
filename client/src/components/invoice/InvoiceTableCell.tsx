@@ -44,7 +44,7 @@ const InvoiceTableCell = ({
         | 'receiver'
         | 'services'
         | 'senderSignature'
-        | 'bankAccount'
+        | 'bankingInformation'
       >
     ];
 

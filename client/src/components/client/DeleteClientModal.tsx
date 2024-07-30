@@ -16,14 +16,15 @@ import useGetUser from '@/lib/hooks/user/useGetUser';
 import { ClientModel } from '@/lib/types/models/client';
 
 type Props = {
+  userId: number;
   clientData: ClientModel;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const DeleteClientModal = ({ isOpen, onClose, clientData }: Props) => {
-  const { mutateClients } = useGetClients();
-  const { user } = useGetUser();
+const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
+  const { mutateClients } = useGetClients({ userId });
+  const { user } = useGetUser({ userId });
 
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');

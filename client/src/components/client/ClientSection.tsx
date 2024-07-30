@@ -17,8 +17,12 @@ import Loader from '../ui/Loader';
 
 const PER_PAGE = 8;
 
-const ClientSection = () => {
-  const { clients, isClientsLoading } = useGetClients();
+type Props = {
+  userId: number;
+};
+
+const ClientSection = ({ userId }: Props) => {
+  const { clients, isClientsLoading } = useGetClients({ userId });
   const {
     page,
     setPage,
@@ -107,6 +111,7 @@ const ClientSection = () => {
   return (
     <section className='flex flex-col gap-4'>
       <ClientSectionTopContent
+        userId={userId}
         clients={filteredItems}
         searchTerm={searchTerm}
         onSearch={handleSearch}
@@ -122,6 +127,7 @@ const ClientSection = () => {
       />
       {currentClientData && isEditClientModalOpen && (
         <EditClientModal
+          userId={userId}
           isOpen={isEditClientModalOpen}
           onClose={handleCloseEditClientModal}
           clientData={currentClientData}
@@ -129,6 +135,7 @@ const ClientSection = () => {
       )}
       {currentClientData && isDeleteClientModalOpen && (
         <DeleteClientModal
+          userId={userId}
           clientData={currentClientData}
           isOpen={isDeleteClientModalOpen}
           onClose={handleCloseDeleteClientModal}

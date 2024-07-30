@@ -8,6 +8,7 @@ import { InvoiceModel } from '@/lib/types/models/invoice';
 import PDFDocument from '../pdf/PDFDocument';
 
 type Props = {
+  userId: number;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   invoiceData: InvoiceModel;
@@ -15,14 +16,16 @@ type Props = {
 };
 
 const InvoiceModal = ({
+  userId,
   isOpen,
   onOpenChange,
   invoiceData,
   senderSignatureImage,
 }: Props) => {
   const { invoiceId } = invoiceData;
-  const { user } = useGetUser();
+  const { user } = useGetUser({ userId });
   const { bankAccount } = useGetBankAccount({
+    userId,
     bankAccountId: user?.selectedBankAccountId,
   });
 

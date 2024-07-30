@@ -25,13 +25,13 @@ import { capitalize } from '@/lib/utils';
 import SignaturePad from '../SignaturePad';
 
 type Props = {
-  user: UserModel | undefined;
+  userId: number;
 };
 
 // TODO: Improve form and add validation
 
-const PersonalInformationForm = ({ user }: Props) => {
-  const { mutateUser } = useGetUser();
+const PersonalInformationForm = ({ userId }: Props) => {
+  const { mutateUser, user } = useGetUser({ userId });
   const {
     register,
     handleSubmit,

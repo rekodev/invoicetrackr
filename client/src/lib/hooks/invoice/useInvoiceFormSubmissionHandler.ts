@@ -28,6 +28,7 @@ const INITIAL_RECEIVER_DATA: ClientModel = {
 
 type Props = {
   invoiceData: InvoiceModel | undefined;
+  userId: number;
   user: UserModel | undefined;
   receiverData: ClientModel | undefined;
   bankingInformation?: BankingInformation;
@@ -38,6 +39,7 @@ type Props = {
 
 const useInvoiceFormSubmissionHandler = ({
   invoiceData,
+  userId,
   user,
   receiverData,
   bankingInformation,
@@ -46,8 +48,11 @@ const useInvoiceFormSubmissionHandler = ({
   setError,
 }: Props) => {
   const router = useRouter();
-  const { mutateInvoices } = useGetInvoices();
-  const { mutateInvoice } = useGetInvoice(invoiceData?.id);
+  const { mutateInvoices } = useGetInvoices({ userId });
+  const { mutateInvoice } = useGetInvoice({
+    userId,
+    invoiceId: invoiceData?.id,
+  });
 
   const redirectToInvoicesPage = () => {
     router.push(INVOICES_PAGE);

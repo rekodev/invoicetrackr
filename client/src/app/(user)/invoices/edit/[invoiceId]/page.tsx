@@ -1,25 +1,27 @@
-'use client';
-
-import { useParams } from 'next/navigation';
-
+import { getInvoice } from '@/api';
+import { auth } from '@/auth';
 import InvoiceForm from '@/components/invoice/InvoiceForm';
-import ErrorAlert from '@/components/ui/ErrorAlert';
-import Loader from '@/components/ui/Loader';
-import useGetInvoice from '@/lib/hooks/invoice/useGetInvoice';
 
-const EditInvoicePage = () => {
-  const params = useParams<{ invoiceId: string }>();
-  const { invoice, isInvoiceLoading, invoiceError } = useGetInvoice(
+const EditInvoicePage = async ({
+  params,
+}: {
+  params: { invoiceId: string };
+}) => {
+  const session = await auth();
+
+  if (!session?.user?.id) return null;
+
+  const response = await getInvoice(
+    Number(session.user.id),
     Number(params!.invoiceId)
   );
 
-  if (isInvoiceLoading) return <Loader />;
-
-  if (invoiceError) return <ErrorAlert />;
-
   return (
     <section>
-      <InvoiceForm invoiceData={invoice} />
+      <InvoiceForm
+        userId={Number(session.user.id)}
+        invoiceData={response.data.invoice}
+      />
     </section>
   );
 };

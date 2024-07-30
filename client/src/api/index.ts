@@ -11,6 +11,7 @@ import {
   DeleteInvoiceResp,
   GetBankAccountResp,
   GetBankingInformationResp,
+  GetInvoiceResp,
   UpdateClientResp,
   UpdateInvoiceResp,
   UpdateUserResp,
@@ -19,6 +20,12 @@ import {
 import api from './apiInstance';
 
 type UserModelWithPassword = UserModel & { password: string };
+
+export const getInvoice = async (
+  userId: number,
+  invoiceId: number
+): Promise<AxiosResponse<GetInvoiceResp>> =>
+  await api.get(`/api/${userId}/invoices/${invoiceId}`);
 
 export const addInvoice = async (
   userId: number,

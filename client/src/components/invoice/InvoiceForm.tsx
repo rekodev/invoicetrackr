@@ -31,11 +31,12 @@ import ErrorAlert from '../ui/ErrorAlert';
 import Loader from '../ui/Loader';
 
 type Props = {
+  userId: number;
   invoiceData?: InvoiceModel;
 };
 
-const InvoiceForm = ({ invoiceData }: Props) => {
-  const { user, isUserLoading, userError } = useGetUser();
+const InvoiceForm = ({ userId, invoiceData }: Props) => {
+  const { user, isUserLoading, userError } = useGetUser({ userId });
   const methods = useForm<InvoiceModel>({
     defaultValues: invoiceData || {
       services: [{ amount: 0, quantity: 0, description: '', unit: '' }],
@@ -65,6 +66,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
 
   const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({
     invoiceData,
+    userId,
     user,
     receiverData,
     bankingInformation,
@@ -146,6 +148,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
     <div className='flex gap-4 flex-col col-span-full'>
       <h4>Banking Details</h4>
       <BankingInformationSelect
+        userId={userId}
         setSelectedBankAccount={setBankingInformation}
         existingBankAccountId={invoiceData?.bankingInformation?.id}
       />
@@ -258,6 +261,7 @@ const InvoiceForm = ({ invoiceData }: Props) => {
       </FormProvider>
 
       <InvoiceFormReceiverModal
+        userId={userId}
         isOpen={isReceiverModalOpen}
         onClose={handleCloseReceiverModal}
         onReceiverSelect={handleSelectReceiver}

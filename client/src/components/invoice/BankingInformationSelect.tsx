@@ -9,6 +9,7 @@ import useGetUser from '@/lib/hooks/user/useGetUser';
 import { BankingInformation } from '@/lib/types/models/user';
 
 type Props = {
+  userId: number;
   setSelectedBankAccount: Dispatch<
     SetStateAction<BankingInformation | undefined>
   >;
@@ -16,11 +17,14 @@ type Props = {
 };
 
 export default function BankingInformationSelect({
+  userId,
   setSelectedBankAccount,
   existingBankAccountId,
 }: Props) {
-  const { user } = useGetUser();
-  const { bankAccounts, isBankAccountsLoading } = useGetBankAccounts();
+  const { user } = useGetUser({ userId });
+  const { bankAccounts, isBankAccountsLoading } = useGetBankAccounts({
+    userId,
+  });
   const [value, setValue] = useState(
     existingBankAccountId
       ? new Set([existingBankAccountId.toString()])

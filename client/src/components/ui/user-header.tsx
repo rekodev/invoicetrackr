@@ -34,10 +34,14 @@ const navbarItems = [
   { name: 'Clients', href: CLIENTS_PAGE },
 ];
 
-export default function UserHeader() {
+type Props = {
+  userId: number;
+};
+
+export default function UserHeader({ userId }: Props) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user } = useGetUser();
+  const { user } = useGetUser({ userId });
 
   const navigateToProfilePage = () => {
     router.push(PERSONAL_INFORMATION_PAGE);
