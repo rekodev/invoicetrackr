@@ -62,8 +62,8 @@ export default function UserHeader() {
         <NavbarItem>
           <Button
             as={Link}
-            color='secondary'
             href={SIGN_UP_PAGE}
+            color='secondary'
             variant='flat'
           >
             Sign Up

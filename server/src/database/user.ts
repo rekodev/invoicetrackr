@@ -63,6 +63,20 @@ export const insertUser = async ({
   return users;
 };
 
+export const registerUser = async ({
+  email,
+  password,
+}: Pick<UserModel, 'email' | 'password'>) => {
+  const [user] = await sql`
+    insert into users
+      (email, password)
+    values
+      (${email}, ${password})
+    returning email
+  `;
+  return user;
+};
+
 export const updateUserInDb = async (
   id: number,
   user: UserModel,

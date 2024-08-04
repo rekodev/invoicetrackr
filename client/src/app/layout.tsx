@@ -28,7 +28,9 @@ export default async function RootLayout({
       <body className={(inter.className, bgGradient)}>
         <Providers>
           <Header />
-          {children}
+          <main className='flex-grow flex flex-col max-w-5xl p-6 mx-auto w-full'>
+            {children}
+          </main>
           <Footer />
         </Providers>
       </body>
