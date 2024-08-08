@@ -30,9 +30,24 @@ export const getUserByEmailOptions: RouteShorthandOptionsWithHandler = {
 
 export const postUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: User,
+    body: Type.Object({
+      email: Type.String({
+        format: 'email',
+        maxLength: 255,
+        minLength: 5,
+        errorMessage: 'Invalid email',
+      }),
+      password: Type.String({
+        minLength: 6,
+        errorMessage: 'Password must be at least 6 characters long',
+      }),
+      confirmedPassword: Type.String({
+        minLength: 6,
+        errorMessage: 'Must match password',
+      }),
+    }),
     response: {
-      201: User,
+      201: Type.Object({ email: Type.String(), message: Type.String() }),
     },
   },
   handler: postUser,

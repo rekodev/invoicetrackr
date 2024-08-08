@@ -13,17 +13,19 @@ import useGetClients from '@/lib/hooks/client/useGetClients';
 import { ClientModel } from '@/lib/types/models/client';
 
 type Props = {
+  userId: number;
   isOpen: boolean;
   onClose: () => void;
   onReceiverSelect: (client: ClientModel) => void;
 };
 
 const InvoiceFormPartyModal = ({
+  userId,
   isOpen,
   onClose,
   onReceiverSelect,
 }: Props) => {
-  const { clients } = useGetClients();
+  const { clients } = useGetClients({ userId });
 
   const renderClientOption = (client: ClientModel) => (
     <div key={client.id} onClick={() => onReceiverSelect(client)}>

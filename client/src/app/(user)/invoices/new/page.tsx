@@ -1,9 +1,14 @@
+import { auth } from '@/auth';
 import InvoiceForm from '@/components/invoice/InvoiceForm';
 
-const AddNewInvoicePage = () => {
+const AddNewInvoicePage = async () => {
+  const session = await auth();
+
+  if (!session?.user?.id) return null;
+
   return (
     <section className='w-full'>
-      <InvoiceForm />
+      <InvoiceForm userId={Number(session.user.id)} />
     </section>
   );
 };

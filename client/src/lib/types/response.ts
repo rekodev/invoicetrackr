@@ -4,6 +4,14 @@ import { ClientModel } from './models/client';
 import { InvoiceModel } from './models/invoice';
 import { BankingInformation, UserModel } from './models/user';
 
+export type RegisterUserResponse = ApiError & {
+  email: string;
+};
+
+export type GetInvoiceResp = ApiError & {
+  invoice: InvoiceModel;
+};
+
 export type GetInvoicesResp = ApiError & {
   invoices: Array<InvoiceModel>;
 };

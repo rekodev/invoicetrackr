@@ -7,3 +7,4 @@ export const InternalServerError = createError(
   '%s',
   500
 );
+export const UnauthorizedError = createError('UNAUTHORIZED', '%s', 401);

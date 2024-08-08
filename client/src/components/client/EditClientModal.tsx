@@ -21,6 +21,7 @@ import { ClientModel } from '@/lib/types/models/client';
 import { capitalize } from '@/lib/utils';
 
 type Props = {
+  userId: number;
   isOpen: boolean;
   onClose: () => void;
   clientData: ClientModel;
@@ -28,9 +29,9 @@ type Props = {
 
 type ClientFormData = ClientModel;
 
-const EditClientModal = ({ isOpen, onClose, clientData }: Props) => {
-  const { user } = useGetUser();
-  const { mutateClients } = useGetClients();
+const EditClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
+  const { user } = useGetUser({ userId });
+  const { mutateClients } = useGetClients({ userId });
 
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [uiState, setUiState] = useState(UiState.Idle);

@@ -16,14 +16,20 @@ import useGetUser from '@/lib/hooks/user/useGetUser';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 
 type Props = {
+  userId: number;
   invoiceData: InvoiceModel;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const DeleteInvoiceModal = ({ isOpen, onClose, invoiceData }: Props) => {
-  const { mutateInvoices } = useGetInvoices();
-  const { user } = useGetUser();
+const DeleteInvoiceModal = ({
+  userId,
+  isOpen,
+  onClose,
+  invoiceData,
+}: Props) => {
+  const { mutateInvoices } = useGetInvoices({ userId });
+  const { user } = useGetUser({ userId });
 
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');

@@ -31,11 +31,15 @@ import DeleteBankAccountModal from './DeleteBankAccountModal';
 import ErrorAlert from '../ui/ErrorAlert';
 import Loader from '../ui/Loader';
 
-const BankingInformationForm = () => {
+type Props = {
+  userId: number;
+};
+
+const BankingInformationForm = ({ userId }: Props) => {
   const router = useRouter();
   const { bankAccounts, bankAccountsError, isBankAccountsLoading } =
-    useGetBankAccounts();
-  const { user, isUserLoading, userError, mutateUser } = useGetUser();
+    useGetBankAccounts({ userId });
+  const { user, isUserLoading, userError, mutateUser } = useGetUser({ userId });
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -123,7 +127,8 @@ const BankingInformationForm = () => {
         <Divider />
         <CardBody className='p-6 flex flex-col items-end gap-6'>
           <Button
-            color={'secondary'}
+            color='secondary'
+            variant='bordered'
             endContent={<PlusIcon className='w-4 h-4' />}
             onPress={handleAddNewBankAccount}
           >
@@ -176,6 +181,7 @@ const BankingInformationForm = () => {
 
       {bankAccountToDelete && isOpen && (
         <DeleteBankAccountModal
+          userId={userId}
           isOpen={isOpen}
           onClose={onClose}
           bankAccount={bankAccountToDelete}

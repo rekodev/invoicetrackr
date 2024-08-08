@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 
-import Breadcrumbs from '@/components/Breadcrumbs';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
   description: 'Invoice generating and tracking',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
@@ -29,7 +28,9 @@ export default function RootLayout({
       <body className={(inter.className, bgGradient)}>
         <Providers>
           <Header />
-          {children}
+          <main className='flex-grow flex flex-col max-w-5xl p-6 mx-auto w-full'>
+            {children}
+          </main>
           <Footer />
         </Providers>
       </body>

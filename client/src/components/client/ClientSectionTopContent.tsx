@@ -23,6 +23,7 @@ import SearchIcon from '../icons/SearchIcon';
 const filters = ['business', 'individual'];
 
 type Props = {
+  userId: number;
   clients: Array<ClientModel> | undefined;
   searchTerm: string;
   onSearch: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -32,6 +33,7 @@ type Props = {
 };
 
 const ClientSectionTopContent = ({
+  userId,
   clients,
   searchTerm,
   onSearch,
@@ -112,6 +114,7 @@ const ClientSectionTopContent = ({
       </div>
 
       <AddNewClientModal
+        userId={userId}
         isOpen={isAddNewClientModalOpen}
         onClose={handleCloseAddNewClientModal}
       />

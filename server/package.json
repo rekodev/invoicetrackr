@@ -11,6 +11,7 @@
   "author": "rekodev",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.14.8",
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.4",
@@ -22,6 +23,7 @@
     "@fastify/type-provider-typebox": "^4.0.0",
     "@sinclair/typebox": "^0.32.34",
     "ajv-errors": "^3.0.0",
+    "bcrypt": "^5.1.1",
     "cloudinary": "^2.2.0",
     "fastify": "^4.28.0",
     "fastify-multer": "^2.0.3",

@@ -1,14 +1,19 @@
 'use client';
 
-import { BuildingLibraryIcon } from '@heroicons/react/24/outline';
-import { Select, Selection, SelectItem } from '@nextui-org/react';
+import {
+  BuildingLibraryIcon,
+  IdentificationIcon,
+} from '@heroicons/react/24/outline';
+import { Card, Link, Select, Selection, SelectItem } from '@nextui-org/react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
+import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 import useGetBankAccounts from '@/lib/hooks/banking-information/useGetBankAccounts';
 import useGetUser from '@/lib/hooks/user/useGetUser';
 import { BankingInformation } from '@/lib/types/models/user';
 
 type Props = {
+  userId: number;
   setSelectedBankAccount: Dispatch<
     SetStateAction<BankingInformation | undefined>
   >;
@@ -16,11 +21,14 @@ type Props = {
 };
 
 export default function BankingInformationSelect({
+  userId,
   setSelectedBankAccount,
   existingBankAccountId,
 }: Props) {
-  const { user } = useGetUser();
-  const { bankAccounts, isBankAccountsLoading } = useGetBankAccounts();
+  const { user } = useGetUser({ userId });
+  const { bankAccounts, isBankAccountsLoading } = useGetBankAccounts({
+    userId,
+  });
   const [value, setValue] = useState(
     existingBankAccountId
       ? new Set([existingBankAccountId.toString()])
@@ -40,6 +48,30 @@ export default function BankingInformationSelect({
 
     setSelectedBankAccount(newBankAccount);
   }, [bankAccounts, value, setSelectedBankAccount]);
+
+  if (!bankAccounts?.length && !isBankAccountsLoading) {
+    return (
+      <Card className='p-4 flex-row items-start gap-4 max-w-max border border-foreground-200'>
+        <div className='border p-2 rounded-xl border-foreground-200'>
+          <IdentificationIcon className='w-6 h-6 text-foreground-500' />
+        </div>
+        <div>
+          <h4 className='font-medium'>Add Banking Details</h4>
+          <p className='text-sm text-foreground-400 max-w-96'>
+            Banking details can only be added in the banking information section
+            of the profile page.
+            <Link
+              href={BANKING_INFORMATION_PAGE}
+              color='secondary'
+              className='text-sm'
+            >
+              &nbsp;Go to Banking Information
+            </Link>
+          </p>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Select

@@ -7,7 +7,7 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const publicPaths = ['/login', '/signup', '/forgot-password', '/'];
+      const publicPaths = ['/login', '/sign-up', '/forgot-password', '/'];
       const pathIsPublic = publicPaths.includes(nextUrl.pathname);
 
       if (!pathIsPublic) {
@@ -19,7 +19,12 @@ export const authConfig = {
 
       return true;
     },
+    session({ session, token }) {
+      session.user.id = token.sub!;
+      return session;
+    },
   },
   session: {},
+
   providers: [], // Add providers with an empty array for now
 } satisfies NextAuthConfig;

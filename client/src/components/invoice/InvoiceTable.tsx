@@ -34,8 +34,12 @@ const INITIAL_VISIBLE_COLUMNS = [
   'actions',
 ];
 
-const InvoiceTable = () => {
-  const { invoices, isInvoicesLoading } = useGetInvoices();
+type Props = {
+  userId: number;
+};
+
+const InvoiceTable = ({ userId }: Props) => {
+  const { invoices, isInvoicesLoading } = useGetInvoices({ userId });
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
@@ -201,6 +205,7 @@ const InvoiceTable = () => {
 
       {currentInvoice && (
         <InvoiceModal
+          userId={userId}
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           invoiceData={currentInvoice}
@@ -209,6 +214,7 @@ const InvoiceTable = () => {
       )}
       {currentInvoice && (
         <DeleteInvoiceModal
+          userId={userId}
           invoiceData={currentInvoice}
           isOpen={isDeleteInvoiceModalOpen}
           onClose={handleCloseDeleteInvoiceModal}

@@ -23,15 +23,17 @@ import { UserModel } from '@/lib/types/models/user';
 import { capitalize } from '@/lib/utils';
 
 import SignaturePad from '../SignaturePad';
+import ErrorAlert from '../ui/ErrorAlert';
+import Loader from '../ui/Loader';
 
 type Props = {
-  user: UserModel | undefined;
+  userId: number;
 };
 
 // TODO: Improve form and add validation
 
-const PersonalInformationForm = ({ user }: Props) => {
-  const { mutateUser } = useGetUser();
+const PersonalInformationForm = ({ userId }: Props) => {
+  const { mutateUser, user, isUserLoading, userError } = useGetUser({ userId });
   const {
     register,
     handleSubmit,
@@ -54,6 +56,7 @@ const PersonalInformationForm = ({ user }: Props) => {
     const response = await updateUser(user.id, {
       ...data,
       signature: formSignature || user.signature,
+      type: 'sender',
     });
     setSubmissionMessage(response.data.message);
 
@@ -71,6 +74,89 @@ const PersonalInformationForm = ({ user }: Props) => {
     mutateUser();
   };
 
+  const renderCardBodyAndFooter = () => {
+    if (isUserLoading)
+      return (
+        <div className='h-full pb-8'>
+          <Loader fullHeight />
+        </div>
+      );
+
+    return (
+      <>
+        <CardBody className='p-6 grid grid-cols-1 gap-4 sm:grid-cols-2'>
+          <Input
+            {...register('name')}
+            label='Name'
+            labelPlacement='outside'
+            variant='faded'
+            defaultValue={user?.name || ''}
+          />
+          <Select
+            {...register('businessType')}
+            label='Business Type'
+            labelPlacement='outside'
+            variant='faded'
+            defaultSelectedKeys={
+              user?.businessType ? [`${user?.businessType}`] : undefined
+            }
+          >
+            {CLIENT_BUSINESS_TYPES.map((type) => (
+              <SelectItem key={type}>{capitalize(type)}</SelectItem>
+            ))}
+          </Select>
+          <Input
+            {...register('businessNumber')}
+            label='Business Number'
+            labelPlacement='outside'
+            variant='faded'
+            defaultValue={user?.businessNumber || ''}
+          />
+          <Input
+            {...register('address')}
+            label='Address'
+            labelPlacement='outside'
+            variant='faded'
+            defaultValue={user?.address || ''}
+          />
+          <Input
+            {...register('email')}
+            label='Email'
+            labelPlacement='outside'
+            variant='faded'
+            defaultValue={user?.email || ''}
+          />
+          <div className='flex flex-col gap-2 mt-[-0.25rem]'>
+            <label className='text-sm self-start '>Signature</label>
+            <SignaturePad
+              signature={formSignature || user?.signature}
+              onSignatureChange={setFormSignature}
+            />
+          </div>
+        </CardBody>
+        <CardFooter className='justify-between p-6 w-full flex-col'>
+          {submissionMessage && (
+            <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
+              {submissionMessage}
+            </Chip>
+          )}
+
+          <Button
+            isDisabled={!isDirty && !Boolean(formSignature)}
+            type='submit'
+            isLoading={uiState === UiState.Pending}
+            color='secondary'
+            className='self-end'
+          >
+            Save
+          </Button>
+        </CardFooter>
+      </>
+    );
+  };
+
+  if (userError) return <ErrorAlert />;
+
   return (
     <Card
       as='form'
@@ -81,73 +167,7 @@ const PersonalInformationForm = ({ user }: Props) => {
     >
       <CardHeader className='p-4 px-6'>Personal Information</CardHeader>
       <Divider />
-      <CardBody className='p-6 grid grid-cols-1 gap-4 sm:grid-cols-2'>
-        <Input
-          {...register('name')}
-          label='Name'
-          labelPlacement='outside'
-          variant='faded'
-          defaultValue={user?.name || ''}
-        />
-        <Select
-          {...register('businessType')}
-          label='Business Type'
-          labelPlacement='outside'
-          variant='faded'
-          defaultSelectedKeys={
-            user?.businessType ? [`${user?.businessType}`] : undefined
-          }
-        >
-          {CLIENT_BUSINESS_TYPES.map((type) => (
-            <SelectItem key={type}>{capitalize(type)}</SelectItem>
-          ))}
-        </Select>
-        <Input
-          {...register('businessNumber')}
-          label='Business Number'
-          labelPlacement='outside'
-          variant='faded'
-          defaultValue={user?.businessNumber || ''}
-        />
-        <Input
-          {...register('address')}
-          label='Address'
-          labelPlacement='outside'
-          variant='faded'
-          defaultValue={user?.address || ''}
-        />
-        <Input
-          {...register('email')}
-          label='Email'
-          labelPlacement='outside'
-          variant='faded'
-          defaultValue={user?.email || ''}
-        />
-        <div className='flex flex-col gap-2 mt-[-0.25rem]'>
-          <label className='text-sm self-start '>Signature</label>
-          <SignaturePad
-            signature={formSignature || user?.signature}
-            onSignatureChange={setFormSignature}
-          />
-        </div>
-      </CardBody>
-      <CardFooter className='justify-between p-6 w-full flex-col'>
-        {submissionMessage && (
-          <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-            {submissionMessage}
-          </Chip>
-        )}
-
-        <Button
-          isDisabled={!isDirty && !Boolean(formSignature)}
-          type='submit'
-          isLoading={uiState === UiState.Pending}
-          color='secondary'
-          className='self-end'
-        >
-          Save
-        </Button>
-      </CardFooter>
+      {renderCardBodyAndFooter()}
     </Card>
   );
 };

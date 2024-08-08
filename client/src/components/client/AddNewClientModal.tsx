@@ -31,13 +31,14 @@ const INITIAL_CLIENT_DATA: ClientFormData = {
 };
 
 type Props = {
+  userId: number;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const AddNewClientModal = ({ isOpen, onClose }: Props) => {
-  const { user } = useGetUser();
-  const { mutateClients } = useGetClients();
+const AddNewClientModal = ({ userId, isOpen, onClose }: Props) => {
+  const { user } = useGetUser({ userId });
+  const { mutateClients } = useGetClients({ userId });
 
   const [clientData, setClientData] =
     useState<ClientFormData>(INITIAL_CLIENT_DATA);

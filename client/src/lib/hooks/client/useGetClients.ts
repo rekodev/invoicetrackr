@@ -5,10 +5,14 @@ import { ClientModel } from '@/lib/types/models/client';
 
 import SWRKeys from '../../constants/swrKeys';
 
-const useGetClients = () => {
+type Props = {
+  userId: number;
+};
+
+const useGetClients = ({ userId }: Props) => {
   const { data, isLoading, mutate, error, isValidating } = useSWR<
     Array<ClientModel>
-  >(SWRKeys.clients(1));
+  >(SWRKeys.clients(userId));
 
   return useMemo(
     () => ({

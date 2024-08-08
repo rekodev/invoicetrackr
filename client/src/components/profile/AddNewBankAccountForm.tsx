@@ -23,9 +23,13 @@ import {
   bankingInformationSchema,
 } from '@/lib/types/models/user';
 
-const AddNewBankAccountForm = () => {
+type Props = {
+  userId: number;
+};
+
+const AddNewBankAccountForm = ({ userId }: Props) => {
   const router = useRouter();
-  const { user } = useGetUser();
+  const { user } = useGetUser({ userId });
   const {
     register,
     handleSubmit,

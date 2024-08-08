@@ -1,10 +1,12 @@
-import { getUser } from '@/api';
+import { auth } from '@/auth';
 import PersonalInformationForm from '@/components/profile/PersonalInformationForm';
 
 async function PersonalInformationPage() {
-  const user = await getUser(1);
+  const session = await auth();
 
-  return <PersonalInformationForm user={user.data} />;
+  if (!session?.user?.id) return null;
+
+  return <PersonalInformationForm userId={Number(session.user.id)} />;
 }
 
 export default PersonalInformationPage;

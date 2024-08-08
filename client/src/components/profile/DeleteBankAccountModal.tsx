@@ -16,14 +16,20 @@ import useGetUser from '@/lib/hooks/user/useGetUser';
 import { BankingInformation } from '@/lib/types/models/user';
 
 type Props = {
+  userId: number;
   bankAccount: BankingInformation;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const DeleteBankAccountModal = ({ isOpen, onClose, bankAccount }: Props) => {
-  const { mutateBankAccounts } = useGetBankAccounts();
-  const { user } = useGetUser();
+const DeleteBankAccountModal = ({
+  userId,
+  isOpen,
+  onClose,
+  bankAccount,
+}: Props) => {
+  const { mutateBankAccounts } = useGetBankAccounts({ userId });
+  const { user } = useGetUser({ userId });
 
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');

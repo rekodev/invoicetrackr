@@ -3,6 +3,7 @@ import { UserModel } from '../types/models';
 import {
   getUserByEmailFromDb,
   getUserFromDb,
+  registerUser,
   updateUserInDb,
   updateUserSelectedBankAccountInDb,
 } from '../database';
@@ -10,6 +11,8 @@ import { UserDto } from '../types/dtos';
 import { transformUserDto } from '../types/transformers';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { File } from 'fastify-multer/lib/interfaces';
+import { BadRequestError } from '../utils/errors';
+import bcrypt from 'bcrypt';
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { id: number } }>,
@@ -53,11 +56,30 @@ export const getUserByEmail = async (
   }
 };
 
-export const postUser = (
-  req: FastifyRequest<{ Body: UserModel }>,
+export const postUser = async (
+  req: FastifyRequest<{
+    Body: Pick<UserModel, 'email' | 'password'> & { confirmedPassword: string };
+  }>,
   reply: FastifyReply
 ) => {
-  const { address, businessNumber, businessType, name, type, email } = req.body;
+  const { email, password, confirmedPassword } = req.body;
+
+  if (password !== confirmedPassword)
+    throw new BadRequestError('Passwords do not match');
+
+  const [user] = await getUserByEmailFromDb(email);
+
+  if (user) throw new BadRequestError('User already exists');
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const createdUser = await registerUser({ email, password: hashedPassword });
+
+  if (!createdUser) throw new BadRequestError('Unable to create user');
+
+  return reply
+    .status(201)
+    .send({ email, message: 'User created successfully' });
 };
 
 export const updateUser = async (
