@@ -56,6 +56,7 @@ const PersonalInformationForm = ({ userId }: Props) => {
     const response = await updateUser(user.id, {
       ...data,
       signature: formSignature || user.signature,
+      type: 'sender',
     });
     setSubmissionMessage(response.data.message);
 

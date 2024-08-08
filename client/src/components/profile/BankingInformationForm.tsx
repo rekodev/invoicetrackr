@@ -127,7 +127,8 @@ const BankingInformationForm = ({ userId }: Props) => {
         <Divider />
         <CardBody className='p-6 flex flex-col items-end gap-6'>
           <Button
-            color={'secondary'}
+            color='secondary'
+            variant='bordered'
             endContent={<PlusIcon className='w-4 h-4' />}
             onPress={handleAddNewBankAccount}
           >

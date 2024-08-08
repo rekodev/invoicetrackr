@@ -16,8 +16,8 @@ type Props = {
 
 const CompleteProfile = ({ title }: Props) => {
   return (
-    <Card className='mx-auto max-w-md gap-4'>
-      <CardHeader className='font-bold flex-col justify-center text-2xl p-6 pb-0 gap-2 text-center text-foreground'>
+    <Card className='mx-auto gap-4 max-w-lg bg-transparent'>
+      <CardHeader className='font-bold flex-col justify-center text-3xl p-6 pb-0 gap-4 text-center text-foreground'>
         <UserIcon className='size-12 text-secondary-500' />
         Complete Your Profile
       </CardHeader>
@@ -27,13 +27,12 @@ const CompleteProfile = ({ title }: Props) => {
           personal information in your profile.
         </p>
       </CardBody>
-      <CardFooter className='text-center p-6 pt-2'>
+      <CardFooter className='text-center p-6 pt-0 justify-center'>
         <Button
           href={PERSONAL_INFORMATION_PAGE}
           as={Link}
           color='secondary'
           showAnchorIcon
-          className='w-full'
         >
           Go to Profile
         </Button>

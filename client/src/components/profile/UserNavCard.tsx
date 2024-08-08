@@ -25,10 +25,11 @@ const UserCard = ({ userId }: Props) => {
 
   const currentPath = pathname?.split('/')[2];
 
-  const renderUserNameAndEmail = () => {
+  const renderUserDetails = () => {
     if (isUserLoading)
       return (
         <>
+          <Skeleton className='h-14 rounded-full w-14 mb-2' />
           <Skeleton className='h-3 w-2/5 rounded-lg mt-2' />
           <Skeleton className='h-3 w-3/5 rounded-lg mt-2 mb-1' />
         </>
@@ -36,6 +37,7 @@ const UserCard = ({ userId }: Props) => {
 
     return (
       <>
+        <Avatar size='lg' className='mb-2' />
         <p className='text-md'>{user?.name || 'User'}</p>
         <p className='text-small text-default-500'>{user?.email}</p>
       </>
@@ -47,10 +49,7 @@ const UserCard = ({ userId }: Props) => {
       as='aside'
       className='flex flex-col justify-between min-w-56 min-h-80 max-h-80 sm:max-w-56 pt-3 border border-neutral-800 bg-transparent'
     >
-      <CardHeader className='flex-col'>
-        <Avatar size='lg' className='mb-2' />
-        {renderUserNameAndEmail()}
-      </CardHeader>
+      <CardHeader className='flex-col'>{renderUserDetails()}</CardHeader>
       <CardBody className='flex justify-center p-0 px-2'>
         <Tabs
           aria-label='Actions'

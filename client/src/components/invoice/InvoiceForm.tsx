@@ -194,7 +194,13 @@ const InvoiceForm = ({ userId, invoiceData }: Props) => {
 
   if (isUserLoading) return <Loader />;
 
-  if (user?.name || user?.businessNumber || user?.address || user?.email)
+  if (
+    !user?.name ||
+    !user?.businessNumber ||
+    !user?.businessType ||
+    !user?.address ||
+    !user?.email
+  )
     return <CompleteProfile title='invoice' />;
 
   if (userError) return <ErrorAlert />;
