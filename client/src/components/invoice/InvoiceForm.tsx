@@ -27,6 +27,7 @@ import InvoiceServicesTable from './InvoiceServicesTable';
 import PencilIcon from '../icons/PencilIcon';
 import { PlusIcon } from '../icons/PlusIcon';
 import SignaturePad from '../SignaturePad';
+import CompleteProfile from '../ui/complete-profile';
 import ErrorAlert from '../ui/ErrorAlert';
 import Loader from '../ui/Loader';
 
@@ -192,6 +193,9 @@ const InvoiceForm = ({ userId, invoiceData }: Props) => {
   );
 
   if (isUserLoading) return <Loader />;
+
+  if (user?.name || user?.businessNumber || user?.address || user?.email)
+    return <CompleteProfile title='invoice' />;
 
   if (userError) return <ErrorAlert />;
 

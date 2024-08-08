@@ -5,6 +5,7 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Skeleton,
   Tab,
   Tabs,
 } from '@nextui-org/react';
@@ -14,22 +15,32 @@ import { usePathname } from 'next/navigation';
 import { profileMenuTabs } from '@/lib/constants/profile';
 import useGetUser from '@/lib/hooks/user/useGetUser';
 
-enum UserNavKeys {
-  PersonalInformation = 'personal-information',
-  BankingInformation = 'banking-information',
-  ChangePassword = 'change-password',
-  AccountSettings = 'account-settings',
-}
-
 type Props = {
   userId: number;
 };
 
 const UserCard = ({ userId }: Props) => {
   const pathname = usePathname();
-  const { user } = useGetUser({ userId });
+  const { user, isUserLoading } = useGetUser({ userId });
 
   const currentPath = pathname?.split('/')[2];
+
+  const renderUserNameAndEmail = () => {
+    if (isUserLoading)
+      return (
+        <>
+          <Skeleton className='h-3 w-2/5 rounded-lg mt-2' />
+          <Skeleton className='h-3 w-3/5 rounded-lg mt-2 mb-1' />
+        </>
+      );
+
+    return (
+      <>
+        <p className='text-md'>{user?.name || 'User'}</p>
+        <p className='text-small text-default-500'>{user?.email}</p>
+      </>
+    );
+  };
 
   return (
     <Card
@@ -38,8 +49,7 @@ const UserCard = ({ userId }: Props) => {
     >
       <CardHeader className='flex-col'>
         <Avatar size='lg' className='mb-2' />
-        <p className='text-md'>{user?.name}</p>
-        <p className='text-small text-default-500'>{user?.email}</p>
+        {renderUserNameAndEmail()}
       </CardHeader>
       <CardBody className='flex justify-center p-0 px-2'>
         <Tabs

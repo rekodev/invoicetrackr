@@ -1,4 +1,3 @@
-import { getUser } from '@/api';
 import { auth } from '@/auth';
 import PersonalInformationForm from '@/components/profile/PersonalInformationForm';
 
