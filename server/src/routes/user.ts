@@ -11,6 +11,7 @@ import {
   deleteUserOptions,
   getUserByEmailOptions,
   updateUserSelectedBankAccountOptions,
+  updateUserProfilePictureOptions,
 } from '../options';
 
 const userRoutes = (
@@ -31,6 +32,11 @@ const userRoutes = (
   fastify.put(
     '/api/users/:id/selected-bank-account',
     updateUserSelectedBankAccountOptions
+  );
+
+  fastify.put(
+    '/api/users/:id/profile-picture',
+    updateUserProfilePictureOptions
   );
 
   done();

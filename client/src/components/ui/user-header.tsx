@@ -82,7 +82,7 @@ export default function UserHeader({ userId }: Props) {
               color='secondary'
               name={user?.name}
               size='sm'
-              src='https://i.pravatar.cc/150?u=a042581f4e29026704d'
+              src={user?.profilePictureUrl}
             />
           </DropdownTrigger>
           <form action={logOut}>

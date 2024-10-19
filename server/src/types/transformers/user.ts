@@ -13,6 +13,7 @@ export const transformUserDto = (userDto: UserDto): UserModel => {
     signature,
     selected_bank_account_id,
     password,
+    profile_picture_url,
   } = userDto;
 
   return {
@@ -26,5 +27,6 @@ export const transformUserDto = (userDto: UserDto): UserModel => {
     email,
     signature,
     password,
+    profilePictureUrl: profile_picture_url,
   };
 };

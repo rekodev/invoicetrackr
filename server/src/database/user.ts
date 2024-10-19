@@ -15,7 +15,8 @@ export const getUserFromDb = async (id: number) => {
       email,
       created_at,
       updated_at,
-      signature
+      signature,
+      profile_picture_url
     from users
     where id = ${id}
   `;
@@ -37,7 +38,8 @@ export const getUserByEmailFromDb = async (email: string) => {
       email,
       created_at,
       updated_at,
-      signature
+      signature,
+      profile_picture_url
     from users
     where email = ${email}
   `;
@@ -109,6 +111,21 @@ export const updateUserSelectedBankAccountInDb = async (
     update users
     set
       selected_bank_account_id = ${selectedBankAccountId}
+    where id = ${userId}
+    returning id, name, type, business_type, business_number, address, email, signature
+  `;
+
+  return updatedUser;
+};
+
+export const updateUserProfilePictureInDb = async (
+  userId: number,
+  url: string
+) => {
+  const [updatedUser] = await sql<Array<UserDto>>`
+    update users
+    set
+      profile_picture_url = ${url}
     where id = ${userId}
     returning id, name, type, business_type, business_number, address, email, signature
   `;

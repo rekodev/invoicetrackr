@@ -13,4 +13,5 @@ export type UserDto = {
   signature: string;
   selected_bank_account_id?: number;
   password?: string;
+  profile_picture_url: string;
 };

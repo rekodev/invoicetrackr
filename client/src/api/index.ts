@@ -126,3 +126,11 @@ export const updateUserSelectedBankAccount = async (
   await api.put(`/api/users/${userId}/selected-bank-account`, {
     selectedBankAccountId,
   });
+
+export const updateUserProfilePicture = async (
+  userId: number,
+  formData: FormData
+): Promise<AxiosResponse<UpdateUserResp>> =>
+  await api.put(`/api/users/${userId}/profile-picture`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });

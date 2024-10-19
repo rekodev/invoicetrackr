@@ -1,18 +1,20 @@
+import bcrypt from 'bcrypt';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { UserModel } from '../types/models';
+import { File } from 'fastify-multer/lib/interfaces';
+
 import {
   getUserByEmailFromDb,
   getUserFromDb,
   registerUser,
   updateUserInDb,
+  updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb,
 } from '../database';
 import { UserDto } from '../types/dtos';
+import { UserModel } from '../types/models';
 import { transformUserDto } from '../types/transformers';
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
-import { File } from 'fastify-multer/lib/interfaces';
 import { BadRequestError } from '../utils/errors';
-import bcrypt from 'bcrypt';
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { id: number } }>,
@@ -157,5 +159,43 @@ export const updateUserSelectedBankAccount = async (
 
   reply.send({
     message: 'User bank account selection updated successfully',
+  });
+};
+
+export const updateUserProfilePicture = async (
+  req: FastifyRequest<{ Params: { id: number } }> & { file: File },
+  reply: FastifyReply
+) => {
+  const { id } = req.params;
+  const profilePicture = req.file;
+
+  let uploadedProfilePicture: UploadApiResponse;
+
+  if (profilePicture) {
+    uploadedProfilePicture = await cloudinary.uploader.upload(
+      `data:${profilePicture.mimetype};base64,${profilePicture.buffer.toString(
+        'base64'
+      )}`
+    );
+
+    if (!uploadedProfilePicture)
+      return reply
+        .status(400)
+        .send({ message: 'Unable to upload profile picture' });
+  }
+
+  const updatedUser = await updateUserProfilePictureInDb(
+    id,
+    uploadedProfilePicture.url
+  );
+
+  if (!updatedUser)
+    return reply
+      .status(400)
+      .send({ message: 'Unable to update profile picture' });
+
+  reply.send({
+    user: transformUserDto(updatedUser),
+    message: 'Profile picture updated successfully',
   });
 };
