@@ -1,10 +1,11 @@
 'use client';
 
 import {
+  LockClosedIcon,
   PlusIcon,
   TrashIcon,
-  LockClosedIcon,
 } from '@heroicons/react/24/outline';
+import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import {
   Button,
   Card,
@@ -18,7 +19,7 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { updateUserSelectedBankAccount } from '@/api';
 import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
@@ -28,6 +29,7 @@ import useGetUser from '@/lib/hooks/user/useGetUser';
 import { BankingInformation } from '@/lib/types/models/user';
 
 import DeleteBankAccountModal from './DeleteBankAccountModal';
+import EmptyState from '../ui/empty-state';
 import ErrorAlert from '../ui/ErrorAlert';
 import Loader from '../ui/Loader';
 
@@ -51,6 +53,10 @@ const BankingInformationForm = ({ userId }: Props) => {
 
   const [bankAccountToDelete, setBankAccountToDelete] =
     useState<BankingInformation>();
+
+  useEffect(() => {
+    setSelectedBankAccountId(String(user?.selectedBankAccountId));
+  }, [user?.selectedBankAccountId]);
 
   const handleAddNewBankAccount = () => {
     router.push(ADD_NEW_BANK_ACCOUNT_PAGE);
@@ -81,7 +87,16 @@ const BankingInformationForm = ({ userId }: Props) => {
     onOpen();
   };
 
-  if (bankAccountsError || userError) return <ErrorAlert />;
+  const renderAddNewButton = () => (
+    <Button
+      color='secondary'
+      variant='bordered'
+      endContent={<PlusIcon className='w-4 h-4' />}
+      onPress={handleAddNewBankAccount}
+    >
+      Add New
+    </Button>
+  );
 
   const renderBankingInformationCard = ({
     id,
@@ -120,42 +135,50 @@ const BankingInformationForm = ({ userId }: Props) => {
     </Card>
   );
 
+  if (bankAccountsError || userError) return <ErrorAlert />;
+
+  const renderCardBody = () => {
+    if (isBankAccountsLoading || isUserLoading) return <Loader />;
+
+    if (bankAccounts?.length === 0)
+      return (
+        <EmptyState
+          icon={<PlusCircleIcon className='w-10 h-10 text-secondary-500' />}
+          title='No bank accounts'
+          description='You have no bank accounts added. To add one, click on the "Add New +" button'
+        />
+      );
+
+    return (
+      <RadioGroup
+        className='w-full'
+        value={String(selectedBankAccountId)}
+        onValueChange={setSelectedBankAccountId}
+      >
+        <div className='grid grid-cols-2 gap-4'>
+          {bankAccounts?.map((account) => {
+            const { id, name, code, accountNumber } = account;
+
+            return renderBankingInformationCard({
+              id,
+              name,
+              code,
+              accountNumber,
+            });
+          })}
+        </div>
+      </RadioGroup>
+    );
+  };
+
   return (
     <>
       <Card className='w-full bg-transparent border border-neutral-800'>
         <CardHeader className='p-4 px-6'>Banking Information</CardHeader>
         <Divider />
         <CardBody className='p-6 flex flex-col items-end gap-6'>
-          <Button
-            color='secondary'
-            variant='bordered'
-            endContent={<PlusIcon className='w-4 h-4' />}
-            onPress={handleAddNewBankAccount}
-          >
-            Add New
-          </Button>
-          {isBankAccountsLoading || isUserLoading ? (
-            <Loader />
-          ) : (
-            <RadioGroup
-              className='w-full'
-              value={String(selectedBankAccountId)}
-              onValueChange={setSelectedBankAccountId}
-            >
-              <div className='grid grid-cols-2 gap-4'>
-                {bankAccounts?.map((account) => {
-                  const { id, name, code, accountNumber } = account;
-
-                  return renderBankingInformationCard({
-                    id,
-                    name,
-                    code,
-                    accountNumber,
-                  });
-                })}
-              </div>
-            </RadioGroup>
-          )}
+          {renderAddNewButton()}
+          {renderCardBody()}
         </CardBody>
         <CardFooter className='justify-end p-6'>
           {submissionMessage && (

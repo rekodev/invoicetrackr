@@ -8,6 +8,7 @@ import {
   getUserFromDb,
   insertBankAccountInDb,
   updateBankAccountInDb,
+  updateUserSelectedBankAccountInDb,
 } from '../database';
 import { transformBankAccountDto } from '../types/transformers';
 import { UserDto } from '../types/dtos';
@@ -40,12 +41,13 @@ export const getBankAccount = async (
 export const postBankAccount = async (
   req: FastifyRequest<{
     Params: { userId: number };
-    Body: Omit<BankAccountModel, 'id'>;
+    Body: Omit<BankAccountModel, 'id'> & { hasSelectedBankAccount: boolean };
   }>,
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const bankAccountData = req.body;
+  const { hasSelectedBankAccount } = bankAccountData;
 
   const foundBankAccount = await findBankAccountByAccountNumber(
     userId,
@@ -64,6 +66,18 @@ export const postBankAccount = async (
 
   if (!insertedBankAccount)
     return reply.status(400).send({ message: 'Unable to add bank account' });
+
+  if (!hasSelectedBankAccount) {
+    const updatedUserSelectedBankAccount =
+      await updateUserSelectedBankAccountInDb(userId, insertedBankAccount.id);
+
+    if (!updatedUserSelectedBankAccount)
+      return reply.status(200).send({
+        bankAccount: transformBankAccountDto(insertedBankAccount),
+        message:
+          'Bank account added succesfully. Please select it as your main account.',
+      });
+  }
 
   return reply.send({
     bankAccount: transformBankAccountDto(insertedBankAccount),

@@ -12,7 +12,7 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateUser } from '@/api';
@@ -38,6 +38,7 @@ const PersonalInformationForm = ({ userId }: Props) => {
     register,
     handleSubmit,
     formState: { isDirty },
+    reset,
   } = useForm<UserModel>({
     defaultValues: user,
   });
@@ -73,6 +74,11 @@ const PersonalInformationForm = ({ userId }: Props) => {
     setUiState(UiState.Success);
     mutateUser();
   };
+
+  // When form is updated and user is re-fetched, reset the form to match the new user data
+  useEffect(() => {
+    reset(user);
+  }, [reset, user]);
 
   const renderCardBodyAndFooter = () => {
     if (isUserLoading)

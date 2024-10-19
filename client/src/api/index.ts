@@ -106,9 +106,13 @@ export const getBankingInformation = async (
 
 export const addBankingInformation = async (
   userId: number,
-  bankingInformation: BankingInformation
+  bankingInformation: BankingInformation,
+  hasSelectedBankAccount: boolean
 ): Promise<AxiosResponse<AddBankingInformationResp>> =>
-  await api.post(`/api/${userId}/banking-information`, bankingInformation);
+  await api.post(`/api/${userId}/banking-information`, {
+    ...bankingInformation,
+    hasSelectedBankAccount,
+  });
 
 export const deleteBankingInformation = async (
   userId: number,
