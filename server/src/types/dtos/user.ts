@@ -14,4 +14,6 @@ export type UserDto = {
   selected_bank_account_id?: number;
   password?: string;
   profile_picture_url: string;
+  currency: string;
+  language: string;
 };

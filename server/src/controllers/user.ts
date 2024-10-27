@@ -7,6 +7,7 @@ import {
   getUserByEmailFromDb,
   getUserFromDb,
   registerUser,
+  updateUserAccountSettingsInDb,
   updateUserInDb,
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb,
@@ -198,4 +199,26 @@ export const updateUserProfilePicture = async (
     user: transformUserDto(updatedUser),
     message: 'Profile picture updated successfully',
   });
+};
+
+export const updateUserAccountSettings = async (
+  req: FastifyRequest<{
+    Params: { id: number };
+    Body: { currency: string; language: string };
+  }>,
+  reply: FastifyReply
+) => {
+  const { id } = req.params;
+  const { currency, language } = req.body;
+
+  const updatedUser = await updateUserAccountSettingsInDb(
+    id,
+    language,
+    currency
+  );
+
+  if (!updatedUser)
+    throw new BadRequestError('Unable to update account settings');
+
+  reply.send({ message: 'Account settings updated successfully' });
 };

@@ -134,3 +134,12 @@ export const updateUserProfilePicture = async (
   await api.put(`/api/users/${userId}/profile-picture`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
+
+export const updateUserAccountSettings = async (
+  userId: number,
+  { language, currency }: { language: string; currency: string }
+): Promise<AxiosResponse<UpdateUserResp>> =>
+  await api.put(`/api/users/${userId}/account-settings`, {
+    language,
+    currency,
+  });

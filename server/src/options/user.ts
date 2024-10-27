@@ -7,6 +7,7 @@ import {
   getUserByEmail,
   postUser,
   updateUser,
+  updateUserAccountSettings,
   updateUserProfilePicture,
   updateUserSelectedBankAccount,
 } from '../controllers';
@@ -97,4 +98,18 @@ export const updateUserProfilePictureOptions: RouteShorthandOptionsWithHandler =
       storage: multer.memoryStorage(),
     }).single('profilePicture'),
     handler: updateUserProfilePicture,
+  };
+
+export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      body: Type.Object({
+        currency: Type.String({ maxLength: 3, minLength: 3 }),
+        language: Type.String({ maxLength: 2, minLength: 2 }),
+      }),
+      response: {
+        200: Type.Object({ message: Type.String() }),
+      },
+    },
+    handler: updateUserAccountSettings,
   };

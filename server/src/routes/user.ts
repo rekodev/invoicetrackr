@@ -5,13 +5,14 @@ import {
 } from 'fastify';
 
 import {
-  getUserOptions,
-  postUserOptions,
-  updateUserOptions,
   deleteUserOptions,
   getUserByEmailOptions,
-  updateUserSelectedBankAccountOptions,
+  getUserOptions,
+  postUserOptions,
+  updateUserAccountSettingsOptions,
+  updateUserOptions,
   updateUserProfilePictureOptions,
+  updateUserSelectedBankAccountOptions,
 } from '../options';
 
 const userRoutes = (
@@ -37,6 +38,11 @@ const userRoutes = (
   fastify.put(
     '/api/users/:id/profile-picture',
     updateUserProfilePictureOptions
+  );
+
+  fastify.put(
+    '/api/users/:id/account-settings',
+    updateUserAccountSettingsOptions
   );
 
   done();

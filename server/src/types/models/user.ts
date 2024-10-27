@@ -13,6 +13,8 @@ export const User = Type.Object({
   selectedBankAccountId: Type.Optional(Type.Number()),
   password: Type.Optional(Type.String()),
   profilePictureUrl: Type.String(),
+  currency: Type.String(),
+  language: Type.String(),
 });
 
 export type UserModel = Static<typeof User>;
