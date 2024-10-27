@@ -25,7 +25,7 @@ import {
 } from '@/lib/constants/pages';
 import useGetUser from '@/lib/hooks/user/useGetUser';
 
-import AcmeLogo from '../icons/AcmeLogo.jsx';
+import AppLogo from '../icons/AppLogo.jsx';
 
 const navbarItems = [
   { name: 'Dashboard', href: DASHBOARD_PAGE },
@@ -49,9 +49,11 @@ export default function UserHeader({ userId }: Props) {
 
   return (
     <Navbar isBordered>
-      <NavbarBrand className='text-white' as={Link} href={HOME_PAGE}>
-        <AcmeLogo />
-        <p className='font-bold text-inherit'>ACME</p>
+      <NavbarBrand className='text-white flex gap-2' as={Link} href={HOME_PAGE}>
+        <AppLogo />
+        <p className='font-bold text-inherit'>
+          INVOICE<span className='text-secondary-600'>APP</span>
+        </p>
       </NavbarBrand>
 
       <NavbarContent className='hidden sm:flex gap-4' justify='center'>
