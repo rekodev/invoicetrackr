@@ -4,6 +4,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { File } from 'fastify-multer/lib/interfaces';
 
 import {
+  deleteUserFromDb,
   getUserByEmailFromDb,
   getUserFromDb,
   registerUser,
@@ -129,11 +130,20 @@ export const updateUser = async (
   });
 };
 
-export const deleteUser = (
+export const deleteUser = async (
   req: FastifyRequest<{ Params: { id: number } }>,
   reply: FastifyReply
 ) => {
   const { id } = req.params;
+
+  const deletedUserId = await deleteUserFromDb(id);
+
+  if (!deletedUserId)
+    throw BadRequestError(
+      'Unable to delete account at this time. Please try again later'
+    );
+
+  return reply.status(200).send({ message: 'Account deleted successfully' });
 };
 
 export const updateUserSelectedBankAccount = async (

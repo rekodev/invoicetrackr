@@ -24,6 +24,7 @@ import { UiState } from '@/lib/constants/uiState';
 import useGetUser from '@/lib/hooks/user/useGetUser';
 import { AccountSettings } from '@/lib/types/models/user';
 
+import DeleteAccountModal from './delete-account-modal';
 import ErrorAlert from '../ui/ErrorAlert';
 import Loader from '../ui/Loader';
 
@@ -45,6 +46,8 @@ const AccountSettingsForm = ({ userId }: Props) => {
   });
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [uiState, setUiState] = useState(UiState.Idle);
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
+    useState(false);
 
   const onSubmit: SubmitHandler<AccountSettings> = async (data) => {
     if (!user?.id) return;
@@ -130,7 +133,12 @@ const AccountSettingsForm = ({ userId }: Props) => {
             </Chip>
           )}
           <div className='flex gap-2 self-end'>
-            <Button variant='faded' type='button' color='danger'>
+            <Button
+              variant='faded'
+              type='button'
+              color='danger'
+              onPress={() => setIsDeleteAccountModalOpen(true)}
+            >
               Delete Account
             </Button>
             <Button
@@ -151,16 +159,23 @@ const AccountSettingsForm = ({ userId }: Props) => {
   if (userError) return <ErrorAlert />;
 
   return (
-    <Card
-      as='form'
-      aria-label='Account Settings Form'
-      onSubmit={handleSubmit(onSubmit)}
-      className='w-full bg-transparent border border-neutral-800'
-    >
-      <CardHeader className='p-4 px-6'>Account Settings</CardHeader>
-      <Divider />
-      {renderCardBodyAndFooter()}
-    </Card>
+    <>
+      <Card
+        as='form'
+        aria-label='Account Settings Form'
+        onSubmit={handleSubmit(onSubmit)}
+        className='w-full bg-transparent border border-neutral-800'
+      >
+        <CardHeader className='p-4 px-6'>Account Settings</CardHeader>
+        <Divider />
+        {renderCardBodyAndFooter()}
+      </Card>
+      <DeleteAccountModal
+        userId={userId}
+        isOpen={isDeleteAccountModalOpen}
+        onClose={() => setIsDeleteAccountModalOpen(false)}
+      />
+    </>
   );
 };
 

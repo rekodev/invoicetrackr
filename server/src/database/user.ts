@@ -155,3 +155,13 @@ export const updateUserAccountSettingsInDb = async (
 
   return updatedUser;
 };
+
+export const deleteUserFromDb = async (id: number) => {
+  const [deletedUserId] = await sql`
+    delete from users
+    where id = ${id}
+    returning id
+  `;
+
+  return deletedUserId;
+};

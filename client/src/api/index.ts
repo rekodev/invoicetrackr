@@ -9,12 +9,14 @@ import {
   AddInvoiceResp,
   DeleteClientResp,
   DeleteInvoiceResp,
+  DeleteUserAccountResp,
   GetBankAccountResp,
   GetBankingInformationResp,
   GetInvoiceResp,
   RegisterUserResponse,
   UpdateClientResp,
   UpdateInvoiceResp,
+  UpdateUserAccountSettingsResp,
   UpdateUserResp,
 } from '@/lib/types/response';
 
@@ -138,8 +140,13 @@ export const updateUserProfilePicture = async (
 export const updateUserAccountSettings = async (
   userId: number,
   { language, currency }: { language: string; currency: string }
-): Promise<AxiosResponse<UpdateUserResp>> =>
+): Promise<AxiosResponse<UpdateUserAccountSettingsResp>> =>
   await api.put(`/api/users/${userId}/account-settings`, {
     language,
     currency,
   });
+
+export const deleteUserAccount = async (
+  userId: number
+): Promise<AxiosResponse<DeleteUserAccountResp>> =>
+  await api.delete(`/api/users/${userId}`);
