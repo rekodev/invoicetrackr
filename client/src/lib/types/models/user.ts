@@ -18,6 +18,9 @@ export const userSchema = z.object({
   email: z.string(),
   bankingInformation: z.array(bankingInformationSchema),
   selectedBankAccountId: z.number(),
+  profilePictureUrl: z.string(),
+  currency: z.string(),
+  language: z.string(),
 });
 
 export const userSchemaWithPassword = userSchema.extend({
@@ -28,3 +31,4 @@ export type UserModel = z.infer<typeof userSchema>;
 export type UserModelWithPassword = z.infer<typeof userSchema>;
 
 export type BankingInformation = z.infer<typeof bankingInformationSchema>;
+export type AccountSettings = Pick<UserModel, 'currency' | 'language'>;

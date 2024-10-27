@@ -16,7 +16,7 @@ import {
   SIGN_UP_PAGE,
 } from '@/lib/constants/pages';
 
-import AcmeLogo from '../icons/AcmeLogo.jsx';
+import AppLogo from '../icons/AppLogo.jsx';
 
 const navbarItems = [
   { name: 'Features', href: '#' },
@@ -25,14 +25,20 @@ const navbarItems = [
   { name: 'Company', href: '#' },
 ];
 
-export default function UserHeader() {
+export default function GuestHeader() {
   const pathname = usePathname();
 
   return (
     <Navbar isBordered>
-      <NavbarBrand className='text-white' as={Link} href={DASHBOARD_PAGE}>
-        <AcmeLogo />
-        <p className='font-bold text-inherit'>ACME</p>
+      <NavbarBrand
+        className='text-white flex gap-2'
+        as={Link}
+        href={DASHBOARD_PAGE}
+      >
+        <AppLogo />
+        <p className='font-bold text-inherit'>
+          INVOICE<span className='text-secondary-600'>APP</span>
+        </p>
       </NavbarBrand>
 
       <NavbarContent className='hidden sm:flex gap-4' justify='center'>

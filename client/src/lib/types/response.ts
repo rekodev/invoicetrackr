@@ -49,3 +49,7 @@ export type GetBankingInformationResp = ApiError & Array<BankingInformation>;
 export type AddBankingInformationResp = ApiError & {
   bankingInformation: BankingInformation;
 };
+
+export type UpdateUserAccountSettingsResp = ApiError;
+
+export type DeleteUserAccountResp = ApiError;

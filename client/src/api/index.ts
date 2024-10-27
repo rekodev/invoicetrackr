@@ -9,12 +9,14 @@ import {
   AddInvoiceResp,
   DeleteClientResp,
   DeleteInvoiceResp,
+  DeleteUserAccountResp,
   GetBankAccountResp,
   GetBankingInformationResp,
   GetInvoiceResp,
   RegisterUserResponse,
   UpdateClientResp,
   UpdateInvoiceResp,
+  UpdateUserAccountSettingsResp,
   UpdateUserResp,
 } from '@/lib/types/response';
 
@@ -106,9 +108,13 @@ export const getBankingInformation = async (
 
 export const addBankingInformation = async (
   userId: number,
-  bankingInformation: BankingInformation
+  bankingInformation: BankingInformation,
+  hasSelectedBankAccount: boolean
 ): Promise<AxiosResponse<AddBankingInformationResp>> =>
-  await api.post(`/api/${userId}/banking-information`, bankingInformation);
+  await api.post(`/api/${userId}/banking-information`, {
+    ...bankingInformation,
+    hasSelectedBankAccount,
+  });
 
 export const deleteBankingInformation = async (
   userId: number,
@@ -122,3 +128,25 @@ export const updateUserSelectedBankAccount = async (
   await api.put(`/api/users/${userId}/selected-bank-account`, {
     selectedBankAccountId,
   });
+
+export const updateUserProfilePicture = async (
+  userId: number,
+  formData: FormData
+): Promise<AxiosResponse<UpdateUserResp>> =>
+  await api.put(`/api/users/${userId}/profile-picture`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+
+export const updateUserAccountSettings = async (
+  userId: number,
+  { language, currency }: { language: string; currency: string }
+): Promise<AxiosResponse<UpdateUserAccountSettingsResp>> =>
+  await api.put(`/api/users/${userId}/account-settings`, {
+    language,
+    currency,
+  });
+
+export const deleteUserAccount = async (
+  userId: number
+): Promise<AxiosResponse<DeleteUserAccountResp>> =>
+  await api.delete(`/api/users/${userId}`);

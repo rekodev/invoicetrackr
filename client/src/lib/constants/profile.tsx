@@ -38,3 +38,13 @@ export const profileMenuTabs = [
     href: ACCOUNT_SETTINGS_PAGE,
   },
 ];
+
+export const AVAILABLE_CURRENCIES = [
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'USD', name: 'United States Dollar', symbol: '$' },
+] as const;
+
+export const AVAILABLE_LANGUAGES = [
+  { code: 'LT', name: 'Lithuanian' },
+  { code: 'EN', name: 'English' },
+] as const;

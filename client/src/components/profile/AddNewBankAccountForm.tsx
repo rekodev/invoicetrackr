@@ -29,7 +29,7 @@ type Props = {
 
 const AddNewBankAccountForm = ({ userId }: Props) => {
   const router = useRouter();
-  const { user } = useGetUser({ userId });
+  const { user, mutateUser } = useGetUser({ userId });
   const {
     register,
     handleSubmit,
@@ -45,7 +45,11 @@ const AddNewBankAccountForm = ({ userId }: Props) => {
   const onSubmit: SubmitHandler<BankingInformation> = async (data) => {
     if (!user?.id) return;
 
-    const response = await addBankingInformation(user.id, data);
+    const response = await addBankingInformation(
+      user.id,
+      data,
+      !!user.selectedBankAccountId
+    );
     setSubmissionMessage(response.data.message);
 
     if ('errors' in response.data) {
@@ -56,6 +60,7 @@ const AddNewBankAccountForm = ({ userId }: Props) => {
       return;
     }
 
+    mutateUser();
     router.push(BANKING_INFORMATION_PAGE);
   };
 

@@ -7,6 +7,8 @@ import {
   getUserByEmail,
   postUser,
   updateUser,
+  updateUserAccountSettings,
+  updateUserProfilePicture,
   updateUserSelectedBankAccount,
 } from '../controllers';
 import { User } from '../types/models';
@@ -83,4 +85,31 @@ export const updateUserSelectedBankAccountOptions: RouteShorthandOptionsWithHand
       },
     },
     handler: updateUserSelectedBankAccount,
+  };
+
+export const updateUserProfilePictureOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      response: {
+        200: Type.Object({ message: Type.String() }),
+      },
+    },
+    preValidation: multer({
+      storage: multer.memoryStorage(),
+    }).single('profilePicture'),
+    handler: updateUserProfilePicture,
+  };
+
+export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      body: Type.Object({
+        currency: Type.String({ maxLength: 3, minLength: 3 }),
+        language: Type.String({ maxLength: 2, minLength: 2 }),
+      }),
+      response: {
+        200: Type.Object({ message: Type.String() }),
+      },
+    },
+    handler: updateUserAccountSettings,
   };
