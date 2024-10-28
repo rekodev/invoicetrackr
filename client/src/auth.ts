@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { getUserByEmail } from './api';
 import { authConfig } from './auth.config';
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { auth, signIn, signOut, unstable_update } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({

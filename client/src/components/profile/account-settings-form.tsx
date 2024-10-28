@@ -12,10 +12,12 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateUserAccountSettings } from '@/api';
+import { updateSession } from '@/lib/actions';
 import {
   AVAILABLE_CURRENCIES,
   AVAILABLE_LANGUAGES,
@@ -36,6 +38,7 @@ type Props = {
 
 const AccountSettingsForm = ({ userId }: Props) => {
   const { mutateUser, user, isUserLoading, userError } = useGetUser({ userId });
+  const t = useTranslations('profile.account_settings');
   const {
     register,
     handleSubmit,
@@ -73,6 +76,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
 
     setUiState(UiState.Success);
     mutateUser();
+    updateSession({ ...user, language: data.language });
   };
 
   // When form is updated and user is re-fetched, reset the form to match the new user data
@@ -166,7 +170,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
         onSubmit={handleSubmit(onSubmit)}
         className='w-full bg-transparent border border-neutral-800'
       >
-        <CardHeader className='p-4 px-6'>Account Settings</CardHeader>
+        <CardHeader className='p-4 px-6'>{t('title')}</CardHeader>
         <Divider />
         {renderCardBodyAndFooter()}
       </Card>
