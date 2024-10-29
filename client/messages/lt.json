@@ -1,7 +1,19 @@
 {
   "profile": {
     "account_settings": {
-      "title": "Paskyros Nustatymai"
+      "title": "Paskyros Nustatymai",
+      "currency": "Valiuta",
+      "language": "Kalba",
+      "available_languages": {
+        "en": "Anglų",
+        "lt": "Lietuvių"
+      },
+      "available_currencies": {
+        "usd": "JAV Doleris",
+        "eur": "Euras"
+      },
+      "delete_account": "Ištrinti Paskyrą",
+      "save_changes": "Išsaugoti Pakeitimus"
     }
   }
 }
