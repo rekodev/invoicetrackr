@@ -1,0 +1,19 @@
+{
+  "profile": {
+    "account_settings": {
+      "title": "Account Settings",
+      "currency": "Currency",
+      "language": "Language",
+      "available_languages": {
+        "en": "English",
+        "lt": "Lithuanian"
+      },
+      "available_currencies": {
+        "usd": "United States Dollar",
+        "eur": "Euro"
+      },
+      "delete_account": "Delete Account",
+      "save_changes": "Save Changes"
+    }
+  }
+}

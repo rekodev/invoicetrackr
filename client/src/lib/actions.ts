@@ -3,10 +3,11 @@ import { AuthError } from 'next-auth';
 
 import { registerUser } from '@/api';
 
-import { signIn, signOut } from '../auth';
+import { UserModel } from './types/models/user';
+import { signIn, signOut, unstable_update } from '../auth';
 
 export async function authenticate(
-  prevState: string | undefined,
+  _prevState: string | undefined,
   formData: FormData
 ) {
   try {
@@ -49,3 +50,14 @@ export async function signUp(
     throw error;
   }
 }
+
+export const updateSession = async (user: UserModel) => {
+  await unstable_update({
+    user: {
+      email: user.email,
+      language: user.language,
+      id: String(user.id),
+      name: user.name,
+    },
+  });
+};

@@ -12,14 +12,13 @@ import {
   Select,
   SelectItem,
 } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateUserAccountSettings } from '@/api';
-import {
-  AVAILABLE_CURRENCIES,
-  AVAILABLE_LANGUAGES,
-} from '@/lib/constants/profile';
+import { updateSession } from '@/lib/actions';
 import { UiState } from '@/lib/constants/uiState';
 import useGetUser from '@/lib/hooks/user/useGetUser';
 import { AccountSettings } from '@/lib/types/models/user';
@@ -36,6 +35,8 @@ type Props = {
 
 const AccountSettingsForm = ({ userId }: Props) => {
   const { mutateUser, user, isUserLoading, userError } = useGetUser({ userId });
+  const { refresh } = useRouter();
+  const t = useTranslations('profile.account_settings');
   const {
     register,
     handleSubmit,
@@ -48,6 +49,24 @@ const AccountSettingsForm = ({ userId }: Props) => {
   const [uiState, setUiState] = useState(UiState.Idle);
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
+
+  const availableLanguages = [
+    { code: 'LT', name: t('available_languages.lt') },
+    { code: 'EN', name: t('available_languages.en') },
+  ] as const;
+
+  const availableCurrencies = [
+    {
+      code: 'EUR',
+      name: t('available_currencies.eur'),
+      symbol: '€',
+    },
+    {
+      code: 'USD',
+      name: t('available_currencies.usd'),
+      symbol: '$',
+    },
+  ] as const;
 
   const onSubmit: SubmitHandler<AccountSettings> = async (data) => {
     if (!user?.id) return;
@@ -73,6 +92,8 @@ const AccountSettingsForm = ({ userId }: Props) => {
 
     setUiState(UiState.Success);
     mutateUser();
+    updateSession({ ...user, language: data.language });
+    refresh();
   };
 
   // When form is updated and user is re-fetched, reset the form to match the new user data
@@ -95,14 +116,14 @@ const AccountSettingsForm = ({ userId }: Props) => {
             {...register('language')}
             label={
               <div className='flex gap-1 items-center'>
-                <LanguageIcon className='h-5 w-5' /> Language
+                <LanguageIcon className='h-5 w-5' /> {t('language')}
               </div>
             }
             labelPlacement='outside'
             variant='faded'
             defaultSelectedKeys={user?.language ? [user.language] : undefined}
           >
-            {AVAILABLE_LANGUAGES.map((language) => (
+            {availableLanguages.map((language) => (
               <SelectItem key={language.code} value={language.code}>
                 {language.name}
               </SelectItem>
@@ -112,14 +133,14 @@ const AccountSettingsForm = ({ userId }: Props) => {
             {...register('currency')}
             label={
               <div className='flex items-center gap-1'>
-                <CurrencyDollarIcon className='w-5 h-5' /> Currency
+                <CurrencyDollarIcon className='w-5 h-5' /> {t('currency')}
               </div>
             }
             labelPlacement='outside'
             variant='faded'
             defaultSelectedKeys={user?.currency ? [user.currency] : undefined}
           >
-            {AVAILABLE_CURRENCIES.map((currency) => (
+            {availableCurrencies.map((currency) => (
               <SelectItem key={currency.code} value={currency.code}>
                 {`${currency.name} (${currency.symbol})`}
               </SelectItem>
@@ -139,7 +160,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
               color='danger'
               onPress={() => setIsDeleteAccountModalOpen(true)}
             >
-              Delete Account
+              {t('delete_account')}
             </Button>
             <Button
               isDisabled={!isDirty}
@@ -148,7 +169,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
               color='secondary'
               className='self-end'
             >
-              Save Changes
+              {t('save_changes')}
             </Button>
           </div>
         </CardFooter>
@@ -166,7 +187,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
         onSubmit={handleSubmit(onSubmit)}
         className='w-full bg-transparent border border-neutral-800'
       >
-        <CardHeader className='p-4 px-6'>Account Settings</CardHeader>
+        <CardHeader className='p-4 px-6'>{t('title')}</CardHeader>
         <Divider />
         {renderCardBodyAndFooter()}
       </Card>

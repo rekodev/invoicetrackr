@@ -19,12 +19,21 @@ export const authConfig = {
 
       return true;
     },
+    jwt({ token, user, trigger, session }) {
+      if (user) token.language = user.language;
+
+      if (trigger === 'update') {
+        token = { ...token, language: session.user.language };
+      }
+
+      return token;
+    },
     session({ session, token }) {
       session.user.id = token.sub!;
+      session.user.language = token.language as string;
       return session;
     },
   },
   session: {},
-
   providers: [], // Add providers with an empty array for now
 } satisfies NextAuthConfig;
