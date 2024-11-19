@@ -78,7 +78,7 @@ const useInvoiceFormSubmissionHandler = ({
     if (invoiceData) {
       response = await updateInvoice(user.id, fullData);
     } else {
-      response = await addInvoice(user.id, fullData);
+      response = await addInvoice(user.id, fullData, user.language);
     }
     setSubmissionMessage(response.data.message);
 

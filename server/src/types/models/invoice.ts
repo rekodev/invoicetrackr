@@ -62,7 +62,7 @@ export const Invoice = Type.Object({
     {
       id: Type.Number(),
       type: InvoicePartyType,
-      name: Type.String({ minLength: 1, errorMessage: 'Name is required' }),
+      name: Type.String({ minLength: 1, errorMessage: 'errors.invoice.name' }),
       businessType: InvoicePartyBusinessType,
       businessNumber: Type.String({
         minLength: 1,

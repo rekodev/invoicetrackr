@@ -1,19 +1,22 @@
+import cors from '@fastify/cors';
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+
+import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import fastify from 'fastify';
+import { defineI18n, useI18n } from 'fastify-i18n';
 import multer from 'fastify-multer';
-import cors from '@fastify/cors';
 
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { cloudinaryConfig } from './config/cloudinary';
 import { getPgVersion } from './database/db';
+import i18n from './plugins/i18n';
 import {
+  bankingInformationRoutes,
   clientRoutes,
   invoiceRoutes,
   userRoutes,
-  bankingInformationRoutes,
 } from './routes';
-import { transformErrors } from './utils/validation';
-import { v2 as cloudinary } from 'cloudinary';
-import { cloudinaryConfig } from './config/cloudinary';
+import { getTranslationKeyPrefix } from './utils/url';
 
 dotenv.config();
 cloudinary.config(cloudinaryConfig);
@@ -28,18 +31,36 @@ const server = fastify({
   },
 }).withTypeProvider<TypeBoxTypeProvider>();
 
+defineI18n(server, {
+  en: import('./locales/en'),
+  lt: import('./locales/lt'),
+});
+
 server.register(cors);
 server.register(multer.contentParser);
 server.register(invoiceRoutes);
 server.register(clientRoutes);
 server.register(userRoutes);
 server.register(bankingInformationRoutes);
+server.register(i18n);
 
-server.setErrorHandler(function (error, _request, reply) {
+server.setErrorHandler(async function (error, request, reply) {
+  const i18n = useI18n(request);
+
   if (error.validation) {
     return reply.status(400).send({
       message: 'Review fields and retry',
-      errors: transformErrors(error.validation),
+      errors: error.validation.map((err) => {
+        const key = err.instancePath.substring(1).replace(/\//g, '.');
+        const keyPrefix = getTranslationKeyPrefix(request.url);
+        const nonDynamicKeyWithPrefix =
+          `validationErrors.${keyPrefix}.${key}`.replace(/\.?\d+/g, '');
+
+        return {
+          key,
+          value: i18n.t(nonDynamicKeyWithPrefix),
+        };
+      }),
       code: error.code,
     });
   }
