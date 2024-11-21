@@ -2,7 +2,10 @@ import { AxiosResponse } from 'axios';
 
 import { ClientFormData, ClientModel } from '@/lib/types/models/client';
 import { InvoiceFormData, InvoiceModel } from '@/lib/types/models/invoice';
-import { BankingInformation, UserModel } from '@/lib/types/models/user';
+import {
+  BankingInformationFormModel,
+  UserModel,
+} from '@/lib/types/models/user';
 import {
   AddBankingInformationResp,
   AddClientResp,
@@ -112,7 +115,7 @@ export const getBankingInformation = async (
 
 export const addBankingInformation = async (
   userId: number,
-  bankingInformation: BankingInformation,
+  bankingInformation: BankingInformationFormModel,
   hasSelectedBankAccount: boolean
 ): Promise<AxiosResponse<AddBankingInformationResp>> =>
   await api.post(`/api/${userId}/banking-information`, {
@@ -158,3 +161,22 @@ export const deleteUserAccount = async (
   userId: number
 ): Promise<AxiosResponse<DeleteUserAccountResp>> =>
   await api.delete(`/api/users/${userId}`);
+
+export const changeUserPassword = async ({
+  userId,
+  language,
+  password,
+  newPassword,
+  confirmedNewPassword,
+}: {
+  userId: number;
+  language: string;
+  password: string;
+  newPassword: string;
+  confirmedNewPassword: string;
+}): Promise<AxiosResponse<UpdateUserResp>> =>
+  await api.put(
+    `/api/users/${userId}/password`,
+    { password, newPassword, confirmedNewPassword },
+    { headers: { 'Accept-Language': language.toLowerCase() } }
+  );

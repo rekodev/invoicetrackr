@@ -19,7 +19,7 @@ import { addBankingInformation } from '@/api';
 import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 import useGetUser from '@/lib/hooks/user/useGetUser';
 import {
-  BankingInformation,
+  BankingInformationFormModel,
   bankingInformationSchema,
 } from '@/lib/types/models/user';
 
@@ -35,14 +35,14 @@ const AddNewBankAccountForm = ({ userId }: Props) => {
     handleSubmit,
     setError,
     formState: { isSubmitSuccessful, isSubmitting },
-  } = useForm<BankingInformation>({
+  } = useForm<BankingInformationFormModel>({
     defaultValues: {},
     resolver: zodResolver(bankingInformationSchema),
   });
 
   const [submissionMessage, setSubmissionMessage] = useState('');
 
-  const onSubmit: SubmitHandler<BankingInformation> = async (data) => {
+  const onSubmit: SubmitHandler<BankingInformationFormModel> = async (data) => {
     if (!user?.id) return;
 
     const response = await addBankingInformation(

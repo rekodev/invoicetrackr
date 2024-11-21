@@ -14,6 +14,14 @@
       },
       "delete_account": "Delete Account",
       "save_changes": "Save Changes"
+    },
+    "change_password": {
+      "title": "Change Password",
+      "current_password": "Current Password",
+      "new_password": "New Password",
+      "confirm_new_password": "Confirm New Password",
+      "save_changes": "Save Changes",
+      "password_requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
     }
   }
 }
