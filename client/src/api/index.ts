@@ -41,10 +41,14 @@ export const getInvoice = async (
 
 export const addInvoice = async (
   userId: number,
-  invoiceData: InvoiceFormData
+  invoiceData: InvoiceFormData,
+  language: string = 'EN'
 ): Promise<AxiosResponse<AddInvoiceResp>> =>
   await api.post(`/api/${userId}/invoices`, invoiceData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Accept-Language': language.toLowerCase(),
+    },
   });
 
 export const updateInvoice = async (
@@ -141,10 +145,14 @@ export const updateUserAccountSettings = async (
   userId: number,
   { language, currency }: { language: string; currency: string }
 ): Promise<AxiosResponse<UpdateUserAccountSettingsResp>> =>
-  await api.put(`/api/users/${userId}/account-settings`, {
-    language,
-    currency,
-  });
+  await api.put(
+    `/api/users/${userId}/account-settings`,
+    {
+      language,
+      currency,
+    },
+    { headers: { 'Accept-Language': language.toLowerCase() } }
+  );
 
 export const deleteUserAccount = async (
   userId: number

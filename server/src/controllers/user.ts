@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { useI18n } from 'fastify-i18n';
 import { File } from 'fastify-multer/lib/interfaces';
 
 import {
@@ -13,6 +14,7 @@ import {
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb,
 } from '../database';
+
 import { UserDto } from '../types/dtos';
 import { UserModel } from '../types/models';
 import { transformUserDto } from '../types/transformers';
@@ -220,6 +222,7 @@ export const updateUserAccountSettings = async (
 ) => {
   const { id } = req.params;
   const { currency, language } = req.body;
+  const i18n = await useI18n(req);
 
   const updatedUser = await updateUserAccountSettingsInDb(
     id,
@@ -228,7 +231,7 @@ export const updateUserAccountSettings = async (
   );
 
   if (!updatedUser)
-    throw new BadRequestError('Unable to update account settings');
+    throw new BadRequestError('errors.user.accountSettings.update.badRequest');
 
-  reply.send({ message: 'Account settings updated successfully' });
+  reply.send({ message: i18n.t('errors.user.accountSettings.update.success') });
 };
