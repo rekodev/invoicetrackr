@@ -3,7 +3,11 @@ import { ReactNode } from 'react';
 import { auth } from '@/auth';
 import UserNavCard from '@/components/profile/UserNavCard';
 
-export async function ProfilePageLayout({ children }: { children: ReactNode }) {
+export default async function ProfilePageLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const session = await auth();
 
   if (!session?.user?.id) return null;
@@ -15,5 +19,3 @@ export async function ProfilePageLayout({ children }: { children: ReactNode }) {
     </section>
   );
 }
-
-export default ProfilePageLayout;
