@@ -4,11 +4,11 @@ on:
   pull_request:
 
 jobs:
-  pull-request-checks:
+  cache-and-install:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
@@ -23,44 +23,37 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      # Steps for the Client Folder
-      - name: Install Dependencies (Client)
-        run: |
-          cd client
-          pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install
 
-      - name: Run TypeScript Compiler (Client)
+      # Steps for the Client Folder
+      - name: Run TypeScript Compiler (client)
         run: |
           cd client
           pnpm tsc
 
-      - name: Run Linter (Client)
+      - name: Run Linter (client)
         run: |
           cd client
           pnpm lint
 
-      #   - name: Run Tests (Client)
+      #   - name: Run Tests (client)
       #     run: |
       #       cd client
       #       pnpm test
 
       # Steps for the Server Folder
-      - name: Install Dependencies (Server)
-        run: |
-          cd server
-          pnpm install --frozen-lockfile
-
-      - name: Run TypeScript Compiler (Server)
+      - name: Run TypeScript Compiler (server)
         run: |
           cd server
           pnpm tsc
 
-    #   - name: Run Linter (Server)
+    #   - name: Run Linter (server)
     #     run: |
     #       cd server
     #       pnpm lint
 
-    #   - name: Run Tests (Server)
+    #   - name: Run Tests (server)
     #     run: |
     #       cd server
     #       pnpm test
