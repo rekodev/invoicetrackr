@@ -21,7 +21,7 @@ import { getTranslationKeyPrefix } from './utils/url';
 dotenv.config();
 cloudinary.config(cloudinaryConfig);
 
-const port = parseInt(process.env.PORT);
+const port = parseInt(process.env.SERVER_PORT);
 const server = fastify({
   ajv: {
     customOptions: {

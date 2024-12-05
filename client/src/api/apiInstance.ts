@@ -21,32 +21,14 @@ export type ApiError = {
 class ApiInstance {
   private httpClient: AxiosInstance;
 
-  constructor(baseURL: string) {
+  constructor() {
     this.httpClient = axios.create({
-      baseURL,
+      baseURL:
+        typeof window !== 'undefined'
+          ? undefined
+          : `http://localhost:${process.env.SERVER_PORT}`,
     });
-
-    // this.setupInterceptors();
   }
-
-  //   private setupInterceptors() {
-  //     this.httpClient.interceptors.response.use(
-  //       (response) => response,
-  //       (error) => Promise.reject(error)
-  //     );
-
-  //     this.httpClient.interceptors.request.use((config) => {
-  //       const excludes = ['/api/login', '/api/signup'];
-  //       if (!excludes.includes(config.url!)) {
-  //         const token = getAuthToken();
-  //         if (token) {
-  //           config.headers!['Authorization'] = `Bearer ${token}`;
-  //         }
-  //       }
-
-  //       return config;
-  //     });
-  //   }
 
   async request<T = any>(
     method: Method,
@@ -116,8 +98,6 @@ class ApiInstance {
   }
 }
 
-const api = new ApiInstance(
-  process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000'
-);
+const api = new ApiInstance();
 
 export default api;

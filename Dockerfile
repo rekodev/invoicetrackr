@@ -1,6 +1,7 @@
 FROM node:20 AS base
 RUN corepack enable
 WORKDIR /app
+ENV SERVER_PORT=12478
 
 # Stage 1: Install dependencies
 FROM base AS deps
@@ -8,13 +9,14 @@ COPY . .
 RUN cd client && pnpm install --frozen-lockfile
 RUN cd server && pnpm install --frozen-lockfile
 
-# Stage 2: Build the client
+# Stage 2: Build the client and the server
+# -- Client
 FROM base AS client 
 COPY --from=deps /app/client/node_modules ./client/node_modules
 COPY . .
 RUN cd client && pnpm run build
 
-# Stage 2: Build the server 
+# -- Server
 FROM base AS server 
 COPY --from=deps /app/server/node_modules ./server/node_modules
 COPY . .
