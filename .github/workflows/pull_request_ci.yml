@@ -11,14 +11,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
-
-      - name: Enable Corepack
-        run: corepack enable
+          cache: 'pnpm'
 
       # Steps for the Client Folder
       - name: Install Dependencies (Client)
