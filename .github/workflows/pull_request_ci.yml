@@ -1,0 +1,63 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+
+jobs:
+  pull-request-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      # Steps for the Client Folder
+      - name: Install Dependencies (Client)
+        run: |
+          cd client
+          pnpm install --frozen-lockfile
+
+      - name: Run TypeScript Compiler (Client)
+        run: |
+          cd client
+          pnpm tsc
+
+      - name: Run Linter (Client)
+        run: |
+          cd client
+          pnpm lint
+
+      #   - name: Run Tests (Client)
+      #     run: |
+      #       cd client
+      #       pnpm test
+
+      # Steps for the Server Folder
+      - name: Install Dependencies (Server)
+        run: |
+          cd server
+          pnpm install --frozen-lockfile
+
+      - name: Run TypeScript Compiler (Server)
+        run: |
+          cd server
+          pnpm tsc
+
+    #   - name: Run Linter (Server)
+    #     run: |
+    #       cd server
+    #       pnpm lint
+
+    #   - name: Run Tests (Server)
+    #     run: |
+    #       cd server
+    #       pnpm test
