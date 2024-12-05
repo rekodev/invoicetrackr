@@ -1,4 +1,4 @@
-name: ci
+name: Main CI
 
 on:
   push:
@@ -9,11 +9,12 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Cloning repo
+      - name: Clone Repository
         uses: actions/checkout@v4
 
-      - name: Install deps
+      - name: Install Dependencies
         run: docker image build -t invoicetrackr .
 
       - name: Save SSH key
@@ -24,5 +25,5 @@ jobs:
           chmod 400 ~/.ssh/key
           ssh-keyscan ${{ secrets.PROD_IP_ADDRESS }} >> ~/.ssh/known_hosts
 
-      - name: Push image to prod server
+      - name: Push Docker Image to Production
         run: docker image save invoicetrackr | ssh dokku@${{ secrets.PROD_IP_ADDRESS }} -i ~/.ssh/key git:load-image invoice-app invoicetrackr

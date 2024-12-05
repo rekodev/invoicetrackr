@@ -3,8 +3,8 @@ import { AuthError } from 'next-auth';
 
 import { registerUser } from '@/api';
 
-import { UserModel } from './types/models/user';
 import { signIn, signOut, unstable_update } from '../auth';
+import { UserModel } from './types/models/user';
 
 export async function authenticate(
   _prevState: string | undefined,
