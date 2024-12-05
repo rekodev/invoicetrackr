@@ -171,7 +171,7 @@ const InvoiceTable = ({ userId }: Props) => {
         classNames={{
           wrapper: 'min-h-[480px] bg-transparent border border-neutral-800',
         }}
-        sortDescriptor={sortDescriptor}
+        sortDescriptor={sortDescriptor as any}
         topContent={renderTopContent()}
         topContentPlacement='outside'
         onSortChange={setSortDescriptor as (descriptor: SortDescriptor) => any}
