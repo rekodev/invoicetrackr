@@ -9,19 +9,13 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 
 # Stage 2: Build the client and the server
+FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
-
-# -- Client
-FROM base AS client 
 COPY --from=deps /app/client/node_modules ./client/node_modules
-COPY . .
-RUN cd client && pnpm run build
-
-# -- Server
-FROM base AS server 
 COPY --from=deps /app/server/node_modules ./server/node_modules
 COPY . .
-RUN cd server && pnpm run build
+RUN (cd client && pnpm run build) & (cd server && pnpm run build) && wait
+
 
 # Stage 3: Production server
 FROM base AS runner
