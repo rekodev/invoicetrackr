@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Dependencies
-        run: docker image build -t invoicetrackr .
+        run: docker image build -t invoicetrackr:${{ github.sha }} .
 
       - name: Save SSH key
         run: |
@@ -26,4 +26,4 @@ jobs:
           ssh-keyscan ${{ secrets.PROD_IP_ADDRESS }} >> ~/.ssh/known_hosts
 
       - name: Push Docker Image to Production
-        run: docker image save invoicetrackr | ssh dokku@${{ secrets.PROD_IP_ADDRESS }} -i ~/.ssh/key git:load-image invoice-app invoicetrackr
+        run: docker image save invoicetrackr:${{ github.sha }} | ssh dokku@${{ secrets.PROD_IP_ADDRESS }} -i ~/.ssh/key git:load-image invoice-app invoicetrackr:${{ github.sha }}
