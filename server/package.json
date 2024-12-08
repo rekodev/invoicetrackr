@@ -1,7 +1,7 @@
 {
-  "name": "invoice-app-server",
+  "name": "@invoicetrackr/server",
   "version": "1.0.0",
-  "description": "The backend for rekodev's invoice app",
+  "description": "The backend for rekodev's InvoiceTrackr app",
   "main": "dist/app.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
