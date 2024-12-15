@@ -6,7 +6,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import '../globals.css';
 
 export const metadata: Metadata = {
-  title: 'Invoice App',
+  title: 'InvoiceTrackr',
   description: 'Invoice generating and tracking',
 };
 

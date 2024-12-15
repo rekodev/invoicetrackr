@@ -12,7 +12,7 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Invoice App',
+  title: 'InvoiceTrackr',
   description: 'Invoice generating and tracking',
 };
 

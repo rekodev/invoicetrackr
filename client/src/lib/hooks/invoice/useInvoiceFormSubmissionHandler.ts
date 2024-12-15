@@ -76,7 +76,7 @@ const useInvoiceFormSubmissionHandler = ({
     let response: AxiosResponse<UpdateInvoiceResp | AddInvoiceResp>;
 
     if (invoiceData) {
-      response = await updateInvoice(user.id, fullData);
+      response = await updateInvoice(user.id, fullData, user.language);
     } else {
       response = await addInvoice(user.id, fullData, user.language);
     }

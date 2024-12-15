@@ -1,6 +1,5 @@
 import { Type } from '@sinclair/typebox';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
-import multer from 'fastify-multer';
 
 import {
   deleteInvoice,
@@ -10,6 +9,7 @@ import {
   updateInvoice,
 } from '../controllers';
 import { Invoice } from '../types/models';
+import { preValidateFileAndFields } from '../utils/multipart';
 
 export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -23,7 +23,7 @@ export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
 export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Invoice,
+      200: Type.Object({ invoice: Invoice }),
     },
   },
   handler: getInvoice,
@@ -36,9 +36,7 @@ export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
       201: Type.Object({ invoice: Invoice, message: Type.String() }),
     },
   },
-  preValidation: multer({
-    storage: multer.memoryStorage(),
-  }).single('senderSignature'),
+  preValidation: preValidateFileAndFields,
   handler: postInvoice,
 };
 
@@ -49,9 +47,7 @@ export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ invoice: Invoice, message: Type.String() }),
     },
   },
-  preValidation: multer({
-    storage: multer.memoryStorage(),
-  }).single('senderSignature'),
+  preValidation: preValidateFileAndFields,
   handler: updateInvoice,
 };
 
