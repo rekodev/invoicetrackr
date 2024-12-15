@@ -7,14 +7,12 @@ const EditInvoicePage = async ({
 }: {
   params: { invoiceId: string };
 }) => {
+  const { invoiceId } = await params;
   const session = await auth();
 
   if (!session?.user?.id) return null;
 
-  const response = await getInvoice(
-    Number(session.user.id),
-    Number(params!.invoiceId)
-  );
+  const response = await getInvoice(Number(session.user.id), Number(invoiceId));
 
   return (
     <section>

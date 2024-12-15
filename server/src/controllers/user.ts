@@ -1,8 +1,8 @@
+import { MultipartFile } from '@fastify/multipart';
 import bcrypt from 'bcrypt';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
-import { File } from 'fastify-multer/lib/interfaces';
 
 import {
   deleteUserFromDb,
@@ -14,7 +14,6 @@ import {
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb,
 } from '../database';
-
 import { UserDto } from '../types/dtos';
 import { UserModel } from '../types/models';
 import { transformUserDto } from '../types/transformers';
@@ -89,22 +88,22 @@ export const postUser = async (
 };
 
 export const updateUser = async (
-  req: FastifyRequest<{ Params: { id: number }; Body: UserModel }> & {
-    file: File;
-  },
+  req: FastifyRequest<{
+    Params: { id: number };
+    Body: UserModel & { file: MultipartFile };
+  }>,
   reply: FastifyReply
 ) => {
   const { id } = req.params;
-  const signatureFile = req.file;
+  const file = req.body.file;
+  const fileBuffer = await file.toBuffer();
   const user = req.body;
 
   let uploadedSignature: UploadApiResponse;
 
-  if (signatureFile) {
+  if (file) {
     uploadedSignature = await cloudinary.uploader.upload(
-      `data:${signatureFile.mimetype};base64,${signatureFile.buffer.toString(
-        'base64'
-      )}`
+      `data:${file.mimetype};base64,${fileBuffer.toString('base64')}`
     );
 
     if (!uploadedSignature)
@@ -118,7 +117,7 @@ export const updateUser = async (
   const updatedUser = await updateUserInDb(
     id,
     user,
-    signatureFile ? uploadedSignature.url : user.signature
+    file ? uploadedSignature.url : user.signature
   );
 
   if (!updatedUser)
@@ -180,13 +179,14 @@ export const updateUserProfilePicture = async (
   reply: FastifyReply
 ) => {
   const { id } = req.params;
-  const profilePicture = req.file;
+  const profilePicture = await req.file();
+  const profilePictureBuffer = await profilePicture.toBuffer();
 
   let uploadedProfilePicture: UploadApiResponse;
 
   if (profilePicture) {
     uploadedProfilePicture = await cloudinary.uploader.upload(
-      `data:${profilePicture.mimetype};base64,${profilePicture.buffer.toString(
+      `data:${profilePicture.mimetype};base64,${profilePictureBuffer.toString(
         'base64'
       )}`
     );

@@ -43,21 +43,39 @@ export const addInvoice = async (
   userId: number,
   invoiceData: InvoiceFormData,
   language: string = 'EN'
-): Promise<AxiosResponse<AddInvoiceResp>> =>
-  await api.post(`/api/${userId}/invoices`, invoiceData, {
+): Promise<AxiosResponse<AddInvoiceResp>> => {
+  const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
+
+  return await api.post(`/api/${userId}/invoices`, invoiceData, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': isSignatureFile
+        ? 'multipart/form-data'
+        : 'application/json',
       'Accept-Language': language.toLowerCase(),
     },
   });
+};
 
 export const updateInvoice = async (
   userId: number,
-  invoiceData: InvoiceModel
-): Promise<AxiosResponse<UpdateInvoiceResp>> =>
-  api.put(`/api/${userId}/invoices/${invoiceData.id}`, invoiceData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  invoiceData: InvoiceModel,
+  language: string = 'EN'
+): Promise<AxiosResponse<UpdateInvoiceResp>> => {
+  const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
+
+  return await api.put(
+    `/api/${userId}/invoices/${invoiceData.id}`,
+    invoiceData,
+    {
+      headers: {
+        'Content-Type': isSignatureFile
+          ? 'multipart/form-data'
+          : 'application/json',
+        'Accept-Language': language.toLowerCase(),
+      },
+    }
+  );
+};
 
 export const deleteInvoice = async (
   userId: number,

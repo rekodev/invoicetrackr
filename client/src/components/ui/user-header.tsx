@@ -52,7 +52,7 @@ export default function UserHeader({ userId }: Props) {
       <NavbarBrand className='text-white flex gap-2' as={Link} href={HOME_PAGE}>
         <AppLogo />
         <p className='font-bold text-inherit'>
-          INVOICE<span className='text-secondary-600'>APP</span>
+          INVOICE<span className='text-secondary-600'>TRACKR</span>
         </p>
       </NavbarBrand>
 
@@ -89,11 +89,11 @@ export default function UserHeader({ userId }: Props) {
           </DropdownTrigger>
           <form action={logOut}>
             <DropdownMenu aria-label='Profile Actions' variant='flat'>
-              <DropdownItem key='profile' className='h-14 gap-2'>
+              <DropdownItem key='signed-in-as' className='h-14 gap-2'>
                 <p className='font-semibold'>Signed in as</p>
                 <p className='font-semibold'>{user?.email}</p>
               </DropdownItem>
-              <DropdownItem key='profile' onClick={navigateToProfilePage}>
+              <DropdownItem key='profile' onPress={navigateToProfilePage}>
                 My Profile
               </DropdownItem>
               <DropdownItem

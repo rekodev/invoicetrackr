@@ -1,6 +1,7 @@
+import { MultipartFile } from '@fastify/multipart';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { File } from 'fastify-multer/lib/interfaces';
+
 import {
   deleteInvoiceFromDb,
   findInvoiceById,
@@ -37,26 +38,28 @@ export const getInvoice = async (
 
   if (!invoice) reply.status(404).send({ message: 'Invoice not found' });
 
-  reply.send(transformInvoiceDto(invoice));
+  reply.send({
+    invoice: transformInvoiceDto(invoice),
+  });
 };
 
 export const postInvoice = async (
-  req: FastifyRequest<{ Params: { userId: number }; Body: InvoiceModel }> & {
-    file: File;
-  },
+  req: FastifyRequest<{
+    Params: { userId: number };
+    Body: InvoiceModel & { file: MultipartFile };
+  }>,
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const invoiceData = req.body;
-  const signatureFile = req.file;
+  const signatureFile = req.body.file;
+  const fileBuffer = await signatureFile.toBuffer();
 
   let uploadedSignature: UploadApiResponse;
 
   if (signatureFile) {
     uploadedSignature = await cloudinary.uploader.upload(
-      `data:${signatureFile.mimetype};base64,${signatureFile.buffer.toString(
-        'base64'
-      )}`
+      `data:${signatureFile.mimetype};base64,${fileBuffer.toString('base64')}`
     );
 
     if (!uploadedSignature)
@@ -90,21 +93,20 @@ export const postInvoice = async (
 export const updateInvoice = async (
   req: FastifyRequest<{
     Params: { userId: number; id: number };
-    Body: InvoiceModel;
-  }> & { file: File },
+    Body: InvoiceModel & { file: MultipartFile };
+  }>,
   reply: FastifyReply
 ) => {
   const { userId, id } = req.params;
   const invoiceData = req.body;
-  const signatureFile = req.file;
+  const signatureFile = req.body.file;
+  const fileBuffer = await signatureFile.toBuffer();
 
   let uploadedSignature: UploadApiResponse;
 
   if (signatureFile) {
     uploadedSignature = await cloudinary.uploader.upload(
-      `data:${signatureFile.mimetype};base64,${signatureFile.buffer.toString(
-        'base64'
-      )}`
+      `data:${signatureFile.mimetype};base64,${fileBuffer.toString('base64')}`
     );
 
     if (!uploadedSignature)
