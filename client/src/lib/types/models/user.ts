@@ -27,8 +27,17 @@ export const userSchemaWithPassword = userSchema.extend({
   password: z.string(),
 });
 
-export type UserModel = z.infer<typeof userSchema>;
-export type UserModelWithPassword = z.infer<typeof userSchema>;
+export const changePasswordFormSchema = z.object({
+  password: z.string(),
+  newPassword: z.string(),
+  confirmedNewPassword: z.string(),
+});
 
-export type BankingInformation = z.infer<typeof bankingInformationSchema>;
-export type AccountSettings = Pick<UserModel, 'currency' | 'language'>;
+export type UserModel = z.infer<typeof userSchema>;
+export type UserModelWithPassword = z.infer<typeof userSchemaWithPassword>;
+
+export type BankingInformationFormModel = z.infer<
+  typeof bankingInformationSchema
+>;
+export type AccountSettingsFormModel = Pick<UserModel, 'currency' | 'language'>;
+export type ChangePasswordFormModel = z.infer<typeof changePasswordFormSchema>;
