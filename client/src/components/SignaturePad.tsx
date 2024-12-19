@@ -159,7 +159,6 @@ const SignaturePad = ({
         <ModalContent>
           <ModalHeader>Signature</ModalHeader>
           <ModalBody>
-            {/* @ts-expect-error*/}
             <SignatureCanvas
               ref={signatureRef}
               canvasProps={{
