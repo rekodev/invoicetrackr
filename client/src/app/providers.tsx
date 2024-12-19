@@ -1,8 +1,8 @@
 import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
 import { ReactNode } from 'react';
 
-import SWRProvider from '@/components/providers/swr-provider';
 import { NextUIProvider } from '@/components/providers/next-ui-provider';
+import SWRProvider from '@/components/providers/swr-provider';
 
 type Props = {
   children: ReactNode;
