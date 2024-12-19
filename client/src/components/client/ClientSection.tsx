@@ -13,7 +13,7 @@ import DeleteClientModal from './DeleteClientModal';
 import EditClientModal from './EditClientModal';
 import TrashIcon from '../icons/TrashIcon';
 import InvoicePartyCard from '../invoice/InvoicePartyCard';
-import Loader from '../ui/Loader';
+import Loader from '../ui/loader';
 
 const PER_PAGE = 8;
 

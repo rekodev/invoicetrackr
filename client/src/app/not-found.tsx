@@ -1,4 +1,4 @@
-import ErrorAlert from '@/components/ui/ErrorAlert';
+import ErrorAlert from '@/components/ui/error-alert';
 
 const NotFound = () => {
   return <ErrorAlert />;
