@@ -2,11 +2,9 @@ import { getInvoice } from '@/api';
 import { auth } from '@/auth';
 import InvoiceForm from '@/components/invoice/InvoiceForm';
 
-const EditInvoicePage = async ({
-  params,
-}: {
-  params: { invoiceId: string };
-}) => {
+type Params = Promise<{ invoiceId: string }>;
+
+const EditInvoicePage = async ({ params }: { params: Params }) => {
   const { invoiceId } = await params;
   const session = await auth();
 
