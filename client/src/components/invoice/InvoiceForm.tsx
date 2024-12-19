@@ -28,8 +28,8 @@ import PencilIcon from '../icons/PencilIcon';
 import { PlusIcon } from '../icons/PlusIcon';
 import SignaturePad from '../SignaturePad';
 import CompleteProfile from '../ui/complete-profile';
-import ErrorAlert from '../ui/ErrorAlert';
-import Loader from '../ui/Loader';
+import ErrorAlert from '../ui/error-alert';
+import Loader from '../ui/loader';
 
 type Props = {
   userId: number;

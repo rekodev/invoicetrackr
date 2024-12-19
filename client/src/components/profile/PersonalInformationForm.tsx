@@ -23,8 +23,8 @@ import { UserModel } from '@/lib/types/models/user';
 import { capitalize } from '@/lib/utils';
 
 import SignaturePad from '../SignaturePad';
-import ErrorAlert from '../ui/ErrorAlert';
-import Loader from '../ui/Loader';
+import ErrorAlert from '../ui/error-alert';
+import Loader from '../ui/loader';
 
 type Props = {
   userId: number;

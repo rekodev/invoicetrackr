@@ -1,8 +1,8 @@
-import { NextUIProvider } from '@nextui-org/react';
 import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
 import { ReactNode } from 'react';
 
 import SWRProvider from '@/components/providers/swr-provider';
+import { NextUIProvider } from '@/components/providers/next-ui-provider';
 
 type Props = {
   children: ReactNode;
@@ -12,7 +12,7 @@ type Props = {
 export function Providers({ children, messages }: Props) {
   return (
     <NextIntlClientProvider messages={messages}>
-      <NextUIProvider className='flex flex-col min-h-screen justify-between'>
+      <NextUIProvider>
         <SWRProvider>{children}</SWRProvider>
       </NextUIProvider>
     </NextIntlClientProvider>
