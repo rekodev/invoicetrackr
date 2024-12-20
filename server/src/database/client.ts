@@ -1,5 +1,7 @@
+import { desc, eq } from 'drizzle-orm';
 import { ClientModel } from '../types/models';
-import { sql } from './db';
+import { db, sql } from './db';
+import { clientsTable } from './schema';
 
 export const findClientByEmail = async (userId: number, email: string) => {
   const clients = await sql`
@@ -13,20 +15,11 @@ export const findClientByEmail = async (userId: number, email: string) => {
 };
 
 export const getClientsFromDb = async (userId: number) => {
-  const clients = await sql`
-    select
-      id,
-      name,
-      type,
-      business_type,
-      business_number,
-      address,
-      email,
-      created_at,
-      updated_at
-    from clients
-    where user_id = ${userId} order by id desc
-  `;
+  const clients = await db
+    .select()
+    .from(clientsTable)
+    .where(eq(clientsTable.userId, userId))
+    .orderBy(desc(clientsTable.id));
 
   return clients;
 };

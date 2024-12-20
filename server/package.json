@@ -13,8 +13,11 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.10.1",
+    "@types/pg": "^8.11.10",
     "dotenv": "^16.4.7",
+    "drizzle-kit": "^0.30.1",
     "nodemon": "^3.1.9",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {
@@ -22,13 +25,16 @@
     "@fastify/error": "^4.0.0",
     "@fastify/multipart": "^9.0.1",
     "@fastify/type-provider-typebox": "^5.1.0",
+    "@neondatabase/serverless": "^0.10.4",
     "@sinclair/typebox": "^0.34.11",
     "ajv-errors": "^3.0.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.1",
+    "drizzle-orm": "^0.38.2",
     "fastify": "^5.2.0",
     "fastify-i18n": "3.0.0",
     "fastify-plugin": "5.0.1",
+    "pg": "^8.13.1",
     "postgres": "^3.4.5"
   }
 }

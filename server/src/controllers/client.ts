@@ -18,7 +18,7 @@ export const getClients = async (
   const { userId } = req.params;
 
   const clients = await getClientsFromDb(userId);
-  reply.send(clients.map((client) => transformClientDto(client as ClientDto)));
+  reply.send(clients);
 };
 
 export const getClient = async (
