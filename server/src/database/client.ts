@@ -1,68 +1,54 @@
+import { desc, eq, and } from 'drizzle-orm';
 import { ClientModel } from '../types/models';
-import { sql } from './db';
+import { db } from './db';
+import { clientsTable } from './schema';
 
 export const findClientByEmail = async (userId: number, email: string) => {
-  const clients = await sql`
-    select
-      email
-    from clients
-    where user_id = ${userId} and email = ${email}
-  `;
+  const clients = await db
+    .select({ email: clientsTable.email })
+    .from(clientsTable)
+    .where(and(eq(clientsTable.userId, userId), eq(clientsTable.email, email)));
 
-  return clients;
+  return clients.at(0);
 };
 
 export const getClientsFromDb = async (userId: number) => {
-  const clients = await sql`
-    select
-      id,
-      name,
-      type,
-      business_type,
-      business_number,
-      address,
-      email,
-      created_at,
-      updated_at
-    from clients
-    where user_id = ${userId} order by id desc
-  `;
+  const clients = await db
+    .select()
+    .from(clientsTable)
+    .where(eq(clientsTable.userId, userId))
+    .orderBy(desc(clientsTable.id));
 
   return clients;
 };
 
 export const getClientFromDb = async (userId: number, clientId: number) => {
-  const clients = await sql`
-      select
-        id,
-        name,
-        type,
-        business_type,
-        business_number,
-        address,
-        email,
-        created_at,
-        updated_at
-      from clients
-      where user_id = ${userId} AND id = ${clientId}
-    `;
+  const clients = await db
+    .select()
+    .from(clientsTable)
+    .where(and(eq(clientsTable.userId, userId), eq(clientsTable.id, clientId)));
 
-  return clients;
+  return clients.at(0);
 };
 
 export const insertClientInDb = async (
   userId: number,
   { name, address, businessNumber, businessType, type, email }: ClientModel
 ) => {
-  const clients = await sql`
-        insert into clients
-          (name, type, business_type, business_number, address, email, user_id)
-        values
-          (${name}, ${type}, ${businessType}, ${businessNumber}, ${address}, ${email}, ${userId})
-        returning name, type, business_type, business_number, address, email
-      `;
+  const clients = await db
+    .insert(clientsTable)
+    .values({
+      name,
+      address,
+      businessNumber,
+      businessType,
+      type,
+      email,
+      userId,
+    })
+    .returning();
 
-  return clients;
+  return clients.at(0);
 };
 
 export const updateClientInDb = async (
@@ -70,28 +56,20 @@ export const updateClientInDb = async (
   clientId: number,
   { name, address, businessNumber, businessType, type, email }: ClientModel
 ) => {
-  const clients = await sql`
-  update clients
-  set
-    name = ${name},
-    address = ${address},
-    business_number = ${businessNumber},
-    business_type = ${businessType},
-    type = ${type},
-    email = ${email}
-  where id = ${clientId} and user_id = ${userId}
-  returning id, name, type, business_type, business_number, address, email
-`;
+  const clients = await db
+    .update(clientsTable)
+    .set({ name, address, businessNumber, businessType, type, email })
+    .where(and(eq(clientsTable.id, clientId), eq(clientsTable.userId, userId)))
+    .returning();
 
-  return clients;
+  return clients.at(0);
 };
 
 export const deleteClientFromDb = async (userId: number, clientId: number) => {
-  const clients = await sql`
-  delete from clients
-  where id = ${clientId} and user_id = ${userId}
-  returning *
-`;
+  const clients = await db
+    .delete(clientsTable)
+    .where(and(eq(clientsTable.id, clientId), eq(clientsTable.userId, userId)))
+    .returning();
 
-  return clients;
+  return clients.at(0);
 };
