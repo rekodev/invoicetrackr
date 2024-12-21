@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/app.js",
-    "dev": "tsc && nodemon src/app.ts"
+    "dev": "tsc && nodemon src/app.ts",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate"
   },
   "author": "rekodev",
   "license": "ISC",

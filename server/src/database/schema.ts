@@ -78,7 +78,7 @@ export const clientsTable = pgTable(
     businessType: varchar('business_type', { length: 50 }).notNull(),
     businessNumber: varchar('business_number', { length: 255 }).notNull(),
     address: text().notNull(),
-    email: varchar({ length: 255 }),
+    email: varchar({ length: 255 }).notNull(),
     createdAt: timestamp('created_at', {
       withTimezone: true,
       mode: 'string',
