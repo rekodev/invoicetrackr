@@ -8,3 +8,4 @@ export const InternalServerError = createError(
   500
 );
 export const UnauthorizedError = createError('UNAUTHORIZED', '%s', 401);
+export const AlreadyExistsError = createError('ALREADY_EXISTS', '%s', 403);

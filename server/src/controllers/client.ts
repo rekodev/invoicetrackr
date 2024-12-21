@@ -18,6 +18,7 @@ export const getClients = async (
   const { userId } = req.params;
 
   const clients = await getClientsFromDb(userId);
+
   reply.send(clients);
 };
 
@@ -29,9 +30,9 @@ export const getClient = async (
 
   const client = await getClientFromDb(userId, id);
 
-  if (!client) throw NotFoundError('Client not found');
+  if (!client) throw new NotFoundError('Client not found');
 
-  reply.send(client);
+  reply.status(200).send(client);
 };
 
 export const postClient = async (
@@ -43,13 +44,13 @@ export const postClient = async (
 
   const foundClient = await findClientByEmail(userId, clientData.email);
 
-  if (foundClient) throw BadRequestError('Client already exists');
+  if (foundClient) throw new BadRequestError('Client already exists');
 
   const insertedClient = await insertClientInDb(userId, clientData);
 
-  if (!insertedClient) throw BadRequestError('Unable to add client');
+  if (!insertedClient) throw new BadRequestError('Unable to add client');
 
-  reply.send({
+  reply.status(200).send({
     client: insertedClient,
     message: 'Client added successfully',
   });
@@ -67,9 +68,9 @@ export const updateClient = async (
 
   const updatedClient = await updateClientInDb(userId, id, clientData);
 
-  if (!updatedClient) throw BadRequestError('Unable to update client');
+  if (!updatedClient) throw new BadRequestError('Unable to update client');
 
-  reply.send({
+  reply.status(200).send({
     message: 'Client updated successfully',
     client: updatedClient,
   });
@@ -83,7 +84,7 @@ export const deleteClient = async (
 
   const deletedClient = await deleteClientFromDb(userId, id);
 
-  if (!deletedClient) throw BadRequestError('Unable to delete client');
+  if (!deletedClient) throw new BadRequestError('Unable to delete client');
 
-  reply.send({ message: 'Client deleted successfully' });
+  reply.status(200).send({ message: 'Client deleted successfully' });
 };
