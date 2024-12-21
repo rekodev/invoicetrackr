@@ -113,10 +113,9 @@ export const deleteBankAccount = async (
   reply: FastifyReply
 ) => {
   const { userId, id } = req.params;
+  const user = await getUserFromDb(userId);
 
-  const [user] = await getUserFromDb(userId);
-
-  if ((user as UserDto)?.selected_bank_account_id === Number(id))
+  if (user.selectedBankAccountId === Number(id))
     throw new BadRequestError('Cannot delete selected bank account');
 
   const bankAccount = await deleteBankAccountFromDb(userId, id);
