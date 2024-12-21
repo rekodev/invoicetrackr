@@ -103,12 +103,12 @@ export const usersTable = pgTable(
   'users',
   {
     id: serial().primaryKey().notNull(),
-    name: varchar({ length: 255 }),
-    type: varchar({ length: 50 }),
-    businessType: varchar('business_type', { length: 50 }),
-    businessNumber: varchar('business_number', { length: 255 }),
-    address: text(),
-    email: varchar({ length: 255 }),
+    name: varchar({ length: 255 }).notNull(),
+    type: varchar({ length: 50 }).notNull(),
+    businessType: varchar('business_type', { length: 50 }).notNull(),
+    businessNumber: varchar('business_number', { length: 255 }).notNull(),
+    address: text().notNull(),
+    email: varchar({ length: 255 }).notNull(),
     createdAt: timestamp('created_at', {
       withTimezone: true,
       mode: 'string',
@@ -118,11 +118,13 @@ export const usersTable = pgTable(
       mode: 'string',
     }).default(sql`CURRENT_TIMESTAMP`),
     password: varchar({ length: 255 }).notNull(),
-    signature: varchar({ length: 255 }),
-    selectedBankAccountId: integer('selected_bank_account_id'),
-    profilePictureUrl: varchar('profile_picture_url', { length: 255 }),
-    currency: varchar({ length: 255 }),
-    language: varchar({ length: 255 }),
+    signature: varchar({ length: 255 }).notNull(),
+    selectedBankAccountId: integer('selected_bank_account_id').notNull(),
+    profilePictureUrl: varchar('profile_picture_url', {
+      length: 255,
+    }).notNull(),
+    currency: varchar({ length: 255 }).notNull(),
+    language: varchar({ length: 255 }).notNull(),
   },
   (table) => [
     foreignKey({
