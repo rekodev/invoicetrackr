@@ -75,12 +75,13 @@ export const updateUser = async (
 ) => {
   const { id } = req.params;
   const file = req.body.file;
-  const fileBuffer = await file.toBuffer();
   const user = req.body;
 
   let uploadedSignature: UploadApiResponse;
 
   if (file) {
+    const fileBuffer = await file.toBuffer();
+
     uploadedSignature = await cloudinary.uploader.upload(
       `data:${file.mimetype};base64,${fileBuffer.toString('base64')}`
     );
@@ -155,11 +156,12 @@ export const updateUserProfilePicture = async (
 ) => {
   const { id } = req.params;
   const profilePicture = await req.file();
-  const profilePictureBuffer = await profilePicture.toBuffer();
 
   let uploadedProfilePicture: UploadApiResponse;
 
   if (profilePicture) {
+    const profilePictureBuffer = await profilePicture.toBuffer();
+
     uploadedProfilePicture = await cloudinary.uploader.upload(
       `data:${profilePicture.mimetype};base64,${profilePictureBuffer.toString(
         'base64'

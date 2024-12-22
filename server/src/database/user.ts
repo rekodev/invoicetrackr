@@ -101,9 +101,13 @@ export const updateUserInDb = async (
       name: usersTable.name,
       type: usersTable.type,
       businessType: usersTable.businessType,
+      businessNumber: usersTable.businessNumber,
       address: usersTable.address,
       email: usersTable.email,
       signature: usersTable.signature,
+      profilePictureUrl: usersTable.profilePictureUrl,
+      currency: usersTable.currency,
+      language: usersTable.language,
     });
 
   return users.at(0);
