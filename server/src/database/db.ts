@@ -1,20 +1,15 @@
-import postgres from 'postgres';
-import dotenv from 'dotenv';
+import { neonConfig, Pool } from '@neondatabase/serverless';
+import { config } from 'dotenv';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import ws from 'ws';
 
-dotenv.config();
+config({ path: '.env' });
+neonConfig.webSocketConstructor = ws;
 
-let { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+export const db = drizzle({ client: pool });
 
-export const sql = postgres({
-  host: PGHOST,
-  database: PGDATABASE,
-  username: PGUSER,
-  password: PGPASSWORD,
-  port: 5432,
-  ssl: 'require',
-});
-
-export async function getPgVersion() {
-  const result = await sql`select version()`;
-  console.log(result[0]);
-}
+export const getPgVersion = async () => {
+  const result = await db.execute('SELECT version()');
+  console.log(result.rows[0]);
+};

@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { ClientModel } from '../types/models';
+
 import {
   deleteClientFromDb,
   findClientByEmail,
@@ -8,8 +8,8 @@ import {
   insertClientInDb,
   updateClientInDb,
 } from '../database';
-import { ClientDto } from '../types/dtos';
-import { transformClientDto } from '../types/transformers';
+import { ClientModel } from '../types/models';
+import { BadRequestError, NotFoundError } from '../utils/errors';
 
 export const getClients = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -18,7 +18,8 @@ export const getClients = async (
   const { userId } = req.params;
 
   const clients = await getClientsFromDb(userId);
-  reply.send(clients.map((client) => transformClientDto(client as ClientDto)));
+
+  reply.send(clients);
 };
 
 export const getClient = async (
@@ -27,13 +28,11 @@ export const getClient = async (
 ) => {
   const { userId, id } = req.params;
 
-  const queryResult = await getClientFromDb(userId, id);
+  const client = await getClientFromDb(userId, id);
 
-  if (!queryResult.length)
-    return reply.status(404).send({ message: 'Client not found' });
+  if (!client) throw new NotFoundError('Client not found');
 
-  const client = queryResult[0];
-  reply.send(transformClientDto(client as ClientDto));
+  reply.status(200).send(client);
 };
 
 export const postClient = async (
@@ -43,22 +42,16 @@ export const postClient = async (
   const { userId } = req.params;
   const clientData = req.body;
 
-  const findClientByEmailQueryResult = await findClientByEmail(
-    userId,
-    clientData.email
-  );
+  const foundClient = await findClientByEmail(userId, clientData.email);
 
-  if (findClientByEmailQueryResult.length)
-    return reply.status(400).send({ message: 'Client already exists' });
+  if (foundClient) throw new BadRequestError('Client already exists');
 
-  const insertionResult = await insertClientInDb(userId, clientData);
+  const insertedClient = await insertClientInDb(userId, clientData);
 
-  if (!insertionResult.length)
-    return reply.status(400).send({ message: 'Unable to add client' });
+  if (!insertedClient) throw new BadRequestError('Unable to add client');
 
-  const client = insertionResult[0];
-  reply.send({
-    client: transformClientDto(client as ClientDto),
+  reply.status(200).send({
+    client: insertedClient,
     message: 'Client added successfully',
   });
 };
@@ -73,15 +66,13 @@ export const updateClient = async (
   const { userId, id } = req.params;
   const clientData = req.body;
 
-  const queryResult = await updateClientInDb(userId, id, clientData);
+  const updatedClient = await updateClientInDb(userId, id, clientData);
 
-  if (!queryResult.length)
-    return reply.status(400).send({ message: 'Unable to update client' });
+  if (!updatedClient) throw new BadRequestError('Unable to update client');
 
-  const client = queryResult[0];
-  reply.send({
+  reply.status(200).send({
     message: 'Client updated successfully',
-    client: transformClientDto(client as ClientDto),
+    client: updatedClient,
   });
 };
 
@@ -91,10 +82,9 @@ export const deleteClient = async (
 ) => {
   const { userId, id } = req.params;
 
-  const queryResult = await deleteClientFromDb(userId, id);
+  const deletedClient = await deleteClientFromDb(userId, id);
 
-  if (!queryResult.length)
-    return reply.status(400).send({ message: 'Unable to delete client' });
+  if (!deletedClient) throw new BadRequestError('Unable to delete client');
 
-  reply.send({ message: 'Client deleted successfully' });
+  reply.status(200).send({ message: 'Client deleted successfully' });
 };

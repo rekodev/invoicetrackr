@@ -104,10 +104,18 @@ export const deleteClient = async (
 export const updateUser = async (
   id: number,
   userData: UserModel
-): Promise<AxiosResponse<UpdateUserResp>> =>
-  await api.put(`/api/users/${id}`, userData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+): Promise<AxiosResponse<UpdateUserResp>> => {
+  const isSignatureFile = typeof userData.signature !== 'string';
+
+  return await api.put(`/api/users/${id}`, userData, {
+    headers: {
+      'Content-Type': isSignatureFile
+        ? 'multipart/form-data'
+        : 'application/json',
+      'Accept-Language': userData.language.toLowerCase(),
+    },
   });
+};
 
 export const getUser = async (id: number): Promise<AxiosResponse<UserModel>> =>
   await api.get(`/api/users/${id}`);
