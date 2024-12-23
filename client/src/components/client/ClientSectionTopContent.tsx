@@ -96,7 +96,7 @@ const ClientSectionTopContent = ({
             <Button
               color='secondary'
               endContent={<PlusIcon width={16} height={16} />}
-              onClick={handleAddNewClient}
+              onPress={handleAddNewClient}
             >
               Add New
             </Button>

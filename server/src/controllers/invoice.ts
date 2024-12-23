@@ -12,7 +12,6 @@ import {
   updateInvoiceInDb,
 } from '../database';
 import { InvoiceModel } from '../types/models';
-import { transformInvoiceDto } from '../types/transformers';
 import {
   AlreadyExistsError,
   BadRequestError,
@@ -83,7 +82,7 @@ export const postInvoice = async (
   if (!insertedInvoice) throw new BadRequestError('Unable to add invoice');
 
   reply.status(200).send({
-    invoice: transformInvoiceDto(insertedInvoice),
+    invoice: insertedInvoice,
     message: 'Invoice added successfully',
   });
 };

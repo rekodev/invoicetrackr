@@ -1,8 +1,16 @@
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import {
+  and,
+  desc,
+  eq,
+  ExtractTablesWithRelations,
+  inArray,
+} from 'drizzle-orm';
+import { NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
+import { PgTransaction } from 'drizzle-orm/pg-core';
 
-import { InvoiceDto } from '../types/dtos';
 import { InvoiceModel } from '../types/models';
-import { db, sql } from './db';
+import { jsonAgg } from '../utils/jsonAgg';
+import { db } from './db';
 import {
   bankingInformationTable,
   clientsTable,
@@ -10,7 +18,6 @@ import {
   invoicesTable,
   usersTable,
 } from './schema';
-import { jsonAgg } from '../utils/jsonAgg';
 
 export const findInvoiceById = async (userId: number, id: number) => {
   const invoices = await db
@@ -107,8 +114,16 @@ export const getInvoicesFromDb = async (userId: number) => {
   return invoices;
 };
 
-export const getInvoiceFromDb = async (userId: number, invoiceId: number) => {
-  const invoices = await db
+export const getInvoiceFromDb = async (
+  userId: number,
+  id: number,
+  transaction?: PgTransaction<
+    NeonQueryResultHKT,
+    any,
+    ExtractTablesWithRelations<Record<string, never>>
+  >
+) => {
+  const invoices = await (transaction ? transaction : db)
     .select({
       id: invoicesTable.id,
       invoiceId: invoicesTable.invoiceId,
@@ -164,9 +179,7 @@ export const getInvoiceFromDb = async (userId: number, invoiceId: number) => {
       invoiceServicesTable,
       eq(invoiceServicesTable.invoiceId, invoicesTable.id)
     )
-    .where(
-      and(eq(invoicesTable.senderId, userId), eq(invoicesTable.id, invoiceId))
-    )
+    .where(and(eq(invoicesTable.senderId, userId), eq(invoicesTable.id, id)))
     .groupBy(
       invoicesTable.id,
       usersTable.id,
@@ -181,73 +194,41 @@ export const insertInvoiceInDb = async (
   invoiceData: InvoiceModel,
   senderSignature: string
 ) => {
-  const invoice = await sql.begin<InvoiceDto>(async (sql) => {
-    const [invoice] = await sql`
-      insert into invoices (
-        date, invoice_id, total_amount, status, due_date, sender_id, receiver_id, sender_signature, bank_account_id
-      ) values (
-        ${invoiceData.date}, ${invoiceData.invoiceId}, ${invoiceData.totalAmount}, ${invoiceData.status}, 
-        ${invoiceData.dueDate}, ${invoiceData.sender.id}, ${invoiceData.receiver.id}, ${senderSignature}, ${invoiceData.bankingInformation.id}
-      ) returning id
-    `;
+  const invoice = await db.transaction(async (tx) => {
+    const invoices = await tx
+      .insert(invoicesTable)
+      .values({
+        date: invoiceData.date,
+        invoiceId: invoiceData.invoiceId,
+        totalAmount: String(invoiceData.totalAmount),
+        status: invoiceData.status,
+        dueDate: invoiceData.dueDate,
+        senderId: invoiceData.sender.id,
+        receiverId: invoiceData.receiver.id,
+        senderSignature: senderSignature,
+        bankAccountId: invoiceData.bankingInformation.id,
+      })
+      .returning({ id: invoicesTable.id });
+
+    const insertedInvoiceId = invoices.at(0).id;
 
     for (const service of invoiceData.services) {
-      await sql`
-        insert into invoice_services (
-          description, amount, quantity, unit, invoice_id
-        ) values (
-          ${service.description}, ${service.amount}, ${service.quantity}, 
-          ${service.unit}, ${invoice.id}
-        )
-      `;
+      await tx.insert(invoiceServicesTable).values({
+        quantity: service.quantity,
+        amount: String(service.amount),
+        unit: service.unit,
+        description: service.description,
+        invoiceId: insertedInvoiceId,
+      });
     }
 
-    const [insertedInvoice] = await sql<Array<InvoiceDto>>`
-      select
-        invoices.id,
-        invoices.invoice_id,
-        invoices.date,
-        invoices.total_amount,
-        invoices.status,
-        invoices.due_date,
-        banking_information.id as bank_account_id,
-        banking_information.name as bank_account_name,
-        banking_information.account_number as bank_account_number,
-        banking_information.code as bank_account_code,
-        users.id as sender_id,
-        users.name as sender_name,
-        users.type as sender_type,
-        users.business_type as sender_business_type,
-        users.business_number as sender_business_number,
-        users.address as sender_address,
-        users.email as sender_email,
-        clients.id as receiver_id,
-        clients.name as receiver_name,
-        clients.type as receiver_type,
-        clients.business_type as receiver_business_type,
-        clients.business_number as receiver_business_number,
-        clients.address as receiver_address,
-        clients.email as receiver_email,
-        json_agg(
-          json_build_object(
-            'id', invoice_services.id,
-            'description', invoice_services.description,
-            'amount', invoice_services.amount,
-            'quantity', invoice_services.quantity,
-            'unit', invoice_services.unit
-          )
-        ) as services
-      from 
-        invoices
-      left join users on invoices.sender_id = users.id
-      left join clients on invoices.receiver_id = clients.id
-      left join banking_information on invoices.bank_account_id = banking_information.id
-      left join invoice_services on invoice_services.invoice_id = invoices.id
-      where invoices.id = ${invoice.id}
-      group by invoices.id, users.id, clients.id, banking_information.id
-    `;
+    const insertedInvoice = await getInvoiceFromDb(
+      invoiceData.sender.id,
+      insertedInvoiceId,
+      tx
+    );
 
-    return insertedInvoice;
+    return !!insertedInvoice?.services.length ? insertedInvoice : null;
   });
 
   return invoice;
