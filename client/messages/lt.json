@@ -16,12 +16,16 @@
       "save_changes": "Išsaugoti Pakeitimus"
     },
     "change_password": {
+      "aria_label": "Slaptažodžio keitimo forma",
       "title": "Pakeisti Slaptažodį",
       "current_password": "Dabartinis Slaptažodis",
+      "current_password_placeholder": "Įveskite dabartinį slaptažodį",
       "new_password": "Naujas Slaptažodis",
+      "new_password_placeholder": "Įveskite naują slaptažodį",
       "confirm_new_password": "Patvirtinti Naują Slaptažodį",
+      "confirm_new_password_placeholder": "Patvirtinkite naują slaptažodį",
       "save_changes": "Išsaugoti pakeitimus",
-      "password_requirements": "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną skaičių, didžiąją raidę ir mažąją raidę."
+      "password_requirements": "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną skaičių, didžiąją raidę, mažąją raidę ir specialų simbolį."
     }
   }
 }

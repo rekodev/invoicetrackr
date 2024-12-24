@@ -1,6 +1,5 @@
 'use server';
 
-import bcrypt from 'bcrypt';
 import { AuthError } from 'next-auth';
 
 import { registerUser } from '@/api';
@@ -62,8 +61,4 @@ export const updateSession = async (user: UserModel) => {
       name: user.name,
     },
   });
-};
-
-export const encryptPassword = async (password: string) => {
-  return await bcrypt.hash(password, 10);
 };

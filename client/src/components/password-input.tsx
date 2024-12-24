@@ -9,12 +9,18 @@ type Props = {
   label: string;
   registeredPassword: UseFormRegisterReturn;
   className?: string;
+  placeholder?: string;
+  isInvalid: boolean;
+  errorMessage?: string;
 };
 
 export default function PasswordInput({
   label,
   registeredPassword,
   className,
+  placeholder,
+  isInvalid,
+  errorMessage,
 }: Props) {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -28,6 +34,9 @@ export default function PasswordInput({
       labelPlacement='outside'
       type={isVisible ? 'text' : 'password'}
       className={`col-span-1 col-start-1 ${className}`}
+      placeholder={placeholder}
+      isInvalid={isInvalid}
+      errorMessage={errorMessage}
       endContent={
         <button
           className='focus:outline-none'

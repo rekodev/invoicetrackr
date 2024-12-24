@@ -1,6 +1,7 @@
 import { Type } from '@sinclair/typebox';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import {
+  changeUserPassword,
   deleteUser,
   getUser,
   getUserByEmail,
@@ -108,3 +109,26 @@ export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler 
     },
     handler: updateUserAccountSettings,
   };
+
+export const changeUserPasswordOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    body: Type.Object({
+      password: Type.String({
+        minLength: 1,
+        errorMessage: 'user.password',
+      }),
+      newPassword: Type.String({
+        minLength: 1,
+        errorMessage: 'user.newPassword',
+      }),
+      confirmedNewPassword: Type.String({
+        minLength: 1,
+        errorMessage: 'user.confirmedNewPasswords',
+      }),
+    }),
+    response: {
+      200: Type.Object({ message: Type.String() }),
+    },
+  },
+  handler: changeUserPassword,
+};

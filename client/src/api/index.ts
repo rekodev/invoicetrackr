@@ -202,7 +202,7 @@ export const changeUserPassword = async ({
   confirmedNewPassword: string;
 }): Promise<AxiosResponse<UpdateUserResp>> =>
   await api.put(
-    `/api/users/${userId}/password`,
+    `/api/users/${userId}/change-password`,
     { password, newPassword, confirmedNewPassword },
     { headers: { 'Accept-Language': language.toLowerCase() } }
   );

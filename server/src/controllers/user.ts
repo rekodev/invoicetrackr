@@ -5,9 +5,11 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
 import {
+  changeUserPasswordInDb,
   deleteUserFromDb,
   getUserByEmailFromDb,
   getUserFromDb,
+  getUserPasswordHashFromDb,
   registerUser,
   updateUserAccountSettingsInDb,
   updateUserInDb,
@@ -211,4 +213,43 @@ export const updateUserAccountSettings = async (
   reply
     .status(200)
     .send({ message: i18n.t('errors.user.accountSettings.update.success') });
+};
+
+export const changeUserPassword = async (
+  req: FastifyRequest<{
+    Params: { id: number };
+    Body: {
+      password: string;
+      newPassword: string;
+      confirmedNewPassword: string;
+    };
+  }>,
+  reply: FastifyReply
+) => {
+  const { id } = req.params;
+  const { password, newPassword, confirmedNewPassword } = req.body;
+  const i18n = await useI18n(req);
+
+  if (newPassword !== confirmedNewPassword)
+    throw new BadRequestError(
+      i18n.t('errors.user.changePassword.newAndConfirmed')
+    );
+
+  const currentPasswordHash = await getUserPasswordHashFromDb(id);
+  const isPasswordValid = await bcrypt.compare(password, currentPasswordHash);
+
+  if (!isPasswordValid)
+    throw new BadRequestError(
+      i18n.t('errors.user.changePassword.currentPassword')
+    );
+
+  const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+  const changedPassword = await changeUserPasswordInDb(id, hashedNewPassword);
+
+  if (!changedPassword)
+    throw new BadRequestError(i18n.t('errors.user.changePassword.badRequest'));
+
+  reply
+    .status(200)
+    .send({ message: i18n.t('errors.user.changePassword.success') });
 };
