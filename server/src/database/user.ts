@@ -45,6 +45,7 @@ export const getUserByEmailFromDb = async (email: string) => {
       profilePictureUrl: usersTable.profilePictureUrl,
       currency: usersTable.currency,
       language: usersTable.language,
+      password: usersTable.password,
     })
     .from(usersTable)
     .where(eq(usersTable.email, email));
@@ -63,14 +64,13 @@ export const registerUser = async ({
       password,
       currency: 'USD',
       language: 'EN',
-      type: '',
-      businessType: '',
+      type: 'sender',
+      businessType: 'individual',
       businessNumber: '',
       name: '',
       address: '',
       signature: '',
       profilePictureUrl: '',
-      selectedBankAccountId: 0,
     })
     .returning({ email: usersTable.email });
 

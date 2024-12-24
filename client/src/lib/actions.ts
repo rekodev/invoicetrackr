@@ -1,4 +1,5 @@
 'use server';
+
 import { AuthError } from 'next-auth';
 
 import { registerUser } from '@/api';
