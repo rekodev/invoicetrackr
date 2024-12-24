@@ -2,7 +2,7 @@ import { ApiError } from '@/api/apiInstance';
 
 import { ClientModel } from './models/client';
 import { InvoiceModel } from './models/invoice';
-import { BankingInformation, UserModel } from './models/user';
+import { BankingInformationFormModel, UserModel } from './models/user';
 
 export type RegisterUserResponse = ApiError & {
   email: string;
@@ -41,13 +41,14 @@ export type UpdateUserResp = ApiError & {
 };
 
 export type GetBankAccountResp = ApiError & {
-  bankAccount: BankingInformation;
+  bankAccount: BankingInformationFormModel;
 };
 
-export type GetBankingInformationResp = ApiError & Array<BankingInformation>;
+export type GetBankingInformationResp = ApiError &
+  Array<BankingInformationFormModel>;
 
 export type AddBankingInformationResp = ApiError & {
-  bankingInformation: BankingInformation;
+  bankingInformation: BankingInformationFormModel;
 };
 
 export type UpdateUserAccountSettingsResp = ApiError;

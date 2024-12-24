@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import useSWR from 'swr';
 
-import { BankingInformation } from '@/lib/types/models/user';
+import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 import SWRKeys from '../../constants/swrKeys';
 
@@ -12,7 +12,7 @@ type Props = {
 
 const useGetBankAccount = ({ userId, bankAccountId }: Props) => {
   const { data, isLoading, mutate, error, isValidating } =
-    useSWR<BankingInformation>(
+    useSWR<BankingInformationFormModel>(
       bankAccountId ? SWRKeys.bankAccount(userId, bankAccountId) : null
     );
 

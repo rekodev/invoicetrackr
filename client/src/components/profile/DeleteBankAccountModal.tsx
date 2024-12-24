@@ -13,11 +13,11 @@ import { deleteBankingInformation } from '@/api';
 import { UiState } from '@/lib/constants/uiState';
 import useGetBankAccounts from '@/lib/hooks/banking-information/useGetBankAccounts';
 import useGetUser from '@/lib/hooks/user/useGetUser';
-import { BankingInformation } from '@/lib/types/models/user';
+import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 type Props = {
   userId: number;
-  bankAccount: BankingInformation;
+  bankAccount: BankingInformationFormModel;
   isOpen: boolean;
   onClose: () => void;
 };

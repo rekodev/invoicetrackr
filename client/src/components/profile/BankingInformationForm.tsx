@@ -26,7 +26,7 @@ import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
 import { UiState } from '@/lib/constants/uiState';
 import useGetBankAccounts from '@/lib/hooks/banking-information/useGetBankAccounts';
 import useGetUser from '@/lib/hooks/user/useGetUser';
-import { BankingInformation } from '@/lib/types/models/user';
+import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 import DeleteBankAccountModal from './DeleteBankAccountModal';
 import EmptyState from '../ui/empty-state';
@@ -52,7 +52,7 @@ const BankingInformationForm = ({ userId }: Props) => {
   const [uiState, setUiState] = useState(UiState.Idle);
 
   const [bankAccountToDelete, setBankAccountToDelete] =
-    useState<BankingInformation>();
+    useState<BankingInformationFormModel>();
 
   useEffect(() => {
     setSelectedBankAccountId(String(user?.selectedBankAccountId));
@@ -82,7 +82,7 @@ const BankingInformationForm = ({ userId }: Props) => {
     mutateUser();
   };
 
-  const handleTrashIconClick = (bankAccount: BankingInformation) => {
+  const handleTrashIconClick = (bankAccount: BankingInformationFormModel) => {
     setBankAccountToDelete(bankAccount);
     onOpen();
   };
@@ -103,7 +103,7 @@ const BankingInformationForm = ({ userId }: Props) => {
     name,
     code,
     accountNumber,
-  }: BankingInformation) => (
+  }: BankingInformationFormModel) => (
     <Card key={id} className='col-span-1'>
       <CardBody className='flex flex-row gap-2 items-center'>
         <Radio color='secondary' value={String(id || 0)} />
