@@ -1,0 +1,13 @@
+{
+  "name": "invoicetrackr",
+  "version": "1.0.0",
+  "description": "InvoiceTrackr App",
+  "main": "index.js",
+  "scripts": {
+    "client": "pnpm --filter @invoicetrackr/client",
+    "server": "pnpm --filter @invoicetrackr/server"
+  },
+  "keywords": [],
+  "author": "rekodev",
+  "license": "ISC"
+}

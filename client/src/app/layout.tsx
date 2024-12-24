@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { getLocale, getMessages } from 'next-intl/server';
 import { Inter } from 'next/font/google';
+import { getLocale, getMessages } from 'next-intl/server';
 import { ReactNode } from 'react';
 
 import Footer from '@/components/Footer';
@@ -12,7 +12,7 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Invoice App',
+  title: 'InvoiceTrackr',
   description: 'Invoice generating and tracking',
 };
 

@@ -1,5 +1,4 @@
 import { Static, Type } from '@sinclair/typebox';
-import { User } from './user';
 
 export const InvoiceService = Type.Object({
   id: Type.Optional(Type.Number()),
@@ -51,7 +50,21 @@ export const Invoice = Type.Object({
     format: 'date',
     errorMessage: 'Valid date is required',
   }),
-  sender: User,
+  sender: Type.Object({
+    id: Type.Optional(Type.Number()),
+    type: InvoicePartyType,
+    name: Type.String(),
+    businessType: InvoicePartyBusinessType,
+    businessNumber: Type.String(),
+    address: Type.String(),
+    email: Type.Optional(Type.String()),
+    signature: Type.Optional(Type.String()),
+    selectedBankAccountId: Type.Optional(Type.Number()),
+    password: Type.Optional(Type.String()),
+    profilePictureUrl: Type.String(),
+    currency: Type.String(),
+    language: Type.String(),
+  }),
   // TODO: Update senderSignature type
   senderSignature: Type.Optional(Type.Any()),
   // senderSignature: Type.Union(

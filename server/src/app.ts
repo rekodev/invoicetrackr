@@ -1,11 +1,11 @@
 import cors from '@fastify/cors';
+import fastifyMultipart from '@fastify/multipart';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import fastify from 'fastify';
 import { defineI18n, useI18n } from 'fastify-i18n';
-import multer from 'fastify-multer';
 
 import { cloudinaryConfig } from './config/cloudinary';
 import { getPgVersion } from './database/db';
@@ -21,7 +21,7 @@ import { getTranslationKeyPrefix } from './utils/url';
 dotenv.config();
 cloudinary.config(cloudinaryConfig);
 
-const port = parseInt(process.env.PORT);
+const port = parseInt(process.env.SERVER_PORT);
 const server = fastify({
   ajv: {
     customOptions: {
@@ -37,7 +37,7 @@ defineI18n(server, {
 });
 
 server.register(cors);
-server.register(multer.contentParser);
+server.register(fastifyMultipart);
 server.register(invoiceRoutes);
 server.register(clientRoutes);
 server.register(userRoutes);

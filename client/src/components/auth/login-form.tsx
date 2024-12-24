@@ -11,12 +11,12 @@ import {
   Input,
   Link,
 } from '@nextui-org/react';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 
 import { authenticate } from '@/lib/actions';
 
 export default function LoginForm() {
-  const [errorMessage, formAction, isPending] = useFormState(
+  const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined
   );

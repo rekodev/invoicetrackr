@@ -30,8 +30,8 @@ import { BankingInformation } from '@/lib/types/models/user';
 
 import DeleteBankAccountModal from './DeleteBankAccountModal';
 import EmptyState from '../ui/empty-state';
-import ErrorAlert from '../ui/ErrorAlert';
-import Loader from '../ui/Loader';
+import ErrorAlert from '../ui/error-alert';
+import Loader from '../ui/loader';
 
 type Props = {
   userId: number;

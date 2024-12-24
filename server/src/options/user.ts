@@ -1,6 +1,5 @@
 import { Type } from '@sinclair/typebox';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
-import multer from 'fastify-multer';
 import {
   deleteUser,
   getUser,
@@ -12,6 +11,7 @@ import {
   updateUserSelectedBankAccount,
 } from '../controllers';
 import { User } from '../types/models';
+import { preValidateFileAndFields } from '../utils/multipart';
 
 export const getUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -62,9 +62,7 @@ export const updateUserOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ user: User, message: Type.String() }),
     },
   },
-  preValidation: multer({
-    storage: multer.memoryStorage(),
-  }).single('signature'),
+  preValidation: preValidateFileAndFields,
   handler: updateUser,
 };
 
@@ -94,9 +92,6 @@ export const updateUserProfilePictureOptions: RouteShorthandOptionsWithHandler =
         200: Type.Object({ message: Type.String() }),
       },
     },
-    preValidation: multer({
-      storage: multer.memoryStorage(),
-    }).single('profilePicture'),
     handler: updateUserProfilePicture,
   };
 

@@ -140,7 +140,7 @@ const InvoiceTableTopContent = ({
           <Button
             color='secondary'
             endContent={<PlusIcon width={16} height={16} />}
-            onClick={handleAddNewInvoice}
+            onPress={handleAddNewInvoice}
           >
             Add New
           </Button>

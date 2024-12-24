@@ -1,8 +1,8 @@
+import { MultipartFile } from '@fastify/multipart';
 import bcrypt from 'bcrypt';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
-import { File } from 'fastify-multer/lib/interfaces';
 
 import {
   deleteUserFromDb,
@@ -14,31 +14,19 @@ import {
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb,
 } from '../database';
-
-import { UserDto } from '../types/dtos';
 import { UserModel } from '../types/models';
-import { transformUserDto } from '../types/transformers';
-import { BadRequestError } from '../utils/errors';
+import { BadRequestError, NotFoundError } from '../utils/errors';
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { id: number } }>,
   reply: FastifyReply
 ) => {
   const { id } = req.params;
+  const user = await getUserFromDb(id);
 
-  try {
-    const result = await getUserFromDb(id);
+  if (!user) throw new BadRequestError('User not found');
 
-    const userDto =
-      Array.isArray(result) && result.length > 0 ? result[0] : null;
-
-    if (!userDto) return reply.status(400).send({ message: 'User not found' });
-
-    reply.send(transformUserDto(userDto as UserDto));
-  } catch (error) {
-    console.error(error);
-    return reply.status(500).send({ message: 'Internal server error' });
-  }
+  reply.status(200).send(user);
 };
 
 export const getUserByEmail = async (
@@ -46,20 +34,11 @@ export const getUserByEmail = async (
   reply: FastifyReply
 ) => {
   const { email } = req.params;
+  const user = await getUserByEmailFromDb(email);
 
-  try {
-    const result = await getUserByEmailFromDb(email);
+  if (!user) throw new BadRequestError('User not found');
 
-    const userDto =
-      Array.isArray(result) && result.length > 0 ? result[0] : null;
-
-    if (!userDto) return reply.status(400).send({ message: 'User not found' });
-
-    reply.send(transformUserDto(userDto as UserDto));
-  } catch (error) {
-    console.error(error);
-    return reply.status(500).send({ message: 'Internal server error' });
-  }
+  reply.status(200).send(user);
 };
 
 export const postUser = async (
@@ -73,12 +52,11 @@ export const postUser = async (
   if (password !== confirmedPassword)
     throw new BadRequestError('Passwords do not match');
 
-  const [user] = await getUserByEmailFromDb(email);
+  const user = await getUserByEmailFromDb(email);
 
-  if (user) throw new BadRequestError('User already exists');
+  if (!!user) throw new BadRequestError('User already exists');
 
   const hashedPassword = await bcrypt.hash(password, 10);
-
   const createdUser = await registerUser({ email, password: hashedPassword });
 
   if (!createdUser) throw new BadRequestError('Unable to create user');
@@ -89,45 +67,44 @@ export const postUser = async (
 };
 
 export const updateUser = async (
-  req: FastifyRequest<{ Params: { id: number }; Body: UserModel }> & {
-    file: File;
-  },
+  req: FastifyRequest<{
+    Params: { id: number };
+    Body: UserModel & { file: MultipartFile };
+  }>,
   reply: FastifyReply
 ) => {
   const { id } = req.params;
-  const signatureFile = req.file;
+  const file = req.body.file;
   const user = req.body;
 
   let uploadedSignature: UploadApiResponse;
 
-  if (signatureFile) {
+  if (file) {
+    const fileBuffer = await file.toBuffer();
+
     uploadedSignature = await cloudinary.uploader.upload(
-      `data:${signatureFile.mimetype};base64,${signatureFile.buffer.toString(
-        'base64'
-      )}`
+      `data:${file.mimetype};base64,${fileBuffer.toString('base64')}`
     );
 
     if (!uploadedSignature)
-      return reply.status(400).send({ message: 'Unable to upload signature' });
+      throw new BadRequestError('Unable to upload signature');
   }
 
   const foundUser = await getUserFromDb(id);
 
-  if (!foundUser) return reply.status(400).send({ message: 'User not found' });
+  if (!foundUser) throw new NotFoundError('User not found');
 
   const updatedUser = await updateUserInDb(
     id,
     user,
-    signatureFile ? uploadedSignature.url : user.signature
+    file ? uploadedSignature.url : user.signature
   );
 
   if (!updatedUser)
-    return reply
-      .status(400)
-      .send({ message: 'Unable to update user information' });
+    throw new BadRequestError('Unable to update user information');
 
-  reply.send({
-    user: transformUserDto(updatedUser),
+  reply.status(200).send({
+    user: updatedUser,
     message: 'User information updated successfully',
   });
 };
@@ -141,11 +118,11 @@ export const deleteUser = async (
   const deletedUserId = await deleteUserFromDb(id);
 
   if (!deletedUserId)
-    throw BadRequestError(
+    throw new BadRequestError(
       'Unable to delete account at this time. Please try again later'
     );
 
-  return reply.status(200).send({ message: 'Account deleted successfully' });
+  reply.status(200).send({ message: 'Account deleted successfully' });
 };
 
 export const updateUserSelectedBankAccount = async (
@@ -166,11 +143,9 @@ export const updateUserSelectedBankAccount = async (
     await updateUserSelectedBankAccountInDb(id, selectedBankAccountId);
 
   if (!updatedUserSelectedBankAccount)
-    return reply
-      .status(400)
-      .send({ message: 'Unable to update user bank account selection' });
+    throw new BadRequestError('Unable to update user bank account selection');
 
-  reply.send({
+  reply.status(200).send({
     message: 'User bank account selection updated successfully',
   });
 };
@@ -180,13 +155,15 @@ export const updateUserProfilePicture = async (
   reply: FastifyReply
 ) => {
   const { id } = req.params;
-  const profilePicture = req.file;
+  const profilePicture = await req.file();
 
   let uploadedProfilePicture: UploadApiResponse;
 
   if (profilePicture) {
+    const profilePictureBuffer = await profilePicture.toBuffer();
+
     uploadedProfilePicture = await cloudinary.uploader.upload(
-      `data:${profilePicture.mimetype};base64,${profilePicture.buffer.toString(
+      `data:${profilePicture.mimetype};base64,${profilePictureBuffer.toString(
         'base64'
       )}`
     );
@@ -203,12 +180,10 @@ export const updateUserProfilePicture = async (
   );
 
   if (!updatedUser)
-    return reply
-      .status(400)
-      .send({ message: 'Unable to update profile picture' });
+    throw new BadRequestError('Unable to update profile picture');
 
-  reply.send({
-    user: transformUserDto(updatedUser),
+  reply.status(200).send({
+    user: updatedUser,
     message: 'Profile picture updated successfully',
   });
 };
@@ -233,5 +208,7 @@ export const updateUserAccountSettings = async (
   if (!updatedUser)
     throw new BadRequestError('errors.user.accountSettings.update.badRequest');
 
-  reply.send({ message: i18n.t('errors.user.accountSettings.update.success') });
+  reply
+    .status(200)
+    .send({ message: i18n.t('errors.user.accountSettings.update.success') });
 };

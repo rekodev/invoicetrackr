@@ -1,32 +1,36 @@
-import { BankAccountDto } from '../types/dtos';
+import { and, eq } from 'drizzle-orm';
+
 import { BankAccountModel } from '../types/models';
-import { sql } from './db';
+import { db } from './db';
+import { bankingInformationTable } from './schema';
 
 export const findBankAccountByAccountNumber = async (
   userId: number,
   accountNumber: string
 ) => {
-  const [bankAccount] = await sql`
-        select
-            id
-        from banking_information
-        where user_id = ${userId} and account_number = ${accountNumber};    
-    `;
+  const bankAccounts = await db
+    .select({ id: bankingInformationTable.id })
+    .from(bankingInformationTable)
+    .where(
+      and(
+        eq(bankingInformationTable.userId, userId),
+        eq(bankingInformationTable.accountNumber, accountNumber)
+      )
+    );
 
-  return bankAccount;
+  return bankAccounts.at(0);
 };
 
 export const getBankAccountsFromDb = async (userId: number) => {
-  const bankAccounts = await sql<Array<BankAccountDto>>`
-        select 
-            id,
-            name,
-            code,
-            account_number
-        from
-            banking_information
-        where user_id = ${userId}
-    `;
+  const bankAccounts = await db
+    .select({
+      id: bankingInformationTable.id,
+      name: bankingInformationTable.name,
+      code: bankingInformationTable.code,
+      accountNumber: bankingInformationTable.accountNumber,
+    })
+    .from(bankingInformationTable)
+    .where(eq(bankingInformationTable.userId, userId));
 
   return bankAccounts;
 };
@@ -35,33 +39,44 @@ export const getBankAccountFromDb = async (
   userId: number,
   bankAccountId: number
 ) => {
-  const [bankAccount] = await sql<Array<BankAccountDto>>`
-    select 
-        id,
-        name,
-        code,
-        account_number
-    from
-        banking_information
-    where user_id = ${userId} and id = ${bankAccountId}
-`;
+  const bankAccounts = await db
+    .select({
+      id: bankingInformationTable.id,
+      name: bankingInformationTable.name,
+      code: bankingInformationTable.code,
+      accountNumber: bankingInformationTable.accountNumber,
+    })
+    .from(bankingInformationTable)
+    .where(
+      and(
+        eq(bankingInformationTable.id, bankAccountId),
+        eq(bankingInformationTable.userId, userId)
+      )
+    );
 
-  return bankAccount;
+  return bankAccounts.at(0);
 };
 
 export const insertBankAccountInDb = async (
   userId: number,
   { name, accountNumber, code }: Omit<BankAccountModel, 'id'>
 ) => {
-  const [bankAccount] = await sql<Array<BankAccountDto>>`
-        insert into banking_information
-            (name, code, account_number, user_id)
-        values
-            (${name}, ${code}, ${accountNumber}, ${userId})
-        returning id, name, code, account_number
-    `;
+  const bankAccounts = await db
+    .insert(bankingInformationTable)
+    .values({
+      name,
+      accountNumber,
+      code,
+      userId,
+    })
+    .returning({
+      id: bankingInformationTable.id,
+      name: bankingInformationTable.name,
+      code: bankingInformationTable.code,
+      accountNumber: bankingInformationTable.accountNumber,
+    });
 
-  return bankAccount;
+  return bankAccounts.at(0);
 };
 
 export const updateBankAccountInDb = async (
@@ -69,28 +84,38 @@ export const updateBankAccountInDb = async (
   bankAccountId: number,
   { name, accountNumber, code }: Omit<BankAccountModel, 'id'>
 ) => {
-  const [bankAccount] = await sql<Array<BankAccountDto>>`
-    update banking_information
-        set
-            name = ${name},
-            code = ${code},
-            account_number = ${accountNumber}
-        where id = ${bankAccountId} and user_id = ${userId}
-        returning id, name, code, account_number
-    `;
+  const bankAccounts = await db
+    .update(bankingInformationTable)
+    .set({ name, code, accountNumber })
+    .where(
+      and(
+        eq(bankingInformationTable.id, bankAccountId),
+        eq(bankingInformationTable.userId, userId)
+      )
+    )
+    .returning({
+      id: bankingInformationTable.id,
+      name: bankingInformationTable.name,
+      code: bankingInformationTable.code,
+      accountNumber: bankingInformationTable.accountNumber,
+    });
 
-  return bankAccount;
+  return bankAccounts.at(0);
 };
 
 export const deleteBankAccountFromDb = async (
   userId: number,
   bankAccountId: number
 ) => {
-  const [bankAccount] = await sql`
-    delete from banking_information
-    where id = ${bankAccountId} and user_id = ${userId}
-    returning id
-  `;
+  const bankAccounts = await db
+    .delete(bankingInformationTable)
+    .where(
+      and(
+        eq(bankingInformationTable.id, bankAccountId),
+        eq(bankingInformationTable.userId, userId)
+      )
+    )
+    .returning({ id: bankingInformationTable.id });
 
-  return bankAccount;
+  return bankAccounts.at(0);
 };

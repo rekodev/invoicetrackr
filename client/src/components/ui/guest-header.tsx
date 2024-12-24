@@ -37,7 +37,7 @@ export default function GuestHeader() {
       >
         <AppLogo />
         <p className='font-bold text-inherit'>
-          INVOICE<span className='text-secondary-600'>APP</span>
+          INVOICE<span className='text-secondary-600'>TRACKR</span>
         </p>
       </NavbarBrand>
 

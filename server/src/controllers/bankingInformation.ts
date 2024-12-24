@@ -10,9 +10,12 @@ import {
   updateBankAccountInDb,
   updateUserSelectedBankAccountInDb,
 } from '../database';
-import { transformBankAccountDto } from '../types/transformers';
 import { UserDto } from '../types/dtos';
-import { BadRequestError } from '../utils/errors';
+import {
+  AlreadyExistsError,
+  BadRequestError,
+  NotFoundError,
+} from '../utils/errors';
 
 export const getBankAccounts = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -21,7 +24,8 @@ export const getBankAccounts = async (
   const { userId } = req.params;
 
   const bankAccounts = await getBankAccountsFromDb(userId);
-  reply.send(bankAccounts.map((account) => transformBankAccountDto(account)));
+
+  reply.status(200).send(bankAccounts);
 };
 
 export const getBankAccount = async (
@@ -32,10 +36,9 @@ export const getBankAccount = async (
 
   const bankAccount = await getBankAccountFromDb(userId, id);
 
-  if (!bankAccount)
-    return reply.status(404).send({ message: 'Bank account not found' });
+  if (!bankAccount) throw new NotFoundError('Bank account not found');
 
-  return reply.send(transformBankAccountDto(bankAccount));
+  reply.status(200).send(bankAccount);
 };
 
 export const postBankAccount = async (
@@ -55,9 +58,9 @@ export const postBankAccount = async (
   );
 
   if (foundBankAccount)
-    return reply.status(403).send({
-      message: 'Bank account with provided account number already exists',
-    });
+    throw new AlreadyExistsError(
+      'Bank account with provided account number already exists'
+    );
 
   const insertedBankAccount = await insertBankAccountInDb(
     userId,
@@ -65,7 +68,7 @@ export const postBankAccount = async (
   );
 
   if (!insertedBankAccount)
-    return reply.status(400).send({ message: 'Unable to add bank account' });
+    throw new BadRequestError('Unable to add bank account');
 
   if (!hasSelectedBankAccount) {
     const updatedUserSelectedBankAccount =
@@ -73,14 +76,14 @@ export const postBankAccount = async (
 
     if (!updatedUserSelectedBankAccount)
       return reply.status(200).send({
-        bankAccount: transformBankAccountDto(insertedBankAccount),
+        bankAccount: updatedUserSelectedBankAccount,
         message:
           'Bank account added succesfully. Please select it as your main account.',
       });
   }
 
-  return reply.send({
-    bankAccount: transformBankAccountDto(insertedBankAccount),
+  return reply.status(200).send({
+    bankAccount: insertedBankAccount,
     message: 'Bank account added successfully',
   });
 };
@@ -97,11 +100,10 @@ export const updateBankAccount = async (
 
   const bankAccount = await updateBankAccountInDb(userId, id, bankAccountData);
 
-  if (!bankAccount)
-    return reply.status(400).send({ message: 'Unable to update bank account' });
+  if (!bankAccount) throw new BadRequestError('Unable to update bank account');
 
-  return reply.send({
-    bankAccount: transformBankAccountDto(bankAccount),
+  reply.status(200).send({
+    bankAccount,
     message: 'Bank account updated successfully',
   });
 };
@@ -111,16 +113,14 @@ export const deleteBankAccount = async (
   reply: FastifyReply
 ) => {
   const { userId, id } = req.params;
+  const user = await getUserFromDb(userId);
 
-  const [user] = await getUserFromDb(userId);
-
-  if ((user as UserDto)?.selected_bank_account_id === Number(id))
+  if (user.selectedBankAccountId === Number(id))
     throw new BadRequestError('Cannot delete selected bank account');
 
   const bankAccount = await deleteBankAccountFromDb(userId, id);
 
-  if (!bankAccount)
-    return reply.status(400).send({ message: 'Unable to delete bank account' });
+  if (!bankAccount) throw new BadRequestError('Unable to delete bank account');
 
   return reply.send({ message: 'Bank account deleted successfully' });
 };

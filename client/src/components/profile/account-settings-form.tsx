@@ -24,8 +24,8 @@ import useGetUser from '@/lib/hooks/user/useGetUser';
 import { AccountSettingsFormModel } from '@/lib/types/models/user';
 
 import DeleteAccountModal from './delete-account-modal';
-import ErrorAlert from '../ui/ErrorAlert';
-import Loader from '../ui/Loader';
+import ErrorAlert from '../ui/error-alert';
+import Loader from '../ui/loader';
 
 type Props = {
   userId: number;
