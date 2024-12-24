@@ -119,7 +119,7 @@ export const usersTable = pgTable(
     }).default(sql`CURRENT_TIMESTAMP`),
     password: varchar({ length: 255 }).notNull(),
     signature: varchar({ length: 255 }).notNull(),
-    selectedBankAccountId: integer('selected_bank_account_id').notNull(),
+    selectedBankAccountId: integer('selected_bank_account_id'),
     profilePictureUrl: varchar('profile_picture_url', {
       length: 255,
     }).notNull(),

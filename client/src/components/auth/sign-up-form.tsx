@@ -2,8 +2,8 @@
 
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
-  ExclamationCircleIcon,
   CheckCircleIcon,
+  ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import {
   Button,
@@ -14,7 +14,7 @@ import {
   Input,
   Link,
 } from '@nextui-org/react';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 
 import { signUp } from '@/lib/actions';
 
@@ -24,7 +24,7 @@ const initialState = {
 };
 
 export default function SignUpForm() {
-  const [state, formAction, isPending] = useFormState(signUp, initialState);
+  const [state, formAction, isPending] = useActionState(signUp, initialState);
 
   const renderSubmissionMessage = () => {
     if (!state.message) return null;
