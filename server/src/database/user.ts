@@ -119,7 +119,6 @@ export const updateUserSelectedBankAccountInDb = async (
 ) => {
   const users = await db
     .update(usersTable)
-    // @ts-expect-error
     .set({ selectedBankAccountId })
     .where(eq(usersTable.id, userId))
     .returning({
