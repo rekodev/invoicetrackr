@@ -8,7 +8,10 @@ import { INVOICES_PAGE } from '@/lib/constants/pages';
 import { UiState } from '@/lib/constants/uiState';
 import { ClientModel } from '@/lib/types/models/client';
 import { InvoiceModel, InvoiceService } from '@/lib/types/models/invoice';
-import { BankingInformation, UserModel } from '@/lib/types/models/user';
+import {
+  BankingInformationFormModel,
+  UserModel,
+} from '@/lib/types/models/user';
 import { AddInvoiceResp, UpdateInvoiceResp } from '@/lib/types/response';
 
 import useGetInvoice from './useGetInvoice';
@@ -31,7 +34,7 @@ type Props = {
   userId: number;
   user: UserModel | undefined;
   receiverData: ClientModel | undefined;
-  bankingInformation?: BankingInformation;
+  bankingInformation?: BankingInformationFormModel;
   setUiState: Dispatch<SetStateAction<UiState>>;
   setSubmissionMessage: Dispatch<SetStateAction<string>>;
   setError: UseFormSetError<InvoiceModel>;

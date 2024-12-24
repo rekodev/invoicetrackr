@@ -5,6 +5,7 @@ import {
 } from 'fastify';
 
 import {
+  changeUserPasswordOptions,
   deleteUserOptions,
   getUserByEmailOptions,
   getUserOptions,
@@ -44,6 +45,8 @@ const userRoutes = (
     '/api/users/:id/account-settings',
     updateUserAccountSettingsOptions
   );
+
+  fastify.put('/api/users/:id/change-password', changeUserPasswordOptions);
 
   done();
 };

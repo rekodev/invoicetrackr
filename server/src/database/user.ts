@@ -197,3 +197,22 @@ export const deleteUserFromDb = async (id: number) => {
 
   return users.at(0);
 };
+
+export const getUserPasswordHashFromDb = async (id: number) => {
+  const users = await db
+    .select({ password: usersTable.password })
+    .from(usersTable)
+    .where(eq(usersTable.id, id));
+
+  return users.at(0).password;
+};
+
+export const changeUserPasswordInDb = async (id: number, password: string) => {
+  const users = await db
+    .update(usersTable)
+    .set({ password })
+    .where(eq(usersTable.id, id))
+    .returning({ id: usersTable.id });
+
+  return users.at(0);
+};

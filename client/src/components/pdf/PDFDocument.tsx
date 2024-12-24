@@ -7,7 +7,7 @@ import {
 } from '@react-pdf/renderer';
 
 import { InvoiceModel } from '@/lib/types/models/invoice';
-import { BankingInformation } from '@/lib/types/models/user';
+import { BankingInformationFormModel } from '@/lib/types/models/user';
 import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/formatDate';
 
@@ -19,7 +19,7 @@ registerFont();
 type Props = {
   invoiceData: InvoiceModel;
   senderSignatureImage: string;
-  bankAccount: BankingInformation;
+  bankAccount: BankingInformationFormModel;
 };
 
 const PDFDocument = ({

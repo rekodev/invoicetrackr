@@ -17,7 +17,7 @@ import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/useInvoiceFormS
 import useGetUser from '@/lib/hooks/user/useGetUser';
 import { ClientModel } from '@/lib/types/models/client';
 import { InvoiceModel } from '@/lib/types/models/invoice';
-import { BankingInformation } from '@/lib/types/models/user';
+import { BankingInformationFormModel } from '@/lib/types/models/user';
 import { formatDate } from '@/lib/utils/formatDate';
 
 import BankingInformationSelect from './BankingInformationSelect';
@@ -62,7 +62,7 @@ const InvoiceForm = ({ userId, invoiceData }: Props) => {
     string | File | undefined
   >(invoiceData?.senderSignature);
   const [bankingInformation, setBankingInformation] = useState<
-    BankingInformation | undefined
+    BankingInformationFormModel | undefined
   >(invoiceData?.bankingInformation);
 
   const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({

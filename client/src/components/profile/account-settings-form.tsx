@@ -21,7 +21,7 @@ import { updateUserAccountSettings } from '@/api';
 import { updateSession } from '@/lib/actions';
 import { UiState } from '@/lib/constants/uiState';
 import useGetUser from '@/lib/hooks/user/useGetUser';
-import { AccountSettings } from '@/lib/types/models/user';
+import { AccountSettingsFormModel } from '@/lib/types/models/user';
 
 import DeleteAccountModal from './delete-account-modal';
 import ErrorAlert from '../ui/error-alert';
@@ -42,7 +42,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
     handleSubmit,
     formState: { isDirty },
     reset,
-  } = useForm<AccountSettings>({
+  } = useForm<AccountSettingsFormModel>({
     defaultValues: { language: user?.language, currency: user?.currency },
   });
   const [submissionMessage, setSubmissionMessage] = useState('');
@@ -68,7 +68,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
     },
   ] as const;
 
-  const onSubmit: SubmitHandler<AccountSettings> = async (data) => {
+  const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) => {
     if (!user?.id) return;
 
     setSubmissionMessage('');

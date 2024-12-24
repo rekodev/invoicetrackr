@@ -14,6 +14,18 @@
       },
       "delete_account": "Delete Account",
       "save_changes": "Save Changes"
+    },
+    "change_password": {
+      "aria_label": "Change password form",
+      "title": "Change Password",
+      "current_password": "Current Password",
+      "current_password_placeholder": "Enter current password",
+      "new_password": "New Password",
+      "new_password_placeholder": "Enter new password",
+      "confirm_new_password": "Confirm New Password",
+      "confirm_new_password_placeholder": "Confirm new password",
+      "save_changes": "Save Changes",
+      "password_requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
     }
   }
 }

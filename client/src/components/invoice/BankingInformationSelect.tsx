@@ -10,12 +10,12 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 import useGetBankAccounts from '@/lib/hooks/banking-information/useGetBankAccounts';
 import useGetUser from '@/lib/hooks/user/useGetUser';
-import { BankingInformation } from '@/lib/types/models/user';
+import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 type Props = {
   userId: number;
   setSelectedBankAccount: Dispatch<
-    SetStateAction<BankingInformation | undefined>
+    SetStateAction<BankingInformationFormModel | undefined>
   >;
   existingBankAccountId?: number;
 };
