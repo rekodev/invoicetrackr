@@ -91,7 +91,8 @@ const InvoiceServicesTable = ({
       </Button>
       <div className='flex gap-6 pr-3'>
         <p>Grand Total:</p>
-        <p>${totalAmount >= 0.01 ? totalAmount : 0}</p>
+        {/* TODO: Replace $ with currency */}
+        <p>${totalAmount >= 0.01 ? totalAmount.toFixed(2) : 0}</p>
       </div>
     </div>
   );

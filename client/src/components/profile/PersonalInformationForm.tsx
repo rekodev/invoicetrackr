@@ -25,6 +25,7 @@ import { capitalize } from '@/lib/utils';
 import SignaturePad from '../SignaturePad';
 import ErrorAlert from '../ui/error-alert';
 import Loader from '../ui/loader';
+import GeneralFormError from '../ui/general-form-error';
 
 type Props = {
   userId: number;
@@ -140,13 +141,12 @@ const PersonalInformationForm = ({ userId }: Props) => {
             />
           </div>
         </CardBody>
-        <CardFooter className='justify-between p-6 w-full flex-col'>
-          {submissionMessage && (
-            <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-              {submissionMessage}
-            </Chip>
-          )}
-
+        <CardFooter className='justify-between p-6 w-full'>
+          <GeneralFormError
+            submissionMessage={submissionMessage}
+            uiState={uiState}
+          />
+          <hr />
           <Button
             isDisabled={!isDirty && !Boolean(formSignature)}
             type='submit'

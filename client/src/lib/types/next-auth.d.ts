@@ -9,6 +9,7 @@ declare module 'next-auth' {
     name: string;
     email: string;
     language: string;
+    currency: string;
   }
 
   interface Session {

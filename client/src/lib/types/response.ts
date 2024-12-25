@@ -16,6 +16,11 @@ export type GetInvoicesResp = ApiError & {
   invoices: Array<InvoiceModel>;
 };
 
+export type GetInvoicesTotalAmountResp = ApiError & {
+  invoices: Array<Pick<InvoiceModel, 'totalAmount' | 'status'>>;
+  totalClients: number;
+};
+
 export type AddInvoiceResp = ApiError & {
   invoice: InvoiceModel;
 };

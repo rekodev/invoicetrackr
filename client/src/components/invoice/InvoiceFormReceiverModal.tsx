@@ -70,15 +70,13 @@ const InvoiceFormPartyModal = ({
           <ModalHeader>Select Client</ModalHeader>
           <ModalBody>{renderBody()}</ModalBody>
           <ModalFooter>
-            {!clients?.length && (
-              <Button
-                color='secondary'
-                onPress={() => setIsAddNewClientModalOpen(true)}
-                startContent={<PlusCircleIcon className='h-5 w-5' />}
-              >
-                Add New
-              </Button>
-            )}
+            <Button
+              color='secondary'
+              onPress={() => setIsAddNewClientModalOpen(true)}
+              startContent={<PlusCircleIcon className='h-5 w-5' />}
+            >
+              Add New
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

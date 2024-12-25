@@ -10,7 +10,6 @@ import {
   updateBankAccountInDb,
   updateUserSelectedBankAccountInDb,
 } from '../database';
-import { UserDto } from '../types/dtos';
 import {
   AlreadyExistsError,
   BadRequestError,

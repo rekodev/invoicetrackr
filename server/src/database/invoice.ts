@@ -318,3 +318,15 @@ export const deleteInvoiceFromDb = async (
 
   return invoices.at(0);
 };
+
+export const getInvoicesTotalAmountFromDb = async (userId: number) => {
+  const invoices = await db
+    .select({
+      totalAmount: invoicesTable.totalAmount,
+      status: invoicesTable.status,
+    })
+    .from(invoicesTable)
+    .where(eq(invoicesTable.senderId, userId));
+
+  return invoices;
+};

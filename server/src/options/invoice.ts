@@ -5,6 +5,7 @@ import {
   deleteInvoice,
   getInvoice,
   getInvoices,
+  getInvoicesTotalAmount,
   postInvoice,
   updateInvoice,
 } from '../controllers';
@@ -58,4 +59,18 @@ export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {
     },
   },
   handler: deleteInvoice,
+};
+
+export const getInvoicesTotalAmountOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    response: {
+      200: Type.Object({
+        invoices: Type.Array(
+          Type.Object({ totalAmount: Type.String(), status: Type.String() })
+        ),
+        totalClients: Type.Number(),
+      }),
+    },
+  },
+  handler: getInvoicesTotalAmount,
 };

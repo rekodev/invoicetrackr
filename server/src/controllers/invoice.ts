@@ -6,8 +6,10 @@ import {
   deleteInvoiceFromDb,
   findInvoiceById,
   findInvoiceByInvoiceId,
+  getClientsFromDb,
   getInvoiceFromDb,
   getInvoicesFromDb,
+  getInvoicesTotalAmountFromDb,
   insertInvoiceInDb,
   updateInvoiceInDb,
 } from '../database';
@@ -140,4 +142,18 @@ export const deleteInvoice = async (
   if (!deletedInvoice) throw new BadRequestError('Unable to delete invoice');
 
   reply.status(200).send({ message: 'Invoice deleted successfully' });
+};
+
+export const getInvoicesTotalAmount = async (
+  req: FastifyRequest<{ Params: { userId: number } }>,
+  reply: FastifyReply
+) => {
+  const { userId } = req.params;
+  const invoices = await getInvoicesTotalAmountFromDb(userId);
+  const clients = await getClientsFromDb(userId);
+
+  if (!invoices.length)
+    throw new BadRequestError('Unable to retrieve invoice data');
+
+  reply.status(200).send({ invoices, totalClients: clients.length });
 };
