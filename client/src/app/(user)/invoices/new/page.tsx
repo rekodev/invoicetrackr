@@ -8,7 +8,10 @@ const AddNewInvoicePage = async () => {
 
   return (
     <section className='w-full'>
-      <InvoiceForm userId={Number(session.user.id)} />
+      <InvoiceForm
+        currency={session.user.currency}
+        userId={Number(session.user.id)}
+      />
     </section>
   );
 };

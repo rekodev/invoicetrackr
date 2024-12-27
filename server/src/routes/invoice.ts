@@ -10,6 +10,9 @@ import {
   postInvoiceOptions,
   updateInvoiceOptions,
   deleteInvoiceOptions,
+  getInvoicesTotalAmountOptions,
+  getInvoicesRevenueOptions,
+  getLatestInvoicesOptions,
 } from '../options';
 
 const invoiceRoutes = (
@@ -26,6 +29,15 @@ const invoiceRoutes = (
   fastify.put('/api/:userId/invoices/:id', updateInvoiceOptions);
 
   fastify.delete('/api/:userId/invoices/:id', deleteInvoiceOptions);
+
+  fastify.get(
+    '/api/:userId/invoices/total-amount',
+    getInvoicesTotalAmountOptions
+  );
+
+  fastify.get('/api/:userId/invoices/revenue', getInvoicesRevenueOptions);
+
+  fastify.get('/api/:userId/invoices/latest', getLatestInvoicesOptions);
 
   done();
 };

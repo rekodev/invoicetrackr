@@ -95,7 +95,6 @@ export const clientsTable = pgTable(
       foreignColumns: [usersTable.id],
       name: 'fk_clients_user_id',
     }).onDelete('cascade'),
-    unique('clients_email_key').on(table.email),
   ]
 );
 

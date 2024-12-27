@@ -20,10 +20,17 @@ export const authConfig = {
       return true;
     },
     jwt({ token, user, trigger, session }) {
-      if (user) token.language = user.language;
+      if (user) {
+        token.language = user.language;
+        token.currency = user.currency;
+      }
 
       if (trigger === 'update') {
-        token = { ...token, language: session.user.language };
+        token = {
+          ...token,
+          language: session.user.language,
+          currency: session.user.currency,
+        };
       }
 
       return token;
@@ -31,6 +38,7 @@ export const authConfig = {
     session({ session, token }) {
       session.user.id = token.sub!;
       session.user.language = token.language as string;
+      session.user.currency = token.currency as string;
       return session;
     },
   },

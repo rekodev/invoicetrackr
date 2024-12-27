@@ -16,6 +16,24 @@ export type GetInvoicesResp = ApiError & {
   invoices: Array<InvoiceModel>;
 };
 
+export type GetInvoicesTotalAmountResp = ApiError & {
+  invoices: Array<Pick<InvoiceModel, 'totalAmount' | 'status'>> | undefined;
+  totalClients: number | undefined;
+};
+
+export type GetInvoicesRevenueResp = ApiError & {
+  revenueByMonth: Record<number, number> | undefined;
+};
+
+export type GetLatestInvoicesResp = ApiError & {
+  invoices:
+    | Array<
+        Pick<InvoiceModel, 'id' | 'totalAmount'> &
+          Pick<ClientModel, 'name' | 'email'>
+      >
+    | undefined;
+};
+
 export type AddInvoiceResp = ApiError & {
   invoice: InvoiceModel;
 };

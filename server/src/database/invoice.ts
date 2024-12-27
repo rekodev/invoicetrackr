@@ -3,7 +3,9 @@ import {
   desc,
   eq,
   ExtractTablesWithRelations,
+  gte,
   inArray,
+  sql,
 } from 'drizzle-orm';
 import { NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
 import { PgTransaction } from 'drizzle-orm/pg-core';
@@ -317,4 +319,51 @@ export const deleteInvoiceFromDb = async (
     .returning({ id: invoiceServicesTable.id });
 
   return invoices.at(0);
+};
+
+export const getInvoicesTotalAmountFromDb = async (userId: number) => {
+  const invoices = await db
+    .select({
+      totalAmount: invoicesTable.totalAmount,
+      status: invoicesTable.status,
+    })
+    .from(invoicesTable)
+    .where(eq(invoicesTable.senderId, userId));
+
+  return invoices;
+};
+
+export const getInvoicesRevenueFromDb = async (userId: number) => {
+  const invoices = await db
+    .select({
+      totalAmount: invoicesTable.totalAmount,
+      date: invoicesTable.date,
+    })
+    .from(invoicesTable)
+    .where(
+      and(
+        eq(invoicesTable.senderId, userId),
+        eq(invoicesTable.status, 'paid'),
+        gte(invoicesTable.date, sql`NOW() - INTERVAL '1 year'`)
+      )
+    );
+
+  return invoices;
+};
+
+export const getLatestInvoicesFromDb = async (userId: number) => {
+  const invoices = await db
+    .select({
+      id: invoicesTable.id,
+      totalAmount: invoicesTable.totalAmount,
+      name: clientsTable.name,
+      email: clientsTable.email,
+    })
+    .from(invoicesTable)
+    .where(eq(invoicesTable.senderId, userId))
+    .leftJoin(clientsTable, eq(invoicesTable.receiverId, clientsTable.id))
+    .orderBy(desc(invoicesTable.date))
+    .limit(5);
+
+  return invoices;
 };

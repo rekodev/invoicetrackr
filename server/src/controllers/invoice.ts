@@ -6,8 +6,12 @@ import {
   deleteInvoiceFromDb,
   findInvoiceById,
   findInvoiceByInvoiceId,
+  getClientsFromDb,
   getInvoiceFromDb,
   getInvoicesFromDb,
+  getInvoicesRevenueFromDb,
+  getInvoicesTotalAmountFromDb,
+  getLatestInvoicesFromDb,
   insertInvoiceInDb,
   updateInvoiceInDb,
 } from '../database';
@@ -140,4 +144,64 @@ export const deleteInvoice = async (
   if (!deletedInvoice) throw new BadRequestError('Unable to delete invoice');
 
   reply.status(200).send({ message: 'Invoice deleted successfully' });
+};
+
+export const getInvoicesTotalAmount = async (
+  req: FastifyRequest<{ Params: { userId: number } }>,
+  reply: FastifyReply
+) => {
+  const { userId } = req.params;
+  const invoices = await getInvoicesTotalAmountFromDb(userId);
+  const clients = await getClientsFromDb(userId);
+
+  if (!invoices.length)
+    throw new BadRequestError('Unable to retrieve invoice data');
+
+  reply.status(200).send({ invoices, totalClients: clients.length });
+};
+
+export const getInvoicesRevenue = async (
+  req: FastifyRequest<{ Params: { userId: number } }>,
+  reply: FastifyReply
+) => {
+  const { userId } = req.params;
+  const invoices = await getInvoicesRevenueFromDb(userId);
+
+  if (!invoices.length)
+    throw new BadRequestError('Unable to retrieve invoice data');
+
+  const revenueByMonth = {
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 0,
+    10: 0,
+    11: 0,
+  };
+
+  invoices.forEach((invoice) => {
+    const date = new Date(invoice.date);
+    revenueByMonth[date.getMonth()] += Number(invoice.totalAmount);
+  });
+
+  reply.status(200).send({ revenueByMonth });
+};
+
+export const getLatestInvoices = async (
+  req: FastifyRequest<{ Params: { userId: number } }>,
+  reply: FastifyReply
+) => {
+  const { userId } = req.params;
+  const invoices = await getLatestInvoicesFromDb(userId);
+
+  if (!invoices.length)
+    throw new BadRequestError('Unable to retrieve invoices');
+
+  reply.status(200).send({ invoices });
 };

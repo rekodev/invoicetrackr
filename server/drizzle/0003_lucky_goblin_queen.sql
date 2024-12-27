@@ -1,1 +1,0 @@
-ALTER TABLE "users" ALTER COLUMN "selected_bank_account_id" DROP NOT NULL;

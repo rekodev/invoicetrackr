@@ -18,6 +18,7 @@ import useGetClients from '@/lib/hooks/client/useGetClients';
 import { ClientModel } from '@/lib/types/models/client';
 
 import AddNewClientModal from '../client/AddNewClientModal';
+import ClientCard from '../ui/client-card';
 
 type Props = {
   userId: number;
@@ -60,7 +61,13 @@ const InvoiceFormPartyModal = ({
       );
     }
 
-    return clients?.map(renderClientOption);
+    return clients?.map((client) => (
+      <ClientCard
+        key={client.id}
+        onClick={() => onReceiverSelect(client)}
+        client={client}
+      />
+    ));
   };
 
   return (
@@ -70,15 +77,13 @@ const InvoiceFormPartyModal = ({
           <ModalHeader>Select Client</ModalHeader>
           <ModalBody>{renderBody()}</ModalBody>
           <ModalFooter>
-            {!clients?.length && (
-              <Button
-                color='secondary'
-                onPress={() => setIsAddNewClientModalOpen(true)}
-                startContent={<PlusCircleIcon className='h-5 w-5' />}
-              >
-                Add New
-              </Button>
-            )}
+            <Button
+              color='secondary'
+              onPress={() => setIsAddNewClientModalOpen(true)}
+              startContent={<PlusCircleIcon className='h-5 w-5' />}
+            >
+              Add New
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
