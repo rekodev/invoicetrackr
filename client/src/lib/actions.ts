@@ -1,10 +1,12 @@
 'use server';
 
 import { AuthError } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 
-import { registerUser } from '@/api';
+import { registerUser, updateClient } from '@/api';
 
 import { signIn, signOut, unstable_update } from '../auth';
+import { ClientModel } from './types/models/client';
 import { UserModel } from './types/models/user';
 
 export async function authenticate(
@@ -62,3 +64,21 @@ export const updateSession = async (user: UserModel) => {
     },
   });
 };
+
+export async function updateClientAction({
+  userId,
+  newClientData,
+}: {
+  userId: number;
+  newClientData: ClientModel;
+}) {
+  const response = await updateClient(userId, newClientData);
+
+  if ('error' in response.data) {
+    return { error: response.data.error, message: response.data.message };
+  }
+
+  revalidatePath('/clients');
+
+  return response.data;
+}

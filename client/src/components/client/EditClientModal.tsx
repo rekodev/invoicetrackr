@@ -12,10 +12,9 @@ import {
 } from '@nextui-org/react';
 import { ChangeEvent, useState } from 'react';
 
-import { updateClient } from '@/api';
+import { updateClientAction } from '@/lib/actions';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { UiState } from '@/lib/constants/uiState';
-import useGetClients from '@/lib/hooks/client/useGetClients';
 import useGetUser from '@/lib/hooks/user/useGetUser';
 import { ClientModel } from '@/lib/types/models/client';
 import { capitalize } from '@/lib/utils';
@@ -31,7 +30,6 @@ type ClientFormData = ClientModel;
 
 const EditClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
   const { user } = useGetUser({ userId });
-  const { mutateClients } = useGetClients({ userId });
 
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [uiState, setUiState] = useState(UiState.Idle);
@@ -51,18 +49,19 @@ const EditClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
     setUiState(UiState.Pending);
     setSubmissionMessage('');
 
-    const response = await updateClient(user.id, newClientData);
-    setSubmissionMessage(response.data.message);
+    const response = await updateClientAction({
+      userId: user.id,
+      newClientData,
+    });
+    setSubmissionMessage(response.message);
 
-    if ('error' in response.data) {
+    if ('error' in response) {
       setUiState(UiState.Failure);
 
       return;
     }
 
     setUiState(UiState.Success);
-
-    mutateClients();
   };
 
   return (
