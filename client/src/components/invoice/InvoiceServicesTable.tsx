@@ -14,6 +14,7 @@ import { Key, useEffect, useMemo } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { InvoiceFormData, InvoiceService } from '@/lib/types/models/invoice';
+import { getCurrencySymbol } from '@/lib/utils/currency';
 
 import DeleteIcon from '../icons/DeleteIcon';
 import { PlusIcon } from '../icons/PlusIcon';
@@ -33,12 +34,14 @@ type Props = {
   invoiceServices?: Array<InvoiceService>;
   isInvalid?: boolean;
   errorMessage?: string;
+  currency: string;
 };
 
 const InvoiceServicesTable = ({
   invoiceServices,
   isInvalid,
   errorMessage,
+  currency,
 }: Props) => {
   const {
     register,
@@ -91,8 +94,10 @@ const InvoiceServicesTable = ({
       </Button>
       <div className='flex gap-6 pr-3'>
         <p>Grand Total:</p>
-        {/* TODO: Replace $ with currency */}
-        <p>${totalAmount >= 0.01 ? totalAmount.toFixed(2) : 0}</p>
+        <p>
+          {getCurrencySymbol(currency)}
+          {totalAmount >= 0.01 ? totalAmount.toFixed(2) : 0}
+        </p>
       </div>
     </div>
   );

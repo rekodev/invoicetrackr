@@ -5,7 +5,7 @@ import DashboardCards from '@/components/dashboard/dashboard-cards';
 import LatestInvoices from '@/components/dashboard/latest-invoices';
 import RevenueChart from '@/components/dashboard/revenue-chart';
 import {
-  CardsSkeleton,
+  DashboardCardsSkeleton,
   LatestInvoicesSkeleton,
   RevenueChartSkeleton,
 } from '@/components/ui/skeletons';
@@ -19,7 +19,7 @@ const DashboardPage = async () => {
 
   return (
     <main className='flex flex-col gap-6'>
-      <Suspense fallback={<CardsSkeleton />}>
+      <Suspense fallback={<DashboardCardsSkeleton />}>
         <DashboardCards userId={userId} currency={session.user.currency} />
       </Suspense>
       <section className='flex gap-6'>

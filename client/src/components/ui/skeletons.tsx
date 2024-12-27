@@ -1,7 +1,7 @@
 const shimmer =
   'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
 
-export const CardSkeleton = () => {
+export const DashboardCardSkeleton = () => {
   return (
     <div
       className={`${shimmer} flex flex-col gap-2 relative overflow-hidden rounded-xl bg-default-100 p-2 shadow-sm`}
@@ -17,13 +17,13 @@ export const CardSkeleton = () => {
   );
 };
 
-export const CardsSkeleton = () => {
+export const DashboardCardsSkeleton = () => {
   return (
     <div className='grid grid-cols-4 gap-4'>
-      <CardSkeleton />
-      <CardSkeleton />
-      <CardSkeleton />
-      <CardSkeleton />
+      <DashboardCardSkeleton />
+      <DashboardCardSkeleton />
+      <DashboardCardSkeleton />
+      <DashboardCardSkeleton />
     </div>
   );
 };

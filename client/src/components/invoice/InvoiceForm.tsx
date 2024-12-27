@@ -34,9 +34,10 @@ import Loader from '../ui/loader';
 type Props = {
   userId: number;
   invoiceData?: InvoiceModel;
+  currency: string;
 };
 
-const InvoiceForm = ({ userId, invoiceData }: Props) => {
+const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
   const { user, isUserLoading, userError } = useGetUser({ userId });
   const methods = useForm<InvoiceModel>({
     defaultValues: invoiceData || {
@@ -138,6 +139,7 @@ const InvoiceForm = ({ userId, invoiceData }: Props) => {
     <div className='flex gap-4 flex-col col-span-1 md:col-span-2 lg:col-span-4'>
       <h4>Services</h4>
       <InvoiceServicesTable
+        currency={currency}
         invoiceServices={invoiceData?.services}
         isInvalid={!!errors.services}
         errorMessage={errors.services?.message}

@@ -15,6 +15,7 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
   return (
     <section>
       <InvoiceForm
+        currency={session.user.currency}
         userId={Number(session.user.id)}
         invoiceData={response.data.invoice}
       />
