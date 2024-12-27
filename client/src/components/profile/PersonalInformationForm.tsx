@@ -6,7 +6,6 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Chip,
   Divider,
   Input,
   Select,
@@ -24,8 +23,8 @@ import { capitalize } from '@/lib/utils';
 
 import SignaturePad from '../SignaturePad';
 import ErrorAlert from '../ui/error-alert';
-import Loader from '../ui/loader';
 import GeneralFormError from '../ui/general-form-error';
+import Loader from '../ui/loader';
 
 type Props = {
   userId: number;

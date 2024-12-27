@@ -1,10 +1,11 @@
 'use client';
 
+import { UserIcon } from '@heroicons/react/24/outline';
+import { Card, CardBody } from '@nextui-org/react';
+
 import { ClientModel } from '@/lib/types/models/client';
 import { cn } from '@/lib/utils/cn';
 import { getCurrencySymbol } from '@/lib/utils/currency';
-import { UserIcon } from '@heroicons/react/24/outline';
-import { Card, CardBody } from '@nextui-org/react';
 
 type Props = {
   currency?: string;
