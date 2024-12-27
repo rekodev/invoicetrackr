@@ -5,7 +5,9 @@ import {
   deleteInvoice,
   getInvoice,
   getInvoices,
+  getInvoicesRevenue,
   getInvoicesTotalAmount,
+  getLatestInvoices,
   postInvoice,
   updateInvoice,
 } from '../controllers';
@@ -73,4 +75,33 @@ export const getInvoicesTotalAmountOptions: RouteShorthandOptionsWithHandler = {
     },
   },
   handler: getInvoicesTotalAmount,
+};
+
+export const getInvoicesRevenueOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    response: {
+      200: Type.Object({
+        revenueByMonth: Type.Record(Type.Number(), Type.Number()),
+      }),
+    },
+  },
+  handler: getInvoicesRevenue,
+};
+
+export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    response: {
+      200: Type.Object({
+        invoices: Type.Array(
+          Type.Object({
+            id: Type.Number(),
+            totalAmount: Type.String(),
+            name: Type.String(),
+            email: Type.String(),
+          })
+        ),
+      }),
+    },
+  },
+  handler: getLatestInvoices,
 };

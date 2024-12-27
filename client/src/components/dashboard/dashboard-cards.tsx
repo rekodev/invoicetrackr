@@ -1,11 +1,14 @@
 import {
   BanknotesIcon,
   ClockIcon,
+  DocumentCurrencyDollarIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
-import DashboardCard from './dashboard-card';
+
 import { getInvoicesTotalAmount } from '@/api';
 import { getCurrencySymbol } from '@/lib/utils/currency';
+
+import DashboardCard from './dashboard-card';
 
 type Props = {
   userId: number;
@@ -13,10 +16,13 @@ type Props = {
 };
 
 const DashboardCards = async ({ userId, currency }: Props) => {
-  const response = await getInvoicesTotalAmount(userId);
+  const {
+    data: { invoices, totalClients },
+  } = await getInvoicesTotalAmount(userId);
+
   const currencySymbol = getCurrencySymbol(currency);
 
-  const totalInvoiceRevenue = response.data.invoices?.reduce<{
+  const totalInvoiceRevenue = invoices?.reduce<{
     pending: number;
     paid: number;
   }>(
@@ -33,7 +39,7 @@ const DashboardCards = async ({ userId, currency }: Props) => {
   );
 
   return (
-    <div className='grid grid-cols-4 gap-4'>
+    <section className='grid grid-cols-4 gap-4'>
       <DashboardCard
         title={
           <div className='flex items-center gap-1'>
@@ -41,7 +47,7 @@ const DashboardCards = async ({ userId, currency }: Props) => {
             <h4>Paid</h4>
           </div>
         }
-        text={`${currencySymbol}${totalInvoiceRevenue.paid.toFixed(2)}`}
+        text={`${currencySymbol}${totalInvoiceRevenue?.paid.toFixed(2) || '-'}`}
       />
       <DashboardCard
         title={
@@ -50,16 +56,18 @@ const DashboardCards = async ({ userId, currency }: Props) => {
             <h4>Pending</h4>
           </div>
         }
-        text={`${currencySymbol}${totalInvoiceRevenue.pending.toFixed(2)}`}
+        text={`${currencySymbol}${
+          totalInvoiceRevenue?.pending.toFixed(2) || '-'
+        }`}
       />
       <DashboardCard
         title={
           <div className='flex items-center gap-1'>
-            <BanknotesIcon className='w-5 h-5' />
+            <DocumentCurrencyDollarIcon className='w-5 h-5' />
             <h4>Total Invoices</h4>
           </div>
         }
-        text={`${response.data.invoices.length}`}
+        text={`${invoices?.length || '-'}`}
       />
       <DashboardCard
         title={
@@ -68,9 +76,9 @@ const DashboardCards = async ({ userId, currency }: Props) => {
             <h4>Total Clients</h4>
           </div>
         }
-        text={`${response.data.totalClients}`}
+        text={`${totalClients || '-'}`}
       />
-    </div>
+    </section>
   );
 };
 

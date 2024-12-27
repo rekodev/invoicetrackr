@@ -16,7 +16,9 @@ import {
   GetBankAccountResp,
   GetBankingInformationResp,
   GetInvoiceResp,
+  GetInvoicesRevenueResp,
   GetInvoicesTotalAmountResp,
+  GetLatestInvoicesResp,
   RegisterUserResponse,
   UpdateClientResp,
   UpdateInvoiceResp,
@@ -47,6 +49,16 @@ export const getInvoicesTotalAmount = async (
   userId: number
 ): Promise<AxiosResponse<GetInvoicesTotalAmountResp>> =>
   await api.get(`/api/${userId}/invoices/total-amount`);
+
+export const getInvoicesRevenue = async (
+  userId: number
+): Promise<AxiosResponse<GetInvoicesRevenueResp>> =>
+  await api.get(`/api/${userId}/invoices/revenue`);
+
+export const getLatestInvoices = async (
+  userId: number
+): Promise<AxiosResponse<GetLatestInvoicesResp>> =>
+  await api.get(`/api/${userId}/invoices/latest`);
 
 export const addInvoice = async (
   userId: number,

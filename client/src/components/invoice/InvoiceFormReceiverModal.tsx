@@ -18,6 +18,7 @@ import useGetClients from '@/lib/hooks/client/useGetClients';
 import { ClientModel } from '@/lib/types/models/client';
 
 import AddNewClientModal from '../client/AddNewClientModal';
+import ClientCard from '../ui/client-card';
 
 type Props = {
   userId: number;
@@ -60,7 +61,13 @@ const InvoiceFormPartyModal = ({
       );
     }
 
-    return clients?.map(renderClientOption);
+    return clients?.map((client) => (
+      <ClientCard
+        key={client.id}
+        onClick={() => onReceiverSelect(client)}
+        client={client}
+      />
+    ));
   };
 
   return (
