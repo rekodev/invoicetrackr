@@ -14,7 +14,6 @@ import {
 import { Key, useCallback, useMemo, useState } from 'react';
 
 import { columns, statusOptions } from '@/lib/constants/table';
-import useGetInvoices from '@/lib/hooks/invoice/useGetInvoices';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/useInvoiceTableActionHandlers';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 
@@ -36,11 +35,10 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 type Props = {
   userId: number;
+  invoices: Array<InvoiceModel> | undefined;
 };
 
-const InvoiceTable = ({ userId }: Props) => {
-  const { invoices, isInvoicesLoading } = useGetInvoices({ userId });
-
+const InvoiceTable = ({ userId, invoices }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
 
@@ -188,9 +186,8 @@ const InvoiceTable = ({ userId }: Props) => {
           )}
         </TableHeader>
         <TableBody
-          isLoading={isInvoicesLoading}
           loadingContent={<Spinner color='secondary' />}
-          emptyContent={!isInvoicesLoading && 'No invoices found'}
+          emptyContent='No invoices found'
           items={sortedItems}
         >
           {(item) => (

@@ -12,7 +12,7 @@ import { Client } from '../types/models';
 export const getClientsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Array(Client),
+      200: Type.Object({ clients: Type.Array(Client) }),
     },
   },
   handler: getClients,

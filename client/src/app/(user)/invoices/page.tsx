@@ -1,12 +1,13 @@
 import { auth } from '@/auth';
-import InvoiceTable from '@/components/invoice/InvoiceTable';
+import Invoices from '@/components/invoice/invoices';
 
 const InvoicesPage = async () => {
   const session = await auth();
+  const userId = Number(session?.user?.id);
 
-  if (!session?.user?.id) return null;
+  if (!userId) return null;
 
-  return <InvoiceTable userId={Number(session.user.id)} />;
+  return <Invoices userId={userId} />;
 };
 
 export default InvoicesPage;

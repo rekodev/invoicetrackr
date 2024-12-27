@@ -17,7 +17,7 @@ import { preValidateFileAndFields } from '../utils/multipart';
 export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Array(Invoice),
+      200: Type.Object({ invoices: Type.Array(Invoice) }),
     },
   },
   handler: getInvoices,

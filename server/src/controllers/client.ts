@@ -19,7 +19,7 @@ export const getClients = async (
 
   const clients = await getClientsFromDb(userId);
 
-  reply.send(clients);
+  reply.send({ clients });
 };
 
 export const getClient = async (

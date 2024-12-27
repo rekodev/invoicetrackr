@@ -72,3 +72,7 @@ export type AddBankingInformationResp = ApiError & {
 export type UpdateUserAccountSettingsResp = ApiError;
 
 export type DeleteUserAccountResp = ApiError;
+
+export type GetClientsResp = ApiError & {
+  clients: Array<ClientModel>;
+};

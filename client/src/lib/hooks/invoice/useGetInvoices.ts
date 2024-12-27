@@ -10,13 +10,13 @@ type Props = {
 };
 
 const useGetInvoices = ({ userId }: Props) => {
-  const { data, isLoading, mutate, error, isValidating } = useSWR<
-    Array<InvoiceModel>
-  >(SWRKeys.invoices(userId));
+  const { data, isLoading, mutate, error, isValidating } = useSWR<{
+    invoices: Array<InvoiceModel>;
+  }>(SWRKeys.invoices(userId));
 
   return useMemo(
     () => ({
-      invoices: data,
+      invoices: data?.invoices,
       isInvoicesLoading: isLoading,
       mutateInvoices: mutate,
       invoicesError: error,

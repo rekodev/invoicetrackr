@@ -12,6 +12,8 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
     data: { invoices },
   } = await getLatestInvoices(userId);
 
+  if (!invoices?.length) return null;
+
   return (
     <div className='flex flex-col gap-6'>
       <h2 className='text-2xl'>Latest Invoices</h2>

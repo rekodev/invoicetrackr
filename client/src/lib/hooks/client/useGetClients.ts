@@ -10,13 +10,13 @@ type Props = {
 };
 
 const useGetClients = ({ userId }: Props) => {
-  const { data, isLoading, mutate, error, isValidating } = useSWR<
-    Array<ClientModel>
-  >(SWRKeys.clients(userId));
+  const { data, isLoading, mutate, error, isValidating } = useSWR<{
+    clients: Array<ClientModel>;
+  }>(SWRKeys.clients(userId));
 
   return useMemo(
     () => ({
-      clients: data,
+      clients: data?.clients,
       isClientsLoading: isLoading,
       mutateClients: mutate,
       clientsError: error,

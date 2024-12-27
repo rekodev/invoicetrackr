@@ -4,7 +4,6 @@ import { Button } from '@nextui-org/react';
 import { useState } from 'react';
 
 import useClientSearchAndFilter from '@/lib/hooks/client/useClientSearchAndFilter';
-import useGetClients from '@/lib/hooks/client/useGetClients';
 import { ClientModel } from '@/lib/types/models/client';
 
 import ClientSectionBottomContent from './ClientSectionBottomContent';
@@ -13,16 +12,15 @@ import DeleteClientModal from './DeleteClientModal';
 import EditClientModal from './EditClientModal';
 import TrashIcon from '../icons/TrashIcon';
 import InvoicePartyCard from '../invoice/InvoicePartyCard';
-import Loader from '../ui/loader';
 
 const PER_PAGE = 8;
 
 type Props = {
   userId: number;
+  clients: Array<ClientModel> | undefined;
 };
 
-const ClientSection = ({ userId }: Props) => {
-  const { clients, isClientsLoading } = useGetClients({ userId });
+const ClientSection = ({ userId, clients }: Props) => {
   const {
     page,
     setPage,
@@ -94,9 +92,7 @@ const ClientSection = ({ userId }: Props) => {
   };
 
   const renderSectionContent = () => {
-    if (isClientsLoading) return <Loader />;
-
-    if (!isClientsLoading && !clients?.length)
+    if (!clients?.length)
       return <div className='min-h-[480px]'>No clients found</div>;
 
     return (

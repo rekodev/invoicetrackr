@@ -15,7 +15,9 @@ import {
   DeleteUserAccountResp,
   GetBankAccountResp,
   GetBankingInformationResp,
+  GetClientsResp,
   GetInvoiceResp,
+  GetInvoicesResp,
   GetInvoicesRevenueResp,
   GetInvoicesTotalAmountResp,
   GetLatestInvoicesResp,
@@ -224,3 +226,13 @@ export const changeUserPassword = async ({
     { password, newPassword, confirmedNewPassword },
     { headers: { 'Accept-Language': language.toLowerCase() } }
   );
+
+export const getClients = async (
+  userId: number
+): Promise<AxiosResponse<GetClientsResp>> =>
+  await api.get(`/api/${userId}/clients`);
+
+export const getInvoices = async (
+  userId: number
+): Promise<AxiosResponse<GetInvoicesResp>> =>
+  await api.get(`/api/${userId}/invoices`);

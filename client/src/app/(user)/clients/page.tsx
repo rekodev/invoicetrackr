@@ -1,12 +1,13 @@
 import { auth } from '@/auth';
-import ClientSection from '@/components/client/ClientSection';
+import Clients from '@/components/client/clients';
 
 const ClientsPage = async () => {
   const session = await auth();
+  const userId = Number(session?.user.id);
 
-  if (!session?.user?.id) return null;
+  if (!userId) return null;
 
-  return <ClientSection userId={Number(session.user.id)} />;
+  return <Clients userId={userId} />;
 };
 
 export default ClientsPage;
