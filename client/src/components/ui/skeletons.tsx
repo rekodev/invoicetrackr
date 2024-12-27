@@ -28,56 +28,47 @@ export const CardsSkeleton = () => {
   );
 };
 
-// TODO: Adjust based on actual chart
 export const RevenueChartSkeleton = () => {
   return (
-    <div className={`${shimmer} relative w-full overflow-hidden md:col-span-4`}>
-      <div className='mb-4 h-8 w-36 rounded-md bg-gray-100' />
-      <div className='rounded-xl bg-gray-100 p-4'>
-        <div className='mt-0 grid h-[410px] grid-cols-12 items-end gap-2 rounded-md bg-white p-4 sm:grid-cols-13 md:gap-4' />
-        <div className='flex items-center pb-2 pt-6'>
-          <div className='h-5 w-5 rounded-full bg-gray-200' />
-          <div className='ml-2 h-4 w-20 rounded-md bg-gray-200' />
-        </div>
+    <div className='overflow-hidden md:col-span-4'>
+      <div className='mb-4 h-7 w-44 rounded-md bg-gray-100' />
+      <div
+        className={`relative ${shimmer} overflow-hidden bg-transparent p-4 rounded-xl`}
+      >
+        <div className='mt-0 grid h-[384px] min-w-[656px] grid-cols-12 items-end gap-2 rounded-md bg-transparent p-4 sm:grid-cols-13 md:gap-4' />
       </div>
     </div>
   );
 };
 
-// TODO: Adjust based on client card
 export function InvoiceSkeleton() {
   return (
-    <div className='flex flex-row items-center justify-between border-b border-gray-100 py-4'>
+    <div className='px-3 flex bg-default-100 flex-row items-center justify-between py-4 rounded-xl'>
       <div className='flex items-center'>
-        <div className='mr-2 h-8 w-8 rounded-full bg-gray-200' />
+        <div className='mr-2 h-9 w-9 rounded-xl bg-default-50 border-default-200 border' />
         <div className='min-w-0'>
-          <div className='h-5 w-40 rounded-md bg-gray-200' />
-          <div className='mt-2 h-4 w-12 rounded-md bg-gray-200' />
+          <div className='h-5 w-24 rounded-md bg-gray-200' />
+          <div className='mt-2 h-4 w-40 rounded-md bg-default-300' />
         </div>
       </div>
-      <div className='mt-2 h-4 w-12 rounded-md bg-gray-200' />
+      <div className='ml-4 mt-2 h-4 w-12 rounded-md bg-gray-200' />
     </div>
   );
 }
 
-// TODO: Adjust based on client cards
 export function LatestInvoicesSkeleton() {
   return (
-    <div
-      className={`${shimmer} relative flex w-full flex-col overflow-hidden md:col-span-4`}
-    >
-      <div className='mb-4 h-8 w-36 rounded-md bg-gray-100' />
-      <div className='flex grow flex-col justify-between rounded-xl bg-gray-100 p-4'>
-        <div className='bg-white px-6'>
+    <div className='flex flex-col md:col-span-4'>
+      <div className='mb-4 h-7 w-40 rounded-md bg-gray-100' />
+      <div
+        className={`relative ${shimmer} overflow-hidden flex grow flex-col justify-between rounded-xl`}
+      >
+        <div className='flex flex-col gap-2'>
           <InvoiceSkeleton />
           <InvoiceSkeleton />
           <InvoiceSkeleton />
           <InvoiceSkeleton />
           <InvoiceSkeleton />
-        </div>
-        <div className='flex items-center pb-2 pt-6'>
-          <div className='h-5 w-5 rounded-full bg-gray-200' />
-          <div className='ml-2 h-4 w-20 rounded-md bg-gray-200' />
         </div>
       </div>
     </div>

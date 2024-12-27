@@ -41,7 +41,7 @@ const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
     labels,
     datasets: [
       {
-        label: 'Revenue from invoices for the month',
+        label: 'Invoice Revenue by Month',
         data: dataByMonth,
         backgroundColor: '#71717A',
         borderWidth: 1,
@@ -49,12 +49,24 @@ const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
     ],
   };
 
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem: any) => {
+            const revenue = tooltipItem.raw;
+            return `Revenue: $${revenue}`;
+          },
+        },
+      },
+    },
+  };
+
   return (
     <div className='w-full min-h-96'>
-      <Bar
-        data={data}
-        options={{ responsive: true, maintainAspectRatio: false }}
-      />
+      <Bar data={data} options={options} />
     </div>
   );
 };
