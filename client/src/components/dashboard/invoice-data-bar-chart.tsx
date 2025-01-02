@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { CategoryScale } from 'chart.js';
-import Chart from 'chart.js/auto';
-import { Bar } from 'react-chartjs-2';
+import { CategoryScale } from "chart.js";
+import Chart from "chart.js/auto";
+import { Bar } from "react-chartjs-2";
 
 Chart.register(CategoryScale);
 
 const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 type Props = {
@@ -28,7 +28,7 @@ type Props = {
 const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
   const currentMonthIndex = new Date().getMonth();
   const labels = MONTHS.slice(0, currentMonthIndex).concat(
-    MONTHS.slice(currentMonthIndex)
+    MONTHS.slice(currentMonthIndex),
   );
 
   const dataByMonth = revenueByMonth
@@ -41,9 +41,9 @@ const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
     labels,
     datasets: [
       {
-        label: 'Invoice Revenue by Month',
+        label: "Invoice Revenue by Month",
         data: dataByMonth,
-        backgroundColor: '#71717A',
+        backgroundColor: "#71717A",
         borderWidth: 1,
       },
     ],
@@ -65,7 +65,7 @@ const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
   };
 
   return (
-    <div className='w-full min-h-96'>
+    <div className="w-full min-h-96">
       <Bar data={data} options={options} />
     </div>
   );
