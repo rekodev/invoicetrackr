@@ -1,8 +1,8 @@
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
 
-import { UserModel } from '../types/models';
-import { db } from './db';
-import { usersTable } from './schema';
+import { UserModel } from "../types/models";
+import { db } from "./db";
+import { usersTable } from "./schema";
 
 export const getUserFromDb = async (id: number) => {
   const users = await db
@@ -56,21 +56,21 @@ export const getUserByEmailFromDb = async (email: string) => {
 export const registerUser = async ({
   email,
   password,
-}: Pick<UserModel, 'email' | 'password'>) => {
+}: Pick<UserModel, "email" | "password">) => {
   const users = await db
     .insert(usersTable)
     .values({
       email,
       password,
-      currency: 'USD',
-      language: 'EN',
-      type: 'sender',
-      businessType: 'individual',
-      businessNumber: '',
-      name: '',
-      address: '',
-      signature: '',
-      profilePictureUrl: '',
+      currency: "USD",
+      language: "EN",
+      type: "sender",
+      businessType: "individual",
+      businessNumber: "",
+      name: "",
+      address: "",
+      signature: "",
+      profilePictureUrl: "",
     })
     .returning({ email: usersTable.email });
 
@@ -80,7 +80,7 @@ export const registerUser = async ({
 export const updateUserInDb = async (
   id: number,
   user: UserModel,
-  signature: string
+  signature: string,
 ) => {
   const { name, address, businessNumber, businessType, type, email } = user;
 
@@ -115,10 +115,11 @@ export const updateUserInDb = async (
 
 export const updateUserSelectedBankAccountInDb = async (
   userId: number,
-  selectedBankAccountId: number
+  selectedBankAccountId: number,
 ) => {
   const users = await db
     .update(usersTable)
+    // @ts-ignore
     .set({ selectedBankAccountId })
     .where(eq(usersTable.id, userId))
     .returning({
@@ -140,7 +141,7 @@ export const updateUserSelectedBankAccountInDb = async (
 
 export const updateUserProfilePictureInDb = async (
   userId: number,
-  url: string
+  url: string,
 ) => {
   const users = await db
     .update(usersTable)
@@ -166,7 +167,7 @@ export const updateUserProfilePictureInDb = async (
 export const updateUserAccountSettingsInDb = async (
   userId: number,
   language: string,
-  currency: string
+  currency: string,
 ) => {
   const users = await db
     .update(usersTable)

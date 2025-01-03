@@ -4,15 +4,15 @@ import {
   Image as PDFImage,
   Text,
   View,
-} from '@react-pdf/renderer';
+} from "@react-pdf/renderer";
 
-import { InvoiceModel } from '@/lib/types/models/invoice';
-import { BankingInformationFormModel } from '@/lib/types/models/user';
-import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
-import { formatDate } from '@/lib/utils/formatDate';
+import { InvoiceModel } from "@/lib/types/models/invoice";
+import { BankingInformationFormModel } from "@/lib/types/models/user";
+import { getDaysUntilDueDate, splitInvoiceId } from "@/lib/utils";
+import { formatDate } from "@/lib/utils/formatDate";
 
-import styles from './styles';
-import { registerFont } from './utils';
+import styles from "./styles";
+import { registerFont } from "./utils";
 
 registerFont();
 
@@ -20,12 +20,14 @@ type Props = {
   invoiceData: InvoiceModel;
   senderSignatureImage: string;
   bankAccount: BankingInformationFormModel;
+  currency: string;
 };
 
 const PDFDocument = ({
   invoiceData,
   senderSignatureImage,
   bankAccount,
+  currency,
 }: Props) => {
   const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
     invoiceData;
@@ -81,7 +83,7 @@ const PDFDocument = ({
     description: string,
     unit: string,
     quantity: number,
-    amount: number
+    amount: number,
   ) => (
     <View style={styles.tableRow} key={index}>
       <View style={[styles.tableCol, styles.tableCol1]}>
@@ -128,8 +130,8 @@ const PDFDocument = ({
           service.description,
           service.unit,
           service.quantity,
-          service.amount
-        )
+          service.amount,
+        ),
       )}
     </View>
   );
@@ -192,7 +194,7 @@ const PDFDocument = ({
 
   return (
     <Document>
-      <Page size='A4' style={styles.page}>
+      <Page size="A4" style={styles.page}>
         {renderHeader()}
         {renderBillingDetailsSection()}
         {renderTableSection()}
