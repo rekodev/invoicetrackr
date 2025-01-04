@@ -181,10 +181,12 @@ export const updateUserProfilePicture = async (
         .send({ message: "Unable to upload profile picture" });
   }
 
-  const updatedUser = await updateUserProfilePictureInDb(
-    id,
-    uploadedProfilePicture.url,
+  const urlWithHttps = uploadedProfilePicture.url.replace(
+    "http://",
+    "https://",
   );
+
+  const updatedUser = await updateUserProfilePictureInDb(id, urlWithHttps);
 
   if (!updatedUser)
     throw new BadRequestError("Unable to update profile picture");
