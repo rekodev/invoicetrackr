@@ -129,6 +129,7 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
   const renderCell = useCallback(
     (invoice: InvoiceModel, columnKey: Key) => (
       <InvoiceTableCell
+        currency={currency}
         invoice={invoice}
         columnKey={columnKey}
         onView={handleViewInvoice}
@@ -136,7 +137,7 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
         onDelete={handleDeleteInvoice}
       />
     ),
-    [handleViewInvoice, handleDeleteInvoice, handleEditInvoice],
+    [handleViewInvoice, handleDeleteInvoice, handleEditInvoice, currency],
   );
 
   const renderTopContent = () => (

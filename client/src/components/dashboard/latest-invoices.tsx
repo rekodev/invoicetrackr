@@ -30,6 +30,7 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
                   name: invoiceData.name,
                 }}
                 amount={invoiceData.totalAmount}
+                hideIcon
               />
             ))
           : renderEmptyState()}
