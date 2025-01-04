@@ -1,8 +1,15 @@
-export default [
-  {
-    extends: "next/core-web-vitals",
+import { FlatCompat } from "@eslint/eslintrc";
+
+const compat = new FlatCompat({
+  baseDirectory: import.meta.dirname,
+});
+
+const eslintConfig = [
+  ...compat.config({
+    extends: ["next"],
     rules: {
-      "react-hooks/exhaustive-deps": "warn",
+      "react/no-unescaped-entities": "off",
+      "@next/next/no-page-custom-font": "off",
       "import/order": [
         "error",
         {
@@ -26,5 +33,7 @@ export default [
         },
       ],
     },
-  },
+  }),
 ];
+
+export default eslintConfig;

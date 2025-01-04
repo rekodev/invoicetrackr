@@ -9,8 +9,8 @@ import {
 import { InvoiceModel } from "@/lib/types/models/invoice";
 import { BankingInformationFormModel } from "@/lib/types/models/user";
 import { getDaysUntilDueDate, splitInvoiceId } from "@/lib/utils";
-import { formatDate } from "@/lib/utils/formatDate";
 import { amountToWords } from "@/lib/utils/amountToWords";
+import { formatDate } from "@/lib/utils/formatDate";
 
 import styles from "./styles";
 import { registerFont } from "./utils";
