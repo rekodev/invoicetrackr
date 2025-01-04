@@ -96,16 +96,11 @@ export const updateUser = async (
 
   if (!foundUser) throw new NotFoundError("User not found");
 
-  const signatureWithHttps = uploadedSignature.url.replace(
-    "http://",
-    "https://",
-  );
+  const signatureUrl = uploadedSignature?.url
+    ? uploadedSignature.url.replace("http://", "https://")
+    : user.signature;
 
-  const updatedUser = await updateUserInDb(
-    id,
-    user,
-    file ? signatureWithHttps : user.signature,
-  );
+  const updatedUser = await updateUserInDb(id, user, signatureUrl);
 
   if (!updatedUser)
     throw new BadRequestError("Unable to update user information");
@@ -181,7 +176,7 @@ export const updateUserProfilePicture = async (
         .send({ message: "Unable to upload profile picture" });
   }
 
-  const urlWithHttps = uploadedProfilePicture.url.replace(
+  const urlWithHttps = uploadedProfilePicture?.url.replace(
     "http://",
     "https://",
   );
