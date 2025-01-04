@@ -1,4 +1,29 @@
 {
+  "invoices": {
+    "pdf": {
+      "title": "PVM SĄSKAITA FAKTŪRA",
+      "series_label": "Sąskaitos serija",
+      "invoice_number_label": "Nr.",
+      "provider_label": "Tiekėjas:",
+      "business_number_business": "Įmonės kodas:",
+      "business_number_individual": "IV Pažymos Nr.:",
+      "address_label": "Adresas:",
+      "invoice_date_label": "Sąskaitos išrašymo data:",
+      "payer_label": "Mokėtojas:",
+      "position_label": "Poz",
+      "description_label": "Aprašymas",
+      "unit_label": "Mato vnt.",
+      "quantity_label": "Kiekis",
+      "amount_label": "Suma",
+      "cents": "{cents} ct.",
+      "invoice_issued_by_label": "Sąskaitą išrašė:",
+      "invoice_received_by_label": "Sąskaitą gavo:",
+      "signature_label": "(parašas)",
+      "name_label": "(vardas, pavardė)",
+      "payment_terms_label": "Apmokėjimo sąlygos: {days} d.",
+      "bank_info_label": "{bank_name}, banko kodas {bank_code}; Atsiskaitomoji sąskaita: {bank_account_number}"
+    }
+  },
   "profile": {
     "account_settings": {
       "title": "Paskyros Nustatymai",
