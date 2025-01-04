@@ -78,12 +78,11 @@ export const postInvoice = async (
       "Invoice with provided invoice ID already exists",
     );
 
-  const urlWithHttps = uploadedSignature.url.replace("http://", "https://");
+  const signatureUrl = uploadedSignature?.url
+    ? uploadedSignature.url.replace("http://", "https://")
+    : invoiceData.senderSignature;
 
-  const insertedInvoice = await insertInvoiceInDb(
-    invoiceData,
-    uploadedSignature ? urlWithHttps : invoiceData.senderSignature,
-  );
+  const insertedInvoice = await insertInvoiceInDb(invoiceData, signatureUrl);
 
   if (!insertedInvoice) throw new BadRequestError("Unable to add invoice");
 
@@ -121,13 +120,15 @@ export const updateInvoice = async (
 
   if (!foundInvoice) throw new NotFoundError("Invoice not found");
 
-  const urlWithHttps = uploadedSignature.url.replace("http://", "https://");
+  const signatureUrl = uploadedSignature?.url
+    ? uploadedSignature.url.replace("http://", "https://")
+    : invoiceData.senderSignature;
 
   const updatedInvoice = await updateInvoiceInDb(
     userId,
     id,
     invoiceData,
-    signatureFile ? urlWithHttps : invoiceData.senderSignature,
+    signatureUrl,
   );
 
   if (!updatedInvoice) throw new BadRequestError("Unable to update invoice");
