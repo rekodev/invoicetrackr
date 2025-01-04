@@ -1,22 +1,24 @@
-import { Chip, Tooltip } from '@nextui-org/react';
-import { Key } from 'react';
+import { Chip, Tooltip } from "@nextui-org/react";
+import { Key } from "react";
 
-import { InvoiceModel, InvoiceStatus } from '@/lib/types/models/invoice';
-import { formatDate } from '@/lib/utils/formatDate';
+import { InvoiceModel, InvoiceStatus } from "@/lib/types/models/invoice";
+import { getCurrencySymbol } from "@/lib/utils/currency";
+import { formatDate } from "@/lib/utils/formatDate";
 
-import DeleteIcon from '../icons/DeleteIcon';
-import DocumentText from '../icons/DocumentText';
-import EditIcon from '../icons/EditIcon';
-import EyeIcon from '../icons/EyeIcon';
+import DeleteIcon from "../icons/DeleteIcon";
+import DocumentText from "../icons/DocumentText";
+import EditIcon from "../icons/EditIcon";
+import EyeIcon from "../icons/EyeIcon";
 
-const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
+const statusColorMap: Record<InvoiceStatus, "success" | "danger" | "warning"> =
   {
-    paid: 'success',
-    pending: 'warning',
-    canceled: 'danger',
+    paid: "success",
+    pending: "warning",
+    canceled: "danger",
   };
 
 type Props = {
+  currency: string;
   invoice: InvoiceModel;
   columnKey: Key;
   onView: (invoice: InvoiceModel) => void;
@@ -25,6 +27,7 @@ type Props = {
 };
 
 const InvoiceTableCell = ({
+  currency,
   invoice,
   columnKey,
   onView,
@@ -39,75 +42,84 @@ const InvoiceTableCell = ({
     invoice[
       columnKey as keyof Omit<
         InvoiceModel,
-        | 'actions'
-        | 'sender'
-        | 'receiver'
-        | 'services'
-        | 'senderSignature'
-        | 'bankingInformation'
+        | "actions"
+        | "sender"
+        | "receiver"
+        | "services"
+        | "senderSignature"
+        | "bankingInformation"
       >
     ];
 
-  switch (columnKey as keyof InvoiceModel | 'actions') {
-    case 'bankingInformation':
+  switch (columnKey as keyof InvoiceModel | "actions") {
+    case "bankingInformation":
       return;
-    case 'senderSignature':
+    case "senderSignature":
       return;
-    case 'sender':
+    case "sender":
       return;
-    case 'services':
+    case "services":
       return;
-    case 'id':
+    case "id":
       return (
-        <div className='flex'>
+        <div className="flex">
           <DocumentText />
           &nbsp;
-          <p className='text-bold text-small capitalize'>{invoice.invoiceId}</p>
+          <p className="text-bold text-small capitalize">{invoice.invoiceId}</p>
         </div>
       );
-    case 'receiver':
+    case "receiver":
       return (
-        <div className='flex flex-col'>
-          <p className='text-bold text-small capitalize'>
+        <div className="flex flex-col">
+          <p className="text-bold text-small capitalize">
             {invoice.receiver.name}
           </p>
         </div>
       );
-    case 'date':
-      return formatDate(cellValue as string) || '';
-    case 'status':
+    case "totalAmount":
+      return (
+        <p className="flex gap-0.5">
+          <span className="text-success-700">
+            {getCurrencySymbol(currency)}
+          </span>
+          {(invoice.totalAmount || 0).toFixed(2)}
+        </p>
+      );
+    case "date":
+      return formatDate(cellValue as string) || "";
+    case "status":
       return (
         <Chip
-          className='capitalize'
+          className="capitalize"
           color={statusColorMap[invoice.status as InvoiceStatus]}
-          size='sm'
-          variant='flat'
+          size="sm"
+          variant="flat"
         >
           {cellValue as string}
         </Chip>
       );
-    case 'actions':
+    case "actions":
       return (
-        <div className='relative flex items-center gap-2'>
-          <Tooltip disableAnimation content='Details'>
+        <div className="relative flex items-center gap-2">
+          <Tooltip disableAnimation content="Details">
             <span
               onClick={handleViewIconClick}
-              className='text-lg text-default-400 cursor-pointer active:opacity-50'
+              className="text-lg text-default-400 cursor-pointer active:opacity-50"
             >
               <EyeIcon />
             </span>
           </Tooltip>
-          <Tooltip disableAnimation content='Edit invoice'>
+          <Tooltip disableAnimation content="Edit invoice">
             <span
-              className='text-lg text-default-400 cursor-pointer active:opacity-50'
+              className="text-lg text-default-400 cursor-pointer active:opacity-50"
               onClick={handleEditInvoiceClick}
             >
               <EditIcon />
             </span>
           </Tooltip>
-          <Tooltip disableAnimation color='danger' content='Delete invoice'>
+          <Tooltip disableAnimation color="danger" content="Delete invoice">
             <span
-              className='text-lg text-danger cursor-pointer active:opacity-50'
+              className="text-lg text-danger cursor-pointer active:opacity-50"
               onClick={handleDeleteInvoiceClick}
             >
               <DeleteIcon />

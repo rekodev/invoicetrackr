@@ -1,44 +1,51 @@
-'use client';
+"use client";
 
-import { UserIcon } from '@heroicons/react/24/outline';
-import { Card, CardBody } from '@nextui-org/react';
+import { UserIcon } from "@heroicons/react/24/outline";
+import { Card, CardBody } from "@nextui-org/react";
 
-import { ClientModel } from '@/lib/types/models/client';
-import { cn } from '@/lib/utils/cn';
-import { getCurrencySymbol } from '@/lib/utils/currency';
+import { ClientModel } from "@/lib/types/models/client";
+import { cn } from "@/lib/utils/cn";
+import { getCurrencySymbol } from "@/lib/utils/currency";
 
 type Props = {
   currency?: string;
   client: Partial<ClientModel>;
   onClick?: () => void;
   amount?: number;
+  hideIcon?: boolean;
 };
 
-const ClientCard = ({ currency, client, onClick, amount }: Props) => {
+const ClientCard = ({ currency, client, onClick, amount, hideIcon }: Props) => {
   return (
     <div onClick={onClick}>
       <Card
         isHoverable={!!onClick}
-        className={cn('justify-center', {
-          'cursor-pointer': !!onClick,
+        className={cn("justify-center", {
+          "cursor-pointer": !!onClick,
         })}
       >
-        <CardBody className='flex flex-row justify-between items-center gap-4'>
-          <div className='flex items-center gap-3'>
-            <div className='item-center flex rounded-medium border p-2 border-default-200'>
-              <UserIcon className='w-5 h-5' />
-            </div>
+        <CardBody className="flex flex-row justify-between min-h-[70px] min-w-72 items-center gap-4">
+          <div className="flex items-center gap-3">
+            {!hideIcon && (
+              <div className="item-center flex rounded-medium border p-2 border-default-200">
+                <UserIcon className="w-5 h-5" />
+              </div>
+            )}
             <div>
-              <div className='pb-0.5 uppercase font-bold'>{client.name}</div>
-              <div className='flex gap-2 text-small text-default-500'>
+              <div className="pb-0.5 uppercase text-small font-bold">
+                {client.name}
+              </div>
+              <div className="flex gap-2 text-xs text-default-500">
                 {client.address && <span>{client.address}</span>}
                 <span>{client.email}</span>
               </div>
             </div>
           </div>
           {amount && currency && (
-            <div className='text-lg font-medium right-3'>
-              {getCurrencySymbol(currency)}
+            <div className="text-lg font-medium right-3 flex gap-[1px]">
+              <span className="text-success-700">
+                {getCurrencySymbol(currency)}
+              </span>
               {Number(amount).toFixed(2)}
             </div>
           )}
