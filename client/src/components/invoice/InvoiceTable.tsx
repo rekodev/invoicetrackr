@@ -37,9 +37,10 @@ const INITIAL_VISIBLE_COLUMNS = [
 type Props = {
   userId: number;
   currency: string;
+  language: string;
 };
 
-const InvoiceTable = ({ userId, currency }: Props) => {
+const InvoiceTable = ({ userId, currency, language }: Props) => {
   const { invoices, isInvoicesLoading } = useGetInvoices({ userId });
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -206,6 +207,7 @@ const InvoiceTable = ({ userId, currency }: Props) => {
 
       {currentInvoice && (
         <InvoiceModal
+          language={language}
           currency={currency}
           userId={userId}
           isOpen={isOpen}

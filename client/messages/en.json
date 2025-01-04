@@ -1,4 +1,29 @@
 {
+  "invoices": {
+    "pdf": {
+      "title": "VAT INVOICE",
+      "series_label": "Invoice series",
+      "invoice_number_label": "No.",
+      "provider_label": "Provider:",
+      "business_number_business": "Company code:",
+      "business_number_individual": "Sole proprietorship certificate No.:",
+      "address_label": "Address:",
+      "invoice_date_label": "Invoice date:",
+      "payer_label": "Payer:",
+      "position_label": "Pos",
+      "description_label": "Description",
+      "unit_label": "Unit",
+      "quantity_label": "Qty",
+      "amount_label": "Amount",
+      "cents": "{cents} c",
+      "invoice_issued_by_label": "Issued by:",
+      "invoice_received_by_label": "Received by:",
+      "signature_label": "(signature)",
+      "name_label": "(name, surname)",
+      "payment_terms_label": "Payment terms: {days} days",
+      "bank_info_label": "{bank_name}, bank code {bank_code}; Account number: {bank_account_number}"
+    }
+  },
   "profile": {
     "account_settings": {
       "title": "Account Settings",

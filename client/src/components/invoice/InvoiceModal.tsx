@@ -1,5 +1,6 @@
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
 import { PDFViewer } from "@react-pdf/renderer";
+import { useTranslations } from "next-intl";
 
 import useGetBankAccount from "@/lib/hooks/banking-information/useGetBankAccount";
 import useGetUser from "@/lib/hooks/user/useGetUser";
@@ -10,6 +11,7 @@ import PDFDocument from "../pdf/PDFDocument";
 type Props = {
   userId: number;
   currency: string;
+  language: string;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   invoiceData: InvoiceModel;
@@ -19,11 +21,13 @@ type Props = {
 const InvoiceModal = ({
   userId,
   currency,
+  language,
   isOpen,
   onOpenChange,
   invoiceData,
   senderSignatureImage,
 }: Props) => {
+  const t = useTranslations("invoices.pdf");
   const { invoiceId } = invoiceData;
   const { user } = useGetUser({ userId });
   const { bankAccount } = useGetBankAccount({
@@ -47,6 +51,8 @@ const InvoiceModal = ({
           <div className="w-full h-full">
             <PDFViewer className="h-full w-full">
               <PDFDocument
+                t={t}
+                language={language}
                 currency={currency}
                 invoiceData={invoiceData}
                 senderSignatureImage={senderSignatureImage}

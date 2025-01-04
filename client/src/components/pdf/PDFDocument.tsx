@@ -10,6 +10,7 @@ import { InvoiceModel } from "@/lib/types/models/invoice";
 import { BankingInformationFormModel } from "@/lib/types/models/user";
 import { getDaysUntilDueDate, splitInvoiceId } from "@/lib/utils";
 import { formatDate } from "@/lib/utils/formatDate";
+import { amountToWords } from "@/lib/utils/amountToWords";
 
 import styles from "./styles";
 import { registerFont } from "./utils";
@@ -17,17 +18,21 @@ import { registerFont } from "./utils";
 registerFont();
 
 type Props = {
+  t: any;
   invoiceData: InvoiceModel;
   senderSignatureImage: string;
   bankAccount: BankingInformationFormModel;
   currency: string;
+  language: string;
 };
 
 const PDFDocument = ({
+  t,
   invoiceData,
   senderSignatureImage,
   bankAccount,
   currency,
+  language,
 }: Props) => {
   const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
     invoiceData;
@@ -36,11 +41,19 @@ const PDFDocument = ({
   const series = splitId[0];
   const number = splitId[1];
 
+  const cents = Math.floor(totalAmount * 100) % 100;
+
+  const renderBusinessNumberLabel = (party: "sender" | "receiver") =>
+    invoiceData[party].businessType === "business"
+      ? t("business_number_business")
+      : t("business_number_individual");
+
   const renderHeader = () => (
     <>
-      <Text style={styles.title}>PVM SĄSKAITA FAKTŪRA</Text>
+      <Text style={styles.title}>{t("title")}</Text>
       <Text style={styles.subtitle}>
-        Sąskaitos serija <Text style={styles.boldText}>{series}</Text> Nr.&nbsp;
+        {t("series_label")} <Text style={styles.boldText}>{series}</Text>{" "}
+        Nr.&nbsp;
         <Text style={styles.boldText}>{number}</Text>
       </Text>
     </>
@@ -50,16 +63,18 @@ const PDFDocument = ({
     <>
       <View style={styles.row}>
         <View style={styles.leftColumn}>
-          <Text style={styles.detailItemTitle}>Tiekėjas:</Text>
+          <Text style={styles.detailItemTitle}>{t("provider_label")}</Text>
           <Text style={styles.detailItem}>{sender.name}</Text>
           <Text style={styles.detailItem}>
-            Įmonės kodas: {sender.businessNumber}
+            {renderBusinessNumberLabel("sender")} {sender.businessNumber}
           </Text>
-          <Text style={styles.detailItem}>Adresas: {sender.address}</Text>
+          <Text style={styles.detailItem}>
+            {t("address_label")} {sender.address}
+          </Text>
         </View>
         <View style={styles.rightColumn}>
           <Text style={[styles.detailItem, styles.boldText]}>
-            Sąskaitos išrašymo data:
+            {t("invoice_date_label")}
           </Text>
           <Text style={styles.detailItem}>{formatDate(date)}</Text>
         </View>
@@ -67,12 +82,14 @@ const PDFDocument = ({
 
       <View style={styles.row}>
         <View style={styles.leftColumn}>
-          <Text style={styles.detailItemTitle}>Mokėtojas:</Text>
+          <Text style={styles.detailItemTitle}>{t("payer_label")}</Text>
           <Text style={styles.detailItem}>{receiver.name}</Text>
           <Text style={styles.detailItem}>
-            Įmonės kodas: {receiver.businessNumber}
+            {renderBusinessNumberLabel("receiver")} {receiver.businessNumber}
           </Text>
-          <Text style={styles.detailItem}>Adresas: {receiver.address}</Text>
+          <Text style={styles.detailItem}>
+            {t("address_label")} {receiver.address}
+          </Text>
         </View>
       </View>
     </>
@@ -99,7 +116,9 @@ const PDFDocument = ({
         <Text style={styles.tableCell}>{quantity}</Text>
       </View>
       <View style={[styles.tableCol, styles.tableCol5]}>
-        <Text style={styles.tableCell}>{amount} EUR</Text>
+        <Text style={styles.tableCell}>
+          {(amount || 0).toFixed(2)} {currency.toUpperCase()}
+        </Text>
       </View>
     </View>
   );
@@ -108,19 +127,19 @@ const PDFDocument = ({
     <View style={styles.table}>
       <View style={styles.tableRow}>
         <View style={[styles.tableColHeader, styles.tableCol1]}>
-          <Text style={styles.tableCellHeader}>Poz</Text>
+          <Text style={styles.tableCellHeader}>{t("position_label")}</Text>
         </View>
         <View style={[styles.tableColHeader, styles.tableCol2]}>
-          <Text style={styles.tableCellHeader}>Aprašymas</Text>
+          <Text style={styles.tableCellHeader}>{t("description_label")}</Text>
         </View>
         <View style={[styles.tableColHeader, styles.tableCol3]}>
-          <Text style={styles.tableCellHeader}>Mato vnt.</Text>
+          <Text style={styles.tableCellHeader}>{t("unit_label")}</Text>
         </View>
         <View style={[styles.tableColHeader, styles.tableCol4]}>
-          <Text style={styles.tableCellHeader}>Kiekis</Text>
+          <Text style={styles.tableCellHeader}>{t("quantity_label")}</Text>
         </View>
         <View style={[styles.tableColHeader, styles.tableCol5]}>
-          <Text style={styles.tableCellHeader}>Suma</Text>
+          <Text style={styles.tableCellHeader}>{t("amount_label")}</Text>
         </View>
       </View>
 
@@ -139,7 +158,9 @@ const PDFDocument = ({
   const renderSignatureSection = () => (
     <>
       <View style={styles.signatureSection}>
-        <Text style={styles.signatureTitle}>Sąskaitą išrašė:</Text>
+        <Text style={styles.signatureTitle}>
+          {t("invoice_issued_by_label")}
+        </Text>
         <View style={styles.signatureBox}>
           <View style={styles.signatureAndName}>
             <Text></Text>
@@ -155,24 +176,26 @@ const PDFDocument = ({
           </View>
           <View style={styles.signatureLine}></View>
           <View style={styles.signatureAndName}>
-            <Text style={styles.subTextSignature}>(parašas)</Text>
-            <Text style={styles.subTextName}>(vardas, pavardė)</Text>
+            <Text style={styles.subTextSignature}>{t("signature_label")}</Text>
+            <Text style={styles.subTextName}>{t("name_label")}</Text>
           </View>
         </View>
       </View>
 
       <View style={styles.signatureSection}>
-        <Text style={styles.signatureTitle}>Sąskaitą gavo:</Text>
+        <Text style={styles.signatureTitle}>
+          {t("invoice_received_by_label")}
+        </Text>
         <View style={styles.signatureBox}>
           <View style={styles.signatureAndName}>
             <Text></Text>
             {/* TODO: Add ability for receiver to sign */}
-            <Text style={styles.nameWithSubtext}></Text>
+            <Text style={styles.nameWithSubtextEmpty}>0</Text>
           </View>
           <View style={styles.signatureLine}></View>
           <View style={styles.signatureAndName}>
-            <Text style={styles.subTextSignature}>(parašas)</Text>
-            <Text style={styles.subTextName}>(vardas, pavardė)</Text>
+            <Text style={styles.subTextSignature}>{t("signature_label")}</Text>
+            <Text style={styles.subTextName}>{t("name_label")}</Text>
           </View>
         </View>
       </View>
@@ -182,12 +205,14 @@ const PDFDocument = ({
   const renderFooter = () => (
     <View style={styles.footer}>
       <Text style={[styles.footerItem, styles.boldText]}>
-        Apmokėjimo sąlygos: {getDaysUntilDueDate(date, dueDate)} d.
+        {t("payment_terms_label", { days: getDaysUntilDueDate(date, dueDate) })}
       </Text>
       <Text style={styles.footerItem}>
-        AB &quot;{bankAccount.name}&quot;, banko kodas {bankAccount.code};
-        Atsiskaitomoji sąskaita:
-        {bankAccount.accountNumber}
+        {t("bank_info_label", {
+          bank_name: bankAccount.name,
+          bank_code: bankAccount.code,
+          bank_account_number: bankAccount.accountNumber,
+        })}
       </Text>
     </View>
   );
@@ -200,7 +225,11 @@ const PDFDocument = ({
         {renderTableSection()}
         <View style={styles.midSection}>
           <Text style={[styles.detailItem, styles.boldText]}>
-            {totalAmount} EUR
+            {amountToWords(totalAmount, language.toLowerCase())}{" "}
+            {currency.toUpperCase()}{" "}
+            {t("cents", {
+              cents: String(cents).length > 1 ? cents : `0${cents}`,
+            })}
           </Text>
           {renderSignatureSection()}
         </View>

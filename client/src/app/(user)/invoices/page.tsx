@@ -8,8 +8,11 @@ const InvoicesPage = async () => {
 
   const userId = Number(session.user.id);
   const currency = session.user.currency;
+  const language = session.user.language;
 
-  return <InvoiceTable currency={currency} userId={userId} />;
+  return (
+    <InvoiceTable language={language} currency={currency} userId={userId} />
+  );
 };
 
 export default InvoicesPage;
