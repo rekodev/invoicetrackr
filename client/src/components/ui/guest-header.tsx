@@ -13,8 +13,8 @@ import {
   DASHBOARD_PAGE,
   LOGIN_PAGE,
   SIGN_UP_PAGE,
-} from "../../lib/constants/pages";
-import { scrollToElement } from "../../lib/utils/scrollToElement";
+} from "@/lib/constants/pages";
+import { scrollToElement } from "@/lib/utils/scrollToElement";
 
 import AppLogo from "../icons/AppLogo.jsx";
 
