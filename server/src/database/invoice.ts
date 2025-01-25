@@ -6,20 +6,20 @@ import {
   gte,
   inArray,
   sql,
-} from 'drizzle-orm';
-import { NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
-import { PgTransaction } from 'drizzle-orm/pg-core';
+} from "drizzle-orm";
+import { NeonQueryResultHKT } from "drizzle-orm/neon-serverless";
+import { PgTransaction } from "drizzle-orm/pg-core";
 
-import { InvoiceModel } from '../types/models';
-import { jsonAgg } from '../utils/jsonAgg';
-import { db } from './db';
+import { InvoiceModel } from "../types/models";
+import { jsonAgg } from "../utils/jsonAgg";
+import { db } from "./db";
 import {
-  bankingInformationTable,
-  clientsTable,
+  invoiceBankingInformationTable,
+  invoiceReceiversTable,
+  invoiceSendersTable,
   invoiceServicesTable,
   invoicesTable,
-  usersTable,
-} from './schema';
+} from "./schema";
 
 export const findInvoiceById = async (userId: number, id: number) => {
   const invoices = await db
@@ -32,7 +32,7 @@ export const findInvoiceById = async (userId: number, id: number) => {
 
 export const findInvoiceByInvoiceId = async (
   userId: number,
-  invoiceId: string
+  invoiceId: string,
 ) => {
   const invoices = await db
     .select({ id: invoicesTable.id })
@@ -40,8 +40,8 @@ export const findInvoiceByInvoiceId = async (
     .where(
       and(
         eq(invoicesTable.invoiceId, invoiceId),
-        eq(invoicesTable.senderId, userId)
-      )
+        eq(invoicesTable.senderId, userId),
+      ),
     );
 
   return invoices.at(0);
@@ -58,32 +58,27 @@ export const getInvoicesFromDb = async (userId: number) => {
       dueDate: invoicesTable.dueDate,
       senderSignature: invoicesTable.senderSignature,
       bankingInformation: {
-        id: bankingInformationTable.id,
-        code: bankingInformationTable.code,
-        name: bankingInformationTable.name,
-        accountNumber: bankingInformationTable.accountNumber,
+        id: invoiceBankingInformationTable.id,
+        code: invoiceBankingInformationTable.bankCode,
+        name: invoiceBankingInformationTable.accountName,
+        accountNumber: invoiceBankingInformationTable.accountNumber,
       },
       sender: {
-        id: usersTable.id,
-        name: usersTable.name,
-        type: usersTable.type,
-        businessType: usersTable.businessType,
-        businessNumber: usersTable.businessNumber,
-        address: usersTable.address,
-        email: usersTable.email,
-        signature: usersTable.signature,
-        profilePictureUrl: usersTable.profilePictureUrl,
-        language: usersTable.language,
-        currency: usersTable.currency,
+        id: invoiceSendersTable.id,
+        name: invoiceSendersTable.name,
+        type: invoiceSendersTable.type,
+        businessType: invoiceSendersTable.businessType,
+        businessNumber: invoiceSendersTable.businessNumber,
+        address: invoiceSendersTable.address,
       },
       receiver: {
-        id: clientsTable.id,
-        name: clientsTable.name,
-        type: clientsTable.type,
-        businessType: clientsTable.businessType,
-        businessNumber: clientsTable.businessNumber,
-        address: clientsTable.address,
-        email: clientsTable.email,
+        id: invoiceReceiversTable.id,
+        name: invoiceReceiversTable.name,
+        type: invoiceReceiversTable.type,
+        businessType: invoiceReceiversTable.businessType,
+        businessNumber: invoiceReceiversTable.businessNumber,
+        address: invoiceReceiversTable.address,
+        email: invoiceReceiversTable.email,
       },
       services: jsonAgg({
         id: invoiceServicesTable.id,
@@ -94,22 +89,28 @@ export const getInvoicesFromDb = async (userId: number) => {
       }),
     })
     .from(invoicesTable)
-    .leftJoin(usersTable, eq(invoicesTable.senderId, usersTable.id))
-    .leftJoin(clientsTable, eq(invoicesTable.receiverId, clientsTable.id))
     .leftJoin(
-      bankingInformationTable,
-      eq(invoicesTable.bankAccountId, bankingInformationTable.id)
+      invoiceSendersTable,
+      eq(invoicesTable.senderId, invoiceSendersTable.id),
+    )
+    .leftJoin(
+      invoiceReceiversTable,
+      eq(invoicesTable.receiverId, invoiceReceiversTable.id),
+    )
+    .leftJoin(
+      invoiceBankingInformationTable,
+      eq(invoicesTable.bankAccountId, invoiceBankingInformationTable.id),
     )
     .leftJoin(
       invoiceServicesTable,
-      eq(invoiceServicesTable.invoiceId, invoicesTable.id)
+      eq(invoiceServicesTable.invoiceId, invoicesTable.id),
     )
     .where(eq(invoicesTable.senderId, userId))
     .groupBy(
       invoicesTable.id,
-      usersTable.id,
-      clientsTable.id,
-      bankingInformationTable.id
+      invoiceSendersTable.id,
+      invoiceReceiversTable.id,
+      invoiceBankingInformationTable.id,
     )
     .orderBy(desc(invoicesTable.id));
 
@@ -123,7 +124,7 @@ export const getInvoiceFromDb = async (
     NeonQueryResultHKT,
     any,
     ExtractTablesWithRelations<Record<string, never>>
-  >
+  >,
 ) => {
   const invoices = await (transaction ? transaction : db)
     .select({
@@ -135,32 +136,28 @@ export const getInvoiceFromDb = async (
       dueDate: invoicesTable.dueDate,
       senderSignature: invoicesTable.senderSignature,
       bankingInformation: {
-        id: bankingInformationTable.id,
-        code: bankingInformationTable.code,
-        name: bankingInformationTable.name,
-        accountNumber: bankingInformationTable.accountNumber,
+        id: invoiceBankingInformationTable.id,
+        code: invoiceBankingInformationTable.bankCode,
+        name: invoiceBankingInformationTable.accountName,
+        accountNumber: invoiceBankingInformationTable.accountNumber,
       },
       sender: {
-        id: usersTable.id,
-        name: usersTable.name,
-        type: usersTable.type,
-        businessType: usersTable.businessType,
-        businessNumber: usersTable.businessNumber,
-        address: usersTable.address,
-        email: usersTable.email,
-        signature: usersTable.signature,
-        profilePictureUrl: usersTable.profilePictureUrl,
-        language: usersTable.language,
-        currency: usersTable.currency,
+        id: invoiceSendersTable.id,
+        name: invoiceSendersTable.name,
+        type: invoiceSendersTable.type,
+        businessType: invoiceSendersTable.businessType,
+        businessNumber: invoiceSendersTable.businessNumber,
+        address: invoiceSendersTable.address,
+        email: invoiceSendersTable.email,
       },
       receiver: {
-        id: clientsTable.id,
-        name: clientsTable.name,
-        type: clientsTable.type,
-        businessType: clientsTable.businessType,
-        businessNumber: clientsTable.businessNumber,
-        address: clientsTable.address,
-        email: clientsTable.email,
+        id: invoiceReceiversTable.id,
+        name: invoiceReceiversTable.name,
+        type: invoiceReceiversTable.type,
+        businessType: invoiceReceiversTable.businessType,
+        businessNumber: invoiceReceiversTable.businessNumber,
+        address: invoiceReceiversTable.address,
+        email: invoiceReceiversTable.email,
       },
       services: jsonAgg({
         id: invoiceServicesTable.id,
@@ -171,22 +168,28 @@ export const getInvoiceFromDb = async (
       }),
     })
     .from(invoicesTable)
-    .leftJoin(usersTable, eq(invoicesTable.senderId, usersTable.id))
-    .leftJoin(clientsTable, eq(invoicesTable.receiverId, clientsTable.id))
     .leftJoin(
-      bankingInformationTable,
-      eq(invoicesTable.bankAccountId, bankingInformationTable.id)
+      invoiceSendersTable,
+      eq(invoicesTable.senderId, invoiceSendersTable.id),
+    )
+    .leftJoin(
+      invoiceReceiversTable,
+      eq(invoicesTable.receiverId, invoiceReceiversTable.id),
+    )
+    .leftJoin(
+      invoiceBankingInformationTable,
+      eq(invoicesTable.bankAccountId, invoiceBankingInformationTable.id),
     )
     .leftJoin(
       invoiceServicesTable,
-      eq(invoiceServicesTable.invoiceId, invoicesTable.id)
+      eq(invoiceServicesTable.invoiceId, invoicesTable.id),
     )
     .where(and(eq(invoicesTable.senderId, userId), eq(invoicesTable.id, id)))
     .groupBy(
       invoicesTable.id,
-      usersTable.id,
-      clientsTable.id,
-      bankingInformationTable.id
+      invoiceSendersTable.id,
+      invoiceReceiversTable.id,
+      invoiceBankingInformationTable.id,
     );
 
   return invoices.at(0);
@@ -194,9 +197,10 @@ export const getInvoiceFromDb = async (
 
 export const insertInvoiceInDb = async (
   invoiceData: InvoiceModel,
-  senderSignature: string
+  senderSignature: string,
 ) => {
   const invoice = await db.transaction(async (tx) => {
+    // Invoice insert
     const invoices = await tx
       .insert(invoicesTable)
       .values({
@@ -214,6 +218,43 @@ export const insertInvoiceInDb = async (
 
     const insertedInvoiceId = invoices.at(0).id;
 
+    // Invoice sender insert
+    await tx
+      .insert(invoiceSendersTable)
+      .values({
+        invoiceId: insertedInvoiceId,
+        name: invoiceData.sender.name,
+        email: invoiceData.sender.email,
+        address: invoiceData.sender.address,
+        type: invoiceData.sender.type,
+        businessType: invoiceData.sender.businessType,
+        businessNumber: invoiceData.sender.businessNumber,
+      })
+      .returning({ id: invoiceSendersTable.id });
+
+    // Invoice receiver insert
+    await tx
+      .insert(invoiceReceiversTable)
+      .values({
+        invoiceId: insertedInvoiceId,
+        name: invoiceData.receiver.name,
+        email: invoiceData.receiver.email,
+        address: invoiceData.receiver.address,
+        type: invoiceData.receiver.type,
+        businessType: invoiceData.receiver.businessType,
+        businessNumber: invoiceData.receiver.businessNumber,
+      })
+      .returning({ id: invoiceReceiversTable.id });
+
+    // Invoice banking information insert
+    await tx.insert(invoiceBankingInformationTable).values({
+      invoiceId: insertedInvoiceId,
+      accountName: invoiceData.bankingInformation.name,
+      accountNumber: invoiceData.bankingInformation.accountNumber,
+      bankCode: invoiceData.bankingInformation.code,
+    });
+
+    // Invoice services insert
     for (const service of invoiceData.services) {
       await tx.insert(invoiceServicesTable).values({
         quantity: service.quantity,
@@ -227,7 +268,7 @@ export const insertInvoiceInDb = async (
     const insertedInvoice = await getInvoiceFromDb(
       invoiceData.sender.id,
       insertedInvoiceId,
-      tx
+      tx,
     );
 
     return !!insertedInvoice?.services.length ? insertedInvoice : null;
@@ -240,7 +281,7 @@ export const updateInvoiceInDb = async (
   userId: number,
   id: number,
   invoiceData: InvoiceModel,
-  senderSignature: string
+  senderSignature: string,
 ) => {
   const updatedInvoice = await db.transaction(async (tx) => {
     const invoices = await tx
@@ -261,6 +302,91 @@ export const updateInvoiceInDb = async (
 
     if (!invoices.at(0)) return null;
 
+    // Updating sender information
+    const currentSender = await tx
+      .select()
+      .from(invoiceSendersTable)
+      .where(eq(invoiceSendersTable.invoiceId, id));
+
+    if (currentSender.length > 0) {
+      await tx
+        .update(invoiceSendersTable)
+        .set({
+          name: invoiceData.sender.name,
+          email: invoiceData.sender.email,
+          address: invoiceData.sender.address,
+          type: invoiceData.sender.type,
+          businessType: invoiceData.sender.businessType,
+          businessNumber: invoiceData.sender.businessNumber,
+        })
+        .where(eq(invoiceSendersTable.invoiceId, id));
+    } else {
+      await tx.insert(invoiceSendersTable).values({
+        invoiceId: id,
+        name: invoiceData.sender.name,
+        email: invoiceData.sender.email,
+        address: invoiceData.sender.address,
+        type: invoiceData.sender.type,
+        businessType: invoiceData.sender.businessType,
+        businessNumber: invoiceData.sender.businessNumber,
+      });
+    }
+
+    // Updating receiver information
+    const currentReceiver = await tx
+      .select()
+      .from(invoiceReceiversTable)
+      .where(eq(invoiceReceiversTable.invoiceId, id));
+
+    if (currentReceiver.length > 0) {
+      await tx
+        .update(invoiceReceiversTable)
+        .set({
+          name: invoiceData.receiver.name,
+          email: invoiceData.receiver.email,
+          address: invoiceData.receiver.address,
+          type: invoiceData.receiver.type,
+          businessType: invoiceData.receiver.businessType,
+          businessNumber: invoiceData.receiver.businessNumber,
+        })
+        .where(eq(invoiceReceiversTable.invoiceId, id));
+    } else {
+      await tx.insert(invoiceReceiversTable).values({
+        invoiceId: id,
+        name: invoiceData.receiver.name,
+        email: invoiceData.receiver.email,
+        address: invoiceData.receiver.address,
+        type: invoiceData.receiver.type,
+        businessType: invoiceData.receiver.businessType,
+        businessNumber: invoiceData.receiver.businessNumber,
+      });
+    }
+
+    // Updating banking information
+    const currentBankInfo = await tx
+      .select()
+      .from(invoiceBankingInformationTable)
+      .where(eq(invoiceBankingInformationTable.invoiceId, id));
+
+    if (currentBankInfo.length > 0) {
+      await tx
+        .update(invoiceBankingInformationTable)
+        .set({
+          accountName: invoiceData.bankingInformation.name,
+          accountNumber: invoiceData.bankingInformation.accountNumber,
+          bankCode: invoiceData.bankingInformation.code,
+        })
+        .where(eq(invoiceBankingInformationTable.invoiceId, id));
+    } else {
+      await tx.insert(invoiceBankingInformationTable).values({
+        invoiceId: id,
+        accountName: invoiceData.bankingInformation.name,
+        accountNumber: invoiceData.bankingInformation.accountNumber,
+        bankCode: invoiceData.bankingInformation.code,
+      });
+    }
+
+    // Updating services
     const existingServices = await tx
       .select({ id: invoiceServicesTable.id })
       .from(invoiceServicesTable)
@@ -270,7 +396,7 @@ export const updateInvoiceInDb = async (
     const newServiceIds = invoiceData.services.map((service) => service.id);
 
     const servicesToDelete = existingServiceIds.filter(
-      (serviceId) => !newServiceIds.includes(serviceId)
+      (serviceId) => !newServiceIds.includes(serviceId),
     );
 
     if (servicesToDelete.length > 0) {
@@ -309,12 +435,12 @@ export const updateInvoiceInDb = async (
 
 export const deleteInvoiceFromDb = async (
   userId: number,
-  invoiceId: number
+  invoiceId: number,
 ) => {
   const invoices = await db
     .delete(invoicesTable)
     .where(
-      and(eq(invoicesTable.id, invoiceId), eq(invoicesTable.senderId, userId))
+      and(eq(invoicesTable.id, invoiceId), eq(invoicesTable.senderId, userId)),
     )
     .returning({ id: invoiceServicesTable.id });
 
@@ -343,9 +469,9 @@ export const getInvoicesRevenueFromDb = async (userId: number) => {
     .where(
       and(
         eq(invoicesTable.senderId, userId),
-        eq(invoicesTable.status, 'paid'),
-        gte(invoicesTable.date, sql`NOW() - INTERVAL '1 year'`)
-      )
+        eq(invoicesTable.status, "paid"),
+        gte(invoicesTable.date, sql`NOW() - INTERVAL '1 year'`),
+      ),
     );
 
   return invoices;
@@ -356,12 +482,15 @@ export const getLatestInvoicesFromDb = async (userId: number) => {
     .select({
       id: invoicesTable.id,
       totalAmount: invoicesTable.totalAmount,
-      name: clientsTable.name,
-      email: clientsTable.email,
+      name: invoiceReceiversTable.name,
+      email: invoiceReceiversTable.email,
     })
     .from(invoicesTable)
     .where(eq(invoicesTable.senderId, userId))
-    .leftJoin(clientsTable, eq(invoicesTable.receiverId, clientsTable.id))
+    .leftJoin(
+      invoiceReceiversTable,
+      eq(invoicesTable.receiverId, invoiceReceiversTable.id),
+    )
     .orderBy(desc(invoicesTable.date))
     .limit(5);
 
