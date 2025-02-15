@@ -82,7 +82,11 @@ export const postInvoice = async (
     ? uploadedSignature.url.replace("http://", "https://")
     : invoiceData.senderSignature;
 
-  const insertedInvoice = await insertInvoiceInDb(invoiceData, signatureUrl);
+  const insertedInvoice = await insertInvoiceInDb(
+    invoiceData,
+    userId,
+    signatureUrl,
+  );
 
   if (!insertedInvoice) throw new BadRequestError("Unable to add invoice");
 

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Button,
@@ -7,29 +7,29 @@ import {
   Input,
   Select,
   SelectItem,
-} from '@nextui-org/react';
-import { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+} from "@nextui-org/react";
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 
-import { statusOptions } from '@/lib/constants/table';
-import { UiState } from '@/lib/constants/uiState';
-import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/useInvoiceFormSubmissionHandler';
-import useGetUser from '@/lib/hooks/user/useGetUser';
-import { ClientModel } from '@/lib/types/models/client';
-import { InvoiceModel } from '@/lib/types/models/invoice';
-import { BankingInformationFormModel } from '@/lib/types/models/user';
-import { formatDate } from '@/lib/utils/formatDate';
+import { statusOptions } from "@/lib/constants/table";
+import { UiState } from "@/lib/constants/uiState";
+import useInvoiceFormSubmissionHandler from "@/lib/hooks/invoice/useInvoiceFormSubmissionHandler";
+import useGetUser from "@/lib/hooks/user/useGetUser";
+import { ClientModel } from "@/lib/types/models/client";
+import { InvoiceModel } from "@/lib/types/models/invoice";
+import { BankingInformationFormModel } from "@/lib/types/models/user";
+import { formatDate } from "@/lib/utils/formatDate";
 
-import BankingInformationSelect from './BankingInformationSelect';
-import InvoiceFormReceiverModal from './InvoiceFormReceiverModal';
-import InvoicePartyCard from './InvoicePartyCard';
-import InvoiceServicesTable from './InvoiceServicesTable';
-import PencilIcon from '../icons/PencilIcon';
-import { PlusIcon } from '../icons/PlusIcon';
-import SignaturePad from '../SignaturePad';
-import CompleteProfile from '../ui/complete-profile';
-import ErrorAlert from '../ui/error-alert';
-import Loader from '../ui/loader';
+import BankingInformationSelect from "./BankingInformationSelect";
+import InvoiceFormReceiverModal from "./InvoiceFormReceiverModal";
+import InvoicePartyCard from "./InvoicePartyCard";
+import InvoiceServicesTable from "./InvoiceServicesTable";
+import PencilIcon from "../icons/PencilIcon";
+import { PlusIcon } from "../icons/PlusIcon";
+import SignaturePad from "../SignaturePad";
+import CompleteProfile from "../ui/complete-profile";
+import ErrorAlert from "../ui/error-alert";
+import Loader from "../ui/loader";
 
 type Props = {
   userId: number;
@@ -41,7 +41,7 @@ const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
   const { user, isUserLoading, userError } = useGetUser({ userId });
   const methods = useForm<InvoiceModel>({
     defaultValues: invoiceData || {
-      services: [{ amount: 0, quantity: 0, description: '', unit: '' }],
+      services: [{ amount: 0, quantity: 0, description: "", unit: "" }],
     },
   });
   const {
@@ -54,10 +54,10 @@ const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
   } = methods;
 
   const [receiverData, setReceiverData] = useState<ClientModel | undefined>(
-    invoiceData?.receiver
+    invoiceData?.receiver,
   );
   const [uiState, setUiState] = useState(UiState.Idle);
-  const [submissionMessage, setSubmissionMessage] = useState('');
+  const [submissionMessage, setSubmissionMessage] = useState("");
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
   const [senderSignature, setSenderSignature] = useState<
     string | File | undefined
@@ -88,21 +88,21 @@ const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
   const handleSelectReceiver = (receiver: ClientModel) => {
     setReceiverData(receiver);
     setIsReceiverModalOpen(false);
-    clearErrors('receiver');
+    clearErrors("receiver");
   };
 
   const handleSignatureChange = (signature: string | File) => {
     setSenderSignature(signature);
-    setValue('senderSignature', signature);
-    clearErrors('senderSignature');
+    setValue("senderSignature", signature);
+    clearErrors("senderSignature");
   };
 
   const renderReceiverActions = () => (
-    <div className='absolute right-2 top-2 flex gap-1.5 z-10'>
+    <div className="absolute right-2 top-2 flex gap-1.5 z-10">
       {receiverData ? (
         <Button
-          variant='faded'
-          className='min-w-unit-10 w-unit-26 h-unit-8 cursor-pointer'
+          variant="faded"
+          className="min-w-unit-10 w-unit-26 h-unit-8 cursor-pointer"
           onPress={handleOpenReceiverModal}
         >
           <PencilIcon width={4} height={4} />
@@ -110,8 +110,8 @@ const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
         </Button>
       ) : (
         <Button
-          variant='faded'
-          className='min-w-unit-10 w-22 h-unit-8 cursor-pointer'
+          variant="faded"
+          className="min-w-unit-10 w-22 h-unit-8 cursor-pointer"
           onPress={handleOpenReceiverModal}
         >
           <PlusIcon width={4} height={4} />
@@ -122,11 +122,11 @@ const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
   );
 
   const renderSenderAndReceiverCards = () => (
-    <div className='col-span-1 flex gap-4 w-full flex-col md:col-span-2 lg:col-span-4 md:flex-row'>
-      <InvoicePartyCard insideForm partyType='sender' partyData={user} />
+    <div className="col-span-1 flex gap-4 w-full flex-col md:col-span-2 lg:col-span-4 md:flex-row">
+      <InvoicePartyCard insideForm partyType="sender" partyData={user} />
       <InvoicePartyCard
         insideForm
-        partyType='receiver'
+        partyType="receiver"
         partyData={receiverData}
         renderActions={renderReceiverActions}
         isInvalid={!!errors.receiver}
@@ -136,7 +136,7 @@ const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
   );
 
   const renderInvoiceServices = () => (
-    <div className='flex gap-4 flex-col col-span-1 md:col-span-2 lg:col-span-4'>
+    <div className="flex gap-4 flex-col col-span-1 md:col-span-2 lg:col-span-4">
       <h4>Services</h4>
       <InvoiceServicesTable
         currency={currency}
@@ -148,18 +148,18 @@ const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
   );
 
   const renderBankingInformation = () => (
-    <div className='flex gap-4 flex-col col-span-full'>
+    <div className="flex gap-4 flex-col col-span-full">
       <h4>Banking Details</h4>
       <BankingInformationSelect
         userId={userId}
         setSelectedBankAccount={setBankingInformation}
-        existingBankAccountId={invoiceData?.bankingInformation?.id}
+        existingBankAccount={invoiceData?.bankingInformation}
       />
     </div>
   );
 
   const renderInvoiceSignature = () => (
-    <div className='flex gap-4 flex-col'>
+    <div className="flex gap-4 flex-col">
       <h4>Signature</h4>
       <SignaturePad
         signature={senderSignature}
@@ -173,20 +173,20 @@ const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
   );
 
   const renderSubmissionMessageAndActions = () => (
-    <div className='col-span-full flex w-full items-center gap-5 justify-between overflow-x-hidden'>
+    <div className="col-span-full flex w-full items-center gap-5 justify-between overflow-x-hidden">
       {submissionMessage && (
-        <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
+        <Chip color={uiState === UiState.Success ? "success" : "danger"}>
           {submissionMessage}
         </Chip>
       )}
-      <div className='flex gap-1 justify-end w-full'>
-        <Button color='danger' variant='light' onPress={redirectToInvoicesPage}>
+      <div className="flex gap-1 justify-end w-full">
+        <Button color="danger" variant="light" onPress={redirectToInvoicesPage}>
           Cancel
         </Button>
         <Button
-          type='submit'
+          type="submit"
           isLoading={uiState === UiState.Pending}
-          color='secondary'
+          color="secondary"
         >
           Save
         </Button>
@@ -203,34 +203,34 @@ const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
     !user?.address ||
     !user?.email
   )
-    return <CompleteProfile title='invoice' />;
+    return <CompleteProfile title="invoice" />;
 
   if (userError) return <ErrorAlert />;
 
   return (
     <>
       <FormProvider {...methods}>
-        <Card className='p-8 border border-neutral-800 bg-transparent'>
+        <Card className="p-8 border border-neutral-800 bg-transparent">
           <form
-            aria-label='Add New Invoice Form'
-            className='w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'
+            aria-label="Add New Invoice Form"
+            className="w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
             onSubmit={handleSubmit(onSubmit)}
-            encType='multipart/form-data'
+            encType="multipart/form-data"
           >
             <Input
-              aria-label='Invoice ID'
-              {...register('invoiceId')}
-              label='Invoice ID'
-              placeholder='e.g., INV001'
-              defaultValue={invoiceData?.invoiceId || ''}
+              aria-label="Invoice ID"
+              {...register("invoiceId")}
+              label="Invoice ID"
+              placeholder="e.g., INV001"
+              defaultValue={invoiceData?.invoiceId || ""}
               isInvalid={!!errors.invoiceId}
               errorMessage={errors.invoiceId?.message}
             />
             <Select
-              aria-label='Status'
-              {...register('status')}
-              label='Status'
-              placeholder='Select status'
+              aria-label="Status"
+              {...register("status")}
+              label="Status"
+              placeholder="Select status"
               defaultSelectedKeys={
                 invoiceData?.status ? [`${invoiceData.status}`] : undefined
               }
@@ -242,23 +242,23 @@ const InvoiceForm = ({ userId, currency, invoiceData }: Props) => {
               ))}
             </Select>
             <Input
-              aria-label='Date'
-              {...register('date')}
-              type='date'
-              label='Date'
+              aria-label="Date"
+              {...register("date")}
+              type="date"
+              label="Date"
               defaultValue={
-                invoiceData?.date ? formatDate(invoiceData.date) : ''
+                invoiceData?.date ? formatDate(invoiceData.date) : ""
               }
               errorMessage={errors.date?.message}
               isInvalid={!!errors.date}
             />
             <Input
-              aria-label='Due Date'
-              {...register('dueDate')}
-              type='date'
-              label='Due Date'
+              aria-label="Due Date"
+              {...register("dueDate")}
+              type="date"
+              label="Due Date"
               defaultValue={
-                invoiceData?.dueDate ? formatDate(invoiceData.dueDate) : ''
+                invoiceData?.dueDate ? formatDate(invoiceData.dueDate) : ""
               }
               isInvalid={!!errors.dueDate}
               errorMessage={errors.dueDate?.message}

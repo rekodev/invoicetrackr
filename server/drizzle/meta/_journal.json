@@ -29,6 +29,34 @@
       "when": 1735127784309,
       "tag": "0003_giant_squadron_supreme",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1737830986173,
+      "tag": "0004_next_masque",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1737831305311,
+      "tag": "0005_wandering_squadron_supreme",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1739647436645,
+      "tag": "0006_crazy_micromacro",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1739649917662,
+      "tag": "0007_talented_the_professor",
+      "breakpoints": true
     }
   ]
 }
