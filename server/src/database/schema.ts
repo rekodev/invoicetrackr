@@ -36,15 +36,16 @@ export const invoicesTable = pgTable(
   "invoices",
   {
     date: date().notNull(),
-    senderId: integer("sender_id").notNull(),
-    receiverId: integer("receiver_id").notNull(),
+    userId: integer("user_id").notNull(),
+    senderId: integer("sender_id"),
+    receiverId: integer("receiver_id"),
     totalAmount: numeric("total_amount", { precision: 10, scale: 2 }).notNull(),
     status: varchar({ length: 50 }).notNull(),
     dueDate: date("due_date").notNull(),
     invoiceId: varchar("invoice_id").notNull(),
     id: serial().primaryKey().notNull(),
     senderSignature: varchar("sender_signature", { length: 255 }).notNull(),
-    bankAccountId: integer("bank_account_id").notNull(),
+    bankAccountId: integer("bank_account_id"),
   },
   (table) => [
     foreignKey({
