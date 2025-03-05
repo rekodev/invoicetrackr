@@ -6,7 +6,7 @@ import useGetBankAccount from "@/lib/hooks/banking-information/useGetBankAccount
 import useGetUser from "@/lib/hooks/user/useGetUser";
 import { InvoiceModel } from "@/lib/types/models/invoice";
 
-import PDFDocument from "../pdf/PDFDocument";
+import PDFDocument from "../pdf/pdf-document";
 
 type Props = {
   userId: number;
