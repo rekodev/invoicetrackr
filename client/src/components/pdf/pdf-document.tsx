@@ -26,14 +26,14 @@ type Props = {
   language: string;
 };
 
-const PDFDocument = ({
+export default function PDFDocument({
   t,
   invoiceData,
   senderSignatureImage,
   bankAccount,
   currency,
   language,
-}: Props) => {
+}: Props) {
   const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
     invoiceData;
 
@@ -50,10 +50,14 @@ const PDFDocument = ({
 
   const renderHeader = () => (
     <>
-      <Text style={styles.title}>{t("title")}</Text>
+      <Text style={styles.title}>
+        {invoiceData.sender.businessType === "business"
+          ? t("businessTitle")
+          : t("individualTitle")}{" "}
+      </Text>
       <Text style={styles.subtitle}>
         {t("series_label")} <Text style={styles.boldText}>{series}</Text>{" "}
-        Nr.&nbsp;
+        {t("invoice_number_label")}&nbsp;
         <Text style={styles.boldText}>{number}</Text>
       </Text>
     </>
@@ -237,6 +241,4 @@ const PDFDocument = ({
       </Page>
     </Document>
   );
-};
-
-export default PDFDocument;
+}

@@ -1,8 +1,9 @@
 {
   "invoices": {
     "pdf": {
-      "title": "VAT INVOICE",
-      "series_label": "Invoice series",
+      "businessTitle": "VAT INVOICE",
+      "individualTitle": "INVOICE",
+      "series_label": "Invoice Series",
       "invoice_number_label": "No.",
       "provider_label": "Provider:",
       "business_number_business": "Company code:",

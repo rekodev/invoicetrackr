@@ -1,6 +1,8 @@
 {
   "invoices": {
     "pdf": {
+      "individualTitle": "SĄSKAITA FAKTŪRA",
+      "businessTitle": "PVM SĄSKAITA FAKTŪRA",
       "title": "PVM SĄSKAITA FAKTŪRA",
       "series_label": "Sąskaitos serija",
       "invoice_number_label": "Nr.",

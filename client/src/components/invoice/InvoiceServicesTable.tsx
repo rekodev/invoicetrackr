@@ -27,7 +27,6 @@ const INVOICE_SERVICE_COLUMNS = [
   { name: "AMOUNT", uid: "amount" },
   { name: "ACTION", uid: "actions" },
 ];
-
 const INITIAL_GRAND_TOTAL = 0;
 
 type Props = {
@@ -56,8 +55,9 @@ const InvoiceServicesTable = ({
   });
 
   // watching the entire services array doesn't work, individual services have to be selected
-  const serviceAmounts = fields.map((_field, index) =>
-    watch(`services.${index}.amount`),
+  const serviceAmounts = fields.map(
+    (_field, index) =>
+      watch(`services.${index}.amount`) * watch(`services.${index}.quantity`),
   );
 
   const totalAmount = useMemo(
