@@ -1,4 +1,4 @@
-FROM node:20 AS base
+FROM node:22 AS base
 RUN corepack enable
 WORKDIR /app
 ENV SERVER_PORT=12478
