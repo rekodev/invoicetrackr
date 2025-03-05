@@ -1,5 +1,5 @@
 import { MultipartFile } from "@fastify/multipart";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { useI18n } from "fastify-i18n";

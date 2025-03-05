@@ -1,10 +1,10 @@
-import bcrypt from 'bcrypt';
-import NextAuth from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import { z } from 'zod';
+import bcrypt from "bcryptjs";
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import { z } from "zod";
 
-import { getUserByEmail } from './api';
-import { authConfig } from './auth.config';
+import { getUserByEmail } from "./api";
+import { authConfig } from "./auth.config";
 
 export const { auth, signIn, signOut, unstable_update } = NextAuth({
   ...authConfig,

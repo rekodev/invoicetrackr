@@ -13,7 +13,6 @@
   "author": "rekodev",
   "license": "ISC",
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
     "@types/node": "^22.10.1",
     "@types/pg": "^8.11.10",
     "@types/ws": "^8.5.13",
@@ -32,7 +31,7 @@
     "@neondatabase/serverless": "^0.10.4",
     "@sinclair/typebox": "^0.34.11",
     "ajv-errors": "^3.0.0",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "cloudinary": "^2.5.1",
     "drizzle-orm": "^0.38.2",
     "fastify": "^5.2.0",
