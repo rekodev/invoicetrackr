@@ -1,13 +1,13 @@
-import type { Metadata } from 'next';
-import { ReactNode } from 'react';
+import type { Metadata } from "next";
+import { ReactNode } from "react";
 
-import Breadcrumbs from '@/components/Breadcrumbs';
+import Breadcrumbs from "@/components/Breadcrumbs";
 
-import '../globals.css';
+import "../globals.css";
 
 export const metadata: Metadata = {
-  title: 'InvoiceTrackr',
-  description: 'Invoice generating and tracking',
+  title: "InvoiceTrackr",
+  description: "Invoice generating and tracking",
 };
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <main className='flex-grow flex flex-col max-w-5xl p-6 mx-auto w-full'>
+    <main className="flex-grow flex flex-col max-w-5xl p-6 mx-auto w-full">
       <Breadcrumbs />
       {children}
     </main>
