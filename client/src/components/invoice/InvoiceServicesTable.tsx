@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Button,
   Chip,
@@ -190,8 +192,8 @@ const InvoiceServicesTable = ({
           )}
         </TableHeader>
         <TableBody items={fields} className="bg-red-500">
-          {fields.map((field) => (
-            <TableRow key={field.id}>
+          {fields.map((field, index) => (
+            <TableRow key={index}>
               {(columnKey) => (
                 <TableCell>
                   {renderCell(columnKey, fields.indexOf(field))}

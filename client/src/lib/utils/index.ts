@@ -1,3 +1,5 @@
+import { InvoiceService } from "../types/models/invoice";
+
 export const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
@@ -23,3 +25,6 @@ export const getDaysUntilDueDate = (date: string, dueDate: string) => {
 
   return diffDays;
 };
+
+export const calculateServiceTotal = (services: Array<InvoiceService>) =>
+  services.reduce((acc, currentValue) => acc + Number(currentValue.amount), 0);

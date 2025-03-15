@@ -1,14 +1,15 @@
 "use client";
 
 import { EyeIcon } from "@heroicons/react/24/outline";
-import { Button, Card, Input, Select, SelectItem } from "@heroui/react";
+import { Button, Card, Input } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { HOME_PAGE } from "@/lib/constants/pages";
-import { statusOptions } from "@/lib/constants/table";
 import { InvoiceModel } from "@/lib/types/models/invoice";
+import { calculateServiceTotal } from "@/lib/utils";
+import { formatDate } from "@/lib/utils/formatDate";
 
 import InvoiceServicesTable from "./InvoiceServicesTable";
 import SignaturePad from "../SignaturePad";
@@ -90,7 +91,7 @@ const FreeInvoiceForm = () => {
           <Input
             label="Sender's Email"
             size="sm"
-            aria-label="Unit"
+            aria-label="Sender's Email"
             type="text"
             maxLength={20}
             defaultValue=""
@@ -190,7 +191,7 @@ const FreeInvoiceForm = () => {
           maxLength={20}
           placeholder="e.g.: HABALT22"
           defaultValue=""
-          {...register("receiver.address")}
+          {...register("bankingInformation.code")}
           isInvalid={!!errors.bankingInformation?.code}
           errorMessage={errors.bankingInformation?.code?.message}
         />
@@ -246,7 +247,7 @@ const FreeInvoiceForm = () => {
   return (
     <>
       <FormProvider {...methods}>
-        <div className="px-6 pb-6 mx-auto max-w-5xl">
+        <div className="p-6 mx-auto max-w-5xl">
           <div className="flex flex-col gap-2">
             <h1 className="text-white text-3xl font-semibold">
               Create Invoice
@@ -262,46 +263,38 @@ const FreeInvoiceForm = () => {
               encType="multipart/form-data"
             >
               <h4 className="col-span-4">Invoice Details</h4>
-              <Input
-                aria-label="Invoice ID"
-                {...register("invoiceId")}
-                label="Invoice ID"
-                placeholder="e.g., INV001"
-                defaultValue=""
-                isInvalid={!!errors.invoiceId}
-                errorMessage={errors.invoiceId?.message}
-              />
-              <Select
-                aria-label="Status"
-                {...register("status")}
-                label="Status"
-                placeholder="Select status"
-                defaultSelectedKeys={undefined}
-                isInvalid={!!errors.status}
-                errorMessage={errors.status?.message}
-              >
-                {statusOptions.map((option) => (
-                  <SelectItem key={option.uid}>{option.name}</SelectItem>
-                ))}
-              </Select>
-              <Input
-                aria-label="Date"
-                {...register("date")}
-                type="date"
-                label="Date"
-                defaultValue=""
-                errorMessage={errors.date?.message}
-                isInvalid={!!errors.date}
-              />
-              <Input
-                aria-label="Due Date"
-                {...register("dueDate")}
-                type="date"
-                label="Due Date"
-                defaultValue=""
-                isInvalid={!!errors.dueDate}
-                errorMessage={errors.dueDate?.message}
-              />
+              <div className="flex gap-2 col-span-4">
+                <Input
+                  className="w-full"
+                  aria-label="Invoice ID"
+                  {...register("invoiceId")}
+                  label="Invoice ID"
+                  placeholder="e.g., INV001"
+                  defaultValue=""
+                  isInvalid={!!errors.invoiceId}
+                  errorMessage={errors.invoiceId?.message}
+                />
+                <Input
+                  className="w-full"
+                  aria-label="Date"
+                  {...register("date")}
+                  type="date"
+                  label="Date"
+                  defaultValue={formatDate(new Date(Date.now()).toISOString())}
+                  errorMessage={errors.date?.message}
+                  isInvalid={!!errors.date}
+                />
+                <Input
+                  className="w-full"
+                  aria-label="Due Date"
+                  {...register("dueDate")}
+                  type="date"
+                  label="Due Date"
+                  defaultValue=""
+                  isInvalid={!!errors.dueDate}
+                  errorMessage={errors.dueDate?.message}
+                />
+              </div>
               {renderSenderAndReceiverFields()}
               {renderInvoiceServices()}
               {renderBankingInformation()}
@@ -314,7 +307,10 @@ const FreeInvoiceForm = () => {
 
       <InvoiceModal
         userId={undefined}
-        invoiceData={getValues()}
+        invoiceData={{
+          ...getValues(),
+          totalAmount: calculateServiceTotal(getValues("services")),
+        }}
         currency="usd"
         language="en"
         isOpen={isInvoiceModalOpen}
