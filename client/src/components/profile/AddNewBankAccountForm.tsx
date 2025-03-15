@@ -10,7 +10,7 @@ import {
   Chip,
   Divider,
   Input,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';

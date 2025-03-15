@@ -1,32 +1,30 @@
-import { AxiosResponse } from 'axios';
-import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction } from 'react';
-import { SubmitHandler, UseFormSetError } from 'react-hook-form';
+import { AxiosResponse } from "axios";
+import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction } from "react";
+import { SubmitHandler, UseFormSetError } from "react-hook-form";
 
-import { addInvoice, updateInvoice } from '@/api';
-import { INVOICES_PAGE } from '@/lib/constants/pages';
-import { UiState } from '@/lib/constants/uiState';
-import { ClientModel } from '@/lib/types/models/client';
-import { InvoiceModel, InvoiceService } from '@/lib/types/models/invoice';
+import { addInvoice, updateInvoice } from "@/api";
+import { INVOICES_PAGE } from "@/lib/constants/pages";
+import { UiState } from "@/lib/constants/uiState";
+import { ClientModel } from "@/lib/types/models/client";
+import { InvoiceModel } from "@/lib/types/models/invoice";
 import {
   BankingInformationFormModel,
   UserModel,
-} from '@/lib/types/models/user';
-import { AddInvoiceResp, UpdateInvoiceResp } from '@/lib/types/response';
+} from "@/lib/types/models/user";
+import { AddInvoiceResp, UpdateInvoiceResp } from "@/lib/types/response";
+import { calculateServiceTotal } from "@/lib/utils";
 
-import useGetInvoice from './useGetInvoice';
-import useGetInvoices from './useGetInvoices';
-
-const calculateServiceTotal = (services: Array<InvoiceService>) =>
-  services.reduce((acc, currentValue) => acc + Number(currentValue.amount), 0);
+import useGetInvoice from "./useGetInvoice";
+import useGetInvoices from "./useGetInvoices";
 
 const INITIAL_RECEIVER_DATA: ClientModel = {
-  businessNumber: '',
-  businessType: 'business',
-  address: '',
-  email: '',
-  name: '',
-  type: 'receiver',
+  businessNumber: "",
+  businessType: "business",
+  address: "",
+  email: "",
+  name: "",
+  type: "receiver",
 };
 
 type Props = {
@@ -64,13 +62,13 @@ const useInvoiceFormSubmissionHandler = ({
   const onSubmit: SubmitHandler<InvoiceModel> = async (data) => {
     if (!user?.id) return;
 
-    setSubmissionMessage('');
+    setSubmissionMessage("");
     setUiState(UiState.Pending);
 
     const fullData: typeof data = {
       ...data,
       sender: user,
-      senderSignature: data.senderSignature || '',
+      senderSignature: data.senderSignature || "",
       receiver: receiverData || invoiceData?.receiver || INITIAL_RECEIVER_DATA,
       totalAmount: calculateServiceTotal(data.services),
       bankingInformation: bankingInformation || data.bankingInformation,
@@ -85,7 +83,7 @@ const useInvoiceFormSubmissionHandler = ({
     }
     setSubmissionMessage(response.data.message);
 
-    if ('errors' in response.data) {
+    if ("errors" in response.data) {
       setUiState(UiState.Failure);
 
       response.data.errors.forEach((error) => {

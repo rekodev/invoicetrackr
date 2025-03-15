@@ -8,7 +8,7 @@ import {
   DropdownTrigger,
   Input,
   Selection,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 
 import { ClientModel } from '@/lib/types/models/client';

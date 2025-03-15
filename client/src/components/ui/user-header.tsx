@@ -11,7 +11,7 @@ import {
   Dropdown,
   DropdownMenu,
   Avatar,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { usePathname, useRouter } from 'next/navigation';
 
 import { logOut } from '@/lib/actions';

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Button,
@@ -7,50 +7,47 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-} from '@nextui-org/react';
-import { usePathname } from 'next/navigation';
+} from "@heroui/react";
+import { usePathname } from "next/navigation";
 
 import {
-  DASHBOARD_PAGE,
+  CREATE_INVOICE_PAGE,
+  HOME_PAGE,
   LOGIN_PAGE,
   SIGN_UP_PAGE,
-} from '@/lib/constants/pages';
+} from "@/lib/constants/pages";
 
-import AppLogo from '../icons/AppLogo.jsx';
+import AppLogo from "../icons/AppLogo.jsx";
 
 const navbarItems = [
-  { name: 'Features', href: '#' },
-  { name: 'Customers', href: '#' },
-  { name: 'Pricing', href: '#' },
-  { name: 'Company', href: '#' },
+  { name: "Features", href: "#features" },
+  { name: "Pricing", href: "#pricing" },
 ];
 
 export default function GuestHeader() {
   const pathname = usePathname();
 
   return (
-    <Navbar isBordered>
-      <NavbarBrand
-        className='text-white flex gap-2'
-        as={Link}
-        href={DASHBOARD_PAGE}
-      >
+    <Navbar isBordered maxWidth="xl">
+      <NavbarBrand className="text-white flex gap-2" as={Link} href={HOME_PAGE}>
         <AppLogo />
-        <p className='font-bold text-inherit'>
-          INVOICE<span className='text-secondary-600'>TRACKR</span>
+        <p className="font-bold text-inherit">
+          INVOICE<span className="text-secondary-600">TRACKR</span>
         </p>
       </NavbarBrand>
 
-      <NavbarContent className='hidden sm:flex gap-4' justify='center'>
+      <NavbarContent justify="start" className="hidden sm:flex gap-4">
         {navbarItems.map((item, index) => {
           const isActive = pathname?.includes(item.href);
 
           return (
             <NavbarItem key={index} isActive={isActive}>
               <Link
-                href={item.href}
-                aria-current='page'
-                color={isActive ? 'secondary' : 'foreground'}
+                href={
+                  pathname !== HOME_PAGE ? HOME_PAGE + item.href : item.href
+                }
+                aria-current="page"
+                color={isActive ? "secondary" : "foreground"}
               >
                 {item.name}
               </Link>
@@ -59,9 +56,19 @@ export default function GuestHeader() {
         })}
       </NavbarContent>
 
-      <NavbarContent as='div' justify='end'>
-        <NavbarItem className='hidden lg:flex'>
-          <Link color='secondary' href={LOGIN_PAGE}>
+      <NavbarContent as="div" justify="end">
+        <NavbarItem className="border-r border-default-100 pr-4 hidden lg:flex">
+          <Button
+            as={Link}
+            color="secondary"
+            variant="faded"
+            href={CREATE_INVOICE_PAGE}
+          >
+            Create Invoice
+          </Button>
+        </NavbarItem>
+        <NavbarItem className="hidden lg:flex">
+          <Link color="secondary" href={LOGIN_PAGE}>
             Login
           </Link>
         </NavbarItem>
@@ -69,8 +76,8 @@ export default function GuestHeader() {
           <Button
             as={Link}
             href={SIGN_UP_PAGE}
-            color='secondary'
-            variant='flat'
+            color="secondary"
+            variant="flat"
           >
             Sign Up
           </Button>
