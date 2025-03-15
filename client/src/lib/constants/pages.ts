@@ -17,3 +17,6 @@ export const ADD_NEW_BANK_ACCOUNT_PAGE = "/profile/banking-information/new";
 
 export const CHANGE_PASSWORD_PAGE = "/profile/change-password";
 export const ACCOUNT_SETTINGS_PAGE = "/profile/account-settings";
+
+export const PRIVACY_POLICY_PAGE = "/privacy-policy";
+export const TERMS_OF_SERVICE_PAGE = "/terms-of-service";

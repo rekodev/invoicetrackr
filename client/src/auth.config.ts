@@ -13,6 +13,8 @@ export const authConfig = {
         "/forgot-password",
         "/",
         "/create-invoice",
+        "/privacy-policy",
+        "/terms-of-service",
       ];
       const pathIsPublic = publicPaths.includes(nextUrl.pathname);
 

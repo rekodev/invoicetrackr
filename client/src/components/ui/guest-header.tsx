@@ -12,7 +12,6 @@ import { usePathname } from "next/navigation";
 
 import {
   CREATE_INVOICE_PAGE,
-  DASHBOARD_PAGE,
   HOME_PAGE,
   LOGIN_PAGE,
   SIGN_UP_PAGE,
@@ -21,10 +20,8 @@ import {
 import AppLogo from "../icons/AppLogo.jsx";
 
 const navbarItems = [
-  { name: "Features", href: "#" },
-  { name: "Customers", href: "#" },
-  { name: "Pricing", href: "#" },
-  { name: "Company", href: "#" },
+  { name: "Features", href: "#features" },
+  { name: "Pricing", href: "#pricing" },
 ];
 
 export default function GuestHeader() {
@@ -39,14 +36,16 @@ export default function GuestHeader() {
         </p>
       </NavbarBrand>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent justify="start" className="hidden sm:flex gap-4">
         {navbarItems.map((item, index) => {
           const isActive = pathname?.includes(item.href);
 
           return (
             <NavbarItem key={index} isActive={isActive}>
               <Link
-                href={item.href}
+                href={
+                  pathname !== HOME_PAGE ? HOME_PAGE + item.href : item.href
+                }
                 aria-current="page"
                 color={isActive ? "secondary" : "foreground"}
               >

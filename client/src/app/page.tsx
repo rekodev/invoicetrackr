@@ -5,7 +5,7 @@ import { Button } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { CREATE_INVOICE_PAGE } from "@/lib/constants/pages";
+import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from "@/lib/constants/pages";
 
 export default function Home() {
   const renderDivider = () => (
@@ -78,10 +78,10 @@ export default function Home() {
                     <CheckIcon className="h-5 w-5 text-secondary" />
                   </div>
                   <div>
-                    <h3 className="font-bold">Beautiful Templates</h3>
+                    <h3 className="font-bold">Save & Edit Invoices</h3>
                     <p className="text-muted-foreground">
-                      Choose from multiple professional invoice templates to
-                      match your brand.
+                      Easily create, save, and edit invoices whenever needed,
+                      ensuring flexibility in your billing process.
                     </p>
                   </div>
                 </li>
@@ -90,10 +90,10 @@ export default function Home() {
                     <CheckIcon className="h-5 w-5 text-secondary" />
                   </div>
                   <div>
-                    <h3 className="font-bold">Easy Customization</h3>
+                    <h3 className="font-bold">Income Dashboard</h3>
                     <p className="text-muted-foreground">
-                      Add your logo, change colors, and customize fields to
-                      create the perfect invoice.
+                      Get a clear overview of your earnings with a visual income
+                      dashboard displaying monthly trends and recent invoices.
                     </p>
                   </div>
                 </li>
@@ -102,10 +102,10 @@ export default function Home() {
                     <CheckIcon className="h-5 w-5 text-secondary" />
                   </div>
                   <div>
-                    <h3 className="font-bold">Export to PDF</h3>
+                    <h3 className="font-bold">Multi-Currency & Language</h3>
                     <p className="text-muted-foreground">
-                      Download your invoice as a professional PDF document ready
-                      to send to clients.
+                      Customize invoices with your preferred currency and
+                      language to suit international clients.
                     </p>
                   </div>
                 </li>
@@ -170,7 +170,7 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <div className="flex flex-col rounded-lg border border-default-600 bg-secondary-50 bg-opacity-75 text-primary-foreground shadow-sm">
+            <div className="backdrop-blur-xl bg-secondary-50 bg-opacity-50 flex flex-col rounded-lg border border-secondary-500 text-primary-foreground shadow-sm">
               <div className="flex flex-col space-y-1.5 p-6">
                 <h3 className="text-2xl font-bold">Premium</h3>
                 <p className="text-primary-foreground/80">
@@ -189,7 +189,7 @@ export default function Home() {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="h-4 w-4" />
-                    <span>Save invoices to your account</span>
+                    <span>Save and edit invoices</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="h-4 w-4" />
@@ -201,7 +201,7 @@ export default function Home() {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="h-4 w-4" />
-                    <span>Save your signature</span>
+                    <span>Choose currency and language</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="h-4 w-4" />
@@ -211,7 +211,7 @@ export default function Home() {
               </div>
               <div className="flex flex-col p-6 pt-0">
                 <Button variant="solid" color="secondary">
-                  <Link href="/signup">Upgrade Now</Link>
+                  <Link href={SIGN_UP_PAGE}>Upgrade Now</Link>
                 </Button>
               </div>
             </div>
@@ -239,9 +239,9 @@ export default function Home() {
                 Testimonial
               </div>
               <blockquote className="text-lg font-semibold">
-                "InvoiceFlow has completely transformed how I handle invoicing.
-                The free version was great to start, but the premium features
-                save me hours every month."
+                "InvoiceTrackr has completely transformed how I handle
+                invoicing. The free version is great to start, but the premium
+                features save me hours every month."
               </blockquote>
               <div className="flex items-center gap-4">
                 <div className="rounded-full bg-muted-foreground/20 p-1">
@@ -262,9 +262,9 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <div className="font-semibold">Sarah Johnson</div>
+                  <div className="font-semibold">Nikita K.</div>
                   <div className="text-sm text-muted-foreground">
-                    Freelance Designer
+                    Freelance Data Analyst
                   </div>
                 </div>
               </div>
