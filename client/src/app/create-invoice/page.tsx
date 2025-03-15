@@ -1,5 +1,5 @@
-import InvoiceForm from "@/components/invoice/InvoiceForm";
+import FreeInvoiceForm from "@/components/invoice/free-invoice-form";
 
 export default function CreateInvoicePage() {
-  return <InvoiceForm userId={0} currency="EUR" />;
+  return <FreeInvoiceForm />;
 }

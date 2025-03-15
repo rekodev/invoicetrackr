@@ -51,18 +51,18 @@ const AccountSettingsForm = ({ userId }: Props) => {
     useState(false);
 
   const availableLanguages = [
-    { code: "LT", name: t("available_languages.lt") },
-    { code: "EN", name: t("available_languages.en") },
+    { code: "lt", name: t("available_languages.lt") },
+    { code: "en", name: t("available_languages.en") },
   ] as const;
 
   const availableCurrencies = [
     {
-      code: "EUR",
+      code: "eur",
       name: t("available_currencies.eur"),
       symbol: "€",
     },
     {
-      code: "USD",
+      code: "usd",
       name: t("available_currencies.usd"),
       symbol: "$",
     },

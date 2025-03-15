@@ -21,7 +21,7 @@ type Props = {
   t: any;
   invoiceData: InvoiceModel;
   senderSignatureImage: string;
-  bankAccount: BankingInformationFormModel;
+  bankAccount: BankingInformationFormModel | undefined;
   currency: string;
   language: string;
 };
@@ -44,14 +44,14 @@ export default function PDFDocument({
   const cents = Math.floor(totalAmount * 100) % 100;
 
   const renderBusinessNumberLabel = (party: "sender" | "receiver") =>
-    invoiceData[party].businessType === "business"
+    invoiceData?.[party]?.businessType === "business"
       ? t("business_number_business")
       : t("business_number_individual");
 
   const renderHeader = () => (
     <>
       <Text style={styles.title}>
-        {invoiceData.sender.businessType === "business"
+        {invoiceData?.sender?.businessType === "business"
           ? t("businessTitle")
           : t("individualTitle")}{" "}
       </Text>
@@ -68,31 +68,31 @@ export default function PDFDocument({
       <View style={styles.row}>
         <View style={styles.leftColumn}>
           <Text style={styles.detailItemTitle}>{t("provider_label")}</Text>
-          <Text style={styles.detailItem}>{sender.name}</Text>
+          <Text style={styles.detailItem}>{sender?.name}</Text>
           <Text style={styles.detailItem}>
-            {renderBusinessNumberLabel("sender")} {sender.businessNumber}
+            {renderBusinessNumberLabel("sender")} {sender?.businessNumber}
           </Text>
           <Text style={styles.detailItem}>
-            {t("address_label")} {sender.address}
+            {t("address_label")} {sender?.address}
           </Text>
         </View>
         <View style={styles.rightColumn}>
           <Text style={[styles.detailItem, styles.boldText]}>
             {t("invoice_date_label")}
           </Text>
-          <Text style={styles.detailItem}>{formatDate(date)}</Text>
+          <Text style={styles.detailItem}>{date ? formatDate(date) : ""}</Text>
         </View>
       </View>
 
       <View style={styles.row}>
         <View style={styles.leftColumn}>
           <Text style={styles.detailItemTitle}>{t("payer_label")}</Text>
-          <Text style={styles.detailItem}>{receiver.name}</Text>
+          <Text style={styles.detailItem}>{receiver?.name}</Text>
           <Text style={styles.detailItem}>
-            {renderBusinessNumberLabel("receiver")} {receiver.businessNumber}
+            {renderBusinessNumberLabel("receiver")} {receiver?.businessNumber}
           </Text>
           <Text style={styles.detailItem}>
-            {t("address_label")} {receiver.address}
+            {t("address_label")} {receiver?.address}
           </Text>
         </View>
       </View>
@@ -121,7 +121,7 @@ export default function PDFDocument({
       </View>
       <View style={[styles.tableCol, styles.tableCol5]}>
         <Text style={styles.tableCell}>
-          {(amount || 0).toFixed(2)} {currency.toUpperCase()}
+          {(Number(amount) || 0).toFixed(2)} {currency.toUpperCase()}
         </Text>
       </View>
     </View>
@@ -176,7 +176,7 @@ export default function PDFDocument({
                 />
               </View>
             )}
-            <Text style={styles.nameWithSubtext}>{sender.name}</Text>
+            <Text style={styles.nameWithSubtext}>{sender?.name}</Text>
           </View>
           <View style={styles.signatureLine}></View>
           <View style={styles.signatureAndName}>
@@ -209,15 +209,19 @@ export default function PDFDocument({
   const renderFooter = () => (
     <View style={styles.footer}>
       <Text style={[styles.footerItem, styles.boldText]}>
-        {t("payment_terms_label", { days: getDaysUntilDueDate(date, dueDate) })}
-      </Text>
-      <Text style={styles.footerItem}>
-        {t("bank_info_label", {
-          bank_name: bankAccount.name,
-          bank_code: bankAccount.code,
-          bank_account_number: bankAccount.accountNumber,
+        {t("payment_terms_label", {
+          days: date && dueDate ? getDaysUntilDueDate(date, dueDate) : "0",
         })}
       </Text>
+      {bankAccount?.code && bankAccount?.name && bankAccount?.accountNumber && (
+        <Text style={styles.footerItem}>
+          {t("bank_info_label", {
+            bank_name: bankAccount?.name || "-",
+            bank_code: bankAccount?.code || "-",
+            bank_account_number: bankAccount?.accountNumber || "-",
+          })}
+        </Text>
+      )}
     </View>
   );
 
@@ -229,10 +233,16 @@ export default function PDFDocument({
         {renderTableSection()}
         <View style={styles.midSection}>
           <Text style={[styles.detailItem, styles.boldText]}>
-            {amountToWords(totalAmount, language.toLowerCase())}{" "}
+            {totalAmount
+              ? amountToWords(totalAmount, language.toLowerCase())
+              : "0"}{" "}
             {currency.toUpperCase()}{" "}
             {t("cents", {
-              cents: String(cents).length > 1 ? cents : `0${cents}`,
+              cents: isNaN(cents)
+                ? "00"
+                : String(cents).length > 1
+                  ? cents
+                  : `0${cents}`,
             })}
           </Text>
           {renderSignatureSection()}

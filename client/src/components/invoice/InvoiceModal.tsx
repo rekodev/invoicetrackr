@@ -9,7 +9,7 @@ import { InvoiceModel } from "@/lib/types/models/invoice";
 import PDFDocument from "../pdf/pdf-document";
 
 type Props = {
-  userId: number;
+  userId: number | undefined;
   currency: string;
   language: string;
   isOpen: boolean;
@@ -35,8 +35,6 @@ const InvoiceModal = ({
     bankAccountId: user?.selectedBankAccountId,
   });
 
-  if (!user || !bankAccount) return null;
-
   return (
     <Modal
       className="h-[84.84vh] w-[90%] max-w-md min-w-[60%] pb-2 max-h-[978px]"
@@ -56,7 +54,7 @@ const InvoiceModal = ({
                 currency={currency}
                 invoiceData={invoiceData}
                 senderSignatureImage={senderSignatureImage}
-                bankAccount={bankAccount}
+                bankAccount={bankAccount || invoiceData.bankingInformation}
               />
             </PDFViewer>
           </div>

@@ -8,8 +8,8 @@ export const validateInvoiceId = (invoiceId: string) => {
 };
 
 export const splitInvoiceId = (invoiceId: string) => {
-  const series = invoiceId.slice(0, 3);
-  const number = invoiceId.slice(3);
+  const series = invoiceId?.slice(0, 3);
+  const number = invoiceId?.slice(3);
 
   return [series, number];
 };
