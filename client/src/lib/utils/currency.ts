@@ -1,10 +1,10 @@
 export const getCurrencySymbol = (currencyCode: string) => {
   switch (currencyCode) {
-    case 'EUR':
-      return '€';
-    case 'USD':
-      return '$';
+    case "eur":
+      return "€";
+    case "usd":
+      return "$";
     default:
-      return '$';
+      return "$";
   }
 };

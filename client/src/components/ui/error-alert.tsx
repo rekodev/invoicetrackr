@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
   Link,
-} from '@nextui-org/react';
+} from "@heroui/react";
 
 import { HOME_PAGE } from '@/lib/constants/pages';
 

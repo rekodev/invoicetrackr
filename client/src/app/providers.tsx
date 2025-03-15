@@ -1,8 +1,8 @@
-import { AbstractIntlMessages, NextIntlClientProvider } from 'next-intl';
-import { ReactNode } from 'react';
+import { AbstractIntlMessages, NextIntlClientProvider } from "next-intl";
+import { ReactNode } from "react";
 
-import { NextUIProvider } from '@/components/providers/next-ui-provider';
-import SWRProvider from '@/components/providers/swr-provider';
+import { HeroUIProvider } from "@/components/providers/hero-ui-provider";
+import SWRProvider from "@/components/providers/swr-provider";
 
 type Props = {
   children: ReactNode;
@@ -12,9 +12,9 @@ type Props = {
 export function Providers({ children, messages }: Props) {
   return (
     <NextIntlClientProvider messages={messages}>
-      <NextUIProvider>
+      <HeroUIProvider>
         <SWRProvider>{children}</SWRProvider>
-      </NextUIProvider>
+      </HeroUIProvider>
     </NextIntlClientProvider>
   );
 }

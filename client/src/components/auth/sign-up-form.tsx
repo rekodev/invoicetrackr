@@ -13,7 +13,7 @@ import {
   CardHeader,
   Input,
   Link,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { useActionState } from 'react';
 
 import { signUp } from '@/lib/actions';

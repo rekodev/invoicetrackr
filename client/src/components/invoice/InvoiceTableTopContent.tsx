@@ -5,7 +5,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Input,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 

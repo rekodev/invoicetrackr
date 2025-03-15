@@ -62,8 +62,8 @@ export const registerUser = async ({
     .values({
       email,
       password,
-      currency: "USD",
-      language: "EN",
+      currency: "usd",
+      language: "en",
       type: "sender",
       businessType: "individual",
       businessNumber: "",
