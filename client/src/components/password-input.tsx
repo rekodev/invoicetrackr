@@ -1,7 +1,7 @@
 'use client';
 
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { Input } from '@nextui-org/react';
+import { Input } from "@heroui/react";
 import { useState } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 

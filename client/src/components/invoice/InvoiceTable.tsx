@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Key, useCallback, useMemo, useState } from "react";
 
 import { columns, statusOptions } from "@/lib/constants/table";

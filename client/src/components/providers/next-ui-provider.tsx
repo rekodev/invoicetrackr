@@ -1,12 +1,12 @@
 'use client';
 
-import { NextUIProvider as NextUIProviderFromLib } from '@nextui-org/react';
+import { HeroUIProvider as HeroUIProviderFromLib } from "@heroui/react";
 import { ReactNode } from 'react';
 
-export function NextUIProvider({ children }: { children: ReactNode }) {
+export function HeroUIProvider({ children }: { children: ReactNode }) {
   return (
-    <NextUIProviderFromLib className='flex flex-col min-h-screen justify-between'>
+    <HeroUIProviderFromLib className='flex flex-col min-h-screen justify-between'>
       {children}
-    </NextUIProviderFromLib>
+    </HeroUIProviderFromLib>
   );
 }

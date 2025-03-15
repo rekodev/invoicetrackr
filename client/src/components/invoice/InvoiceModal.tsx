@@ -1,4 +1,4 @@
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/react";
 import { PDFViewer } from "@react-pdf/renderer";
 import { useTranslations } from "next-intl";
 

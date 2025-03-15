@@ -4,7 +4,7 @@ import {
   BuildingLibraryIcon,
   IdentificationIcon,
 } from "@heroicons/react/24/outline";
-import { Card, Link, Select, Selection, SelectItem } from "@nextui-org/react";
+import { Card, Link, Select, Selection, SelectItem } from "@heroui/react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { BANKING_INFORMATION_PAGE } from "@/lib/constants/pages";

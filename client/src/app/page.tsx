@@ -2,7 +2,7 @@
 
 import { CREATE_INVOICE_PAGE } from "@/lib/constants/pages";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
 

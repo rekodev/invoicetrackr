@@ -1,7 +1,7 @@
 "use client";
 
 import { EyeIcon } from "@heroicons/react/24/outline";
-import { Button, Card, Input, Select, SelectItem } from "@nextui-org/react";
+import { Button, Card, Input, Select, SelectItem } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";

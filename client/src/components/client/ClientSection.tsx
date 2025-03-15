@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 import { useState } from 'react';
 
 import useClientSearchAndFilter from '@/lib/hooks/client/useClientSearchAndFilter';

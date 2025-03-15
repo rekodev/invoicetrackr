@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
   Link,
-} from '@nextui-org/react';
+} from "@heroui/react";
 
 import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
 

@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Key, useEffect, useMemo } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 

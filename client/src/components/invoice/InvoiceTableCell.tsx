@@ -1,4 +1,4 @@
-import { Chip, Tooltip } from "@nextui-org/react";
+import { Chip, Tooltip } from "@heroui/react";
 import { Key } from "react";
 
 import { InvoiceModel, InvoiceStatus } from "@/lib/types/models/invoice";

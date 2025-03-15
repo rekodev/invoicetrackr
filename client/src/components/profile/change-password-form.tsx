@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   Divider,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';

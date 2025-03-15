@@ -11,7 +11,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { useState } from 'react';
 
 import useGetClients from '@/lib/hooks/client/useGetClients';

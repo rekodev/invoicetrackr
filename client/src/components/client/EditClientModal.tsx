@@ -9,7 +9,7 @@ import {
   ModalHeader,
   Select,
   SelectItem,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { ChangeEvent, useState } from 'react';
 
 import { updateClient } from '@/api';

@@ -1,7 +1,7 @@
 "use client";
 
 import { UserIcon } from "@heroicons/react/24/outline";
-import { Card, CardBody } from "@nextui-org/react";
+import { Card, CardBody } from "@heroui/react";
 
 import { ClientModel } from "@/lib/types/models/client";
 import { cn } from "@/lib/utils/cn";
