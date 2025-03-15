@@ -128,7 +128,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
             defaultSelectedKeys={user?.language ? [user.language] : undefined}
           >
             {availableLanguages.map((language) => (
-              <SelectItem key={language.code} value={language.code}>
+              <SelectItem key={language.code} textValue={language.code}>
                 {language.name}
               </SelectItem>
             ))}
@@ -145,7 +145,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
             defaultSelectedKeys={user?.currency ? [user.currency] : undefined}
           >
             {availableCurrencies.map((currency) => (
-              <SelectItem key={currency.code} value={currency.code}>
+              <SelectItem key={currency.code} textValue={currency.code}>
                 {`${currency.name} (${currency.symbol})`}
               </SelectItem>
             ))}
