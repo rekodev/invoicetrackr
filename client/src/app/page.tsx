@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-        <section className="max-w-5xl px-6 mx-auto w-full py-12 md:py-24 lg:py-32 xl:py-48">
+        <section className="max-w-7xl px-6 mx-auto w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
             <div className="flex flex-col justify-center space-y-4">
               <div className="space-y-2">
@@ -37,11 +37,11 @@ export default function Home() {
               </div>
             </div>
             <Image
-              src="/placeholder.svg?height=550&width=850"
+              src="https://res.cloudinary.com/dpc8mowbo/image/upload/fl_preserve_transparency/v1742077159/amyxvmvgwypog08nu4mp.jpg?_s=public-apps"
               width={850}
               height={550}
               alt="Invoice app dashboard preview"
-              className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+              className="mx-auto overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
             />
           </div>
         </section>
@@ -50,7 +50,7 @@ export default function Home() {
 
         <section
           id="features"
-          className="max-w-5xl mx-auto px-6 w-full py-12 md:py-24 lg:py-32 bg-muted"
+          className="max-w-8xl max-w-7xl mx-auto px-6 w-full py-12 md:py-24 lg:py-32 bg-muted"
         >
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
@@ -63,13 +63,13 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
+          <div className="mx-auto grid max-w-7xl items-center gap-12 py-12 lg:grid-cols-2 lg:gap-12">
             <Image
-              src="/placeholder.svg?height=550&width=850"
+              src="https://res.cloudinary.com/dpc8mowbo/image/upload/fl_preserve_transparency/v1742079914/bmnbendbuwp8ydtusijr.jpg?_s=public-apps"
               width={850}
               height={550}
               alt="Invoice editor interface"
-              className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full"
+              className="mx-auto overflow-hidden rounded-xl object-cover object-center sm:w-full"
             />
             <div className="flex flex-col justify-center space-y-4">
               <ul className="grid gap-6">
@@ -118,7 +118,7 @@ export default function Home() {
 
         <section
           id="pricing"
-          className="max-w-5xl mx-auto w-full px-6 py-12 md:py-24 lg:py-32"
+          className="max-w-7xl mx-auto w-full px-6 py-12 md:py-24 lg:py-32"
         >
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
@@ -130,8 +130,8 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl gap-6 py-12 lg:grid-cols-2">
-            <div className="flex flex-col border-default-100 rounded-lg border justify-between bg-card text-card-foreground shadow-sm">
+          <div className="mx-auto max-w-7xl flex flex-col justify-center gap-6 py-12 lg:flex-row">
+            <div className="flex flex-col max-w-md w-full border-default-100 rounded-lg border justify-between bg-card text-card-foreground shadow-sm">
               <div>
                 <div className="flex flex-col space-y-1.5 p-6">
                   <h3 className="text-2xl font-bold">Free</h3>
@@ -170,7 +170,7 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <div className="backdrop-blur-xl bg-secondary-50 bg-opacity-50 flex flex-col rounded-lg border border-secondary-500 text-primary-foreground shadow-sm">
+            <div className="w-full max-w-md bg-secondary-50 bg-opacity-50 flex flex-col rounded-lg border border-secondary-500 text-primary-foreground shadow-sm">
               <div className="flex flex-col space-y-1.5 p-6">
                 <h3 className="text-2xl font-bold">Premium</h3>
                 <p className="text-primary-foreground/80">
@@ -220,8 +220,8 @@ export default function Home() {
 
         {renderDivider()}
 
-        <section className="max-w-5xl mx-auto w-full px-6 py-12 md:py-24 lg:py-32 bg-muted">
-          <div className="grid gap-10 px-10 md:gap-16 lg:grid-cols-2">
+        <section className="max-w-7xl mx-auto w-full px-6 py-12 md:py-24 lg:py-32 bg-muted">
+          <div className="grid gap-12 md:gap-16 lg:grid-cols-2">
             <div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
                 Ready to streamline your invoicing process?

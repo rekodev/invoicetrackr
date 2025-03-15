@@ -176,7 +176,7 @@ const FreeInvoiceForm = () => {
           labelPlacement="inside"
           aria-label="Bank Name"
           type="text"
-          placeholder="e.g.: Swedbank"
+          placeholder="e.g., Swedbank"
           maxLength={20}
           defaultValue=""
           variant="flat"
@@ -189,7 +189,7 @@ const FreeInvoiceForm = () => {
           aria-label="Bank Code"
           type="text"
           maxLength={20}
-          placeholder="e.g.: HABALT22"
+          placeholder="e.g., HABALT22"
           defaultValue=""
           {...register("bankingInformation.code")}
           isInvalid={!!errors.bankingInformation?.code}
@@ -198,7 +198,7 @@ const FreeInvoiceForm = () => {
         <Input
           label="Bank Account Number"
           aria-label="Bank Account Number"
-          placeholder="e.g.: LT121000011101001000"
+          placeholder="e.g., LT121000011101001000"
           type="text"
           maxLength={20}
           defaultValue=""

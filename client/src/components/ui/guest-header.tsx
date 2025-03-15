@@ -28,7 +28,7 @@ export default function GuestHeader() {
   const pathname = usePathname();
 
   return (
-    <Navbar isBordered>
+    <Navbar isBordered maxWidth="xl">
       <NavbarBrand className="text-white flex gap-2" as={Link} href={HOME_PAGE}>
         <AppLogo />
         <p className="font-bold text-inherit">
