@@ -1,14 +1,15 @@
 "use client";
 
 import { Link } from "@heroui/react";
+import { usePathname } from "next/navigation";
 
-import AppLogo from "./icons/AppLogo";
 import {
   HOME_PAGE,
   PRIVACY_POLICY_PAGE,
   TERMS_OF_SERVICE_PAGE,
 } from "@/lib/constants/pages";
-import { usePathname } from "next/navigation";
+
+import AppLogo from "./icons/AppLogo";
 
 const Footer = () => {
   const pathname = usePathname();
