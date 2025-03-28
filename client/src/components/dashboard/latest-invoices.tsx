@@ -23,6 +23,7 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
         {invoices?.length
           ? invoices.map((invoiceData) => (
               <ClientCard
+                truncate
                 key={invoiceData.id}
                 currency={currency}
                 client={{

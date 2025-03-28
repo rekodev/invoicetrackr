@@ -13,9 +13,17 @@ type Props = {
   onClick?: () => void;
   amount?: number;
   hideIcon?: boolean;
+  truncate?: boolean;
 };
 
-const ClientCard = ({ currency, client, onClick, amount, hideIcon }: Props) => {
+const ClientCard = ({
+  truncate,
+  currency,
+  client,
+  onClick,
+  amount,
+  hideIcon,
+}: Props) => {
   return (
     <div onClick={onClick}>
       <Card
@@ -32,12 +40,19 @@ const ClientCard = ({ currency, client, onClick, amount, hideIcon }: Props) => {
               </div>
             )}
             <div>
-              <div className="pb-0.5 uppercase text-small font-bold">
+              <div
+                className={cn(
+                  "pb-0.5 truncate uppercase text-small font-bold",
+                  { "truncate max-w-40": truncate },
+                )}
+              >
                 {client.name}
               </div>
               <div className="flex gap-2 text-xs text-default-500">
                 {client.address && <span>{client.address}</span>}
-                <span>{client.email}</span>
+                <span className={cn("", { "max-w-40 truncate": truncate })}>
+                  {client.email}
+                </span>
               </div>
             </div>
           </div>
