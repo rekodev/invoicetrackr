@@ -13,9 +13,13 @@ import { UiState } from "@/lib/constants/uiState";
 import useInvoiceFormSubmissionHandler from "@/lib/hooks/invoice/useInvoiceFormSubmissionHandler";
 import { ClientModel } from "@/lib/types/models/client";
 import { InvoiceModel } from "@/lib/types/models/invoice";
-import { UserModel } from "@/lib/types/models/user";
+import {
+  BankingInformationFormModel,
+  UserModel,
+} from "@/lib/types/models/user";
 import { formatDate } from "@/lib/utils/formatDate";
 
+import BankingInformationModal from "./banking-information-modal";
 import InvoiceFormReceiverModal from "./InvoiceFormReceiverModal";
 import InvoiceServicesTable from "./InvoiceServicesTable";
 import SignaturePad from "../SignaturePad";
@@ -57,6 +61,8 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState("");
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
+  const [isBankingInformationModalOpen, setIsBankingInformationModalOpen] =
+    useState(false);
   const [senderSignature, setSenderSignature] = useState<
     string | File | undefined
   >(invoiceData?.senderSignature);
@@ -77,16 +83,21 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
     setIsReceiverModalOpen(false);
   };
 
-  const handleOpenBankingInformationModal = () => {
-    // TODO: Implement
-  };
-
   const handleSelectReceiver = (receiver: ClientModel) => {
-    setValue("receiver.name", receiver.name, { shouldTouch: true });
+    setValue("receiver.name", receiver.name);
     setValue("receiver.businessNumber", receiver.businessNumber);
     setValue("receiver.address", receiver.address);
     setValue("receiver.email", receiver.email);
     setIsReceiverModalOpen(false);
+  };
+
+  const handleBankAccountSelect = (
+    bankAccount: BankingInformationFormModel,
+  ) => {
+    setValue("bankingInformation.name", bankAccount.name);
+    setValue("bankingInformation.code", bankAccount.code);
+    setValue("bankingInformation.accountNumber", bankAccount.accountNumber);
+    setIsBankingInformationModalOpen(false);
   };
 
   const handleSignatureChange = (signature: string | File) => {
@@ -251,47 +262,64 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
           size="sm"
           variant="faded"
           className="min-w-unit-10 w-unit-26 h-unit-8 cursor-pointer"
-          onPress={handleOpenBankingInformationModal}
+          onPress={() => setIsBankingInformationModalOpen(true)}
         >
           <BuildingLibraryIcon className="w-4 h-4" />
           Select Bank Account
         </Button>
       </div>
       <div className="flex gap-4">
-        <Input
-          label="Bank Name"
-          labelPlacement="inside"
-          aria-label="Bank Name"
-          type="text"
-          placeholder="e.g., Swedbank"
-          maxLength={20}
-          defaultValue=""
-          variant="flat"
-          {...register("bankingInformation.name")}
-          isInvalid={!!errors.bankingInformation?.name}
-          errorMessage={errors.bankingInformation?.name?.message}
+        <Controller
+          name="bankingInformation.name"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Bank Name"
+              labelPlacement="inside"
+              aria-label="Bank Name"
+              type="text"
+              placeholder="e.g., Swedbank"
+              maxLength={20}
+              variant="flat"
+              isInvalid={!!errors.bankingInformation?.name}
+              errorMessage={errors.bankingInformation?.name?.message}
+            />
+          )}
         />
-        <Input
-          label="Bank Code"
-          aria-label="Bank Code"
-          type="text"
-          maxLength={20}
-          placeholder="e.g., HABALT22"
-          defaultValue=""
-          {...register("bankingInformation.code")}
-          isInvalid={!!errors.bankingInformation?.code}
-          errorMessage={errors.bankingInformation?.code?.message}
+
+        <Controller
+          name="bankingInformation.code"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Bank Code"
+              aria-label="Bank Code"
+              type="text"
+              maxLength={20}
+              placeholder="e.g., HABALT22"
+              isInvalid={!!errors.bankingInformation?.code}
+              errorMessage={errors.bankingInformation?.code?.message}
+            />
+          )}
         />
-        <Input
-          label="Bank Account Number"
-          aria-label="Bank Account Number"
-          placeholder="e.g., LT121000011101001000"
-          type="text"
-          maxLength={20}
-          defaultValue=""
-          {...register("bankingInformation.accountNumber")}
-          isInvalid={!!errors.bankingInformation?.accountNumber}
-          errorMessage={errors.bankingInformation?.accountNumber?.message}
+
+        <Controller
+          name="bankingInformation.accountNumber"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Bank Account Number"
+              aria-label="Bank Account Number"
+              placeholder="e.g., LT121000011101001000"
+              type="text"
+              maxLength={20}
+              isInvalid={!!errors.bankingInformation?.accountNumber}
+              errorMessage={errors.bankingInformation?.accountNumber?.message}
+            />
+          )}
         />
       </div>
     </div>
@@ -417,6 +445,12 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
         isOpen={isReceiverModalOpen}
         onClose={handleCloseReceiverModal}
         onReceiverSelect={handleSelectReceiver}
+      />
+      <BankingInformationModal
+        userId={user.id || 0}
+        isOpen={isBankingInformationModalOpen}
+        onClose={() => setIsBankingInformationModalOpen(false)}
+        onBankAccountSelect={handleBankAccountSelect}
       />
     </>
   );
