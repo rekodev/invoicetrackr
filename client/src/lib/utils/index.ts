@@ -27,4 +27,8 @@ export const getDaysUntilDueDate = (date: string, dueDate: string) => {
 };
 
 export const calculateServiceTotal = (services: Array<InvoiceService>) =>
-  services.reduce((acc, currentValue) => acc + Number(currentValue.amount), 0);
+  services.reduce(
+    (acc, currentValue) =>
+      acc + Number(currentValue.amount * Number(currentValue.quantity)),
+    0,
+  );
