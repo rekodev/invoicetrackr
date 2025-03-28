@@ -17,6 +17,7 @@
       "unit_label": "Mato vnt.",
       "quantity_label": "Kiekis",
       "amount_label": "Suma",
+      "total_amount": "Viso",
       "cents": "{cents} ct.",
       "invoice_issued_by_label": "Sąskaitą išrašė:",
       "invoice_received_by_label": "Sąskaitą gavo:",

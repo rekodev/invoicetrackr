@@ -1,19 +1,21 @@
-import { useMemo } from 'react';
-import useSWR from 'swr';
+import { useMemo } from "react";
+import useSWR from "swr";
 
-import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { BankingInformationFormModel } from "@/lib/types/models/user";
 
-import SWRKeys from '../../constants/swrKeys';
+import SWRKeys from "../../constants/swrKeys";
 
 type Props = {
-  userId: number;
+  userId: number | undefined;
   bankAccountId: number | undefined;
 };
 
 const useGetBankAccount = ({ userId, bankAccountId }: Props) => {
   const { data, isLoading, mutate, error, isValidating } =
     useSWR<BankingInformationFormModel>(
-      bankAccountId ? SWRKeys.bankAccount(userId, bankAccountId) : null
+      bankAccountId && userId
+        ? SWRKeys.bankAccount(userId, bankAccountId)
+        : null,
     );
 
   return useMemo(
@@ -24,7 +26,7 @@ const useGetBankAccount = ({ userId, bankAccountId }: Props) => {
       bankAccountError: error,
       bankAccountIsValidating: isValidating,
     }),
-    [data, isLoading, mutate, error, isValidating]
+    [data, isLoading, mutate, error, isValidating],
   );
 };
 

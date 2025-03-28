@@ -1,20 +1,28 @@
-import type { NextAuthConfig } from 'next-auth';
+import type { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
   pages: {
-    signIn: '/login',
+    signIn: "/login",
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const publicPaths = ['/login', '/sign-up', '/forgot-password', '/'];
+      const publicPaths = [
+        "/login",
+        "/sign-up",
+        "/forgot-password",
+        "/",
+        "/create-invoice",
+        "/privacy-policy",
+        "/terms-of-service",
+      ];
       const pathIsPublic = publicPaths.includes(nextUrl.pathname);
 
       if (!pathIsPublic) {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page
       } else if (isLoggedIn) {
-        return Response.redirect(new URL('/dashboard', nextUrl));
+        return Response.redirect(new URL("/dashboard", nextUrl));
       }
 
       return true;
@@ -25,7 +33,7 @@ export const authConfig = {
         token.currency = user.currency;
       }
 
-      if (trigger === 'update') {
+      if (trigger === "update") {
         token = {
           ...token,
           language: session.user.language,

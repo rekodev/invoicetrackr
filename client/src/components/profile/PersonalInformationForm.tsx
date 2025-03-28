@@ -10,7 +10,7 @@ import {
   Input,
   Select,
   SelectItem,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 

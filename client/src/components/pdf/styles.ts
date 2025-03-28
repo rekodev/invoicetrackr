@@ -80,11 +80,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRightWidth: 0,
     borderBottomWidth: 0,
-    marginVertical: 16,
+    marginTop: 16,
   },
   tableRow: {
     margin: "auto",
     flexDirection: "row",
+  },
+  totalTableRow: {
+    flexDirection: "row",
+    alignSelf: "flex-end",
+    borderLeftWidth: 1,
+    borderColor: "#bfbfbf",
+    marginBottom: 16,
   },
   tableColHeader: {
     width: "25%",
@@ -124,7 +131,8 @@ const styles = StyleSheet.create({
     fontWeight: 500,
   },
   tableCell: {
-    margin: 5,
+    padding: 5,
+    marginVertical: "auto",
     fontSize: 10,
   },
   midSection: {

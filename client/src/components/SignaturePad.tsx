@@ -1,4 +1,4 @@
-import { CheckCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
+import { CheckCircleIcon, PencilSquareIcon } from "@heroicons/react/16/solid";
 import {
   Button,
   Card,
@@ -11,11 +11,11 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure,
-} from '@nextui-org/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import SignatureCanvas from 'react-signature-canvas';
+} from "@heroui/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import SignatureCanvas from "react-signature-canvas";
 
-import { base64ToFile, imageUrlToBase64 } from '@/lib/utils/base64';
+import { base64ToFile, imageUrlToBase64 } from "@/lib/utils/base64";
 
 type Props = {
   signature?: File | string;
@@ -35,25 +35,25 @@ const SignaturePad = ({
   isChipVisible = false,
 }: Props) => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-  const [signatureImage, setSignatureImage] = useState('');
+  const [signatureImage, setSignatureImage] = useState("");
 
   const signatureRef = useRef<SignatureCanvas>(null);
 
   const signatureImgUrl = useMemo(
     () =>
       signature
-        ? typeof signature === 'string'
+        ? typeof signature === "string"
           ? signature
           : URL.createObjectURL(signature)
-        : '',
-    [signature]
+        : "",
+    [signature],
   );
 
   useEffect(() => {
     if (!signature || signatureImage) return;
 
     const setInitialSignatureImage = async () => {
-      if (typeof signature !== 'string') {
+      if (typeof signature !== "string") {
         setSignatureImage(URL.createObjectURL(signature));
 
         return;
@@ -77,20 +77,14 @@ const SignaturePad = ({
   }, [isOpen, signatureImage]);
 
   const saveSignature = () => {
-    const dataURL = signatureRef.current
-      ?.getTrimmedCanvas()
-      .toDataURL('image/png');
+    const trimmedDataURL = signatureRef.current
+      ?.getCanvas()
+      .toDataURL("image/png");
 
-    setSignatureImage(dataURL || '');
-
-    const trimmedSignatureImage = signatureRef.current
-      ?.getTrimmedCanvas()
-      .toDataURL('image/png');
-
-    if (trimmedSignatureImage) {
-      setSignatureImage(trimmedSignatureImage);
+    if (trimmedDataURL) {
+      setSignatureImage(trimmedDataURL);
       onSignatureChange(
-        base64ToFile(trimmedSignatureImage, 'sender_signature.png', 'image/png')
+        base64ToFile(trimmedDataURL, "sender_signature.png", "image/png"),
       );
     }
 
@@ -108,32 +102,32 @@ const SignaturePad = ({
 
   return (
     <>
-      <div className='flex flex-col gap-1.5'>
+      <div className="flex flex-col gap-1.5">
         <Card
-          radius='lg'
+          radius="lg"
           className={`flex justify-center items-center relative aspect-4/3 overflow-hidden ${
-            isInvalid && 'bg-[#F3126040]'
+            isInvalid && "bg-[#F3126040]"
           }`}
           onPress={onOpen}
           isPressable
         >
-          <CardBody className='p-0 w-full h-full flex flex-col gap-2 justify-center items-center overflow-visible group'>
+          <CardBody className="p-0 w-full h-full flex flex-col gap-2 justify-center items-center overflow-visible group">
             {signatureImgUrl ? (
               <>
                 <Image
                   src={signatureImgUrl}
-                  alt='Signature'
-                  className='z-0 rounded-none'
+                  alt="Signature"
+                  className="bg-white z-0 rounded-none"
                 />
-                <div className='absolute w-full h-full bg-black bg-opacity-75 flex-col justify-center items-center gap-2 hidden group-hover:flex'>
-                  <PencilSquareIcon className='h-10 w-10' />
-                  <p className='font-medium'>Edit Signature</p>
+                <div className="absolute w-full h-full bg-black bg-opacity-75 flex-col justify-center items-center gap-2 hidden group-hover:flex">
+                  <PencilSquareIcon className="h-10 w-10" />
+                  <p className="font-medium">Edit Signature</p>
                 </div>
               </>
             ) : (
               <>
-                <PencilSquareIcon className='h-8 w-8' />
-                <p className='font-medium'>Add a Signature</p>
+                <PencilSquareIcon className="h-8 w-8" />
+                <p className="font-medium">Add a Signature</p>
               </>
             )}
           </CardBody>
@@ -141,21 +135,21 @@ const SignaturePad = ({
         {profileSignature && isChipVisible && (
           <Chip
             onClose={setProfileSignature}
-            endContent={<CheckCircleIcon className='w-4 h-4 mr-0.5' />}
-            color='secondary'
-            variant='faded'
+            endContent={<CheckCircleIcon className="w-4 h-4 mr-0.5" />}
+            color="secondary"
+            variant="faded"
           >
             Use Profile Signature
           </Chip>
         )}
         {isInvalid && (
-          <Chip variant='light' className='mt-[-4px]' size='sm' color='danger'>
+          <Chip variant="light" className="mt-[-4px]" size="sm" color="danger">
             {errorMessage}
           </Chip>
         )}
       </div>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='xl'>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
         <ModalContent>
           <ModalHeader>Signature</ModalHeader>
           <ModalBody>
@@ -164,19 +158,19 @@ const SignaturePad = ({
               canvasProps={{
                 width: 532,
                 height: 400,
-                style: { backgroundColor: 'white' },
+                style: { backgroundColor: "white" },
               }}
-              backgroundColor='white'
+              backgroundColor="white"
             />
           </ModalBody>
           <ModalFooter>
             <Button
-              color='danger'
+              color="danger"
               onPress={() => signatureRef.current?.clear()}
             >
               Clear
             </Button>
-            <Button color='secondary' onPress={saveSignature}>
+            <Button color="secondary" onPress={saveSignature}>
               Save
             </Button>
           </ModalFooter>

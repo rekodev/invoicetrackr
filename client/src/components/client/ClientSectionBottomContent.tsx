@@ -1,4 +1,4 @@
-import { Button, Pagination } from '@nextui-org/react';
+import { Button, Pagination } from "@heroui/react";
 import { Dispatch, SetStateAction } from 'react';
 
 const PER_PAGE = 8;
