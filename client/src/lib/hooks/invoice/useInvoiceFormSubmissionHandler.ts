@@ -29,9 +29,7 @@ const INITIAL_RECEIVER_DATA: ClientModel = {
 
 type Props = {
   invoiceData: InvoiceModel | undefined;
-  userId: number;
   user: UserModel | undefined;
-  receiverData: ClientModel | undefined;
   bankingInformation?: BankingInformationFormModel;
   setUiState: Dispatch<SetStateAction<UiState>>;
   setSubmissionMessage: Dispatch<SetStateAction<string>>;
@@ -40,18 +38,16 @@ type Props = {
 
 const useInvoiceFormSubmissionHandler = ({
   invoiceData,
-  userId,
   user,
-  receiverData,
   bankingInformation,
   setUiState,
   setSubmissionMessage,
   setError,
 }: Props) => {
   const router = useRouter();
-  const { mutateInvoices } = useGetInvoices({ userId });
+  const { mutateInvoices } = useGetInvoices({ userId: user?.id || 0 });
   const { mutateInvoice } = useGetInvoice({
-    userId,
+    userId: user?.id || 0,
     invoiceId: invoiceData?.id,
   });
 
@@ -69,7 +65,7 @@ const useInvoiceFormSubmissionHandler = ({
       ...data,
       sender: user,
       senderSignature: data.senderSignature || "",
-      receiver: receiverData || invoiceData?.receiver || INITIAL_RECEIVER_DATA,
+      receiver: data?.receiver || INITIAL_RECEIVER_DATA,
       totalAmount: calculateServiceTotal(data.services),
       bankingInformation: bankingInformation || data.bankingInformation,
     };

@@ -51,7 +51,9 @@ const FreeInvoiceForm = () => {
       <h4>Sender and Receiver Data</h4>
       <div className="col-span-4 flex w-full justify-between gap-4">
         <Card className="w-full p-4 flex flex-col gap-4">
-          <p className="text-default-500 text-sm">From:</p>
+          <div className="min-h-8 flex items-center justify-between">
+            <p className="text-default-500 text-sm">From:</p>
+          </div>
           <Input
             label="Sender's Name"
             size="sm"
@@ -102,7 +104,9 @@ const FreeInvoiceForm = () => {
           />
         </Card>
         <Card className="w-full flex flex-col gap-4 p-4">
-          <p className="text-default-500 text-sm">To:</p>
+          <div className="min-h-8 flex items-center justify-between">
+            <p className="text-default-500 text-sm">To:</p>
+          </div>
           <Input
             label="Receiver's Name"
             size="sm"
@@ -259,41 +263,45 @@ const FreeInvoiceForm = () => {
           <Card className="mt-8 p-8 border border-neutral-800 bg-transparent">
             <form
               aria-label="Add New Invoice Form"
-              className="w-full grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+              className="w-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
               encType="multipart/form-data"
             >
-              <h4 className="col-span-4">Invoice Details</h4>
-              <div className="flex gap-2 col-span-4">
-                <Input
-                  className="w-full"
-                  aria-label="Invoice ID"
-                  {...register("invoiceId")}
-                  label="Invoice ID"
-                  placeholder="e.g., INV001"
-                  defaultValue=""
-                  isInvalid={!!errors.invoiceId}
-                  errorMessage={errors.invoiceId?.message}
-                />
-                <Input
-                  className="w-full"
-                  aria-label="Date"
-                  {...register("date")}
-                  type="date"
-                  label="Date"
-                  defaultValue={formatDate(new Date(Date.now()).toISOString())}
-                  errorMessage={errors.date?.message}
-                  isInvalid={!!errors.date}
-                />
-                <Input
-                  className="w-full"
-                  aria-label="Due Date"
-                  {...register("dueDate")}
-                  type="date"
-                  label="Due Date"
-                  defaultValue=""
-                  isInvalid={!!errors.dueDate}
-                  errorMessage={errors.dueDate?.message}
-                />
+              <div className="col-span-full flex flex-col gap-4">
+                <h4>Invoice Details</h4>
+                <div className="flex gap-2 col-span-4">
+                  <Input
+                    className="w-full"
+                    aria-label="Invoice ID"
+                    {...register("invoiceId")}
+                    label="Invoice ID"
+                    placeholder="e.g., INV001"
+                    defaultValue=""
+                    isInvalid={!!errors.invoiceId}
+                    errorMessage={errors.invoiceId?.message}
+                  />
+                  <Input
+                    className="w-full"
+                    aria-label="Date"
+                    {...register("date")}
+                    type="date"
+                    label="Date"
+                    defaultValue={formatDate(
+                      new Date(Date.now()).toISOString(),
+                    )}
+                    errorMessage={errors.date?.message}
+                    isInvalid={!!errors.date}
+                  />
+                  <Input
+                    className="w-full"
+                    aria-label="Due Date"
+                    {...register("dueDate")}
+                    type="date"
+                    label="Due Date"
+                    defaultValue=""
+                    isInvalid={!!errors.dueDate}
+                    errorMessage={errors.dueDate?.message}
+                  />
+                </div>
               </div>
               {renderSenderAndReceiverFields()}
               {renderInvoiceServices()}
