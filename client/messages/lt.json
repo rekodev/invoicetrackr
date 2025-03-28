@@ -55,5 +55,21 @@
       "save_changes": "Išsaugoti pakeitimus",
       "password_requirements": "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną skaičių, didžiąją raidę, mažąją raidę ir specialų simbolį."
     }
+  },
+  "forgot_password": {
+    "title": "Atstatyti slaptažodį",
+    "description": "Įveskite savo el. pašto adresą, kad gautumėte slaptažodžio atstatymo instrukcijas",
+    "card_header": "Pamiršote slaptažodį",
+    "email": "El. paštas",
+    "email_placeholder": "Įveskite savo el. pašto adresą",
+    "reset_link": "Siųsti atstatymo nuorodą",
+    "login": "Grįžti į prisijungimą",
+    "create_account": "Reikia sukurti paskyrą?",
+    "sign_up": "Registruotis",
+    "success": "Jūsų slaptažodis buvo sėkmingai atstatytas.",
+    "error": {
+      "general": "Nepavyko apdoroti jūsų slaptažodžio atstatymo užklausos. Bandykite dar kartą vėliau.",
+      "email": "Pateiktas el. pašto adresas nerastas mūsų sistemoje."
+    }
   }
 }

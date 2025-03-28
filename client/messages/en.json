@@ -54,5 +54,21 @@
       "save_changes": "Save Changes",
       "password_requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
     }
+  },
+  "forgot_password": {
+    "title": "Reset Password",
+    "description": "Enter your email to receive password reset instructions",
+    "card_header": "Forgot Password",
+    "email": "Email",
+    "email_placeholder": "Enter your email address",
+    "reset_link": "Send Reset Link",
+    "login": "Back to Login",
+    "create_account": "Need to create an account?",
+    "sign_up": "Sign Up",
+    "success": "Your password has been reset successfully.",
+    "error": {
+      "general": "We were unable to process your password reset request. Please try again later.",
+      "email": "The provided email address was not found in our system."
+    }
   }
 }

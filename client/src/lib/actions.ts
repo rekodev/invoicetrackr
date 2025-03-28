@@ -7,6 +7,27 @@ import { registerUser } from "@/api";
 import { signIn, signOut, unstable_update } from "../auth";
 import { UserModel } from "./types/models/user";
 
+type ResetPasswordActionReturnType = {
+  ok: boolean;
+  message?: string;
+};
+
+// TODO: Finish implementing
+export async function resetPasswordAction(
+  _prevState: ResetPasswordActionReturnType | undefined,
+): Promise<ResetPasswordActionReturnType> {
+  try {
+    // const response = await resetPassword()
+    // if (response.status)
+    if (true) {
+      return { ok: true, message: "success" };
+    }
+    return { ok: false, message: "error.email" };
+  } catch (error) {
+    return { ok: false, message: "error.general" };
+  }
+}
+
 export async function authenticate(
   _prevState: string | undefined,
   formData: FormData,
