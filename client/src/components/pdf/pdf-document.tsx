@@ -127,36 +127,53 @@ export default function PDFDocument({
     </View>
   );
 
+  const renderTotalAmountTableRow = () => (
+    <View style={styles.totalTableRow}>
+      <View style={[styles.tableCol, styles.tableCol4]}>
+        <Text style={styles.tableCellHeader}>{t("total_amount")}</Text>
+      </View>
+      <View style={[styles.tableCol, styles.tableCol5]}>
+        <Text style={styles.tableCell}>
+          {Number(invoiceData.totalAmount).toFixed(2)} {currency.toUpperCase()}
+        </Text>
+      </View>
+    </View>
+  );
+
   const renderTableSection = () => (
-    <View style={styles.table}>
-      <View style={styles.tableRow}>
-        <View style={[styles.tableColHeader, styles.tableCol1]}>
-          <Text style={styles.tableCellHeader}>{t("position_label")}</Text>
+    <>
+      <View style={styles.table}>
+        <View style={styles.tableRow}>
+          <View style={[styles.tableColHeader, styles.tableCol1]}>
+            <Text style={styles.tableCellHeader}>{t("position_label")}</Text>
+          </View>
+          <View style={[styles.tableColHeader, styles.tableCol2]}>
+            <Text style={styles.tableCellHeader}>{t("description_label")}</Text>
+          </View>
+          <View style={[styles.tableColHeader, styles.tableCol3]}>
+            <Text style={styles.tableCellHeader}>{t("unit_label")}</Text>
+          </View>
+          <View style={[styles.tableColHeader, styles.tableCol4]}>
+            <Text style={styles.tableCellHeader}>{t("quantity_label")}</Text>
+          </View>
+          <View style={[styles.tableColHeader, styles.tableCol5]}>
+            <Text style={styles.tableCellHeader}>{t("amount_label")}</Text>
+          </View>
         </View>
-        <View style={[styles.tableColHeader, styles.tableCol2]}>
-          <Text style={styles.tableCellHeader}>{t("description_label")}</Text>
-        </View>
-        <View style={[styles.tableColHeader, styles.tableCol3]}>
-          <Text style={styles.tableCellHeader}>{t("unit_label")}</Text>
-        </View>
-        <View style={[styles.tableColHeader, styles.tableCol4]}>
-          <Text style={styles.tableCellHeader}>{t("quantity_label")}</Text>
-        </View>
-        <View style={[styles.tableColHeader, styles.tableCol5]}>
-          <Text style={styles.tableCellHeader}>{t("amount_label")}</Text>
-        </View>
+
+        {services.map((service, index) =>
+          renderTableRow(
+            index,
+            service.description,
+            service.unit,
+            service.quantity,
+            service.amount,
+          ),
+        )}
       </View>
 
-      {services.map((service, index) =>
-        renderTableRow(
-          index,
-          service.description,
-          service.unit,
-          service.quantity,
-          service.amount,
-        ),
-      )}
-    </View>
+      {renderTotalAmountTableRow()}
+    </>
   );
 
   const renderSignatureSection = () => (

@@ -16,6 +16,7 @@
       "unit_label": "Unit",
       "quantity_label": "Qty",
       "amount_label": "Amount",
+      "total_amount": "Total",
       "cents": "{cents} c",
       "invoice_issued_by_label": "Issued by:",
       "invoice_received_by_label": "Received by:",
