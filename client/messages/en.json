@@ -66,5 +66,17 @@
     "login": "Back to Login",
     "create_account": "Need to create an account?",
     "sign_up": "Sign Up"
+  },
+  "create_new_password": {
+    "title": "Reset Password",
+    "description": "Create a new password for your account",
+    "form": {
+      "title": "Create New Password",
+      "new_password": "New Password",
+      "confirm_new_password": "Confirm New Password",
+      "submit": "Reset Password",
+      "remember_your_password": "Remember your password?",
+      "sign_in": "Sign in"
+    }
   }
 }

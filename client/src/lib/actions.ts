@@ -9,15 +9,15 @@ import { registerUser, resetUserPassword } from "@/api";
 import { signIn, signOut, unstable_update } from "../auth";
 import { UserModel } from "./types/models/user";
 
-export type ResetPasswordActionReturnType = {
+export type ActionReturnType = {
   ok: boolean;
   message?: string;
 };
 
 export async function resetPasswordAction(
-  _prevState: ResetPasswordActionReturnType | undefined,
+  _prevState: ActionReturnType | undefined,
   email: string,
-): Promise<ResetPasswordActionReturnType> {
+): Promise<ActionReturnType> {
   try {
     const response = await resetUserPassword({ email });
 
@@ -30,6 +30,15 @@ export async function resetPasswordAction(
     const t = await getTranslations();
     return { ok: false, message: t("general_error") };
   }
+}
+
+export async function createNewPasswordAction(
+  _prevState: ActionReturnType | undefined,
+  formData: FormData,
+): Promise<ActionReturnType> {
+  // TODO: Implement
+  // await createNewPassword(formData) or something
+  // return { ok: true, message: response.data.message };
 }
 
 export async function authenticate(

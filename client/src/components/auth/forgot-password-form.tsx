@@ -18,19 +18,14 @@ import {
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
-import {
-  resetPasswordAction,
-  ResetPasswordActionReturnType,
-} from "@/lib/actions";
+import { resetPasswordAction, ActionReturnType } from "@/lib/actions";
 import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from "@/lib/constants/pages";
 
 export default function ForgotPasswordForm() {
   const t = useTranslations("forgot_password");
   const [response, formAction, isPending] = useActionState(
-    (
-      prevState: ResetPasswordActionReturnType | undefined,
-      formData: FormData,
-    ) => resetPasswordAction(prevState, formData.get("email") as string),
+    (prevState: ActionReturnType | undefined, formData: FormData) =>
+      resetPasswordAction(prevState, formData.get("email") as string),
     undefined,
   );
 

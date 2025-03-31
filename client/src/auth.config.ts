@@ -16,7 +16,9 @@ export const authConfig = {
         "/privacy-policy",
         "/terms-of-service",
       ];
-      const pathIsPublic = publicPaths.includes(nextUrl.pathname);
+      const pathIsPublic =
+        publicPaths.includes(nextUrl.pathname) ||
+        nextUrl.pathname.startsWith("/create-new-password");
 
       if (!pathIsPublic) {
         if (isLoggedIn) return true;

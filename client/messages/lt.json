@@ -67,5 +67,17 @@
     "login": "Grįžti į prisijungimą",
     "create_account": "Reikia sukurti paskyrą?",
     "sign_up": "Registruotis"
+  },
+  "create_new_password": {
+    "title": "Atstatyti slaptažodį",
+    "description": "Sukurkite naują slaptažodį savo paskyrai",
+    "form": {
+      "title": "Sukurti naują slaptažodį",
+      "new_password": "Naujas slaptažodis",
+      "confirm_new_password": "Patvirtinti naują slaptažodį",
+      "submit": "Atstatyti slaptažodį",
+      "remember_your_password": "Prisiminate slaptažodį?",
+      "sign_in": "Prisijungti"
+    }
   }
 }
