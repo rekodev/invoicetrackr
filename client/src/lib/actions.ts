@@ -1,30 +1,34 @@
 "use server";
 
+import { HttpStatusCode } from "axios";
 import { AuthError } from "next-auth";
+import { getTranslations } from "next-intl/server";
 
-import { registerUser } from "@/api";
+import { registerUser, resetUserPassword } from "@/api";
 
 import { signIn, signOut, unstable_update } from "../auth";
 import { UserModel } from "./types/models/user";
 
-type ResetPasswordActionReturnType = {
+export type ResetPasswordActionReturnType = {
   ok: boolean;
   message?: string;
 };
 
-// TODO: Finish implementing
 export async function resetPasswordAction(
   _prevState: ResetPasswordActionReturnType | undefined,
+  email: string,
 ): Promise<ResetPasswordActionReturnType> {
   try {
-    // const response = await resetPassword()
-    // if (response.status)
-    if (true) {
-      return { ok: true, message: "success" };
+    const response = await resetUserPassword({ email });
+
+    if (response.status !== HttpStatusCode.Ok) {
+      return { ok: false, message: response.data.message };
     }
-    return { ok: false, message: "error.email" };
+
+    return { ok: true, message: response.data.message };
   } catch (error) {
-    return { ok: false, message: "error.general" };
+    const t = await getTranslations();
+    return { ok: false, message: t("general_error") };
   }
 }
 
@@ -52,7 +56,7 @@ export async function logOut() {
 }
 
 export async function signUp(
-  prevState: { message: string; ok: boolean } | undefined,
+  _prevState: { message: string; ok: boolean } | undefined,
   formData: FormData,
 ) {
   const rawFormData = {
