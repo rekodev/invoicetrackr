@@ -18,6 +18,8 @@ import {
 } from "../database";
 import { UserModel } from "../types/models";
 import { BadRequestError, NotFoundError } from "../utils/errors";
+import { transporter } from "../config/nodemailer";
+import { saveResetTokenToDb } from "../database/passwordReset";
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { id: number } }>,
@@ -254,4 +256,39 @@ export const changeUserPassword = async (
   reply
     .status(200)
     .send({ message: i18n.t("errors.user.changePassword.success") });
+};
+
+export const resetUserPassword = async (
+  req: FastifyRequest<{ Params: { id: number }; Body: { email: string } }>,
+  reply: FastifyReply,
+) => {
+  const { email } = req.body;
+  const user = await getUserByEmailFromDb(email);
+  const i18n = await useI18n(req);
+
+  if (!user)
+    throw new NotFoundError(i18n.t("errors.user.resetPassword.notFound"));
+
+  const resetToken = crypto.randomUUID();
+  const tokenExpiresAt = new Date(Date.now() + 3600000).toISOString();
+
+  await saveResetTokenToDb(user.id, resetToken, tokenExpiresAt);
+
+  const resetLink = `https://invoicetrackr.app/create-new-password/${resetToken}`;
+  const mailOptions = {
+    from: "invoicetrackr@gmail.com",
+    to: email,
+    subject: i18n.t("emails.resetPassword.subject"),
+    text: i18n.t("emails.resetPassword.text", { resetLink }),
+  };
+
+  transporter.sendMail(mailOptions, (error) => {
+    if (error) {
+      throw new BadRequestError(i18n.t("errors.user.resetPassword.failure"));
+    }
+  });
+
+  reply
+    .status(200)
+    .send({ message: i18n.t("errors.user.resetPassword.success") });
 };

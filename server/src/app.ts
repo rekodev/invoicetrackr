@@ -1,22 +1,22 @@
-import cors from '@fastify/cors';
-import fastifyMultipart from '@fastify/multipart';
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 
-import { v2 as cloudinary } from 'cloudinary';
-import dotenv from 'dotenv';
-import fastify from 'fastify';
-import { defineI18n, useI18n } from 'fastify-i18n';
+import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv";
+import fastify from "fastify";
+import { defineI18n, useI18n } from "fastify-i18n";
+import cors from "@fastify/cors";
+import fastifyMultipart from "@fastify/multipart";
 
-import { cloudinaryConfig } from './config/cloudinary';
-import { getPgVersion } from './database/db';
-import i18n from './plugins/i18n';
+import { cloudinaryConfig } from "./config/cloudinary";
+import { getPgVersion } from "./database/db";
+import i18n from "./plugins/i18n";
 import {
   bankingInformationRoutes,
   clientRoutes,
   invoiceRoutes,
   userRoutes,
-} from './routes';
-import { getTranslationKeyPrefix } from './utils/url';
+} from "./routes";
+import { getTranslationKeyPrefix } from "./utils/url";
 
 dotenv.config();
 cloudinary.config(cloudinaryConfig);
@@ -27,13 +27,13 @@ const server = fastify({
     customOptions: {
       allErrors: true,
     },
-    plugins: [require('ajv-errors')],
+    plugins: [require("ajv-errors")],
   },
 }).withTypeProvider<TypeBoxTypeProvider>();
 
 defineI18n(server, {
-  en: import('./locales/en'),
-  lt: import('./locales/lt'),
+  en: import("./locales/en"),
+  lt: import("./locales/lt"),
 });
 
 server.register(cors);
@@ -49,12 +49,12 @@ server.setErrorHandler(async function (error, request, reply) {
 
   if (error.validation) {
     return reply.status(400).send({
-      message: 'Review fields and retry',
+      message: "Review fields and retry",
       errors: error.validation.map((err) => {
-        const key = err.instancePath.substring(1).replace(/\//g, '.');
+        const key = err.instancePath.substring(1).replace(/\//g, ".");
         const keyPrefix = getTranslationKeyPrefix(request.url);
         const nonDynamicKeyWithPrefix =
-          `validationErrors.${keyPrefix}.${key}`.replace(/\.?\d+/g, '');
+          `validationErrors.${keyPrefix}.${key}`.replace(/\.?\d+/g, "");
 
         return {
           key,
