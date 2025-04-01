@@ -8,7 +8,7 @@ import {
   changeUserPasswordOptions,
   createNewUserPasswordOptions,
   deleteUserOptions,
-  getUserByEmailOptions,
+  loginUserOptions,
   getUserOptions,
   getUserResetPasswordTokenOptions,
   postUserOptions,
@@ -26,7 +26,7 @@ const userRoutes = (
 ) => {
   fastify.get("/api/users/:userId", getUserOptions);
 
-  fastify.get("/api/users/email/:email", getUserByEmailOptions);
+  fastify.post("/api/users/login", loginUserOptions);
 
   fastify.post("/api/users", postUserOptions);
 

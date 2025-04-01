@@ -19,15 +19,7 @@ export const authMiddleware = async (
     salt: AUTH_COOKIE,
   });
 
-  if (!decodedToken) {
-    throw new UnauthorizedError();
-  }
-
-  if (req.params.userId && decodedToken.sub !== req.params.userId) {
-    throw new UnauthorizedError();
-  }
-
-  if (req.params.email && decodedToken.sub !== req.params.email) {
+  if (!decodedToken || decodedToken.sub !== req.params.userId) {
     throw new UnauthorizedError();
   }
 };

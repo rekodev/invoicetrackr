@@ -28,7 +28,7 @@ import {
   UpdateUserResp,
 } from "@/lib/types/response";
 
-import api from "./apiInstance";
+import api, { ApiError } from "./apiInstance";
 
 type UserModelWithPassword = UserModel & { password: string };
 
@@ -143,10 +143,11 @@ export const updateUser = async (
 export const getUser = async (id: number): Promise<AxiosResponse<UserModel>> =>
   await api.get(`/api/users/${id}`);
 
-export const getUserByEmail = async (
+export const loginUser = async (
   email: string,
-): Promise<AxiosResponse<UserModelWithPassword>> =>
-  await api.get(`/api/users/email/${email}`);
+  password: string,
+): Promise<AxiosResponse<ApiError & { user: UserModelWithPassword }>> =>
+  await api.post("/api/users/login", { email, password });
 
 export const getBankAccount = async (
   userId: number,

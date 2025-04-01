@@ -1,9 +1,8 @@
-import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
-import { getUserByEmail } from "./api";
+import { loginUser } from "./api";
 import { authConfig } from "./auth.config";
 
 export const { auth, signIn, signOut, unstable_update } = NextAuth({
@@ -17,13 +16,13 @@ export const { auth, signIn, signOut, unstable_update } = NextAuth({
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          const user = (await getUserByEmail(email)).data;
+          const response = (await loginUser(email, password)).data;
+
+          const { user } = response;
 
           if (!user) return null;
 
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-
-          if (passwordsMatch) return { ...user, id: String(user.id) };
+          return { ...user, id: String(user.id) };
         }
 
         return null;

@@ -5,7 +5,7 @@ import {
   createNewUserPassword,
   deleteUser,
   getUser,
-  getUserByEmail,
+  loginUser,
   getUserResetPasswordToken,
   postUser,
   resetUserPassword,
@@ -28,14 +28,25 @@ export const getUserOptions: RouteShorthandOptionsWithHandler = {
   handler: getUser,
 };
 
-export const getUserByEmailOptions: RouteShorthandOptionsWithHandler = {
+export const loginUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
+    body: Type.Object({
+      email: Type.String({
+        format: "email",
+        maxLength: 255,
+        minLength: 5,
+        errorMessage: "Invalid email",
+      }),
+      password: Type.String({
+        minLength: 6,
+        errorMessage: "Password must be at least 6 characters long",
+      }),
+    }),
     response: {
-      200: User,
+      200: { user: User },
     },
   },
-  preHandler: authMiddleware,
-  handler: getUserByEmail,
+  handler: loginUser,
 };
 
 export const postUserOptions: RouteShorthandOptionsWithHandler = {
