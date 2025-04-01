@@ -1,13 +1,14 @@
-import { Type } from '@sinclair/typebox';
-import { RouteShorthandOptionsWithHandler } from 'fastify';
+import { Type } from "@sinclair/typebox";
+import { RouteShorthandOptionsWithHandler } from "fastify";
 import {
   deleteClient,
   getClient,
   getClients,
   postClient,
   updateClient,
-} from '../controllers';
-import { Client } from '../types/models';
+} from "../controllers";
+import { Client } from "../types/models";
+import { authMiddleware } from "../middleware/auth";
 
 export const getClientsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -15,6 +16,7 @@ export const getClientsOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Array(Client),
     },
   },
+  preHandler: authMiddleware,
   handler: getClients,
 };
 
@@ -24,16 +26,18 @@ export const getClientOptions: RouteShorthandOptionsWithHandler = {
       200: Client,
     },
   },
+  preHandler: authMiddleware,
   handler: getClient,
 };
 
 export const postClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Type.Omit(Client, ['id']),
+    body: Type.Omit(Client, ["id"]),
     response: {
       201: Type.Object({ client: Client, message: Type.String() }),
     },
   },
+  preHandler: authMiddleware,
   handler: postClient,
 };
 
@@ -44,6 +48,7 @@ export const updateClientOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ client: Client, message: Type.String() }),
     },
   },
+  preHandler: authMiddleware,
   handler: updateClient,
 };
 
@@ -53,5 +58,6 @@ export const deleteClientOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ message: Type.String() }),
     },
   },
+  preHandler: authMiddleware,
   handler: deleteClient,
 };

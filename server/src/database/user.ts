@@ -77,11 +77,7 @@ export const registerUser = async ({
   return users.at(0);
 };
 
-export const updateUserInDb = async (
-  id: number,
-  user: UserModel,
-  signature: string,
-) => {
+export const updateUserInDb = async (user: UserModel, signature: string) => {
   const { name, address, businessNumber, businessType, type, email } = user;
 
   const users = await db
@@ -95,7 +91,7 @@ export const updateUserInDb = async (
       email,
       signature,
     })
-    .where(eq(usersTable.id, id))
+    .where(eq(usersTable.id, user.id))
     .returning({
       id: usersTable.id,
       name: usersTable.name,

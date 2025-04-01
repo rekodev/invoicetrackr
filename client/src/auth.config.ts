@@ -5,7 +5,7 @@ export const authConfig = {
     signIn: "/login",
   },
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
+    async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const publicPaths = [
         "/login",
@@ -29,7 +29,7 @@ export const authConfig = {
 
       return true;
     },
-    jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.language = user.language;
         token.currency = user.currency;
@@ -45,10 +45,11 @@ export const authConfig = {
 
       return token;
     },
-    session({ session, token }) {
+    async session({ session, token }) {
       session.user.id = token.sub!;
       session.user.language = token.language as string;
       session.user.currency = token.currency as string;
+
       return session;
     },
   },

@@ -16,6 +16,7 @@ import {
 } from "../controllers";
 import { User } from "../types/models";
 import { preValidateFileAndFields } from "../utils/multipart";
+import { authMiddleware } from "../middleware/auth";
 
 export const getUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -23,14 +24,17 @@ export const getUserOptions: RouteShorthandOptionsWithHandler = {
       200: User,
     },
   },
+  preHandler: authMiddleware,
   handler: getUser,
 };
+
 export const getUserByEmailOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: User,
     },
   },
+  preHandler: authMiddleware,
   handler: getUserByEmail,
 };
 
@@ -67,6 +71,7 @@ export const updateUserOptions: RouteShorthandOptionsWithHandler = {
     },
   },
   preValidation: preValidateFileAndFields,
+  preHandler: authMiddleware,
   handler: updateUser,
 };
 
@@ -76,6 +81,7 @@ export const deleteUserOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ message: Type.String() }),
     },
   },
+  preHandler: authMiddleware,
   handler: deleteUser,
 };
 
@@ -86,6 +92,7 @@ export const updateUserSelectedBankAccountOptions: RouteShorthandOptionsWithHand
         200: Type.Object({ message: Type.String() }),
       },
     },
+    preHandler: authMiddleware,
     handler: updateUserSelectedBankAccount,
   };
 
@@ -96,6 +103,7 @@ export const updateUserProfilePictureOptions: RouteShorthandOptionsWithHandler =
         200: Type.Object({ message: Type.String() }),
       },
     },
+    preHandler: authMiddleware,
     handler: updateUserProfilePicture,
   };
 
@@ -110,6 +118,7 @@ export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler 
         200: Type.Object({ message: Type.String() }),
       },
     },
+    preHandler: authMiddleware,
     handler: updateUserAccountSettings,
   };
 
@@ -133,6 +142,7 @@ export const changeUserPasswordOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ message: Type.String() }),
     },
   },
+  preHandler: authMiddleware,
   handler: changeUserPassword,
 };
 
@@ -167,5 +177,6 @@ export const createNewUserPasswordOptions: RouteShorthandOptionsWithHandler = {
       token: Type.String(),
     }),
   },
+  preHandler: authMiddleware,
   handler: createNewUserPassword,
 };

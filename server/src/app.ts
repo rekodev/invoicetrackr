@@ -17,6 +17,7 @@ import {
   userRoutes,
 } from "./routes";
 import { getTranslationKeyPrefix } from "./utils/url";
+import fastifyCookie from "@fastify/cookie";
 
 dotenv.config();
 cloudinary.config(cloudinaryConfig);
@@ -38,6 +39,7 @@ defineI18n(server, {
 
 server.register(cors);
 server.register(fastifyMultipart);
+server.register(fastifyCookie);
 server.register(invoiceRoutes);
 server.register(clientRoutes);
 server.register(userRoutes);
