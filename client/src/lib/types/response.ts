@@ -2,7 +2,11 @@ import { ApiError } from "@/api/apiInstance";
 
 import { ClientModel } from "./models/client";
 import { InvoiceModel } from "./models/invoice";
-import { BankingInformationFormModel, UserModel } from "./models/user";
+import {
+  BankingInformationFormModel,
+  ResetPasswordTokenModel,
+  UserModel,
+} from "./models/user";
 
 export type RegisterUserResponse = ApiError & {
   email: string;
@@ -74,3 +78,5 @@ export type UpdateUserAccountSettingsResp = ApiError;
 export type DeleteUserAccountResp = ApiError;
 
 export type ResetPasswordResp = ApiError & { message: string };
+
+export type GetUserResetPasswordTokenResp = ApiError & ResetPasswordTokenModel;

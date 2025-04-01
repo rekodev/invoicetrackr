@@ -5,6 +5,7 @@ import {
   deleteUser,
   getUser,
   getUserByEmail,
+  getUserResetPasswordToken,
   postUser,
   resetUserPassword,
   updateUser,
@@ -145,3 +146,8 @@ export const resetUserPasswordOptions: RouteShorthandOptionsWithHandler = {
   },
   handler: resetUserPassword,
 };
+
+export const getUserResetPasswordTokenOptions: RouteShorthandOptionsWithHandler =
+  {
+    handler: getUserResetPasswordToken,
+  };

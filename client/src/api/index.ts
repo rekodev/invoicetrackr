@@ -19,6 +19,7 @@ import {
   GetInvoicesRevenueResp,
   GetInvoicesTotalAmountResp,
   GetLatestInvoicesResp,
+  GetUserResetPasswordTokenResp,
   RegisterUserResponse,
   ResetPasswordResp,
   UpdateClientResp,
@@ -232,3 +233,8 @@ export const resetUserPassword = async ({
   email: string;
 }): Promise<AxiosResponse<ResetPasswordResp>> =>
   await api.post(`/api/forgot-password`, { email });
+
+export const getUserResetPasswordToken = async (
+  token: string,
+): Promise<AxiosResponse<GetUserResetPasswordTokenResp>> =>
+  await api.get(`/api/reset-password-token/${token}`);

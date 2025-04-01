@@ -71,6 +71,13 @@
   "create_new_password": {
     "title": "Atstatyti slaptažodį",
     "description": "Sukurkite naują slaptažodį savo paskyrai",
+    "invalid_token": {
+      "title": "Neteisingas raktas",
+      "description": "Slaptažodžio atkūrimo nuorodos galioja tik ribotą laiką dėl saugumo priežasčių",
+      "request_new": "Prašyti naujos atkūrimo nuorodos",
+      "sign_in": "Prisijungti",
+      "remember_your_password": "Prisimeni savo slaptažodį?"
+    },
     "form": {
       "title": "Sukurti naują slaptažodį",
       "new_password": "Naujas slaptažodis",

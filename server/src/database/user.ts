@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 
 import { UserModel } from "../types/models";
 import { db } from "./db";
-import { usersTable } from "./schema";
+import { passwordResetTokensTable, usersTable } from "./schema";
 
 export const getUserFromDb = async (id: number) => {
   const users = await db
@@ -216,4 +216,13 @@ export const changeUserPasswordInDb = async (id: number, password: string) => {
     .returning({ id: usersTable.id });
 
   return users.at(0);
+};
+
+export const getUserResetPasswordTokenFromDb = async (token: string) => {
+  const [selectedToken] = await db
+    .select()
+    .from(passwordResetTokensTable)
+    .where(eq(passwordResetTokensTable.token, token));
+
+  return selectedToken;
 };

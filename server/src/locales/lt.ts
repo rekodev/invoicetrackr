@@ -3,6 +3,10 @@ export default {
     resetPassword: {
       subject: "Atkurkite slaptažodį",
       text: "Spustelėkite nuorodą, kad atkurtumėte slaptažodį: %{resetLink}",
+      token: {
+        invalid: "Raktas yra neteisingas",
+        expired: "Rakto galiojimo laikas pasibaigė",
+      },
     },
   },
   text: "Tekstas",

@@ -10,6 +10,7 @@ import {
   getUserByEmailFromDb,
   getUserFromDb,
   getUserPasswordHashFromDb,
+  getUserResetPasswordTokenFromDb,
   registerUser,
   updateUserAccountSettingsInDb,
   updateUserInDb,
@@ -291,4 +292,23 @@ export const resetUserPassword = async (
   reply
     .status(200)
     .send({ message: i18n.t("errors.user.resetPassword.success") });
+};
+
+export const getUserResetPasswordToken = async (
+  req: FastifyRequest<{ Params: { token: string } }>,
+  reply: FastifyReply,
+) => {
+  const { token } = req.params;
+  const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
+
+  if (!tokenFromDb)
+    throw new BadRequestError("errors.user.resetPassword.token.invalid");
+
+  const currentDate = new Date();
+  const tokenExpirationDate = new Date(tokenFromDb.expiresAt);
+
+  if (currentDate > tokenExpirationDate)
+    throw new BadRequestError("errors.user.resetPassword.token.expired");
+
+  reply.status(200).send(tokenFromDb);
 };

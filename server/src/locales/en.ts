@@ -3,6 +3,10 @@ export default {
     resetPassword: {
       subject: "Reset Your Password",
       text: "Click the link to reset your password: %{resetLink}",
+      token: {
+        invalid: "Token is invalid",
+        expired: "Token has expired",
+      },
     },
   },
   text: "Text",

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const bankingInformationSchema = z.object({
   id: z.number().optional(),
@@ -10,9 +10,9 @@ export const bankingInformationSchema = z.object({
 export const userSchema = z.object({
   id: z.number().optional(),
   name: z.string(),
-  type: z.literal('sender'),
+  type: z.literal("sender"),
   signature: z.union([z.string(), z.instanceof(File)]).optional(),
-  businessType: z.union([z.literal('individual'), z.literal('business')]),
+  businessType: z.union([z.literal("individual"), z.literal("business")]),
   businessNumber: z.string(),
   address: z.string(),
   email: z.string(),
@@ -33,11 +33,20 @@ export const changePasswordFormSchema = z.object({
   confirmedNewPassword: z.string(),
 });
 
+export const resetPasswordTokenSchema = z.object({
+  id: z.number().positive().int(),
+  userId: z.number().positive().int(),
+  token: z.string(),
+  expiresAt: z.string(),
+  createdAt: z.string(),
+});
+
 export type UserModel = z.infer<typeof userSchema>;
 export type UserModelWithPassword = z.infer<typeof userSchemaWithPassword>;
 
 export type BankingInformationFormModel = z.infer<
   typeof bankingInformationSchema
 >;
-export type AccountSettingsFormModel = Pick<UserModel, 'currency' | 'language'>;
+export type AccountSettingsFormModel = Pick<UserModel, "currency" | "language">;
 export type ChangePasswordFormModel = z.infer<typeof changePasswordFormSchema>;
+export type ResetPasswordTokenModel = z.infer<typeof resetPasswordTokenSchema>;

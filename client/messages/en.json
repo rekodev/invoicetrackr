@@ -70,6 +70,13 @@
   "create_new_password": {
     "title": "Reset Password",
     "description": "Create a new password for your account",
+    "invalid_token": {
+      "title": "Invalid Token",
+      "description": "Password reset links are only valid for a limited time for security reasons",
+      "request_new": "Request New Reset Link",
+      "sign_in": "Sign in",
+      "remember_your_password": "Remember your password?"
+    },
     "form": {
       "title": "Create New Password",
       "new_password": "New Password",
