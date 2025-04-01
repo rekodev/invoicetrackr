@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { UserModel } from "../types/models";
 import { db } from "./db";
@@ -225,4 +225,19 @@ export const getUserResetPasswordTokenFromDb = async (token: string) => {
     .where(eq(passwordResetTokensTable.token, token));
 
   return selectedToken;
+};
+
+export const invalidateTokenInDb = async (userId: number, token: string) => {
+  const [updatedToken] = await db
+    .update(passwordResetTokensTable)
+    .set({ expiresAt: new Date().toISOString() })
+    .where(
+      and(
+        eq(passwordResetTokensTable.token, token),
+        eq(passwordResetTokensTable.userId, userId),
+      ),
+    )
+    .returning({ id: passwordResetTokensTable.id });
+
+  return updatedToken.id;
 };

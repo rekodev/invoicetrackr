@@ -11,6 +11,7 @@ import {
   getUserFromDb,
   getUserPasswordHashFromDb,
   getUserResetPasswordTokenFromDb,
+  invalidateTokenInDb,
   registerUser,
   updateUserAccountSettingsInDb,
   updateUserInDb,
@@ -311,4 +312,48 @@ export const getUserResetPasswordToken = async (
     throw new BadRequestError("errors.user.resetPassword.token.expired");
 
   reply.status(200).send(tokenFromDb);
+};
+
+export const createNewUserPassword = async (
+  req: FastifyRequest<{
+    Params: { id: number };
+    Body: { token: string; newPassword: string; confirmedNewPassword: string };
+  }>,
+  reply: FastifyReply,
+) => {
+  const { id } = req.params;
+  const { newPassword, confirmedNewPassword, token } = req.body;
+  const i18n = await useI18n(req);
+
+  if (newPassword !== confirmedNewPassword)
+    throw new BadRequestError(
+      i18n.t("errors.user.changePassword.newAndConfirmed"),
+    );
+
+  const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
+
+  if (!token || !tokenFromDb)
+    throw new BadRequestError(
+      i18n.t("errors.user.resetPassword.token.invalid"),
+    );
+
+  const currentDate = new Date();
+  const tokenExpirationDate = new Date(tokenFromDb.expiresAt);
+
+  if (currentDate > tokenExpirationDate)
+    throw new BadRequestError(
+      i18n.t("errors.user.resetPassword.token.expired"),
+    );
+
+  const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+  const changedPassword = await changeUserPasswordInDb(id, hashedNewPassword);
+
+  if (!changedPassword)
+    throw new BadRequestError(i18n.t("errors.user.changePassword.badRequest"));
+
+  await invalidateTokenInDb(id, token);
+
+  reply
+    .status(200)
+    .send({ message: i18n.t("errors.user.changePassword.success") });
 };

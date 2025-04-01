@@ -81,7 +81,9 @@
     "form": {
       "title": "Sukurti naują slaptažodį",
       "new_password": "Naujas slaptažodis",
-      "confirm_new_password": "Patvirtinti naują slaptažodį",
+      "confirmed_new_password": "Patvirtinti naują slaptažodį",
+      "new_password_placeholder": "Įveskite naują slaptažodį",
+      "confirmed_new_password_placeholder": "Patvirtinkite naują slaptažodį",
       "submit": "Atstatyti slaptažodį",
       "remember_your_password": "Prisiminate slaptažodį?",
       "sign_in": "Prisijungti"

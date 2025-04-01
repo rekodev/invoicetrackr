@@ -80,7 +80,9 @@
     "form": {
       "title": "Create New Password",
       "new_password": "New Password",
-      "confirm_new_password": "Confirm New Password",
+      "confirmed_new_password": "Confirm New Password",
+      "new_password_placeholder": "Enter new password",
+      "confirmed_new_password_placeholder": "Confirm new password",
       "submit": "Reset Password",
       "remember_your_password": "Remember your password?",
       "sign_in": "Sign in"

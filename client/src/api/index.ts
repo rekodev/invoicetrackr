@@ -210,13 +210,13 @@ export const deleteUserAccount = async (
 
 export const changeUserPassword = async ({
   userId,
-  language,
+  language = "en",
   password,
   newPassword,
   confirmedNewPassword,
 }: {
   userId: number;
-  language: string;
+  language?: string;
   password: string;
   newPassword: string;
   confirmedNewPassword: string;
@@ -238,3 +238,20 @@ export const getUserResetPasswordToken = async (
   token: string,
 ): Promise<AxiosResponse<GetUserResetPasswordTokenResp>> =>
   await api.get(`/api/reset-password-token/${token}`);
+
+export const createNewUserPassword = async ({
+  userId,
+  newPassword,
+  confirmedNewPassword,
+  token,
+}: {
+  userId: number;
+  newPassword: string;
+  confirmedNewPassword: string;
+  token: string;
+}) =>
+  await api.put(`/api/users/${userId}/create-new-password`, {
+    newPassword,
+    confirmedNewPassword,
+    token,
+  });

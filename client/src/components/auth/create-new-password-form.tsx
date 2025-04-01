@@ -1,26 +1,42 @@
 "use client";
 
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/outline";
 import {
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
+  cn,
   Input,
   Link,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
-import { createNewPasswordAction } from "@/lib/actions";
+import { ActionReturnType, createNewPasswordAction } from "@/lib/actions";
 import { LOGIN_PAGE } from "@/lib/constants/pages";
 
-export default function CreateNewPasswordForm() {
+type Props = {
+  userId: number;
+  token: string;
+};
+
+export default function CreateNewPasswordForm({ userId, token }: Props) {
   const t = useTranslations("create_new_password.form");
   const [response, formAction, isPending] = useActionState(
-    createNewPasswordAction,
+    (prevState: ActionReturnType | undefined, formData: FormData) => {
+      const newFormData = new FormData();
+      formData.forEach((value, key) => newFormData.append(key, value));
+      newFormData.append("userId", String(userId));
+      newFormData.append("token", token);
+
+      return createNewPasswordAction(prevState, newFormData);
+    },
     undefined,
   );
 
@@ -41,18 +57,18 @@ export default function CreateNewPasswordForm() {
             type="password"
             name="newPassword"
             label={t("new_password")}
-            placeholder="Enter new password"
+            placeholder={t("new_password_placeholder")}
             required
             minLength={6}
           />
           <Input
             labelPlacement="outside"
             variant="faded"
-            id="confirmNewPassword"
+            id="confirmedNewPassword"
             type="password"
-            name="confirmNewPassword"
-            label={t("confirm_new_password")}
-            placeholder="Confirm new password"
+            name="confirmedNewPassword"
+            label={t("confirmed_new_password")}
+            placeholder={t("confirmed_new_password_placeholder")}
             required
             minLength={6}
           />
@@ -69,8 +85,19 @@ export default function CreateNewPasswordForm() {
           <div aria-live="polite" aria-atomic="true">
             {response?.message && (
               <div className="flex items-center gap-1 mb-6">
-                <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-                <p className="text-sm text-red-500">{response.message}</p>
+                {response.ok ? (
+                  <CheckCircleIcon className="h-5 w-5 text-success-500" />
+                ) : (
+                  <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+                )}
+                <p
+                  className={cn("text-sm", {
+                    "text-red-500": !response.ok,
+                    "text-success-500": response.ok,
+                  })}
+                >
+                  {response.message}
+                </p>
               </div>
             )}
           </div>

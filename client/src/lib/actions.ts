@@ -4,7 +4,7 @@ import { HttpStatusCode } from "axios";
 import { AuthError } from "next-auth";
 import { getTranslations } from "next-intl/server";
 
-import { registerUser, resetUserPassword } from "@/api";
+import { createNewUserPassword, registerUser, resetUserPassword } from "@/api";
 
 import { signIn, signOut, unstable_update } from "../auth";
 import { UserModel } from "./types/models/user";
@@ -36,9 +36,32 @@ export async function createNewPasswordAction(
   _prevState: ActionReturnType | undefined,
   formData: FormData,
 ): Promise<ActionReturnType> {
-  // TODO: Implement
-  // await createNewPassword(formData) or something
-  // return { ok: true, message: response.data.message };
+  const rawFormData = {
+    userId: formData.get("userId"),
+    newPassword: formData.get("newPassword") as string,
+    confirmedNewPassword: formData.get("confirmedNewPassword") as string,
+    token: formData.get("token") as string,
+  };
+
+  const { userId, newPassword, confirmedNewPassword, token } = rawFormData;
+
+  try {
+    const response = await createNewUserPassword({
+      userId: Number(userId),
+      newPassword,
+      confirmedNewPassword,
+      token,
+    });
+
+    if (response.status !== HttpStatusCode.Ok) {
+      return { ok: false, message: response.data.message };
+    }
+
+    return { ok: true, message: response.data.message };
+  } catch {
+    const t = await getTranslations();
+    return { ok: false, message: t("general_error") };
+  }
 }
 
 export async function authenticate(

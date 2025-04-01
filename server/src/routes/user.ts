@@ -6,6 +6,7 @@ import {
 
 import {
   changeUserPasswordOptions,
+  createNewUserPasswordOptions,
   deleteUserOptions,
   getUserByEmailOptions,
   getUserOptions,
@@ -55,6 +56,11 @@ const userRoutes = (
   fastify.get(
     "/api/reset-password-token/:token",
     getUserResetPasswordTokenOptions,
+  );
+
+  fastify.put(
+    "/api/users/:id/create-new-password",
+    createNewUserPasswordOptions,
   );
 
   done();

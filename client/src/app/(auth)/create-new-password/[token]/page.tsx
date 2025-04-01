@@ -36,7 +36,7 @@ export default async function CreateNewPasswordPage({ params }: Props) {
         <h2 className="text-2xl font-medium">{t("title")}</h2>
         <p className="text-default-500">{t("description")}</p>
       </div>
-      <CreateNewPasswordForm />
+      <CreateNewPasswordForm userId={response.data.userId} token={token} />
     </section>
   );
 }
