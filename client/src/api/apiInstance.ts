@@ -6,6 +6,8 @@ import axios, {
   Method,
 } from "axios";
 
+import { getAuthTokenFromCookies } from "@/lib/utils/cookie";
+
 export type ApiResponse<T = any> = {
   data: T;
   errors?: Record<string, string>;
@@ -28,6 +30,18 @@ class ApiInstance {
           ? undefined
           : `http://localhost:${process.env.SERVER_PORT}`,
       withCredentials: true,
+    });
+
+    this.httpClient.interceptors.request.use(async (config) => {
+      if (typeof window === "undefined") {
+        const authToken = await getAuthTokenFromCookies();
+
+        if (authToken) {
+          config.headers["Cookie"] = `authjs.session-token=${authToken}`;
+        }
+      }
+
+      return config;
     });
   }
 

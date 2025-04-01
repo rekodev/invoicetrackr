@@ -42,6 +42,7 @@ export default function Home() {
               height={550}
               alt="Invoice app dashboard preview"
               className="mx-auto overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
+              unoptimized
             />
           </div>
         </section>
@@ -70,6 +71,7 @@ export default function Home() {
               height={550}
               alt="Invoice editor interface"
               className="mx-auto overflow-hidden rounded-xl object-cover object-center sm:w-full"
+              unoptimized
             />
             <div className="flex flex-col justify-center space-y-4">
               <ul className="grid gap-6">

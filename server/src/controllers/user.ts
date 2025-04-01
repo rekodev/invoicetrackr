@@ -19,7 +19,11 @@ import {
   updateUserSelectedBankAccountInDb,
 } from "../database";
 import { UserModel } from "../types/models";
-import { BadRequestError, NotFoundError } from "../utils/errors";
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+} from "../utils/errors";
 import { transporter } from "../config/nodemailer";
 import { saveResetTokenToDb } from "../database/passwordReset";
 
@@ -35,16 +39,19 @@ export const getUser = async (
   reply.status(200).send(user);
 };
 
-export const getUserByEmail = async (
-  req: FastifyRequest<{ Params: { email: string } }>,
+export const loginUser = async (
+  req: FastifyRequest<{ Body: { email: string; password: string } }>,
   reply: FastifyReply,
 ) => {
-  const { email } = req.params;
+  const { email, password } = req.body;
   const user = await getUserByEmailFromDb(email);
 
-  if (!user) throw new BadRequestError("User not found");
+  if (!user) throw new UnauthorizedError("Invalid credentials");
 
-  reply.status(200).send(user);
+  const isValidPassword = await bcrypt.compare(password, user.password);
+  if (!isValidPassword) throw new UnauthorizedError("Invalid credentials");
+
+  reply.status(200).send({ user });
 };
 
 export const postUser = async (
