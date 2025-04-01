@@ -1,18 +1,22 @@
-import { Type } from '@sinclair/typebox';
-import { RouteShorthandOptionsWithHandler } from 'fastify';
+import { Type } from "@sinclair/typebox";
+import { RouteShorthandOptionsWithHandler } from "fastify";
 import {
   changeUserPassword,
+  createNewUserPassword,
   deleteUser,
   getUser,
   getUserByEmail,
+  getUserResetPasswordToken,
   postUser,
+  resetUserPassword,
   updateUser,
   updateUserAccountSettings,
   updateUserProfilePicture,
   updateUserSelectedBankAccount,
-} from '../controllers';
-import { User } from '../types/models';
-import { preValidateFileAndFields } from '../utils/multipart';
+} from "../controllers";
+import { User } from "../types/models";
+import { preValidateFileAndFields } from "../utils/multipart";
+import { authMiddleware } from "../middleware/auth";
 
 export const getUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -20,14 +24,17 @@ export const getUserOptions: RouteShorthandOptionsWithHandler = {
       200: User,
     },
   },
+  preHandler: authMiddleware,
   handler: getUser,
 };
+
 export const getUserByEmailOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: User,
     },
   },
+  preHandler: authMiddleware,
   handler: getUserByEmail,
 };
 
@@ -35,18 +42,18 @@ export const postUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Type.Object({
       email: Type.String({
-        format: 'email',
+        format: "email",
         maxLength: 255,
         minLength: 5,
-        errorMessage: 'Invalid email',
+        errorMessage: "Invalid email",
       }),
       password: Type.String({
         minLength: 6,
-        errorMessage: 'Password must be at least 6 characters long',
+        errorMessage: "Password must be at least 6 characters long",
       }),
       confirmedPassword: Type.String({
         minLength: 6,
-        errorMessage: 'Must match password',
+        errorMessage: "Must match password",
       }),
     }),
     response: {
@@ -64,6 +71,7 @@ export const updateUserOptions: RouteShorthandOptionsWithHandler = {
     },
   },
   preValidation: preValidateFileAndFields,
+  preHandler: authMiddleware,
   handler: updateUser,
 };
 
@@ -73,6 +81,7 @@ export const deleteUserOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ message: Type.String() }),
     },
   },
+  preHandler: authMiddleware,
   handler: deleteUser,
 };
 
@@ -83,6 +92,7 @@ export const updateUserSelectedBankAccountOptions: RouteShorthandOptionsWithHand
         200: Type.Object({ message: Type.String() }),
       },
     },
+    preHandler: authMiddleware,
     handler: updateUserSelectedBankAccount,
   };
 
@@ -93,6 +103,7 @@ export const updateUserProfilePictureOptions: RouteShorthandOptionsWithHandler =
         200: Type.Object({ message: Type.String() }),
       },
     },
+    preHandler: authMiddleware,
     handler: updateUserProfilePicture,
   };
 
@@ -107,6 +118,7 @@ export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler 
         200: Type.Object({ message: Type.String() }),
       },
     },
+    preHandler: authMiddleware,
     handler: updateUserAccountSettings,
   };
 
@@ -115,20 +127,56 @@ export const changeUserPasswordOptions: RouteShorthandOptionsWithHandler = {
     body: Type.Object({
       password: Type.String({
         minLength: 1,
-        errorMessage: 'user.password',
+        errorMessage: "user.password",
       }),
       newPassword: Type.String({
         minLength: 1,
-        errorMessage: 'user.newPassword',
+        errorMessage: "user.newPassword",
       }),
       confirmedNewPassword: Type.String({
         minLength: 1,
-        errorMessage: 'user.confirmedNewPasswords',
+        errorMessage: "user.confirmedNewPassword",
       }),
     }),
     response: {
       200: Type.Object({ message: Type.String() }),
     },
   },
+  preHandler: authMiddleware,
   handler: changeUserPassword,
+};
+
+export const resetUserPasswordOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    body: Type.Object({
+      email: Type.String({ minLength: 1, errorMessage: "user.email" }),
+    }),
+    response: {
+      200: Type.Object({ message: Type.String() }),
+    },
+  },
+  handler: resetUserPassword,
+};
+
+export const getUserResetPasswordTokenOptions: RouteShorthandOptionsWithHandler =
+  {
+    handler: getUserResetPasswordToken,
+  };
+
+export const createNewUserPasswordOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    body: Type.Object({
+      newPassword: Type.String({
+        minLength: 1,
+        errorMessage: "user.newPassword",
+      }),
+      confirmedNewPassword: Type.String({
+        minLength: 1,
+        errorMessage: "user.confirmedNewPassword",
+      }),
+      token: Type.String(),
+    }),
+  },
+  preHandler: authMiddleware,
+  handler: createNewUserPassword,
 };

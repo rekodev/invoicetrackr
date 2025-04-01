@@ -1,8 +1,8 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { UserModel } from "../types/models";
 import { db } from "./db";
-import { usersTable } from "./schema";
+import { passwordResetTokensTable, usersTable } from "./schema";
 
 export const getUserFromDb = async (id: number) => {
   const users = await db
@@ -77,11 +77,7 @@ export const registerUser = async ({
   return users.at(0);
 };
 
-export const updateUserInDb = async (
-  id: number,
-  user: UserModel,
-  signature: string,
-) => {
+export const updateUserInDb = async (user: UserModel, signature: string) => {
   const { name, address, businessNumber, businessType, type, email } = user;
 
   const users = await db
@@ -95,7 +91,7 @@ export const updateUserInDb = async (
       email,
       signature,
     })
-    .where(eq(usersTable.id, id))
+    .where(eq(usersTable.id, user.id))
     .returning({
       id: usersTable.id,
       name: usersTable.name,
@@ -216,4 +212,28 @@ export const changeUserPasswordInDb = async (id: number, password: string) => {
     .returning({ id: usersTable.id });
 
   return users.at(0);
+};
+
+export const getUserResetPasswordTokenFromDb = async (token: string) => {
+  const [selectedToken] = await db
+    .select()
+    .from(passwordResetTokensTable)
+    .where(eq(passwordResetTokensTable.token, token));
+
+  return selectedToken;
+};
+
+export const invalidateTokenInDb = async (userId: number, token: string) => {
+  const [updatedToken] = await db
+    .update(passwordResetTokensTable)
+    .set({ expiresAt: new Date().toISOString() })
+    .where(
+      and(
+        eq(passwordResetTokensTable.token, token),
+        eq(passwordResetTokensTable.userId, userId),
+      ),
+    )
+    .returning({ id: passwordResetTokensTable.id });
+
+  return updatedToken.id;
 };

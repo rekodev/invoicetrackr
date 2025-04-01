@@ -1,4 +1,5 @@
 {
+  "general_error": "Uh oh! Something went wrong...",
   "invoices": {
     "pdf": {
       "businessTitle": "VAT INVOICE",
@@ -53,6 +54,38 @@
       "confirm_new_password_placeholder": "Confirm new password",
       "save_changes": "Save Changes",
       "password_requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
+    }
+  },
+  "forgot_password": {
+    "title": "Reset Password",
+    "description": "Enter your email to receive password reset instructions",
+    "card_header": "Forgot Password",
+    "email": "Email",
+    "email_placeholder": "Enter your email address",
+    "reset_link": "Send Reset Link",
+    "login": "Back to Login",
+    "create_account": "Need to create an account?",
+    "sign_up": "Sign Up"
+  },
+  "create_new_password": {
+    "title": "Reset Password",
+    "description": "Create a new password for your account",
+    "invalid_token": {
+      "title": "Invalid Token",
+      "description": "Password reset links are only valid for a limited time for security reasons",
+      "request_new": "Request New Reset Link",
+      "sign_in": "Sign in",
+      "remember_your_password": "Remember your password?"
+    },
+    "form": {
+      "title": "Create New Password",
+      "new_password": "New Password",
+      "confirmed_new_password": "Confirm New Password",
+      "new_password_placeholder": "Enter new password",
+      "confirmed_new_password_placeholder": "Confirm new password",
+      "submit": "Reset Password",
+      "remember_your_password": "Remember your password?",
+      "sign_in": "Sign in"
     }
   }
 }

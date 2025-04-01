@@ -4,7 +4,7 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
   Method,
-} from 'axios';
+} from "axios";
 
 export type ApiResponse<T = any> = {
   data: T;
@@ -24,9 +24,10 @@ class ApiInstance {
   constructor() {
     this.httpClient = axios.create({
       baseURL:
-        typeof window !== 'undefined'
+        typeof window !== "undefined"
           ? undefined
           : `http://localhost:${process.env.SERVER_PORT}`,
+      withCredentials: true,
     });
   }
 
@@ -34,19 +35,22 @@ class ApiInstance {
     method: Method,
     url: string,
     data: any = {},
-    config: AxiosRequestConfig = {}
+    config: AxiosRequestConfig = {},
   ): Promise<AxiosResponse<ApiResponse<T>> | AxiosResponse<ApiError>> {
     try {
       if (data instanceof FormData) {
-        config.headers = { ...config.headers, 'Content-Type': undefined };
+        config.headers = {
+          ...config.headers,
+          "Content-Type": undefined,
+        };
       }
 
       const response = await this.httpClient.request<ApiResponse<T>>({
         method,
         url,
-        data: method === 'get' ? undefined : data,
+        data: method === "get" ? undefined : data,
         ...config,
-        params: method === 'get' ? data : config.params,
+        params: method === "get" ? data : config.params,
       });
 
       return response;
@@ -60,7 +64,7 @@ class ApiInstance {
         data: {
           error,
           errors: [],
-          message: 'Service unavailable. Try again later',
+          message: "Service unavailable. Try again later",
         },
       };
     }
@@ -68,33 +72,33 @@ class ApiInstance {
 
   async get(
     url: string,
-    config: AxiosRequestConfig = {}
+    config: AxiosRequestConfig = {},
   ): Promise<AxiosResponse> {
-    return this.request('get', url, {}, config);
+    return this.request("get", url, {}, config);
   }
 
   async post(
     url: string,
     data = {},
-    config: AxiosRequestConfig = {}
+    config: AxiosRequestConfig = {},
   ): Promise<AxiosResponse> {
-    return this.request('post', url, data, config);
+    return this.request("post", url, data, config);
   }
 
   async put(
     url: string,
     data = {},
-    config: AxiosRequestConfig = {}
+    config: AxiosRequestConfig = {},
   ): Promise<AxiosResponse> {
-    return this.request('put', url, data, config);
+    return this.request("put", url, data, config);
   }
 
   async delete(
     url: string,
     data = {},
-    config: AxiosRequestConfig = {}
+    config: AxiosRequestConfig = {},
   ): Promise<AxiosResponse> {
-    return this.request('delete', url, data, config);
+    return this.request("delete", url, data, config);
   }
 }
 

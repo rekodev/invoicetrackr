@@ -57,6 +57,34 @@
       "when": 1739649917662,
       "tag": "0007_talented_the_professor",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1743449267019,
+      "tag": "0008_tidy_piledriver",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1743449783995,
+      "tag": "0009_fluffy_mastermind",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1743450064335,
+      "tag": "0010_mushy_ultimatum",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1743450084623,
+      "tag": "0011_small_sentinels",
+      "breakpoints": true
     }
   ]
 }

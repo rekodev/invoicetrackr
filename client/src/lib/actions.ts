@@ -1,11 +1,68 @@
 "use server";
 
+import { HttpStatusCode } from "axios";
 import { AuthError } from "next-auth";
+import { getTranslations } from "next-intl/server";
 
-import { registerUser } from "@/api";
+import { createNewUserPassword, registerUser, resetUserPassword } from "@/api";
 
 import { signIn, signOut, unstable_update } from "../auth";
 import { UserModel } from "./types/models/user";
+
+export type ActionReturnType = {
+  ok: boolean;
+  message?: string;
+};
+
+export async function resetPasswordAction(
+  _prevState: ActionReturnType | undefined,
+  email: string,
+): Promise<ActionReturnType> {
+  try {
+    const response = await resetUserPassword({ email });
+
+    if (response.status !== HttpStatusCode.Ok) {
+      return { ok: false, message: response.data.message };
+    }
+
+    return { ok: true, message: response.data.message };
+  } catch (error) {
+    const t = await getTranslations();
+    return { ok: false, message: t("general_error") };
+  }
+}
+
+export async function createNewPasswordAction(
+  _prevState: ActionReturnType | undefined,
+  formData: FormData,
+): Promise<ActionReturnType> {
+  const rawFormData = {
+    userId: formData.get("userId"),
+    newPassword: formData.get("newPassword") as string,
+    confirmedNewPassword: formData.get("confirmedNewPassword") as string,
+    token: formData.get("token") as string,
+  };
+
+  const { userId, newPassword, confirmedNewPassword, token } = rawFormData;
+
+  try {
+    const response = await createNewUserPassword({
+      userId: Number(userId),
+      newPassword,
+      confirmedNewPassword,
+      token,
+    });
+
+    if (response.status !== HttpStatusCode.Ok) {
+      return { ok: false, message: response.data.message };
+    }
+
+    return { ok: true, message: response.data.message };
+  } catch {
+    const t = await getTranslations();
+    return { ok: false, message: t("general_error") };
+  }
+}
 
 export async function authenticate(
   _prevState: string | undefined,
@@ -31,7 +88,7 @@ export async function logOut() {
 }
 
 export async function signUp(
-  prevState: { message: string; ok: boolean } | undefined,
+  _prevState: { message: string; ok: boolean } | undefined,
   formData: FormData,
 ) {
   const rawFormData = {

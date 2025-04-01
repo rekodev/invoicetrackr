@@ -2,51 +2,66 @@ import {
   DoneFuncWithErrOrRes,
   FastifyInstance,
   FastifyPluginOptions,
-} from 'fastify';
+} from "fastify";
 
 import {
   changeUserPasswordOptions,
+  createNewUserPasswordOptions,
   deleteUserOptions,
   getUserByEmailOptions,
   getUserOptions,
+  getUserResetPasswordTokenOptions,
   postUserOptions,
+  resetUserPasswordOptions,
   updateUserAccountSettingsOptions,
   updateUserOptions,
   updateUserProfilePictureOptions,
   updateUserSelectedBankAccountOptions,
-} from '../options';
+} from "../options";
 
 const userRoutes = (
   fastify: FastifyInstance,
   _options: FastifyPluginOptions,
-  done: DoneFuncWithErrOrRes
+  done: DoneFuncWithErrOrRes,
 ) => {
-  fastify.get('/api/users/:id', getUserOptions);
+  fastify.get("/api/users/:userId", getUserOptions);
 
-  fastify.get('/api/users/email/:email', getUserByEmailOptions);
+  fastify.get("/api/users/email/:email", getUserByEmailOptions);
 
-  fastify.post('/api/users', postUserOptions);
+  fastify.post("/api/users", postUserOptions);
 
-  fastify.put('/api/users/:id', updateUserOptions);
+  fastify.put("/api/users/:userId", updateUserOptions);
 
-  fastify.delete('/api/users/:id', deleteUserOptions);
+  fastify.delete("/api/users/:userId", deleteUserOptions);
 
   fastify.put(
-    '/api/users/:id/selected-bank-account',
-    updateUserSelectedBankAccountOptions
+    "/api/users/:userId/selected-bank-account",
+    updateUserSelectedBankAccountOptions,
   );
 
   fastify.put(
-    '/api/users/:id/profile-picture',
-    updateUserProfilePictureOptions
+    "/api/users/:userId/profile-picture",
+    updateUserProfilePictureOptions,
   );
 
   fastify.put(
-    '/api/users/:id/account-settings',
-    updateUserAccountSettingsOptions
+    "/api/users/:userId/account-settings",
+    updateUserAccountSettingsOptions,
   );
 
-  fastify.put('/api/users/:id/change-password', changeUserPasswordOptions);
+  fastify.put("/api/users/:userId/change-password", changeUserPasswordOptions);
+
+  fastify.post("/api/forgot-password", resetUserPasswordOptions);
+
+  fastify.get(
+    "/api/reset-password-token/:token",
+    getUserResetPasswordTokenOptions,
+  );
+
+  fastify.put(
+    "/api/users/:userId/create-new-password",
+    createNewUserPasswordOptions,
+  );
 
   done();
 };

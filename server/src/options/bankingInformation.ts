@@ -1,13 +1,14 @@
-import { Type } from '@sinclair/typebox';
-import { BankAccount } from '../types/models';
+import { Type } from "@sinclair/typebox";
+import { BankAccount } from "../types/models";
 import {
   deleteBankAccount,
   getBankAccount,
   getBankAccounts,
   postBankAccount,
   updateBankAccount,
-} from '../controllers';
-import { RouteShorthandOptionsWithHandler } from 'fastify';
+} from "../controllers";
+import { RouteShorthandOptionsWithHandler } from "fastify";
+import { authMiddleware } from "../middleware/auth";
 
 export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -15,6 +16,7 @@ export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Array(BankAccount),
     },
   },
+  preHandler: authMiddleware,
   handler: getBankAccounts,
 };
 
@@ -24,6 +26,7 @@ export const getBankAccountOptions: RouteShorthandOptionsWithHandler = {
       200: BankAccount,
     },
   },
+  preHandler: authMiddleware,
   handler: getBankAccount,
 };
 
@@ -34,6 +37,7 @@ export const postBankAccountOptions: RouteShorthandOptionsWithHandler = {
       201: Type.Object({ bankAccount: BankAccount, message: Type.String() }),
     },
   },
+  preHandler: authMiddleware,
   handler: postBankAccount,
 };
 
@@ -44,6 +48,7 @@ export const updateBankAccountOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ bankAccount: BankAccount, message: Type.String() }),
     },
   },
+  preHandler: authMiddleware,
   handler: updateBankAccount,
 };
 
@@ -53,5 +58,6 @@ export const deleteBankAccountOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ message: Type.String() }),
     },
   },
+  preHandler: authMiddleware,
   handler: deleteBankAccount,
 };

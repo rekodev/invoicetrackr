@@ -1,4 +1,5 @@
 {
+  "general_error": "Ajajai! Kažkas negerai...",
   "invoices": {
     "pdf": {
       "individualTitle": "SĄSKAITA FAKTŪRA",
@@ -54,6 +55,38 @@
       "confirm_new_password_placeholder": "Patvirtinkite naują slaptažodį",
       "save_changes": "Išsaugoti pakeitimus",
       "password_requirements": "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną skaičių, didžiąją raidę, mažąją raidę ir specialų simbolį."
+    }
+  },
+  "forgot_password": {
+    "title": "Atstatyti slaptažodį",
+    "description": "Įveskite savo el. pašto adresą, kad gautumėte slaptažodžio atstatymo instrukcijas",
+    "card_header": "Pamiršote slaptažodį",
+    "email": "El. paštas",
+    "email_placeholder": "Įveskite savo el. pašto adresą",
+    "reset_link": "Siųsti atstatymo nuorodą",
+    "login": "Grįžti į prisijungimą",
+    "create_account": "Reikia sukurti paskyrą?",
+    "sign_up": "Registruotis"
+  },
+  "create_new_password": {
+    "title": "Atstatyti slaptažodį",
+    "description": "Sukurkite naują slaptažodį savo paskyrai",
+    "invalid_token": {
+      "title": "Neteisingas raktas",
+      "description": "Slaptažodžio atkūrimo nuorodos galioja tik ribotą laiką dėl saugumo priežasčių",
+      "request_new": "Prašyti naujos atkūrimo nuorodos",
+      "sign_in": "Prisijungti",
+      "remember_your_password": "Prisimeni savo slaptažodį?"
+    },
+    "form": {
+      "title": "Sukurti naują slaptažodį",
+      "new_password": "Naujas slaptažodis",
+      "confirmed_new_password": "Patvirtinti naują slaptažodį",
+      "new_password_placeholder": "Įveskite naują slaptažodį",
+      "confirmed_new_password_placeholder": "Patvirtinkite naują slaptažodį",
+      "submit": "Atstatyti slaptažodį",
+      "remember_your_password": "Prisiminate slaptažodį?",
+      "sign_in": "Prisijungti"
     }
   }
 }
