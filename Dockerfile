@@ -14,7 +14,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/client/node_modules ./client/node_modules
 COPY --from=deps /app/server/node_modules ./server/node_modules
 COPY . .
-RUN (cd client && pnpm run build) & (cd server && pnpm run build) && wait
+RUN cd client && pnpm run build && cd ../server && pnpm run build
 
 # Stage 3: Production server
 FROM base AS runner
