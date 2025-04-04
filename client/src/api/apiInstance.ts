@@ -6,8 +6,6 @@ import axios, {
   Method,
 } from "axios";
 
-import { getAuthTokenFromCookies } from "@/lib/utils/cookie";
-
 export type ApiResponse<T = any> = {
   data: T;
   errors?: Record<string, string>;
@@ -34,7 +32,8 @@ class ApiInstance {
 
     this.httpClient.interceptors.request.use(async (config) => {
       if (typeof window === "undefined") {
-        const authToken = await getAuthTokenFromCookies();
+        const { cookies } = await import("next/headers");
+        const authToken = (await cookies()).get("authjs.session-token")?.value;
 
         if (authToken) {
           config.headers["Cookie"] = `authjs.session-token=${authToken}`;
