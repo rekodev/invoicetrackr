@@ -172,7 +172,8 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
         bottomContent={renderBottomContent()}
         bottomContentPlacement="outside"
         classNames={{
-          wrapper: "min-h-[480px] bg-transparent border border-neutral-800",
+          wrapper:
+            "min-h-[480px] bg-transparent dark:border dark:border-default-100",
         }}
         sortDescriptor={sortDescriptor as any}
         topContent={renderTopContent()}

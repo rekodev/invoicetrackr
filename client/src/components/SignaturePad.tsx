@@ -4,6 +4,7 @@ import {
   Card,
   CardBody,
   Chip,
+  cn,
   Image,
   Modal,
   ModalBody,
@@ -105,9 +106,10 @@ const SignaturePad = ({
       <div className="flex flex-col gap-1.5">
         <Card
           radius="lg"
-          className={`shadow-small dark:border dark:border-default-100 flex justify-center items-center relative aspect-4/3 overflow-hidden ${
-            isInvalid && "bg-[#F3126040]"
-          }`}
+          className={cn(
+            "shadow-small dark:border dark:border-default-100 flex justify-center items-center relative aspect-4/3 overflow-hidden",
+            { "bg-[#F3126040]": isInvalid },
+          )}
           onPress={onOpen}
           isPressable
         >
@@ -119,7 +121,7 @@ const SignaturePad = ({
                   alt="Signature"
                   className="bg-white z-0 rounded-none"
                 />
-                <div className="absolute w-full h-full bg-black bg-opacity-75 flex-col justify-center items-center gap-2 hidden group-hover:flex">
+                <div className="absolute w-full text-white h-full bg-black bg-opacity-50 dark:bg-opacity-75 flex-col justify-center items-center gap-2 hidden group-hover:flex">
                   <PencilSquareIcon className="h-10 w-10" />
                   <p className="font-medium">Edit Signature</p>
                 </div>
