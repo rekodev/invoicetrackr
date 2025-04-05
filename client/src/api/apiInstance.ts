@@ -39,8 +39,13 @@ class ApiInstance {
           awaitedCookies.get("__Secure-authjs.session-token")?.value ||
           awaitedCookies.get("authjs.session-token")?.value;
 
+        const isCookieSecure = !!awaitedCookies.get(
+          "__Secure-authjs.session-token",
+        )?.value;
+
         if (authToken) {
-          config.headers["Cookie"] = `authjs.session-token=${authToken}`;
+          config.headers["Cookie"] =
+            `${isCookieSecure ? "__Secure-" : ""}authjs.session-token=${authToken}`;
         }
       }
 
