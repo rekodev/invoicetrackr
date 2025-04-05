@@ -28,9 +28,9 @@ export default async function RootLayout({
     "bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-purple-900 from-[-35%] via-transparent to-transparent";
 
   return (
-    <html lang={locale} className="dark">
+    <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
-        <div className={`min-h-screen ${bgGradient} fixed inset-0`} />
+        <div className={`min-h-screen ${bgGradient} -z-10 fixed inset-0`} />
         <Providers messages={messages}>
           <Header />
           <main className="flex-grow flex flex-col py-6 mx-auto w-full">

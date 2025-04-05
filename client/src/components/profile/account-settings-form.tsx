@@ -189,7 +189,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
         as="form"
         aria-label="Account Settings Form"
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full bg-transparent border border-neutral-800"
+        className="w-full bg-transparent dark:border dark:border-default-100"
       >
         <CardHeader className="p-4 px-6">{t("title")}</CardHeader>
         <Divider />

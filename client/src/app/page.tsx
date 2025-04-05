@@ -9,12 +9,12 @@ import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from "@/lib/constants/pages";
 
 export default function Home() {
   const renderDivider = () => (
-    <div className="w-full border-t border-default-100" />
+    <div className="w-full border-t border-default-300 dark:border-default-100" />
   );
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
+      <main className="flex-1 ">
         <section className="max-w-7xl px-6 mx-auto w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
             <div className="flex flex-col justify-center space-y-4">
@@ -133,7 +133,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mx-auto max-w-7xl flex flex-col justify-center gap-6 py-12 lg:flex-row">
-            <div className="flex flex-col max-w-md w-full border-default-100 rounded-lg border justify-between bg-card text-card-foreground shadow-sm">
+            <div className="flex flex-col max-w-md w-full border-default-300 dark:border-default-100 rounded-lg border justify-between bg-card text-card-foreground shadow-sm">
               <div>
                 <div className="flex flex-col space-y-1.5 p-6">
                   <h3 className="text-2xl font-bold">Free</h3>
@@ -172,41 +172,39 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <div className="w-full max-w-md bg-secondary-50 bg-opacity-50 flex flex-col rounded-lg border border-secondary-500 text-primary-foreground shadow-sm">
+            <div className="w-full max-w-md bg-secondary-50 bg-opacity-50 dark:bg-opacity-100 flex flex-col rounded-lg border border-secondary-500 shadow-sm">
               <div className="flex flex-col space-y-1.5 p-6">
                 <h3 className="text-2xl font-bold">Premium</h3>
-                <p className="text-primary-foreground/80">
-                  Everything you need for efficient invoicing
-                </p>
+                <p>Everything you need for efficient invoicing</p>
               </div>
               <div className="p-6 pt-0">
                 <div className="text-4xl font-bold">$9.99</div>
-                <div className="text-primary-foreground/80">per month</div>
+                <div>per month</div>
               </div>
               <div className="p-6 pt-0">
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4" />
+                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
                     <span>Everything in Free</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4" />
+                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
                     <span>Save and edit invoices</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4" />
+                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
                     <span>Store client information</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4" />
+                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
                     <span>Create and manage contracts</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4" />
+                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
                     <span>Choose currency and language</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4" />
+                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
                     <span>Email invoices directly</span>
                   </li>
                 </ul>

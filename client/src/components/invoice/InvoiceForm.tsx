@@ -373,7 +373,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   return (
     <>
       <FormProvider {...methods}>
-        <Card className="p-8 border border-neutral-800 bg-transparent">
+        <Card className="p-8 dark:border dark:border-default-100 bg-transparent">
           <form
             aria-label="Add New Invoice Form"
             className="w-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
