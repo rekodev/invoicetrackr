@@ -64,7 +64,7 @@ export async function createNewPasswordAction(
   }
 }
 
-export async function authenticate(
+export async function authenticateAction(
   _prevState: string | undefined,
   formData: FormData,
 ) {
@@ -83,7 +83,7 @@ export async function authenticate(
   }
 }
 
-export async function logOut() {
+export async function logOutAction() {
   await signOut({ redirect: true, redirectTo: "/" });
 }
 

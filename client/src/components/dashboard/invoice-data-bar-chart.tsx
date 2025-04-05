@@ -2,7 +2,11 @@
 
 import { CategoryScale } from "chart.js";
 import Chart from "chart.js/auto";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
+
+import { DASHBOARD_PAGE, LOGIN_PAGE } from "@/lib/constants/pages";
 
 Chart.register(CategoryScale);
 
@@ -26,10 +30,17 @@ type Props = {
 };
 
 const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
+  const router = useRouter();
+  const pathname = usePathname();
   const currentMonthIndex = new Date().getMonth();
   const labels = MONTHS.slice(0, currentMonthIndex).concat(
     MONTHS.slice(currentMonthIndex),
   );
+
+  useEffect(() => {
+    // Temporary workaround for right after login
+    if (pathname === LOGIN_PAGE) router.replace(DASHBOARD_PAGE);
+  }, [pathname, router]);
 
   const dataByMonth = revenueByMonth
     ? Object.values(revenueByMonth)

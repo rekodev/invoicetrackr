@@ -43,7 +43,7 @@ const ClientCard = ({
               <div
                 className={cn(
                   "pb-0.5 truncate uppercase text-small font-bold",
-                  { "truncate max-w-40": truncate },
+                  { "lg:truncate lg:max-w-40": truncate },
                 )}
               >
                 {client.name}

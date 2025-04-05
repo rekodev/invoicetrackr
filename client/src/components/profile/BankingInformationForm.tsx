@@ -104,7 +104,7 @@ const BankingInformationForm = ({ userId }: Props) => {
     code,
     accountNumber,
   }: BankingInformationFormModel) => (
-    <Card key={id} className="col-span-1">
+    <Card key={id} className="col-span-2 lg:col-span-1">
       <CardBody className="flex flex-row gap-2 items-center">
         <Radio color="secondary" value={String(id || 0)} />
         <div>

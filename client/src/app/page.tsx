@@ -17,8 +17,8 @@ export default function Home() {
       <main className="flex-1 ">
         <section className="max-w-7xl px-6 mx-auto w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-            <div className="flex flex-col justify-center space-y-4">
-              <div className="space-y-2">
+            <div className="flex flex-col justify-center space-y-6">
+              <div className="space-y-4">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
                   Create Professional Invoices in Minutes
                 </h1>
@@ -27,7 +27,7 @@ export default function Home() {
                   and small businesses. No account required to get started.
                 </p>
               </div>
-              <div className="flex flex-col gap-2 min-[400px]:flex-row">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <Button size="lg" color="secondary" className="px-8">
                   <Link href={CREATE_INVOICE_PAGE}>Create Free Invoice</Link>
                 </Button>
@@ -54,7 +54,7 @@ export default function Home() {
           className="max-w-8xl max-w-7xl mx-auto px-6 w-full py-12 md:py-24 lg:py-32 bg-muted"
         >
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
+            <div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
                 Everything You Need for Professional Invoicing
               </h2>
@@ -123,7 +123,7 @@ export default function Home() {
           className="max-w-7xl mx-auto w-full px-6 py-12 md:py-24 lg:py-32"
         >
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
+            <div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
                 Simple, Transparent Pricing
               </h2>
@@ -222,7 +222,7 @@ export default function Home() {
 
         <section className="max-w-7xl mx-auto w-full px-6 py-12 md:py-24 lg:py-32 bg-muted">
           <div className="grid gap-12 md:gap-16 lg:grid-cols-2">
-            <div className="space-y-4">
+            <div className="space-y-6">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
                 Ready to streamline your invoicing process?
               </h2>

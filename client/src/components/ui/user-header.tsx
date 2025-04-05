@@ -1,20 +1,23 @@
 "use client";
 
+import { Bars3Icon } from "@heroicons/react/24/outline";
 import {
+  Avatar,
+  Button,
+  cn,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
   Link,
-  DropdownItem,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  Avatar,
 } from "@heroui/react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { logOut } from "@/lib/actions";
+import { logOutAction } from "@/lib/actions";
 import {
   CLIENTS_PAGE,
   CONTRACTS_PAGE,
@@ -23,10 +26,10 @@ import {
   INVOICES_PAGE,
   PERSONAL_INFORMATION_PAGE,
 } from "@/lib/constants/pages";
-import useGetUser from "@/lib/hooks/user/useGetUser";
+import { UserModel } from "@/lib/types/models/user";
 
 import ThemeSwitcher from "./theme-switcher";
-import AppLogo from "../icons/AppLogo.jsx";
+import AppLogo from "../icons/AppLogo";
 
 const navbarItems = [
   { name: "Dashboard", href: DASHBOARD_PAGE },
@@ -36,17 +39,44 @@ const navbarItems = [
 ];
 
 type Props = {
-  userId: number;
+  user: Partial<UserModel>;
 };
 
-export default function UserHeader({ userId }: Props) {
+export default function UserHeader({ user }: Props) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user } = useGetUser({ userId });
 
   const navigateToProfilePage = () => {
     router.push(PERSONAL_INFORMATION_PAGE);
   };
+
+  const renderMobileNavbarContent = () => (
+    <Dropdown>
+      <DropdownTrigger className="md:hidden">
+        <Button isIconOnly variant="faded" color="secondary">
+          <Bars3Icon className="w-5 h-5" />
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu>
+        {navbarItems.map((item, index) => {
+          const isActive = pathname?.includes(item.href);
+
+          return (
+            <DropdownItem
+              as={Link}
+              key={`mobile-${index}`}
+              href={item.href}
+              className={cn("w-full text-default-800", {
+                "text-secondary": isActive,
+              })}
+            >
+              {item.name}
+            </DropdownItem>
+          );
+        })}
+      </DropdownMenu>
+    </Dropdown>
+  );
 
   return (
     <Navbar isBordered>
@@ -60,7 +90,7 @@ export default function UserHeader({ userId }: Props) {
         </p>
       </NavbarBrand>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden md:flex gap-4" justify="center">
         {navbarItems.map((item, index) => {
           const isActive = pathname?.includes(item.href);
 
@@ -69,7 +99,9 @@ export default function UserHeader({ userId }: Props) {
               <Link
                 href={item.href}
                 aria-current="page"
-                color={isActive ? "secondary" : "foreground"}
+                className={cn("text-foreground", {
+                  "text-secondary": isActive,
+                })}
               >
                 {item.name}
               </Link>
@@ -79,6 +111,10 @@ export default function UserHeader({ userId }: Props) {
       </NavbarContent>
 
       <NavbarContent as="div" justify="end">
+        {renderMobileNavbarContent()}
+        <div className="md:hidden h-full py-3">
+          <div className="border-r border-default-300 dark:border-default-100 h-full" />
+        </div>
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Avatar
@@ -86,16 +122,16 @@ export default function UserHeader({ userId }: Props) {
               as="button"
               className="transition-transform"
               color="secondary"
-              name={user?.name}
+              name={user.name}
               size="sm"
-              src={user?.profilePictureUrl}
+              src={user.profilePictureUrl}
             />
           </DropdownTrigger>
-          <form action={logOut}>
+          <form action={logOutAction}>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="signed-in-as" className="h-14 gap-2">
                 <p className="font-semibold">Signed in as</p>
-                <p className="font-semibold">{user?.email}</p>
+                <p className="font-semibold">{user.email}</p>
               </DropdownItem>
               <DropdownItem key="profile" onPress={navigateToProfilePage}>
                 My Profile

@@ -1,11 +1,16 @@
 "use client";
 
+import { Bars3Icon } from "@heroicons/react/24/outline";
 import {
   Button,
-  Link,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Navbar,
   NavbarBrand,
   NavbarContent,
+  Link,
   NavbarItem,
 } from "@heroui/react";
 import { usePathname } from "next/navigation";
@@ -27,6 +32,46 @@ const navbarItems = [
 
 export default function GuestHeader() {
   const pathname = usePathname();
+
+  const renderMobileNavbarContent = () => {
+    return (
+      <Dropdown>
+        <DropdownTrigger className="md:hidden">
+          <Button isIconOnly color="secondary" variant="faded">
+            <Bars3Icon className="w-5 h-5" />
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu>
+          <DropdownItem
+            key="create-invoice"
+            className="text-secondary"
+            color="secondary"
+            as={Link}
+            href={CREATE_INVOICE_PAGE}
+            showDivider
+          >
+            Create Invoice
+          </DropdownItem>
+          <DropdownItem
+            as={Link}
+            href={LOGIN_PAGE}
+            className="flex justify-center items-center text-default-800"
+            key="login"
+          >
+            Login
+          </DropdownItem>
+          <DropdownItem
+            key="sign-up"
+            as={Link}
+            href={SIGN_UP_PAGE}
+            className="text-default-800"
+          >
+            Sign Up
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+    );
+  };
 
   return (
     <Navbar isBordered maxWidth="xl">
@@ -61,6 +106,7 @@ export default function GuestHeader() {
       </NavbarContent>
 
       <NavbarContent as="div" justify="end">
+        {renderMobileNavbarContent()}
         <NavbarItem className="border-r border-default-300 dark:border-default-100 pr-4 hidden lg:flex">
           <Button
             as={Link}
@@ -72,11 +118,11 @@ export default function GuestHeader() {
           </Button>
         </NavbarItem>
         <NavbarItem className="hidden lg:flex">
-          <Link color="secondary" href={LOGIN_PAGE}>
+          <Link className="text-secondary" href={LOGIN_PAGE}>
             Login
           </Link>
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem className="hidden lg:flex">
           <Button
             as={Link}
             href={SIGN_UP_PAGE}
@@ -86,7 +132,7 @@ export default function GuestHeader() {
             Sign Up
           </Button>
         </NavbarItem>
-        <NavbarItem className="border-l border-default-300 dark:border-default-100 pl-4 hidden lg:flex">
+        <NavbarItem className="border-l border-default-300 dark:border-default-100 pl-4">
           <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>
