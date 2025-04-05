@@ -10,8 +10,6 @@ export default function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
 
   const handleClick = () => {
-    if (!mounted) return;
-
     if (theme === "dark") setTheme("light");
     else setTheme("dark");
   };
@@ -19,6 +17,8 @@ export default function ThemeSwitcher() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  if (!mounted) return null;
 
   return (
     <Button variant="bordered" isIconOnly onPress={handleClick}>
