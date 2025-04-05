@@ -89,12 +89,17 @@ const InvoiceServicesTable = ({
   };
 
   const renderBottomContent = () => (
-    <div className="flex justify-between items-center">
-      <Button variant="bordered" color="secondary" onPress={handleAddService}>
+    <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
+      <Button
+        className="sticky"
+        variant="faded"
+        color="secondary"
+        onPress={handleAddService}
+      >
         <PlusIcon height={2} width={2} />
         Add Service
       </Button>
-      <div className="flex gap-6 pr-3">
+      <div className="flex gap-6 pr-3 self-end">
         <p>Grand Total:</p>
         <p>
           {getCurrencySymbol(currency)}
@@ -111,6 +116,7 @@ const InvoiceServicesTable = ({
       case "description":
         return (
           <Input
+            className="min-w-44"
             aria-label="Description"
             type="text"
             maxLength={200}
@@ -124,6 +130,7 @@ const InvoiceServicesTable = ({
       case "unit":
         return (
           <Input
+            className="min-w-44"
             aria-label="Unit"
             type="text"
             maxLength={20}
@@ -185,6 +192,8 @@ const InvoiceServicesTable = ({
       <Table
         aria-label="Invoice Services Table"
         bottomContent={renderBottomContent()}
+        bottomContentPlacement="outside"
+        className="relative"
       >
         <TableHeader columns={INVOICE_SERVICE_COLUMNS}>
           {(column) => (

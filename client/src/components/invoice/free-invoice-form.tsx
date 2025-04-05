@@ -49,7 +49,7 @@ const FreeInvoiceForm = () => {
   const renderSenderAndReceiverFields = () => (
     <div className="col-span-4 flex flex-col w-full gap-4">
       <h4>Sender and Receiver Data</h4>
-      <div className="col-span-4 flex w-full justify-between gap-4">
+      <div className="col-span-4 flex flex-col md:flex-row w-full justify-between gap-4">
         <Card className="w-full p-4 flex flex-col gap-4">
           <div className="min-h-8 flex items-center justify-between">
             <p className="text-default-500 text-sm">From:</p>
@@ -161,7 +161,7 @@ const FreeInvoiceForm = () => {
   );
 
   const renderInvoiceServices = () => (
-    <div className="flex gap-4 flex-col col-span-1 md:col-span-2 lg:col-span-4">
+    <div className="flex gap-4 flex-col col-span-4">
       <h4>Services</h4>
       <InvoiceServicesTable
         currency="usd"
@@ -172,9 +172,9 @@ const FreeInvoiceForm = () => {
   );
 
   const renderBankingInformation = () => (
-    <div className="flex gap-4 flex-col col-span-full">
+    <div className="flex gap-4 flex-col col-span-4">
       <h4>Banking Details</h4>
-      <div className="flex gap-4">
+      <div className="flex flex-col md:flex-row gap-4">
         <Input
           label="Bank Name"
           labelPlacement="inside"
@@ -227,7 +227,7 @@ const FreeInvoiceForm = () => {
   );
 
   const renderSubmissionMessageAndActions = () => (
-    <div className="col-span-full flex w-full items-center gap-5 justify-between overflow-x-hidden">
+    <div className="col-span-4 flex w-full items-center gap-5 justify-between overflow-x-hidden">
       <div className="flex gap-1 justify-end w-full">
         <Button
           color="danger"
@@ -264,9 +264,9 @@ const FreeInvoiceForm = () => {
               className="w-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
               encType="multipart/form-data"
             >
-              <div className="col-span-full flex flex-col gap-4">
+              <div className="col-span-4 flex flex-col gap-4">
                 <h4>Invoice Details</h4>
-                <div className="flex gap-2 col-span-4">
+                <div className="flex flex-col md:flex-row gap-2 col-span-4">
                   <Input
                     className="w-full"
                     aria-label="Invoice ID"

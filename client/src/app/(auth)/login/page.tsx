@@ -3,7 +3,7 @@ import AppLogo from "@/components/icons/AppLogo";
 
 const LogInPage = () => {
   return (
-    <section className="py-8 flex flex-col justify-center items-center gap-4">
+    <section className="px-6 py-8 flex flex-col justify-center items-center gap-4">
       <AppLogo />
       <div className="flex flex-col justify-center items-center gap-1 mb-6">
         <h2 className="text-2xl font-medium">Welcome</h2>

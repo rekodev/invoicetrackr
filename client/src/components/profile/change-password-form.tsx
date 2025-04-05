@@ -88,7 +88,7 @@ export default function ChangePasswordForm({ userId, language }: Props) {
 
     return (
       <>
-        <CardBody className="p-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <CardBody className="p-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <PasswordInput
             placeholder={t("current_password_placeholder")}
             registeredPassword={registeredPassword}

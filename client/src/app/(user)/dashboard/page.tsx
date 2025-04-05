@@ -18,11 +18,11 @@ const DashboardPage = async () => {
   const userId = Number(session.user.id);
 
   return (
-    <main className="flex flex-col gap-6">
+    <main className="flex flex-col gap-12">
       <Suspense fallback={<DashboardCardsSkeleton />}>
         <DashboardCards userId={userId} currency={session.user.currency} />
       </Suspense>
-      <section className="flex gap-6">
+      <section className="flex flex-col lg:flex-row gap-12 lg:gap-6">
         <Suspense fallback={<RevenueChartSkeleton />}>
           <RevenueChart userId={userId} />
         </Suspense>

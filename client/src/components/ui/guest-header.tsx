@@ -1,7 +1,12 @@
 "use client";
 
+import { Bars3Icon } from "@heroicons/react/24/outline";
 import {
   Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Link,
   Navbar,
   NavbarBrand,
@@ -27,6 +32,39 @@ const navbarItems = [
 
 export default function GuestHeader() {
   const pathname = usePathname();
+
+  const renderMobileNavbarContent = () => {
+    return (
+      <Dropdown>
+        <DropdownTrigger className="md:hidden">
+          <Button isIconOnly color="secondary" variant="faded">
+            <Bars3Icon className="w-5 h-5" />
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu>
+          <DropdownItem key="create-invoice" showDivider>
+            <Link
+              color="secondary"
+              className="w-full"
+              href={CREATE_INVOICE_PAGE}
+            >
+              Create Invoice
+            </Link>
+          </DropdownItem>
+          <DropdownItem key="login">
+            <Link className="w-full" color="foreground" href={LOGIN_PAGE}>
+              Login
+            </Link>
+          </DropdownItem>
+          <DropdownItem key="sign-up">
+            <Link className="w-full" color="foreground" href={SIGN_UP_PAGE}>
+              Sign Up
+            </Link>
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+    );
+  };
 
   return (
     <Navbar isBordered maxWidth="xl">
@@ -61,6 +99,7 @@ export default function GuestHeader() {
       </NavbarContent>
 
       <NavbarContent as="div" justify="end">
+        {renderMobileNavbarContent()}
         <NavbarItem className="border-r border-default-300 dark:border-default-100 pr-4 hidden lg:flex">
           <Button
             as={Link}
@@ -76,7 +115,7 @@ export default function GuestHeader() {
             Login
           </Link>
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem className="hidden lg:flex">
           <Button
             as={Link}
             href={SIGN_UP_PAGE}
@@ -86,7 +125,7 @@ export default function GuestHeader() {
             Sign Up
           </Button>
         </NavbarItem>
-        <NavbarItem className="border-l border-default-300 dark:border-default-100 pl-4 hidden lg:flex">
+        <NavbarItem className="border-l border-default-300 dark:border-default-100 pl-4">
           <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>
