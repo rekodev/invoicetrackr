@@ -115,7 +115,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
 
     return (
       <>
-        <CardBody className="p-6 grid grid-cols-1 gap-4 sm:w-1/2">
+        <CardBody className="p-6 grid grid-cols-1 gap-4 lg:w-1/2">
           <Select
             {...register("language")}
             label={
@@ -157,8 +157,9 @@ const AccountSettingsForm = ({ userId }: Props) => {
               {submissionMessage}
             </Chip>
           )}
-          <div className="flex gap-2 self-end">
+          <div className="w-full md:w-min flex gap-2 self-end">
             <Button
+              className="w-full md:w-min"
               variant="faded"
               type="button"
               color="danger"
@@ -171,7 +172,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
               type="submit"
               isLoading={uiState === UiState.Pending}
               color="secondary"
-              className="self-end"
+              className="w-full md:w-min"
             >
               {t("save_changes")}
             </Button>

@@ -90,7 +90,7 @@ const PersonalInformationForm = ({ userId }: Props) => {
 
     return (
       <>
-        <CardBody className="p-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <CardBody className="p-6 grid grid-cols-1 gap-4 md:grid-cols-2">
           <Input
             {...register("name")}
             label="Name"
