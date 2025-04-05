@@ -33,7 +33,11 @@ class ApiInstance {
     this.httpClient.interceptors.request.use(async (config) => {
       if (typeof window === "undefined") {
         const { cookies } = await import("next/headers");
-        const authToken = (await cookies()).get("authjs.session-token")?.value;
+        const awaitedCookies = await cookies();
+
+        const authToken =
+          awaitedCookies.get("__Secure-authjs.session-token")?.value ||
+          awaitedCookies.get("authjs.session-token")?.value;
 
         if (authToken) {
           config.headers["Cookie"] = `authjs.session-token=${authToken}`;
