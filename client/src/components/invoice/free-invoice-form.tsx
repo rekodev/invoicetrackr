@@ -253,14 +253,12 @@ const FreeInvoiceForm = () => {
       <FormProvider {...methods}>
         <div className="p-6 mx-auto max-w-5xl">
           <div className="flex flex-col gap-2">
-            <h1 className="text-white text-3xl font-semibold">
-              Create Invoice
-            </h1>
+            <h1 className="text-3xl font-semibold">Create Invoice</h1>
             <p className="text-default-500">
               Create, preview and download an invoice for free
             </p>
           </div>
-          <Card className="mt-8 p-8 border border-neutral-800 bg-transparent">
+          <Card className="mt-8 p-8 dark:border dark:border-default-100 bg-transparent">
             <form
               aria-label="Add New Invoice Form"
               className="w-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"

@@ -105,7 +105,7 @@ const SignaturePad = ({
       <div className="flex flex-col gap-1.5">
         <Card
           radius="lg"
-          className={`flex justify-center items-center relative aspect-4/3 overflow-hidden ${
+          className={`shadow-small dark:border dark:border-default-100 flex justify-center items-center relative aspect-4/3 overflow-hidden ${
             isInvalid && "bg-[#F3126040]"
           }`}
           onPress={onOpen}
