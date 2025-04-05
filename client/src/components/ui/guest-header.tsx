@@ -7,10 +7,10 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Link,
   Navbar,
   NavbarBrand,
   NavbarContent,
+  Link,
   NavbarItem,
 } from "@heroui/react";
 import { usePathname } from "next/navigation";
@@ -42,24 +42,31 @@ export default function GuestHeader() {
           </Button>
         </DropdownTrigger>
         <DropdownMenu>
-          <DropdownItem key="create-invoice" showDivider>
-            <Link
-              color="secondary"
-              className="w-full"
-              href={CREATE_INVOICE_PAGE}
-            >
-              Create Invoice
-            </Link>
+          <DropdownItem
+            key="create-invoice"
+            className="text-secondary"
+            color="secondary"
+            as={Link}
+            href={CREATE_INVOICE_PAGE}
+            showDivider
+          >
+            Create Invoice
           </DropdownItem>
-          <DropdownItem key="login">
-            <Link className="w-full" color="foreground" href={LOGIN_PAGE}>
-              Login
-            </Link>
+          <DropdownItem
+            as={Link}
+            href={LOGIN_PAGE}
+            className="flex justify-center items-center text-default-800"
+            key="login"
+          >
+            Login
           </DropdownItem>
-          <DropdownItem key="sign-up">
-            <Link className="w-full" color="foreground" href={SIGN_UP_PAGE}>
-              Sign Up
-            </Link>
+          <DropdownItem
+            key="sign-up"
+            as={Link}
+            href={SIGN_UP_PAGE}
+            className="text-default-800"
+          >
+            Sign Up
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
@@ -111,7 +118,7 @@ export default function GuestHeader() {
           </Button>
         </NavbarItem>
         <NavbarItem className="hidden lg:flex">
-          <Link color="secondary" href={LOGIN_PAGE}>
+          <Link className="text-secondary" href={LOGIN_PAGE}>
             Login
           </Link>
         </NavbarItem>

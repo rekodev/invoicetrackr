@@ -13,11 +13,12 @@ import {
 } from "@heroui/react";
 import { useActionState } from "react";
 
-import { authenticate } from "@/lib/actions";
+import { authenticateAction } from "@/lib/actions";
+import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from "@/lib/constants/pages";
 
 export default function LoginForm() {
   const [errorMessage, formAction, isPending] = useActionState(
-    authenticate,
+    authenticateAction,
     undefined,
   );
 
@@ -73,12 +74,12 @@ export default function LoginForm() {
         </form>
       </CardBody>
       <CardFooter className="flex flex-col items-center justify-center pt-0 pb-8 gap-1">
-        <Link color="secondary" href="/forgot-password">
+        <Link color="secondary" href={FORGOT_PASSWORD_PAGE}>
           Forgot Password?
         </Link>
         <div className="flex gap-1">
           <p className="text-md">Need to create an account?</p>{" "}
-          <Link color="secondary" href="/sign-up">
+          <Link color="secondary" href={SIGN_UP_PAGE}>
             Sign Up
           </Link>
         </div>

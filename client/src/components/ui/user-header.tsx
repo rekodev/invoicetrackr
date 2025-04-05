@@ -13,11 +13,11 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
+  Link,
 } from "@heroui/react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
-import { logOut } from "@/lib/actions";
+import { logOutAction } from "@/lib/actions";
 import {
   CLIENTS_PAGE,
   CONTRACTS_PAGE,
@@ -46,8 +46,6 @@ export default function UserHeader({ user }: Props) {
   const pathname = usePathname();
   const router = useRouter();
 
-  console.log({ user });
-
   const navigateToProfilePage = () => {
     router.push(PERSONAL_INFORMATION_PAGE);
   };
@@ -66,12 +64,11 @@ export default function UserHeader({ user }: Props) {
           return (
             <DropdownItem
               as={Link}
-              className={cn("text-default-800", {
-                "text-secondary-500": isActive,
-              })}
-              href={item.href}
-              color={isActive ? "secondary" : "default"}
               key={`mobile-${index}`}
+              href={item.href}
+              className={cn("w-full text-default-800", {
+                "text-secondary": isActive,
+              })}
             >
               {item.name}
             </DropdownItem>
@@ -130,7 +127,7 @@ export default function UserHeader({ user }: Props) {
               src={user.profilePictureUrl}
             />
           </DropdownTrigger>
-          <form action={logOut}>
+          <form action={logOutAction}>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="signed-in-as" className="h-14 gap-2">
                 <p className="font-semibold">Signed in as</p>

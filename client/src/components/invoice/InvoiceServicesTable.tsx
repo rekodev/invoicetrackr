@@ -90,12 +90,7 @@ const InvoiceServicesTable = ({
 
   const renderBottomContent = () => (
     <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center">
-      <Button
-        className="sticky"
-        variant="faded"
-        color="secondary"
-        onPress={handleAddService}
-      >
+      <Button variant="faded" color="secondary" onPress={handleAddService}>
         <PlusIcon height={2} width={2} />
         Add Service
       </Button>
@@ -193,7 +188,6 @@ const InvoiceServicesTable = ({
         aria-label="Invoice Services Table"
         bottomContent={renderBottomContent()}
         bottomContentPlacement="outside"
-        className="relative"
       >
         <TableHeader columns={INVOICE_SERVICE_COLUMNS}>
           {(column) => (
