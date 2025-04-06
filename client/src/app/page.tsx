@@ -1,9 +1,8 @@
 "use client";
 
 import { CheckIcon } from "@heroicons/react/24/outline";
-import { Button } from "@heroui/react";
+import { Button, Link } from "@heroui/react";
 import Image from "next/image";
-import Link from "next/link";
 
 import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from "@/lib/constants/pages";
 
@@ -28,11 +27,17 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
-                <Button size="lg" color="secondary" className="px-8">
-                  <Link href={CREATE_INVOICE_PAGE}>Create Free Invoice</Link>
+                <Button
+                  as={Link}
+                  href={CREATE_INVOICE_PAGE}
+                  size="lg"
+                  color="secondary"
+                  className="px-8"
+                >
+                  Create Free Invoice
                 </Button>
-                <Button variant="ghost" size="lg">
-                  <Link href="#pricing">See Premium Features</Link>
+                <Button as={Link} href="#pricing" variant="ghost" size="lg">
+                  See Premium Features
                 </Button>
               </div>
             </div>
@@ -167,8 +172,8 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex flex-col p-6 pt-0">
-                <Button>
-                  <Link href={CREATE_INVOICE_PAGE}>Get Started</Link>
+                <Button as={Link} href={CREATE_INVOICE_PAGE}>
+                  Get Started
                 </Button>
               </div>
             </div>
@@ -210,8 +215,13 @@ export default function Home() {
                 </ul>
               </div>
               <div className="flex flex-col p-6 pt-0">
-                <Button variant="solid" color="secondary">
-                  <Link href={SIGN_UP_PAGE}>Upgrade Now</Link>
+                <Button
+                  as={Link}
+                  href={SIGN_UP_PAGE}
+                  variant="solid"
+                  color="secondary"
+                >
+                  Upgrade Now
                 </Button>
               </div>
             </div>
@@ -230,8 +240,13 @@ export default function Home() {
                 Start creating professional invoices today, no credit card
                 required.
               </p>
-              <Button size="lg" className="px-8">
-                <Link href={CREATE_INVOICE_PAGE}>Try For Free</Link>
+              <Button
+                as={Link}
+                href={CREATE_INVOICE_PAGE}
+                size="lg"
+                className="px-8"
+              >
+                Try For Free
               </Button>
             </div>
             <div className="flex flex-col items-start space-y-4">

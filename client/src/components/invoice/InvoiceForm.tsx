@@ -109,7 +109,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   const renderSenderAndReceiverFields = () => (
     <div className="col-span-4 flex flex-col w-full gap-4">
       <h4>Sender and Receiver Data</h4>
-      <div className="col-span-4 flex w-full justify-between gap-4">
+      <div className="col-span-4 flex flex-col md:flex-row w-full justify-between gap-4">
         <Card className="w-full p-4 flex flex-col gap-4">
           <div className="min-h-8 flex justify-between items-center">
             <p className="text-default-500 text-sm">From:</p>
@@ -243,7 +243,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   );
 
   const renderInvoiceServices = () => (
-    <div className="flex gap-4 flex-col col-span-1 md:col-span-2 lg:col-span-4">
+    <div className="flex gap-4 flex-col col-span-4">
       <h4>Services</h4>
       <InvoiceServicesTable
         currency={currency}
@@ -255,7 +255,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   );
 
   const renderBankingInformation = () => (
-    <div className="flex gap-4 flex-col col-span-full">
+    <div className="flex gap-4 flex-col col-span-4">
       <div className="flex items-end justify-between">
         <h4>Banking Details</h4>
         <Button
@@ -268,7 +268,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
           Select Bank Account
         </Button>
       </div>
-      <div className="flex gap-4">
+      <div className="flex flex-col md:flex-row gap-4">
         <Controller
           name="bankingInformation.name"
           control={control}
@@ -340,13 +340,13 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   );
 
   const renderSubmissionMessageAndActions = () => (
-    <div className="col-span-full flex w-full items-center gap-5 justify-between overflow-x-hidden">
+    <div className="col-span-4 flex w-full items-center gap-5 justify-between overflow-x-hidden">
       {submissionMessage && (
         <Chip color={uiState === UiState.Success ? "success" : "danger"}>
           {submissionMessage}
         </Chip>
       )}
-      <div className="flex gap-1 justify-end w-full">
+      <div className="flex gap-1 flex-col sm:flex-row justify-end w-full">
         <Button color="danger" variant="light" onPress={redirectToInvoicesPage}>
           Cancel
         </Button>
@@ -380,9 +380,9 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
             onSubmit={handleSubmit(onSubmit)}
             encType="multipart/form-data"
           >
-            <div className="flex gap-4 flex-col col-span-full">
+            <div className="flex gap-4 flex-col col-span-4">
               <h4>Invoice Details</h4>
-              <div className="flex gap-4">
+              <div className="flex flex-col md:flex-row gap-4">
                 <Input
                   aria-label="Invoice ID"
                   {...register("invoiceId")}

@@ -18,9 +18,9 @@ const Footer = () => {
     <footer className="flex justify-center items-center flex-col">
       {pathname === HOME_PAGE && (
         <div className="border-t-1 border-default-300 dark:border-default-100 w-full gap-4 py-10 md:flex-row md:gap-8 md:py-12">
-          <div className="flex justify-between items-center max-w-7xl w-full m-auto px-6">
-            <div className="flex flex-col gap-2 md:gap-4 lg:gap-6">
-              <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-8 sm:flex-row justify-between text-center sm:text-start items-center max-w-7xl w-full m-auto px-6">
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-2 mx-auto sm:mx-0">
                 <AppLogo />
                 <p className="font-bold text-inherit">
                   INVOICE<span className="text-secondary-600">TRACKR</span>

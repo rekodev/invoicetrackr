@@ -228,7 +228,7 @@ const FreeInvoiceForm = () => {
 
   const renderSubmissionMessageAndActions = () => (
     <div className="col-span-4 flex w-full items-center gap-5 justify-between overflow-x-hidden">
-      <div className="flex gap-1 justify-end w-full">
+      <div className="flex flex-col sm:flex-row gap-1 justify-end w-full">
         <Button
           color="danger"
           variant="light"
