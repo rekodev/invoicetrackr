@@ -82,7 +82,7 @@ export default function UserHeader({ user }: Props) {
     <Navbar isBordered>
       <NavbarBrand className="text-white flex gap-2" as={Link} href={HOME_PAGE}>
         <AppLogo />
-        <p className="font-bold text-default-800">
+        <p className="hidden sm:flex font-bold text-default-800">
           INVOICE
           <span className="text-secondary-400 dark:text-secondary-600">
             TRACKR
