@@ -1,6 +1,17 @@
 "use client";
 
-import { Button } from "@heroui/react";
+import {
+  EllipsisVerticalIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@heroui/react";
 import { useState } from "react";
 
 import useClientSearchAndFilter from "@/lib/hooks/client/useClientSearchAndFilter";
@@ -11,7 +22,6 @@ import ClientSectionBottomContent from "./ClientSectionBottomContent";
 import ClientSectionTopContent from "./ClientSectionTopContent";
 import DeleteClientModal from "./DeleteClientModal";
 import EditClientModal from "./EditClientModal";
-import TrashIcon from "../icons/TrashIcon";
 import InvoicePartyCard from "../invoice/InvoicePartyCard";
 import Loader from "../ui/loader";
 
@@ -56,25 +66,62 @@ const ClientSection = ({ userId }: Props) => {
     setIsEditClientModalOpen(true);
   };
 
+  const renderMobileClientCardActions = (clientData: ClientModel) => (
+    <Dropdown>
+      <DropdownTrigger className="absolute right-2 top-2">
+        <Button variant="light" size="sm" isIconOnly className="sm:hidden">
+          <EllipsisVerticalIcon className="w-5 h-5" />
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu>
+        <DropdownItem
+          color="warning"
+          key="edit-client"
+          onPress={() => handleEditClient(clientData)}
+        >
+          <div className="flex items-center gap-1">
+            <PencilIcon className="w-4 h-4" />
+            Edit
+          </div>
+        </DropdownItem>
+        <DropdownItem
+          color="danger"
+          key="remove-client"
+          onPress={() => handleOpenDeleteClientModal(clientData)}
+        >
+          <div className="flex items-center gap-1">
+            <TrashIcon className="w-4 h-4" />
+            Remove
+          </div>
+        </DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+  );
+
   const renderClientCardActions = (clientData: ClientModel) => (
-    <div className="absolute right-2 top-2 flex gap-1.5 z-10">
-      <Button
-        className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
-        variant="bordered"
-        onPress={() => handleEditClient(clientData)}
-      >
-        Edit
-      </Button>
-      <Button
-        isIconOnly
-        variant="bordered"
-        color="danger"
-        className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
-        onPress={() => handleOpenDeleteClientModal(clientData)}
-      >
-        <TrashIcon height={4} width={4} />
-      </Button>
-    </div>
+    <>
+      {renderMobileClientCardActions(clientData)}
+      <div className="hidden sm:flex absolute right-2 top-2 gap-1.5 z-10">
+        <Button
+          isIconOnly
+          className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
+          color="warning"
+          variant="bordered"
+          onPress={() => handleEditClient(clientData)}
+        >
+          <PencilIcon className="h-4 w-4" />
+        </Button>
+        <Button
+          isIconOnly
+          variant="bordered"
+          color="danger"
+          className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
+          onPress={() => handleOpenDeleteClientModal(clientData)}
+        >
+          <TrashIcon className="h-4 w-4" />
+        </Button>
+      </div>
+    </>
   );
 
   const renderClient = (client: ClientModel, index: number) => {

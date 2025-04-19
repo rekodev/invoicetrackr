@@ -77,7 +77,7 @@ export default function GuestHeader() {
     <Navbar isBordered maxWidth="xl">
       <NavbarBrand className="flex gap-2" as={Link} href={HOME_PAGE}>
         <AppLogo />
-        <p className="font-bold text-default-800">
+        <p className="hidden sm:flex font-bold text-default-800">
           INVOICE
           <span className="text-secondary-400 dark:text-secondary-600">
             TRACKR
@@ -107,7 +107,7 @@ export default function GuestHeader() {
 
       <NavbarContent as="div" justify="end">
         {renderMobileNavbarContent()}
-        <NavbarItem className="border-r border-default-300 dark:border-default-100 pr-4 hidden lg:flex">
+        <NavbarItem className="border-r border-default-300 dark:border-default-100 pr-4 hidden md:flex">
           <Button
             as={Link}
             color="secondary"
@@ -117,12 +117,12 @@ export default function GuestHeader() {
             Create Invoice
           </Button>
         </NavbarItem>
-        <NavbarItem className="hidden lg:flex">
+        <NavbarItem className="hidden md:flex">
           <Link className="text-secondary" href={LOGIN_PAGE}>
             Login
           </Link>
         </NavbarItem>
-        <NavbarItem className="hidden lg:flex">
+        <NavbarItem className="hidden md:flex">
           <Button
             as={Link}
             href={SIGN_UP_PAGE}

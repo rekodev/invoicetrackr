@@ -37,7 +37,7 @@ const InvoiceModal = ({
 
   return (
     <Modal
-      className="h-[84.84vh] w-[90%] max-w-md min-w-[60%] pb-2 max-h-[978px]"
+      className="min-w-[50%] max-h-[84.84vh] pb-3"
       isOpen={isOpen}
       onOpenChange={onOpenChange}
     >
@@ -45,19 +45,17 @@ const InvoiceModal = ({
         <ModalHeader className="flex flex-col gap-1 pb-2">
           {invoiceId}
         </ModalHeader>
-        <ModalBody>
-          <div className="w-full h-full">
-            <PDFViewer className="h-full w-full">
-              <PDFDocument
-                t={t}
-                language={language}
-                currency={currency}
-                invoiceData={invoiceData}
-                senderSignatureImage={senderSignatureImage}
-                bankAccount={bankAccount || invoiceData.bankingInformation}
-              />
-            </PDFViewer>
-          </div>
+        <ModalBody className="overflow-y-scroll">
+          <PDFViewer className="aspect-[210/297]">
+            <PDFDocument
+              t={t}
+              language={language}
+              currency={currency}
+              invoiceData={invoiceData}
+              senderSignatureImage={senderSignatureImage}
+              bankAccount={bankAccount || invoiceData.bankingInformation}
+            />
+          </PDFViewer>
         </ModalBody>
       </ModalContent>
     </Modal>

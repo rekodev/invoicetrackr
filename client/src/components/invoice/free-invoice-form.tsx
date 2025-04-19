@@ -258,7 +258,7 @@ const FreeInvoiceForm = () => {
               Create, preview and download an invoice for free
             </p>
           </div>
-          <Card className="mt-8 p-8 dark:border dark:border-default-100 bg-transparent">
+          <Card className="p-4 mt-8 sm:p-8 dark:border dark:border-default-100 bg-transparent">
             <form
               aria-label="Add New Invoice Form"
               className="w-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"

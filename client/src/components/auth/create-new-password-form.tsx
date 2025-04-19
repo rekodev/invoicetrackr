@@ -42,7 +42,7 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
 
   return (
     <Card
-      className="mx-auto w-full max-w-lg border border-neutral-800"
+      className="mx-auto w-full max-w-lg dark:border dark:border-neutral-800"
       isBlurred
     >
       <CardHeader className="p-8 pb-0">

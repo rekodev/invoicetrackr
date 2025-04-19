@@ -256,15 +256,15 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
 
   const renderBankingInformation = () => (
     <div className="flex gap-4 flex-col col-span-4">
-      <div className="flex items-end justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
         <h4>Banking Details</h4>
         <Button
           size="sm"
           variant="faded"
-          className="min-w-unit-10 w-unit-26 h-unit-8 cursor-pointer"
+          className="min-w-unit-10 w-unit-26 h-unit-8 cursor-pointer max-w-min"
           onPress={() => setIsBankingInformationModalOpen(true)}
+          startContent={<BuildingLibraryIcon className="min-w-4 min-h-4" />}
         >
-          <BuildingLibraryIcon className="w-4 h-4" />
           Select Bank Account
         </Button>
       </div>
@@ -373,7 +373,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   return (
     <>
       <FormProvider {...methods}>
-        <Card className="p-8 dark:border dark:border-default-100 bg-transparent">
+        <Card className="p-4 sm:p-8 dark:border dark:border-default-100 bg-transparent">
           <form
             aria-label="Add New Invoice Form"
             className="w-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"

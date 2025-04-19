@@ -31,7 +31,7 @@ export default function ForgotPasswordForm() {
 
   return (
     <Card
-      className="mx-auto w-full max-w-lg border border-neutral-800"
+      className="mx-auto w-full max-w-lg dark:border dark:border-neutral-800"
       isBlurred
     >
       <CardHeader className="p-8 pb-0">
@@ -63,14 +63,14 @@ export default function ForgotPasswordForm() {
             {response?.message && (
               <div className="flex items-center gap-1 mb-6">
                 {response.ok ? (
-                  <CheckCircleIcon className="h-5 w-5 text-success-500" />
+                  <CheckCircleIcon className="h-5 w-5 text-success-400" />
                 ) : (
-                  <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+                  <ExclamationCircleIcon className="h-5 w-5 text-rose-500" />
                 )}
                 <p
                   className={cn("text-sm", {
-                    "text-success-500": response.ok,
-                    "text-red-500": !response.ok,
+                    "text-success-400": response.ok,
+                    "text-rose-500": !response.ok,
                   })}
                 >
                   {response.message}

@@ -56,7 +56,7 @@ const Footer = () => {
       )}
       <div className="w-full flex flex-col gap-4 border-t-1 border-t-default-300 dark:border-t-default-100 py-6 md:flex-row md:items-center">
         <div className="flex w-full justify-center items-center px-6 max-w-7xl mx-auto">
-          <div className="text-xs text-muted-foreground">
+          <div className="text-center text-xs text-muted-foreground">
             © {new Date().getFullYear()} InvoiceTrackr. All rights reserved.
           </div>
         </div>
