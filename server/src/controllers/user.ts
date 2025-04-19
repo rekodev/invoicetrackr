@@ -294,11 +294,12 @@ export const resetUserPassword = async (
     text: i18n.t("emails.resetPassword.text", { resetLink }),
   };
 
-  transporter.sendMail(mailOptions, (error) => {
-    if (error) {
-      throw new BadRequestError(i18n.t("errors.user.resetPassword.failure"));
-    }
-  });
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    throw new BadRequestError(i18n.t("errors.user.resetPassword.failure"));
+  }
 
   reply
     .status(200)
