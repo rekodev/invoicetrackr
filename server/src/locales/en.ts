@@ -38,6 +38,7 @@ export default {
       resetPassword: {
         notFound: "User with given email not found",
         success: "Reset link has been sent to the entered email",
+        failure: "Unable to send reset link. Please try again",
         token: {
           invalid: "Token is invalid",
           expired: "Token has expired",

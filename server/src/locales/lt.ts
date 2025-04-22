@@ -39,6 +39,8 @@ export default {
       resetPassword: {
         notFound: "Vartotojas su nurodytu el. paštu nerastas",
         success: "Slaptažodžio atstatymo nuoroda išsiųsta į nurodytą el. paštą",
+        failure:
+          "Nepavyko išsiųsti nuorodos slaptažodžiui atkurti. Bandykite vėliau",
         token: {
           invalid: "Raktas yra neteisingas",
           expired: "Rakto galiojimo laikas pasibaigė",
