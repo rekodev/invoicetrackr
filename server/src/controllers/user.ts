@@ -24,8 +24,8 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "../utils/errors";
-import { transporter } from "../config/nodemailer";
 import { saveResetTokenToDb } from "../database/passwordReset";
+import { resend } from "../config/resend";
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -287,17 +287,16 @@ export const resetUserPassword = async (
   await saveResetTokenToDb(user.id, resetToken, tokenExpiresAt);
 
   const resetLink = `https://invoicetrackr.app/create-new-password/${resetToken}`;
-  const mailOptions = {
-    from: "invoicetrackr@gmail.com",
-    to: email,
+
+  const { error } = await resend.emails.send({
+    from: "InvoiceTrackr <noreply@invoicetrackr.app>",
+    to: [email],
     subject: i18n.t("emails.resetPassword.subject"),
     text: i18n.t("emails.resetPassword.text", { resetLink }),
-  };
+  });
 
-  try {
-    await transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.error("Failed to send email:", error);
+  if (error) {
+    console.error({ error });
     throw new BadRequestError(i18n.t("errors.user.resetPassword.failure"));
   }
 
