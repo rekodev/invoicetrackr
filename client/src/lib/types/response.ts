@@ -11,7 +11,7 @@ import {
 export type ActionResponseModel = {
   ok: boolean;
   message?: string;
-  validationErrors?: Array<{ key: string; value: string }>;
+  validationErrors?: Record<string, string>;
 };
 
 export type RegisterUserResponse = ApiError & {

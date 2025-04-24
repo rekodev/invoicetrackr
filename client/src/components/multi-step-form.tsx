@@ -11,8 +11,13 @@ import {
 } from '@heroui/react';
 import { useState } from 'react';
 
+import {
+  BankingInformationFormModel,
+  UserModel
+} from '@/lib/types/models/user';
+
 import SignUpForm from './auth/sign-up-form';
-// import BankingInformationForm from './profile/BankingInformationForm';
+import BankAccountForm from './profile/bank-account-form';
 import PersonalInformationForm from './profile/personal-information-form';
 
 const steps = [
@@ -35,30 +40,45 @@ const steps = [
 ];
 
 type Props = {
-  existingEmail?: string;
+  existingUserData?: UserModel;
+  existingBankingInformation?: BankingInformationFormModel;
 };
 
-export default function MultiStepForm({ existingEmail }: Props) {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [email, setEmail] = useState(existingEmail);
+export default function MultiStepForm({
+  existingUserData,
+  existingBankingInformation
+}: Props) {
+  const personalInformation = {
+    email: existingUserData?.email,
+    name: existingUserData?.name,
+    businessType: existingUserData?.businessType,
+    businessNumber: existingUserData?.businessNumber
+  };
+
+  const [currentStep, setCurrentStep] = useState(!!existingUserData ? 1 : 0);
+
+  const advanceStep = () => setCurrentStep((prev) => prev + 1);
 
   const renderStep = () => {
     switch (currentStep) {
       case 0:
+        return <SignUpForm />;
+      case 1:
         return (
-          <SignUpForm
-            onSuccess={(emailFromResponse: string) => {
-              setEmail(emailFromResponse);
-              setCurrentStep(1);
-            }}
+          <PersonalInformationForm
+            defaultValues={existingUserData}
+            onSuccess={advanceStep}
           />
         );
-      case 1:
-        // TODO: Implement onSuccess
-        return <PersonalInformationForm />;
       case 2:
-      // TODO: Implement onSuccess
-      // return <BankingInformationForm userId={1} />;
+        return (
+          <BankAccountForm
+            userId={existingUserData?.id}
+            userSelectedBankAccountId={existingUserData?.selectedBankAccountId}
+            defaultValues={existingBankingInformation}
+            onSuccess={advanceStep}
+          />
+        );
       default:
         null;
     }
@@ -89,8 +109,8 @@ export default function MultiStepForm({ existingEmail }: Props) {
                   'opacity-65': currentStep < index
                 })}
                 onClick={() => {
-                  // if (!email) return;
-                  // if (index === 0) return;
+                  if (!existingUserData) return;
+                  if (index === 0) return;
 
                   setCurrentStep(index);
                 }}

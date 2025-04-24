@@ -25,11 +25,12 @@ import GeneralFormError from '../ui/general-form-error';
 
 type Props = {
   defaultValues?: Partial<UserModel> | undefined;
+  onSuccess?: () => void;
 };
 
 // TODO: Improve form and add validation
 
-const PersonalInformationForm = ({ defaultValues }: Props) => {
+const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
   const {
     register,
     handleSubmit,
@@ -62,8 +63,10 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
       setUiState(UiState.Failure);
 
       if (response.validationErrors) {
-        response.validationErrors.forEach((error) => {
-          setError(error.key as keyof UserModel, { message: error.value });
+        Object.keys(response.validationErrors).forEach((key) => {
+          setError(key as keyof UserModel, {
+            message: response.validationErrors!.key
+          });
         });
       }
 
@@ -71,6 +74,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
     }
 
     setUiState(UiState.Success);
+    onSuccess?.();
   };
 
   // When form is updated and user is re-fetched, reset the form to match the new user data

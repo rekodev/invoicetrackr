@@ -1,30 +1,32 @@
-import type { NextAuthConfig } from "next-auth";
+import type { NextAuthConfig } from 'next-auth';
 
 export const authConfig = {
-  pages: {
-    signIn: "/login",
-  },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const publicPaths = [
-        "/login",
-        "/sign-up",
-        "/forgot-password",
-        "/",
-        "/create-invoice",
-        "/privacy-policy",
-        "/terms-of-service",
+        '/login',
+        '/sign-up',
+        '/forgot-password',
+        '/',
+        '/create-invoice',
+        '/privacy-policy',
+        '/terms-of-service'
       ];
       const pathIsPublic =
         publicPaths.includes(nextUrl.pathname) ||
-        nextUrl.pathname.startsWith("/create-new-password");
+        nextUrl.pathname.startsWith('/create-new-password');
+      // TODO: Implement actual isOnboarded logic
+      const isOnboarded = nextUrl.pathname.startsWith('/onboarding');
 
       if (!pathIsPublic) {
-        if (isLoggedIn) return true;
+        if (isLoggedIn)
+          return isOnboarded
+            ? true
+            : Response.redirect(new URL('/onboarding', nextUrl));
         return false; // Redirect unauthenticated users to login page
       } else if (isLoggedIn) {
-        return Response.redirect(new URL("/dashboard", nextUrl));
+        return Response.redirect(new URL('/dashboard', nextUrl));
       }
 
       return true;
@@ -35,11 +37,11 @@ export const authConfig = {
         token.currency = user.currency;
       }
 
-      if (trigger === "update") {
+      if (trigger === 'update') {
         token = {
           ...token,
           language: session.user.language,
-          currency: session.user.currency,
+          currency: session.user.currency
         };
       }
 
@@ -51,8 +53,8 @@ export const authConfig = {
       session.user.currency = token.currency as string;
 
       return session;
-    },
+    }
   },
   session: {},
-  providers: [], // Add providers with an empty array for now
+  providers: [] // Add providers with an empty array for now
 } satisfies NextAuthConfig;

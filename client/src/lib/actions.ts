@@ -88,7 +88,7 @@ export async function logOutAction() {
 }
 
 export async function signUp(
-  _prevState: { message: string; ok: boolean; email: string } | undefined,
+  _prevState: { message: string; ok: boolean } | undefined,
   formData: FormData
 ) {
   const rawFormData = {
@@ -100,11 +100,11 @@ export async function signUp(
   try {
     const response = await registerUser(rawFormData);
 
-    return {
-      message: response.data.message,
-      ok: 'errors' in response.data ? false : true,
-      email: response.data.email
-    };
+    if ('errors' in response.data) {
+      return { ok: false, message: response.data.message };
+    }
+
+    return signIn('credentials', formData);
   } catch (error) {
     throw error;
   }

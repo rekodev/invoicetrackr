@@ -1,9 +1,9 @@
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import { z } from "zod";
+import NextAuth from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import { z } from 'zod';
 
-import { loginUser } from "./api";
-import { authConfig } from "./auth.config";
+import { loginUser } from './api';
+import { authConfig } from './auth.config';
 
 export const { auth, signIn, signOut, unstable_update } = NextAuth({
   ...authConfig,
@@ -26,7 +26,7 @@ export const { auth, signIn, signOut, unstable_update } = NextAuth({
         }
 
         return null;
-      },
-    }),
-  ],
+      }
+    })
+  ]
 });

@@ -8,6 +8,7 @@ import { updateUser } from '@/api';
 import { PERSONAL_INFORMATION_PAGE } from '../constants/pages';
 import { UserModel } from '../types/models/user';
 import { ActionResponseModel } from '../types/response';
+import { mapValidationErrors } from '../utils/validation';
 
 export async function updateUserAction({
   user,
@@ -16,7 +17,8 @@ export async function updateUserAction({
   user: UserModel;
   signature: string | File | undefined;
 }): Promise<ActionResponseModel> {
-  if (!user.id) return { ok: false };
+  const t = await getTranslations();
+  if (!user.id) return { ok: false, message: t('general_error') };
 
   try {
     const response = await updateUser(user.id, {
@@ -29,17 +31,13 @@ export async function updateUserAction({
       return {
         ok: false,
         message: response.data.message,
-        validationErrors: response.data.errors as Array<{
-          key: string;
-          value: string;
-        }>
+        validationErrors: mapValidationErrors(response.data.errors)
       };
     }
 
     revalidatePath(PERSONAL_INFORMATION_PAGE);
     return { ok: true, message: response.data.message };
   } catch (e) {
-    const t = await getTranslations();
     return { ok: false, message: t('general_error') };
   }
 }

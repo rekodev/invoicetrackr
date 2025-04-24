@@ -20,25 +20,14 @@ import { signUp } from '@/lib/actions';
 
 const initialState = {
   message: '',
-  ok: false,
-  email: ''
+  ok: false
 };
 
-type Props = {
-  onSuccess: (email: string) => void;
-};
-
-export default function SignUpForm({ onSuccess }: Props) {
+export default function SignUpForm() {
   const [state, formAction, isPending] = useActionState(signUp, initialState);
 
-  useEffect(() => {
-    if (!state.ok) return;
-
-    onSuccess(state.email);
-  }, [onSuccess, state]);
-
   const renderSubmissionMessage = () => {
-    if (!state.message) return null;
+    if (!state?.message) return null;
 
     if (!state.ok) {
       return (
