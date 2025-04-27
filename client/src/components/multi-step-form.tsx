@@ -85,7 +85,11 @@ export default function MultiStepForm({
   };
 
   return (
-    <section className="mx-auto flex w-full max-w-7xl justify-center gap-4 px-6 py-4">
+    <section
+      className={cn('mx-auto flex w-full max-w-7xl justify-center gap-4 py-4', {
+        'px-6': !existingUserData
+      })}
+    >
       <Card className="h-full w-full max-w-sm gap-8 border border-default-100 bg-gradient-to-b from-default-100 via-secondary-50 dark:to-black">
         <CardHeader className="flex-col items-start gap-8 px-8 pt-8 text-start">
           <Button

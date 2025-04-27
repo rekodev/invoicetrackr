@@ -19,15 +19,18 @@ export const authConfig = {
         publicPaths.includes(nextUrl.pathname) ||
         nextUrl.pathname.startsWith('/create-new-password');
       const isOnboarded = !!auth?.user.isOnboarded;
+      const pathIsOnboarding = nextUrl.pathname.startsWith(ONBOARDING_PAGE);
 
       if (!pathIsPublic) {
         if (isLoggedIn) {
           if (isOnboarded) {
-            return nextUrl.pathname.startsWith(ONBOARDING_PAGE)
+            return pathIsOnboarding
               ? Response.redirect(new URL(DASHBOARD_PAGE, nextUrl))
               : true;
           } else {
-            return Response.redirect(new URL('/onboarding', nextUrl));
+            return pathIsOnboarding
+              ? true
+              : Response.redirect(new URL('/onboarding', nextUrl));
           }
         }
 

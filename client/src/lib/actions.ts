@@ -113,11 +113,8 @@ export async function signUp(
 export const updateSession = async (user: UserModel) => {
   await unstable_update({
     user: {
-      email: user.email,
-      currency: user.currency,
-      language: user.language,
-      id: String(user.id),
-      name: user.name
+      ...user,
+      id: String(user.id)
     }
   });
 };
