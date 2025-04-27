@@ -86,3 +86,6 @@ export type DeleteUserAccountResp = ApiError;
 export type ResetPasswordResp = ApiError & { message: string };
 
 export type GetUserResetPasswordTokenResp = ApiError & ResetPasswordTokenModel;
+
+// Stripe
+export type CreatePaymentIntentResp = ApiError & { clientSecret: string };

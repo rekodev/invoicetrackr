@@ -17,6 +17,7 @@ import {
 } from '@/lib/types/models/user';
 
 import SignUpForm from './auth/sign-up-form';
+import PaymentForm from './payment-form';
 import BankAccountForm from './profile/bank-account-form';
 import PersonalInformationForm from './profile/personal-information-form';
 
@@ -79,6 +80,8 @@ export default function MultiStepForm({
             onSuccess={advanceStep}
           />
         );
+      case 3:
+        return <PaymentForm currency={existingUserData?.currency || 'usd'} />;
       default:
         null;
     }
