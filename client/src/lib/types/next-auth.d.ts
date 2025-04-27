@@ -13,10 +13,10 @@ declare module 'next-auth' {
     type: string;
     businessType: string;
     businessNumber: string;
-    selectedBankAccountId: string;
+    selectedBankAccountId: number;
     address: string;
     email: string;
-    isOnboarded: boolean;
+    isOnboarded?: boolean;
   }
 
   interface Session {
