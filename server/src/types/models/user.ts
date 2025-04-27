@@ -1,5 +1,5 @@
-import { Static, Type } from '@sinclair/typebox';
-import { InvoicePartyBusinessType, InvoicePartyType } from './invoice';
+import { Static, Type } from "@sinclair/typebox";
+import { InvoicePartyBusinessType, InvoicePartyType } from "./invoice";
 
 export const User = Type.Object({
   id: Type.Optional(Type.Number()),

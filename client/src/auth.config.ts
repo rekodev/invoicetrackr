@@ -1,5 +1,7 @@
 import type { NextAuthConfig } from 'next-auth';
 
+import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './lib/constants/pages';
+
 export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
@@ -16,14 +18,19 @@ export const authConfig = {
       const pathIsPublic =
         publicPaths.includes(nextUrl.pathname) ||
         nextUrl.pathname.startsWith('/create-new-password');
-      // TODO: Implement actual isOnboarded logic
-      const isOnboarded = nextUrl.pathname.startsWith('/onboarding');
+      const isOnboarded = !!auth?.user.isOnboarded;
 
       if (!pathIsPublic) {
-        if (isLoggedIn)
-          return isOnboarded
-            ? true
-            : Response.redirect(new URL('/onboarding', nextUrl));
+        if (isLoggedIn) {
+          if (isOnboarded) {
+            return nextUrl.pathname.startsWith(ONBOARDING_PAGE)
+              ? Response.redirect(new URL(DASHBOARD_PAGE, nextUrl))
+              : true;
+          } else {
+            return Response.redirect(new URL('/onboarding', nextUrl));
+          }
+        }
+
         return false; // Redirect unauthenticated users to login page
       } else if (isLoggedIn) {
         return Response.redirect(new URL('/dashboard', nextUrl));
@@ -33,8 +40,21 @@ export const authConfig = {
     },
     jwt({ token, user, trigger, session }) {
       if (user) {
+        let isOnboarded = false;
+
+        if (
+          user.name &&
+          user.businessType &&
+          user.businessNumber &&
+          user.address &&
+          user.selectedBankAccountId
+        ) {
+          isOnboarded = true;
+        }
+
         token.language = user.language;
         token.currency = user.currency;
+        token.isOnboarded = isOnboarded;
       }
 
       if (trigger === 'update') {
@@ -51,6 +71,7 @@ export const authConfig = {
       session.user.id = token.sub!;
       session.user.language = token.language as string;
       session.user.currency = token.currency as string;
+      session.user.isOnboarded = Boolean(token.isOnboarded);
 
       return session;
     }
