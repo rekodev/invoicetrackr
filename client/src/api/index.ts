@@ -10,7 +10,8 @@ import {
   AddBankingInformationResp,
   AddClientResp,
   AddInvoiceResp,
-  CreatePaymentIntentResp,
+  CreateCustomerResp,
+  CreateSubscriptionResp,
   DeleteClientResp,
   DeleteInvoiceResp,
   DeleteUserAccountResp,
@@ -259,11 +260,19 @@ export const createNewUserPassword = async ({
   });
 
 // Stripe
-export const createPaymentIntent = async ({
-  amount
+export const createCustomer = async ({
+  email,
+  name
 }: {
-  amount: string;
-}): Promise<AxiosResponse<CreatePaymentIntentResp>> =>
-  await api.post(`/api/create-payment-intent`, {
-    amount
+  email: string;
+  name: string;
+}): Promise<AxiosResponse<CreateCustomerResp>> =>
+  await api.post(`/api/create-customer`, {
+    email,
+    name
   });
+
+export const createSubscription = async (
+  customerId: string
+): Promise<AxiosResponse<CreateSubscriptionResp>> =>
+  await api.post('/api/create-subscription', { customerId });

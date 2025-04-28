@@ -88,4 +88,8 @@ export type ResetPasswordResp = ApiError & { message: string };
 export type GetUserResetPasswordTokenResp = ApiError & ResetPasswordTokenModel;
 
 // Stripe
-export type CreatePaymentIntentResp = ApiError & { clientSecret: string };
+export type CreateCustomerResp = ApiError & { customerId: string };
+export type CreateSubscriptionResp = ApiError & {
+  type: string;
+  clientSecret: string;
+};

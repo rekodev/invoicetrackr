@@ -1,13 +1,17 @@
 import { Type } from "@sinclair/typebox";
 import { RouteShorthandOptionsWithHandler } from "fastify";
 
-import { createPaymentIntent } from "../controllers/payment";
+import { createCustomer, createSubscription } from "../controllers/payment";
 
-export const createPaymentIntentOptions: RouteShorthandOptionsWithHandler = {
+export const createCustomerOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: { clientSecret: Type.String() },
+      200: { customerId: Type.String() },
     },
   },
-  handler: createPaymentIntent,
+  handler: createCustomer,
+};
+
+export const createSubscriptionOptions: RouteShorthandOptionsWithHandler = {
+  handler: createSubscription,
 };

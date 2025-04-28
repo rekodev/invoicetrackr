@@ -9,12 +9,16 @@ import {
   CardHeader,
   cn
 } from '@heroui/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   BankingInformationFormModel,
   UserModel
 } from '@/lib/types/models/user';
+import {
+  isUserBankingDetailsSetUp,
+  isUserPersonalInformationSetUp
+} from '@/lib/utils/user';
 
 import SignUpForm from './auth/sign-up-form';
 import PaymentForm from './payment-form';
@@ -49,14 +53,16 @@ export default function MultiStepForm({
   existingUserData,
   existingBankingInformation
 }: Props) {
-  const personalInformation = {
-    email: existingUserData?.email,
-    name: existingUserData?.name,
-    businessType: existingUserData?.businessType,
-    businessNumber: existingUserData?.businessNumber
-  };
+  const initialCurrentStep = useMemo(() => {
+    if (!existingUserData) return 0;
+    if (isUserPersonalInformationSetUp(existingUserData)) {
+      return isUserBankingDetailsSetUp(existingUserData) ? 3 : 2;
+    }
 
-  const [currentStep, setCurrentStep] = useState(!!existingUserData ? 1 : 0);
+    return 0;
+  }, [existingUserData]);
+
+  const [currentStep, setCurrentStep] = useState(initialCurrentStep);
 
   const advanceStep = () => setCurrentStep((prev) => prev + 1);
 
@@ -74,6 +80,7 @@ export default function MultiStepForm({
       case 2:
         return (
           <BankAccountForm
+            isUserOnboarding
             userId={existingUserData?.id}
             userSelectedBankAccountId={existingUserData?.selectedBankAccountId}
             defaultValues={existingBankingInformation}
@@ -81,7 +88,7 @@ export default function MultiStepForm({
           />
         );
       case 3:
-        return <PaymentForm currency={existingUserData?.currency || 'usd'} />;
+        return <PaymentForm user={existingUserData} />;
       default:
         null;
     }

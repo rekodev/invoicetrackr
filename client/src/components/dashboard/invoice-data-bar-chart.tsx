@@ -6,8 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { DASHBOARD_PAGE, LOGIN_PAGE } from '@/lib/constants/pages';
-
 Chart.register(CategoryScale);
 
 const MONTHS = [

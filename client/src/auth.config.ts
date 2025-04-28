@@ -63,6 +63,7 @@ export const authConfig = {
       if (trigger === 'update') {
         token = {
           ...token,
+          isOnboarded: session.user.isOnboarded,
           language: session.user.language,
           currency: session.user.currency
         };

@@ -82,7 +82,7 @@ export default function BankAccountForm({
   };
 
   return (
-    <Card className="w-full border border-neutral-800 bg-transparent">
+    <Card className="w-full bg-transparent dark:border dark:border-neutral-800">
       <form
         aria-label="Banking Information Form"
         onSubmit={handleSubmit(onSubmit)}
@@ -119,13 +119,15 @@ export default function BankAccountForm({
             </Chip>
           )}
           <div className="flex gap-2">
-            <Button
-              color="danger"
-              variant="light"
-              onPress={() => router.push(BANKING_INFORMATION_PAGE)}
-            >
-              Cancel
-            </Button>
+            {!isUserOnboarding && (
+              <Button
+                color="danger"
+                variant="light"
+                onPress={() => router.push(BANKING_INFORMATION_PAGE)}
+              >
+                Cancel
+              </Button>
+            )}
             <Button type="submit" color="secondary" isLoading={isSubmitting}>
               Save
             </Button>

@@ -110,10 +110,13 @@ export async function signUp(
   }
 }
 
-export const updateSession = async (user: UserModel) => {
+export const updateSession = async (
+  user: UserModel & { isOnboarded?: boolean }
+) => {
   await unstable_update({
     user: {
       ...user,
+      isOnboarded: true,
       id: String(user.id)
     }
   });
