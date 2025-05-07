@@ -41,7 +41,7 @@ export const authConfig = {
 
       return true;
     },
-    jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         let isOnboarded = false;
 
@@ -50,7 +50,9 @@ export const authConfig = {
           user.businessType &&
           user.businessNumber &&
           user.address &&
-          user.selectedBankAccountId
+          user.selectedBankAccountId &&
+          user.stripeCustomerId &&
+          user.stripeSubscriptionId
         ) {
           isOnboarded = true;
         }

@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { FormEvent, useState } from 'react';
 
-import { createCustomer, createSubscription } from '@/api';
+import { createCustomer, createSubscription, getStripeCustomerId } from '@/api';
 import { updateSession } from '@/lib/actions';
 import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
 import { UserModel } from '@/lib/types/models/user';
@@ -50,7 +50,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
   const handleSubmit = async (event: FormEvent<HTMLDivElement>) => {
     event.preventDefault();
 
-    if (!stripe || !elements) return;
+    if (!stripe || !elements || !user.id) return;
 
     try {
       setIsLoading(true);
@@ -63,14 +63,26 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
         return;
       }
 
-      const createCustomerResp = await createCustomer({
-        email: user.email,
-        name: user.name
-      });
+      let stripeCustomerId;
 
-      const response = await createSubscription(
-        createCustomerResp.data.customerId
-      );
+      const {
+        data: { customerId: existingCustomerId }
+      } = await getStripeCustomerId(user.id);
+
+      if (existingCustomerId) {
+        stripeCustomerId = existingCustomerId;
+      } else {
+        const createCustomerResp = await createCustomer({
+          userId: user.id,
+          email: user.email,
+          name: user.name
+        });
+
+        stripeCustomerId = createCustomerResp.data.customerId;
+      }
+
+      // TODO: Implement update subscription (re-subscribe) if it already exists
+      const response = await createSubscription(user.id, stripeCustomerId);
 
       const { error } = await stripe.confirmPayment({
         elements,

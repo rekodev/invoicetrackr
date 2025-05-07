@@ -21,6 +21,7 @@ import {
   GetInvoicesRevenueResp,
   GetInvoicesTotalAmountResp,
   GetLatestInvoicesResp,
+  GetStripeCustomerIdResp,
   GetUserResetPasswordTokenResp,
   RegisterUserResponse,
   ResetPasswordResp,
@@ -261,18 +262,26 @@ export const createNewUserPassword = async ({
 
 // Stripe
 export const createCustomer = async ({
+  userId,
   email,
   name
 }: {
+  userId: number;
   email: string;
   name: string;
 }): Promise<AxiosResponse<CreateCustomerResp>> =>
-  await api.post(`/api/create-customer`, {
+  await api.post(`/api/${userId}/create-customer`, {
     email,
     name
   });
 
 export const createSubscription = async (
+  userId: number,
   customerId: string
 ): Promise<AxiosResponse<CreateSubscriptionResp>> =>
-  await api.post('/api/create-subscription', { customerId });
+  await api.post(`/api/${userId}/create-subscription`, { customerId });
+
+export const getStripeCustomerId = async (
+  userId: number
+): Promise<AxiosResponse<GetStripeCustomerIdResp>> =>
+  await api.get(`/api/${userId}/customer`);

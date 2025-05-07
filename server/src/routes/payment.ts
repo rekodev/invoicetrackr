@@ -7,6 +7,7 @@ import {
 import {
   createCustomerOptions,
   createSubscriptionOptions,
+  getStripeCustomerIdOptions,
 } from "../options/payment";
 
 const paymentRoutes = (
@@ -14,8 +15,9 @@ const paymentRoutes = (
   _options: FastifyPluginOptions,
   done: DoneFuncWithErrOrRes,
 ) => {
-  fastify.post("/api/create-customer", createCustomerOptions);
-  fastify.post("/api/create-subscription", createSubscriptionOptions);
+  fastify.post("/api/:userId/create-customer", createCustomerOptions);
+  fastify.post("/api/:userId/create-subscription", createSubscriptionOptions);
+  fastify.get("/api/:userId/customer", getStripeCustomerIdOptions);
 
   done();
 };

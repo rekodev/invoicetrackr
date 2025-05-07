@@ -2,7 +2,11 @@ import { and, eq } from "drizzle-orm";
 
 import { UserModel } from "../types/models";
 import { db } from "./db";
-import { passwordResetTokensTable, usersTable } from "./schema";
+import {
+  passwordResetTokensTable,
+  stripeAccountsTable,
+  usersTable,
+} from "./schema";
 
 export const getUserFromDb = async (id: number) => {
   const users = await db
@@ -46,8 +50,14 @@ export const getUserByEmailFromDb = async (email: string) => {
       currency: usersTable.currency,
       language: usersTable.language,
       password: usersTable.password,
+      stripeCustomerId: stripeAccountsTable.stripeCustomerId,
+      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
     })
     .from(usersTable)
+    .leftJoin(
+      stripeAccountsTable,
+      eq(stripeAccountsTable.userId, usersTable.id),
+    )
     .where(eq(usersTable.email, email));
 
   return users.at(0);

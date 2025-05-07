@@ -59,7 +59,7 @@ export default function MultiStepForm({
       return isUserBankingDetailsSetUp(existingUserData) ? 3 : 2;
     }
 
-    return 0;
+    return 1;
   }, [existingUserData]);
 
   const [currentStep, setCurrentStep] = useState(initialCurrentStep);

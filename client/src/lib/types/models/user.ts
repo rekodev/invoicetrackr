@@ -20,7 +20,9 @@ export const userSchema = z.object({
   selectedBankAccountId: z.number(),
   profilePictureUrl: z.string(),
   currency: z.string(),
-  language: z.string()
+  language: z.string(),
+  stripeCustomerId: z.string().nullable(),
+  stripeSubscriptionId: z.string().nullable()
 });
 
 export const userSchemaWithPassword = userSchema.extend({

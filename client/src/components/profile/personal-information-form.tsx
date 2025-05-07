@@ -87,6 +87,13 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
       <>
         <CardBody className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
           <Input
+            isDisabled
+            {...register('email')}
+            label="Email"
+            labelPlacement="outside"
+            variant="faded"
+          />
+          <Input
             {...register('name')}
             label="Name"
             labelPlacement="outside"
@@ -116,12 +123,6 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
           <Input
             {...register('address')}
             label="Address"
-            labelPlacement="outside"
-            variant="faded"
-          />
-          <Input
-            {...register('email')}
-            label="Email"
             labelPlacement="outside"
             variant="faded"
           />

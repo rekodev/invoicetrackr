@@ -16,6 +16,8 @@ declare module 'next-auth' {
     selectedBankAccountId: number;
     address: string;
     email: string;
+    stripeCustomerId: string | null;
+    stripeSubscriptionId: string | null;
     isOnboarded?: boolean;
   }
 

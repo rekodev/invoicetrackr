@@ -230,6 +230,15 @@ export const passwordResetTokensTable = pgTable("password_reset_tokens", {
   }).default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const stripeAccountsTable = pgTable("stripe_accounts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  stripeCustomerId: text("stripe_customer_id").notNull().unique(),
+  stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
+});
+
 export type InsertInvoice = typeof invoicesTable.$inferInsert;
 export type SelectInvoice = typeof invoicesTable.$inferSelect;
 

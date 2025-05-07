@@ -129,6 +129,7 @@ export const deleteUser = async (
   const { userId } = req.params;
 
   const deletedUserId = await deleteUserFromDb(userId);
+  // TODO: Also delete user's stripe account
 
   if (!deletedUserId)
     throw new BadRequestError(
