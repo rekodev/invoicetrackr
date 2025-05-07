@@ -7,6 +7,7 @@ import { getTranslations } from 'next-intl/server';
 import { createNewUserPassword, registerUser, resetUserPassword } from '@/api';
 
 import { signIn, signOut, unstable_update } from '../auth';
+import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
 import { UserModel } from './types/models/user';
 
 export type ActionReturnType = {
@@ -69,7 +70,11 @@ export async function authenticateAction(
   formData: FormData
 ) {
   try {
-    await signIn('credentials', formData);
+    await signIn('credentials', {
+      email: formData.get('email'),
+      password: formData.get('password'),
+      redirectTo: DASHBOARD_PAGE
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -104,7 +109,10 @@ export async function signUp(
       return { ok: false, message: response.data.message };
     }
 
-    return signIn('credentials', formData);
+    return signIn('credentials', {
+      ...rawFormData,
+      redirectTo: ONBOARDING_PAGE
+    });
   } catch (error) {
     throw error;
   }
