@@ -73,7 +73,7 @@ export const Invoice = Type.Object({
   // ),
   receiver: Type.Object(
     {
-      id: Type.Number(),
+      id: Type.Optional(Type.Number()),
       type: InvoicePartyType,
       name: Type.String({ minLength: 1, errorMessage: "errors.invoice.name" }),
       businessType: InvoicePartyBusinessType,
@@ -108,7 +108,7 @@ export const Invoice = Type.Object({
   }),
   bankingInformation: Type.Object(
     {
-      id: Type.Number(),
+      id: Type.Optional(Type.Number()),
       name: Type.String(),
       code: Type.String(),
       accountNumber: Type.String(),
