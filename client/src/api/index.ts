@@ -10,6 +10,7 @@ import {
   AddBankingInformationResp,
   AddClientResp,
   AddInvoiceResp,
+  CancelStripeSubscriptionResp,
   CreateCustomerResp,
   CreateSubscriptionResp,
   DeleteClientResp,
@@ -285,3 +286,8 @@ export const getStripeCustomerId = async (
   userId: number
 ): Promise<AxiosResponse<GetStripeCustomerIdResp>> =>
   await api.get(`/api/${userId}/customer`);
+
+export const cancelStripeSubscription = async (
+  userId: number
+): Promise<AxiosResponse<CancelStripeSubscriptionResp>> =>
+  await api.put(`/api/${userId}/cancel-subscription`);

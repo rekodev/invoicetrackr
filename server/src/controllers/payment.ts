@@ -96,3 +96,19 @@ export const getStripeCustomerId = async (
 
   reply.status(200).send({ customerId: stripeCustomerId });
 };
+
+export const cancelStripeSubscription = async (
+  req: FastifyRequest<{ Params: { userId: number } }>,
+  reply: FastifyReply,
+) => {
+  const { userId } = req.params;
+
+  const stripeSubscriptionId =
+    await getStripeCustomerSubscriptionIdFromDb(userId);
+
+  if (!stripeSubscriptionId) throw NotFoundError("Subscription not found.");
+
+  await stripe.subscriptions.cancel(stripeSubscriptionId);
+
+  reply.status(200).send({ message: "Subscription canceled successfuly" });
+};

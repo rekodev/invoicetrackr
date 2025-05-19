@@ -108,7 +108,6 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
     } catch (e) {
       console.error(e);
       setErrorMessage('Something occurred');
-    } finally {
       setIsLoading(false);
     }
 
@@ -124,12 +123,14 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
         });
       } catch (sessionError) {
         console.error('Failed to update session', sessionError);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
   return (
-    <Card as="form" onSubmit={handleSubmit}>
+    <Card as="form" className="mx-auto max-w-2xl" onSubmit={handleSubmit}>
       <CardHeader className="p-4 px-6">Payment</CardHeader>
       <Divider />
       <CardBody className="px-5 py-4">

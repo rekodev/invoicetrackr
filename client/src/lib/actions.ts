@@ -132,6 +132,7 @@ export const updateSession = async ({
   await unstable_update({
     user: {
       ...newSession,
+      isOnboarded: true,
       id: String(newSession.id)
     }
   });

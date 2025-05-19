@@ -40,7 +40,7 @@ export const authConfig = {
 
         // Onboarded but subscription inactive → redirect unless already on renew page
         if (!isSubscriptionActive) {
-          return isRenewPage
+          return isRenewPage || path.startsWith('/profile')
             ? true
             : Response.redirect(new URL(RENEW_SUBSCRIPTION_PAGE, nextUrl));
         }

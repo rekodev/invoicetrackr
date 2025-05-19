@@ -2,6 +2,7 @@ import { Type } from "@sinclair/typebox";
 import { RouteShorthandOptionsWithHandler } from "fastify";
 
 import {
+  cancelStripeSubscription,
   createCustomer,
   createSubscription,
   getStripeCustomerId,
@@ -32,3 +33,14 @@ export const getStripeCustomerIdOptions: RouteShorthandOptionsWithHandler = {
   preHandler: authMiddleware,
   handler: getStripeCustomerId,
 };
+
+export const cancelStripeSubscriptionOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      response: {
+        200: { message: Type.String() },
+      },
+    },
+    preHandler: authMiddleware,
+    handler: cancelStripeSubscription,
+  };

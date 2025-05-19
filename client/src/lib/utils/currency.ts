@@ -1,4 +1,4 @@
-export const getCurrencySymbol = (currencyCode: string) => {
+export const getCurrencySymbol = (currencyCode: string | undefined) => {
   switch (currencyCode) {
     case 'eur':
       return '€';

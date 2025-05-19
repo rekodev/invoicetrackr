@@ -5,6 +5,7 @@ import {
 } from "fastify";
 
 import {
+  cancelStripeSubscriptionOptions,
   createCustomerOptions,
   createSubscriptionOptions,
   getStripeCustomerIdOptions,
@@ -18,6 +19,10 @@ const paymentRoutes = (
   fastify.post("/api/:userId/create-customer", createCustomerOptions);
   fastify.post("/api/:userId/create-subscription", createSubscriptionOptions);
   fastify.get("/api/:userId/customer", getStripeCustomerIdOptions);
+  fastify.put(
+    "/api/:userId/cancel-subscription",
+    cancelStripeSubscriptionOptions,
+  );
 
   done();
 };

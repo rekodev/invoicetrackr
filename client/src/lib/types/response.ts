@@ -94,3 +94,4 @@ export type CreateSubscriptionResp = ApiError & {
   clientSecret: string;
 };
 export type GetStripeCustomerIdResp = ApiError & { customerId: string };
+export type CancelStripeSubscriptionResp = ApiError & { message: string };

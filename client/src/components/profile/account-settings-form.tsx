@@ -22,18 +22,21 @@ import { updateSession } from '@/lib/actions';
 import { UiState } from '@/lib/constants/uiState';
 import useGetUser from '@/lib/hooks/user/useGetUser';
 import { AccountSettingsFormModel } from '@/lib/types/models/user';
+import { getCurrencySymbol } from '@/lib/utils/currency';
 
 import DeleteAccountModal from './delete-account-modal';
+import SubscriptionStatusCard from './subscription-status-card';
 import ErrorAlert from '../ui/error-alert';
 import Loader from '../ui/loader';
 
 type Props = {
   userId: number;
+  isSubscriptionActive: boolean;
 };
 
 // TODO: Improve form and add validation
 
-const AccountSettingsForm = ({ userId }: Props) => {
+const AccountSettingsForm = ({ userId, isSubscriptionActive }: Props) => {
   const { mutateUser, user, isUserLoading, userError } = useGetUser({ userId });
   const { refresh } = useRouter();
   const t = useTranslations('profile.account_settings');
@@ -130,7 +133,7 @@ const AccountSettingsForm = ({ userId }: Props) => {
             defaultSelectedKeys={user?.language ? [user.language] : undefined}
           >
             {availableLanguages.map((language) => (
-              <SelectItem key={language.code} textValue={language.code}>
+              <SelectItem key={language.code} textValue={language.name}>
                 {language.name}
               </SelectItem>
             ))}
@@ -147,11 +150,16 @@ const AccountSettingsForm = ({ userId }: Props) => {
             defaultSelectedKeys={user?.currency ? [user.currency] : undefined}
           >
             {availableCurrencies.map((currency) => (
-              <SelectItem key={currency.code} textValue={currency.code}>
+              <SelectItem key={currency.code} textValue={currency.name}>
                 {`${currency.name} (${currency.symbol})`}
               </SelectItem>
             ))}
           </Select>
+          <SubscriptionStatusCard
+            userId={userId}
+            isActive={isSubscriptionActive}
+            currency={getCurrencySymbol(user?.currency)}
+          />
         </CardBody>
         <CardFooter className="w-full flex-col justify-between p-6">
           {submissionMessage && (
