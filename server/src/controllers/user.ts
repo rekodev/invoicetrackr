@@ -26,6 +26,7 @@ import {
 } from "../utils/errors";
 import { saveResetTokenToDb } from "../database/passwordReset";
 import { resend } from "../config/resend";
+import { stripe } from "../config/stripe";
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -51,7 +52,19 @@ export const loginUser = async (
   const isValidPassword = await bcrypt.compare(password, user.password);
   if (!isValidPassword) throw new UnauthorizedError("Invalid credentials");
 
-  reply.status(200).send({ user });
+  let isSubscriptionActive = false;
+
+  if (!!user.stripeSubscriptionId) {
+    const userSubscription = await stripe.subscriptions.retrieve(
+      user.stripeSubscriptionId,
+    );
+
+    if (userSubscription.status === "active") isSubscriptionActive = true;
+  }
+
+  reply.status(200).send({
+    user: { ...user, isSubscriptionActive },
+  });
 };
 
 export const postUser = async (

@@ -1,14 +1,16 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import "dotenv/config";
-import { BadRequestError, NotFoundError } from "../utils/errors";
-import Stripe from "stripe";
+import {
+  AlreadyExistsError,
+  BadRequestError,
+  NotFoundError,
+} from "../utils/errors";
 import {
   createStripeCustomerInDb,
   getStripeCustomerIdFromDb,
+  getStripeCustomerSubscriptionIdFromDb,
   updateStripeSubscriptionForUserInDb,
 } from "../database/payment";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+import { stripe } from "../config/stripe";
 
 export const createCustomer = async (
   req: FastifyRequest<{
@@ -45,6 +47,16 @@ export const createSubscription = async (
   const { customerId } = req.body;
   const { userId } = req.params;
   const priceId = "price_1RIYncR05Mv5dKcbHtwclkWf";
+
+  const existingSubId = await getStripeCustomerSubscriptionIdFromDb(userId);
+
+  if (existingSubId) {
+    const existingSubscription =
+      await stripe.subscriptions.retrieve(existingSubId);
+
+    if (existingSubscription.status === "active")
+      throw new AlreadyExistsError("Subscription already active");
+  }
 
   const subscription = await stripe.subscriptions.create({
     customer: customerId,

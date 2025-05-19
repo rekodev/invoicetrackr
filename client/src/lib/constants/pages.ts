@@ -16,6 +16,7 @@ export const BANKING_INFORMATION_PAGE = '/profile/banking-information';
 export const ADD_NEW_BANK_ACCOUNT_PAGE = '/profile/banking-information/new';
 export const ONBOARDING_PAGE = '/onboarding';
 export const PAYMENT_SUCCESS_PAGE = '/payment-success';
+export const RENEW_SUBSCRIPTION_PAGE = '/renew-subscription';
 
 export const CHANGE_PASSWORD_PAGE = '/profile/change-password';
 export const ACCOUNT_SETTINGS_PAGE = '/profile/account-settings';

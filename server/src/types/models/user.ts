@@ -15,6 +15,8 @@ export const User = Type.Object({
   profilePictureUrl: Type.String(),
   currency: Type.String(),
   language: Type.String(),
+  stripeCustomerId: Type.String(),
+  stripeSubscriptionId: Type.String(),
 });
 
 export type UserModel = Static<typeof User>;

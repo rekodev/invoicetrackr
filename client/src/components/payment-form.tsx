@@ -15,7 +15,6 @@ import {
   PaymentElement
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { FormEvent, useState } from 'react';
 
@@ -39,7 +38,6 @@ type Props = {
 };
 
 function PaymentFormInsideElements({ user }: { user: UserModel }) {
-  const router = useRouter();
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState('');
@@ -52,14 +50,15 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
 
     if (!stripe || !elements || !user.id) return;
 
-    try {
-      setIsLoading(true);
+    setIsLoading(true);
 
+    let shouldUpdateSession = false;
+
+    try {
       const { error: submitError } = await elements.submit();
 
       if (submitError) {
         setErrorMessage(submitError.message || '');
-        setIsLoading(false);
         return;
       }
 
@@ -78,15 +77,22 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
           name: user.name
         });
 
+        if ('errors' in createCustomerResp) {
+          setErrorMessage('Failed to create customer');
+          return;
+        }
+
         stripeCustomerId = createCustomerResp.data.customerId;
       }
 
-      // TODO: Implement update subscription (re-subscribe) if it already exists
-      const response = await createSubscription(user.id, stripeCustomerId);
+      const subscriptionCreationResp = await createSubscription(
+        user.id,
+        stripeCustomerId
+      );
 
       const { error } = await stripe.confirmPayment({
         elements,
-        clientSecret: response.data.clientSecret,
+        clientSecret: subscriptionCreationResp.data.clientSecret,
         confirmParams: {
           return_url: `http://localhost:3000/payment-success`
         },
@@ -95,15 +101,30 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
 
       if (error) {
         setErrorMessage(error.message || '');
-      } else {
-        await updateSession({ ...user, isOnboarded: true });
-        router.push(PAYMENT_SUCCESS_PAGE);
+        return;
       }
-    } catch (error) {
-      // TODO: Better error handling
-      setErrorMessage('An error occured. Please try again.');
+
+      shouldUpdateSession = true;
+    } catch (e) {
+      console.error(e);
+      setErrorMessage('Something occurred');
     } finally {
       setIsLoading(false);
+    }
+
+    if (shouldUpdateSession) {
+      try {
+        await updateSession({
+          newSession: {
+            ...user,
+            isOnboarded: true,
+            isSubscriptionActive: true
+          },
+          redirectPath: PAYMENT_SUCCESS_PAGE
+        });
+      } catch (sessionError) {
+        console.error('Failed to update session', sessionError);
+      }
     }
   };
 

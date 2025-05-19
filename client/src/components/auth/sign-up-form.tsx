@@ -14,7 +14,7 @@ import {
   Input,
   Link
 } from '@heroui/react';
-import { useActionState, useEffect } from 'react';
+import { useActionState } from 'react';
 
 import { signUp } from '@/lib/actions';
 

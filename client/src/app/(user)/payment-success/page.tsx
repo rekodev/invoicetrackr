@@ -6,7 +6,7 @@ import {
 import { Button, Card, CardBody, CardFooter, CardHeader } from '@heroui/react';
 import Link from 'next/link';
 
-import { CREATE_INVOICE_PAGE } from '@/lib/constants/pages';
+import { ADD_NEW_INVOICE_PAGE } from '@/lib/constants/pages';
 
 // TODO: Improve Page UI
 export default function PaymentSuccessPage() {
@@ -41,20 +41,19 @@ export default function PaymentSuccessPage() {
           <div className="flex flex-col gap-1">
             <p className="font-medium">What's next?</p>
             <p className="text-sm text-default-500">
-              Start by creating your first invoice to begin tracking your
-              finances.
+              Start by creating an invoice to begin tracking your finances.
             </p>
           </div>
           <Button
             as={Link}
             size="lg"
-            href={CREATE_INVOICE_PAGE}
+            href={ADD_NEW_INVOICE_PAGE}
             color="secondary"
             variant="solid"
             className="w-full font-medium"
             startContent={<DocumentTextIcon className="h-5 w-5" />}
           >
-            Create Your First Invoice
+            Create An Invoice
           </Button>
         </div>
       </CardBody>

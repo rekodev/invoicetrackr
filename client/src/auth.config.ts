@@ -1,6 +1,10 @@
 import type { NextAuthConfig } from 'next-auth';
 
-import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './lib/constants/pages';
+import {
+  DASHBOARD_PAGE,
+  ONBOARDING_PAGE,
+  RENEW_SUBSCRIPTION_PAGE
+} from './lib/constants/pages';
 
 export const authConfig = {
   callbacks: {
@@ -15,28 +19,43 @@ export const authConfig = {
         '/privacy-policy',
         '/terms-of-service'
       ];
+      const path = nextUrl.pathname;
       const pathIsPublic =
-        publicPaths.includes(nextUrl.pathname) ||
-        nextUrl.pathname.startsWith('/create-new-password');
-      const isOnboarded = !!auth?.user.isOnboarded;
-      const pathIsOnboarding = nextUrl.pathname.startsWith(ONBOARDING_PAGE);
+        publicPaths.includes(path) || path.startsWith('/create-new-password');
+
+      const isOnboarded = !!auth?.user?.isOnboarded;
+      const isSubscriptionActive = !!auth?.user?.isSubscriptionActive;
+      const isOnboardingPage = path.startsWith(ONBOARDING_PAGE);
+      const isRenewPage = path.startsWith(RENEW_SUBSCRIPTION_PAGE);
 
       if (!pathIsPublic) {
-        if (isLoggedIn) {
-          if (isOnboarded) {
-            return pathIsOnboarding
-              ? Response.redirect(new URL(DASHBOARD_PAGE, nextUrl))
-              : true;
-          } else {
-            return pathIsOnboarding
-              ? true
-              : Response.redirect(new URL('/onboarding', nextUrl));
-          }
+        if (!isLoggedIn) return false;
+
+        // Not onboarded → allow onboarding page, redirect elsewhere
+        if (!isOnboarded) {
+          return isOnboardingPage
+            ? true
+            : Response.redirect(new URL(ONBOARDING_PAGE, nextUrl));
         }
 
-        return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL('/dashboard', nextUrl));
+        // Onboarded but subscription inactive → redirect unless already on renew page
+        if (!isSubscriptionActive) {
+          return isRenewPage
+            ? true
+            : Response.redirect(new URL(RENEW_SUBSCRIPTION_PAGE, nextUrl));
+        }
+
+        // Onboarded + active sub → redirect away from onboarding
+        if (isOnboardingPage || isRenewPage) {
+          return Response.redirect(new URL(DASHBOARD_PAGE, nextUrl));
+        }
+
+        return true;
+      }
+
+      // Logged in but accessing public path → send to dashboard
+      if (isLoggedIn) {
+        return Response.redirect(new URL(DASHBOARD_PAGE, nextUrl));
       }
 
       return true;
@@ -60,6 +79,7 @@ export const authConfig = {
         token.language = user.language;
         token.currency = user.currency;
         token.isOnboarded = isOnboarded;
+        token.isSubscriptionActive = user.isSubscriptionActive;
       }
 
       if (trigger === 'update') {
@@ -67,7 +87,8 @@ export const authConfig = {
           ...token,
           isOnboarded: session.user.isOnboarded,
           language: session.user.language,
-          currency: session.user.currency
+          currency: session.user.currency,
+          isSubscriptionActive: session.user.isSubscriptionActive
         };
       }
 
@@ -78,6 +99,7 @@ export const authConfig = {
       session.user.language = token.language as string;
       session.user.currency = token.currency as string;
       session.user.isOnboarded = Boolean(token.isOnboarded);
+      session.user.isSubscriptionActive = Boolean(token.isSubscriptionActive);
 
       return session;
     }

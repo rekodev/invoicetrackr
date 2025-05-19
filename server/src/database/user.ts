@@ -25,8 +25,14 @@ export const getUserFromDb = async (id: number) => {
       profilePictureUrl: usersTable.profilePictureUrl,
       currency: usersTable.currency,
       language: usersTable.language,
+      stripeCustomerId: stripeAccountsTable.stripeCustomerId,
+      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
     })
     .from(usersTable)
+    .leftJoin(
+      stripeAccountsTable,
+      eq(stripeAccountsTable.userId, usersTable.id),
+    )
     .where(eq(usersTable.id, id));
 
   return users.at(0);

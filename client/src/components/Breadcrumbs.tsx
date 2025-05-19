@@ -6,7 +6,12 @@ import {
 } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 
-import { HOME_PAGE } from '@/lib/constants/pages';
+import {
+  HOME_PAGE,
+  ONBOARDING_PAGE,
+  PAYMENT_SUCCESS_PAGE,
+  RENEW_SUBSCRIPTION_PAGE
+} from '@/lib/constants/pages';
 import { capitalize } from '@/lib/utils';
 
 const splitPathnameToSegments = (pathname: string): Array<string> => {
@@ -19,8 +24,9 @@ const Breadcrumbs = () => {
   const renderBreadcrumbs = () => {
     if (
       !pathname ||
-      pathname.startsWith('/payment-success') ||
-      pathname.startsWith('/onboarding')
+      pathname.startsWith(PAYMENT_SUCCESS_PAGE) ||
+      pathname.startsWith(ONBOARDING_PAGE) ||
+      pathname.startsWith(RENEW_SUBSCRIPTION_PAGE)
     )
       return null;
 

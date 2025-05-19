@@ -1,6 +1,7 @@
 'use server';
 
 import { HttpStatusCode } from 'axios';
+import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 
@@ -118,14 +119,24 @@ export async function signUp(
   }
 }
 
-export const updateSession = async (
-  user: UserModel & { isOnboarded?: boolean }
-) => {
+export const updateSession = async ({
+  newSession,
+  redirectPath
+}: {
+  newSession: UserModel & {
+    isOnboarded?: boolean;
+    isSubscriptionActive?: boolean;
+  };
+  redirectPath?: string;
+}) => {
   await unstable_update({
     user: {
-      ...user,
-      isOnboarded: true,
-      id: String(user.id)
+      ...newSession,
+      id: String(newSession.id)
     }
   });
+
+  if (redirectPath) {
+    redirect(redirectPath);
+  }
 };

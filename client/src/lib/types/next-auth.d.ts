@@ -19,6 +19,7 @@ declare module 'next-auth' {
     stripeCustomerId: string | null;
     stripeSubscriptionId: string | null;
     isOnboarded?: boolean;
+    isSubscriptionActive?: boolean;
   }
 
   interface Session {

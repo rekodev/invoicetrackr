@@ -40,3 +40,12 @@ export const getStripeCustomerIdFromDb = async (userId: number) => {
 
   return customer?.stripeCustomerId;
 };
+
+export const getStripeCustomerSubscriptionIdFromDb = async (userId: number) => {
+  const [customer] = await db
+    .select({ stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId })
+    .from(stripeAccountsTable)
+    .where(eq(stripeAccountsTable.userId, userId));
+
+  return customer?.stripeSubscriptionId;
+};
