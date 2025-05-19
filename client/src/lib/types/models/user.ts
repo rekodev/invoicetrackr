@@ -19,7 +19,7 @@ export const userSchema = z.object({
   bankingInformation: z.array(bankingInformationSchema).nullish(),
   selectedBankAccountId: z.number(),
   profilePictureUrl: z.string(),
-  currency: z.string(),
+  currency: z.union([z.literal('usd'), z.literal('eur')]),
   language: z.string(),
   stripeCustomerId: z.string().nullable(),
   stripeSubscriptionId: z.string().nullable()

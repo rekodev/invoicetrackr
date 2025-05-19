@@ -1,5 +1,7 @@
 import NextAuth, { DefaultSession } from 'next-auth';
 
+import { Currency } from './currency';
+
 declare module 'next-auth' {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
@@ -9,7 +11,7 @@ declare module 'next-auth' {
     name: string;
     email: string;
     language: string;
-    currency: string;
+    currency: Currency;
     type: string;
     businessType: string;
     businessNumber: string;

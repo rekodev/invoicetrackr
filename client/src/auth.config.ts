@@ -5,6 +5,7 @@ import {
   ONBOARDING_PAGE,
   RENEW_SUBSCRIPTION_PAGE
 } from './lib/constants/pages';
+import { Currency } from './lib/types/currency';
 
 export const authConfig = {
   callbacks: {
@@ -97,7 +98,7 @@ export const authConfig = {
     session({ session, token }) {
       session.user.id = token.sub!;
       session.user.language = token.language as string;
-      session.user.currency = token.currency as string;
+      session.user.currency = token.currency as Currency;
       session.user.isOnboarded = Boolean(token.isOnboarded);
       session.user.isSubscriptionActive = Boolean(token.isSubscriptionActive);
 

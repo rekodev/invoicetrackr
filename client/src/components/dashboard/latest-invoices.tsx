@@ -1,6 +1,6 @@
-import { getLatestInvoices } from "@/api";
+import { getLatestInvoices } from '@/api';
 
-import ClientCard from "../ui/client-card";
+import ClientCard from '../ui/client-card';
 
 type Props = {
   userId: number;
@@ -9,7 +9,7 @@ type Props = {
 
 const LatestInvoices = async ({ userId, currency }: Props) => {
   const {
-    data: { invoices },
+    data: { invoices }
   } = await getLatestInvoices(userId);
 
   const renderEmptyState = () => {
@@ -17,7 +17,7 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 min-w-72">
+    <div className="flex w-full min-w-72 max-w-md flex-col gap-6">
       <h2 className="text-2xl">Latest Invoices</h2>
       <div className="flex flex-col gap-2">
         {invoices?.length
@@ -28,7 +28,7 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
                 currency={currency}
                 client={{
                   email: invoiceData.email,
-                  name: invoiceData.name,
+                  name: invoiceData.name
                 }}
                 amount={invoiceData.totalAmount}
                 hideIcon

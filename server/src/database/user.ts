@@ -253,3 +253,12 @@ export const invalidateTokenInDb = async (userId: number, token: string) => {
 
   return updatedToken?.id;
 };
+
+export const getUserCurrencyFromDb = async (userId: number) => {
+  const [user] = await db
+    .select({ currency: usersTable.currency })
+    .from(usersTable)
+    .where(eq(usersTable.id, userId));
+
+  return user?.currency as "eur" | "usd";
+};

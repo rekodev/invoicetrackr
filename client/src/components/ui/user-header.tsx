@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Bars3Icon } from "@heroicons/react/24/outline";
+import { Bars3Icon } from '@heroicons/react/24/outline';
 import {
   Avatar,
   Button,
@@ -13,29 +13,29 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-  Link,
-} from "@heroui/react";
-import { usePathname, useRouter } from "next/navigation";
+  Link
+} from '@heroui/react';
+import { usePathname, useRouter } from 'next/navigation';
 
-import { logOutAction } from "@/lib/actions";
+import { logOutAction } from '@/lib/actions';
 import {
   CLIENTS_PAGE,
   CONTRACTS_PAGE,
   DASHBOARD_PAGE,
   HOME_PAGE,
   INVOICES_PAGE,
-  PERSONAL_INFORMATION_PAGE,
-} from "@/lib/constants/pages";
-import { UserModel } from "@/lib/types/models/user";
+  PERSONAL_INFORMATION_PAGE
+} from '@/lib/constants/pages';
+import { UserModel } from '@/lib/types/models/user';
 
-import ThemeSwitcher from "./theme-switcher";
-import AppLogo from "../icons/AppLogo";
+import ThemeSwitcher from './theme-switcher';
+import AppLogo from '../icons/AppLogo';
 
 const navbarItems = [
-  { name: "Dashboard", href: DASHBOARD_PAGE },
-  { name: "Invoices", href: INVOICES_PAGE },
-  { name: "Contracts", href: CONTRACTS_PAGE },
-  { name: "Clients", href: CLIENTS_PAGE },
+  { name: 'Dashboard', href: DASHBOARD_PAGE },
+  { name: 'Invoices', href: INVOICES_PAGE },
+  { name: 'Contracts', href: CONTRACTS_PAGE },
+  { name: 'Clients', href: CLIENTS_PAGE }
 ];
 
 type Props = {
@@ -54,7 +54,7 @@ export default function UserHeader({ user }: Props) {
     <Dropdown>
       <DropdownTrigger className="md:hidden">
         <Button isIconOnly variant="faded" color="secondary">
-          <Bars3Icon className="w-5 h-5" />
+          <Bars3Icon className="h-5 w-5" />
         </Button>
       </DropdownTrigger>
       <DropdownMenu>
@@ -66,8 +66,8 @@ export default function UserHeader({ user }: Props) {
               as={Link}
               key={`mobile-${index}`}
               href={item.href}
-              className={cn("w-full text-default-800", {
-                "text-secondary": isActive,
+              className={cn('w-full text-default-800', {
+                'text-secondary': isActive
               })}
             >
               {item.name}
@@ -79,10 +79,10 @@ export default function UserHeader({ user }: Props) {
   );
 
   return (
-    <Navbar isBordered>
-      <NavbarBrand className="text-white flex gap-2" as={Link} href={HOME_PAGE}>
+    <Navbar isBordered maxWidth="xl">
+      <NavbarBrand className="flex gap-2 text-white" as={Link} href={HOME_PAGE}>
         <AppLogo />
-        <p className="hidden sm:flex font-bold text-default-800">
+        <p className="hidden font-bold text-default-800 sm:flex">
           INVOICE
           <span className="text-secondary-400 dark:text-secondary-600">
             TRACKR
@@ -90,7 +90,7 @@ export default function UserHeader({ user }: Props) {
         </p>
       </NavbarBrand>
 
-      <NavbarContent className="hidden md:flex gap-4" justify="center">
+      <NavbarContent className="hidden gap-4 md:flex" justify="center">
         {navbarItems.map((item, index) => {
           const isActive = pathname?.includes(item.href);
 
@@ -99,8 +99,8 @@ export default function UserHeader({ user }: Props) {
               <Link
                 href={item.href}
                 aria-current="page"
-                className={cn("text-foreground", {
-                  "text-secondary": isActive,
+                className={cn('text-foreground', {
+                  'text-secondary': isActive
                 })}
               >
                 {item.name}
@@ -112,13 +112,13 @@ export default function UserHeader({ user }: Props) {
 
       <NavbarContent as="div" justify="end">
         {renderMobileNavbarContent()}
-        <div className="md:hidden h-full py-3">
-          <div className="border-r border-default-300 dark:border-default-100 h-full" />
+        <div className="h-full py-3 md:hidden">
+          <div className="h-full border-r border-default-300 dark:border-default-100" />
         </div>
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Avatar
-              isBordered={pathname?.includes("profile")}
+              isBordered={pathname?.includes('profile')}
               as="button"
               className="transition-transform"
               color="secondary"
@@ -148,7 +148,7 @@ export default function UserHeader({ user }: Props) {
             </DropdownMenu>
           </form>
         </Dropdown>
-        <NavbarItem className="border-l border-default-300 dark:border-default-100 pl-4">
+        <NavbarItem className="border-l border-default-300 pl-4 dark:border-default-100">
           <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>

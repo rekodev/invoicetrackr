@@ -107,7 +107,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
       shouldUpdateSession = true;
     } catch (e) {
       console.error(e);
-      setErrorMessage('Something occurred');
+      setErrorMessage('Failed to process payment. Please try again.');
       setIsLoading(false);
     }
 

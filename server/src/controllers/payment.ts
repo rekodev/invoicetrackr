@@ -11,6 +11,8 @@ import {
   updateStripeSubscriptionForUserInDb,
 } from "../database/payment";
 import { stripe } from "../config/stripe";
+import { getUserCurrencyFromDb } from "../database";
+import "dotenv/config";
 
 export const createCustomer = async (
   req: FastifyRequest<{
@@ -46,7 +48,16 @@ export const createSubscription = async (
 ) => {
   const { customerId } = req.body;
   const { userId } = req.params;
-  const priceId = "price_1RIYncR05Mv5dKcbHtwclkWf";
+
+  const currency = await getUserCurrencyFromDb(userId);
+
+  let priceId = "";
+
+  if (currency === "eur") {
+    priceId = process.env.STRIPE_EUR_PRICE;
+  } else {
+    priceId = process.env.STRIPE_USD_PRICE;
+  }
 
   const existingSubId = await getStripeCustomerSubscriptionIdFromDb(userId);
 
@@ -60,7 +71,7 @@ export const createSubscription = async (
 
   const subscription = await stripe.subscriptions.create({
     customer: customerId,
-    currency: "eur",
+    currency,
     items: [{ price: priceId }],
     payment_behavior: "default_incomplete",
     payment_settings: { save_default_payment_method: "on_subscription" },
