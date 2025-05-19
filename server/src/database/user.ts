@@ -251,5 +251,5 @@ export const invalidateTokenInDb = async (userId: number, token: string) => {
     )
     .returning({ id: passwordResetTokensTable.id });
 
-  return updatedToken.id;
+  return updatedToken?.id;
 };

@@ -27,6 +27,7 @@ import {
 import { saveResetTokenToDb } from "../database/passwordReset";
 import { resend } from "../config/resend";
 import { stripe } from "../config/stripe";
+import { getStripeCustomerIdFromDb } from "../database/payment";
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -141,8 +142,10 @@ export const deleteUser = async (
 ) => {
   const { userId } = req.params;
 
+  const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
+  await stripe.customers.del(stripeCustomerId);
+
   const deletedUserId = await deleteUserFromDb(userId);
-  // TODO: Also delete user's stripe account
 
   if (!deletedUserId)
     throw new BadRequestError(
