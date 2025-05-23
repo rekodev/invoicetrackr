@@ -1,10 +1,11 @@
 import { getLatestInvoices } from '@/api';
+import { Currency } from '@/lib/types/currency';
 
 import ClientCard from '../ui/client-card';
 
 type Props = {
   userId: number;
-  currency: string;
+  currency: Currency;
 };
 
 const LatestInvoices = async ({ userId, currency }: Props) => {
