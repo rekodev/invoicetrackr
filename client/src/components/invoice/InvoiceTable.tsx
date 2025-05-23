@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   SortDescriptor,
@@ -9,34 +9,35 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  useDisclosure,
-} from "@heroui/react";
-import { Key, useCallback, useMemo, useState } from "react";
+  useDisclosure
+} from '@heroui/react';
+import { Key, useCallback, useMemo, useState } from 'react';
 
-import { columns, statusOptions } from "@/lib/constants/table";
-import useGetInvoices from "@/lib/hooks/invoice/useGetInvoices";
-import useInvoiceTableActionHandlers from "@/lib/hooks/invoice/useInvoiceTableActionHandlers";
-import { InvoiceModel } from "@/lib/types/models/invoice";
+import { columns, statusOptions } from '@/lib/constants/table';
+import useGetInvoices from '@/lib/hooks/invoice/useGetInvoices';
+import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/useInvoiceTableActionHandlers';
+import { Currency } from '@/lib/types/currency';
+import { InvoiceModel } from '@/lib/types/models/invoice';
 
-import DeleteInvoiceModal from "./DeleteInvoiceModal";
-import InvoiceModal from "./InvoiceModal";
-import InvoiceTableBottomContent from "./InvoiceTableBottomContent";
-import InvoiceTableCell from "./InvoiceTableCell";
-import InvoiceTableTopContent from "./InvoiceTableTopContent";
+import DeleteInvoiceModal from './DeleteInvoiceModal';
+import InvoiceModal from './InvoiceModal';
+import InvoiceTableBottomContent from './InvoiceTableBottomContent';
+import InvoiceTableCell from './InvoiceTableCell';
+import InvoiceTableTopContent from './InvoiceTableTopContent';
 
 const ROWS_PER_PAGE = 10;
 const INITIAL_VISIBLE_COLUMNS = [
-  "id",
-  "date",
-  "receiver",
-  "totalAmount",
-  "status",
-  "actions",
+  'id',
+  'date',
+  'receiver',
+  'totalAmount',
+  'status',
+  'actions'
 ];
 
 type Props = {
   userId: number;
-  currency: string;
+  currency: Currency;
   language: string;
 };
 
@@ -46,18 +47,18 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
 
-  const [filterValue, setFilterValue] = useState("");
-  const [selectedKeys, _setSelectedKeys] = useState<Set<never> | "all">(
-    new Set([]),
+  const [filterValue, setFilterValue] = useState('');
+  const [selectedKeys, _setSelectedKeys] = useState<Set<never> | 'all'>(
+    new Set([])
   );
-  const [visibleColumns, setVisibleColumns] = useState<Set<string> | "all">(
-    new Set(INITIAL_VISIBLE_COLUMNS),
+  const [visibleColumns, setVisibleColumns] = useState<Set<string> | 'all'>(
+    new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState('all');
   const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "date",
-    direction: "descending",
+    column: 'date',
+    direction: 'descending'
   });
   const [page, setPage] = useState(1);
 
@@ -66,16 +67,16 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
     handleEditInvoice,
     handleDeleteInvoice,
     isDeleteInvoiceModalOpen,
-    handleCloseDeleteInvoiceModal,
+    handleCloseDeleteInvoiceModal
   } = useInvoiceTableActionHandlers({ setCurrentInvoice, onOpen });
 
   const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = useMemo(() => {
-    if (visibleColumns === "all") return columns;
+    if (visibleColumns === 'all') return columns;
 
     return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid),
+      Array.from(visibleColumns).includes(column.uid)
     );
   }, [visibleColumns]);
 
@@ -87,15 +88,15 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
 
     if (hasSearchFilter) {
       filteredInvoices = filteredInvoices.filter((invoice) =>
-        invoice.id.toString().toLowerCase().includes(filterValue.toLowerCase()),
+        invoice.id.toString().toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
-      statusFilter !== "all" &&
+      statusFilter !== 'all' &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredInvoices = filteredInvoices.filter((invoice) =>
-        Array.from(statusFilter).includes(invoice.status),
+        Array.from(statusFilter).includes(invoice.status)
       );
     }
 
@@ -118,11 +119,11 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
     if (!items) return [];
 
     return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column as "date"];
-      const second = b[sortDescriptor.column as "date"];
+      const first = a[sortDescriptor.column as 'date'];
+      const second = b[sortDescriptor.column as 'date'];
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      return sortDescriptor.direction === 'descending' ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
@@ -137,7 +138,7 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
         onDelete={handleDeleteInvoice}
       />
     ),
-    [handleViewInvoice, handleDeleteInvoice, handleEditInvoice, currency],
+    [handleViewInvoice, handleDeleteInvoice, handleEditInvoice, currency]
   );
 
   const renderTopContent = () => (
@@ -173,7 +174,7 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
         bottomContentPlacement="outside"
         classNames={{
           wrapper:
-            "min-h-[480px] bg-transparent dark:border dark:border-default-100",
+            'min-h-[480px] bg-transparent dark:border dark:border-default-100'
         }}
         sortDescriptor={sortDescriptor as any}
         topContent={renderTopContent()}
@@ -184,7 +185,7 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
+              align={column.uid === 'actions' ? 'center' : 'start'}
               allowsSorting={column.sortable}
             >
               {column.name}
@@ -194,7 +195,7 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
         <TableBody
           isLoading={isInvoicesLoading}
           loadingContent={<Spinner color="secondary" />}
-          emptyContent={!isInvoicesLoading && "No invoices found"}
+          emptyContent={!isInvoicesLoading && 'No invoices found'}
           items={sortedItems}
         >
           {(item) => (

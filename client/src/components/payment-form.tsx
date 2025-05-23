@@ -21,6 +21,7 @@ import { FormEvent, useState } from 'react';
 import { createCustomer, createSubscription, getStripeCustomerId } from '@/api';
 import { updateSession } from '@/lib/actions';
 import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
+import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
 import { UserModel } from '@/lib/types/models/user';
 import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
 
@@ -31,7 +32,6 @@ if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
 }
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
-const AMOUNT = 4.99;
 
 type Props = {
   user: UserModel | undefined;
@@ -94,7 +94,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
         elements,
         clientSecret: subscriptionCreationResp.data.clientSecret,
         confirmParams: {
-          return_url: `http://localhost:3000/payment-success`
+          return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success`
         },
         redirect: 'if_required'
       });
@@ -155,7 +155,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
         >
           {isLoading
             ? 'Processing...'
-            : `Pay ${getCurrencySymbol(user.currency)}${AMOUNT}`}
+            : `Pay ${getCurrencySymbol(user.currency)}${SUBSCRIPTION_AMOUNT}`}
         </Button>
       </CardFooter>
     </Card>
@@ -174,7 +174,7 @@ export default function PaymentForm({ user }: Props) {
       stripe={stripePromise}
       options={{
         mode: 'subscription',
-        amount: convertToSubcurrency(AMOUNT),
+        amount: convertToSubcurrency(SUBSCRIPTION_AMOUNT),
         currency: user.currency,
         appearance: {
           theme: 'flat',
