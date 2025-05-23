@@ -104,7 +104,7 @@ export default function SignUpForm() {
         </form>
       </CardBody>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
-        <div className="flex gap-1">
+        <div className="flex flex-col items-center gap-1 sm:flex-row">
           <p className="text-md">Already have an account?</p>{' '}
           <Link color="secondary" href="/login">
             Log In

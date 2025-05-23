@@ -27,9 +27,7 @@ export default function PaymentSuccessPage() {
 
       <CardBody className="flex flex-col items-center gap-4 py-6 text-center">
         <div className="flex items-center gap-2">
-          <SparklesIcon className="h-5 w-5 text-warning" />
           <h2 className="text-2xl font-semibold">Welcome to the app!</h2>
-          <SparklesIcon className="h-5 w-5 text-warning" />
         </div>
 
         <p className="text-default-500">

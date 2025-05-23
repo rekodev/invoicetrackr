@@ -101,6 +101,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
 
       if (error) {
         setErrorMessage(error.message || '');
+        setIsLoading(false);
         return;
       }
 
@@ -130,7 +131,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
   };
 
   return (
-    <Card as="form" className="mx-auto max-w-2xl" onSubmit={handleSubmit}>
+    <Card as="form" className="mx-auto max-w-4xl" onSubmit={handleSubmit}>
       <CardHeader className="p-4 px-6">Payment</CardHeader>
       <Divider />
       <CardBody className="px-5 py-4">
@@ -174,7 +175,7 @@ export default function PaymentForm({ user }: Props) {
       options={{
         mode: 'subscription',
         amount: convertToSubcurrency(AMOUNT),
-        currency: 'eur',
+        currency: user.currency,
         appearance: {
           theme: 'flat',
           rules: {

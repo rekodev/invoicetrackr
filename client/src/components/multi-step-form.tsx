@@ -41,7 +41,11 @@ const steps = [
     name: 'Banking Details',
     description: 'Add your banking information'
   },
-  { id: 'payment', name: 'Payment', description: 'Finalize your registration' }
+  {
+    id: 'payment',
+    name: 'Make a Payment',
+    description: 'Finalize your registration'
+  }
 ];
 
 type Props = {
@@ -94,28 +98,76 @@ export default function MultiStepForm({
     }
   };
 
+  const renderMobileStepper = () => (
+    <div className="mx-auto flex w-full min-w-[512px] max-w-lg justify-between px-12 pb-16 md:mx-0 md:hidden">
+      {steps.map((step, index) => (
+        <div
+          key={step.id}
+          className="relative flex cursor-pointer flex-col items-center"
+          onClick={() => {
+            if (!existingUserData || index === 0) return;
+            setCurrentStep(index);
+          }}
+        >
+          <div
+            className={cn(
+              'flex h-9 w-9 items-center justify-center rounded-full border-2 border-default-400 font-semibold dark:border-default-800',
+              {
+                'border-1 bg-default-500 bg-opacity-25': index < currentStep,
+                'opacity-65': currentStep < index
+              }
+            )}
+          >
+            {index < currentStep ? (
+              <CheckIcon className="h-4 w-4 text-white" />
+            ) : (
+              <span className="text-xs">{index + 1}</span>
+            )}
+            <p className="absolute top-10 mt-1 min-w-16 text-center text-xs">
+              {step.name}
+            </p>
+          </div>
+          {index < steps.length - 1 && (
+            <div className="absolute left-12 top-0 flex h-8 items-center">
+              <div
+                className={cn('ml-0.5 h-0.5 w-16 bg-white', {
+                  'opacity-65': currentStep <= index
+                })}
+              />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <section
-      className={cn('mx-auto flex w-full max-w-7xl justify-center gap-4 py-4', {
-        'px-6': !existingUserData
-      })}
+      className={cn(
+        'mx-auto flex w-full max-w-7xl flex-col justify-center gap-4 py-4 md:flex-row',
+        {
+          'px-6': !existingUserData
+        }
+      )}
     >
-      <Card className="h-full w-full max-w-sm gap-8 border border-default-100 bg-gradient-to-b from-default-100 via-secondary-50 dark:to-black">
-        <CardHeader className="flex-col items-start gap-8 px-8 pt-8 text-start">
+      <Card className="h-full w-full gap-8 border border-default-100 bg-gradient-to-b from-default-100 via-secondary-50 dark:to-black md:max-w-sm">
+        <CardHeader className="-mt-4 flex-col items-start gap-8 px-8 text-start md:mt-0 md:pt-8">
           <Button
             variant="bordered"
+            className="hidden md:flex"
             onPress={() => setCurrentStep((prev) => (prev <= 1 ? 1 : prev - 1))}
           >
             <ArrowLeftIcon className="h-5 w-5" />
             Back
           </Button>
-          <div>
+          <div className="hidden md:block">
             <h3 className="text-2xl font-bold">InvoiceTrackr</h3>
             <p className="text-default-500">Do something</p>
           </div>
         </CardHeader>
-        <CardBody className="flex max-h-min items-center justify-center">
-          <div className="max-w-max">
+        <CardBody className="flex max-h-min md:items-center md:justify-center">
+          {renderMobileStepper()}
+          <div className="hidden max-w-max md:block">
             {steps.map((step, index) => (
               <div
                 key={step.id}
@@ -162,7 +214,7 @@ export default function MultiStepForm({
             ))}
           </div>
         </CardBody>
-        <CardFooter></CardFooter>
+        <CardFooter className="hidden md:flex"></CardFooter>
       </Card>
 
       <div className="w-full">{renderStep()}</div>

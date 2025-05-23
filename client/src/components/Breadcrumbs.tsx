@@ -22,14 +22,7 @@ const Breadcrumbs = () => {
   const pathname = usePathname();
 
   const renderBreadcrumbs = () => {
-    if (
-      !pathname ||
-      pathname.startsWith(PAYMENT_SUCCESS_PAGE) ||
-      pathname.startsWith(ONBOARDING_PAGE) ||
-      pathname.startsWith(RENEW_SUBSCRIPTION_PAGE)
-    )
-      return null;
-
+    if (!pathname) return null;
     if (pathname === HOME_PAGE) {
       return <BreadcrumbItem>Home</BreadcrumbItem>;
     }
@@ -49,6 +42,14 @@ const Breadcrumbs = () => {
       );
     });
   };
+
+  if (
+    !pathname ||
+    pathname.startsWith(PAYMENT_SUCCESS_PAGE) ||
+    pathname.startsWith(ONBOARDING_PAGE) ||
+    pathname.startsWith(RENEW_SUBSCRIPTION_PAGE)
+  )
+    return null;
 
   return (
     <HeroUIBreadcrumbs className="pb-6" isDisabled>

@@ -15,7 +15,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col p-6">
+    <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col px-6">
       <Breadcrumbs />
       {children}
     </main>
