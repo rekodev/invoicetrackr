@@ -49,3 +49,12 @@ export const getStripeCustomerSubscriptionIdFromDb = async (userId: number) => {
 
   return customer?.stripeSubscriptionId;
 };
+
+export const deleteStripeAccountFromDb = async (userId: number) => {
+  const stripeAccounts = await db
+    .delete(stripeAccountsTable)
+    .where(eq(stripeAccountsTable.userId, userId))
+    .returning({ id: stripeAccountsTable.id });
+
+  return stripeAccounts.at(0)?.id;
+};

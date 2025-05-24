@@ -6,6 +6,7 @@ import {
 } from "../utils/errors";
 import {
   createStripeCustomerInDb,
+  deleteStripeAccountFromDb,
   getStripeCustomerIdFromDb,
   getStripeCustomerSubscriptionIdFromDb,
   updateStripeSubscriptionForUserInDb,
@@ -23,6 +24,19 @@ export const createCustomer = async (
 ) => {
   const { userId } = req.params;
   const { email, name } = req.body;
+
+  const existingCustomerId = await getStripeCustomerIdFromDb(userId);
+
+  // Delete any existing records before creating a new one
+  if (existingCustomerId) {
+    try {
+      await stripe.customers.del(existingCustomerId);
+    } catch {
+      console.log("Customer does not exist in stripe");
+    }
+
+    await deleteStripeAccountFromDb(userId);
+  }
 
   const customer = await stripe.customers.create({
     email,
