@@ -15,7 +15,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Dependencies
-        run: docker image build -t invoicetrackr:${{ github.sha }} .
+        run: |
+          docker image build \
+          --build-arg SERVER_PORT=${{ secrets.SERVER_PORT }} \
+          --build-arg NEXT_PUBLIC_STRIPE_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLIC_KEY }} \
+          --build-arg NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }} \
+          -t invoicetrackr:${{ github.sha }} .
 
       - name: Save SSH key
         run: |
