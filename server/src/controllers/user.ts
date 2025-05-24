@@ -56,11 +56,15 @@ export const loginUser = async (
   let isSubscriptionActive = false;
 
   if (!!user.stripeSubscriptionId) {
-    const userSubscription = await stripe.subscriptions.retrieve(
-      user.stripeSubscriptionId,
-    );
+    try {
+      const userSubscription = await stripe.subscriptions.retrieve(
+        user.stripeSubscriptionId,
+      );
 
-    if (userSubscription?.status === "active") isSubscriptionActive = true;
+      if (userSubscription?.status === "active") isSubscriptionActive = true;
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   reply.status(200).send({
