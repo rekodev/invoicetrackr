@@ -15,6 +15,9 @@ export default {
         amount: "Amount is required",
       },
     },
+    client: {
+      email: "Must be a valid email address",
+    },
     user: {
       password: "Current password is required",
       newPassword: "New password is required",

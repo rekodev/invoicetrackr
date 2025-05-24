@@ -15,6 +15,9 @@ export default {
         amount: "Kiekis yra privalomas",
       },
     },
+    client: {
+      email: "Turi būti tinkamas el. pašto adresas",
+    },
     user: {
       password: "Dabartinis slaptažodis yra privalomas",
       newPassword: "Naujas slaptažodis yra privalomas",

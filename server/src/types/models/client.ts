@@ -11,12 +11,14 @@ export const Client = Type.Object({
     errorMessage: "Business number is required",
   }),
   address: Type.String({ minLength: 1, errorMessage: "Address is required" }),
-  email: Type.Optional(
+  email: Type.Union([
+    Type.String({ maxLength: 0 }),
     Type.String({
+      minLength: 1,
       format: "email",
       errorMessage: "Must be a valid email address",
     }),
-  ),
+  ]),
 });
 
 export type ClientModel = Static<typeof Client>;
