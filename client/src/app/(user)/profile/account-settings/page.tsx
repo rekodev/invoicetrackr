@@ -6,7 +6,14 @@ const AccountSettingsPage = async () => {
 
   if (!session?.user?.id) return null;
 
-  return <AccountSettingsForm userId={Number(session?.user?.id)} />;
+  const { isSubscriptionActive } = session.user;
+
+  return (
+    <AccountSettingsForm
+      userId={Number(session?.user?.id)}
+      isSubscriptionActive={!!isSubscriptionActive}
+    />
+  );
 };
 
 export default AccountSettingsPage;

@@ -14,6 +14,7 @@ import {
   bankingInformationRoutes,
   clientRoutes,
   invoiceRoutes,
+  paymentRoutes,
   userRoutes,
 } from "./routes";
 import { getTranslationKeyPrefix } from "./utils/url";
@@ -44,6 +45,7 @@ server.register(invoiceRoutes);
 server.register(clientRoutes);
 server.register(userRoutes);
 server.register(bankingInformationRoutes);
+server.register(paymentRoutes);
 server.register(i18n);
 
 server.setErrorHandler(async function (error, request, reply) {

@@ -1,12 +1,12 @@
 import { auth } from '@/auth';
-import AddNewBankAccountForm from '@/components/profile/AddNewBankAccountForm';
+import BankAccountForm from '@/components/profile/bank-account-form';
 
 const AddNewBankAccount = async () => {
   const session = await auth();
 
   if (!session?.user?.id) return null;
 
-  return <AddNewBankAccountForm userId={Number(session.user.id)} />;
+  return <BankAccountForm userId={Number(session.user.id)} />;
 };
 
 export default AddNewBankAccount;

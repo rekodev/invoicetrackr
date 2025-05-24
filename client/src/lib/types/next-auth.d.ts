@@ -1,6 +1,8 @@
-import NextAuth, { DefaultSession } from "next-auth";
+import NextAuth, { DefaultSession } from 'next-auth';
 
-declare module "next-auth" {
+import { Currency } from './currency';
+
+declare module 'next-auth' {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
@@ -9,11 +11,21 @@ declare module "next-auth" {
     name: string;
     email: string;
     language: string;
-    currency: string;
+    currency: Currency;
+    type: string;
+    businessType: string;
+    businessNumber: string;
+    selectedBankAccountId: number;
+    address: string;
+    email: string;
+    stripeCustomerId: string | null;
+    stripeSubscriptionId: string | null;
+    isOnboarded?: boolean;
+    isSubscriptionActive?: boolean;
   }
 
   interface Session {
-    user: User & DefaultSession["user"];
+    user: User & DefaultSession['user'];
     accessToken: string;
   }
 }

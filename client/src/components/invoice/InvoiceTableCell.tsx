@@ -1,24 +1,25 @@
-import { Chip, Tooltip } from "@heroui/react";
-import { Key } from "react";
+import { Chip, Tooltip } from '@heroui/react';
+import { Key } from 'react';
 
-import { InvoiceModel, InvoiceStatus } from "@/lib/types/models/invoice";
-import { getCurrencySymbol } from "@/lib/utils/currency";
-import { formatDate } from "@/lib/utils/formatDate";
+import { Currency } from '@/lib/types/currency';
+import { InvoiceModel, InvoiceStatus } from '@/lib/types/models/invoice';
+import { getCurrencySymbol } from '@/lib/utils/currency';
+import { formatDate } from '@/lib/utils/formatDate';
 
-import DeleteIcon from "../icons/DeleteIcon";
-import DocumentText from "../icons/DocumentText";
-import EditIcon from "../icons/EditIcon";
-import EyeIcon from "../icons/EyeIcon";
+import DeleteIcon from '../icons/DeleteIcon';
+import DocumentText from '../icons/DocumentText';
+import EditIcon from '../icons/EditIcon';
+import EyeIcon from '../icons/EyeIcon';
 
-const statusColorMap: Record<InvoiceStatus, "success" | "danger" | "warning"> =
+const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
   {
-    paid: "success",
-    pending: "warning",
-    canceled: "danger",
+    paid: 'success',
+    pending: 'warning',
+    canceled: 'danger'
   };
 
 type Props = {
-  currency: string;
+  currency: Currency;
   invoice: InvoiceModel;
   columnKey: Key;
   onView: (invoice: InvoiceModel) => void;
@@ -32,7 +33,7 @@ const InvoiceTableCell = ({
   columnKey,
   onView,
   onEdit,
-  onDelete,
+  onDelete
 }: Props) => {
   const handleViewIconClick = () => onView(invoice);
   const handleEditInvoiceClick = () => onEdit(invoice);
@@ -42,25 +43,25 @@ const InvoiceTableCell = ({
     invoice[
       columnKey as keyof Omit<
         InvoiceModel,
-        | "actions"
-        | "sender"
-        | "receiver"
-        | "services"
-        | "senderSignature"
-        | "bankingInformation"
+        | 'actions'
+        | 'sender'
+        | 'receiver'
+        | 'services'
+        | 'senderSignature'
+        | 'bankingInformation'
       >
     ];
 
-  switch (columnKey as keyof InvoiceModel | "actions") {
-    case "bankingInformation":
+  switch (columnKey as keyof InvoiceModel | 'actions') {
+    case 'bankingInformation':
       return;
-    case "senderSignature":
+    case 'senderSignature':
       return;
-    case "sender":
+    case 'sender':
       return;
-    case "services":
+    case 'services':
       return;
-    case "id":
+    case 'id':
       return (
         <div className="flex">
           <DocumentText />
@@ -68,7 +69,7 @@ const InvoiceTableCell = ({
           <p className="text-bold text-small capitalize">{invoice.invoiceId}</p>
         </div>
       );
-    case "receiver":
+    case 'receiver':
       return (
         <div className="flex flex-col">
           <p className="text-bold text-small capitalize">
@@ -76,7 +77,7 @@ const InvoiceTableCell = ({
           </p>
         </div>
       );
-    case "totalAmount":
+    case 'totalAmount':
       return (
         <p className="flex gap-0.5">
           <span className="text-success-700">
@@ -85,9 +86,9 @@ const InvoiceTableCell = ({
           {(invoice.totalAmount || 0).toFixed(2)}
         </p>
       );
-    case "date":
-      return formatDate(cellValue as string) || "";
-    case "status":
+    case 'date':
+      return formatDate(cellValue as string) || '';
+    case 'status':
       return (
         <Chip
           className="capitalize"
@@ -98,20 +99,20 @@ const InvoiceTableCell = ({
           {cellValue as string}
         </Chip>
       );
-    case "actions":
+    case 'actions':
       return (
         <div className="relative flex items-center gap-2">
           <Tooltip disableAnimation content="Details">
             <span
               onClick={handleViewIconClick}
-              className="text-lg text-default-400 cursor-pointer active:opacity-50"
+              className="cursor-pointer text-lg text-default-400 active:opacity-50"
             >
               <EyeIcon />
             </span>
           </Tooltip>
           <Tooltip disableAnimation content="Edit invoice">
             <span
-              className="text-lg text-default-400 cursor-pointer active:opacity-50"
+              className="cursor-pointer text-lg text-default-400 active:opacity-50"
               onClick={handleEditInvoiceClick}
             >
               <EditIcon />
@@ -119,7 +120,7 @@ const InvoiceTableCell = ({
           </Tooltip>
           <Tooltip disableAnimation color="danger" content="Delete invoice">
             <span
-              className="text-lg text-danger cursor-pointer active:opacity-50"
+              className="cursor-pointer text-lg text-danger active:opacity-50"
               onClick={handleDeleteInvoiceClick}
             >
               <DeleteIcon />

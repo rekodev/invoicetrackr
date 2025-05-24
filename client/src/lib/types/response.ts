@@ -1,12 +1,18 @@
-import { ApiError } from "@/api/apiInstance";
+import { ApiError } from '@/api/apiInstance';
 
-import { ClientModel } from "./models/client";
-import { InvoiceModel } from "./models/invoice";
+import { ClientModel } from './models/client';
+import { InvoiceModel } from './models/invoice';
 import {
   BankingInformationFormModel,
   ResetPasswordTokenModel,
-  UserModel,
-} from "./models/user";
+  UserModel
+} from './models/user';
+
+export type ActionResponseModel = {
+  ok: boolean;
+  message?: string;
+  validationErrors?: Record<string, string>;
+};
 
 export type RegisterUserResponse = ApiError & {
   email: string;
@@ -21,7 +27,7 @@ export type GetInvoicesResp = ApiError & {
 };
 
 export type GetInvoicesTotalAmountResp = ApiError & {
-  invoices: Array<Pick<InvoiceModel, "totalAmount" | "status">> | undefined;
+  invoices: Array<Pick<InvoiceModel, 'totalAmount' | 'status'>> | undefined;
   totalClients: number | undefined;
 };
 
@@ -32,8 +38,8 @@ export type GetInvoicesRevenueResp = ApiError & {
 export type GetLatestInvoicesResp = ApiError & {
   invoices:
     | Array<
-        Pick<InvoiceModel, "id" | "totalAmount"> &
-          Pick<ClientModel, "name" | "email">
+        Pick<InvoiceModel, 'id' | 'totalAmount'> &
+          Pick<ClientModel, 'name' | 'email'>
       >
     | undefined;
 };
@@ -80,3 +86,12 @@ export type DeleteUserAccountResp = ApiError;
 export type ResetPasswordResp = ApiError & { message: string };
 
 export type GetUserResetPasswordTokenResp = ApiError & ResetPasswordTokenModel;
+
+// Stripe
+export type CreateCustomerResp = ApiError & { customerId: string };
+export type CreateSubscriptionResp = ApiError & {
+  type: string;
+  clientSecret: string;
+};
+export type GetStripeCustomerIdResp = ApiError & { customerId: string };
+export type CancelStripeSubscriptionResp = ApiError & { message: string };

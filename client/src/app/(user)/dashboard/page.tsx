@@ -1,14 +1,14 @@
-import { Suspense } from "react";
+import { Suspense } from 'react';
 
-import { auth } from "@/auth";
-import DashboardCards from "@/components/dashboard/dashboard-cards";
-import LatestInvoices from "@/components/dashboard/latest-invoices";
-import RevenueChart from "@/components/dashboard/revenue-chart";
+import { auth } from '@/auth';
+import DashboardCards from '@/components/dashboard/dashboard-cards';
+import LatestInvoices from '@/components/dashboard/latest-invoices';
+import RevenueChart from '@/components/dashboard/revenue-chart';
 import {
   DashboardCardsSkeleton,
   LatestInvoicesSkeleton,
-  RevenueChartSkeleton,
-} from "@/components/ui/skeletons";
+  RevenueChartSkeleton
+} from '@/components/ui/skeletons';
 
 const DashboardPage = async () => {
   const session = await auth();
@@ -22,7 +22,7 @@ const DashboardPage = async () => {
       <Suspense fallback={<DashboardCardsSkeleton />}>
         <DashboardCards userId={userId} currency={session.user.currency} />
       </Suspense>
-      <section className="flex flex-col lg:flex-row gap-12 lg:gap-6">
+      <section className="flex flex-col gap-12 lg:flex-row lg:gap-6">
         <Suspense fallback={<RevenueChartSkeleton />}>
           <RevenueChart userId={userId} />
         </Suspense>

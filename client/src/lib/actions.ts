@@ -1,13 +1,15 @@
-"use server";
+'use server';
 
-import { HttpStatusCode } from "axios";
-import { AuthError } from "next-auth";
-import { getTranslations } from "next-intl/server";
+import { HttpStatusCode } from 'axios';
+import { redirect } from 'next/navigation';
+import { AuthError } from 'next-auth';
+import { getTranslations } from 'next-intl/server';
 
-import { createNewUserPassword, registerUser, resetUserPassword } from "@/api";
+import { createNewUserPassword, registerUser, resetUserPassword } from '@/api';
 
-import { signIn, signOut, unstable_update } from "../auth";
-import { UserModel } from "./types/models/user";
+import { signIn, signOut, unstable_update } from '../auth';
+import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
+import { UserModel } from './types/models/user';
 
 export type ActionReturnType = {
   ok: boolean;
@@ -16,7 +18,7 @@ export type ActionReturnType = {
 
 export async function resetPasswordAction(
   _prevState: ActionReturnType | undefined,
-  email: string,
+  email: string
 ): Promise<ActionReturnType> {
   try {
     const response = await resetUserPassword({ email });
@@ -28,19 +30,19 @@ export async function resetPasswordAction(
     return { ok: true, message: response.data.message };
   } catch (error) {
     const t = await getTranslations();
-    return { ok: false, message: t("general_error") };
+    return { ok: false, message: t('general_error') };
   }
 }
 
 export async function createNewPasswordAction(
   _prevState: ActionReturnType | undefined,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionReturnType> {
   const rawFormData = {
-    userId: formData.get("userId"),
-    newPassword: formData.get("newPassword") as string,
-    confirmedNewPassword: formData.get("confirmedNewPassword") as string,
-    token: formData.get("token") as string,
+    userId: formData.get('userId'),
+    newPassword: formData.get('newPassword') as string,
+    confirmedNewPassword: formData.get('confirmedNewPassword') as string,
+    token: formData.get('token') as string
   };
 
   const { userId, newPassword, confirmedNewPassword, token } = rawFormData;
@@ -50,7 +52,7 @@ export async function createNewPasswordAction(
       userId: Number(userId),
       newPassword,
       confirmedNewPassword,
-      token,
+      token
     });
 
     if (response.status !== HttpStatusCode.Ok) {
@@ -60,23 +62,27 @@ export async function createNewPasswordAction(
     return { ok: true, message: response.data.message };
   } catch {
     const t = await getTranslations();
-    return { ok: false, message: t("general_error") };
+    return { ok: false, message: t('general_error') };
   }
 }
 
 export async function authenticateAction(
   _prevState: string | undefined,
-  formData: FormData,
+  formData: FormData
 ) {
   try {
-    await signIn("credentials", formData);
+    await signIn('credentials', {
+      email: formData.get('email'),
+      password: formData.get('password'),
+      redirectTo: DASHBOARD_PAGE
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
-        case "CredentialsSignin":
-          return "Invalid credentials.";
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
         default:
-          return "Something went wrong.";
+          return 'Something went wrong.';
       }
     }
     throw error;
@@ -84,39 +90,54 @@ export async function authenticateAction(
 }
 
 export async function logOutAction() {
-  await signOut({ redirect: true, redirectTo: "/" });
+  await signOut({ redirect: true, redirectTo: '/' });
 }
 
 export async function signUp(
   _prevState: { message: string; ok: boolean } | undefined,
-  formData: FormData,
+  formData: FormData
 ) {
   const rawFormData = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-    confirmedPassword: formData.get("confirm-password") as string,
+    email: formData.get('email') as string,
+    password: formData.get('password') as string,
+    confirmedPassword: formData.get('confirm-password') as string
   };
 
   try {
     const response = await registerUser(rawFormData);
 
-    return {
-      message: response.data.message,
-      ok: "errors" in response.data ? false : true,
-    };
+    if ('errors' in response.data) {
+      return { ok: false, message: response.data.message };
+    }
+
+    return signIn('credentials', {
+      ...rawFormData,
+      redirectTo: ONBOARDING_PAGE
+    });
   } catch (error) {
     throw error;
   }
 }
 
-export const updateSession = async (user: UserModel) => {
+export const updateSession = async ({
+  newSession,
+  redirectPath
+}: {
+  newSession: UserModel & {
+    isOnboarded?: boolean;
+    isSubscriptionActive?: boolean;
+  };
+  redirectPath?: string;
+}) => {
   await unstable_update({
     user: {
-      email: user.email,
-      currency: user.currency,
-      language: user.language,
-      id: String(user.id),
-      name: user.name,
-    },
+      ...newSession,
+      isOnboarded: true,
+      id: String(newSession.id)
+    }
   });
+
+  if (redirectPath) {
+    redirect(redirectPath);
+  }
 };

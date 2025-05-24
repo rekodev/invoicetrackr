@@ -2,7 +2,11 @@ import { and, eq } from "drizzle-orm";
 
 import { UserModel } from "../types/models";
 import { db } from "./db";
-import { passwordResetTokensTable, usersTable } from "./schema";
+import {
+  passwordResetTokensTable,
+  stripeAccountsTable,
+  usersTable,
+} from "./schema";
 
 export const getUserFromDb = async (id: number) => {
   const users = await db
@@ -21,8 +25,14 @@ export const getUserFromDb = async (id: number) => {
       profilePictureUrl: usersTable.profilePictureUrl,
       currency: usersTable.currency,
       language: usersTable.language,
+      stripeCustomerId: stripeAccountsTable.stripeCustomerId,
+      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
     })
     .from(usersTable)
+    .leftJoin(
+      stripeAccountsTable,
+      eq(stripeAccountsTable.userId, usersTable.id),
+    )
     .where(eq(usersTable.id, id));
 
   return users.at(0);
@@ -46,8 +56,14 @@ export const getUserByEmailFromDb = async (email: string) => {
       currency: usersTable.currency,
       language: usersTable.language,
       password: usersTable.password,
+      stripeCustomerId: stripeAccountsTable.stripeCustomerId,
+      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
     })
     .from(usersTable)
+    .leftJoin(
+      stripeAccountsTable,
+      eq(stripeAccountsTable.userId, usersTable.id),
+    )
     .where(eq(usersTable.email, email));
 
   return users.at(0);
@@ -235,5 +251,14 @@ export const invalidateTokenInDb = async (userId: number, token: string) => {
     )
     .returning({ id: passwordResetTokensTable.id });
 
-  return updatedToken.id;
+  return updatedToken?.id;
+};
+
+export const getUserCurrencyFromDb = async (userId: number) => {
+  const [user] = await db
+    .select({ currency: usersTable.currency })
+    .from(usersTable)
+    .where(eq(usersTable.id, userId));
+
+  return user?.currency as "eur" | "usd";
 };

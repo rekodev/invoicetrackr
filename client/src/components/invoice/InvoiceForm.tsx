@@ -1,43 +1,44 @@
-"use client";
+'use client';
 
 import {
   UserGroupIcon,
-  BuildingLibraryIcon,
-} from "@heroicons/react/24/outline";
-import { Button, Card, Chip, Input, Select, SelectItem } from "@heroui/react";
-import { useState } from "react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
+  BuildingLibraryIcon
+} from '@heroicons/react/24/outline';
+import { Button, Card, Chip, Input, Select, SelectItem } from '@heroui/react';
+import { useState } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 
-import { statusOptions } from "@/lib/constants/table";
-import { UiState } from "@/lib/constants/uiState";
-import useInvoiceFormSubmissionHandler from "@/lib/hooks/invoice/useInvoiceFormSubmissionHandler";
-import { ClientModel } from "@/lib/types/models/client";
-import { InvoiceModel } from "@/lib/types/models/invoice";
+import { statusOptions } from '@/lib/constants/table';
+import { UiState } from '@/lib/constants/uiState';
+import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/useInvoiceFormSubmissionHandler';
+import { Currency } from '@/lib/types/currency';
+import { ClientModel } from '@/lib/types/models/client';
+import { InvoiceModel } from '@/lib/types/models/invoice';
 import {
   BankingInformationFormModel,
-  UserModel,
-} from "@/lib/types/models/user";
-import { formatDate } from "@/lib/utils/formatDate";
+  UserModel
+} from '@/lib/types/models/user';
+import { formatDate } from '@/lib/utils/formatDate';
 
-import BankingInformationModal from "./banking-information-modal";
-import InvoiceFormReceiverModal from "./InvoiceFormReceiverModal";
-import InvoiceServicesTable from "./InvoiceServicesTable";
-import SignaturePad from "../SignaturePad";
-import CompleteProfile from "../ui/complete-profile";
+import BankingInformationModal from './banking-information-modal';
+import InvoiceFormReceiverModal from './InvoiceFormReceiverModal';
+import InvoiceServicesTable from './InvoiceServicesTable';
+import SignaturePad from '../SignaturePad';
+import CompleteProfile from '../ui/complete-profile';
 
 type Props = {
   user: UserModel;
   invoiceData?: InvoiceModel;
-  currency: string;
+  currency: Currency;
 };
 
 const INITIAL_RECEIVER_DATA: ClientModel = {
-  businessNumber: "",
-  businessType: "business",
-  address: "",
-  email: "",
-  name: "",
-  type: "receiver",
+  businessNumber: '',
+  businessType: 'business',
+  address: '',
+  email: '',
+  name: '',
+  type: 'receiver'
 };
 
 const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
@@ -45,8 +46,8 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
     defaultValues: invoiceData || {
       sender: user,
       receiver: INITIAL_RECEIVER_DATA,
-      services: [{ amount: 0, quantity: 0, description: "", unit: "" }],
-    },
+      services: [{ amount: 0, quantity: 0, description: '', unit: '' }]
+    }
   });
   const {
     register,
@@ -55,11 +56,11 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
     formState: { errors },
     clearErrors,
     setValue,
-    control,
+    control
   } = methods;
 
   const [uiState, setUiState] = useState(UiState.Idle);
-  const [submissionMessage, setSubmissionMessage] = useState("");
+  const [submissionMessage, setSubmissionMessage] = useState('');
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
   const [isBankingInformationModalOpen, setIsBankingInformationModalOpen] =
     useState(false);
@@ -72,7 +73,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
     user,
     setUiState,
     setSubmissionMessage,
-    setError,
+    setError
   });
 
   const handleOpenReceiverModal = () => {
@@ -84,35 +85,35 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   };
 
   const handleSelectReceiver = (receiver: ClientModel) => {
-    setValue("receiver.name", receiver.name);
-    setValue("receiver.businessNumber", receiver.businessNumber);
-    setValue("receiver.address", receiver.address);
-    setValue("receiver.email", receiver.email);
+    setValue('receiver.name', receiver.name);
+    setValue('receiver.businessNumber', receiver.businessNumber);
+    setValue('receiver.address', receiver.address);
+    setValue('receiver.email', receiver.email);
     setIsReceiverModalOpen(false);
   };
 
   const handleBankAccountSelect = (
-    bankAccount: BankingInformationFormModel,
+    bankAccount: BankingInformationFormModel
   ) => {
-    setValue("bankingInformation.name", bankAccount.name);
-    setValue("bankingInformation.code", bankAccount.code);
-    setValue("bankingInformation.accountNumber", bankAccount.accountNumber);
+    setValue('bankingInformation.name', bankAccount.name);
+    setValue('bankingInformation.code', bankAccount.code);
+    setValue('bankingInformation.accountNumber', bankAccount.accountNumber);
     setIsBankingInformationModalOpen(false);
   };
 
   const handleSignatureChange = (signature: string | File) => {
     setSenderSignature(signature);
-    setValue("senderSignature", signature);
-    clearErrors("senderSignature");
+    setValue('senderSignature', signature);
+    clearErrors('senderSignature');
   };
 
   const renderSenderAndReceiverFields = () => (
-    <div className="col-span-4 flex flex-col w-full gap-4">
+    <div className="col-span-4 flex w-full flex-col gap-4">
       <h4>Sender and Receiver Data</h4>
-      <div className="col-span-4 flex flex-col md:flex-row w-full justify-between gap-4">
-        <Card className="w-full p-4 flex flex-col gap-4">
-          <div className="min-h-8 flex justify-between items-center">
-            <p className="text-default-500 text-sm">From:</p>
+      <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
+        <Card className="flex w-full flex-col gap-4 p-4">
+          <div className="flex min-h-8 items-center justify-between">
+            <p className="text-sm text-default-500">From:</p>
           </div>
           <Input
             label="Sender's Name"
@@ -121,7 +122,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
             type="text"
             maxLength={20}
             variant="bordered"
-            {...register("sender.name")}
+            {...register('sender.name')}
             isInvalid={!!errors.sender?.name}
             errorMessage={errors.sender?.name?.message}
           />
@@ -132,7 +133,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
             type="text"
             maxLength={20}
             variant="bordered"
-            {...register("sender.businessNumber")}
+            {...register('sender.businessNumber')}
             isInvalid={!!errors.sender?.businessNumber}
             errorMessage={errors.sender?.businessNumber?.message}
           />
@@ -143,7 +144,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
             type="text"
             maxLength={20}
             variant="bordered"
-            {...register("sender.address")}
+            {...register('sender.address')}
             isInvalid={!!errors.sender?.address}
             errorMessage={errors.sender?.address?.message}
           />
@@ -154,21 +155,21 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
             type="text"
             maxLength={20}
             variant="bordered"
-            {...register("sender.email")}
+            {...register('sender.email')}
             isInvalid={!!errors.sender?.email}
             errorMessage={errors.sender?.email?.message}
           />
         </Card>
-        <Card className="w-full flex flex-col gap-4 p-4">
-          <div className="flex justify-between items-center">
-            <p className="text-default-500 text-sm">To:</p>
+        <Card className="flex w-full flex-col gap-4 p-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-default-500">To:</p>
             <Button
               size="sm"
               variant="faded"
               className="min-w-unit-10 w-unit-26 h-unit-8 cursor-pointer"
               onPress={handleOpenReceiverModal}
             >
-              <UserGroupIcon className="w-4 h-4" />
+              <UserGroupIcon className="h-4 w-4" />
               Select Client
             </Button>
           </div>
@@ -243,7 +244,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   );
 
   const renderInvoiceServices = () => (
-    <div className="flex gap-4 flex-col col-span-4">
+    <div className="col-span-4 flex flex-col gap-4">
       <h4>Services</h4>
       <InvoiceServicesTable
         currency={currency}
@@ -255,20 +256,20 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   );
 
   const renderBankingInformation = () => (
-    <div className="flex gap-4 flex-col col-span-4">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+    <div className="col-span-4 flex flex-col gap-4">
+      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
         <h4>Banking Details</h4>
         <Button
           size="sm"
           variant="faded"
-          className="min-w-unit-10 w-unit-26 h-unit-8 cursor-pointer max-w-min"
+          className="min-w-unit-10 w-unit-26 h-unit-8 max-w-min cursor-pointer"
           onPress={() => setIsBankingInformationModalOpen(true)}
-          startContent={<BuildingLibraryIcon className="min-w-4 min-h-4" />}
+          startContent={<BuildingLibraryIcon className="min-h-4 min-w-4" />}
         >
           Select Bank Account
         </Button>
       </div>
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col gap-4 md:flex-row">
         <Controller
           name="bankingInformation.name"
           control={control}
@@ -326,7 +327,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   );
 
   const renderInvoiceSignature = () => (
-    <div className="flex gap-4 flex-col">
+    <div className="flex flex-col gap-4">
       <h4>Signature</h4>
       <SignaturePad
         signature={senderSignature}
@@ -340,13 +341,13 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   );
 
   const renderSubmissionMessageAndActions = () => (
-    <div className="col-span-4 flex w-full items-center gap-5 justify-between overflow-x-hidden">
+    <div className="col-span-4 flex w-full items-center justify-between gap-5 overflow-x-hidden">
       {submissionMessage && (
-        <Chip color={uiState === UiState.Success ? "success" : "danger"}>
+        <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
           {submissionMessage}
         </Chip>
       )}
-      <div className="flex gap-1 flex-col sm:flex-row justify-end w-full">
+      <div className="flex w-full flex-col justify-end gap-1 sm:flex-row">
         <Button color="danger" variant="light" onPress={redirectToInvoicesPage}>
           Cancel
         </Button>
@@ -373,28 +374,28 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   return (
     <>
       <FormProvider {...methods}>
-        <Card className="p-4 sm:p-8 dark:border dark:border-default-100 bg-transparent">
+        <Card className="bg-transparent p-4 dark:border dark:border-default-100 sm:p-8">
           <form
             aria-label="Add New Invoice Form"
-            className="w-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
+            className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
             onSubmit={handleSubmit(onSubmit)}
             encType="multipart/form-data"
           >
-            <div className="flex gap-4 flex-col col-span-4">
+            <div className="col-span-4 flex flex-col gap-4">
               <h4>Invoice Details</h4>
-              <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex flex-col gap-4 md:flex-row">
                 <Input
                   aria-label="Invoice ID"
-                  {...register("invoiceId")}
+                  {...register('invoiceId')}
                   label="Invoice ID"
                   placeholder="e.g., INV001"
-                  defaultValue={invoiceData?.invoiceId || ""}
+                  defaultValue={invoiceData?.invoiceId || ''}
                   isInvalid={!!errors.invoiceId}
                   errorMessage={errors.invoiceId?.message}
                 />
                 <Select
                   aria-label="Status"
-                  {...register("status")}
+                  {...register('status')}
                   label="Status"
                   placeholder="Select status"
                   defaultSelectedKeys={
@@ -409,22 +410,22 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
                 </Select>
                 <Input
                   aria-label="Date"
-                  {...register("date")}
+                  {...register('date')}
                   type="date"
                   label="Date"
                   defaultValue={
-                    invoiceData?.date ? formatDate(invoiceData.date) : ""
+                    invoiceData?.date ? formatDate(invoiceData.date) : ''
                   }
                   errorMessage={errors.date?.message}
                   isInvalid={!!errors.date}
                 />
                 <Input
                   aria-label="Due Date"
-                  {...register("dueDate")}
+                  {...register('dueDate')}
                   type="date"
                   label="Due Date"
                   defaultValue={
-                    invoiceData?.dueDate ? formatDate(invoiceData.dueDate) : ""
+                    invoiceData?.dueDate ? formatDate(invoiceData.dueDate) : ''
                   }
                   isInvalid={!!errors.dueDate}
                   errorMessage={errors.dueDate?.message}
