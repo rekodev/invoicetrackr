@@ -152,13 +152,13 @@ importers:
         version: 9.0.1
       '@fastify/type-provider-typebox':
         specifier: ^5.1.0
-        version: 5.1.0(@sinclair/typebox@0.34.11)
+        version: 5.1.0(@sinclair/typebox@0.34.33)
       '@neondatabase/serverless':
         specifier: ^0.10.4
         version: 0.10.4
       '@sinclair/typebox':
-        specifier: ^0.34.11
-        version: 0.34.11
+        specifier: ^0.34.33
+        version: 0.34.33
       ajv-errors:
         specifier: ^3.0.0
         version: 3.0.0(ajv@8.17.1)
@@ -2170,8 +2170,8 @@ packages:
   '@selderee/plugin-htmlparser2@0.11.0':
     resolution: {integrity: sha512-P33hHGdldxGabLFjPPpaTxVolMrzrcegejx+0GxjrIb9Zv48D8yAIA/QTDR2dFl7Uz7urX8aX6+5bCZslr+gWQ==}
 
-  '@sinclair/typebox@0.34.11':
-    resolution: {integrity: sha512-zE9pWGVSG82z+sFO+oUmqmqRVm8Wg5sVhmljYi1fDhLOSphBBy939QmC/qXcKFWqTiRJ6keyG4y75bIoTPRBAw==}
+  '@sinclair/typebox@0.34.33':
+    resolution: {integrity: sha512-5HAV9exOMcXRUxo+9iYB5n09XxzCXnfy4VTNW4xnDv+FgjzAGY989C28BIdljKqmF+ZltUwujE3aossvcVtq6g==}
 
   '@stripe/react-stripe-js@3.6.0':
     resolution: {integrity: sha512-zEnaUmTOsu7zhl3RWbZ0l1dRiad+QIbcAYzQfF+yYelURJowhAwesRHKWH+qGAIBEpkO6/VCLFHhVLH9DtPlnw==}
@@ -5085,9 +5085,9 @@ snapshots:
       fastify-plugin: 5.0.1
       secure-json-parse: 3.0.1
 
-  '@fastify/type-provider-typebox@5.1.0(@sinclair/typebox@0.34.11)':
+  '@fastify/type-provider-typebox@5.1.0(@sinclair/typebox@0.34.33)':
     dependencies:
-      '@sinclair/typebox': 0.34.11
+      '@sinclair/typebox': 0.34.33
 
   '@formatjs/ecma402-abstract@2.3.4':
     dependencies:
@@ -7475,7 +7475,7 @@ snapshots:
       domhandler: 5.0.3
       selderee: 0.11.0
 
-  '@sinclair/typebox@0.34.11': {}
+  '@sinclair/typebox@0.34.33': {}
 
   '@stripe/react-stripe-js@3.6.0(@stripe/stripe-js@7.2.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:

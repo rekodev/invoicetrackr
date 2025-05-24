@@ -62,7 +62,10 @@ server.setErrorHandler(async function (error, request, reply) {
 
         return {
           key,
-          value: i18n.t(nonDynamicKeyWithPrefix),
+          value:
+            i18n.t(nonDynamicKeyWithPrefix) === nonDynamicKeyWithPrefix
+              ? err.message || "Review field"
+              : i18n.t(nonDynamicKeyWithPrefix),
         };
       }),
       code: error.code,
