@@ -60,7 +60,7 @@ export const loginUser = async (
       user.stripeSubscriptionId,
     );
 
-    if (userSubscription.status === "active") isSubscriptionActive = true;
+    if (userSubscription?.status === "active") isSubscriptionActive = true;
   }
 
   reply.status(200).send({
