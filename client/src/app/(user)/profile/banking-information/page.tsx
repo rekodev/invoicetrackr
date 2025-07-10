@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import BankingInformationForm from '@/components/profile/BankingInformationForm';
+import BankingInformationForm from '@/components/profile/banking-information-form';
 
 async function BankingInformationPage() {
   const session = await auth();

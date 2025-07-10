@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
-import { Button } from "@heroui/react";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
+import { Button } from '@heroui/react';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 export default function ThemeSwitcher() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
   const handleClick = () => {
-    if (theme === "dark") setTheme("light");
-    else setTheme("dark");
+    if (theme === 'dark') setTheme('light');
+    else setTheme('dark');
   };
 
   useEffect(() => {
@@ -22,10 +22,10 @@ export default function ThemeSwitcher() {
 
   return (
     <Button variant="bordered" isIconOnly onPress={handleClick}>
-      {theme === "light" ? (
-        <MoonIcon className="w-5 h-5" />
+      {theme === 'light' ? (
+        <MoonIcon className="h-5 w-5" />
       ) : (
-        <SunIcon className="w-5 h-5" />
+        <SunIcon className="h-5 w-5" />
       )}
     </Button>
   );

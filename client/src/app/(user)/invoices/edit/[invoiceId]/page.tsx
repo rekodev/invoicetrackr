@@ -1,6 +1,6 @@
-import { getInvoice, getUser } from "@/api";
-import { auth } from "@/auth";
-import InvoiceForm from "@/components/invoice/InvoiceForm";
+import { getInvoice, getUser } from '@/api';
+import { auth } from '@/auth';
+import InvoiceForm from '@/components/invoice/invoice-form';
 
 type Params = Promise<{ invoiceId: string }>;
 

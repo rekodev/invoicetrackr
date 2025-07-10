@@ -1,6 +1,6 @@
-import { getUser } from "@/api";
-import { auth } from "@/auth";
-import InvoiceForm from "@/components/invoice/InvoiceForm";
+import { getUser } from '@/api';
+import { auth } from '@/auth';
+import InvoiceForm from '@/components/invoice/invoice-form';
 
 const AddNewInvoicePage = async () => {
   const session = await auth();

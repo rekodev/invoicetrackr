@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Button,
@@ -6,21 +6,21 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Divider,
-} from "@heroui/react";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+  Divider
+} from '@heroui/react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { changeUserPassword } from "@/api";
-import { UiState } from "@/lib/constants/uiState";
-import useGetUser from "@/lib/hooks/user/useGetUser";
-import { ChangePasswordFormModel } from "@/lib/types/models/user";
+import { changeUserPassword } from '@/api';
+import { UiState } from '@/lib/constants/ui-state';
+import useGetUser from '@/lib/hooks/user/use-get-user';
+import { ChangePasswordFormModel } from '@/lib/types/models/user';
 
-import PasswordInput from "../password-input";
-import ErrorAlert from "../ui/error-alert";
-import GeneralFormError from "../ui/general-form-error";
-import Loader from "../ui/loader";
+import PasswordInput from '../password-input';
+import ErrorAlert from '../ui/error-alert';
+import GeneralFormError from '../ui/general-form-error';
+import Loader from '../ui/loader';
 
 type Props = {
   userId: number;
@@ -29,23 +29,23 @@ type Props = {
 
 export default function ChangePasswordForm({ userId, language }: Props) {
   const { mutateUser, user, isUserLoading, userError } = useGetUser({ userId });
-  const t = useTranslations("profile.change_password");
+  const t = useTranslations('profile.change_password');
   const {
     register,
     handleSubmit,
     formState: { errors, isDirty },
     setError,
-    reset,
+    reset
   } = useForm<ChangePasswordFormModel>({
-    defaultValues: { password: "", newPassword: "", confirmedNewPassword: "" },
+    defaultValues: { password: '', newPassword: '', confirmedNewPassword: '' }
   });
-  const [submissionMessage, setSubmissionMessage] = useState("");
+  const [submissionMessage, setSubmissionMessage] = useState('');
   const [uiState, setUiState] = useState(UiState.Idle);
 
   const onSubmit: SubmitHandler<ChangePasswordFormModel> = async (data) => {
     if (!user?.id) return;
 
-    setSubmissionMessage("");
+    setSubmissionMessage('');
     setUiState(UiState.Pending);
 
     const response = await changeUserPassword({
@@ -53,11 +53,11 @@ export default function ChangePasswordForm({ userId, language }: Props) {
       language,
       password: data.password,
       newPassword: data.newPassword,
-      confirmedNewPassword: data.confirmedNewPassword,
+      confirmedNewPassword: data.confirmedNewPassword
     });
     setSubmissionMessage(response.data.message);
 
-    if ("errors" in response.data) {
+    if ('errors' in response.data) {
       setUiState(UiState.Failure);
 
       response.data.errors.forEach((error) => {
@@ -80,41 +80,41 @@ export default function ChangePasswordForm({ userId, language }: Props) {
         </div>
       );
 
-    const registeredPassword = { ...register("password") };
-    const registeredNewPassword = { ...register("newPassword") };
+    const registeredPassword = { ...register('password') };
+    const registeredNewPassword = { ...register('newPassword') };
     const registeredConfirmedNewPassword = {
-      ...register("confirmedNewPassword"),
+      ...register('confirmedNewPassword')
     };
 
     return (
       <>
-        <CardBody className="p-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <CardBody className="grid grid-cols-1 gap-4 p-6 lg:grid-cols-2">
           <PasswordInput
-            placeholder={t("current_password_placeholder")}
+            placeholder={t('current_password_placeholder')}
             registeredPassword={registeredPassword}
-            label={t("current_password")}
+            label={t('current_password')}
             isInvalid={!!errors.password}
             errorMessage={errors.password?.message}
           />
           <PasswordInput
-            placeholder={t("new_password_placeholder")}
+            placeholder={t('new_password_placeholder')}
             registeredPassword={registeredNewPassword}
-            label={t("new_password")}
+            label={t('new_password')}
             isInvalid={!!errors.newPassword}
             errorMessage={errors.newPassword?.message}
           />
-          <small className="mt-[-8] text-default-500 col-span-2">
-            {t("password_requirements")}
+          <small className="col-span-2 mt-[-8] text-default-500">
+            {t('password_requirements')}
           </small>
           <PasswordInput
-            placeholder={t("confirm_new_password_placeholder")}
+            placeholder={t('confirm_new_password_placeholder')}
             registeredPassword={registeredConfirmedNewPassword}
-            label={t("confirm_new_password")}
+            label={t('confirm_new_password')}
             isInvalid={!!errors.confirmedNewPassword}
             errorMessage={errors.confirmedNewPassword?.message}
           />
         </CardBody>
-        <CardFooter className="relative justify-between p-6 w-full">
+        <CardFooter className="relative w-full justify-between p-6">
           <GeneralFormError
             submissionMessage={submissionMessage}
             uiState={uiState}
@@ -128,7 +128,7 @@ export default function ChangePasswordForm({ userId, language }: Props) {
               color="secondary"
               className="self-end"
             >
-              {t("save_changes")}
+              {t('save_changes')}
             </Button>
           </div>
         </CardFooter>
@@ -141,11 +141,11 @@ export default function ChangePasswordForm({ userId, language }: Props) {
   return (
     <Card
       as="form"
-      aria-label={t("aria_label")}
+      aria-label={t('aria_label')}
       onSubmit={handleSubmit(onSubmit)}
       className="w-full bg-transparent dark:border dark:border-default-100"
     >
-      <CardHeader className="p-4 px-6">{t("title")}</CardHeader>
+      <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
       <Divider />
       {renderCardBodyAndFooter()}
     </Card>

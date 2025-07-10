@@ -32,7 +32,7 @@ import {
   UpdateUserResp
 } from '@/lib/types/response';
 
-import api, { ApiError } from './apiInstance';
+import api, { ApiError } from './api-instance';
 
 type UserModelWithPassword = UserModel & { password: string };
 

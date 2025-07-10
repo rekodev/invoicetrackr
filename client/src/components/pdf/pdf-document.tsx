@@ -3,19 +3,17 @@ import {
   Page,
   Image as PDFImage,
   Text,
-  View,
-} from "@react-pdf/renderer";
+  View
+} from '@react-pdf/renderer';
 
-import { InvoiceModel } from "@/lib/types/models/invoice";
-import { BankingInformationFormModel } from "@/lib/types/models/user";
-import { getDaysUntilDueDate, splitInvoiceId } from "@/lib/utils";
-import { amountToWords } from "@/lib/utils/amountToWords";
-import { formatDate } from "@/lib/utils/formatDate";
+import { InvoiceModel } from '@/lib/types/models/invoice';
+import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
+import { amountToWords } from '@/lib/utils/amount-to-words';
+import { formatDate } from '@/lib/utils/format-date';
+import { registerPdfFont, pdfStyles } from '@/lib/utils/pdf';
 
-import styles from "./styles";
-import { registerFont } from "./utils";
-
-registerFont();
+registerPdfFont();
 
 type Props = {
   t: any;
@@ -32,7 +30,7 @@ export default function PDFDocument({
   senderSignatureImage,
   bankAccount,
   currency,
-  language,
+  language
 }: Props) {
   const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
     invoiceData;
@@ -43,56 +41,58 @@ export default function PDFDocument({
 
   const cents = Math.floor(totalAmount * 100) % 100;
 
-  const renderBusinessNumberLabel = (party: "sender" | "receiver") =>
-    invoiceData?.[party]?.businessType === "business"
-      ? t("business_number_business")
-      : t("business_number_individual");
+  const renderBusinessNumberLabel = (party: 'sender' | 'receiver') =>
+    invoiceData?.[party]?.businessType === 'business'
+      ? t('business_number_business')
+      : t('business_number_individual');
 
   const renderHeader = () => (
     <>
-      <Text style={styles.title}>
-        {invoiceData?.sender?.businessType === "business"
-          ? t("businessTitle")
-          : t("individualTitle")}{" "}
+      <Text style={pdfStyles.title}>
+        {invoiceData?.sender?.businessType === 'business'
+          ? t('businessTitle')
+          : t('individualTitle')}{' '}
       </Text>
-      <Text style={styles.subtitle}>
-        {t("series_label")} <Text style={styles.boldText}>{series}</Text>{" "}
-        {t("invoice_number_label")}&nbsp;
-        <Text style={styles.boldText}>{number}</Text>
+      <Text style={pdfStyles.subtitle}>
+        {t('series_label')} <Text style={pdfStyles.boldText}>{series}</Text>{' '}
+        {t('invoice_number_label')}&nbsp;
+        <Text style={pdfStyles.boldText}>{number}</Text>
       </Text>
     </>
   );
 
   const renderBillingDetailsSection = () => (
     <>
-      <View style={styles.row}>
-        <View style={styles.leftColumn}>
-          <Text style={styles.detailItemTitle}>{t("provider_label")}</Text>
-          <Text style={styles.detailItem}>{sender?.name}</Text>
-          <Text style={styles.detailItem}>
-            {renderBusinessNumberLabel("sender")} {sender?.businessNumber}
+      <View style={pdfStyles.row}>
+        <View style={pdfStyles.leftColumn}>
+          <Text style={pdfStyles.detailItemTitle}>{t('provider_label')}</Text>
+          <Text style={pdfStyles.detailItem}>{sender?.name}</Text>
+          <Text style={pdfStyles.detailItem}>
+            {renderBusinessNumberLabel('sender')} {sender?.businessNumber}
           </Text>
-          <Text style={styles.detailItem}>
-            {t("address_label")} {sender?.address}
+          <Text style={pdfStyles.detailItem}>
+            {t('address_label')} {sender?.address}
           </Text>
         </View>
-        <View style={styles.rightColumn}>
-          <Text style={[styles.detailItem, styles.boldText]}>
-            {t("invoice_date_label")}
+        <View style={pdfStyles.rightColumn}>
+          <Text style={[pdfStyles.detailItem, pdfStyles.boldText]}>
+            {t('invoice_date_label')}
           </Text>
-          <Text style={styles.detailItem}>{date ? formatDate(date) : ""}</Text>
+          <Text style={pdfStyles.detailItem}>
+            {date ? formatDate(date) : ''}
+          </Text>
         </View>
       </View>
 
-      <View style={styles.row}>
-        <View style={styles.leftColumn}>
-          <Text style={styles.detailItemTitle}>{t("payer_label")}</Text>
-          <Text style={styles.detailItem}>{receiver?.name}</Text>
-          <Text style={styles.detailItem}>
-            {renderBusinessNumberLabel("receiver")} {receiver?.businessNumber}
+      <View style={pdfStyles.row}>
+        <View style={pdfStyles.leftColumn}>
+          <Text style={pdfStyles.detailItemTitle}>{t('payer_label')}</Text>
+          <Text style={pdfStyles.detailItem}>{receiver?.name}</Text>
+          <Text style={pdfStyles.detailItem}>
+            {renderBusinessNumberLabel('receiver')} {receiver?.businessNumber}
           </Text>
-          <Text style={styles.detailItem}>
-            {t("address_label")} {receiver?.address}
+          <Text style={pdfStyles.detailItem}>
+            {t('address_label')} {receiver?.address}
           </Text>
         </View>
       </View>
@@ -104,23 +104,23 @@ export default function PDFDocument({
     description: string,
     unit: string,
     quantity: number,
-    amount: number,
+    amount: number
   ) => (
-    <View style={styles.tableRow} key={index}>
-      <View style={[styles.tableCol, styles.tableCol1]}>
-        <Text style={styles.tableCell}>{index + 1}</Text>
+    <View style={pdfStyles.tableRow} key={index}>
+      <View style={[pdfStyles.tableCol, pdfStyles.tableCol1]}>
+        <Text style={pdfStyles.tableCell}>{index + 1}</Text>
       </View>
-      <View style={[styles.tableCol, styles.tableCol2]}>
-        <Text style={styles.tableCell}>{description}</Text>
+      <View style={[pdfStyles.tableCol, pdfStyles.tableCol2]}>
+        <Text style={pdfStyles.tableCell}>{description}</Text>
       </View>
-      <View style={[styles.tableCol, styles.tableCol3]}>
-        <Text style={styles.tableCell}>{unit}</Text>
+      <View style={[pdfStyles.tableCol, pdfStyles.tableCol3]}>
+        <Text style={pdfStyles.tableCell}>{unit}</Text>
       </View>
-      <View style={[styles.tableCol, styles.tableCol4]}>
-        <Text style={styles.tableCell}>{quantity}</Text>
+      <View style={[pdfStyles.tableCol, pdfStyles.tableCol4]}>
+        <Text style={pdfStyles.tableCell}>{quantity}</Text>
       </View>
-      <View style={[styles.tableCol, styles.tableCol5]}>
-        <Text style={styles.tableCell}>
+      <View style={[pdfStyles.tableCol, pdfStyles.tableCol5]}>
+        <Text style={pdfStyles.tableCell}>
           {(Number(amount) || 0).toFixed(2)} {currency.toUpperCase()}
         </Text>
       </View>
@@ -128,12 +128,12 @@ export default function PDFDocument({
   );
 
   const renderTotalAmountTableRow = () => (
-    <View style={styles.totalTableRow}>
-      <View style={[styles.tableCol, styles.tableCol4]}>
-        <Text style={styles.tableCellHeader}>{t("total_amount")}</Text>
+    <View style={pdfStyles.totalTableRow}>
+      <View style={[pdfStyles.tableCol, pdfStyles.tableCol4]}>
+        <Text style={pdfStyles.tableCellHeader}>{t('total_amount')}</Text>
       </View>
-      <View style={[styles.tableCol, styles.tableCol5]}>
-        <Text style={styles.tableCell}>
+      <View style={[pdfStyles.tableCol, pdfStyles.tableCol5]}>
+        <Text style={pdfStyles.tableCell}>
           {Number(invoiceData.totalAmount).toFixed(2)} {currency.toUpperCase()}
         </Text>
       </View>
@@ -142,22 +142,24 @@ export default function PDFDocument({
 
   const renderTableSection = () => (
     <>
-      <View style={styles.table}>
-        <View style={styles.tableRow}>
-          <View style={[styles.tableColHeader, styles.tableCol1]}>
-            <Text style={styles.tableCellHeader}>{t("position_label")}</Text>
+      <View style={pdfStyles.table}>
+        <View style={pdfStyles.tableRow}>
+          <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol1]}>
+            <Text style={pdfStyles.tableCellHeader}>{t('position_label')}</Text>
           </View>
-          <View style={[styles.tableColHeader, styles.tableCol2]}>
-            <Text style={styles.tableCellHeader}>{t("description_label")}</Text>
+          <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol2]}>
+            <Text style={pdfStyles.tableCellHeader}>
+              {t('description_label')}
+            </Text>
           </View>
-          <View style={[styles.tableColHeader, styles.tableCol3]}>
-            <Text style={styles.tableCellHeader}>{t("unit_label")}</Text>
+          <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol3]}>
+            <Text style={pdfStyles.tableCellHeader}>{t('unit_label')}</Text>
           </View>
-          <View style={[styles.tableColHeader, styles.tableCol4]}>
-            <Text style={styles.tableCellHeader}>{t("quantity_label")}</Text>
+          <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol4]}>
+            <Text style={pdfStyles.tableCellHeader}>{t('quantity_label')}</Text>
           </View>
-          <View style={[styles.tableColHeader, styles.tableCol5]}>
-            <Text style={styles.tableCellHeader}>{t("amount_label")}</Text>
+          <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol5]}>
+            <Text style={pdfStyles.tableCellHeader}>{t('amount_label')}</Text>
           </View>
         </View>
 
@@ -167,8 +169,8 @@ export default function PDFDocument({
             service.description,
             service.unit,
             service.quantity,
-            service.amount,
-          ),
+            service.amount
+          )
         )}
       </View>
 
@@ -178,45 +180,49 @@ export default function PDFDocument({
 
   const renderSignatureSection = () => (
     <>
-      <View style={styles.signatureSection}>
-        <Text style={styles.signatureTitle}>
-          {t("invoice_issued_by_label")}
+      <View style={pdfStyles.signatureSection}>
+        <Text style={pdfStyles.signatureTitle}>
+          {t('invoice_issued_by_label')}
         </Text>
-        <View style={styles.signatureBox}>
-          <View style={styles.signatureAndName}>
+        <View style={pdfStyles.signatureBox}>
+          <View style={pdfStyles.signatureAndName}>
             <Text></Text>
             {senderSignatureImage && (
-              <View style={styles.signatureImageContainer}>
+              <View style={pdfStyles.signatureImageContainer}>
                 <PDFImage
-                  style={styles.signatureImage}
+                  style={pdfStyles.signatureImage}
                   src={senderSignatureImage}
                 />
               </View>
             )}
-            <Text style={styles.nameWithSubtext}>{sender?.name}</Text>
+            <Text style={pdfStyles.nameWithSubtext}>{sender?.name}</Text>
           </View>
-          <View style={styles.signatureLine}></View>
-          <View style={styles.signatureAndName}>
-            <Text style={styles.subTextSignature}>{t("signature_label")}</Text>
-            <Text style={styles.subTextName}>{t("name_label")}</Text>
+          <View style={pdfStyles.signatureLine}></View>
+          <View style={pdfStyles.signatureAndName}>
+            <Text style={pdfStyles.subTextSignature}>
+              {t('signature_label')}
+            </Text>
+            <Text style={pdfStyles.subTextName}>{t('name_label')}</Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.signatureSection}>
-        <Text style={styles.signatureTitle}>
-          {t("invoice_received_by_label")}
+      <View style={pdfStyles.signatureSection}>
+        <Text style={pdfStyles.signatureTitle}>
+          {t('invoice_received_by_label')}
         </Text>
-        <View style={styles.signatureBox}>
-          <View style={styles.signatureAndName}>
+        <View style={pdfStyles.signatureBox}>
+          <View style={pdfStyles.signatureAndName}>
             <Text></Text>
             {/* TODO: Add ability for receiver to sign */}
-            <Text style={styles.nameWithSubtextEmpty}>0</Text>
+            <Text style={pdfStyles.nameWithSubtextEmpty}>0</Text>
           </View>
-          <View style={styles.signatureLine}></View>
-          <View style={styles.signatureAndName}>
-            <Text style={styles.subTextSignature}>{t("signature_label")}</Text>
-            <Text style={styles.subTextName}>{t("name_label")}</Text>
+          <View style={pdfStyles.signatureLine}></View>
+          <View style={pdfStyles.signatureAndName}>
+            <Text style={pdfStyles.subTextSignature}>
+              {t('signature_label')}
+            </Text>
+            <Text style={pdfStyles.subTextName}>{t('name_label')}</Text>
           </View>
         </View>
       </View>
@@ -224,18 +230,18 @@ export default function PDFDocument({
   );
 
   const renderFooter = () => (
-    <View style={styles.footer}>
-      <Text style={[styles.footerItem, styles.boldText]}>
-        {t("payment_terms_label", {
-          days: date && dueDate ? getDaysUntilDueDate(date, dueDate) : "0",
+    <View style={pdfStyles.footer}>
+      <Text style={[pdfStyles.footerItem, pdfStyles.boldText]}>
+        {t('payment_terms_label', {
+          days: date && dueDate ? getDaysUntilDueDate(date, dueDate) : '0'
         })}
       </Text>
       {bankAccount?.code && bankAccount?.name && bankAccount?.accountNumber && (
-        <Text style={styles.footerItem}>
-          {t("bank_info_label", {
-            bank_name: bankAccount?.name || "-",
-            bank_code: bankAccount?.code || "-",
-            bank_account_number: bankAccount?.accountNumber || "-",
+        <Text style={pdfStyles.footerItem}>
+          {t('bank_info_label', {
+            bank_name: bankAccount?.name || '-',
+            bank_code: bankAccount?.code || '-',
+            bank_account_number: bankAccount?.accountNumber || '-'
           })}
         </Text>
       )}
@@ -244,22 +250,22 @@ export default function PDFDocument({
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={pdfStyles.page}>
         {renderHeader()}
         {renderBillingDetailsSection()}
         {renderTableSection()}
-        <View style={styles.midSection}>
-          <Text style={[styles.detailItem, styles.boldText]}>
+        <View style={pdfStyles.midSection}>
+          <Text style={[pdfStyles.detailItem, pdfStyles.boldText]}>
             {totalAmount
               ? amountToWords(totalAmount, language.toLowerCase())
-              : "0"}{" "}
-            {currency.toUpperCase()}{" "}
-            {t("cents", {
+              : '0'}{' '}
+            {currency.toUpperCase()}{' '}
+            {t('cents', {
               cents: isNaN(cents)
-                ? "00"
+                ? '00'
                 : String(cents).length > 1
                   ? cents
-                  : `0${cents}`,
+                  : `0${cents}`
             })}
           </Text>
           {renderSignatureSection()}

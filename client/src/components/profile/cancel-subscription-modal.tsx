@@ -15,8 +15,8 @@ import { useState } from 'react';
 import { cancelStripeSubscription } from '@/api';
 import { updateSession } from '@/lib/actions';
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
-import { UiState } from '@/lib/constants/uiState';
-import useGetUser from '@/lib/hooks/user/useGetUser';
+import { UiState } from '@/lib/constants/ui-state';
+import useGetUser from '@/lib/hooks/user/use-get-user';
 
 type Props = {
   userId: number;

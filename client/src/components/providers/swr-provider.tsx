@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import axios from "axios";
-import { ReactNode } from "react";
-import { SWRConfig } from "swr";
+import axios from 'axios';
+import { ReactNode } from 'react';
+import { SWRConfig } from 'swr';
 
 type Props = {
   children: ReactNode;
@@ -14,9 +14,9 @@ const fetcher = async (url: string) => {
   const response = await axios.get(url, {
     baseURL: baseURL,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json'
     },
-    withCredentials: true,
+    withCredentials: true
   });
 
   return response.data;

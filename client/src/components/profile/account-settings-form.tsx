@@ -19,8 +19,8 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateUserAccountSettings } from '@/api';
 import { updateSession } from '@/lib/actions';
-import { UiState } from '@/lib/constants/uiState';
-import useGetUser from '@/lib/hooks/user/useGetUser';
+import { UiState } from '@/lib/constants/ui-state';
+import useGetUser from '@/lib/hooks/user/use-get-user';
 import { AccountSettingsFormModel } from '@/lib/types/models/user';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
