@@ -1,8 +1,8 @@
-import { MultipartFile } from "@fastify/multipart";
-import bcrypt from "bcryptjs";
-import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
-import { FastifyReply, FastifyRequest } from "fastify";
-import { useI18n } from "fastify-i18n";
+import { MultipartFile } from '@fastify/multipart';
+import bcrypt from 'bcryptjs';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { useI18n } from 'fastify-i18n';
 
 import {
   changeUserPasswordInDb,
@@ -16,85 +16,85 @@ import {
   updateUserAccountSettingsInDb,
   updateUserInDb,
   updateUserProfilePictureInDb,
-  updateUserSelectedBankAccountInDb,
-} from "../database";
-import { UserModel } from "../types/models";
+  updateUserSelectedBankAccountInDb
+} from '../database';
+import { UserModel } from '../types/models';
 import {
   BadRequestError,
   NotFoundError,
-  UnauthorizedError,
-} from "../utils/errors";
-import { saveResetTokenToDb } from "../database/passwordReset";
-import { resend } from "../config/resend";
-import { stripe } from "../config/stripe";
-import { getStripeCustomerIdFromDb } from "../database/payment";
+  UnauthorizedError
+} from '../utils/errors';
+import { saveResetTokenToDb } from '../database/password-reset';
+import { resend } from '../config/resend';
+import { stripe } from '../config/stripe';
+import { getStripeCustomerIdFromDb } from '../database/payment';
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const user = await getUserFromDb(userId);
 
-  if (!user) throw new BadRequestError("User not found");
+  if (!user) throw new BadRequestError('User not found');
 
   reply.status(200).send(user);
 };
 
 export const loginUser = async (
   req: FastifyRequest<{ Body: { email: string; password: string } }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { email, password } = req.body;
   const user = await getUserByEmailFromDb(email);
 
-  if (!user) throw new UnauthorizedError("Invalid credentials");
+  if (!user) throw new UnauthorizedError('Invalid credentials');
 
   const isValidPassword = await bcrypt.compare(password, user.password);
-  if (!isValidPassword) throw new UnauthorizedError("Invalid credentials");
+  if (!isValidPassword) throw new UnauthorizedError('Invalid credentials');
 
   let isSubscriptionActive = false;
 
   if (!!user.stripeSubscriptionId) {
     try {
       const userSubscription = await stripe.subscriptions.retrieve(
-        user.stripeSubscriptionId,
+        user.stripeSubscriptionId
       );
 
-      if (userSubscription?.status === "active") isSubscriptionActive = true;
+      if (userSubscription?.status === 'active') isSubscriptionActive = true;
     } catch (e) {
       console.error(e);
     }
   }
 
   reply.status(200).send({
-    user: { ...user, isSubscriptionActive },
+    user: { ...user, isSubscriptionActive }
   });
 };
 
 export const postUser = async (
   req: FastifyRequest<{
-    Body: Pick<UserModel, "email" | "password"> & { confirmedPassword: string };
+    Body: Pick<UserModel, 'email' | 'password'> & { confirmedPassword: string };
   }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { email, password, confirmedPassword } = req.body;
 
   if (password !== confirmedPassword)
-    throw new BadRequestError("Passwords do not match");
+    throw new BadRequestError('Passwords do not match');
 
   const user = await getUserByEmailFromDb(email);
 
-  if (!!user) throw new BadRequestError("User already exists");
+  if (!!user) throw new BadRequestError('User already exists');
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const createdUser = await registerUser({ email, password: hashedPassword });
 
-  if (!createdUser) throw new BadRequestError("Unable to create user");
+  if (!createdUser) throw new BadRequestError('Unable to create user');
 
   return reply
     .status(201)
-    .send({ email, message: "User created successfully" });
+    .send({ email, message: 'User created successfully' });
 };
 
 export const updateUser = async (
@@ -102,7 +102,7 @@ export const updateUser = async (
     Params: { userId: number };
     Body: UserModel & { file: MultipartFile };
   }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const file = req.body.file;
@@ -114,35 +114,35 @@ export const updateUser = async (
     const fileBuffer = await file.toBuffer();
 
     uploadedSignature = await cloudinary.uploader.upload(
-      `data:${file.mimetype};base64,${fileBuffer.toString("base64")}`,
+      `data:${file.mimetype};base64,${fileBuffer.toString('base64')}`
     );
 
     if (!uploadedSignature)
-      throw new BadRequestError("Unable to upload signature");
+      throw new BadRequestError('Unable to upload signature');
   }
 
   const foundUser = await getUserFromDb(userId);
 
-  if (!foundUser) throw new NotFoundError("User not found");
+  if (!foundUser) throw new NotFoundError('User not found');
 
   const signatureUrl = uploadedSignature?.url
-    ? uploadedSignature.url.replace("http://", "https://")
+    ? uploadedSignature.url.replace('http://', 'https://')
     : user.signature;
 
   const updatedUser = await updateUserInDb(user, signatureUrl);
 
   if (!updatedUser)
-    throw new BadRequestError("Unable to update user information");
+    throw new BadRequestError('Unable to update user information');
 
   reply.status(200).send({
     user: updatedUser,
-    message: "User information updated successfully",
+    message: 'User information updated successfully'
   });
 };
 
 export const deleteUser = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { userId } = req.params;
 
@@ -153,10 +153,10 @@ export const deleteUser = async (
 
   if (!deletedUserId)
     throw new BadRequestError(
-      "Unable to delete account at this time. Please try again later",
+      'Unable to delete account at this time. Please try again later'
     );
 
-  reply.status(200).send({ message: "Account deleted successfully" });
+  reply.status(200).send({ message: 'Account deleted successfully' });
 };
 
 export const updateUserSelectedBankAccount = async (
@@ -164,29 +164,29 @@ export const updateUserSelectedBankAccount = async (
     Params: { userId: number };
     Body: { selectedBankAccountId: number };
   }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const { selectedBankAccountId } = req.body;
 
   const foundUser = await getUserFromDb(userId);
 
-  if (!foundUser) return reply.status(400).send({ message: "User not found" });
+  if (!foundUser) return reply.status(400).send({ message: 'User not found' });
 
   const updatedUserSelectedBankAccount =
     await updateUserSelectedBankAccountInDb(userId, selectedBankAccountId);
 
   if (!updatedUserSelectedBankAccount)
-    throw new BadRequestError("Unable to update user bank account selection");
+    throw new BadRequestError('Unable to update user bank account selection');
 
   reply.status(200).send({
-    message: "User bank account selection updated successfully",
+    message: 'User bank account selection updated successfully'
   });
 };
 
 export const updateUserProfilePicture = async (
   req: FastifyRequest<{ Params: { userId: number } }> & { file: File },
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const profilePicture = await req.file();
@@ -198,29 +198,29 @@ export const updateUserProfilePicture = async (
 
     uploadedProfilePicture = await cloudinary.uploader.upload(
       `data:${profilePicture.mimetype};base64,${profilePictureBuffer.toString(
-        "base64",
-      )}`,
+        'base64'
+      )}`
     );
 
     if (!uploadedProfilePicture)
       return reply
         .status(400)
-        .send({ message: "Unable to upload profile picture" });
+        .send({ message: 'Unable to upload profile picture' });
   }
 
   const urlWithHttps = uploadedProfilePicture?.url.replace(
-    "http://",
-    "https://",
+    'http://',
+    'https://'
   );
 
   const updatedUser = await updateUserProfilePictureInDb(userId, urlWithHttps);
 
   if (!updatedUser)
-    throw new BadRequestError("Unable to update profile picture");
+    throw new BadRequestError('Unable to update profile picture');
 
   reply.status(200).send({
     user: updatedUser,
-    message: "Profile picture updated successfully",
+    message: 'Profile picture updated successfully'
   });
 };
 
@@ -229,7 +229,7 @@ export const updateUserAccountSettings = async (
     Params: { userId: number };
     Body: { currency: string; language: string };
   }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const { currency, language } = req.body;
@@ -238,15 +238,15 @@ export const updateUserAccountSettings = async (
   const updatedUser = await updateUserAccountSettingsInDb(
     userId,
     language,
-    currency,
+    currency
   );
 
   if (!updatedUser)
-    throw new BadRequestError("errors.user.accountSettings.update.badRequest");
+    throw new BadRequestError('errors.user.accountSettings.update.badRequest');
 
   reply
     .status(200)
-    .send({ message: i18n.t("errors.user.accountSettings.update.success") });
+    .send({ message: i18n.t('errors.user.accountSettings.update.success') });
 };
 
 export const changeUserPassword = async (
@@ -258,7 +258,7 @@ export const changeUserPassword = async (
       confirmedNewPassword: string;
     };
   }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const { password, newPassword, confirmedNewPassword } = req.body;
@@ -266,7 +266,7 @@ export const changeUserPassword = async (
 
   if (newPassword !== confirmedNewPassword)
     throw new BadRequestError(
-      i18n.t("errors.user.changePassword.newAndConfirmed"),
+      i18n.t('errors.user.changePassword.newAndConfirmed')
     );
 
   const currentPasswordHash = await getUserPasswordHashFromDb(userId);
@@ -274,33 +274,33 @@ export const changeUserPassword = async (
 
   if (!isPasswordValid)
     throw new BadRequestError(
-      i18n.t("errors.user.changePassword.currentPassword"),
+      i18n.t('errors.user.changePassword.currentPassword')
     );
 
   const hashedNewPassword = await bcrypt.hash(newPassword, 10);
   const changedPassword = await changeUserPasswordInDb(
     userId,
-    hashedNewPassword,
+    hashedNewPassword
   );
 
   if (!changedPassword)
-    throw new BadRequestError(i18n.t("errors.user.changePassword.badRequest"));
+    throw new BadRequestError(i18n.t('errors.user.changePassword.badRequest'));
 
   reply
     .status(200)
-    .send({ message: i18n.t("errors.user.changePassword.success") });
+    .send({ message: i18n.t('errors.user.changePassword.success') });
 };
 
 export const resetUserPassword = async (
   req: FastifyRequest<{ Body: { email: string } }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { email } = req.body;
   const user = await getUserByEmailFromDb(email);
   const i18n = await useI18n(req);
 
   if (!user)
-    throw new NotFoundError(i18n.t("errors.user.resetPassword.notFound"));
+    throw new NotFoundError(i18n.t('errors.user.resetPassword.notFound'));
 
   const resetToken = crypto.randomUUID();
   const tokenExpiresAt = new Date(Date.now() + 3600000).toISOString();
@@ -310,37 +310,37 @@ export const resetUserPassword = async (
   const resetLink = `https://invoicetrackr.app/create-new-password/${resetToken}`;
 
   const { error } = await resend.emails.send({
-    from: "InvoiceTrackr <noreply@invoicetrackr.app>",
+    from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
     to: [email],
-    subject: i18n.t("emails.resetPassword.subject"),
-    text: i18n.t("emails.resetPassword.text", { resetLink }),
+    subject: i18n.t('emails.resetPassword.subject'),
+    text: i18n.t('emails.resetPassword.text', { resetLink })
   });
 
   if (error) {
     console.error({ error });
-    throw new BadRequestError(i18n.t("errors.user.resetPassword.failure"));
+    throw new BadRequestError(i18n.t('errors.user.resetPassword.failure'));
   }
 
   reply
     .status(200)
-    .send({ message: i18n.t("errors.user.resetPassword.success") });
+    .send({ message: i18n.t('errors.user.resetPassword.success') });
 };
 
 export const getUserResetPasswordToken = async (
   req: FastifyRequest<{ Params: { token: string } }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { token } = req.params;
   const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
 
   if (!tokenFromDb)
-    throw new BadRequestError("errors.user.resetPassword.token.invalid");
+    throw new BadRequestError('errors.user.resetPassword.token.invalid');
 
   const currentDate = new Date();
   const tokenExpirationDate = new Date(tokenFromDb.expiresAt);
 
   if (currentDate > tokenExpirationDate)
-    throw new BadRequestError("errors.user.resetPassword.token.expired");
+    throw new BadRequestError('errors.user.resetPassword.token.expired');
 
   reply.status(200).send(tokenFromDb);
 };
@@ -350,7 +350,7 @@ export const createNewUserPassword = async (
     Params: { userId: number };
     Body: { token: string; newPassword: string; confirmedNewPassword: string };
   }>,
-  reply: FastifyReply,
+  reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const { newPassword, confirmedNewPassword, token } = req.body;
@@ -358,14 +358,14 @@ export const createNewUserPassword = async (
 
   if (newPassword !== confirmedNewPassword)
     throw new BadRequestError(
-      i18n.t("errors.user.changePassword.newAndConfirmed"),
+      i18n.t('errors.user.changePassword.newAndConfirmed')
     );
 
   const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
 
   if (!token || !tokenFromDb)
     throw new BadRequestError(
-      i18n.t("errors.user.resetPassword.token.invalid"),
+      i18n.t('errors.user.resetPassword.token.invalid')
     );
 
   const currentDate = new Date();
@@ -373,21 +373,21 @@ export const createNewUserPassword = async (
 
   if (currentDate > tokenExpirationDate)
     throw new BadRequestError(
-      i18n.t("errors.user.resetPassword.token.expired"),
+      i18n.t('errors.user.resetPassword.token.expired')
     );
 
   const hashedNewPassword = await bcrypt.hash(newPassword, 10);
   const changedPassword = await changeUserPasswordInDb(
     userId,
-    hashedNewPassword,
+    hashedNewPassword
   );
 
   if (!changedPassword)
-    throw new BadRequestError(i18n.t("errors.user.changePassword.badRequest"));
+    throw new BadRequestError(i18n.t('errors.user.changePassword.badRequest'));
 
   await invalidateTokenInDb(userId, token);
 
   reply
     .status(200)
-    .send({ message: i18n.t("errors.user.changePassword.success") });
+    .send({ message: i18n.t('errors.user.changePassword.success') });
 };

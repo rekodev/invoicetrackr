@@ -1,5 +1,5 @@
-import { Static, Type } from "@sinclair/typebox";
-import { InvoicePartyBusinessType, InvoicePartyType } from "./invoice";
+import { Static, Type } from '@sinclair/typebox';
+import { InvoicePartyBusinessType, InvoicePartyType } from './invoice';
 
 export const User = Type.Object({
   id: Type.Optional(Type.Number()),
@@ -16,7 +16,7 @@ export const User = Type.Object({
   currency: Type.String(),
   language: Type.String(),
   stripeCustomerId: Type.String(),
-  stripeSubscriptionId: Type.String(),
+  stripeSubscriptionId: Type.String()
 });
 
 export type UserModel = Static<typeof User>;

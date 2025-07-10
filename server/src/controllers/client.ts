@@ -6,7 +6,7 @@ import {
   getClientFromDb,
   getClientsFromDb,
   insertClientInDb,
-  updateClientInDb,
+  updateClientInDb
 } from '../database';
 import { ClientModel } from '../types/models';
 import { BadRequestError, NotFoundError } from '../utils/errors';
@@ -52,7 +52,7 @@ export const postClient = async (
 
   reply.status(200).send({
     client: insertedClient,
-    message: 'Client added successfully',
+    message: 'Client added successfully'
   });
 };
 
@@ -72,7 +72,7 @@ export const updateClient = async (
 
   reply.status(200).send({
     message: 'Client updated successfully',
-    client: updatedClient,
+    client: updatedClient
   });
 };
 

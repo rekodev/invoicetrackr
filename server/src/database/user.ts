@@ -1,12 +1,12 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq } from 'drizzle-orm';
 
-import { UserModel } from "../types/models";
-import { db } from "./db";
+import { UserModel } from '../types/models';
+import { db } from './db';
 import {
   passwordResetTokensTable,
   stripeAccountsTable,
-  usersTable,
-} from "./schema";
+  usersTable
+} from './schema';
 
 export const getUserFromDb = async (id: number) => {
   const users = await db
@@ -26,12 +26,12 @@ export const getUserFromDb = async (id: number) => {
       currency: usersTable.currency,
       language: usersTable.language,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
-      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
+      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId
     })
     .from(usersTable)
     .leftJoin(
       stripeAccountsTable,
-      eq(stripeAccountsTable.userId, usersTable.id),
+      eq(stripeAccountsTable.userId, usersTable.id)
     )
     .where(eq(usersTable.id, id));
 
@@ -57,12 +57,12 @@ export const getUserByEmailFromDb = async (email: string) => {
       language: usersTable.language,
       password: usersTable.password,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
-      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
+      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId
     })
     .from(usersTable)
     .leftJoin(
       stripeAccountsTable,
-      eq(stripeAccountsTable.userId, usersTable.id),
+      eq(stripeAccountsTable.userId, usersTable.id)
     )
     .where(eq(usersTable.email, email));
 
@@ -71,22 +71,22 @@ export const getUserByEmailFromDb = async (email: string) => {
 
 export const registerUser = async ({
   email,
-  password,
-}: Pick<UserModel, "email" | "password">) => {
+  password
+}: Pick<UserModel, 'email' | 'password'>) => {
   const users = await db
     .insert(usersTable)
     .values({
       email,
       password,
-      currency: "usd",
-      language: "en",
-      type: "sender",
-      businessType: "individual",
-      businessNumber: "",
-      name: "",
-      address: "",
-      signature: "",
-      profilePictureUrl: "",
+      currency: 'usd',
+      language: 'en',
+      type: 'sender',
+      businessType: 'individual',
+      businessNumber: '',
+      name: '',
+      address: '',
+      signature: '',
+      profilePictureUrl: ''
     })
     .returning({ email: usersTable.email });
 
@@ -105,7 +105,7 @@ export const updateUserInDb = async (user: UserModel, signature: string) => {
       businessNumber,
       address,
       email,
-      signature,
+      signature
     })
     .where(eq(usersTable.id, user.id))
     .returning({
@@ -119,7 +119,7 @@ export const updateUserInDb = async (user: UserModel, signature: string) => {
       signature: usersTable.signature,
       profilePictureUrl: usersTable.profilePictureUrl,
       currency: usersTable.currency,
-      language: usersTable.language,
+      language: usersTable.language
     });
 
   return users.at(0);
@@ -127,7 +127,7 @@ export const updateUserInDb = async (user: UserModel, signature: string) => {
 
 export const updateUserSelectedBankAccountInDb = async (
   userId: number,
-  selectedBankAccountId: number,
+  selectedBankAccountId: number
 ) => {
   const users = await db
     .update(usersTable)
@@ -145,7 +145,7 @@ export const updateUserSelectedBankAccountInDb = async (
       signature: usersTable.signature,
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
-      currency: usersTable.currency,
+      currency: usersTable.currency
     });
 
   return users.at(0);
@@ -153,7 +153,7 @@ export const updateUserSelectedBankAccountInDb = async (
 
 export const updateUserProfilePictureInDb = async (
   userId: number,
-  url: string,
+  url: string
 ) => {
   const users = await db
     .update(usersTable)
@@ -170,7 +170,7 @@ export const updateUserProfilePictureInDb = async (
       signature: usersTable.signature,
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
-      currency: usersTable.currency,
+      currency: usersTable.currency
     });
 
   return users.at(0);
@@ -179,7 +179,7 @@ export const updateUserProfilePictureInDb = async (
 export const updateUserAccountSettingsInDb = async (
   userId: number,
   language: string,
-  currency: string,
+  currency: string
 ) => {
   const users = await db
     .update(usersTable)
@@ -196,7 +196,7 @@ export const updateUserAccountSettingsInDb = async (
       signature: usersTable.signature,
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
-      currency: usersTable.currency,
+      currency: usersTable.currency
     });
 
   return users.at(0);
@@ -246,8 +246,8 @@ export const invalidateTokenInDb = async (userId: number, token: string) => {
     .where(
       and(
         eq(passwordResetTokensTable.token, token),
-        eq(passwordResetTokensTable.userId, userId),
-      ),
+        eq(passwordResetTokensTable.userId, userId)
+      )
     )
     .returning({ id: passwordResetTokensTable.id });
 
@@ -260,5 +260,5 @@ export const getUserCurrencyFromDb = async (userId: number) => {
     .from(usersTable)
     .where(eq(usersTable.id, userId));
 
-  return user?.currency as "eur" | "usd";
+  return user?.currency as 'eur' | 'usd';
 };

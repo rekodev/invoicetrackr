@@ -1,7 +1,7 @@
 import {
   DoneFuncWithErrOrRes,
   FastifyInstance,
-  FastifyPluginOptions,
+  FastifyPluginOptions
 } from 'fastify';
 
 import {
@@ -9,7 +9,7 @@ import {
   getClientOptions,
   postClientOptions,
   updateClientOptions,
-  deleteClientOptions,
+  deleteClientOptions
 } from '../options';
 
 const clientRoutes = (

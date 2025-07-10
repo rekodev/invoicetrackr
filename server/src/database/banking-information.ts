@@ -27,7 +27,7 @@ export const getBankAccountsFromDb = async (userId: number) => {
       id: bankingInformationTable.id,
       name: bankingInformationTable.name,
       code: bankingInformationTable.code,
-      accountNumber: bankingInformationTable.accountNumber,
+      accountNumber: bankingInformationTable.accountNumber
     })
     .from(bankingInformationTable)
     .where(eq(bankingInformationTable.userId, userId));
@@ -44,7 +44,7 @@ export const getBankAccountFromDb = async (
       id: bankingInformationTable.id,
       name: bankingInformationTable.name,
       code: bankingInformationTable.code,
-      accountNumber: bankingInformationTable.accountNumber,
+      accountNumber: bankingInformationTable.accountNumber
     })
     .from(bankingInformationTable)
     .where(
@@ -67,13 +67,13 @@ export const insertBankAccountInDb = async (
       name,
       accountNumber,
       code,
-      userId,
+      userId
     })
     .returning({
       id: bankingInformationTable.id,
       name: bankingInformationTable.name,
       code: bankingInformationTable.code,
-      accountNumber: bankingInformationTable.accountNumber,
+      accountNumber: bankingInformationTable.accountNumber
     });
 
   return bankAccounts.at(0);
@@ -97,7 +97,7 @@ export const updateBankAccountInDb = async (
       id: bankingInformationTable.id,
       name: bankingInformationTable.name,
       code: bankingInformationTable.code,
-      accountNumber: bankingInformationTable.accountNumber,
+      accountNumber: bankingInformationTable.accountNumber
     });
 
   return bankAccounts.at(0);

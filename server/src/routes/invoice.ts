@@ -1,7 +1,7 @@
 import {
   DoneFuncWithErrOrRes,
   FastifyInstance,
-  FastifyPluginOptions,
+  FastifyPluginOptions
 } from 'fastify';
 
 import {
@@ -12,7 +12,7 @@ import {
   deleteInvoiceOptions,
   getInvoicesTotalAmountOptions,
   getInvoicesRevenueOptions,
-  getLatestInvoicesOptions,
+  getLatestInvoicesOptions
 } from '../options';
 
 const invoiceRoutes = (

@@ -8,12 +8,12 @@ import {
   getUserFromDb,
   insertBankAccountInDb,
   updateBankAccountInDb,
-  updateUserSelectedBankAccountInDb,
+  updateUserSelectedBankAccountInDb
 } from '../database';
 import {
   AlreadyExistsError,
   BadRequestError,
-  NotFoundError,
+  NotFoundError
 } from '../utils/errors';
 
 export const getBankAccounts = async (
@@ -77,13 +77,13 @@ export const postBankAccount = async (
       return reply.status(200).send({
         bankAccount: updatedUserSelectedBankAccount,
         message:
-          'Bank account added succesfully. Please select it as your main account.',
+          'Bank account added succesfully. Please select it as your main account.'
       });
   }
 
   return reply.status(200).send({
     bankAccount: insertedBankAccount,
-    message: 'Bank account added successfully',
+    message: 'Bank account added successfully'
   });
 };
 
@@ -103,7 +103,7 @@ export const updateBankAccount = async (
 
   reply.status(200).send({
     bankAccount,
-    message: 'Bank account updated successfully',
+    message: 'Bank account updated successfully'
   });
 };
 
