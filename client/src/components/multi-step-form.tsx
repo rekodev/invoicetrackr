@@ -111,7 +111,7 @@ export default function MultiStepForm({
         >
           <div
             className={cn(
-              'flex h-9 w-9 items-center justify-center rounded-full border-2 border-default-400 font-semibold dark:border-default-800',
+              'border-default-400 dark:border-default-800 flex h-9 w-9 items-center justify-center rounded-full border-2 font-semibold',
               {
                 'border-1 bg-default-500 bg-opacity-25': index < currentStep,
                 'opacity-65': currentStep < index
@@ -150,12 +150,12 @@ export default function MultiStepForm({
         }
       )}
     >
-      <Card className="h-full w-full gap-8 border border-default-100 bg-gradient-to-b from-default-100 via-secondary-50 dark:to-black md:max-w-sm">
+      <Card className="border-default-100 from-default-100 via-secondary-50 h-full w-full gap-8 border bg-gradient-to-b md:max-w-sm dark:to-black">
         <CardHeader className="-mt-4 flex-col items-start gap-8 px-8 text-start md:mt-0 md:pt-8">
           <Button
             variant="bordered"
             className="hidden md:flex"
-            onPress={() => setCurrentStep((prev) => (prev <= 1 ? 1 : prev - 1))}
+            onPress={() => setCurrentStep((prev) => (prev <= 0 ? 0 : prev - 1))}
           >
             <ArrowLeftIcon className="h-5 w-5" />
             Back
@@ -183,12 +183,12 @@ export default function MultiStepForm({
               >
                 <div className="mr-4">
                   {index > 0 && (
-                    <div className="my-1 ml-5 h-12 w-0.5 bg-default-500"></div>
+                    <div className="bg-default-500 my-1 ml-5 h-12 w-0.5"></div>
                   )}
                   <div className="flex items-center gap-4">
                     <div
                       className={cn(
-                        `flex h-10 w-10 items-center justify-center rounded-full border-2 border-default-400 font-semibold dark:border-default-800`,
+                        `border-default-400 dark:border-default-800 flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold`,
                         {
                           'border-1 bg-default-500 bg-opacity-25':
                             index < currentStep
@@ -204,7 +204,7 @@ export default function MultiStepForm({
 
                     <div>
                       <p className="font-semibold">{step.name}</p>
-                      <p className="text-sm text-default-500">
+                      <p className="text-default-500 text-sm">
                         {step.description}
                       </p>
                     </div>
