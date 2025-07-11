@@ -1,11 +1,10 @@
 'use client';
 
 import { UserIcon } from '@heroicons/react/24/outline';
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardBody, cn } from '@heroui/react';
 
 import { Currency } from '@/lib/types/currency';
 import { ClientModel } from '@/lib/types/models/client';
-import { cn } from '@/lib/utils/cn';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
 type Props = {
@@ -36,20 +35,20 @@ const ClientCard = ({
         <CardBody className="flex min-h-[70px] min-w-72 flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             {!hideIcon && (
-              <div className="item-center flex rounded-medium border border-default-200 p-2">
+              <div className="item-center rounded-medium border-default-200 flex border p-2">
                 <UserIcon className="h-5 w-5" />
               </div>
             )}
             <div>
               <div
                 className={cn(
-                  'truncate pb-0.5 text-small font-bold uppercase',
+                  'text-small truncate pb-0.5 font-bold uppercase',
                   { 'lg:max-w-40 lg:truncate': truncate }
                 )}
               >
                 {client.name}
               </div>
-              <div className="flex gap-2 text-xs text-default-500">
+              <div className="text-default-500 flex gap-2 text-xs">
                 {client.address && <span>{client.address}</span>}
                 <span className={cn('', { 'max-w-40 truncate': truncate })}>
                   {client.email}

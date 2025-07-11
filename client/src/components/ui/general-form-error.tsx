@@ -2,9 +2,9 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
+import { cn } from '@heroui/react';
 
 import { UiState } from '@/lib/constants/ui-state';
-import { cn } from '@/lib/utils/cn';
 
 type Props = {
   submissionMessage: string;
@@ -17,9 +17,9 @@ const GeneralFormError = ({ submissionMessage, uiState }: Props) => {
   return (
     <div className="flex h-full items-center gap-1">
       {uiState === UiState.Failure ? (
-        <ExclamationCircleIcon className="h-5 w-5 text-danger-400" />
+        <ExclamationCircleIcon className="text-danger-400 h-5 w-5" />
       ) : (
-        <CheckCircleIcon className="h-5 w-5 text-success-400" />
+        <CheckCircleIcon className="text-success-400 h-5 w-5" />
       )}
       <p
         className={cn('text-sm', {
