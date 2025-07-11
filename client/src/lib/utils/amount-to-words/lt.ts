@@ -53,10 +53,10 @@ function convertHundredsLt(n: number): string {
   const hundreds = Math.floor(n / 100);
   const remainder = n % 100;
   const hundredWord = hundreds === 1 ? 'šimtas' : 'šimtai'; // Check if it's 1, else use plural
+  const hundredPrefix = hundreds === 1 ? '' : onesLt[hundreds] + ' ';
 
   return (
-    onesLt[hundreds] +
-    ' ' +
+    hundredPrefix +
     hundredWord +
     (remainder !== 0 ? ' ' + convertHundredsLt(remainder) : '')
   );
