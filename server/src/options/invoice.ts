@@ -1,5 +1,5 @@
-import { Type } from "@sinclair/typebox";
-import { RouteShorthandOptionsWithHandler } from "fastify";
+import { Type } from '@sinclair/typebox';
+import { RouteShorthandOptionsWithHandler } from 'fastify';
 
 import {
   deleteInvoice,
@@ -9,65 +9,65 @@ import {
   getInvoicesTotalAmount,
   getLatestInvoices,
   postInvoice,
-  updateInvoice,
-} from "../controllers";
-import { Invoice } from "../types/models";
-import { preValidateFileAndFields } from "../utils/multipart";
-import { authMiddleware } from "../middleware/auth";
+  updateInvoice
+} from '../controllers';
+import { Invoice } from '../types/models';
+import { preValidateFileAndFields } from '../utils/multipart';
+import { authMiddleware } from '../middleware/auth';
 
 export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Array(Invoice),
-    },
+      200: Type.Array(Invoice)
+    }
   },
 
   preHandler: authMiddleware,
-  handler: getInvoices,
+  handler: getInvoices
 };
 
 export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ invoice: Invoice }),
-    },
+      200: Type.Object({ invoice: Invoice })
+    }
   },
   preHandler: authMiddleware,
-  handler: getInvoice,
+  handler: getInvoice
 };
 
 export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Invoice,
     response: {
-      201: Type.Object({ invoice: Invoice, message: Type.String() }),
-    },
+      201: Type.Object({ invoice: Invoice, message: Type.String() })
+    }
   },
   preHandler: authMiddleware,
   preValidation: preValidateFileAndFields,
-  handler: postInvoice,
+  handler: postInvoice
 };
 
 export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Invoice,
     response: {
-      200: Type.Object({ invoice: Invoice, message: Type.String() }),
-    },
+      200: Type.Object({ invoice: Invoice, message: Type.String() })
+    }
   },
   preHandler: authMiddleware,
   preValidation: preValidateFileAndFields,
-  handler: updateInvoice,
+  handler: updateInvoice
 };
 
 export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ message: Type.String() }),
-    },
+      200: Type.Object({ message: Type.String() })
+    }
   },
   preHandler: authMiddleware,
-  handler: deleteInvoice,
+  handler: deleteInvoice
 };
 
 export const getInvoicesTotalAmountOptions: RouteShorthandOptionsWithHandler = {
@@ -75,26 +75,26 @@ export const getInvoicesTotalAmountOptions: RouteShorthandOptionsWithHandler = {
     response: {
       200: Type.Object({
         invoices: Type.Array(
-          Type.Object({ totalAmount: Type.String(), status: Type.String() }),
+          Type.Object({ totalAmount: Type.String(), status: Type.String() })
         ),
-        totalClients: Type.Number(),
-      }),
-    },
+        totalClients: Type.Number()
+      })
+    }
   },
   preHandler: authMiddleware,
-  handler: getInvoicesTotalAmount,
+  handler: getInvoicesTotalAmount
 };
 
 export const getInvoicesRevenueOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: Type.Object({
-        revenueByMonth: Type.Record(Type.Number(), Type.Number()),
-      }),
-    },
+        revenueByMonth: Type.Record(Type.Number(), Type.Number())
+      })
+    }
   },
   preHandler: authMiddleware,
-  handler: getInvoicesRevenue,
+  handler: getInvoicesRevenue
 };
 
 export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
@@ -106,12 +106,12 @@ export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
             id: Type.Number(),
             totalAmount: Type.String(),
             name: Type.String(),
-            email: Type.String(),
-          }),
-        ),
-      }),
-    },
+            email: Type.String()
+          })
+        )
+      })
+    }
   },
   preHandler: authMiddleware,
-  handler: getLatestInvoices,
+  handler: getLatestInvoices
 };

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
 import {
   BuildingLibraryIcon,
-  PlusCircleIcon,
-} from "@heroicons/react/24/outline";
+  PlusCircleIcon
+} from '@heroicons/react/24/outline';
 import {
   Button,
   Card,
@@ -12,20 +12,20 @@ import {
   ModalBody,
   ModalContent,
   ModalFooter,
-  ModalHeader,
-} from "@heroui/react";
-import { useRouter } from "next/navigation";
+  ModalHeader
+} from '@heroui/react';
+import { useRouter } from 'next/navigation';
 
-import { BANKING_INFORMATION_PAGE } from "@/lib/constants/pages";
-import useGetBankAccounts from "@/lib/hooks/banking-information/useGetBankAccounts";
-import { BankingInformationFormModel } from "@/lib/types/models/user";
+import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
+import useGetBankAccounts from '@/lib/hooks/banking-information/use-get-bank-accounts';
+import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 type Props = {
   userId: number;
   isOpen: boolean;
   onClose: () => void;
   onBankAccountSelect: (
-    bankingInformation: BankingInformationFormModel,
+    bankingInformation: BankingInformationFormModel
   ) => void;
 };
 
@@ -33,7 +33,7 @@ const BankingInformationModal = ({
   userId,
   isOpen,
   onClose,
-  onBankAccountSelect,
+  onBankAccountSelect
 }: Props) => {
   const router = useRouter();
   const { bankAccounts } = useGetBankAccounts({ userId });
@@ -52,14 +52,14 @@ const BankingInformationModal = ({
         key={bankAccount.id}
         onClick={() => onBankAccountSelect(bankAccount)}
       >
-        <Card isHoverable className={"justify-center cursor-pointer"}>
-          <CardBody className="flex flex-row justify-between min-h-[70px] min-w-72 items-center gap-4">
+        <Card isHoverable className={'cursor-pointer justify-center'}>
+          <CardBody className="flex min-h-[70px] min-w-72 flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="item-center flex rounded-medium border p-2 border-default-200">
-                <BuildingLibraryIcon className="w-5 h-5" />
+              <div className="item-center flex rounded-medium border border-default-200 p-2">
+                <BuildingLibraryIcon className="h-5 w-5" />
               </div>
               <div>
-                <div className="pb-0.5 truncate uppercase text-small font-bold">
+                <div className="truncate pb-0.5 text-small font-bold uppercase">
                   {bankAccount.name}
                 </div>
                 <div className="flex gap-2 text-xs text-default-500">

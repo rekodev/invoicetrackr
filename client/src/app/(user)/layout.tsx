@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ReactNode } from 'react';
 import '../globals.css';
 
-import Breadcrumbs from '@/components/Breadcrumbs';
+import Breadcrumbs from '@/components/breadcrumbs';
 
 export const metadata: Metadata = {
   title: 'InvoiceTrackr',

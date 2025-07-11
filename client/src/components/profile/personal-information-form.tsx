@@ -16,11 +16,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateUserAction } from '@/lib/actions/user';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
-import { UiState } from '@/lib/constants/uiState';
+import { UiState } from '@/lib/constants/ui-state';
 import { UserModel } from '@/lib/types/models/user';
 import { capitalize } from '@/lib/utils';
 
-import SignaturePad from '../SignaturePad';
+import SignaturePad from '../signature-pad';
 import GeneralFormError from '../ui/general-form-error';
 
 type Props = {

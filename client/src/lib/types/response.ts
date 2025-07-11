@@ -1,4 +1,4 @@
-import { ApiError } from '@/api/apiInstance';
+import { ApiError } from '@/api/api-instance';
 
 import { ClientModel } from './models/client';
 import { InvoiceModel } from './models/invoice';

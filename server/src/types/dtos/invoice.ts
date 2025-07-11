@@ -2,7 +2,7 @@ import {
   InvoicePartyBusinessType,
   InvoicePartyType,
   InvoiceService,
-  InvoiceStatus,
+  InvoiceStatus
 } from '../models';
 
 export type InvoiceDto = {

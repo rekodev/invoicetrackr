@@ -1,18 +1,18 @@
-import { eq } from "drizzle-orm";
+import { eq } from 'drizzle-orm';
 
-import { db } from "./db";
-import { stripeAccountsTable } from "./schema";
+import { db } from './db';
+import { stripeAccountsTable } from './schema';
 
 export const createStripeCustomerInDb = async (
   userId: number,
-  stripeCustomerId: string,
+  stripeCustomerId: string
 ) => {
   const [insertedCustomer] = await db
     .insert(stripeAccountsTable)
     .values({
       stripeCustomerId,
       userId,
-      stripeSubscriptionId: "",
+      stripeSubscriptionId: ''
     })
     .returning({ id: stripeAccountsTable.id });
 
@@ -21,7 +21,7 @@ export const createStripeCustomerInDb = async (
 
 export const updateStripeSubscriptionForUserInDb = async (
   userId: number,
-  subscriptionId: string,
+  subscriptionId: string
 ) => {
   const [updatedStripeAccount] = await db
     .update(stripeAccountsTable)

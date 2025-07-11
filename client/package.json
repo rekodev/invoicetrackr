@@ -21,9 +21,8 @@
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
     "chart.js": "^4.4.8",
-    "clsx": "^2.1.1",
     "framer-motion": "^12.6.2",
-    "next": "15.2.4",
+    "next": "15.3.5",
     "next-auth": "5.0.0-beta.25",
     "next-intl": "^3.26.5",
     "next-themes": "^0.4.6",
@@ -33,17 +32,7 @@
     "react-hook-form": "^7.54.2",
     "react-signature-canvas": "1.1.0-alpha.1",
     "swr": "^2.3.3",
-    "tailwind-merge": "^2.6.0",
     "zod": "^3.24.2"
-  },
-  "prettier": {
-    "plugins": [
-      "prettier-plugin-tailwindcss"
-    ],
-    "arrowParens": "always",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "none"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -58,8 +47,6 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "postcss": "^8.5.3",
-    "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.2"
   },

@@ -1,24 +1,24 @@
-import { Static, Type } from "@sinclair/typebox";
-import { InvoicePartyBusinessType, InvoicePartyType } from "./invoice";
+import { Static, Type } from '@sinclair/typebox';
+import { InvoicePartyBusinessType, InvoicePartyType } from './invoice';
 
 export const Client = Type.Object({
   id: Type.Number(),
   type: InvoicePartyType,
-  name: Type.String({ minLength: 1, errorMessage: "Name is required" }),
+  name: Type.String({ minLength: 1, errorMessage: 'Name is required' }),
   businessType: InvoicePartyBusinessType,
   businessNumber: Type.String({
     minLength: 1,
-    errorMessage: "Business number is required",
+    errorMessage: 'Business number is required'
   }),
-  address: Type.String({ minLength: 1, errorMessage: "Address is required" }),
+  address: Type.String({ minLength: 1, errorMessage: 'Address is required' }),
   email: Type.Union([
     Type.String({ maxLength: 0 }),
     Type.String({
       minLength: 1,
-      format: "email",
-      errorMessage: "Must be a valid email address",
-    }),
-  ]),
+      format: 'email',
+      errorMessage: 'Must be a valid email address'
+    })
+  ])
 });
 
 export type ClientModel = Static<typeof Client>;

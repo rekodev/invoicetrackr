@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Bars3Icon } from "@heroicons/react/24/outline";
+import { Bars3Icon } from '@heroicons/react/24/outline';
 import {
   Button,
   Dropdown,
@@ -11,23 +11,23 @@ import {
   NavbarBrand,
   NavbarContent,
   Link,
-  NavbarItem,
-} from "@heroui/react";
-import { usePathname } from "next/navigation";
+  NavbarItem
+} from '@heroui/react';
+import { usePathname } from 'next/navigation';
 
 import {
   CREATE_INVOICE_PAGE,
   HOME_PAGE,
   LOGIN_PAGE,
-  SIGN_UP_PAGE,
-} from "@/lib/constants/pages";
+  SIGN_UP_PAGE
+} from '@/lib/constants/pages';
 
-import ThemeSwitcher from "./theme-switcher";
-import AppLogo from "../icons/AppLogo.jsx";
+import ThemeSwitcher from './theme-switcher';
+import AppLogo from '../icons/AppLogo.jsx';
 
 const navbarItems = [
-  { name: "Features", href: "#features" },
-  { name: "Pricing", href: "#pricing" },
+  { name: 'Features', href: '#features' },
+  { name: 'Pricing', href: '#pricing' }
 ];
 
 export default function GuestHeader() {
@@ -38,7 +38,7 @@ export default function GuestHeader() {
       <Dropdown>
         <DropdownTrigger className="md:hidden">
           <Button isIconOnly color="secondary" variant="faded">
-            <Bars3Icon className="w-5 h-5" />
+            <Bars3Icon className="h-5 w-5" />
           </Button>
         </DropdownTrigger>
         <DropdownMenu>
@@ -55,7 +55,7 @@ export default function GuestHeader() {
           <DropdownItem
             as={Link}
             href={LOGIN_PAGE}
-            className="flex justify-center items-center text-default-800"
+            className="flex items-center justify-center text-default-800"
             key="login"
           >
             Login
@@ -77,7 +77,7 @@ export default function GuestHeader() {
     <Navbar isBordered maxWidth="xl">
       <NavbarBrand className="flex gap-2" as={Link} href={HOME_PAGE}>
         <AppLogo />
-        <p className="hidden sm:flex font-bold text-default-800">
+        <p className="hidden font-bold text-default-800 sm:flex">
           INVOICE
           <span className="text-secondary-400 dark:text-secondary-600">
             TRACKR
@@ -85,7 +85,7 @@ export default function GuestHeader() {
         </p>
       </NavbarBrand>
 
-      <NavbarContent justify="start" className="hidden sm:flex gap-4">
+      <NavbarContent justify="start" className="hidden gap-4 sm:flex">
         {navbarItems.map((item, index) => {
           const isActive = pathname?.includes(item.href);
 
@@ -96,7 +96,7 @@ export default function GuestHeader() {
                   pathname !== HOME_PAGE ? HOME_PAGE + item.href : item.href
                 }
                 aria-current="page"
-                color={isActive ? "secondary" : "foreground"}
+                color={isActive ? 'secondary' : 'foreground'}
               >
                 {item.name}
               </Link>
@@ -107,7 +107,7 @@ export default function GuestHeader() {
 
       <NavbarContent as="div" justify="end">
         {renderMobileNavbarContent()}
-        <NavbarItem className="border-r border-default-300 dark:border-default-100 pr-4 hidden md:flex">
+        <NavbarItem className="hidden border-r border-default-300 pr-4 dark:border-default-100 md:flex">
           <Button
             as={Link}
             color="secondary"
@@ -132,7 +132,7 @@ export default function GuestHeader() {
             Sign Up
           </Button>
         </NavbarItem>
-        <NavbarItem className="border-l border-default-300 dark:border-default-100 pl-4">
+        <NavbarItem className="border-l border-default-300 pl-4 dark:border-default-100">
           <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>

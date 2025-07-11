@@ -1,33 +1,33 @@
-"use client";
+'use client';
 
-import { EyeIcon } from "@heroicons/react/24/outline";
-import { Button, Card, Input } from "@heroui/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { EyeIcon } from '@heroicons/react/24/outline';
+import { Button, Card, Input } from '@heroui/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 
-import { HOME_PAGE } from "@/lib/constants/pages";
-import { InvoiceModel } from "@/lib/types/models/invoice";
-import { calculateServiceTotal } from "@/lib/utils";
-import { formatDate } from "@/lib/utils/formatDate";
+import { HOME_PAGE } from '@/lib/constants/pages';
+import { InvoiceModel } from '@/lib/types/models/invoice';
+import { calculateServiceTotal } from '@/lib/utils';
+import { formatDate } from '@/lib/utils/format-date';
 
-import InvoiceServicesTable from "./InvoiceServicesTable";
-import SignaturePad from "../SignaturePad";
-import InvoiceModal from "./InvoiceModal";
+import InvoiceServicesTable from './invoice-services-table';
+import SignaturePad from '../signature-pad';
+import InvoiceModal from './invoice-modal';
 
 const FreeInvoiceForm = () => {
   const router = useRouter();
   const methods = useForm<InvoiceModel>({
     defaultValues: {
-      services: [{ amount: 0, quantity: 0, description: "", unit: "" }],
-    },
+      services: [{ amount: 0, quantity: 0, description: '', unit: '' }]
+    }
   });
   const {
     register,
     formState: { errors },
     clearErrors,
     setValue,
-    getValues,
+    getValues
   } = methods;
 
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -36,23 +36,23 @@ const FreeInvoiceForm = () => {
   >();
 
   const senderSignatureImage =
-    !senderSignature || typeof senderSignature === "string"
-      ? ""
+    !senderSignature || typeof senderSignature === 'string'
+      ? ''
       : URL.createObjectURL(senderSignature);
 
   const handleSignatureChange = (signature: string | File) => {
     setSenderSignature(signature);
-    setValue("senderSignature", signature);
-    clearErrors("senderSignature");
+    setValue('senderSignature', signature);
+    clearErrors('senderSignature');
   };
 
   const renderSenderAndReceiverFields = () => (
-    <div className="col-span-4 flex flex-col w-full gap-4">
+    <div className="col-span-4 flex w-full flex-col gap-4">
       <h4>Sender and Receiver Data</h4>
-      <div className="col-span-4 flex flex-col md:flex-row w-full justify-between gap-4">
-        <Card className="w-full p-4 flex flex-col gap-4">
-          <div className="min-h-8 flex items-center justify-between">
-            <p className="text-default-500 text-sm">From:</p>
+      <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
+        <Card className="flex w-full flex-col gap-4 p-4">
+          <div className="flex min-h-8 items-center justify-between">
+            <p className="text-sm text-default-500">From:</p>
           </div>
           <Input
             label="Sender's Name"
@@ -62,7 +62,7 @@ const FreeInvoiceForm = () => {
             maxLength={20}
             defaultValue=""
             variant="bordered"
-            {...register("sender.name")}
+            {...register('sender.name')}
             isInvalid={!!errors.sender?.name}
             errorMessage={errors.sender?.name?.message}
           />
@@ -74,7 +74,7 @@ const FreeInvoiceForm = () => {
             maxLength={20}
             defaultValue=""
             variant="bordered"
-            {...register("sender.businessNumber")}
+            {...register('sender.businessNumber')}
             isInvalid={!!errors.sender?.businessNumber}
             errorMessage={errors.sender?.businessNumber?.message}
           />
@@ -86,7 +86,7 @@ const FreeInvoiceForm = () => {
             maxLength={20}
             defaultValue=""
             variant="bordered"
-            {...register("sender.address")}
+            {...register('sender.address')}
             isInvalid={!!errors.sender?.address}
             errorMessage={errors.sender?.address?.message}
           />
@@ -98,14 +98,14 @@ const FreeInvoiceForm = () => {
             maxLength={20}
             defaultValue=""
             variant="bordered"
-            {...register("sender.email")}
+            {...register('sender.email')}
             isInvalid={!!errors.sender?.email}
             errorMessage={errors.sender?.email?.message}
           />
         </Card>
-        <Card className="w-full flex flex-col gap-4 p-4">
-          <div className="min-h-8 flex items-center justify-between">
-            <p className="text-default-500 text-sm">To:</p>
+        <Card className="flex w-full flex-col gap-4 p-4">
+          <div className="flex min-h-8 items-center justify-between">
+            <p className="text-sm text-default-500">To:</p>
           </div>
           <Input
             label="Receiver's Name"
@@ -115,7 +115,7 @@ const FreeInvoiceForm = () => {
             maxLength={20}
             defaultValue=""
             variant="bordered"
-            {...register("receiver.name")}
+            {...register('receiver.name')}
             isInvalid={!!errors.receiver?.name}
             errorMessage={errors.receiver?.name?.message}
           />
@@ -127,7 +127,7 @@ const FreeInvoiceForm = () => {
             maxLength={20}
             defaultValue=""
             variant="bordered"
-            {...register("receiver.businessNumber")}
+            {...register('receiver.businessNumber')}
             isInvalid={!!errors.receiver?.businessNumber}
             errorMessage={errors.receiver?.businessNumber?.message}
           />
@@ -139,7 +139,7 @@ const FreeInvoiceForm = () => {
             maxLength={20}
             defaultValue=""
             variant="bordered"
-            {...register("receiver.address")}
+            {...register('receiver.address')}
             isInvalid={!!errors.receiver?.address}
             errorMessage={errors.receiver?.address?.message}
           />
@@ -151,7 +151,7 @@ const FreeInvoiceForm = () => {
             maxLength={20}
             defaultValue=""
             variant="bordered"
-            {...register("receiver.email")}
+            {...register('receiver.email')}
             isInvalid={!!errors.receiver?.email}
             errorMessage={errors.receiver?.email?.message}
           />
@@ -161,7 +161,7 @@ const FreeInvoiceForm = () => {
   );
 
   const renderInvoiceServices = () => (
-    <div className="flex gap-4 flex-col col-span-4">
+    <div className="col-span-4 flex flex-col gap-4">
       <h4>Services</h4>
       <InvoiceServicesTable
         currency="usd"
@@ -172,9 +172,9 @@ const FreeInvoiceForm = () => {
   );
 
   const renderBankingInformation = () => (
-    <div className="flex gap-4 flex-col col-span-4">
+    <div className="col-span-4 flex flex-col gap-4">
       <h4>Banking Details</h4>
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col gap-4 md:flex-row">
         <Input
           label="Bank Name"
           labelPlacement="inside"
@@ -184,7 +184,7 @@ const FreeInvoiceForm = () => {
           maxLength={20}
           defaultValue=""
           variant="flat"
-          {...register("bankingInformation.name")}
+          {...register('bankingInformation.name')}
           isInvalid={!!errors.bankingInformation?.name}
           errorMessage={errors.bankingInformation?.name?.message}
         />
@@ -195,7 +195,7 @@ const FreeInvoiceForm = () => {
           maxLength={20}
           placeholder="e.g., HABALT22"
           defaultValue=""
-          {...register("bankingInformation.code")}
+          {...register('bankingInformation.code')}
           isInvalid={!!errors.bankingInformation?.code}
           errorMessage={errors.bankingInformation?.code?.message}
         />
@@ -206,7 +206,7 @@ const FreeInvoiceForm = () => {
           type="text"
           maxLength={20}
           defaultValue=""
-          {...register("bankingInformation.accountNumber")}
+          {...register('bankingInformation.accountNumber')}
           isInvalid={!!errors.bankingInformation?.accountNumber}
           errorMessage={errors.bankingInformation?.accountNumber?.message}
         />
@@ -215,7 +215,7 @@ const FreeInvoiceForm = () => {
   );
 
   const renderInvoiceSignature = () => (
-    <div className="flex gap-4 flex-col">
+    <div className="flex flex-col gap-4">
       <h4>Signature</h4>
       <SignaturePad
         signature={senderSignature}
@@ -227,8 +227,8 @@ const FreeInvoiceForm = () => {
   );
 
   const renderSubmissionMessageAndActions = () => (
-    <div className="col-span-4 flex w-full items-center gap-5 justify-between overflow-x-hidden">
-      <div className="flex flex-col sm:flex-row gap-1 justify-end w-full">
+    <div className="col-span-4 flex w-full items-center justify-between gap-5 overflow-x-hidden">
+      <div className="flex w-full flex-col justify-end gap-1 sm:flex-row">
         <Button
           color="danger"
           variant="light"
@@ -251,26 +251,26 @@ const FreeInvoiceForm = () => {
   return (
     <>
       <FormProvider {...methods}>
-        <div className="p-6 mx-auto max-w-5xl">
+        <div className="mx-auto max-w-5xl p-6">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-semibold">Create Invoice</h1>
             <p className="text-default-500">
               Create, preview and download an invoice for free
             </p>
           </div>
-          <Card className="p-4 mt-8 sm:p-8 dark:border dark:border-default-100 bg-transparent">
+          <Card className="mt-8 bg-transparent p-4 dark:border dark:border-default-100 sm:p-8">
             <form
               aria-label="Add New Invoice Form"
-              className="w-full grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
+              className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
               encType="multipart/form-data"
             >
               <div className="col-span-4 flex flex-col gap-4">
                 <h4>Invoice Details</h4>
-                <div className="flex flex-col md:flex-row gap-2 col-span-4">
+                <div className="col-span-4 flex flex-col gap-2 md:flex-row">
                   <Input
                     className="w-full"
                     aria-label="Invoice ID"
-                    {...register("invoiceId")}
+                    {...register('invoiceId')}
                     label="Invoice ID"
                     placeholder="e.g., INV001"
                     defaultValue=""
@@ -280,11 +280,11 @@ const FreeInvoiceForm = () => {
                   <Input
                     className="w-full"
                     aria-label="Date"
-                    {...register("date")}
+                    {...register('date')}
                     type="date"
                     label="Date"
                     defaultValue={formatDate(
-                      new Date(Date.now()).toISOString(),
+                      new Date(Date.now()).toISOString()
                     )}
                     errorMessage={errors.date?.message}
                     isInvalid={!!errors.date}
@@ -292,7 +292,7 @@ const FreeInvoiceForm = () => {
                   <Input
                     className="w-full"
                     aria-label="Due Date"
-                    {...register("dueDate")}
+                    {...register('dueDate')}
                     type="date"
                     label="Due Date"
                     defaultValue=""
@@ -315,7 +315,7 @@ const FreeInvoiceForm = () => {
         userId={undefined}
         invoiceData={{
           ...getValues(),
-          totalAmount: calculateServiceTotal(getValues("services")),
+          totalAmount: calculateServiceTotal(getValues('services'))
         }}
         currency="usd"
         language="en"

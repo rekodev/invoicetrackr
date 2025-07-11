@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import InvoiceTable from '@/components/invoice/InvoiceTable';
+import InvoiceTable from '@/components/invoice/invoice-table';
 
 const InvoicesPage = async () => {
   const session = await auth();

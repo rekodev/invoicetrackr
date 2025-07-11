@@ -18,9 +18,9 @@ export default async function CreateNewPasswordPage({ params }: Props) {
 
   if (response.status !== HttpStatusCode.Ok) {
     return (
-      <section className="px-6 py-8 flex flex-col justify-center items-center gap-4">
+      <section className="flex flex-col items-center justify-center gap-4 px-6 py-8">
         <AppLogo />
-        <div className="text-center flex flex-col justify-center items-center gap-1 mb-6">
+        <div className="mb-6 flex flex-col items-center justify-center gap-1 text-center">
           <h2 className="text-2xl font-medium">{t("title")}</h2>
           <p className="text-default-500">{t("description")}</p>
         </div>
@@ -30,9 +30,9 @@ export default async function CreateNewPasswordPage({ params }: Props) {
   }
 
   return (
-    <section className="px-6 py-8 flex flex-col justify-center items-center gap-4">
+    <section className="flex flex-col items-center justify-center gap-4 px-6 py-8">
       <AppLogo />
-      <div className="text-center flex flex-col justify-center items-center gap-1 mb-6">
+      <div className="mb-6 flex flex-col items-center justify-center gap-1 text-center">
         <h2 className="text-2xl font-medium">{t("title")}</h2>
         <p className="text-default-500">{t("description")}</p>
       </div>
