@@ -10,7 +10,7 @@ export const InvoiceService = Type.Object({
   unit: Type.String({
     minLength: 1,
     maxLength: 20,
-    errorMessage: 'Unit up to 10 characters is required'
+    errorMessage: 'Unit up to 20 characters is required'
   }),
   quantity: Type.Number({
     minimum: 0.0001,
