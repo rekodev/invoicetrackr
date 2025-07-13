@@ -9,10 +9,8 @@ import {
 } from '@heroui/react';
 import { useState } from 'react';
 
-import { deleteInvoice } from '@/api';
+import { deleteInvoiceAction } from '@/lib/actions/invoice';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetInvoices from '@/lib/hooks/invoice/use-get-invoices';
-import useGetUser from '@/lib/hooks/user/use-get-user';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 
 type Props = {
@@ -28,21 +26,19 @@ const DeleteInvoiceModal = ({
   onClose,
   invoiceData
 }: Props) => {
-  const { mutateInvoices } = useGetInvoices({ userId });
-  const { user } = useGetUser({ userId });
-
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
 
   const handleSubmit = async () => {
-    if (!user?.id || !invoiceData) return;
-
     setUiState(UiState.Pending);
 
-    const response = await deleteInvoice(user.id, invoiceData.id);
-    setSubmissionMessage(response.data.message);
+    const response = await deleteInvoiceAction({
+      userId,
+      invoiceId: invoiceData.id
+    });
+    setSubmissionMessage(response.message);
 
-    if ('error' in response.data) {
+    if ('error' in response) {
       setUiState(UiState.Failure);
 
       return;
@@ -50,7 +46,6 @@ const DeleteInvoiceModal = ({
 
     setUiState(UiState.Success);
     onClose();
-    mutateInvoices();
   };
 
   const renderModalFooter = () => (

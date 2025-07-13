@@ -19,6 +19,7 @@ import {
   GetBankAccountResp,
   GetBankingInformationResp,
   GetInvoiceResp,
+  GetInvoicesResp,
   GetInvoicesRevenueResp,
   GetInvoicesTotalAmountResp,
   GetLatestInvoicesResp,
@@ -50,6 +51,11 @@ export const getInvoice = async (
   invoiceId: number
 ): Promise<AxiosResponse<GetInvoiceResp>> =>
   await api.get(`/api/${userId}/invoices/${invoiceId}`);
+
+export const getInvoices = async (
+  userId: number
+): Promise<AxiosResponse<GetInvoicesResp>> =>
+  await api.get(`/api/${userId}/invoices`);
 
 export const getInvoicesTotalAmount = async (
   userId: number
@@ -86,7 +92,7 @@ export const addInvoice = async (
 export const updateInvoice = async (
   userId: number,
   invoiceData: InvoiceModel,
-  language: string = 'EN'
+  language: string = 'en'
 ): Promise<AxiosResponse<UpdateInvoiceResp>> => {
   const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
 

@@ -1,3 +1,4 @@
+import { getInvoices } from '@/api';
 import { auth } from '@/auth';
 import InvoiceTable from '@/components/invoice/invoice-table';
 
@@ -10,8 +11,17 @@ const InvoicesPage = async () => {
   const currency = session.user.currency;
   const language = session.user.language;
 
+  const {
+    data: { invoices }
+  } = await getInvoices(userId);
+
   return (
-    <InvoiceTable language={language} currency={currency} userId={userId} />
+    <InvoiceTable
+      language={language}
+      invoices={invoices || []}
+      currency={currency}
+      userId={userId}
+    />
   );
 };
 
