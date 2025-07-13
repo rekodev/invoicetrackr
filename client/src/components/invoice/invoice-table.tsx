@@ -78,7 +78,6 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
     );
   }, [visibleColumns]);
 
-  // TODO: Fix search
   const filteredItems = useMemo(() => {
     if (!invoices) return [];
 
@@ -86,7 +85,10 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
 
     if (hasSearchFilter) {
       filteredInvoices = filteredInvoices.filter((invoice) =>
-        invoice.id.toString().toLowerCase().includes(filterValue.toLowerCase())
+        invoice.invoiceId
+          .toString()
+          .toLowerCase()
+          .includes(filterValue.toLowerCase())
       );
     }
     if (

@@ -82,7 +82,7 @@ const InvoiceTableTopContent = ({
         <Input
           isClearable
           className="w-full sm:max-w-[44%]"
-          placeholder="Search by name..."
+          placeholder="Search by invoice ID..."
           startContent={<SearchIcon width={16} height={16} />}
           value={filterValue}
           onClear={() => onClear()}
@@ -148,10 +148,10 @@ const InvoiceTableTopContent = ({
       </div>
       <div className="flex items-center justify-between">
         <span className="text-small text-default-400">{totalInvoicesText}</span>
-        <label className="flex items-center text-small text-default-400">
+        <label className="text-small text-default-400 flex items-center">
           Rows per page:
           <select
-            className="bg-transparent text-small text-default-400 outline-none"
+            className="text-small text-default-400 bg-transparent outline-none"
             onChange={onRowsPerPageChange}
             defaultValue={10}
           >
