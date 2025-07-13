@@ -1,4 +1,4 @@
-import { getInvoice, getUser } from '@/api';
+import { getClients, getInvoice, getUser } from '@/api';
 import { auth } from '@/auth';
 import InvoiceForm from '@/components/invoice/invoice-form';
 
@@ -10,13 +10,19 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
 
   if (!session?.user?.id) return null;
 
-  const response = await getInvoice(Number(session.user.id), Number(invoiceId));
-  const { data: user } = await getUser(Number(session.user.id));
+  const numericUserId = Number(session.user.id);
+
+  const response = await getInvoice(numericUserId, Number(invoiceId));
+  const { data: user } = await getUser(numericUserId);
+  const {
+    data: { clients }
+  } = await getClients(numericUserId);
 
   return (
     <section>
       <InvoiceForm
         user={user}
+        clients={clients}
         currency={session.user.currency}
         invoiceData={response.data.invoice}
       />
