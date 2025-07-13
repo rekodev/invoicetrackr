@@ -18,6 +18,7 @@ import {
   DeleteUserAccountResp,
   GetBankAccountResp,
   GetBankingInformationResp,
+  GetClientsResp,
   GetInvoiceResp,
   GetInvoicesResp,
   GetInvoicesRevenueResp,
@@ -115,6 +116,12 @@ export const deleteInvoice = async (
   invoiceId: number
 ): Promise<AxiosResponse<DeleteInvoiceResp>> =>
   await api.delete(`/api/${userId}/invoices/${invoiceId}`);
+
+// Clients
+export const getClients = async (
+  userId: number
+): Promise<AxiosResponse<GetClientsResp>> =>
+  await api.get(`/api/${userId}/clients`);
 
 export const addClient = async (
   userId: number,
