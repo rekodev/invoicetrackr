@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Button,
   Chip,
@@ -9,10 +11,8 @@ import {
 } from '@heroui/react';
 import { useState } from 'react';
 
-import { deleteClient } from '@/api';
+import { deleteClientAction } from '@/lib/actions/client';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetClients from '@/lib/hooks/client/use-get-clients';
-import useGetUser from '@/lib/hooks/user/use-get-user';
 import { ClientModel } from '@/lib/types/models/client';
 
 type Props = {
@@ -23,21 +23,21 @@ type Props = {
 };
 
 const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
-  const { mutateClients } = useGetClients({ userId });
-  const { user } = useGetUser({ userId });
-
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
 
   const handleSubmit = async () => {
-    if (!user?.id || !clientData?.id) return;
+    if (!clientData.id) return;
 
     setUiState(UiState.Pending);
 
-    const response = await deleteClient(user.id, clientData.id);
-    setSubmissionMessage(response.data.message);
+    const response = await deleteClientAction({
+      userId,
+      clientId: clientData.id
+    });
+    setSubmissionMessage(response.message);
 
-    if ('error' in response.data) {
+    if ('error' in response) {
       setUiState(UiState.Failure);
 
       return;
@@ -45,7 +45,6 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
 
     setUiState(UiState.Success);
     onClose();
-    mutateClients();
   };
 
   const renderModalFooter = () => (

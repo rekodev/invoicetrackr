@@ -1,9 +1,10 @@
-import { AxiosResponse } from 'axios';
+'use client';
+
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
 import { SubmitHandler, UseFormSetError } from 'react-hook-form';
 
-import { addInvoice, updateInvoice } from '@/api';
+import { addInvoiceAction, updateInvoiceAction } from '@/lib/actions/invoice';
 import { INVOICES_PAGE } from '@/lib/constants/pages';
 import { UiState } from '@/lib/constants/ui-state';
 import { ClientModel } from '@/lib/types/models/client';
@@ -14,9 +15,6 @@ import {
 } from '@/lib/types/models/user';
 import { AddInvoiceResp, UpdateInvoiceResp } from '@/lib/types/response';
 import { calculateServiceTotal } from '@/lib/utils';
-
-import useGetInvoice from './use-get-invoice';
-import useGetInvoices from './use-get-invoices';
 
 const INITIAL_RECEIVER_DATA: ClientModel = {
   businessNumber: '',
@@ -45,11 +43,6 @@ const useInvoiceFormSubmissionHandler = ({
   setError
 }: Props) => {
   const router = useRouter();
-  const { mutateInvoices } = useGetInvoices({ userId: user?.id || 0 });
-  const { mutateInvoice } = useGetInvoice({
-    userId: user?.id || 0,
-    invoiceId: invoiceData?.id
-  });
 
   const redirectToInvoicesPage = () => {
     router.push(INVOICES_PAGE);
@@ -70,19 +63,27 @@ const useInvoiceFormSubmissionHandler = ({
       bankingInformation: bankingInformation || data.bankingInformation
     };
 
-    let response: AxiosResponse<UpdateInvoiceResp | AddInvoiceResp>;
+    let response: UpdateInvoiceResp | AddInvoiceResp;
 
     if (invoiceData) {
-      response = await updateInvoice(user.id, fullData, user.language);
+      response = await updateInvoiceAction({
+        userId: user.id,
+        invoiceData: fullData,
+        lang: user.language
+      });
     } else {
-      response = await addInvoice(user.id, fullData, user.language);
+      response = await addInvoiceAction({
+        userId: user.id,
+        invoiceData: fullData,
+        lang: user.language
+      });
     }
-    setSubmissionMessage(response.data.message);
+    setSubmissionMessage(response.message);
 
-    if ('errors' in response.data) {
+    if ('errors' in response) {
       setUiState(UiState.Failure);
 
-      response.data.errors.forEach((error) => {
+      response.errors.forEach((error) => {
         setError(error.key, { message: error.value });
       });
 
@@ -90,8 +91,6 @@ const useInvoiceFormSubmissionHandler = ({
     }
 
     setUiState(UiState.Success);
-    mutateInvoices();
-    mutateInvoice();
     redirectToInvoicesPage();
   };
 

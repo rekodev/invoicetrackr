@@ -54,6 +54,10 @@ export type UpdateInvoiceResp = ApiError & {
 
 export type DeleteInvoiceResp = ApiError;
 
+export type GetClientsResp = ApiError & {
+  clients: Array<ClientModel>;
+};
+
 export type AddClientResp = ApiError & {
   client: ClientModel;
 };

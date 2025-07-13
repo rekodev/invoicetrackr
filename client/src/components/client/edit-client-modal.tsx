@@ -12,11 +12,9 @@ import {
 } from '@heroui/react';
 import { ChangeEvent, useState } from 'react';
 
-import { updateClient } from '@/api';
+import { updateClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetClients from '@/lib/hooks/client/use-get-clients';
-import useGetUser from '@/lib/hooks/user/use-get-user';
 import { ClientModel } from '@/lib/types/models/client';
 import { capitalize } from '@/lib/utils';
 
@@ -30,9 +28,6 @@ type Props = {
 type ClientFormData = ClientModel;
 
 const EditClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
-  const { user } = useGetUser({ userId });
-  const { mutateClients } = useGetClients({ userId });
-
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [uiState, setUiState] = useState(UiState.Idle);
   const [newClientData, setNewClientData] =
@@ -46,23 +41,22 @@ const EditClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
   };
 
   const handleSubmit = async () => {
-    if (!user?.id) return;
-
     setUiState(UiState.Pending);
     setSubmissionMessage('');
 
-    const response = await updateClient(user.id, newClientData);
-    setSubmissionMessage(response.data.message);
+    const response = await updateClientAction({
+      userId,
+      clientData: newClientData
+    });
+    setSubmissionMessage(response.message);
 
-    if ('error' in response.data) {
+    if ('error' in response) {
       setUiState(UiState.Failure);
 
       return;
     }
 
     setUiState(UiState.Success);
-
-    mutateClients();
   };
 
   return (

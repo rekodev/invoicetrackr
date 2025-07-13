@@ -29,7 +29,7 @@ export const getInvoices = async (
   const { userId } = req.params;
   const invoices = await getInvoicesFromDb(userId);
 
-  reply.status(200).send(invoices);
+  reply.status(200).send({ invoices });
 };
 
 export const getInvoice = async (

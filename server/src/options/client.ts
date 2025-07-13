@@ -13,7 +13,7 @@ import { authMiddleware } from '../middleware/auth';
 export const getClientsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Array(Client)
+      200: Type.Object({ clients: Type.Array(Client) })
     }
   },
   preHandler: authMiddleware,

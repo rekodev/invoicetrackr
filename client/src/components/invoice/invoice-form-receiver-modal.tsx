@@ -11,7 +11,6 @@ import {
 } from '@heroui/react';
 import { useState } from 'react';
 
-import useGetClients from '@/lib/hooks/client/use-get-clients';
 import { ClientModel } from '@/lib/types/models/client';
 
 import AddNewClientModal from '../client/add-new-client-modal';
@@ -20,6 +19,7 @@ import ClientCard from '../ui/client-card';
 type Props = {
   userId: number;
   isOpen: boolean;
+  clients: Array<ClientModel>;
   onClose: () => void;
   onReceiverSelect: (client: ClientModel) => void;
 };
@@ -27,10 +27,10 @@ type Props = {
 const InvoiceFormPartyModal = ({
   userId,
   isOpen,
+  clients,
   onClose,
   onReceiverSelect
 }: Props) => {
-  const { clients } = useGetClients({ userId });
   const [isAddNewClientModalOpen, setIsAddNewClientModalOpen] = useState(false);
 
   const renderBody = () => {

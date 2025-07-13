@@ -18,7 +18,9 @@ import {
   DeleteUserAccountResp,
   GetBankAccountResp,
   GetBankingInformationResp,
+  GetClientsResp,
   GetInvoiceResp,
+  GetInvoicesResp,
   GetInvoicesRevenueResp,
   GetInvoicesTotalAmountResp,
   GetLatestInvoicesResp,
@@ -50,6 +52,11 @@ export const getInvoice = async (
   invoiceId: number
 ): Promise<AxiosResponse<GetInvoiceResp>> =>
   await api.get(`/api/${userId}/invoices/${invoiceId}`);
+
+export const getInvoices = async (
+  userId: number
+): Promise<AxiosResponse<GetInvoicesResp>> =>
+  await api.get(`/api/${userId}/invoices`);
 
 export const getInvoicesTotalAmount = async (
   userId: number
@@ -86,7 +93,7 @@ export const addInvoice = async (
 export const updateInvoice = async (
   userId: number,
   invoiceData: InvoiceModel,
-  language: string = 'EN'
+  language: string = 'en'
 ): Promise<AxiosResponse<UpdateInvoiceResp>> => {
   const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
 
@@ -109,6 +116,12 @@ export const deleteInvoice = async (
   invoiceId: number
 ): Promise<AxiosResponse<DeleteInvoiceResp>> =>
   await api.delete(`/api/${userId}/invoices/${invoiceId}`);
+
+// Clients
+export const getClients = async (
+  userId: number
+): Promise<AxiosResponse<GetClientsResp>> =>
+  await api.get(`/api/${userId}/clients`);
 
 export const addClient = async (
   userId: number,

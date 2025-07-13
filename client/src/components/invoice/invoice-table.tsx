@@ -14,7 +14,6 @@ import {
 import { Key, useCallback, useMemo, useState } from 'react';
 
 import { columns, statusOptions } from '@/lib/constants/table';
-import useGetInvoices from '@/lib/hooks/invoice/use-get-invoices';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
 import { Currency } from '@/lib/types/currency';
 import { InvoiceModel } from '@/lib/types/models/invoice';
@@ -37,13 +36,12 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 type Props = {
   userId: number;
+  invoices: Array<InvoiceModel>;
   currency: Currency;
   language: string;
 };
 
-const InvoiceTable = ({ userId, currency, language }: Props) => {
-  const { invoices, isInvoicesLoading } = useGetInvoices({ userId });
-
+const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
 
@@ -80,7 +78,6 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
     );
   }, [visibleColumns]);
 
-  // TODO: Fix search
   const filteredItems = useMemo(() => {
     if (!invoices) return [];
 
@@ -88,7 +85,10 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
 
     if (hasSearchFilter) {
       filteredInvoices = filteredInvoices.filter((invoice) =>
-        invoice.id.toString().toLowerCase().includes(filterValue.toLowerCase())
+        invoice.invoiceId
+          .toString()
+          .toLowerCase()
+          .includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -193,9 +193,8 @@ const InvoiceTable = ({ userId, currency, language }: Props) => {
           )}
         </TableHeader>
         <TableBody
-          isLoading={isInvoicesLoading}
           loadingContent={<Spinner color="secondary" />}
-          emptyContent={!isInvoicesLoading && 'No invoices found'}
+          emptyContent={!invoices.length && 'No invoices found'}
           items={sortedItems}
         >
           {(item) => (

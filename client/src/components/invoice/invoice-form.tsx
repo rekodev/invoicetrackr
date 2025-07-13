@@ -28,6 +28,7 @@ import CompleteProfile from '../ui/complete-profile';
 
 type Props = {
   user: UserModel;
+  clients: Array<ClientModel>;
   invoiceData?: InvoiceModel;
   currency: Currency;
 };
@@ -41,7 +42,7 @@ const INITIAL_RECEIVER_DATA: ClientModel = {
   type: 'receiver'
 };
 
-const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
+const InvoiceForm = ({ user, currency, invoiceData, clients }: Props) => {
   const methods = useForm<InvoiceModel>({
     defaultValues: invoiceData || {
       sender: user,
@@ -113,7 +114,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
         <Card className="flex w-full flex-col gap-4 p-4">
           <div className="flex min-h-8 items-center justify-between">
-            <p className="text-sm text-default-500">From:</p>
+            <p className="text-default-500 text-sm">From:</p>
           </div>
           <Input
             label="Sender's Name"
@@ -162,7 +163,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
         </Card>
         <Card className="flex w-full flex-col gap-4 p-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-default-500">To:</p>
+            <p className="text-default-500 text-sm">To:</p>
             <Button
               size="sm"
               variant="faded"
@@ -374,7 +375,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
   return (
     <>
       <FormProvider {...methods}>
-        <Card className="bg-transparent p-4 dark:border dark:border-default-100 sm:p-8">
+        <Card className="dark:border-default-100 bg-transparent p-4 sm:p-8 dark:border">
           <form
             aria-label="Add New Invoice Form"
             className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
@@ -444,6 +445,7 @@ const InvoiceForm = ({ user, currency, invoiceData }: Props) => {
       <InvoiceFormReceiverModal
         userId={user.id || 0}
         isOpen={isReceiverModalOpen}
+        clients={clients}
         onClose={handleCloseReceiverModal}
         onReceiverSelect={handleSelectReceiver}
       />
