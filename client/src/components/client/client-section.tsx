@@ -15,7 +15,6 @@ import {
 import { useState } from 'react';
 
 import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
-import useGetClients from '@/lib/hooks/client/use-get-clients';
 import { ClientModel } from '@/lib/types/models/client';
 
 import ClientSectionBottomContent from './client-section-bottom-content';
@@ -23,16 +22,15 @@ import ClientSectionTopContent from './client-section-top-content';
 import DeleteClientModal from './delete-client-modal';
 import EditClientModal from './edit-client-modal';
 import InvoicePartyCard from '../invoice/invoice-party-card';
-import Loader from '../ui/loader';
 
 const PER_PAGE = 8;
 
 type Props = {
   userId: number;
+  clients: Array<ClientModel>;
 };
 
-const ClientSection = ({ userId }: Props) => {
-  const { clients, isClientsLoading } = useGetClients({ userId });
+const ClientSection = ({ userId, clients }: Props) => {
   const {
     page,
     setPage,
@@ -141,9 +139,7 @@ const ClientSection = ({ userId }: Props) => {
   };
 
   const renderSectionContent = () => {
-    if (isClientsLoading) return <Loader />;
-
-    if (!isClientsLoading && !clients?.length)
+    if (!clients?.length)
       return <div className="min-h-[480px]">No clients found</div>;
 
     return (

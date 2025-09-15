@@ -12,10 +12,9 @@ import {
 } from '@heroui/react';
 import { ChangeEvent, useState } from 'react';
 
-import { addClient } from '@/api';
+import { addClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetClients from '@/lib/hooks/client/use-get-clients';
 import useGetUser from '@/lib/hooks/user/use-get-user';
 import { ClientFormData, ClientModel } from '@/lib/types/models/client';
 import { capitalize } from '@/lib/utils';
@@ -38,7 +37,6 @@ type Props = {
 
 const AddNewClientModal = ({ userId, isOpen, onClose }: Props) => {
   const { user } = useGetUser({ userId });
-  const { mutateClients } = useGetClients({ userId });
 
   const [clientData, setClientData] =
     useState<ClientFormData>(INITIAL_CLIENT_DATA);
@@ -67,14 +65,14 @@ const AddNewClientModal = ({ userId, isOpen, onClose }: Props) => {
 
     setUiState(UiState.Pending);
 
-    const result = await addClient(user.id, clientData);
-    setSubmissionMessage(result.data.message);
+    const result = await addClientAction({ userId: user.id, clientData });
+    setSubmissionMessage(result.message);
 
-    if ('errors' in result.data) {
+    if ('errors' in result) {
       setUiState(UiState.Failure);
 
       const validationErrors = mapValidationErrors(
-        result.data.errors as Record<string, string>[]
+        result.errors as Array<Record<string, string>>
       );
 
       setValidationErrors(validationErrors);
@@ -83,7 +81,6 @@ const AddNewClientModal = ({ userId, isOpen, onClose }: Props) => {
     }
 
     setUiState(UiState.Success);
-    mutateClients();
   };
 
   const handleCloseAndClear = () => {

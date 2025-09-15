@@ -6,7 +6,7 @@
   "scripts": {
     "client": "pnpm --filter @invoicetrackr/client",
     "server": "pnpm --filter @invoicetrackr/server",
-    "dev": "concurrently \"pnpm run server dev\" \"pnpm run client dev\""
+    "dev": "concurrently \"pnpm run server dev\" \"pnpm run client dev:turbo\""
   },
   "keywords": [],
   "author": "rekodev",
