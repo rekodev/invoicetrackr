@@ -81,6 +81,7 @@ export const authConfig = {
         token.currency = user.currency;
         token.isOnboarded = isOnboarded;
         token.isSubscriptionActive = user.isSubscriptionActive;
+        token.selectedBankAccountId = user.selectedBankAccountId;
       }
 
       if (trigger === 'update') {
@@ -89,7 +90,8 @@ export const authConfig = {
           isOnboarded: session.user.isOnboarded,
           language: session.user.language,
           currency: session.user.currency,
-          isSubscriptionActive: session.user.isSubscriptionActive
+          isSubscriptionActive: session.user.isSubscriptionActive,
+          selectedBankAccountId: session.user.selectedBankAccountId
         };
       }
 
@@ -101,6 +103,8 @@ export const authConfig = {
       session.user.currency = token.currency as Currency;
       session.user.isOnboarded = Boolean(token.isOnboarded);
       session.user.isSubscriptionActive = Boolean(token.isSubscriptionActive);
+      session.user.selectedBankAccountId =
+        token.selectedBankAccountId as number;
 
       return session;
     }

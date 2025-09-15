@@ -2,14 +2,13 @@
 
 import { HttpStatusCode } from 'axios';
 import { redirect } from 'next/navigation';
-import { AuthError } from 'next-auth';
+import { AuthError, User } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
 
 import { createNewUserPassword, registerUser, resetUserPassword } from '@/api';
 
 import { signIn, signOut, unstable_update } from '../auth';
 import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
-import { UserModel } from './types/models/user';
 
 export type ActionReturnType = {
   ok: boolean;
@@ -123,10 +122,7 @@ export const updateSession = async ({
   newSession,
   redirectPath
 }: {
-  newSession: UserModel & {
-    isOnboarded?: boolean;
-    isSubscriptionActive?: boolean;
-  };
+  newSession: User;
   redirectPath?: string;
 }) => {
   await unstable_update({

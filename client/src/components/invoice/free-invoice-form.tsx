@@ -52,7 +52,7 @@ const FreeInvoiceForm = () => {
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
         <Card className="flex w-full flex-col gap-4 p-4">
           <div className="flex min-h-8 items-center justify-between">
-            <p className="text-sm text-default-500">From:</p>
+            <p className="text-default-500 text-sm">From:</p>
           </div>
           <Input
             label="Sender's Name"
@@ -105,7 +105,7 @@ const FreeInvoiceForm = () => {
         </Card>
         <Card className="flex w-full flex-col gap-4 p-4">
           <div className="flex min-h-8 items-center justify-between">
-            <p className="text-sm text-default-500">To:</p>
+            <p className="text-default-500 text-sm">To:</p>
           </div>
           <Input
             label="Receiver's Name"
@@ -258,7 +258,7 @@ const FreeInvoiceForm = () => {
               Create, preview and download an invoice for free
             </p>
           </div>
-          <Card className="mt-8 bg-transparent p-4 dark:border dark:border-default-100 sm:p-8">
+          <Card className="dark:border-default-100 mt-8 bg-transparent p-4 sm:p-8 dark:border">
             <form
               aria-label="Add New Invoice Form"
               className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
@@ -312,7 +312,6 @@ const FreeInvoiceForm = () => {
       </FormProvider>
 
       <InvoiceModal
-        userId={undefined}
         invoiceData={{
           ...getValues(),
           totalAmount: calculateServiceTotal(getValues('services'))

@@ -29,6 +29,7 @@ import CompleteProfile from '../ui/complete-profile';
 type Props = {
   user: UserModel;
   clients: Array<ClientModel>;
+  bankingInformation: Array<BankingInformationFormModel>;
   invoiceData?: InvoiceModel;
   currency: Currency;
 };
@@ -42,7 +43,13 @@ const INITIAL_RECEIVER_DATA: ClientModel = {
   type: 'receiver'
 };
 
-const InvoiceForm = ({ user, currency, invoiceData, clients }: Props) => {
+const InvoiceForm = ({
+  user,
+  currency,
+  invoiceData,
+  clients,
+  bankingInformation
+}: Props) => {
   const methods = useForm<InvoiceModel>({
     defaultValues: invoiceData || {
       sender: user,
@@ -450,9 +457,9 @@ const InvoiceForm = ({ user, currency, invoiceData, clients }: Props) => {
         onReceiverSelect={handleSelectReceiver}
       />
       <BankingInformationModal
-        userId={user.id || 0}
         isOpen={isBankingInformationModalOpen}
         onClose={() => setIsBankingInformationModalOpen(false)}
+        bankingInformation={bankingInformation}
         onBankAccountSelect={handleBankAccountSelect}
       />
     </>

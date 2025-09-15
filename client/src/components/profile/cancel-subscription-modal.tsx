@@ -44,7 +44,7 @@ const CancelSubscriptionModal = ({ userId, isOpen, onClose }: Props) => {
     }
 
     await updateSession({
-      newSession: { ...user, isSubscriptionActive: false },
+      newSession: { ...user, id: String(user.id), isSubscriptionActive: false },
       redirectPath: RENEW_SUBSCRIPTION_PAGE
     });
   };
@@ -77,7 +77,7 @@ const CancelSubscriptionModal = ({ userId, isOpen, onClose }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         <ModalHeader className="flex items-end gap-2">
-          <ExclamationTriangleIcon className="h-6 w-6 text-danger-400" />
+          <ExclamationTriangleIcon className="text-danger-400 h-6 w-6" />
           Cancel Subscription?
         </ModalHeader>
         <ModalBody>

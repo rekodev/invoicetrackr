@@ -98,6 +98,7 @@ const AccountSettingsForm = ({ userId, isSubscriptionActive }: Props) => {
     await updateSession({
       newSession: {
         ...user,
+        id: String(user.id),
         language: data.language,
         currency: data.currency
       }
@@ -200,7 +201,7 @@ const AccountSettingsForm = ({ userId, isSubscriptionActive }: Props) => {
         as="form"
         aria-label="Account Settings Form"
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full bg-transparent dark:border dark:border-default-100"
+        className="dark:border-default-100 w-full bg-transparent dark:border"
       >
         <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
         <Divider />

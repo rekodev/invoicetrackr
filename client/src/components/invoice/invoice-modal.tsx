@@ -2,14 +2,11 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react';
 import { PDFViewer } from '@react-pdf/renderer';
 import { useTranslations } from 'next-intl';
 
-import useGetBankAccount from '@/lib/hooks/banking-information/use-get-bank-account';
-import useGetUser from '@/lib/hooks/user/use-get-user';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 
 import PDFDocument from '../pdf/pdf-document';
 
 type Props = {
-  userId: number | undefined;
   currency: string;
   language: string;
   isOpen: boolean;
@@ -19,7 +16,6 @@ type Props = {
 };
 
 const InvoiceModal = ({
-  userId,
   currency,
   language,
   isOpen,
@@ -29,11 +25,6 @@ const InvoiceModal = ({
 }: Props) => {
   const t = useTranslations('invoices.pdf');
   const { invoiceId } = invoiceData;
-  const { user } = useGetUser({ userId });
-  const { bankAccount } = useGetBankAccount({
-    userId,
-    bankAccountId: user?.selectedBankAccountId
-  });
 
   return (
     <Modal
@@ -53,7 +44,7 @@ const InvoiceModal = ({
               currency={currency}
               invoiceData={invoiceData}
               senderSignatureImage={senderSignatureImage}
-              bankAccount={bankAccount || invoiceData.bankingInformation}
+              bankAccount={invoiceData.bankingInformation}
             />
           </PDFViewer>
         </ModalBody>

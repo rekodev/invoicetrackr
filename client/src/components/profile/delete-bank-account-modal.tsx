@@ -7,30 +7,26 @@ import {
   ModalFooter,
   ModalHeader
 } from '@heroui/react';
+import { User } from 'next-auth';
 import { useState } from 'react';
 
-import { deleteBankingInformation } from '@/api';
+import { deleteBankingInformationAction } from '@/lib/actions/banking-information';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetBankAccounts from '@/lib/hooks/banking-information/use-get-bank-accounts';
-import useGetUser from '@/lib/hooks/user/use-get-user';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 type Props = {
-  userId: number;
+  user: User;
   bankAccount: BankingInformationFormModel;
   isOpen: boolean;
   onClose: () => void;
 };
 
 const DeleteBankAccountModal = ({
-  userId,
+  user,
   isOpen,
   onClose,
   bankAccount
 }: Props) => {
-  const { mutateBankAccounts } = useGetBankAccounts({ userId });
-  const { user } = useGetUser({ userId });
-
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
 
@@ -39,17 +35,20 @@ const DeleteBankAccountModal = ({
 
     setUiState(UiState.Pending);
 
-    const response = await deleteBankingInformation(user.id, bankAccount.id);
-    setSubmissionMessage(response.data.message);
+    const response = await deleteBankingInformationAction(
+      Number(user.id),
+      bankAccount.id
+    );
 
-    if ('errors' in response.data) {
+    if (response.message) setSubmissionMessage(response.message);
+
+    if (!response.ok) {
       setUiState(UiState.Failure);
 
       return;
     }
 
     setUiState(UiState.Success);
-    mutateBankAccounts();
     onClose();
   };
 

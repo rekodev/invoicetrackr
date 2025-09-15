@@ -19,34 +19,35 @@ import {
   useDisclosure
 } from '@heroui/react';
 import { useRouter } from 'next/navigation';
+import { User } from 'next-auth';
 import { useEffect, useState } from 'react';
 
-import { updateUserSelectedBankAccount } from '@/api';
+import { updateSession } from '@/lib/actions';
+import { updateUserSelectedBankAccountAction } from '@/lib/actions/banking-information';
 import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetBankAccounts from '@/lib/hooks/banking-information/use-get-bank-accounts';
-import useGetUser from '@/lib/hooks/user/use-get-user';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 import DeleteBankAccountModal from './delete-bank-account-modal';
 import EmptyState from '../ui/empty-state';
-import ErrorAlert from '../ui/error-alert';
-import Loader from '../ui/loader';
 
 type Props = {
-  userId: number;
+  user: User;
+  userSelectedBankAccountId?: number;
+  bankAccounts: Array<BankingInformationFormModel> | undefined;
 };
 
-const BankingInformationForm = ({ userId }: Props) => {
+const BankingInformationForm = ({
+  user,
+  bankAccounts,
+  userSelectedBankAccountId
+}: Props) => {
   const router = useRouter();
-  const { bankAccounts, bankAccountsError, isBankAccountsLoading } =
-    useGetBankAccounts({ userId });
-  const { user, isUserLoading, userError, mutateUser } = useGetUser({ userId });
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const [selectedBankAccountId, setSelectedBankAccountId] = useState(
-    String(user?.selectedBankAccountId)
+    String(userSelectedBankAccountId)
   );
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [uiState, setUiState] = useState(UiState.Idle);
@@ -55,8 +56,8 @@ const BankingInformationForm = ({ userId }: Props) => {
     useState<BankingInformationFormModel>();
 
   useEffect(() => {
-    setSelectedBankAccountId(String(user?.selectedBankAccountId));
-  }, [user?.selectedBankAccountId]);
+    setSelectedBankAccountId(String(userSelectedBankAccountId));
+  }, [userSelectedBankAccountId]);
 
   const handleAddNewBankAccount = () => {
     router.push(ADD_NEW_BANK_ACCOUNT_PAGE);
@@ -66,20 +67,26 @@ const BankingInformationForm = ({ userId }: Props) => {
     if (!user?.id || !selectedBankAccountId) return;
 
     setUiState(UiState.Pending);
-    const response = await updateUserSelectedBankAccount(
-      user.id,
+    const response = await updateUserSelectedBankAccountAction(
+      Number(user.id),
       Number(selectedBankAccountId)
     );
-    setSubmissionMessage(response.data.message);
 
-    if ('errors' in response.data) {
+    if (response.message) setSubmissionMessage(response.message);
+
+    if (!response.ok) {
       setUiState(UiState.Failure);
 
       return;
     }
 
+    updateSession({
+      newSession: {
+        ...user,
+        selectedBankAccountId: Number(selectedBankAccountId)
+      }
+    });
     setUiState(UiState.Success);
-    mutateUser();
   };
 
   const handleTrashIconClick = (bankAccount: BankingInformationFormModel) => {
@@ -114,12 +121,12 @@ const BankingInformationForm = ({ userId }: Props) => {
         </div>
         <Button
           isIconOnly
-          isDisabled={id === user?.selectedBankAccountId}
+          isDisabled={id === userSelectedBankAccountId}
           variant="light"
-          color={id === user?.selectedBankAccountId ? 'default' : 'danger'}
+          color={id === userSelectedBankAccountId ? 'default' : 'danger'}
           className="min-w-unit-8 w-unit-8 h-unit-8 absolute right-4 cursor-pointer"
           startContent={
-            id === user?.selectedBankAccountId ? (
+            id === userSelectedBankAccountId ? (
               <LockClosedIcon className="h-5 w-5" />
             ) : (
               <TrashIcon
@@ -135,15 +142,11 @@ const BankingInformationForm = ({ userId }: Props) => {
     </Card>
   );
 
-  if (bankAccountsError || userError) return <ErrorAlert />;
-
   const renderCardBody = () => {
-    if (isBankAccountsLoading || isUserLoading) return <Loader />;
-
     if (bankAccounts?.length === 0)
       return (
         <EmptyState
-          icon={<PlusCircleIcon className="h-10 w-10 text-secondary-500" />}
+          icon={<PlusCircleIcon className="text-secondary-500 h-10 w-10" />}
           title="No bank accounts"
           description='You have no bank accounts added. To add one, click on the "Add New +" button'
         />
@@ -173,7 +176,7 @@ const BankingInformationForm = ({ userId }: Props) => {
 
   return (
     <>
-      <Card className="w-full bg-transparent dark:border dark:border-default-100">
+      <Card className="dark:border-default-100 w-full bg-transparent dark:border">
         <CardHeader className="p-4 px-6">Banking Information</CardHeader>
         <Divider />
         <CardBody className="flex flex-col items-end gap-6 p-6">
@@ -191,7 +194,7 @@ const BankingInformationForm = ({ userId }: Props) => {
           )}
           <Button
             isDisabled={
-              selectedBankAccountId === String(user?.selectedBankAccountId)
+              selectedBankAccountId === String(userSelectedBankAccountId)
             }
             isLoading={uiState === UiState.Pending}
             color="secondary"
@@ -204,7 +207,7 @@ const BankingInformationForm = ({ userId }: Props) => {
 
       {bankAccountToDelete && isOpen && (
         <DeleteBankAccountModal
-          userId={userId}
+          user={user}
           isOpen={isOpen}
           onClose={onClose}
           bankAccount={bankAccountToDelete}
