@@ -25,19 +25,19 @@ type Props = {
   onBankAccountSelect: (
     bankingInformation: BankingInformationFormModel
   ) => void;
-  bankingInformation?: Array<BankingInformationFormModel>;
+  bankingInformationEntries?: Array<BankingInformationFormModel>;
 };
 
-const BankingInformationModal = ({
+const BankingInformationDialog = ({
   isOpen,
   onClose,
   onBankAccountSelect,
-  bankingInformation
+  bankingInformationEntries
 }: Props) => {
   const router = useRouter();
 
   const renderBody = () => {
-    if (!bankingInformation?.length) {
+    if (!bankingInformationEntries?.length) {
       return (
         <p className="text-default-500">
           You have no bank accounts. Create one to get started.
@@ -45,10 +45,10 @@ const BankingInformationModal = ({
       );
     }
 
-    return bankingInformation?.map((bankAccount) => (
+    return bankingInformationEntries?.map((bankingInformation) => (
       <div
-        key={bankAccount.id}
-        onClick={() => onBankAccountSelect(bankAccount)}
+        key={bankingInformation.id}
+        onClick={() => onBankAccountSelect(bankingInformation)}
       >
         <Card isHoverable className={'cursor-pointer justify-center'}>
           <CardBody className="flex min-h-[70px] min-w-72 flex-row items-center justify-between gap-4">
@@ -58,11 +58,11 @@ const BankingInformationModal = ({
               </div>
               <div>
                 <div className="text-small truncate pb-0.5 font-bold uppercase">
-                  {bankAccount.name}
+                  {bankingInformation.name}
                 </div>
                 <div className="text-default-500 flex gap-2 text-xs">
-                  <span>{bankAccount.code}</span>
-                  <span>{bankAccount.accountNumber}</span>
+                  <span>{bankingInformation.code}</span>
+                  <span>{bankingInformation.accountNumber}</span>
                 </div>
               </div>
             </div>
@@ -91,4 +91,4 @@ const BankingInformationModal = ({
   );
 };
 
-export default BankingInformationModal;
+export default BankingInformationDialog;

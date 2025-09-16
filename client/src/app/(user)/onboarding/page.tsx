@@ -1,4 +1,4 @@
-import { getBankingInformation, getUser } from '@/api';
+import { getBankingInformationEntries, getUser } from '@/api';
 import { auth } from '@/auth';
 import MultiStepForm from '@/components/multi-step-form';
 
@@ -10,7 +10,8 @@ export default async function OnboardingPage() {
   const userId = Number(session.user.id);
 
   const { data: user } = await getUser(userId);
-  const { data: bankingInformation } = await getBankingInformation(userId);
+  const { data: bankingInformation } =
+    await getBankingInformationEntries(userId);
 
   const currentBankingInformation = bankingInformation.find(
     (info) => info.id === user.selectedBankAccountId

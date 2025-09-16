@@ -1,4 +1,4 @@
-import { getBankingInformation } from '@/api';
+import { getBankingInformationEntries } from '@/api';
 import { auth } from '@/auth';
 import BankingInformationForm from '@/components/profile/banking-information-form';
 
@@ -7,7 +7,7 @@ async function BankingInformationPage() {
 
   if (!session?.user?.id) return null;
 
-  const bankingInformationResp = await getBankingInformation(
+  const bankingInformationResp = await getBankingInformationEntries(
     Number(session.user.id)
   );
 

@@ -20,7 +20,7 @@ import {
 } from '@/lib/types/models/user';
 import { formatDate } from '@/lib/utils/format-date';
 
-import BankingInformationModal from './banking-information-modal';
+import BankingInformationDialog from './banking-information-dialog';
 import InvoiceFormReceiverModal from './invoice-form-receiver-modal';
 import InvoiceServicesTable from './invoice-services-table';
 import SignaturePad from '../signature-pad';
@@ -29,7 +29,7 @@ import CompleteProfile from '../ui/complete-profile';
 type Props = {
   user: UserModel;
   clients: Array<ClientModel>;
-  bankingInformation: Array<BankingInformationFormModel>;
+  bankingInformationEntries: Array<BankingInformationFormModel>;
   invoiceData?: InvoiceModel;
   currency: Currency;
 };
@@ -48,7 +48,7 @@ const InvoiceForm = ({
   currency,
   invoiceData,
   clients,
-  bankingInformation
+  bankingInformationEntries
 }: Props) => {
   const methods = useForm<InvoiceModel>({
     defaultValues: invoiceData || {
@@ -456,10 +456,10 @@ const InvoiceForm = ({
         onClose={handleCloseReceiverModal}
         onReceiverSelect={handleSelectReceiver}
       />
-      <BankingInformationModal
+      <BankingInformationDialog
         isOpen={isBankingInformationModalOpen}
         onClose={() => setIsBankingInformationModalOpen(false)}
-        bankingInformation={bankingInformation}
+        bankingInformationEntries={bankingInformationEntries}
         onBankAccountSelect={handleBankAccountSelect}
       />
     </>

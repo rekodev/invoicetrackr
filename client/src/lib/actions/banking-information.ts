@@ -3,7 +3,11 @@
 import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
 
-import { addBankingInformation, deleteBankingInformation } from '@/api';
+import {
+  addBankingInformation,
+  deleteBankingInformation,
+  updateBankingInformation
+} from '@/api';
 
 import { BANKING_INFORMATION_PAGE, ONBOARDING_PAGE } from '../constants/pages';
 import { BankingInformationFormModel } from '../types/models/user';
@@ -41,6 +45,24 @@ export async function addBankingInformationAction(
   } catch {
     return { ok: false, message: t('general_error') };
   }
+}
+
+export async function updateBankingInformationAction(
+  userId: number,
+  bankingInformation: BankingInformationFormModel
+): Promise<ActionResponseModel> {
+  const response = await updateBankingInformation(userId, bankingInformation);
+
+  if (isResponseError(response)) {
+    return {
+      ok: false,
+      message: response.data.message,
+      validationErrors: mapValidationErrors(response.data.errors)
+    };
+  }
+
+  revalidatePath(BANKING_INFORMATION_PAGE);
+  return { ok: true, message: response.data.message };
 }
 
 export async function deleteBankingInformationAction(

@@ -7,7 +7,6 @@ import {
   ModalFooter,
   ModalHeader
 } from '@heroui/react';
-import { User } from 'next-auth';
 import { useState } from 'react';
 
 import { deleteBankingInformationAction } from '@/lib/actions/banking-information';
@@ -15,28 +14,28 @@ import { UiState } from '@/lib/constants/ui-state';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 type Props = {
-  user: User;
-  bankAccount: BankingInformationFormModel;
+  userId: number;
+  bankingInformation: BankingInformationFormModel;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const DeleteBankAccountModal = ({
-  user,
+const DeleteBankAccountDialog = ({
+  userId,
   isOpen,
   onClose,
-  bankAccount
+  bankingInformation: bankAccount
 }: Props) => {
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
 
   const handleSubmit = async () => {
-    if (!user?.id || !bankAccount?.id) return;
+    if (!bankAccount?.id) return;
 
     setUiState(UiState.Pending);
 
     const response = await deleteBankingInformationAction(
-      Number(user.id),
+      userId,
       bankAccount.id
     );
 
@@ -92,4 +91,4 @@ const DeleteBankAccountModal = ({
   );
 };
 
-export default DeleteBankAccountModal;
+export default DeleteBankAccountDialog;

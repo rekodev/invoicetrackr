@@ -76,10 +76,14 @@ export type GetBankAccountResp = ApiError & {
   bankAccount: BankingInformationFormModel;
 };
 
-export type GetBankingInformationResp = ApiError &
+export type GetBankingInformationEntriesResp = ApiError &
   Array<BankingInformationFormModel>;
 
 export type AddBankingInformationResp = ApiError & {
+  bankingInformation: BankingInformationFormModel;
+};
+
+export type UpdateBankingInformationResp = ApiError & {
   bankingInformation: BankingInformationFormModel;
 };
 
