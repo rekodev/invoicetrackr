@@ -10,22 +10,21 @@ import {
   ModalFooter,
   ModalHeader
 } from '@heroui/react';
+import { User } from 'next-auth';
 import { useState } from 'react';
 
 import { cancelStripeSubscription } from '@/api';
 import { updateSession } from '@/lib/actions';
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetUser from '@/lib/hooks/user/use-get-user';
 
 type Props = {
-  userId: number;
+  user: User;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const CancelSubscriptionModal = ({ userId, isOpen, onClose }: Props) => {
-  const { user, isUserLoading } = useGetUser({ userId });
+const CancelSubscriptionModal = ({ user, isOpen, onClose }: Props) => {
   const [uiState, setUiState] = useState(UiState.Idle);
   const [submissionMessage, setSubmissionMessage] = useState('');
 
@@ -34,7 +33,7 @@ const CancelSubscriptionModal = ({ userId, isOpen, onClose }: Props) => {
 
     setUiState(UiState.Pending);
 
-    const response = await cancelStripeSubscription(userId);
+    const response = await cancelStripeSubscription(Number(user.id));
     setSubmissionMessage(response.data.message);
 
     if ('errors' in response.data) {
@@ -62,7 +61,7 @@ const CancelSubscriptionModal = ({ userId, isOpen, onClose }: Props) => {
             Go Back
           </Button>
           <Button
-            isLoading={uiState === UiState.Pending || isUserLoading}
+            isLoading={uiState === UiState.Pending}
             color="danger"
             onPress={handleSubmit}
           >

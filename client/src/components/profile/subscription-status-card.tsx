@@ -9,6 +9,7 @@ import {
   cn
 } from '@heroui/react';
 import { useRouter } from 'next/navigation';
+import { User } from 'next-auth';
 import { useState } from 'react';
 
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
@@ -16,13 +17,13 @@ import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
 import CancelSubscriptionModal from './cancel-subscription-modal';
 
 type Props = {
-  userId: number;
+  user: User;
   isActive: boolean;
   currency: string;
 };
 
 export default function SubscriptionStatusCard({
-  userId,
+  user,
   isActive,
   currency
 }: Props) {
@@ -42,19 +43,19 @@ export default function SubscriptionStatusCard({
 
   return (
     <>
-      <Card className="border-2 border-default-200 bg-default-100 shadow-sm">
+      <Card className="border-default-200 bg-default-100 border-2 shadow-sm">
         <CardHeader>Subscription Status</CardHeader>
         <CardBody className="gap-6">
           <div>
             <div className="flex items-center gap-2">
               <div
-                className={cn('h-2 w-2 rounded-full bg-success-500', {
+                className={cn('bg-success-500 h-2 w-2 rounded-full', {
                   'bg-danger-500': !isActive
                 })}
               />{' '}
               <p>{isActive ? 'Active' : 'Inactive'}</p>
             </div>
-            <p className="text-sm text-default-500">
+            <p className="text-default-500 text-sm">
               Premium Plan - {currency}4.99/month
             </p>
           </div>
@@ -73,7 +74,7 @@ export default function SubscriptionStatusCard({
       </Card>
 
       <CancelSubscriptionModal
-        userId={userId}
+        user={user}
         isOpen={isCancelSubscriptionModalOpen}
         onClose={() => setIsCancelSubscriptionModalOpen(false)}
       />

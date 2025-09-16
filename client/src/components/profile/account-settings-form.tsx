@@ -13,31 +13,28 @@ import {
   SelectItem
 } from '@heroui/react';
 import { useRouter } from 'next/navigation';
+import { User } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { updateUserAccountSettings } from '@/api';
 import { updateSession } from '@/lib/actions';
+import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetUser from '@/lib/hooks/user/use-get-user';
 import { AccountSettingsFormModel } from '@/lib/types/models/user';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
 import DeleteAccountModal from './delete-account-modal';
 import SubscriptionStatusCard from './subscription-status-card';
-import ErrorAlert from '../ui/error-alert';
-import Loader from '../ui/loader';
 
 type Props = {
-  userId: number;
+  user: User;
   isSubscriptionActive: boolean;
 };
 
 // TODO: Improve form and add validation
 
-const AccountSettingsForm = ({ userId, isSubscriptionActive }: Props) => {
-  const { mutateUser, user, isUserLoading, userError } = useGetUser({ userId });
+const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
   const { refresh } = useRouter();
   const t = useTranslations('profile.account_settings');
   const {
@@ -77,13 +74,14 @@ const AccountSettingsForm = ({ userId, isSubscriptionActive }: Props) => {
     setSubmissionMessage('');
     setUiState(UiState.Pending);
 
-    const response = await updateUserAccountSettings(user.id, {
+    const response = await updateUserAccountSettingsAction({
+      userId: Number(user.id),
       language: data.language,
       currency: data.currency
     });
-    setSubmissionMessage(response.data.message);
+    setSubmissionMessage(response.message);
 
-    if ('errors' in response.data) {
+    if (!response.ok) {
       setUiState(UiState.Failure);
 
       // response.data.errors.forEach((error) => {
@@ -94,7 +92,6 @@ const AccountSettingsForm = ({ userId, isSubscriptionActive }: Props) => {
     }
 
     setUiState(UiState.Success);
-    mutateUser();
     await updateSession({
       newSession: {
         ...user,
@@ -111,89 +108,78 @@ const AccountSettingsForm = ({ userId, isSubscriptionActive }: Props) => {
     reset(user);
   }, [reset, user]);
 
-  const renderCardBodyAndFooter = () => {
-    if (isUserLoading)
-      return (
-        <div className="h-full pb-8">
-          <Loader fullHeight />
+  const renderCardBodyAndFooter = () => (
+    <>
+      <CardBody className="grid grid-cols-1 gap-4 p-6 lg:w-1/2">
+        <Select
+          {...register('language')}
+          label={
+            <div className="flex items-center gap-1">
+              <LanguageIcon className="h-5 w-5" /> {t('language')}
+            </div>
+          }
+          labelPlacement="outside"
+          variant="faded"
+          defaultSelectedKeys={user?.language ? [user.language] : undefined}
+        >
+          {availableLanguages.map((language) => (
+            <SelectItem key={language.code} textValue={language.name}>
+              {language.name}
+            </SelectItem>
+          ))}
+        </Select>
+        <Select
+          {...register('currency')}
+          label={
+            <div className="flex items-center gap-1">
+              <CurrencyDollarIcon className="h-5 w-5" /> {t('currency')}
+            </div>
+          }
+          labelPlacement="outside"
+          variant="faded"
+          defaultSelectedKeys={user?.currency ? [user.currency] : undefined}
+        >
+          {availableCurrencies.map((currency) => (
+            <SelectItem key={currency.code} textValue={currency.name}>
+              {`${currency.name} (${currency.symbol})`}
+            </SelectItem>
+          ))}
+        </Select>
+        <SubscriptionStatusCard
+          user={user}
+          isActive={isSubscriptionActive}
+          currency={getCurrencySymbol(user?.currency)}
+        />
+      </CardBody>
+      <CardFooter className="w-full flex-col justify-between p-6">
+        {submissionMessage && (
+          <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
+            {submissionMessage}
+          </Chip>
+        )}
+        <div className="flex w-full gap-2 self-end md:w-min">
+          <Button
+            className="w-full md:w-min"
+            variant="faded"
+            type="button"
+            color="danger"
+            onPress={() => setIsDeleteAccountModalOpen(true)}
+          >
+            {t('delete_account')}
+          </Button>
+          <Button
+            isDisabled={!isDirty}
+            type="submit"
+            isLoading={uiState === UiState.Pending}
+            color="secondary"
+            className="w-full md:w-min"
+          >
+            {t('save_changes')}
+          </Button>
         </div>
-      );
-
-    return (
-      <>
-        <CardBody className="grid grid-cols-1 gap-4 p-6 lg:w-1/2">
-          <Select
-            {...register('language')}
-            label={
-              <div className="flex items-center gap-1">
-                <LanguageIcon className="h-5 w-5" /> {t('language')}
-              </div>
-            }
-            labelPlacement="outside"
-            variant="faded"
-            defaultSelectedKeys={user?.language ? [user.language] : undefined}
-          >
-            {availableLanguages.map((language) => (
-              <SelectItem key={language.code} textValue={language.name}>
-                {language.name}
-              </SelectItem>
-            ))}
-          </Select>
-          <Select
-            {...register('currency')}
-            label={
-              <div className="flex items-center gap-1">
-                <CurrencyDollarIcon className="h-5 w-5" /> {t('currency')}
-              </div>
-            }
-            labelPlacement="outside"
-            variant="faded"
-            defaultSelectedKeys={user?.currency ? [user.currency] : undefined}
-          >
-            {availableCurrencies.map((currency) => (
-              <SelectItem key={currency.code} textValue={currency.name}>
-                {`${currency.name} (${currency.symbol})`}
-              </SelectItem>
-            ))}
-          </Select>
-          <SubscriptionStatusCard
-            userId={userId}
-            isActive={isSubscriptionActive}
-            currency={getCurrencySymbol(user?.currency)}
-          />
-        </CardBody>
-        <CardFooter className="w-full flex-col justify-between p-6">
-          {submissionMessage && (
-            <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-              {submissionMessage}
-            </Chip>
-          )}
-          <div className="flex w-full gap-2 self-end md:w-min">
-            <Button
-              className="w-full md:w-min"
-              variant="faded"
-              type="button"
-              color="danger"
-              onPress={() => setIsDeleteAccountModalOpen(true)}
-            >
-              {t('delete_account')}
-            </Button>
-            <Button
-              isDisabled={!isDirty}
-              type="submit"
-              isLoading={uiState === UiState.Pending}
-              color="secondary"
-              className="w-full md:w-min"
-            >
-              {t('save_changes')}
-            </Button>
-          </div>
-        </CardFooter>
-      </>
-    );
-  };
-
-  if (userError) return <ErrorAlert />;
+      </CardFooter>
+    </>
+  );
 
   return (
     <>
@@ -208,7 +194,7 @@ const AccountSettingsForm = ({ userId, isSubscriptionActive }: Props) => {
         {renderCardBodyAndFooter()}
       </Card>
       <DeleteAccountModal
-        userId={userId}
+        userId={Number(user.id)}
         isOpen={isDeleteAccountModalOpen}
         onClose={() => setIsDeleteAccountModalOpen(false)}
       />

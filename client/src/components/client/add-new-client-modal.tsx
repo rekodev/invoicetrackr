@@ -15,7 +15,6 @@ import { ChangeEvent, useState } from 'react';
 import { addClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetUser from '@/lib/hooks/user/use-get-user';
 import { ClientFormData, ClientModel } from '@/lib/types/models/client';
 import { capitalize } from '@/lib/utils';
 import { mapValidationErrors } from '@/lib/utils/validation';
@@ -36,8 +35,6 @@ type Props = {
 };
 
 const AddNewClientModal = ({ userId, isOpen, onClose }: Props) => {
-  const { user } = useGetUser({ userId });
-
   const [clientData, setClientData] =
     useState<ClientFormData>(INITIAL_CLIENT_DATA);
   const [uiState, setUiState] = useState(UiState.Idle);
@@ -61,11 +58,12 @@ const AddNewClientModal = ({ userId, isOpen, onClose }: Props) => {
   };
 
   const handleSubmit = async () => {
-    if (!user?.id) return;
-
     setUiState(UiState.Pending);
 
-    const result = await addClientAction({ userId: user.id, clientData });
+    const result = await addClientAction({
+      userId,
+      clientData
+    });
     setSubmissionMessage(result.message);
 
     if ('errors' in result) {
