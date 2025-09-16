@@ -5,6 +5,7 @@ import axios, {
   AxiosResponse,
   Method
 } from 'axios';
+import { getTranslations } from 'next-intl/server';
 
 export type ApiResponse<T = any> = {
   data: T;
@@ -77,16 +78,14 @@ class ApiInstance {
 
       return response;
     } catch (error: any) {
-      if (error.response) {
-        return error.response;
-      }
+      const t = await getTranslations();
 
       return {
         ...error,
         data: {
           error,
           errors: [],
-          message: 'Service unavailable. Try again later'
+          message: t('general_error')
         }
       };
     }

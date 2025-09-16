@@ -7,7 +7,6 @@ import {
   CardBody,
   CardHeader,
   Chip,
-  Skeleton,
   Tab,
   Tabs
 } from '@heroui/react';
@@ -15,18 +14,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRef, useState } from 'react';
 
-import { updateUserProfilePicture } from '@/api';
+import { updateUserProfilePictureAction } from '@/lib/actions/user';
 import { profileMenuTabs } from '@/lib/constants/profile';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetUser from '@/lib/hooks/user/use-get-user';
+import { UserModel } from '@/lib/types/models/user';
 
 type Props = {
-  userId: number;
+  user: UserModel;
 };
 
-const UserCard = ({ userId }: Props) => {
+const UserCard = ({ user }: Props) => {
   const pathname = usePathname();
-  const { user, isUserLoading, mutateUser } = useGetUser({ userId });
 
   const [uploadedImage, setUploadedImage] = useState<File>();
   const [uiState, setUiState] = useState(UiState.Idle);
@@ -45,9 +43,12 @@ const UserCard = ({ userId }: Props) => {
     formData.append('profilePicture', uploadedImage);
 
     setUiState(UiState.Pending);
-    const response = await updateUserProfilePicture(userId, formData);
+    const response = await updateUserProfilePictureAction({
+      userId: Number(user.id),
+      formData
+    });
 
-    if ('errors' in response) {
+    if (!response.ok) {
       // TODO: Add toast notification
       setUiState(UiState.Failure);
 
@@ -56,18 +57,17 @@ const UserCard = ({ userId }: Props) => {
 
     setUploadedImage(undefined);
     setUiState(UiState.Success);
-    mutateUser();
   };
 
   const renderUserDetails = () => {
-    if (isUserLoading)
-      return (
-        <>
-          <Skeleton className="mb-2 h-14 w-14 rounded-full" />
-          <Skeleton className="mt-2 h-3 w-2/5 rounded-lg" />
-          <Skeleton className="mb-1 mt-2 h-3 w-3/5 rounded-lg" />
-        </>
-      );
+    // if (isUserLoading)
+    //   return (
+    //     <>
+    //       <Skeleton className="mb-2 h-14 w-14 rounded-full" />
+    //       <Skeleton className="mt-2 h-3 w-2/5 rounded-lg" />
+    //       <Skeleton className="mb-1 mt-2 h-3 w-3/5 rounded-lg" />
+    //     </>
+    //   );
 
     return (
       <>
@@ -76,7 +76,7 @@ const UserCard = ({ userId }: Props) => {
             showFallback
             onClick={initiateImageUpload}
             fallback={
-              <CameraIcon className="h-6 w-6 animate-pulse text-default-500" />
+              <CameraIcon className="text-default-500 h-6 w-6 animate-pulse" />
             }
             className="absolute left-0 top-0 z-10 h-14 w-14 cursor-pointer opacity-0 hover:opacity-100"
           />
@@ -94,7 +94,7 @@ const UserCard = ({ userId }: Props) => {
               variant="faded"
               onClose={handleImageUpload}
               endContent={
-                <CheckCircleIcon className="h-5 w-5 text-success-500" />
+                <CheckCircleIcon className="text-success-500 h-5 w-5" />
               }
               className="absolute -right-10 bottom-1 z-10"
             >
@@ -121,7 +121,7 @@ const UserCard = ({ userId }: Props) => {
   return (
     <Card
       as="aside"
-      className="flex max-h-80 min-h-80 min-w-56 flex-col justify-between bg-transparent pt-3 dark:border dark:border-default-100 sm:max-w-56"
+      className="dark:border-default-100 flex max-h-80 min-h-80 min-w-56 flex-col justify-between bg-transparent pt-3 sm:max-w-56 dark:border"
     >
       <CardHeader className="flex-col">{renderUserDetails()}</CardHeader>
       <CardBody className="flex justify-center p-0 px-2">

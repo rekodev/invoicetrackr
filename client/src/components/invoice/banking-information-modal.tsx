@@ -17,29 +17,27 @@ import {
 import { useRouter } from 'next/navigation';
 
 import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
-import useGetBankAccounts from '@/lib/hooks/banking-information/use-get-bank-accounts';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 type Props = {
-  userId: number;
   isOpen: boolean;
   onClose: () => void;
   onBankAccountSelect: (
     bankingInformation: BankingInformationFormModel
   ) => void;
+  bankingInformation?: Array<BankingInformationFormModel>;
 };
 
 const BankingInformationModal = ({
-  userId,
   isOpen,
   onClose,
-  onBankAccountSelect
+  onBankAccountSelect,
+  bankingInformation
 }: Props) => {
   const router = useRouter();
-  const { bankAccounts } = useGetBankAccounts({ userId });
 
   const renderBody = () => {
-    if (!bankAccounts?.length) {
+    if (!bankingInformation?.length) {
       return (
         <p className="text-default-500">
           You have no bank accounts. Create one to get started.
@@ -47,7 +45,7 @@ const BankingInformationModal = ({
       );
     }
 
-    return bankAccounts?.map((bankAccount) => (
+    return bankingInformation?.map((bankAccount) => (
       <div
         key={bankAccount.id}
         onClick={() => onBankAccountSelect(bankAccount)}
@@ -55,14 +53,14 @@ const BankingInformationModal = ({
         <Card isHoverable className={'cursor-pointer justify-center'}>
           <CardBody className="flex min-h-[70px] min-w-72 flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="item-center flex rounded-medium border border-default-200 p-2">
+              <div className="item-center rounded-medium border-default-200 flex border p-2">
                 <BuildingLibraryIcon className="h-5 w-5" />
               </div>
               <div>
-                <div className="truncate pb-0.5 text-small font-bold uppercase">
+                <div className="text-small truncate pb-0.5 font-bold uppercase">
                   {bankAccount.name}
                 </div>
-                <div className="flex gap-2 text-xs text-default-500">
+                <div className="text-default-500 flex gap-2 text-xs">
                   <span>{bankAccount.code}</span>
                   <span>{bankAccount.accountNumber}</span>
                 </div>

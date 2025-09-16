@@ -211,7 +211,6 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
         <InvoiceModal
           language={language}
           currency={currency}
-          userId={userId}
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           invoiceData={currentInvoice}

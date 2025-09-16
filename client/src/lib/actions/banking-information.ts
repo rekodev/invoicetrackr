@@ -3,11 +3,12 @@
 import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
 
-import { addBankingInformation } from '@/api';
+import { addBankingInformation, deleteBankingInformation } from '@/api';
 
 import { BANKING_INFORMATION_PAGE, ONBOARDING_PAGE } from '../constants/pages';
 import { BankingInformationFormModel } from '../types/models/user';
 import { ActionResponseModel } from '../types/response';
+import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 
 export async function addBankingInformationAction(
@@ -25,7 +26,7 @@ export async function addBankingInformationAction(
       hasSelectedBankAccount
     );
 
-    if ('errors' in response.data) {
+    if (isResponseError(response)) {
       return {
         ok: false,
         message: response.data.message,
@@ -36,6 +37,30 @@ export async function addBankingInformationAction(
     revalidatePath(
       isUserOnboarding ? ONBOARDING_PAGE : BANKING_INFORMATION_PAGE
     );
+    return { ok: true };
+  } catch {
+    return { ok: false, message: t('general_error') };
+  }
+}
+
+export async function deleteBankingInformationAction(
+  userId: number,
+  bankAccountId: number
+): Promise<ActionResponseModel> {
+  const t = await getTranslations();
+
+  try {
+    const response = await deleteBankingInformation(userId, bankAccountId);
+
+    if (isResponseError(response)) {
+      return {
+        ok: false,
+        message: response.data.message,
+        validationErrors: mapValidationErrors(response.data.errors)
+      };
+    }
+
+    revalidatePath(BANKING_INFORMATION_PAGE);
     return { ok: true };
   } catch {
     return { ok: false, message: t('general_error') };

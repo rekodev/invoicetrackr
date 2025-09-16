@@ -12,15 +12,12 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { changeUserPassword } from '@/api';
+import { changeUserPasswordAction } from '@/lib/actions/user';
 import { UiState } from '@/lib/constants/ui-state';
-import useGetUser from '@/lib/hooks/user/use-get-user';
 import { ChangePasswordFormModel } from '@/lib/types/models/user';
 
 import PasswordInput from '../password-input';
-import ErrorAlert from '../ui/error-alert';
 import GeneralFormError from '../ui/general-form-error';
-import Loader from '../ui/loader';
 
 type Props = {
   userId: number;
@@ -28,7 +25,6 @@ type Props = {
 };
 
 export default function ChangePasswordForm({ userId, language }: Props) {
-  const { mutateUser, user, isUserLoading, userError } = useGetUser({ userId });
   const t = useTranslations('profile.change_password');
   const {
     register,
@@ -43,43 +39,35 @@ export default function ChangePasswordForm({ userId, language }: Props) {
   const [uiState, setUiState] = useState(UiState.Idle);
 
   const onSubmit: SubmitHandler<ChangePasswordFormModel> = async (data) => {
-    if (!user?.id) return;
-
     setSubmissionMessage('');
     setUiState(UiState.Pending);
 
-    const response = await changeUserPassword({
-      userId: user.id,
+    const response = await changeUserPasswordAction({
+      userId,
       language,
       password: data.password,
       newPassword: data.newPassword,
       confirmedNewPassword: data.confirmedNewPassword
     });
-    setSubmissionMessage(response.data.message);
+    setSubmissionMessage(response.message);
 
-    if ('errors' in response.data) {
+    if (!response.ok) {
       setUiState(UiState.Failure);
 
-      response.data.errors.forEach((error) => {
-        setError(error.key, { message: error.value });
-      });
+      if (response.validationErrors) {
+        Object.entries(response.validationErrors).forEach(([key, value]) => {
+          setError(key as keyof ChangePasswordFormModel, { message: value });
+        });
+      }
 
       return;
     }
 
     setUiState(UiState.Success);
-    mutateUser();
     reset();
   };
 
   const renderCardBodyAndFooter = () => {
-    if (isUserLoading)
-      return (
-        <div className="h-full pb-8">
-          <Loader fullHeight />
-        </div>
-      );
-
     const registeredPassword = { ...register('password') };
     const registeredNewPassword = { ...register('newPassword') };
     const registeredConfirmedNewPassword = {
@@ -103,7 +91,7 @@ export default function ChangePasswordForm({ userId, language }: Props) {
             isInvalid={!!errors.newPassword}
             errorMessage={errors.newPassword?.message}
           />
-          <small className="col-span-2 mt-[-8] text-default-500">
+          <small className="text-default-500 col-span-2 mt-[-8]">
             {t('password_requirements')}
           </small>
           <PasswordInput
@@ -136,14 +124,12 @@ export default function ChangePasswordForm({ userId, language }: Props) {
     );
   };
 
-  if (userError) return <ErrorAlert />;
-
   return (
     <Card
       as="form"
       aria-label={t('aria_label')}
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full bg-transparent dark:border dark:border-default-100"
+      className="dark:border-default-100 w-full bg-transparent dark:border"
     >
       <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
       <Divider />
