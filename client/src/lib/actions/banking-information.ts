@@ -8,6 +8,7 @@ import { addBankingInformation, deleteBankingInformation } from '@/api';
 import { BANKING_INFORMATION_PAGE, ONBOARDING_PAGE } from '../constants/pages';
 import { BankingInformationFormModel } from '../types/models/user';
 import { ActionResponseModel } from '../types/response';
+import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 
 export async function addBankingInformationAction(
@@ -25,7 +26,7 @@ export async function addBankingInformationAction(
       hasSelectedBankAccount
     );
 
-    if ('errors' in response.data) {
+    if (isResponseError(response)) {
       return {
         ok: false,
         message: response.data.message,
@@ -51,7 +52,7 @@ export async function deleteBankingInformationAction(
   try {
     const response = await deleteBankingInformation(userId, bankAccountId);
 
-    if ('errors' in response.data) {
+    if (isResponseError(response)) {
       return {
         ok: false,
         message: response.data.message,
