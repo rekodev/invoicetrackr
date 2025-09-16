@@ -24,7 +24,7 @@ export async function updateUserAction({
 }: {
   user: UserModel;
   signature: string | File | undefined;
-}): Promise<ActionResponseModel | Error> {
+}): Promise<ActionResponseModel> {
   const response = await updateUser(user.id!, {
     ...user,
     signature,

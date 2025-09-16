@@ -22,32 +22,28 @@ import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 import { useEffect, useState } from 'react';
 
+import { updateUserSelectedBankAccount } from '@/api';
 import { updateSession } from '@/lib/actions';
-import { updateUserSelectedBankAccountAction } from '@/lib/actions/banking-information';
 import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
 import { UiState } from '@/lib/constants/ui-state';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { isResponseError } from '@/lib/utils/error';
 
 import DeleteBankAccountModal from './delete-bank-account-modal';
 import EmptyState from '../ui/empty-state';
 
 type Props = {
   user: User;
-  userSelectedBankAccountId?: number;
   bankAccounts: Array<BankingInformationFormModel> | undefined;
 };
 
-const BankingInformationForm = ({
-  user,
-  bankAccounts,
-  userSelectedBankAccountId
-}: Props) => {
+const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   const router = useRouter();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const [selectedBankAccountId, setSelectedBankAccountId] = useState(
-    String(userSelectedBankAccountId)
+    String(user.selectedBankAccountId)
   );
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [uiState, setUiState] = useState(UiState.Idle);
@@ -56,8 +52,8 @@ const BankingInformationForm = ({
     useState<BankingInformationFormModel>();
 
   useEffect(() => {
-    setSelectedBankAccountId(String(userSelectedBankAccountId));
-  }, [userSelectedBankAccountId]);
+    setSelectedBankAccountId(String(user.selectedBankAccountId));
+  }, [user.selectedBankAccountId]);
 
   const handleAddNewBankAccount = () => {
     router.push(ADD_NEW_BANK_ACCOUNT_PAGE);
@@ -67,26 +63,27 @@ const BankingInformationForm = ({
     if (!user?.id || !selectedBankAccountId) return;
 
     setUiState(UiState.Pending);
-    const response = await updateUserSelectedBankAccountAction(
+    const response = await updateUserSelectedBankAccount(
       Number(user.id),
       Number(selectedBankAccountId)
     );
 
-    if (response.message) setSubmissionMessage(response.message);
+    if (response.data.message) setSubmissionMessage(response.data.message);
 
-    if (!response.ok) {
+    if (isResponseError(response)) {
       setUiState(UiState.Failure);
 
       return;
     }
 
-    updateSession({
+    await updateSession({
       newSession: {
         ...user,
         selectedBankAccountId: Number(selectedBankAccountId)
       }
     });
     setUiState(UiState.Success);
+    router.refresh();
   };
 
   const handleTrashIconClick = (bankAccount: BankingInformationFormModel) => {
@@ -121,12 +118,12 @@ const BankingInformationForm = ({
         </div>
         <Button
           isIconOnly
-          isDisabled={id === userSelectedBankAccountId}
+          isDisabled={id === user.selectedBankAccountId}
           variant="light"
-          color={id === userSelectedBankAccountId ? 'default' : 'danger'}
+          color={id === user.selectedBankAccountId ? 'default' : 'danger'}
           className="min-w-unit-8 w-unit-8 h-unit-8 absolute right-4 cursor-pointer"
           startContent={
-            id === userSelectedBankAccountId ? (
+            id === user.selectedBankAccountId ? (
               <LockClosedIcon className="h-5 w-5" />
             ) : (
               <TrashIcon
@@ -183,25 +180,25 @@ const BankingInformationForm = ({
           {renderAddNewButton()}
           {renderCardBody()}
         </CardBody>
-        <CardFooter className="justify-end p-6">
+        <CardFooter className="flex w-full items-center justify-between p-6">
           {submissionMessage && (
-            <Chip
-              color={uiState === UiState.Failure ? 'danger' : 'success'}
-              className="mb-4"
-            >
+            <Chip color={uiState === UiState.Failure ? 'danger' : 'success'}>
               {submissionMessage}
             </Chip>
           )}
-          <Button
-            isDisabled={
-              selectedBankAccountId === String(userSelectedBankAccountId)
-            }
-            isLoading={uiState === UiState.Pending}
-            color="secondary"
-            onPress={handleSave}
-          >
-            Save
-          </Button>
+          <div className="flex w-full flex-col items-center">
+            <Button
+              isDisabled={
+                selectedBankAccountId === String(user.selectedBankAccountId)
+              }
+              isLoading={uiState === UiState.Pending}
+              color="secondary"
+              onPress={handleSave}
+              className="self-end"
+            >
+              Save
+            </Button>
+          </div>
         </CardFooter>
       </Card>
 

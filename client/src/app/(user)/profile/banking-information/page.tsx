@@ -14,7 +14,6 @@ async function BankingInformationPage() {
   return (
     <BankingInformationForm
       user={session.user}
-      userSelectedBankAccountId={session.user.selectedBankAccountId}
       bankAccounts={bankingInformationResp.data}
     />
   );
