@@ -1,19 +1,27 @@
+'use client';
+
+import { Card, CardBody, CardHeader } from '@heroui/react';
+
 const shimmer =
   'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
 
 export const DashboardCardSkeleton = () => {
   return (
-    <div
-      className={`${shimmer} relative flex flex-col gap-2 overflow-hidden rounded-xl bg-default-100 p-2 shadow-sm`}
+    <Card
+      className={`${shimmer} border-default-200 bg-default-100 relative flex flex-col gap-4 overflow-hidden rounded-xl border p-2 shadow-sm`}
     >
-      <div className="my-2 flex gap-1">
-        <div className="h-5 w-5 rounded-md bg-default-600" />
-        <div className="h-5 w-16 rounded-md bg-default-600 text-sm font-medium" />
-      </div>
-      <div className="flex items-center justify-center truncate rounded-xl bg-default-200 px-4 py-6">
-        <div className="h-7 w-20 rounded-md bg-default-600" />
-      </div>
-    </div>
+      <CardHeader className="px-1">
+        <div className="flex gap-1">
+          <div className="bg-default-500 h-5 w-5 rounded-md" />
+          <div className="bg-default-500 h-5 w-16 rounded-md text-sm font-medium" />
+        </div>
+      </CardHeader>
+      <CardBody className="p-1">
+        <div className="bg-default-200 flex items-center justify-center truncate rounded-xl px-4 py-6">
+          <div className="bg-default-500 h-7 w-20 rounded-md" />
+        </div>
+      </CardBody>
+    </Card>
   );
 };
 
@@ -31,7 +39,7 @@ export const DashboardCardsSkeleton = () => {
 export const RevenueChartSkeleton = () => {
   return (
     <div className="flex h-[110rem] w-full flex-col gap-3 overflow-hidden">
-      <div className="mb-4 h-7 w-44 rounded-md bg-gray-100" />
+      <div className="bg-default-500 mb-4 h-7 w-44 rounded-md" />
       <div
         className={`relative ${shimmer} overflow-hidden rounded-xl bg-transparent p-4`}
       >
@@ -43,12 +51,12 @@ export const RevenueChartSkeleton = () => {
 
 export function InvoiceSkeleton() {
   return (
-    <div className="flex min-h-[70px] w-full min-w-72 max-w-md flex-row items-center justify-between rounded-xl bg-default-100 px-3 py-4">
+    <div className="bg-default-100 flex min-h-[70px] w-full min-w-72 max-w-md flex-row items-center justify-between rounded-xl px-3 py-4">
       <div className="min-w-0">
-        <div className="h-4 w-24 rounded-md bg-gray-200" />
-        <div className="mt-2 h-3 w-36 rounded-md bg-default-300" />
+        <div className="bg-default-500 h-4 w-24 rounded-md" />
+        <div className="bg-default-300 mt-2 h-3 w-36 rounded-md" />
       </div>
-      <div className="ml-4 mt-2 h-4 w-16 rounded-md bg-gray-200" />
+      <div className="bg-default-500 ml-4 mt-2 h-4 w-16 rounded-md" />
     </div>
   );
 }
@@ -56,7 +64,7 @@ export function InvoiceSkeleton() {
 export function LatestInvoicesSkeleton() {
   return (
     <div className="flex w-full min-w-72 max-w-md flex-col">
-      <div className="mb-7 h-7 w-40 rounded-md bg-gray-200" />
+      <div className="bg-default-500 mb-7 h-7 w-40 rounded-md" />
       <div
         className={`relative ${shimmer} flex flex-col justify-between overflow-hidden rounded-xl`}
       >

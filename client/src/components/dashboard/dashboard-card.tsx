@@ -1,4 +1,7 @@
-import { ReactNode } from "react";
+'use client';
+
+import { Card, CardBody, CardHeader } from '@heroui/react';
+import { ReactNode } from 'react';
 
 type Props = {
   title: ReactNode;
@@ -7,12 +10,16 @@ type Props = {
 
 const DashboardCard = ({ title, text }: Props) => {
   return (
-    <div className="shadow-sm flex flex-col gap-2 bg-gray-100 dark:bg-default-100 p-2 rounded-xl">
-      <h4 className="my-1">{title}</h4>
-      <div className="bg-default-200 dark:bg-default-200 flex items-center justify-center p-6 rounded-xl text-2xl font-medium">
-        {text}
-      </div>
-    </div>
+    <Card className="border-default-200 border">
+      <CardHeader>
+        <h4 className="my-1">{title}</h4>
+      </CardHeader>
+      <CardBody>
+        <div className="bg-default-200 dark:bg-default-200 flex items-center justify-center rounded-xl p-6 text-2xl font-medium">
+          {text}
+        </div>
+      </CardBody>
+    </Card>
   );
 };
 
