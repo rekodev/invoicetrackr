@@ -17,7 +17,7 @@ import {
   DeleteInvoiceResp,
   DeleteUserAccountResp,
   GetBankAccountResp,
-  GetBankingInformationResp,
+  GetBankingInformationEntriesResp,
   GetClientsResp,
   GetInvoiceResp,
   GetInvoicesResp,
@@ -28,6 +28,7 @@ import {
   GetUserResetPasswordTokenResp,
   RegisterUserResponse,
   ResetPasswordResp,
+  UpdateBankingInformationResp,
   UpdateClientResp,
   UpdateInvoiceResp,
   UpdateUserAccountSettingsResp,
@@ -172,9 +173,9 @@ export const getBankAccount = async (
 ): Promise<AxiosResponse<GetBankAccountResp>> =>
   await api.get(`/api/${userId}/banking-information/${bankAccountId}`);
 
-export const getBankingInformation = async (
+export const getBankingInformationEntries = async (
   userId: number
-): Promise<AxiosResponse<GetBankingInformationResp>> =>
+): Promise<AxiosResponse<GetBankingInformationEntriesResp>> =>
   await api.get(`/api/${userId}/banking-information`);
 
 export const addBankingInformation = async (
@@ -185,6 +186,14 @@ export const addBankingInformation = async (
   await api.post(`/api/${userId}/banking-information`, {
     ...bankingInformation,
     hasSelectedBankAccount
+  });
+
+export const updateBankingInformation = async (
+  userId: number,
+  bankingInformation: BankingInformationFormModel
+): Promise<AxiosResponse<UpdateBankingInformationResp>> =>
+  await api.put(`/api/${userId}/banking-information/${bankingInformation.id}`, {
+    ...bankingInformation
   });
 
 export const deleteBankingInformation = async (

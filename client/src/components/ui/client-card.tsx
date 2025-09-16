@@ -28,7 +28,7 @@ const ClientCard = ({
     <div onClick={onClick}>
       <Card
         isHoverable={!!onClick}
-        className={cn('justify-center', {
+        className={cn('border-default-200 justify-center border', {
           'cursor-pointer': !!onClick
         })}
       >

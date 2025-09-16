@@ -1,4 +1,4 @@
-import { getBankingInformation, getClients, getUser } from '@/api';
+import { getBankingInformationEntries, getClients, getUser } from '@/api';
 import { auth } from '@/auth';
 import InvoiceForm from '@/components/invoice/invoice-form';
 
@@ -10,16 +10,16 @@ const AddNewInvoicePage = async () => {
   const numericUserId = Number(session.user.id);
 
   const { data: user } = await getUser(numericUserId);
-  const [clientsResp, bankingInformationResp] = await Promise.all([
+  const [clientsResp, bankingInformationEntriesResp] = await Promise.all([
     getClients(numericUserId),
-    getBankingInformation(numericUserId)
+    getBankingInformationEntries(numericUserId)
   ]);
 
   return (
     <section className="w-full">
       <InvoiceForm
         user={user}
-        bankingInformation={bankingInformationResp.data}
+        bankingInformationEntries={bankingInformationEntriesResp.data}
         currency={session.user.currency}
         clients={clientsResp.data.clients}
       />

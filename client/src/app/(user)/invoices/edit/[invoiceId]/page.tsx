@@ -1,4 +1,9 @@
-import { getBankingInformation, getClients, getInvoice, getUser } from '@/api';
+import {
+  getBankingInformationEntries,
+  getClients,
+  getInvoice,
+  getUser
+} from '@/api';
 import { auth } from '@/auth';
 import InvoiceForm from '@/components/invoice/invoice-form';
 
@@ -15,9 +20,9 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
   const response = await getInvoice(numericUserId, Number(invoiceId));
   const { data: user } = await getUser(numericUserId);
 
-  const [clientsResp, bankingInformationResp] = await Promise.all([
+  const [clientsResp, bankingInformationEntriesResp] = await Promise.all([
     getClients(numericUserId),
-    getBankingInformation(numericUserId)
+    getBankingInformationEntries(numericUserId)
   ]);
 
   return (
@@ -27,7 +32,7 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
         clients={clientsResp.data.clients}
         currency={session.user.currency}
         invoiceData={response.data.invoice}
-        bankingInformation={bankingInformationResp.data}
+        bankingInformationEntries={bankingInformationEntriesResp.data}
       />
     </section>
   );

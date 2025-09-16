@@ -56,7 +56,7 @@ const InvoicePartyCard = ({
 
   return (
     <div className="w-full">
-      <Card className="relative p-2">
+      <Card className="border-default-200 relative border p-2">
         <CardHeader className="max-w-[80%] flex-col items-start pb-0">
           {renderActions?.(partyData)}
           {insideForm && (

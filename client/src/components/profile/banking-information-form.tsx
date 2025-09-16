@@ -2,6 +2,7 @@
 
 import {
   LockClosedIcon,
+  PencilSquareIcon,
   PlusIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
@@ -29,7 +30,8 @@ import { UiState } from '@/lib/constants/ui-state';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 import { isResponseError } from '@/lib/utils/error';
 
-import DeleteBankAccountModal from './delete-bank-account-modal';
+import DeleteBankAccountDialog from './delete-bank-account-dialog';
+import EditBankingInformationDialog from './edit-banking-information-dialog';
 import EmptyState from '../ui/empty-state';
 
 type Props = {
@@ -41,6 +43,11 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   const router = useRouter();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: isEditOpen,
+    onClose: onEditClose,
+    onOpen: onEditOpen
+  } = useDisclosure();
 
   const [selectedBankAccountId, setSelectedBankAccountId] = useState(
     String(user.selectedBankAccountId)
@@ -48,7 +55,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [uiState, setUiState] = useState(UiState.Idle);
 
-  const [bankAccountToDelete, setBankAccountToDelete] =
+  const [currentBankingInformation, setCurrentBankingInformation] =
     useState<BankingInformationFormModel>();
 
   useEffect(() => {
@@ -86,8 +93,13 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     router.refresh();
   };
 
+  const handleEdit = (bankAccount: BankingInformationFormModel) => {
+    setCurrentBankingInformation(bankAccount);
+    onEditOpen();
+  };
+
   const handleTrashIconClick = (bankAccount: BankingInformationFormModel) => {
-    setBankAccountToDelete(bankAccount);
+    setCurrentBankingInformation(bankAccount);
     onOpen();
   };
 
@@ -116,25 +128,34 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
           <p className="text-tiny font-bold uppercase">{code}</p>
           <small className="text-default-500">{accountNumber}</small>
         </div>
-        <Button
-          isIconOnly
-          isDisabled={id === user.selectedBankAccountId}
-          variant="light"
-          color={id === user.selectedBankAccountId ? 'default' : 'danger'}
-          className="min-w-unit-8 w-unit-8 h-unit-8 absolute right-4 cursor-pointer"
-          startContent={
-            id === user.selectedBankAccountId ? (
-              <LockClosedIcon className="h-5 w-5" />
-            ) : (
-              <TrashIcon
-                onClick={() =>
-                  handleTrashIconClick({ id, name, code, accountNumber })
-                }
-                className="h-5 w-5"
-              />
-            )
-          }
-        />
+        <div className="absolute right-4 flex gap-0.5">
+          <Button
+            isIconOnly
+            variant="light"
+            color="default"
+            startContent={<PencilSquareIcon className="h-5 w-5" />}
+            onPress={() => handleEdit({ id, name, code, accountNumber })}
+          />
+          <Button
+            isIconOnly
+            isDisabled={id === user.selectedBankAccountId}
+            variant="light"
+            color={id === user.selectedBankAccountId ? 'default' : 'danger'}
+            className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
+            onPress={() => {
+              if (id === user.selectedBankAccountId) return;
+
+              handleTrashIconClick({ id, name, code, accountNumber });
+            }}
+            startContent={
+              id === user.selectedBankAccountId ? (
+                <LockClosedIcon className="h-5 w-5" />
+              ) : (
+                <TrashIcon className="h-5 w-5" />
+              )
+            }
+          />
+        </div>
       </CardBody>
     </Card>
   );
@@ -202,12 +223,20 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
         </CardFooter>
       </Card>
 
-      {bankAccountToDelete && isOpen && (
-        <DeleteBankAccountModal
-          user={user}
+      {currentBankingInformation && isOpen && (
+        <DeleteBankAccountDialog
+          userId={Number(user.id)}
           isOpen={isOpen}
           onClose={onClose}
-          bankAccount={bankAccountToDelete}
+          bankingInformation={currentBankingInformation}
+        />
+      )}
+      {currentBankingInformation && isEditOpen && (
+        <EditBankingInformationDialog
+          userId={Number(user.id)}
+          isOpen={isEditOpen}
+          onClose={onEditClose}
+          bankingInformation={currentBankingInformation}
         />
       )}
     </>

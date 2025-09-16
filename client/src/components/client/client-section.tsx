@@ -3,6 +3,7 @@
 import {
   EllipsisVerticalIcon,
   PencilIcon,
+  PencilSquareIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
 import {
@@ -99,25 +100,23 @@ const ClientSection = ({ userId, clients }: Props) => {
   const renderClientCardActions = (clientData: ClientModel) => (
     <>
       {renderMobileClientCardActions(clientData)}
-      <div className="absolute right-2 top-2 z-10 hidden gap-1.5 sm:flex">
+      <div className="absolute right-2 top-2 z-10 hidden gap-0.5 sm:flex">
         <Button
           isIconOnly
           className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
-          color="warning"
-          variant="bordered"
+          color="default"
+          variant="light"
           onPress={() => handleEditClient(clientData)}
-        >
-          <PencilIcon className="h-4 w-4" />
-        </Button>
+          startContent={<PencilSquareIcon className="h-5 w-5" />}
+        />
         <Button
           isIconOnly
-          variant="bordered"
+          variant="light"
           color="danger"
           className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
           onPress={() => handleOpenDeleteClientModal(clientData)}
-        >
-          <TrashIcon className="h-4 w-4" />
-        </Button>
+          startContent={<TrashIcon className="h-5 w-5" />}
+        />
       </div>
     </>
   );
