@@ -463,6 +463,20 @@ export const updateInvoiceInDb = async (
   return updatedInvoice;
 };
 
+export async function updateInvoiceStatusInDb(
+  userId: number,
+  id: number,
+  status: 'paid' | 'pending' | 'canceled'
+) {
+  const invoices = await db
+    .update(invoicesTable)
+    .set({ status })
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .returning({ id: invoicesTable.id });
+
+  return invoices.at(0);
+}
+
 export const deleteInvoiceFromDb = async (
   userId: number,
   invoiceId: number

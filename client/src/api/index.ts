@@ -31,6 +31,7 @@ import {
   UpdateBankingInformationResp,
   UpdateClientResp,
   UpdateInvoiceResp,
+  UpdateInvoiceStatusResp,
   UpdateUserAccountSettingsResp,
   UpdateUserResp
 } from '@/lib/types/response';
@@ -48,6 +49,7 @@ export const registerUser = async ({
 }): Promise<AxiosResponse<RegisterUserResponse>> =>
   await api.post('/api/users', { email, password, confirmedPassword });
 
+// Invoices
 export const getInvoice = async (
   userId: number,
   invoiceId: number
@@ -111,6 +113,17 @@ export const updateInvoice = async (
     }
   );
 };
+
+export const updateInvoiceStatus = async ({
+  userId,
+  invoiceId,
+  newStatus
+}: {
+  userId: number;
+  invoiceId: number;
+  newStatus: 'paid' | 'pending' | 'canceled';
+}): Promise<AxiosResponse<UpdateInvoiceStatusResp>> =>
+  api.put(`/api/${userId}/invoices/${invoiceId}/status`, { status: newStatus });
 
 export const deleteInvoice = async (
   userId: number,
