@@ -57,7 +57,11 @@ const InvoiceTableCell = ({
   const handleViewIconClick = () => onView(invoice);
   const handleEditInvoiceClick = () => onEdit(invoice);
   const handleDeleteInvoiceClick = () => onDelete(invoice);
-  const handleChangeStatus = (status: 'paid' | 'pending' | 'canceled') => {
+  const handleChangeStatus = (
+    status: 'paid' | 'pending' | 'canceled' | undefined
+  ) => {
+    if (!status || status === invoice.status) return;
+
     startTransition(async () => {
       const response = await updateInvoiceStatusAction({
         userId,
@@ -155,7 +159,11 @@ const InvoiceTableCell = ({
             selectedKeys={[cellValue]}
             onSelectionChange={(key) =>
               handleChangeStatus(
-                Array.from(key)[0] as 'paid' | 'pending' | 'canceled'
+                Array.from(key)[0] as
+                  | 'paid'
+                  | 'pending'
+                  | 'canceled'
+                  | undefined
               )
             }
           >
