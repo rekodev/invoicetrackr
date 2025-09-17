@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  addToast,
   Checkbox,
   Chip,
   Dropdown,
@@ -64,10 +65,13 @@ const InvoiceTableCell = ({
         newStatus: status
       });
 
-      // TODO: Implement error handling and notifications
-      if ('errors' in response) return;
+      if ('errors' in response) setIsPaid((prev) => !prev);
 
-      // TODO: Implement success notification
+      addToast({
+        title: 'errors' in response ? 'Error' : 'Success',
+        description: response.message,
+        color: 'errors' in response ? 'danger' : 'success'
+      });
     });
   };
 

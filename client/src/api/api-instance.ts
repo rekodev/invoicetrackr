@@ -84,7 +84,6 @@ class ApiInstance {
       return {
         ...error,
         data: {
-          error,
           errors: [],
           message: generalErrorMessage
         }
