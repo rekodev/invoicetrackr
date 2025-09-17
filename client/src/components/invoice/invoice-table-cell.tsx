@@ -164,10 +164,7 @@ const InvoiceTableCell = ({
     case 'actions':
       return (
         <div className="relative flex items-center gap-2">
-          <Tooltip
-            disableAnimation
-            content={isPaid ? 'Mark as Pending' : 'Mark as Paid'}
-          >
+          <Tooltip content={isPaid ? 'Mark as Pending' : 'Mark as Paid'}>
             <Checkbox
               size="sm"
               color="success"
@@ -176,7 +173,7 @@ const InvoiceTableCell = ({
               isDisabled={isPending}
             />
           </Tooltip>
-          <Tooltip disableAnimation content="Details">
+          <Tooltip content="Details">
             <span
               onClick={handleViewIconClick}
               className="text-default-400 cursor-pointer text-lg active:opacity-50"
@@ -184,7 +181,7 @@ const InvoiceTableCell = ({
               <EyeIcon />
             </span>
           </Tooltip>
-          <Tooltip disableAnimation content="Edit invoice">
+          <Tooltip content="Edit invoice">
             <span
               className="text-default-400 cursor-pointer text-lg active:opacity-50"
               onClick={handleEditInvoiceClick}
@@ -192,7 +189,7 @@ const InvoiceTableCell = ({
               <EditIcon />
             </span>
           </Tooltip>
-          <Tooltip disableAnimation color="danger" content="Delete invoice">
+          <Tooltip color="danger" content="Delete invoice">
             <span
               className="text-danger cursor-pointer text-lg active:opacity-50"
               onClick={handleDeleteInvoiceClick}

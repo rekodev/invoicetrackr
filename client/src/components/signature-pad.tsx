@@ -1,4 +1,4 @@
-import { CheckCircleIcon, PencilSquareIcon } from "@heroicons/react/16/solid";
+import { CheckCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import {
   Button,
   Card,
@@ -11,12 +11,12 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  useDisclosure,
-} from "@heroui/react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import SignatureCanvas from "react-signature-canvas";
+  useDisclosure
+} from '@heroui/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import SignatureCanvas from 'react-signature-canvas';
 
-import { base64ToFile, imageUrlToBase64 } from "@/lib/utils/base64";
+import { base64ToFile, imageUrlToBase64 } from '@/lib/utils/base64';
 
 type Props = {
   signature?: File | string;
@@ -33,28 +33,28 @@ const SignaturePad = ({
   onSignatureChange,
   isInvalid,
   errorMessage,
-  isChipVisible = false,
+  isChipVisible = false
 }: Props) => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-  const [signatureImage, setSignatureImage] = useState("");
+  const [signatureImage, setSignatureImage] = useState('');
 
   const signatureRef = useRef<SignatureCanvas>(null);
 
   const signatureImgUrl = useMemo(
     () =>
       signature
-        ? typeof signature === "string"
+        ? typeof signature === 'string'
           ? signature
           : URL.createObjectURL(signature)
-        : "",
-    [signature],
+        : '',
+    [signature]
   );
 
   useEffect(() => {
     if (!signature || signatureImage) return;
 
     const setInitialSignatureImage = async () => {
-      if (typeof signature !== "string") {
+      if (typeof signature !== 'string') {
         setSignatureImage(URL.createObjectURL(signature));
 
         return;
@@ -73,19 +73,19 @@ const SignaturePad = ({
 
     signatureRef.current?.fromDataURL(signatureImage, {
       width: 532,
-      height: 400,
+      height: 400
     });
   }, [isOpen, signatureImage]);
 
   const saveSignature = () => {
     const trimmedDataURL = signatureRef.current
       ?.getCanvas()
-      .toDataURL("image/png");
+      .toDataURL('image/png');
 
     if (trimmedDataURL) {
       setSignatureImage(trimmedDataURL);
       onSignatureChange(
-        base64ToFile(trimmedDataURL, "sender_signature.png", "image/png"),
+        base64ToFile(trimmedDataURL, 'sender_signature.png', 'image/png')
       );
     }
 
@@ -107,21 +107,21 @@ const SignaturePad = ({
         <Card
           radius="lg"
           className={cn(
-            "shadow-small dark:border dark:border-default-100 flex justify-center items-center relative aspect-4/3 overflow-hidden",
-            { "bg-[#F3126040]": isInvalid },
+            'shadow-small dark:border-default-100 aspect-4/3 relative flex items-center justify-center overflow-hidden dark:border',
+            { 'bg-[#F3126040]': isInvalid }
           )}
           onPress={onOpen}
           isPressable
         >
-          <CardBody className="p-0 w-full h-full flex flex-col gap-2 justify-center items-center overflow-visible group">
+          <CardBody className="group flex h-full w-full flex-col items-center justify-center gap-2 overflow-visible p-0">
             {signatureImgUrl ? (
               <>
                 <Image
                   src={signatureImgUrl}
                   alt="Signature"
-                  className="bg-white z-0 rounded-none"
+                  className="z-0 rounded-none bg-white"
                 />
-                <div className="absolute w-full text-white h-full bg-black bg-opacity-50 dark:bg-opacity-75 flex-col justify-center items-center gap-2 hidden group-hover:flex">
+                <div className="absolute hidden h-full w-full flex-col items-center justify-center gap-2 bg-black bg-opacity-50 text-white group-hover:flex dark:bg-opacity-75">
                   <PencilSquareIcon className="h-10 w-10" />
                   <p className="font-medium">Edit Signature</p>
                 </div>
@@ -137,7 +137,7 @@ const SignaturePad = ({
         {profileSignature && isChipVisible && (
           <Chip
             onClose={setProfileSignature}
-            endContent={<CheckCircleIcon className="w-4 h-4 mr-0.5" />}
+            endContent={<CheckCircleIcon className="mr-0.5 h-4 w-4" />}
             color="secondary"
             variant="faded"
           >
@@ -160,7 +160,7 @@ const SignaturePad = ({
               canvasProps={{
                 width: 532,
                 height: 400,
-                style: { backgroundColor: "white" },
+                style: { backgroundColor: 'white' }
               }}
               backgroundColor="white"
             />
