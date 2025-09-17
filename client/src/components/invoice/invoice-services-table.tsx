@@ -167,11 +167,11 @@ const InvoiceServicesTable = ({
             aria-label="Actions"
             className="relative flex items-center gap-2"
           >
-            <Tooltip disableAnimation color="danger" content="Delete service">
+            <Tooltip color="danger" content="Delete service">
               <Button
                 onPress={() => handleRemoveService(index)}
                 variant="light"
-                className="min-w-min cursor-pointer p-3 text-lg text-danger active:opacity-50"
+                className="text-danger min-w-min cursor-pointer p-3 text-lg active:opacity-50"
               >
                 <DeleteIcon />
               </Button>

@@ -24,13 +24,10 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
 
-  const bgGradient =
-    'bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-purple-900 from-[-35%] via-transparent to-transparent';
-
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
-        <div className={`min-h-screen ${bgGradient} fixed inset-0 -z-10`} />
+        <div className="bg-radial-[at_0%_100%] fixed inset-0 -z-10 min-h-screen from-purple-900 from-[-35%] via-transparent to-transparent" />
         <Providers messages={messages}>
           <Header />
           <main className="mx-auto flex w-full flex-grow flex-col py-6">

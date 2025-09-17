@@ -13,7 +13,8 @@ import {
   getInvoicesTotalAmountFromDb,
   getLatestInvoicesFromDb,
   insertInvoiceInDb,
-  updateInvoiceInDb
+  updateInvoiceInDb,
+  updateInvoiceStatusInDb
 } from '../database';
 import { InvoiceModel } from '../types/models';
 import {
@@ -142,6 +143,28 @@ export const updateInvoice = async (
     message: 'Invoice updated successfully'
   });
 };
+
+export async function updateInvoiceStatus(
+  req: FastifyRequest<{
+    Params: { userId: number; id: number };
+    Body: { status: 'paid' | 'pending' | 'canceled' };
+  }>,
+  reply: FastifyReply
+) {
+  const { userId, id } = req.params;
+  const { status } = req.body;
+
+  const foundInvoice = await findInvoiceById(userId, id);
+
+  if (!foundInvoice) throw new NotFoundError('Invoice not found');
+
+  const updatedInvoice = await updateInvoiceStatusInDb(userId, id, status);
+
+  if (!updatedInvoice)
+    throw new BadRequestError('Unable to update invoice status');
+
+  reply.status(200).send({ message: 'Invoice status updated successfully' });
+}
 
 export const deleteInvoice = async (
   req: FastifyRequest<{ Params: { userId: number; id: number } }>,

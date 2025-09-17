@@ -5,7 +5,8 @@ import axios, {
   AxiosResponse,
   Method
 } from 'axios';
-import { getTranslations } from 'next-intl/server';
+
+import { getGeneralErrorMessageAction } from '@/lib/actions/general-error';
 
 export type ApiResponse<T = any> = {
   data: T;
@@ -78,14 +79,13 @@ class ApiInstance {
 
       return response;
     } catch (error: any) {
-      const t = await getTranslations();
+      const generalErrorMessage = await getGeneralErrorMessageAction();
 
       return {
         ...error,
         data: {
-          error,
           errors: [],
-          message: t('general_error')
+          message: generalErrorMessage
         }
       };
     }

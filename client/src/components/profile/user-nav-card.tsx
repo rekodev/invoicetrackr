@@ -128,7 +128,6 @@ const UserCard = ({ user }: Props) => {
         <Tabs
           aria-label="Actions"
           isVertical
-          disableAnimation
           selectedKey={currentPath}
           fullWidth
           variant="light"

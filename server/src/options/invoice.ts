@@ -9,7 +9,8 @@ import {
   getInvoicesTotalAmount,
   getLatestInvoices,
   postInvoice,
-  updateInvoice
+  updateInvoice,
+  updateInvoiceStatus
 } from '../controllers';
 import { Invoice } from '../types/models';
 import { preValidateFileAndFields } from '../utils/multipart';
@@ -58,6 +59,18 @@ export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
   preHandler: authMiddleware,
   preValidation: preValidateFileAndFields,
   handler: updateInvoice
+};
+
+export const updateInvoiceStatusOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    body: Type.Object({ status: Type.String() }),
+    response: {
+      200: Type.Object({ message: Type.String() })
+    }
+  },
+  preHandler: authMiddleware,
+  preValidation: preValidateFileAndFields,
+  handler: updateInvoiceStatus
 };
 
 export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {

@@ -52,6 +52,10 @@ export type UpdateInvoiceResp = ApiError & {
   invoice: InvoiceModel;
 };
 
+export type UpdateInvoiceStatusResp = ApiError & {
+  message: string;
+};
+
 export type DeleteInvoiceResp = ApiError;
 
 export type GetClientsResp = ApiError & {

@@ -11,7 +11,7 @@ import {
   TableRow,
   useDisclosure
 } from '@heroui/react';
-import { Key, useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { columns, statusOptions } from '@/lib/constants/table';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
@@ -127,20 +127,6 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = useCallback(
-    (invoice: InvoiceModel, columnKey: Key) => (
-      <InvoiceTableCell
-        currency={currency}
-        invoice={invoice}
-        columnKey={columnKey}
-        onView={handleViewInvoice}
-        onEdit={handleEditInvoice}
-        onDelete={handleDeleteInvoice}
-      />
-    ),
-    [handleViewInvoice, handleDeleteInvoice, handleEditInvoice, currency]
-  );
-
   const renderTopContent = () => (
     <InvoiceTableTopContent
       filterValue={filterValue}
@@ -200,7 +186,17 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
+                <TableCell>
+                  <InvoiceTableCell
+                    userId={userId}
+                    currency={currency}
+                    invoice={item}
+                    columnKey={columnKey}
+                    onView={handleViewInvoice}
+                    onEdit={handleEditInvoice}
+                    onDelete={handleDeleteInvoice}
+                  />
+                </TableCell>
               )}
             </TableRow>
           )}
