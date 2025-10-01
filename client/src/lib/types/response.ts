@@ -38,7 +38,7 @@ export type GetInvoicesRevenueResp = ApiError & {
 export type GetLatestInvoicesResp = ApiError & {
   invoices:
     | Array<
-        Pick<InvoiceModel, 'id' | 'totalAmount'> &
+        Pick<InvoiceModel, 'id' | 'totalAmount' | 'invoiceId'> &
           Pick<ClientModel, 'name' | 'email'>
       >
     | undefined;

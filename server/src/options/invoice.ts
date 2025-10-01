@@ -22,7 +22,6 @@ export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
       200: Type.Object({ invoices: Type.Array(Invoice) })
     }
   },
-
   preHandler: authMiddleware,
   handler: getInvoices
 };
@@ -119,7 +118,8 @@ export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
             id: Type.Number(),
             totalAmount: Type.String(),
             name: Type.String(),
-            email: Type.String()
+            email: Type.String(),
+            invoiceId: Type.String()
           })
         )
       })
