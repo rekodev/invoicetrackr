@@ -2,14 +2,19 @@
 
 import {
   UserGroupIcon,
-  BuildingLibraryIcon
+  BuildingLibraryIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, Chip, Input, Select, SelectItem } from '@heroui/react';
-import { useState } from 'react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { Button, Card, Input, Select, SelectItem } from '@heroui/react';
+import { useState, useTransition } from 'react';
+import {
+  Controller,
+  ControllerRenderProps,
+  FormProvider,
+  useForm
+} from 'react-hook-form';
 
 import { statusOptions } from '@/lib/constants/table';
-import { UiState } from '@/lib/constants/ui-state';
 import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
 import { Currency } from '@/lib/types/currency';
 import { ClientModel } from '@/lib/types/models/client';
@@ -32,6 +37,7 @@ type Props = {
   bankingInformationEntries: Array<BankingInformationFormModel>;
   invoiceData?: InvoiceModel;
   currency: Currency;
+  latestInvoiceId?: string;
 };
 
 const INITIAL_RECEIVER_DATA: ClientModel = {
@@ -48,13 +54,15 @@ const InvoiceForm = ({
   currency,
   invoiceData,
   clients,
-  bankingInformationEntries
+  bankingInformationEntries,
+  latestInvoiceId
 }: Props) => {
   const methods = useForm<InvoiceModel>({
     defaultValues: invoiceData || {
       sender: user,
       receiver: INITIAL_RECEIVER_DATA,
-      services: [{ amount: 0, quantity: 0, description: '', unit: '' }]
+      services: [{ amount: 0, quantity: 0, description: '', unit: '' }],
+      bankingInformation: { name: '', code: '', accountNumber: '' }
     }
   });
   const {
@@ -67,8 +75,7 @@ const InvoiceForm = ({
     control
   } = methods;
 
-  const [uiState, setUiState] = useState(UiState.Idle);
-  const [submissionMessage, setSubmissionMessage] = useState('');
+  const [isPending, startTransition] = useTransition();
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
   const [isBankingInformationModalOpen, setIsBankingInformationModalOpen] =
     useState(false);
@@ -79,8 +86,7 @@ const InvoiceForm = ({
   const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({
     invoiceData,
     user,
-    setUiState,
-    setSubmissionMessage,
+    onTransitionStart: startTransition,
     setError
   });
 
@@ -113,6 +119,19 @@ const InvoiceForm = ({
     setSenderSignature(signature);
     setValue('senderSignature', signature);
     clearErrors('senderSignature');
+  };
+
+  const handleNextInvoiceIdSelect = (
+    field: ControllerRenderProps<InvoiceModel, 'invoiceId'>
+  ) => {
+    if (!latestInvoiceId) return;
+
+    const latestInvoiceIdNumber = Number(latestInvoiceId.slice(3));
+    const newInvoiceId = latestInvoiceId
+      .slice(0, 3)
+      .concat((latestInvoiceIdNumber + 1).toString().padStart(3, '0'));
+
+    field.onChange(newInvoiceId);
   };
 
   const renderSenderAndReceiverFields = () => (
@@ -348,22 +367,13 @@ const InvoiceForm = ({
     </div>
   );
 
-  const renderSubmissionMessageAndActions = () => (
+  const renderActions = () => (
     <div className="col-span-4 flex w-full items-center justify-between gap-5 overflow-x-hidden">
-      {submissionMessage && (
-        <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-          {submissionMessage}
-        </Chip>
-      )}
       <div className="flex w-full flex-col justify-end gap-1 sm:flex-row">
         <Button color="danger" variant="light" onPress={redirectToInvoicesPage}>
           Cancel
         </Button>
-        <Button
-          type="submit"
-          isLoading={uiState === UiState.Pending}
-          color="secondary"
-        >
+        <Button type="submit" isLoading={isPending} color="secondary">
           Save
         </Button>
       </div>
@@ -392,14 +402,35 @@ const InvoiceForm = ({
             <div className="col-span-4 flex flex-col gap-4">
               <h4>Invoice Details</h4>
               <div className="flex flex-col gap-4 md:flex-row">
-                <Input
-                  aria-label="Invoice ID"
-                  {...register('invoiceId')}
-                  label="Invoice ID"
-                  placeholder="e.g., INV001"
+                <Controller
+                  name="invoiceId"
+                  control={control}
                   defaultValue={invoiceData?.invoiceId || ''}
-                  isInvalid={!!errors.invoiceId}
-                  errorMessage={errors.invoiceId?.message}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      aria-label="Invoice ID"
+                      label="Invoice ID"
+                      placeholder="e.g., INV001"
+                      isInvalid={!!errors.invoiceId}
+                      errorMessage={errors.invoiceId?.message}
+                      endContent={
+                        latestInvoiceId && (
+                          <Button
+                            size="sm"
+                            variant="faded"
+                            className="px-7"
+                            startContent={
+                              <SparklesIcon className="min-h-4 min-w-4" />
+                            }
+                            onPress={() => handleNextInvoiceIdSelect(field)}
+                          >
+                            Use Next
+                          </Button>
+                        )
+                      }
+                    />
+                  )}
                 />
                 <Select
                   aria-label="Status"
@@ -444,7 +475,7 @@ const InvoiceForm = ({
             {renderInvoiceServices()}
             {renderBankingInformation()}
             {renderInvoiceSignature()}
-            {renderSubmissionMessageAndActions()}
+            {renderActions()}
           </form>
         </Card>
       </FormProvider>

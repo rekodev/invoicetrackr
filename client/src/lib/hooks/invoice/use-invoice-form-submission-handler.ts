@@ -1,12 +1,12 @@
 'use client';
 
+import { addToast } from '@heroui/react';
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction } from 'react';
+import { TransitionStartFunction } from 'react';
 import { SubmitHandler, UseFormSetError } from 'react-hook-form';
 
 import { addInvoiceAction, updateInvoiceAction } from '@/lib/actions/invoice';
 import { INVOICES_PAGE } from '@/lib/constants/pages';
-import { UiState } from '@/lib/constants/ui-state';
 import { ClientModel } from '@/lib/types/models/client';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import {
@@ -29,8 +29,7 @@ type Props = {
   invoiceData: InvoiceModel | undefined;
   user: UserModel | undefined;
   bankingInformation?: BankingInformationFormModel;
-  setUiState: Dispatch<SetStateAction<UiState>>;
-  setSubmissionMessage: Dispatch<SetStateAction<string>>;
+  onTransitionStart: TransitionStartFunction;
   setError: UseFormSetError<InvoiceModel>;
 };
 
@@ -38,8 +37,7 @@ const useInvoiceFormSubmissionHandler = ({
   invoiceData,
   user,
   bankingInformation,
-  setUiState,
-  setSubmissionMessage,
+  onTransitionStart,
   setError
 }: Props) => {
   const router = useRouter();
@@ -48,51 +46,50 @@ const useInvoiceFormSubmissionHandler = ({
     router.push(INVOICES_PAGE);
   };
 
-  const onSubmit: SubmitHandler<InvoiceModel> = async (data) => {
-    if (!user?.id) return;
+  const onSubmit: SubmitHandler<InvoiceModel> = async (data) =>
+    onTransitionStart(async () => {
+      if (!user?.id) return;
 
-    setSubmissionMessage('');
-    setUiState(UiState.Pending);
+      const fullData: typeof data = {
+        ...data,
+        sender: user,
+        senderSignature: data.senderSignature || '',
+        receiver: data?.receiver || INITIAL_RECEIVER_DATA,
+        totalAmount: calculateServiceTotal(data.services),
+        bankingInformation: bankingInformation || data.bankingInformation
+      };
 
-    const fullData: typeof data = {
-      ...data,
-      sender: user,
-      senderSignature: data.senderSignature || '',
-      receiver: data?.receiver || INITIAL_RECEIVER_DATA,
-      totalAmount: calculateServiceTotal(data.services),
-      bankingInformation: bankingInformation || data.bankingInformation
-    };
+      let response: UpdateInvoiceResp | AddInvoiceResp;
 
-    let response: UpdateInvoiceResp | AddInvoiceResp;
+      if (invoiceData) {
+        response = await updateInvoiceAction({
+          userId: user.id,
+          invoiceData: fullData,
+          lang: user.language
+        });
+      } else {
+        response = await addInvoiceAction({
+          userId: user.id,
+          invoiceData: fullData,
+          lang: user.language
+        });
+      }
 
-    if (invoiceData) {
-      response = await updateInvoiceAction({
-        userId: user.id,
-        invoiceData: fullData,
-        lang: user.language
-      });
-    } else {
-      response = await addInvoiceAction({
-        userId: user.id,
-        invoiceData: fullData,
-        lang: user.language
-      });
-    }
-    setSubmissionMessage(response.message);
-
-    if ('errors' in response) {
-      setUiState(UiState.Failure);
-
-      response.errors.forEach((error) => {
-        setError(error.key, { message: error.value });
+      addToast({
+        title: response.message,
+        color: 'errors' in response ? 'danger' : 'success'
       });
 
-      return;
-    }
+      if ('errors' in response) {
+        response.errors.forEach((error) => {
+          setError(error.key, { message: error.value });
+        });
 
-    setUiState(UiState.Success);
-    redirectToInvoicesPage();
-  };
+        return;
+      }
+
+      redirectToInvoicesPage();
+    });
 
   return { onSubmit, redirectToInvoicesPage };
 };

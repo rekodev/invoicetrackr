@@ -526,6 +526,7 @@ export const getLatestInvoicesFromDb = async (userId: number) => {
     .select({
       id: invoicesTable.id,
       totalAmount: invoicesTable.totalAmount,
+      invoiceId: invoicesTable.invoiceId,
       name: invoiceReceiversTable.name,
       email: invoiceReceiversTable.email
     })

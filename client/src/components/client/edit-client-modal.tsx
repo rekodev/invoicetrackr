@@ -1,6 +1,6 @@
 import {
+  addToast,
   Button,
-  Chip,
   Input,
   Modal,
   ModalBody,
@@ -10,11 +10,10 @@ import {
   Select,
   SelectItem
 } from '@heroui/react';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useTransition } from 'react';
 
 import { updateClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
-import { UiState } from '@/lib/constants/ui-state';
 import { ClientModel } from '@/lib/types/models/client';
 import { capitalize } from '@/lib/utils';
 
@@ -28,8 +27,7 @@ type Props = {
 type ClientFormData = ClientModel;
 
 const EditClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
-  const [submissionMessage, setSubmissionMessage] = useState('');
-  const [uiState, setUiState] = useState(UiState.Idle);
+  const [isPending, startTransition] = useTransition();
   const [newClientData, setNewClientData] =
     useState<ClientFormData>(clientData);
 
@@ -40,24 +38,22 @@ const EditClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
     setNewClientData((prev) => ({ ...prev, [field]: event.target.value }));
   };
 
-  const handleSubmit = async () => {
-    setUiState(UiState.Pending);
-    setSubmissionMessage('');
+  const handleSubmit = async () =>
+    startTransition(async () => {
+      const response = await updateClientAction({
+        userId,
+        clientData: newClientData
+      });
 
-    const response = await updateClientAction({
-      userId,
-      clientData: newClientData
+      addToast({
+        title: response.message,
+        color: 'errors' in response ? 'danger' : 'success'
+      });
+
+      if ('errors' in response) return;
+
+      onClose();
     });
-    setSubmissionMessage(response.message);
-
-    if ('error' in response) {
-      setUiState(UiState.Failure);
-
-      return;
-    }
-
-    setUiState(UiState.Success);
-  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -106,22 +102,16 @@ const EditClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
             type="email"
             label="Email"
             variant="bordered"
-            isRequired
           />
         </ModalBody>
         <ModalFooter>
           <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
-            {submissionMessage && (
-              <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-                {submissionMessage}
-              </Chip>
-            )}
             <div className="flex w-full justify-end gap-1">
               <Button color="danger" variant="light" onPress={onClose}>
                 Cancel
               </Button>
               <Button
-                isLoading={uiState === UiState.Pending}
+                isLoading={isPending}
                 color="secondary"
                 onPress={handleSubmit}
               >

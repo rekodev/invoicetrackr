@@ -84,8 +84,9 @@ class ApiInstance {
       return {
         ...error,
         data: {
-          errors: [],
-          message: generalErrorMessage
+          ...error.data,
+          errors: error?.response?.data?.errors || [],
+          message: error?.response?.data?.message || generalErrorMessage
         }
       };
     }
