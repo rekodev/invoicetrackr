@@ -2,12 +2,12 @@
 
 import { CurrencyDollarIcon, LanguageIcon } from '@heroicons/react/24/outline';
 import {
+  addToast,
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
-  Chip,
   Divider,
   Select,
   SelectItem
@@ -15,12 +15,11 @@ import {
 import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateSession } from '@/lib/actions';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
-import { UiState } from '@/lib/constants/ui-state';
 import { AccountSettingsFormModel } from '@/lib/types/models/user';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
@@ -33,7 +32,6 @@ type Props = {
 };
 
 // TODO: Improve form and add validation
-
 const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
   const { refresh } = useRouter();
   const t = useTranslations('profile.account_settings');
@@ -45,8 +43,7 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
   } = useForm<AccountSettingsFormModel>({
     defaultValues: { language: user?.language, currency: user?.currency }
   });
-  const [submissionMessage, setSubmissionMessage] = useState('');
-  const [uiState, setUiState] = useState(UiState.Idle);
+  const [isPending, startTransition] = useTransition();
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
 
@@ -68,40 +65,39 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
     }
   ] as const;
 
-  const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) => {
-    if (!user?.id) return;
+  const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) =>
+    startTransition(async () => {
+      if (!user?.id) return;
 
-    setSubmissionMessage('');
-    setUiState(UiState.Pending);
-
-    const response = await updateUserAccountSettingsAction({
-      userId: Number(user.id),
-      language: data.language,
-      currency: data.currency
-    });
-    setSubmissionMessage(response.message);
-
-    if (!response.ok) {
-      setUiState(UiState.Failure);
-
-      // response.data.errors.forEach((error) => {
-      //   setError(error.key, { message: error.value });
-      // });
-
-      return;
-    }
-
-    setUiState(UiState.Success);
-    await updateSession({
-      newSession: {
-        ...user,
-        id: String(user.id),
+      const response = await updateUserAccountSettingsAction({
+        userId: Number(user.id),
         language: data.language,
         currency: data.currency
+      });
+
+      addToast({
+        title: response.message,
+        color: response.ok ? 'success' : 'danger'
+      });
+
+      if (!response.ok) {
+        // response.data.errors.forEach((error) => {
+        //   setError(error.key, { message: error.value });
+        // });
+
+        return;
       }
+
+      await updateSession({
+        newSession: {
+          ...user,
+          id: String(user.id),
+          language: data.language,
+          currency: data.currency
+        }
+      });
+      refresh();
     });
-    refresh();
-  };
 
   // When form is updated and user is re-fetched, reset the form to match the new user data
   useEffect(() => {
@@ -152,11 +148,6 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
         />
       </CardBody>
       <CardFooter className="w-full flex-col justify-between p-6">
-        {submissionMessage && (
-          <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-            {submissionMessage}
-          </Chip>
-        )}
         <div className="flex w-full gap-2 self-end md:w-min">
           <Button
             className="w-full md:w-min"
@@ -170,7 +161,7 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
           <Button
             isDisabled={!isDirty}
             type="submit"
-            isLoading={uiState === UiState.Pending}
+            isLoading={isPending}
             color="secondary"
             className="w-full md:w-min"
           >

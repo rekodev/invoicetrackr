@@ -1,6 +1,6 @@
 import {
+  addToast,
   Button,
-  Chip,
   Input,
   Modal,
   ModalBody,
@@ -8,10 +8,9 @@ import {
   ModalFooter,
   ModalHeader
 } from '@heroui/react';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useTransition } from 'react';
 
 import { updateBankingInformationAction } from '@/lib/actions/banking-information';
-import { UiState } from '@/lib/constants/ui-state';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 type Props = {
@@ -27,8 +26,7 @@ const EditBankingInformationDialog = ({
   onClose,
   bankingInformation
 }: Props) => {
-  const [submissionMessage, setSubmissionMessage] = useState('');
-  const [uiState, setUiState] = useState(UiState.Idle);
+  const [isPending, startTransition] = useTransition();
   const [newBankingInformation, setNewBankingInformation] =
     useState<BankingInformationFormModel>(bankingInformation);
 
@@ -42,24 +40,22 @@ const EditBankingInformationDialog = ({
     }));
   };
 
-  const handleSubmit = async () => {
-    setUiState(UiState.Pending);
-    setSubmissionMessage('');
+  const handleSubmit = async () =>
+    startTransition(async () => {
+      const response = await updateBankingInformationAction(
+        userId,
+        newBankingInformation
+      );
 
-    const response = await updateBankingInformationAction(
-      userId,
-      newBankingInformation
-    );
-    if (response.message) setSubmissionMessage(response.message);
+      addToast({
+        title: response.message,
+        color: 'errors' in response ? 'danger' : 'success'
+      });
 
-    if (!response.ok) {
-      setUiState(UiState.Failure);
+      if (!response.ok) return;
 
-      return;
-    }
-
-    setUiState(UiState.Success);
-  };
+      onClose();
+    });
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -90,17 +86,12 @@ const EditBankingInformationDialog = ({
         </ModalBody>
         <ModalFooter>
           <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
-            {submissionMessage && (
-              <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-                {submissionMessage}
-              </Chip>
-            )}
             <div className="flex w-full justify-end gap-1">
               <Button color="danger" variant="light" onPress={onClose}>
                 Cancel
               </Button>
               <Button
-                isLoading={uiState === UiState.Pending}
+                isLoading={isPending}
                 color="secondary"
                 onPress={handleSubmit}
               >

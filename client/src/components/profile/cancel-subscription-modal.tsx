@@ -2,8 +2,8 @@
 
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
+  addToast,
   Button,
-  Chip,
   Modal,
   ModalBody,
   ModalContent,
@@ -11,12 +11,11 @@ import {
   ModalHeader
 } from '@heroui/react';
 import { User } from 'next-auth';
-import { useState } from 'react';
+import { useTransition } from 'react';
 
 import { cancelStripeSubscription } from '@/api';
 import { updateSession } from '@/lib/actions';
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
-import { UiState } from '@/lib/constants/ui-state';
 
 type Props = {
   user: User;
@@ -25,46 +24,39 @@ type Props = {
 };
 
 const CancelSubscriptionModal = ({ user, isOpen, onClose }: Props) => {
-  const [uiState, setUiState] = useState(UiState.Idle);
-  const [submissionMessage, setSubmissionMessage] = useState('');
+  const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = async () => {
-    if (!user) return;
+  const handleSubmit = async () =>
+    startTransition(async () => {
+      if (!user) return;
 
-    setUiState(UiState.Pending);
+      const response = await cancelStripeSubscription(Number(user.id));
 
-    const response = await cancelStripeSubscription(Number(user.id));
-    setSubmissionMessage(response.data.message);
+      addToast({
+        title: response.data.message,
+        color: 'errors' in response.data ? 'danger' : 'success'
+      });
 
-    if ('errors' in response.data) {
-      setUiState(UiState.Failure);
+      if ('errors' in response.data) return;
 
-      return;
-    }
-
-    await updateSession({
-      newSession: { ...user, id: String(user.id), isSubscriptionActive: false },
-      redirectPath: RENEW_SUBSCRIPTION_PAGE
+      await updateSession({
+        newSession: {
+          ...user,
+          id: String(user.id),
+          isSubscriptionActive: false
+        },
+        redirectPath: RENEW_SUBSCRIPTION_PAGE
+      });
     });
-  };
 
   const renderModalFooter = () => (
     <ModalFooter>
       <div className="flex w-full items-center justify-between">
-        {submissionMessage && (
-          <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-            {submissionMessage}
-          </Chip>
-        )}
         <div className="flex w-full justify-end gap-1">
           <Button color="danger" variant="bordered" onPress={onClose}>
             Go Back
           </Button>
-          <Button
-            isLoading={uiState === UiState.Pending}
-            color="danger"
-            onPress={handleSubmit}
-          >
+          <Button isLoading={isPending} color="danger" onPress={handleSubmit}>
             Cancel Subscription
           </Button>
         </div>

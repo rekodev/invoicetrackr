@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  addToast,
   Button,
   Card,
   CardBody,
@@ -9,15 +10,13 @@ import {
   Divider
 } from '@heroui/react';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useTransition } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { changeUserPasswordAction } from '@/lib/actions/user';
-import { UiState } from '@/lib/constants/ui-state';
 import { ChangePasswordFormModel } from '@/lib/types/models/user';
 
 import PasswordInput from '../password-input';
-import GeneralFormError from '../ui/general-form-error';
 
 type Props = {
   userId: number;
@@ -35,37 +34,35 @@ export default function ChangePasswordForm({ userId, language }: Props) {
   } = useForm<ChangePasswordFormModel>({
     defaultValues: { password: '', newPassword: '', confirmedNewPassword: '' }
   });
-  const [submissionMessage, setSubmissionMessage] = useState('');
-  const [uiState, setUiState] = useState(UiState.Idle);
+  const [isPending, startTransition] = useTransition();
 
-  const onSubmit: SubmitHandler<ChangePasswordFormModel> = async (data) => {
-    setSubmissionMessage('');
-    setUiState(UiState.Pending);
+  const onSubmit: SubmitHandler<ChangePasswordFormModel> = async (data) =>
+    startTransition(async () => {
+      const response = await changeUserPasswordAction({
+        userId,
+        language,
+        password: data.password,
+        newPassword: data.newPassword,
+        confirmedNewPassword: data.confirmedNewPassword
+      });
 
-    const response = await changeUserPasswordAction({
-      userId,
-      language,
-      password: data.password,
-      newPassword: data.newPassword,
-      confirmedNewPassword: data.confirmedNewPassword
-    });
-    setSubmissionMessage(response.message);
+      addToast({
+        title: response.message,
+        color: response.ok ? 'success' : 'danger'
+      });
 
-    if (!response.ok) {
-      setUiState(UiState.Failure);
+      if (!response.ok) {
+        if (response.validationErrors) {
+          Object.entries(response.validationErrors).forEach(([key, value]) => {
+            setError(key as keyof ChangePasswordFormModel, { message: value });
+          });
+        }
 
-      if (response.validationErrors) {
-        Object.entries(response.validationErrors).forEach(([key, value]) => {
-          setError(key as keyof ChangePasswordFormModel, { message: value });
-        });
+        return;
       }
 
-      return;
-    }
-
-    setUiState(UiState.Success);
-    reset();
-  };
+      reset();
+    });
 
   const renderCardBodyAndFooter = () => {
     const registeredPassword = { ...register('password') };
@@ -103,16 +100,11 @@ export default function ChangePasswordForm({ userId, language }: Props) {
           />
         </CardBody>
         <CardFooter className="relative w-full justify-between p-6">
-          <GeneralFormError
-            submissionMessage={submissionMessage}
-            uiState={uiState}
-          />
-          <hr />
           <div className="flex gap-2 self-end">
             <Button
               isDisabled={!isDirty}
               type="submit"
-              isLoading={uiState === UiState.Pending}
+              isLoading={isPending}
               color="secondary"
               className="self-end"
             >

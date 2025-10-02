@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  addToast,
   Button,
   Card,
   CardBody,
@@ -11,17 +12,15 @@ import {
   Select,
   SelectItem
 } from '@heroui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateUserAction } from '@/lib/actions/user';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
-import { UiState } from '@/lib/constants/ui-state';
 import { UserModel } from '@/lib/types/models/user';
 import { capitalize } from '@/lib/utils';
 
 import SignaturePad from '../signature-pad';
-import GeneralFormError from '../ui/general-form-error';
 
 type Props = {
   defaultValues?: Partial<UserModel> | undefined;
@@ -43,39 +42,36 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
   const [formSignature, setFormSignature] = useState<
     File | string | undefined
   >();
-  const [submissionMessage, setSubmissionMessage] = useState('');
-  const [uiState, setUiState] = useState(UiState.Idle);
+  const [isPending, startTransition] = useTransition();
 
-  const onSubmit: SubmitHandler<UserModel> = async (data) => {
-    if (!defaultValues?.id) return;
+  const onSubmit: SubmitHandler<UserModel> = async (data) =>
+    startTransition(async () => {
+      if (!defaultValues?.id) return;
 
-    setSubmissionMessage('');
-    setUiState(UiState.Pending);
+      const response = await updateUserAction({
+        user: data,
+        signature: formSignature || defaultValues.signature
+      });
 
-    const response = await updateUserAction({
-      user: data,
-      signature: formSignature || defaultValues.signature
-    });
+      addToast({
+        title: response.message,
+        color: response.ok ? 'success' : 'danger'
+      });
 
-    setSubmissionMessage(response?.message || '');
-
-    if (!response?.ok) {
-      setUiState(UiState.Failure);
-
-      if (response.validationErrors) {
-        Object.keys(response.validationErrors).forEach((key) => {
-          setError(key as keyof UserModel, {
-            message: response.validationErrors!.key
+      if (!response?.ok) {
+        if (response.validationErrors) {
+          Object.keys(response.validationErrors).forEach((key) => {
+            setError(key as keyof UserModel, {
+              message: response.validationErrors!.key
+            });
           });
-        });
+        }
+
+        return;
       }
 
-      return;
-    }
-
-    setUiState(UiState.Success);
-    onSuccess?.();
-  };
+      onSuccess?.();
+    });
 
   // When form is updated and user is re-fetched, reset the form to match the new user data
   useEffect(() => {
@@ -135,15 +131,10 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
           </div>
         </CardBody>
         <CardFooter className="w-full justify-between p-6">
-          <GeneralFormError
-            submissionMessage={submissionMessage}
-            uiState={uiState}
-          />
-          <hr />
           <Button
             isDisabled={!isDirty && !Boolean(formSignature)}
             type="submit"
-            isLoading={uiState === UiState.Pending}
+            isLoading={isPending}
             color="secondary"
             className="self-end"
           >
@@ -159,7 +150,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
       as="form"
       aria-label="Personal Information Form"
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full bg-transparent dark:border dark:border-default-100"
+      className="dark:border-default-100 w-full bg-transparent dark:border"
       encType="multipart/form-data"
     >
       <CardHeader className="p-4 px-6">Personal Information</CardHeader>
