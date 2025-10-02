@@ -2,6 +2,7 @@
 
 import { CameraIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import {
+  addToast,
   Avatar,
   Card,
   CardBody,
@@ -12,11 +13,10 @@ import {
 } from '@heroui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useRef, useState, useTransition } from 'react';
 
 import { updateUserProfilePictureAction } from '@/lib/actions/user';
 import { profileMenuTabs } from '@/lib/constants/profile';
-import { UiState } from '@/lib/constants/ui-state';
 import { UserModel } from '@/lib/types/models/user';
 
 type Props = {
@@ -27,7 +27,7 @@ const UserCard = ({ user }: Props) => {
   const pathname = usePathname();
 
   const [uploadedImage, setUploadedImage] = useState<File>();
-  const [uiState, setUiState] = useState(UiState.Idle);
+  const [isPending, startTransition] = useTransition();
 
   const imageFileInputRef = useRef<HTMLInputElement>(null);
   const currentPath = pathname?.split('/')[2];
@@ -36,39 +36,29 @@ const UserCard = ({ user }: Props) => {
     imageFileInputRef.current?.click();
   };
 
-  const handleImageUpload = async () => {
-    if (!uploadedImage) return;
+  const handleImageUpload = async () =>
+    startTransition(async () => {
+      if (!uploadedImage) return;
 
-    const formData = new FormData();
-    formData.append('profilePicture', uploadedImage);
+      const formData = new FormData();
+      formData.append('profilePicture', uploadedImage);
 
-    setUiState(UiState.Pending);
-    const response = await updateUserProfilePictureAction({
-      userId: Number(user.id),
-      formData
+      const response = await updateUserProfilePictureAction({
+        userId: Number(user.id),
+        formData
+      });
+
+      addToast({
+        title: response.message,
+        color: response.ok ? 'success' : 'danger'
+      });
+
+      if (!response.ok) return;
+
+      setUploadedImage(undefined);
     });
 
-    if (!response.ok) {
-      // TODO: Add toast notification
-      setUiState(UiState.Failure);
-
-      return;
-    }
-
-    setUploadedImage(undefined);
-    setUiState(UiState.Success);
-  };
-
   const renderUserDetails = () => {
-    // if (isUserLoading)
-    //   return (
-    //     <>
-    //       <Skeleton className="mb-2 h-14 w-14 rounded-full" />
-    //       <Skeleton className="mt-2 h-3 w-2/5 rounded-lg" />
-    //       <Skeleton className="mb-1 mt-2 h-3 w-3/5 rounded-lg" />
-    //     </>
-    //   );
-
     return (
       <>
         <div className="relative">
@@ -89,7 +79,7 @@ const UserCard = ({ user }: Props) => {
             size="lg"
             className="mb-2"
           />
-          {uploadedImage && uiState === UiState.Idle && (
+          {uploadedImage && !isPending && (
             <Chip
               variant="faded"
               onClose={handleImageUpload}
@@ -105,7 +95,6 @@ const UserCard = ({ user }: Props) => {
             ref={imageFileInputRef}
             onChange={(e) => {
               setUploadedImage(e.target.files?.[0]);
-              if (uiState !== UiState.Idle) setUiState(UiState.Idle);
             }}
             type="file"
             accept="image/*"

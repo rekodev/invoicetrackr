@@ -1,16 +1,15 @@
 import {
+  addToast,
   Button,
-  Chip,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader
 } from '@heroui/react';
-import { useState } from 'react';
+import { useTransition } from 'react';
 
 import { deleteInvoiceAction } from '@/lib/actions/invoice';
-import { UiState } from '@/lib/constants/ui-state';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 
 type Props = {
@@ -26,42 +25,34 @@ const DeleteInvoiceModal = ({
   onClose,
   invoiceData
 }: Props) => {
-  const [uiState, setUiState] = useState(UiState.Idle);
-  const [submissionMessage, setSubmissionMessage] = useState('');
+  const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = async () => {
-    setUiState(UiState.Pending);
+  const handleSubmit = () =>
+    startTransition(async () => {
+      const response = await deleteInvoiceAction({
+        userId,
+        invoiceId: invoiceData.id
+      });
 
-    const response = await deleteInvoiceAction({
-      userId,
-      invoiceId: invoiceData.id
+      addToast({
+        title: response.message,
+        color: 'errors' in response ? 'danger' : 'success'
+      });
+
+      if ('errors' in response) return;
+
+      onClose();
     });
-    setSubmissionMessage(response.message);
-
-    if ('error' in response) {
-      setUiState(UiState.Failure);
-
-      return;
-    }
-
-    setUiState(UiState.Success);
-    onClose();
-  };
 
   const renderModalFooter = () => (
     <ModalFooter>
       <div className="flex w-full items-center justify-between">
-        {submissionMessage && (
-          <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-            {submissionMessage}
-          </Chip>
-        )}
         <div className="flex w-full justify-end gap-1">
           <Button color="danger" onPress={onClose}>
             Cancel
           </Button>
           <Button
-            isLoading={uiState === UiState.Pending}
+            isLoading={isPending}
             color="secondary"
             onPress={handleSubmit}
           >

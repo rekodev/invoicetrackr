@@ -1,16 +1,15 @@
 import {
+  addToast,
   Button,
-  Chip,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader
 } from '@heroui/react';
-import { useState } from 'react';
+import { useTransition } from 'react';
 
 import { deleteBankingInformationAction } from '@/lib/actions/banking-information';
-import { UiState } from '@/lib/constants/ui-state';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 type Props = {
@@ -26,45 +25,36 @@ const DeleteBankAccountDialog = ({
   onClose,
   bankingInformation: bankAccount
 }: Props) => {
-  const [uiState, setUiState] = useState(UiState.Idle);
-  const [submissionMessage, setSubmissionMessage] = useState('');
+  const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = async () => {
-    if (!bankAccount?.id) return;
+  const handleSubmit = async () =>
+    startTransition(async () => {
+      if (!bankAccount?.id) return;
 
-    setUiState(UiState.Pending);
+      const response = await deleteBankingInformationAction(
+        userId,
+        bankAccount.id
+      );
 
-    const response = await deleteBankingInformationAction(
-      userId,
-      bankAccount.id
-    );
+      addToast({
+        title: response.message,
+        color: 'errors' in response ? 'danger' : 'success'
+      });
 
-    if (response.message) setSubmissionMessage(response.message);
+      if (!response.ok) return;
 
-    if (!response.ok) {
-      setUiState(UiState.Failure);
-
-      return;
-    }
-
-    setUiState(UiState.Success);
-    onClose();
-  };
+      onClose();
+    });
 
   const renderModalFooter = () => (
     <ModalFooter>
       <div className="flex w-full items-center justify-between">
-        {submissionMessage && (
-          <Chip color={uiState === UiState.Success ? 'success' : 'danger'}>
-            {submissionMessage}
-          </Chip>
-        )}
         <div className="flex w-full justify-end gap-1">
           <Button color="danger" onPress={onClose}>
             Cancel
           </Button>
           <Button
-            isLoading={uiState === UiState.Pending}
+            isLoading={isPending}
             color="secondary"
             onPress={handleSubmit}
           >

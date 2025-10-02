@@ -8,12 +8,12 @@ import {
 } from '@heroicons/react/24/outline';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import {
+  addToast,
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
-  Chip,
   Divider,
   Radio,
   RadioGroup,
@@ -21,12 +21,11 @@ import {
 } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 
 import { updateUserSelectedBankAccount } from '@/api';
 import { updateSession } from '@/lib/actions';
 import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
-import { UiState } from '@/lib/constants/ui-state';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 import { isResponseError } from '@/lib/utils/error';
 
@@ -42,6 +41,7 @@ type Props = {
 const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   const router = useRouter();
 
+  const [isPending, startTransition] = useTransition();
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
     isOpen: isEditOpen,
@@ -52,8 +52,6 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   const [selectedBankAccountId, setSelectedBankAccountId] = useState(
     String(user.selectedBankAccountId)
   );
-  const [submissionMessage, setSubmissionMessage] = useState('');
-  const [uiState, setUiState] = useState(UiState.Idle);
 
   const [currentBankingInformation, setCurrentBankingInformation] =
     useState<BankingInformationFormModel>();
@@ -66,32 +64,30 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     router.push(ADD_NEW_BANK_ACCOUNT_PAGE);
   };
 
-  const handleSave = async () => {
-    if (!user?.id || !selectedBankAccountId) return;
+  const handleSave = async () =>
+    startTransition(async () => {
+      if (!user?.id || !selectedBankAccountId) return;
 
-    setUiState(UiState.Pending);
-    const response = await updateUserSelectedBankAccount(
-      Number(user.id),
-      Number(selectedBankAccountId)
-    );
+      const response = await updateUserSelectedBankAccount(
+        Number(user.id),
+        Number(selectedBankAccountId)
+      );
 
-    if (response.data.message) setSubmissionMessage(response.data.message);
+      addToast({
+        title: response.data.message,
+        color: 'errors' in response.data ? 'danger' : 'success'
+      });
 
-    if (isResponseError(response)) {
-      setUiState(UiState.Failure);
+      if (isResponseError(response)) return;
 
-      return;
-    }
-
-    await updateSession({
-      newSession: {
-        ...user,
-        selectedBankAccountId: Number(selectedBankAccountId)
-      }
+      await updateSession({
+        newSession: {
+          ...user,
+          selectedBankAccountId: Number(selectedBankAccountId)
+        }
+      });
+      router.refresh();
     });
-    setUiState(UiState.Success);
-    router.refresh();
-  };
 
   const handleEdit = (bankAccount: BankingInformationFormModel) => {
     setCurrentBankingInformation(bankAccount);
@@ -202,17 +198,12 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
           {renderCardBody()}
         </CardBody>
         <CardFooter className="flex w-full items-center justify-between p-6">
-          {submissionMessage && (
-            <Chip color={uiState === UiState.Failure ? 'danger' : 'success'}>
-              {submissionMessage}
-            </Chip>
-          )}
           <div className="flex w-full flex-col items-center">
             <Button
               isDisabled={
                 selectedBankAccountId === String(user.selectedBankAccountId)
               }
-              isLoading={uiState === UiState.Pending}
+              isLoading={isPending}
               color="secondary"
               onPress={handleSave}
               className="self-end"

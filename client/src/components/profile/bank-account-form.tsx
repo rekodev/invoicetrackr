@@ -1,18 +1,17 @@
 'use client';
 
 import {
+  addToast,
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
-  Chip,
   Divider,
   Input
 } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { addBankingInformationAction } from '@/lib/actions/banking-information';
@@ -42,13 +41,11 @@ export default function BankAccountForm({
     register,
     handleSubmit,
     setError,
-    formState: { isSubmitSuccessful, isSubmitting }
+    formState: { isSubmitting }
   } = useForm<BankingInformationFormModel>({
     defaultValues,
     resolver: zodResolver(bankingInformationSchema)
   });
-
-  const [submissionMessage, setSubmissionMessage] = useState('');
 
   const onSubmit: SubmitHandler<BankingInformationFormModel> = async (data) => {
     if (!userId) return;
@@ -60,7 +57,10 @@ export default function BankAccountForm({
       isUserOnboarding
     );
 
-    setSubmissionMessage(response.message || '');
+    addToast({
+      title: response.message,
+      color: response.ok ? 'success' : 'danger'
+    });
 
     if (!response.ok) {
       if (response.validationErrors) {
@@ -113,11 +113,6 @@ export default function BankAccountForm({
           />
         </CardBody>
         <CardFooter className="justify-end gap-2 p-6">
-          {submissionMessage && (
-            <Chip color={isSubmitSuccessful ? 'success' : 'danger'}>
-              {submissionMessage}
-            </Chip>
-          )}
           <div className="flex gap-2">
             {!isUserOnboarding && (
               <Button
