@@ -18,10 +18,10 @@ import { useState } from 'react';
 import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 import { ClientModel } from '@/lib/types/models/client';
 
+import ClientFormDialog from './client-form-dialog';
 import ClientSectionBottomContent from './client-section-bottom-content';
 import ClientSectionTopContent from './client-section-top-content';
 import DeleteClientModal from './delete-client-modal';
-import EditClientModal from './edit-client-modal';
 import InvoicePartyCard from '../invoice/invoice-party-card';
 
 const PER_PAGE = 8;
@@ -168,7 +168,7 @@ const ClientSection = ({ userId, clients }: Props) => {
         clientsLength={filteredItems?.length}
       />
       {currentClientData && isEditClientModalOpen && (
-        <EditClientModal
+        <ClientFormDialog
           userId={userId}
           isOpen={isEditClientModalOpen}
           onClose={handleCloseEditClientModal}

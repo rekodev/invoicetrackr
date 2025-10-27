@@ -178,6 +178,7 @@ const InvoiceTableCell = ({
         <div className="relative flex items-center gap-2">
           <Tooltip content={isPaid ? 'Mark as Pending' : 'Mark as Paid'}>
             <Checkbox
+              className="mr-0.5 max-w-5 p-0"
               size="sm"
               color="success"
               isSelected={isPaid}
