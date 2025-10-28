@@ -69,7 +69,9 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Edit Client</ModalHeader>
+          <ModalHeader>
+            {!!clientData ? 'Edit Client' : 'Add New Client'}
+          </ModalHeader>
           <ModalBody>
             <Input
               {...register('name')}

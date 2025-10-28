@@ -13,7 +13,6 @@ import { useState } from 'react';
 
 import { ClientModel } from '@/lib/types/models/client';
 
-import AddNewClientModal from '../client/add-new-client-modal';
 import ClientFormDialog from '../client/client-form-dialog';
 import ClientCard from '../ui/client-card';
 
