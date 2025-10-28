@@ -1,7 +1,7 @@
 'use client';
 
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { Input } from "@heroui/react";
+import { Input } from '@heroui/react';
 import { useState } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 
@@ -12,6 +12,7 @@ type Props = {
   placeholder?: string;
   isInvalid: boolean;
   errorMessage?: string;
+  autoComplete?: string;
 };
 
 export default function PasswordInput({
@@ -21,6 +22,7 @@ export default function PasswordInput({
   placeholder,
   isInvalid,
   errorMessage,
+  autoComplete
 }: Props) {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -29,9 +31,10 @@ export default function PasswordInput({
   return (
     <Input
       {...registeredPassword}
+      autoComplete={autoComplete}
       label={label}
-      variant='faded'
-      labelPlacement='outside'
+      variant="faded"
+      labelPlacement="outside"
       type={isVisible ? 'text' : 'password'}
       className={`col-span-1 col-start-1 ${className}`}
       placeholder={placeholder}
@@ -39,15 +42,15 @@ export default function PasswordInput({
       errorMessage={errorMessage}
       endContent={
         <button
-          className='focus:outline-none'
-          type='button'
+          className="focus:outline-none"
+          type="button"
           onClick={toggleVisibility}
-          aria-label='toggle password visibility'
+          aria-label="toggle password visibility"
         >
           {isVisible ? (
-            <EyeIcon className='w-5 h-5 text-default-400 pointer-events-none' />
+            <EyeIcon className="text-default-400 pointer-events-none h-5 w-5" />
           ) : (
-            <EyeSlashIcon className='w-5 h-5 text-default-400 pointer-events-none' />
+            <EyeSlashIcon className="text-default-400 pointer-events-none h-5 w-5" />
           )}
         </button>
       }

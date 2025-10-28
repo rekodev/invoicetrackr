@@ -4,6 +4,8 @@ import { db } from './db';
 import { clientsTable } from './schema';
 
 export const findClientByEmail = async (userId: number, email: string) => {
+  if (!email) return;
+
   const clients = await db
     .select({ email: clientsTable.email })
     .from(clientsTable)

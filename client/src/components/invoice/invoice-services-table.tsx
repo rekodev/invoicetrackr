@@ -99,7 +99,7 @@ const InvoiceServicesTable = ({
         <p>Grand Total:</p>
         <p>
           {getCurrencySymbol(currency)}
-          {totalAmount >= 0.01 ? totalAmount.toFixed(2) : 0}
+          {totalAmount.toFixed(2)}
         </p>
       </div>
     </div>

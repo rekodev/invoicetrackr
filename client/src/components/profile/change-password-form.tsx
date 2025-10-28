@@ -75,6 +75,7 @@ export default function ChangePasswordForm({ userId, language }: Props) {
       <>
         <CardBody className="grid grid-cols-1 gap-4 p-6 lg:grid-cols-2">
           <PasswordInput
+            autoComplete="new-password"
             placeholder={t('current_password_placeholder')}
             registeredPassword={registeredPassword}
             label={t('current_password')}
@@ -100,7 +101,7 @@ export default function ChangePasswordForm({ userId, language }: Props) {
           />
         </CardBody>
         <CardFooter className="relative w-full justify-between p-6">
-          <div className="flex gap-2 self-end">
+          <div className="flex w-full flex-col gap-2 self-end">
             <Button
               isDisabled={!isDirty}
               type="submit"

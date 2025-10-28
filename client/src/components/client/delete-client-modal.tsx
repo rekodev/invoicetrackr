@@ -47,14 +47,10 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
     <ModalFooter>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
-          <Button color="danger" onPress={onClose}>
+          <Button color="danger" variant="light" onPress={onClose}>
             Cancel
           </Button>
-          <Button
-            isLoading={isPending}
-            color="secondary"
-            onPress={handleSubmit}
-          >
+          <Button isLoading={isPending} color="danger" onPress={handleSubmit}>
             Delete
           </Button>
         </div>

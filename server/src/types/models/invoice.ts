@@ -85,10 +85,12 @@ export const Invoice = Type.Object({
         minLength: 1,
         errorMessage: 'Address up to 255 characters is required'
       }),
-      email: Type.String({
-        format: 'email',
-        errorMessage: 'Valid email is required'
-      })
+      email: Type.Optional(
+        Type.String({
+          format: 'email',
+          errorMessage: 'Valid email is required'
+        })
+      )
     },
     {
       minProperties: 1,

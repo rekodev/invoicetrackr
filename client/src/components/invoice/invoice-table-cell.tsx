@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import {
   addToast,
   Checkbox,
@@ -10,6 +11,8 @@ import {
   DropdownTrigger,
   Tooltip
 } from '@heroui/react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import { useTranslations } from 'next-intl';
 import { Key, useEffect, useState, useTransition } from 'react';
 
 import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
@@ -24,6 +27,7 @@ import DeleteIcon from '../icons/DeleteIcon';
 import DocumentText from '../icons/DocumentText';
 import EditIcon from '../icons/EditIcon';
 import EyeIcon from '../icons/EyeIcon';
+import PDFDocument from '../pdf/pdf-document';
 
 const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
   {
@@ -35,6 +39,7 @@ const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
 type Props = {
   userId: number;
   currency: Currency;
+  language: string;
   invoice: InvoiceModel;
   columnKey: Key;
   onView: (invoice: InvoiceModel) => void;
@@ -45,12 +50,14 @@ type Props = {
 const InvoiceTableCell = ({
   userId,
   currency,
+  language,
   invoice,
   columnKey,
   onView,
   onEdit,
   onDelete
 }: Props) => {
+  const t = useTranslations('invoices.pdf');
   const [isPaid, setIsPaid] = useState(invoice.status === 'paid');
   const [isPending, startTransition] = useTransition();
 
@@ -175,9 +182,10 @@ const InvoiceTableCell = ({
       );
     case 'actions':
       return (
-        <div className="relative flex items-center gap-2">
+        <div className="relative flex items-center justify-end gap-2">
           <Tooltip content={isPaid ? 'Mark as Pending' : 'Mark as Paid'}>
             <Checkbox
+              className="mr-0.5 max-w-5 p-0"
               size="sm"
               color="success"
               isSelected={isPaid}
@@ -192,6 +200,24 @@ const InvoiceTableCell = ({
             >
               <EyeIcon />
             </span>
+          </Tooltip>
+          <Tooltip content="Download">
+            <PDFDownloadLink
+              fileName={invoice.invoiceId}
+              className="text-default-400 h-5 w-5"
+              document={
+                <PDFDocument
+                  t={t}
+                  language={language}
+                  senderSignatureImage={invoice.senderSignature as string}
+                  bankAccount={invoice.bankingInformation}
+                  currency={currency}
+                  invoiceData={invoice}
+                />
+              }
+            >
+              <ArrowDownTrayIcon />
+            </PDFDownloadLink>
           </Tooltip>
           <Tooltip content="Edit invoice">
             <span

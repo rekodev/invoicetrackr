@@ -39,11 +39,11 @@ const ClientCard = ({
                 <UserIcon className="h-5 w-5" />
               </div>
             )}
-            <div>
+            <div className="max-w-80">
               <div
                 className={cn(
                   'text-small truncate pb-0.5 font-bold uppercase',
-                  { 'lg:max-w-40 lg:truncate': truncate }
+                  { 'lg:truncate': truncate }
                 )}
               >
                 {client.name}

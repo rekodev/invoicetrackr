@@ -15,7 +15,7 @@ import { ClientModel } from '@/lib/types/models/client';
 import { InvoicePartyBusinessType } from '@/lib/types/models/invoice';
 import { capitalize } from '@/lib/utils';
 
-import AddNewClientModal from './add-new-client-modal';
+import ClientFormDialog from './client-form-dialog';
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import { PlusIcon } from '../icons/PlusIcon';
 import SearchIcon from '../icons/SearchIcon';
@@ -113,7 +113,7 @@ const ClientSectionTopContent = ({
         </div>
       </div>
 
-      <AddNewClientModal
+      <ClientFormDialog
         userId={userId}
         isOpen={isAddNewClientModalOpen}
         onClose={handleCloseAddNewClientModal}
