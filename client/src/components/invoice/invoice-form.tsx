@@ -354,7 +354,7 @@ const InvoiceForm = ({
   );
 
   const renderInvoiceSignature = () => (
-    <div className="flex flex-col gap-4">
+    <div className="col-span-4 flex flex-col gap-4 sm:col-span-1">
       <h4>Signature</h4>
       <SignaturePad
         signature={senderSignature}

@@ -22,7 +22,7 @@ const DashboardPage = async () => {
       <Suspense fallback={<DashboardCardsSkeleton />}>
         <DashboardCards userId={userId} currency={session.user.currency} />
       </Suspense>
-      <section className="flex flex-col gap-12 lg:flex-row lg:gap-6">
+      <section className="flex flex-col gap-12 lg:gap-6 xl:flex-row">
         <Suspense fallback={<RevenueChartSkeleton />}>
           <RevenueChart userId={userId} />
         </Suspense>

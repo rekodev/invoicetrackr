@@ -130,7 +130,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
             />
           </div>
         </CardBody>
-        <CardFooter className="w-full justify-between p-6">
+        <CardFooter className="flex w-full flex-col p-6">
           <Button
             isDisabled={!isDirty && !Boolean(formSignature)}
             type="submit"

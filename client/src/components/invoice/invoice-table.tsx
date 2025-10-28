@@ -189,6 +189,7 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
                 <TableCell>
                   <InvoiceTableCell
                     userId={userId}
+                    language={language}
                     currency={currency}
                     invoice={item}
                     columnKey={columnKey}

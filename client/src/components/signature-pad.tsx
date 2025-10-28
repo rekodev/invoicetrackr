@@ -108,7 +108,10 @@ const SignaturePad = ({
           radius="lg"
           className={cn(
             'shadow-small dark:border-default-100 aspect-4/3 relative flex items-center justify-center overflow-hidden dark:border',
-            { 'bg-[#F3126040]': isInvalid }
+            {
+              'bg-[#F3126040]': isInvalid,
+              'hover:border-none': !!signatureImgUrl
+            }
           )}
           onPress={onOpen}
           isPressable
@@ -119,9 +122,9 @@ const SignaturePad = ({
                 <Image
                   src={signatureImgUrl}
                   alt="Signature"
-                  className="z-0 rounded-none bg-white"
+                  className="z-0 rounded-none"
                 />
-                <div className="absolute hidden h-full w-full flex-col items-center justify-center gap-2 bg-black bg-opacity-50 text-white group-hover:flex dark:bg-opacity-75">
+                <div className="absolute hidden h-full w-full flex-col items-center justify-center gap-2 bg-black/50 text-white group-hover:flex dark:bg-black/75">
                   <PencilSquareIcon className="h-10 w-10" />
                   <p className="font-medium">Edit Signature</p>
                 </div>
@@ -158,9 +161,11 @@ const SignaturePad = ({
             <SignatureCanvas
               ref={signatureRef}
               canvasProps={{
-                width: 532,
-                height: 400,
-                style: { backgroundColor: 'white' }
+                style: {
+                  backgroundColor: 'white',
+                  touchAction: 'none',
+                  aspectRatio: '1 / 1'
+                }
               }}
               backgroundColor="white"
             />
