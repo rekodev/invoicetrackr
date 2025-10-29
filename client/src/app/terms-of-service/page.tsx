@@ -1,9 +1,12 @@
+const LAST_UPDATED = 'October 29, 2025';
+const CONTACT_EMAIL = 'support@invoicetrackr.com';
+
 export default function TermsOfServicePage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
       <h1 className="mb-8 text-4xl font-bold tracking-tight">Terms of Service</h1>
       <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-        Last Updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+        Last Updated: {LAST_UPDATED}
       </p>
 
       <div className="space-y-8">
@@ -275,7 +278,7 @@ export default function TermsOfServicePage() {
           <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
             <p className="text-gray-700 dark:text-gray-300">
               <strong>InvoiceTrackr</strong><br />
-              Email: support@invoicetrackr.com
+              Email: {CONTACT_EMAIL}
             </p>
           </div>
         </section>
