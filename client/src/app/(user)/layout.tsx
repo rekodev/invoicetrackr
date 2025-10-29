@@ -5,11 +5,15 @@ import '../globals.css';
 import Breadcrumbs from '@/components/breadcrumbs';
 
 export const metadata: Metadata = {
-  title: 'InvoiceTrackr',
-  description: 'Invoice generating and tracking'
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false }
+  },
+  referrer: 'no-referrer'
 };
 
-export default function RootLayout({
+export default function UserLayout({
   children
 }: Readonly<{
   children: ReactNode;
