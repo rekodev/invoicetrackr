@@ -9,7 +9,7 @@ import { getCurrencySymbol, getUserCurrency } from '@/lib/utils/currency';
 
 export default function Home() {
   const renderDivider = () => (
-    <div className="w-full border-t border-default-300 dark:border-default-100" />
+    <div className="border-default-300 dark:border-default-100 w-full border-t" />
   );
 
   return (
@@ -82,8 +82,8 @@ export default function Home() {
             <div className="flex flex-col justify-center space-y-4">
               <ul className="grid gap-6">
                 <li className="flex items-start gap-4">
-                  <div className="rounded-full bg-primary/10 p-1">
-                    <CheckIcon className="h-5 w-5 text-secondary" />
+                  <div className="bg-primary/10 rounded-full p-1">
+                    <CheckIcon className="text-secondary h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="font-bold">Save & Edit Invoices</h3>
@@ -94,8 +94,8 @@ export default function Home() {
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="rounded-full bg-primary/10 p-1">
-                    <CheckIcon className="h-5 w-5 text-secondary" />
+                  <div className="bg-primary/10 rounded-full p-1">
+                    <CheckIcon className="text-secondary h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="font-bold">Income Dashboard</h3>
@@ -106,8 +106,8 @@ export default function Home() {
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="rounded-full bg-primary/10 p-1">
-                    <CheckIcon className="h-5 w-5 text-secondary" />
+                  <div className="bg-primary/10 rounded-full p-1">
+                    <CheckIcon className="text-secondary h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="font-bold">Multi-Currency & Language</h3>
@@ -138,8 +138,8 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto flex max-w-7xl flex-col justify-center gap-6 py-12 lg:flex-row">
-            <div className="bg-card text-card-foreground flex w-full max-w-md flex-col justify-between rounded-lg border border-default-300 shadow-sm dark:border-default-100">
+          <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-6 py-12 lg:flex-row">
+            <div className="bg-card text-card-foreground border-default-300 dark:border-default-100 flex min-h-[472px] w-full max-w-md flex-col justify-between rounded-lg border shadow-sm">
               <div>
                 <div className="flex flex-col space-y-1.5 p-6">
                   <h3 className="text-2xl font-bold">Free</h3>
@@ -156,19 +156,19 @@ export default function Home() {
                 <div className="p-6 pt-0">
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
-                      <CheckIcon className="h-4 w-4 text-secondary" />
+                      <CheckIcon className="text-secondary h-4 w-4" />
                       <span>Create unlimited invoices</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckIcon className="h-4 w-4 text-secondary" />
+                      <CheckIcon className="text-secondary h-4 w-4" />
                       <span>Basic invoice template</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckIcon className="h-4 w-4 text-secondary" />
+                      <CheckIcon className="text-secondary h-4 w-4" />
                       <span>Export to PDF</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckIcon className="h-4 w-4 text-secondary" />
+                      <CheckIcon className="text-secondary h-4 w-4" />
                       <span>Add your signature</span>
                     </li>
                   </ul>
@@ -180,7 +180,7 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <div className="flex w-full max-w-md flex-col rounded-lg border border-secondary-500 bg-secondary-50 bg-opacity-50 shadow-sm dark:bg-opacity-100">
+            <div className="border-secondary-500 bg-secondary-50 flex w-full max-w-md flex-col rounded-lg border bg-opacity-50 shadow-sm dark:bg-opacity-100">
               <div className="flex flex-col space-y-1.5 p-6">
                 <h3 className="text-2xl font-bold">Premium</h3>
                 <p>Everything you need for efficient invoicing</p>
@@ -194,27 +194,27 @@ export default function Home() {
               <div className="p-6 pt-0">
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
+                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
                     <span>Everything in Free</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
+                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
                     <span>Save and edit invoices</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
+                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
                     <span>Store client information</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
+                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
                     <span>Create and manage contracts</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
+                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
                     <span>Choose currency and language</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="h-4 w-4 text-secondary dark:text-secondary-600" />
+                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
                     <span>Email invoices directly</span>
                   </li>
                 </ul>
@@ -255,7 +255,7 @@ export default function Home() {
               </Button>
             </div>
             <div className="flex flex-col items-start space-y-4">
-              <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm">
+              <div className="bg-background inline-block rounded-lg px-3 py-1 text-sm">
                 Testimonial
               </div>
               <blockquote className="text-lg font-semibold">

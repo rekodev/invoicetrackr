@@ -51,7 +51,7 @@ const InvoiceModal = ({
       onOpenChange={onOpenChange}
     >
       <ModalContent>
-        <ModalHeader className="flex items-center justify-between gap-4 pb-2">
+        <ModalHeader className="flex items-center gap-4 pb-2">
           {invoiceId}
           <PDFDownloadLink
             document={renderPdfDocument()}
@@ -59,7 +59,7 @@ const InvoiceModal = ({
           >
             <Button
               startContent={
-                <ArrowDownTrayIcon className="h-4 w-4 text-white" />
+                <ArrowDownTrayIcon className="h-4 w-4 dark:text-white" />
               }
               size="sm"
               variant="faded"

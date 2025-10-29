@@ -10,6 +10,7 @@ import {
 } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
@@ -27,6 +28,7 @@ export default function SubscriptionStatusCard({
   isActive,
   currency
 }: Props) {
+  const t = useTranslations('profile.account_settings.subscription');
   const router = useRouter();
   const [isCancelSubscriptionModalOpen, setIsCancelSubscriptionModalOpen] =
     useState(false);
@@ -53,10 +55,15 @@ export default function SubscriptionStatusCard({
                   'bg-danger-500': !isActive
                 })}
               />{' '}
-              <p>{isActive ? 'Active' : 'Inactive'}</p>
+              <p>{isActive ? t('status.active') : t('status.inactive')}</p>
             </div>
             <p className="text-default-500 text-sm">
-              Premium Plan - {currency}4.99/month
+              {t('plan', {
+                plan: 'Premium',
+                currency,
+                amount: '4.99',
+                interval: t('interval.month')
+              })}
             </p>
           </div>
         </CardBody>
@@ -68,7 +75,7 @@ export default function SubscriptionStatusCard({
             variant="bordered"
             color={isActive ? 'danger' : 'warning'}
           >
-            {isActive ? 'Cancel Subscription' : 'Renew Subscription'}
+            {isActive ? t('action.cancel') : t('action.renew')}
           </Button>
         </CardFooter>
       </Card>

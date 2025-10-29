@@ -19,7 +19,7 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
   };
 
   return (
-    <div className="flex w-full min-w-72 max-w-md flex-col gap-6">
+    <div className="flex w-full min-w-72 flex-col gap-6 xl:max-w-md">
       <div className="flex w-full items-center justify-between">
         <h2 className="text-2xl">Latest Invoices</h2>
         <ViewAllInvoicesButton />

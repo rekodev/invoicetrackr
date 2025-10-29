@@ -156,7 +156,7 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
             color="danger"
             onPress={() => setIsDeleteAccountModalOpen(true)}
           >
-            {t('delete_account')}
+            {t('delete_account.action')}
           </Button>
           <Button
             isDisabled={!isDirty}

@@ -10,6 +10,7 @@ import {
   ModalFooter,
   ModalHeader
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 
 import { deleteUserAccount } from '@/api';
@@ -22,6 +23,7 @@ type Props = {
 };
 
 const DeleteAccountModal = ({ userId, isOpen, onClose }: Props) => {
+  const t = useTranslations('profile.account_settings.delete_account.dialog');
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = async () =>
@@ -43,11 +45,11 @@ const DeleteAccountModal = ({ userId, isOpen, onClose }: Props) => {
     <ModalFooter>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
-          <Button color="danger" variant="bordered" onPress={onClose}>
-            Cancel
+          <Button variant="bordered" onPress={onClose}>
+            {t('cancel_button')}
           </Button>
           <Button isLoading={isPending} color="danger" onPress={handleSubmit}>
-            Delete Permanently
+            {t('confirm_button')}
           </Button>
         </div>
       </div>
@@ -59,12 +61,9 @@ const DeleteAccountModal = ({ userId, isOpen, onClose }: Props) => {
       <ModalContent>
         <ModalHeader className="flex items-end gap-2">
           <ExclamationTriangleIcon className="text-danger-400 h-6 w-6" />
-          Delete Account?
+          {t('title')}
         </ModalHeader>
-        <ModalBody>
-          Your account and all associated data will be permanently deleted. This
-          action cannot be undone.
-        </ModalBody>
+        <ModalBody>{t('description')}</ModalBody>
         {renderModalFooter()}
       </ModalContent>
     </Modal>

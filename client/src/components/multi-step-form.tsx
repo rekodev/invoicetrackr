@@ -21,6 +21,7 @@ import {
 } from '@/lib/utils/user';
 
 import SignUpForm from './auth/sign-up-form';
+import AppLogo from './icons/AppLogo';
 import PaymentForm from './payment-form';
 import BankAccountForm from './profile/bank-account-form';
 import PersonalInformationForm from './profile/personal-information-form';
@@ -155,14 +156,23 @@ export default function MultiStepForm({
           <Button
             variant="bordered"
             className="hidden md:flex"
+            isDisabled={currentStep <= 0}
             onPress={() => setCurrentStep((prev) => (prev <= 0 ? 0 : prev - 1))}
           >
             <ArrowLeftIcon className="h-5 w-5" />
             Back
           </Button>
           <div className="hidden md:block">
-            <h3 className="text-2xl font-bold">InvoiceTrackr</h3>
-            <p className="text-default-500">Do something</p>
+            <div className="flex items-center gap-2">
+              <AppLogo height={60} width={60} />
+
+              <div className="flex flex-col">
+                <h3 className="text-2xl font-bold">InvoiceTrackr</h3>
+                <p className="text-default-500">
+                  Manage invoices and track your income seamlessly
+                </p>
+              </div>
+            </div>
           </div>
         </CardHeader>
         <CardBody className="flex max-h-min md:items-center md:justify-center">

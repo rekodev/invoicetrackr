@@ -1,4 +1,4 @@
-import { InvoiceService } from "../types/models/invoice";
+import { InvoiceService } from '../types/models/invoice';
 
 export const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -30,5 +30,5 @@ export const calculateServiceTotal = (services: Array<InvoiceService>) =>
   services.reduce(
     (acc, currentValue) =>
       acc + Number(currentValue.amount * Number(currentValue.quantity)),
-    0,
+    0
   );

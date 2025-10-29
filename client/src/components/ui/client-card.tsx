@@ -32,14 +32,14 @@ const ClientCard = ({
           'cursor-pointer': !!onClick
         })}
       >
-        <CardBody className="flex min-h-[70px] min-w-72 flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <CardBody className="flex min-h-[70px] flex-row items-center justify-between gap-4">
+          <div className="max-w-2/3 flex items-center gap-3">
             {!hideIcon && (
               <div className="item-center rounded-medium border-default-200 flex border p-2">
                 <UserIcon className="h-5 w-5" />
               </div>
             )}
-            <div className="max-w-80">
+            <div className="max-w-full">
               <div
                 className={cn(
                   'text-small truncate pb-0.5 font-bold uppercase',
@@ -57,7 +57,7 @@ const ClientCard = ({
             </div>
           </div>
           {amount && currency && (
-            <div className="right-3 flex gap-[1px] text-lg font-medium">
+            <div className="flex gap-[1px] text-lg font-medium">
               <span className="text-success-700">
                 {getCurrencySymbol(currency)}
               </span>

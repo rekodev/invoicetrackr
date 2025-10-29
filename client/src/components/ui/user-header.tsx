@@ -16,6 +16,7 @@ import {
   Link
 } from '@heroui/react';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import { logOutAction } from '@/lib/actions';
 import {
@@ -43,6 +44,7 @@ type Props = {
 };
 
 export default function UserHeader({ user }: Props) {
+  const t = useTranslations('header.user');
   const pathname = usePathname();
   const router = useRouter();
 
@@ -66,7 +68,7 @@ export default function UserHeader({ user }: Props) {
               as={Link}
               key={`mobile-${index}`}
               href={item.href}
-              className={cn('w-full text-default-800', {
+              className={cn('text-default-800 w-full', {
                 'text-secondary': isActive
               })}
             >
@@ -82,7 +84,7 @@ export default function UserHeader({ user }: Props) {
     <Navbar isBordered maxWidth="xl">
       <NavbarBrand className="flex gap-2 text-white" as={Link} href={HOME_PAGE}>
         <AppLogo />
-        <p className="hidden font-bold text-default-800 sm:flex">
+        <p className="text-default-800 hidden font-bold sm:flex">
           INVOICE
           <span className="text-secondary-400 dark:text-secondary-600">
             TRACKR
@@ -103,7 +105,7 @@ export default function UserHeader({ user }: Props) {
                   'text-secondary': isActive
                 })}
               >
-                {item.name}
+                {t(item.name.toLowerCase())}
               </Link>
             </NavbarItem>
           );
@@ -113,7 +115,7 @@ export default function UserHeader({ user }: Props) {
       <NavbarContent as="div" justify="end">
         {renderMobileNavbarContent()}
         <div className="h-full py-3 md:hidden">
-          <div className="h-full border-r border-default-300 dark:border-default-100" />
+          <div className="border-default-300 dark:border-default-100 h-full border-r" />
         </div>
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
@@ -130,11 +132,11 @@ export default function UserHeader({ user }: Props) {
           <form action={logOutAction}>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="signed-in-as" className="h-14 gap-2">
-                <p className="font-semibold">Signed in as</p>
+                <p className="font-semibold">{t('signed_in_as')}</p>
                 <p className="font-semibold">{user.email}</p>
               </DropdownItem>
               <DropdownItem key="profile" onPress={navigateToProfilePage}>
-                My Profile
+                {t('my_profile')}
               </DropdownItem>
               <DropdownItem
                 key="logout"
@@ -143,12 +145,12 @@ export default function UserHeader({ user }: Props) {
                 itemType="submit"
                 className="text-left"
               >
-                Log Out
+                {t('log_out')}
               </DropdownItem>
             </DropdownMenu>
           </form>
         </Dropdown>
-        <NavbarItem className="border-l border-default-300 pl-4 dark:border-default-100">
+        <NavbarItem className="border-default-300 dark:border-default-100 border-l pl-4">
           <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>
