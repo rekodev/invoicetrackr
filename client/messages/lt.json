@@ -1,7 +1,45 @@
 {
+  "header": {
+    "user": {
+      "dashboard": "Skydelis",
+      "invoices": "Sąskaitos faktūros",
+      "clients": "Klientai",
+      "contracts": "Kontraktai",
+      "my_profile": "Mano profilis",
+      "log_out": "Atsijungti",
+      "signed_in_as": "Prisijungęs vartotojas"
+    },
+    "guest": {
+      "login": "Log In",
+      "sign_up": "Sign Up",
+      "create_invoice": "Sukurti sąskaitą faktūrą",
+      "features": "Privalumai",
+      "pricing": "Kainos"
+    }
+  },
   "breadcrumbs": {
+    "account_settings": "Paskyros nustatymai",
+    "banking_information": "Bankinė informacija",
+    "change_password": "Pakeisti slaptažodį",
+    "clients": "Klientai",
+    "contracts": "Kontraktai",
+    "create_invoice": "Sukurti sąskaitą faktūrą",
+    "create_new_password": "Sukurti naują slaptažodį",
+    "dashboard": "Skydelis",
+    "edit": "Redaguoti",
+    "forgot_password": "Pamiršote slaptažodį",
+    "home": "Pradžia",
+    "invoices": "Sąskaitos faktūros",
+    "login": "Prisijungti",
+    "new": "Naujas",
+    "onboarding": "Įvedimas",
+    "payment_success": "Mokėjimas sėkmingas",
+    "personal_information": "Asmeninė informacija",
+    "privacy_policy": "Privatumo politika",
     "profile": "Profilis",
-    "personal_information": "Asmeninė informacija"
+    "renew_subscription": "Atnaujinti prenumeratą",
+    "sign_up": "Registruotis",
+    "terms_of_service": "Paslaugų teikimo sąlygos"
   },
   "general_error": "Ajajai! Kažkas negerai...",
   "invoices": {

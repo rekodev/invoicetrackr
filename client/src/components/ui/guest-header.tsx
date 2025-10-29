@@ -14,6 +14,7 @@ import {
   NavbarItem
 } from '@heroui/react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import {
   CREATE_INVOICE_PAGE,
@@ -31,6 +32,7 @@ const navbarItems = [
 ];
 
 export default function GuestHeader() {
+  const t = useTranslations('header.guest');
   const pathname = usePathname();
 
   const renderMobileNavbarContent = () => {
@@ -50,7 +52,7 @@ export default function GuestHeader() {
             href={CREATE_INVOICE_PAGE}
             showDivider
           >
-            Create Invoice
+            {t('create_invoice')}
           </DropdownItem>
           <DropdownItem
             as={Link}
@@ -58,7 +60,7 @@ export default function GuestHeader() {
             className="text-default-800 flex items-center justify-center"
             key="login"
           >
-            Login
+            {t('login')}
           </DropdownItem>
           <DropdownItem
             key="sign-up"
@@ -66,7 +68,7 @@ export default function GuestHeader() {
             href={SIGN_UP_PAGE}
             className="text-default-800"
           >
-            Sign Up
+            {t('sign_up')}
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
@@ -98,7 +100,7 @@ export default function GuestHeader() {
                 aria-current="page"
                 color={isActive ? 'secondary' : 'foreground'}
               >
-                {item.name}
+                {t(item.name.toLowerCase())}
               </Link>
             </NavbarItem>
           );
@@ -114,12 +116,12 @@ export default function GuestHeader() {
             variant="faded"
             href={CREATE_INVOICE_PAGE}
           >
-            Create Invoice
+            {t('create_invoice')}
           </Button>
         </NavbarItem>
         <NavbarItem className="hidden md:flex">
           <Link className="text-secondary" href={LOGIN_PAGE}>
-            Login
+            {t('login')}
           </Link>
         </NavbarItem>
         <NavbarItem className="hidden md:flex">
@@ -129,7 +131,7 @@ export default function GuestHeader() {
             color="secondary"
             variant="flat"
           >
-            Sign Up
+            {t('sign_up')}
           </Button>
         </NavbarItem>
         <NavbarItem className="border-default-300 dark:border-default-100 border-l pl-4">

@@ -38,7 +38,11 @@ const Breadcrumbs = () => {
         );
       }
 
-      return <BreadcrumbItem key={segment}>{t(segment)}</BreadcrumbItem>;
+      return (
+        <BreadcrumbItem key={segment}>
+          {isNaN(Number(segment)) ? t(segment) : segment}
+        </BreadcrumbItem>
+      );
     });
   };
 
