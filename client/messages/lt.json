@@ -29,6 +29,37 @@
     }
   },
   "profile": {
+    "user_nav_card": {
+      "personal_information": {
+        "title": "Asmeninė informacija"
+      },
+      "account_settings": {
+        "title": "Paskyros nustatymai"
+      },
+      "change_password": {
+        "title": "Pakeisti slaptažodį"
+      },
+      "banking_information": {
+        "title": "Bankinė informacija"
+      }
+    },
+    "personal_information": {
+      "form": {
+        "title": "Asmeninė informacija",
+        "email": "El. paštas",
+        "email_placeholder": "Įveskite savo el. pašto adresą",
+        "name": "Vardas",
+        "name_placeholder": "Įveskite savo vardą",
+        "business_type": "Verslo tipas",
+        "business_type_placeholder": "Pasirinkite verslo tipą",
+        "business_number": "Įmonės kodas / IV pažymos Nr.",
+        "business_number_placeholder": "Įveskite savo įmonės kodą arba IV pažymos Nr.",
+        "address": "Adresas",
+        "address_placeholder": "Įveskite savo adresą",
+        "signature": "Parašas",
+        "save_changes": "Išsaugoti pakeitimus"
+      }
+    },
     "account_settings": {
       "title": "Paskyros Nustatymai",
       "currency": "Valiuta",
@@ -41,8 +72,38 @@
         "usd": "JAV Doleris",
         "eur": "Euras"
       },
-      "delete_account": "Ištrinti Paskyrą",
-      "save_changes": "Išsaugoti Pakeitimus"
+      "delete_account": {
+        "action": "Ištrinti paskyrą",
+        "dialog": {
+          "title": "Ištrinti paskyrą",
+          "description": "Ar tikrai norite ištrinti savo paskyrą? Šis veiksmas yra negrįžtamas ir visi jūsų duomenys bus prarasti.",
+          "confirm_button": "Taip, ištrinti mano paskyrą",
+          "cancel_button": "Atšaukti"
+        }
+      },
+      "save_changes": "Išsaugoti pakeitimus",
+      "subscription": {
+        "title": "Prenumeratos Būsena",
+        "status": {
+          "active": "Aktyvi",
+          "inactive": "Neaktyvi"
+        },
+        "plan": "{plan} Planas - {currency}{amount}/{interval}",
+        "interval": {
+          "month": "mėnėsį",
+          "year": "metus"
+        },
+        "action": {
+          "cancel": "Atšaukti Prenumeratą",
+          "renew": "Atnaujinti Prenumeratą"
+        },
+        "cancel_subscription_dialog": {
+          "title": "Atšaukti Prenumeratą",
+          "description": "Ar tikrai norite atšaukti savo prenumeratą? Jūs išlaikysite prieigą iki dabartinio prenumeratos laikotarpio pabaigos.",
+          "confirm_button": "Taip, atšaukti prenumeratą",
+          "cancel_button": "Atšaukti"
+        }
+      }
     },
     "change_password": {
       "aria_label": "Slaptažodžio keitimo forma",
@@ -55,6 +116,35 @@
       "confirm_new_password_placeholder": "Patvirtinkite naują slaptažodį",
       "save_changes": "Išsaugoti pakeitimus",
       "password_requirements": "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną skaičių, didžiąją raidę, mažąją raidę ir specialų simbolį."
+    },
+    "banking_information": {
+      "title": "Bankinė informacija",
+      "actions": {
+        "add": "Pridėti naują",
+        "save": "Išsaugoti"
+      },
+      "delete_dialog": {
+        "title": "Ištrinti bankinę informaciją {bank_number}",
+        "description": "Ar tikrai norite ištrinti šią bankinę informaciją? Šis veiksmas yra negrįžtamas.",
+        "confirm_button": "Taip, ištrinti",
+        "cancel_button": "Atšaukti"
+      },
+      "form": {
+        "title": {
+          "create": "Pridėti bankinę informaciją",
+          "edit": "Redaguoti bankinę informaciją"
+        },
+        "bank_name": "Banko pavadinimas",
+        "bank_name_placeholder": "Pvz., Swedbank",
+        "bank_code": "Banko kodas",
+        "bank_code_placeholder": "Pvz., HABALT22",
+        "bank_account_number": "Atsiskaitomoji sąskaita",
+        "bank_account_number_placeholder": "Pvz., LT1234 5678 9012 3456 78",
+        "actions": {
+          "save": "Išsaugoti",
+          "cancel": "Atšaukti"
+        }
+      }
     }
   },
   "forgot_password": {

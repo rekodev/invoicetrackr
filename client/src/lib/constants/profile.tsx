@@ -15,25 +15,25 @@ import {
 export const profileMenuTabs = [
   {
     key: 'personal-information',
-    name: 'Personal Information',
+    name: 'personal_information.title',
     icon: <UserIcon className="h-4 w-4" />,
     href: PERSONAL_INFORMATION_PAGE
   },
   {
     key: 'banking-information',
-    name: 'Banking Information',
+    name: 'banking_information.title',
     icon: <CreditCardIcon className="h-4 w-4" />,
     href: BANKING_INFORMATION_PAGE
   },
   {
     key: 'change-password',
-    name: 'Change Password',
+    name: 'change_password.title',
     icon: <LockClosedIcon className="h-4 w-4" />,
     href: CHANGE_PASSWORD_PAGE
   },
   {
     key: 'account-settings',
-    name: 'Account Settings',
+    name: 'account_settings.title',
     icon: <Cog6ToothIcon className="h-4 w-4" />,
     href: ACCOUNT_SETTINGS_PAGE
   }

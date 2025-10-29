@@ -12,8 +12,37 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'InvoiceTrackr',
-  description: 'Invoice generating and tracking'
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+  ),
+  title: {
+    default: 'InvoiceTrackr',
+    template: '%s · InvoiceTrackr'
+  },
+  description:
+    'Create professional invoices, track payments, and monitor income for freelancers and small businesses.',
+  keywords: [
+    'invoicing',
+    'invoice generator',
+    'billing',
+    'payments',
+    'income tracking',
+    'small business',
+    'freelancer'
+  ],
+  authors: [{ name: 'InvoiceTrackr' }],
+  creator: 'InvoiceTrackr',
+  openGraph: {
+    type: 'website',
+    siteName: 'InvoiceTrackr',
+    title: 'InvoiceTrackr',
+    description:
+      'Create professional invoices, track payments, and monitor income for freelancers and small businesses.',
+    url: '/'
+  },
+  alternates: {
+    canonical: '/'
+  }
 };
 
 export default async function RootLayout({

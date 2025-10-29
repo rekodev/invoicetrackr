@@ -12,6 +12,7 @@ import {
   Select,
   SelectItem
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
@@ -30,6 +31,7 @@ type Props = {
 // TODO: Improve form and add validation
 
 const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
+  const t = useTranslations('profile.personal_information.form');
   const {
     register,
     handleSubmit,
@@ -85,19 +87,22 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
           <Input
             isDisabled
             {...register('email')}
-            label="Email"
+            label={t('email')}
+            placeholder={t('email_placeholder')}
             labelPlacement="outside"
             variant="faded"
           />
           <Input
             {...register('name')}
-            label="Name"
+            label={t('name')}
+            placeholder={t('name_placeholder')}
             labelPlacement="outside"
             variant="faded"
           />
           <Select
             {...register('businessType')}
-            label="Business Type"
+            label={t('business_type')}
+            placeholder={t('business_type_placeholder')}
             labelPlacement="outside"
             variant="faded"
             defaultSelectedKeys={
@@ -112,13 +117,15 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
           </Select>
           <Input
             {...register('businessNumber')}
-            label="Business Number"
+            label={t('business_number')}
+            placeholder={t('business_number_placeholder')}
             labelPlacement="outside"
             variant="faded"
           />
           <Input
             {...register('address')}
-            label="Address"
+            label={t('address')}
+            placeholder={t('address_placeholder')}
             labelPlacement="outside"
             variant="faded"
           />
@@ -138,7 +145,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
             color="secondary"
             className="self-end"
           >
-            Save
+            {t('save_changes')}
           </Button>
         </CardFooter>
       </>
@@ -153,7 +160,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
       className="dark:border-default-100 w-full bg-transparent dark:border"
       encType="multipart/form-data"
     >
-      <CardHeader className="p-4 px-6">Personal Information</CardHeader>
+      <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
       <Divider />
       {renderCardBodyAndFooter()}
     </Card>

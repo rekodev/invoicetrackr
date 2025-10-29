@@ -23,7 +23,7 @@ import {
 } from '@/lib/constants/pages';
 
 import ThemeSwitcher from './theme-switcher';
-import AppLogo from '../icons/AppLogo.jsx';
+import AppLogo from '../icons/AppLogo';
 
 const navbarItems = [
   { name: 'Features', href: '#features' },
@@ -55,7 +55,7 @@ export default function GuestHeader() {
           <DropdownItem
             as={Link}
             href={LOGIN_PAGE}
-            className="flex items-center justify-center text-default-800"
+            className="text-default-800 flex items-center justify-center"
             key="login"
           >
             Login
@@ -77,7 +77,7 @@ export default function GuestHeader() {
     <Navbar isBordered maxWidth="xl">
       <NavbarBrand className="flex gap-2" as={Link} href={HOME_PAGE}>
         <AppLogo />
-        <p className="hidden font-bold text-default-800 sm:flex">
+        <p className="text-default-800 hidden font-bold sm:flex">
           INVOICE
           <span className="text-secondary-400 dark:text-secondary-600">
             TRACKR
@@ -107,7 +107,7 @@ export default function GuestHeader() {
 
       <NavbarContent as="div" justify="end">
         {renderMobileNavbarContent()}
-        <NavbarItem className="hidden border-r border-default-300 pr-4 dark:border-default-100 md:flex">
+        <NavbarItem className="border-default-300 dark:border-default-100 hidden border-r pr-4 md:flex">
           <Button
             as={Link}
             color="secondary"
@@ -132,7 +132,7 @@ export default function GuestHeader() {
             Sign Up
           </Button>
         </NavbarItem>
-        <NavbarItem className="border-l border-default-300 pl-4 dark:border-default-100">
+        <NavbarItem className="border-default-300 dark:border-default-100 border-l pl-4">
           <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>

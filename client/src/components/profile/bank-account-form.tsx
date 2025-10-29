@@ -12,6 +12,7 @@ import {
 } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { addBankingInformationAction } from '@/lib/actions/banking-information';
@@ -36,6 +37,7 @@ export default function BankAccountForm({
   userSelectedBankAccountId,
   isUserOnboarding
 }: Props) {
+  const t = useTranslations('profile.banking_information.form');
   const router = useRouter();
   const {
     register,
@@ -87,29 +89,29 @@ export default function BankAccountForm({
         aria-label="Banking Information Form"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <CardHeader className="p-4 px-6">Banking Information</CardHeader>
+        <CardHeader className="p-4 px-6">{t('title.create')}</CardHeader>
         <Divider />
         <CardBody className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2">
           <Input
             {...register('name')}
-            label="Bank Name"
+            label={t('bank_name')}
             variant="faded"
             labelPlacement="outside"
-            placeholder="e.g., Swedbank"
+            placeholder={t('bank_name_placeholder')}
           />
           <Input
             {...register('code')}
-            label="Bank Code"
+            label={t('bank_code')}
             variant="faded"
             labelPlacement="outside"
-            placeholder="e.g., HABALT22"
+            placeholder={t('bank_code_placeholder')}
           />
           <Input
             {...register('accountNumber')}
-            label="Bank Account Number"
+            label={t('bank_account_number')}
             variant="faded"
             labelPlacement="outside"
-            placeholder="e.g., LT12 1000 0111 0100 1000"
+            placeholder={t('bank_account_number_placeholder')}
           />
         </CardBody>
         <CardFooter className="justify-end gap-2 p-6">
@@ -120,11 +122,11 @@ export default function BankAccountForm({
                 variant="light"
                 onPress={() => router.push(BANKING_INFORMATION_PAGE)}
               >
-                Cancel
+                {t('actions.cancel')}
               </Button>
             )}
             <Button type="submit" color="secondary" isLoading={isSubmitting}>
-              Save
+              {t('actions.save')}
             </Button>
           </div>
         </CardFooter>
