@@ -1,4 +1,8 @@
 {
+  "breadcrumbs": {
+    "profile": "Profile",
+    "personal_information": "Personal Information"
+  },
   "general_error": "Uh oh! Something went wrong...",
   "invoices": {
     "pdf": {

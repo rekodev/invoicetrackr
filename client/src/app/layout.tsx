@@ -15,10 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
   ),
-  title: {
-    default: 'InvoiceTrackr',
-    template: '%s · InvoiceTrackr'
-  },
+  title: 'InvoiceTrackr',
   description:
     'Create professional invoices, track payments, and monitor income for freelancers and small businesses.',
   keywords: [

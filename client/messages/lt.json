@@ -1,4 +1,8 @@
 {
+  "breadcrumbs": {
+    "profile": "Profilis",
+    "personal_information": "Asmeninė informacija"
+  },
   "general_error": "Ajajai! Kažkas negerai...",
   "invoices": {
     "pdf": {
