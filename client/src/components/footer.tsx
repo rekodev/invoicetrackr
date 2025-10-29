@@ -4,19 +4,36 @@ import { Link } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 
 import {
+  CHANGE_PASSWORD_PAGE,
+  CREATE_INVOICE_PAGE,
+  FORGOT_PASSWORD_PAGE,
   HOME_PAGE,
+  LOGIN_PAGE,
   PRIVACY_POLICY_PAGE,
   TERMS_OF_SERVICE_PAGE
 } from '@/lib/constants/pages';
 
 import AppLogo from './icons/AppLogo';
 
+const FULL_FOOTER_PATHNAMES = [
+  HOME_PAGE,
+  PRIVACY_POLICY_PAGE,
+  TERMS_OF_SERVICE_PAGE,
+  CREATE_INVOICE_PAGE,
+  LOGIN_PAGE,
+  SIGN_UP_PAGE,
+  FORGOT_PASSWORD_PAGE,
+  CHANGE_PASSWORD_PAGE
+];
+
 const Footer = () => {
   const pathname = usePathname();
 
   return (
     <footer className="flex flex-col items-center justify-center">
-      {pathname === HOME_PAGE && (
+      {FULL_FOOTER_PATHNAMES.some(
+        (name) => pathname && name.includes(pathname)
+      ) && (
         <div className="border-t-1 border-default-300 dark:border-default-100 w-full gap-4 py-10 md:flex-row md:gap-8 md:py-12">
           <div className="m-auto flex w-full max-w-7xl flex-col items-center justify-between gap-8 px-6 text-center sm:flex-row sm:text-start">
             <div className="flex flex-col gap-6">
