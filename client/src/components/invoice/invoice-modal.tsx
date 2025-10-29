@@ -59,7 +59,7 @@ const InvoiceModal = ({
           >
             <Button
               startContent={
-                <ArrowDownTrayIcon className="h-4 w-4 text-white" />
+                <ArrowDownTrayIcon className="h-4 w-4 dark:text-white" />
               }
               size="sm"
               variant="faded"
