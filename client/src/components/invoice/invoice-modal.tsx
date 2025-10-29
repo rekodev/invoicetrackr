@@ -51,7 +51,7 @@ const InvoiceModal = ({
       onOpenChange={onOpenChange}
     >
       <ModalContent>
-        <ModalHeader className="flex items-center justify-between gap-4 pb-2">
+        <ModalHeader className="flex items-center gap-4 pb-2">
           {invoiceId}
           <PDFDownloadLink
             document={renderPdfDocument()}
