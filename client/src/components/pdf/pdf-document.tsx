@@ -2,8 +2,8 @@
 
 import {
   Document,
-  Page,
   Image as PDFImage,
+  Page,
   Text,
   View
 } from '@react-pdf/renderer';
@@ -13,7 +13,7 @@ import { BankingInformationFormModel } from '@/lib/types/models/user';
 import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
 import { amountToWords } from '@/lib/utils/amount-to-words';
 import { formatDate } from '@/lib/utils/format-date';
-import { registerPdfFont, pdfStyles } from '@/lib/utils/pdf';
+import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
 
 registerPdfFont();
 

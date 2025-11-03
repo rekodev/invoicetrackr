@@ -1,9 +1,9 @@
 'use client';
 
 import {
-  UserGroupIcon,
   BuildingLibraryIcon,
-  SparklesIcon
+  SparklesIcon,
+  UserGroupIcon
 } from '@heroicons/react/24/outline';
 import { Button, Card, Input, Select, SelectItem } from '@heroui/react';
 import { useState, useTransition } from 'react';

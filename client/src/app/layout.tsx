@@ -1,19 +1,48 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { getLocale, getMessages } from 'next-intl/server';
+import { GoogleAnalytics } from '@next/third-parties/google';
+import { Inter } from 'next/font/google';
+import type { Metadata } from 'next';
 import { ReactNode } from 'react';
+
 import './globals.css';
 
 import Footer from '@/components/footer';
 import Header from '@/components/header';
 
+import CookieConsent from './cookie-consent';
 import { Providers } from './providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+  ),
   title: 'InvoiceTrackr',
-  description: 'Invoice generating and tracking'
+  description:
+    'Create professional invoices, track payments, and monitor income for freelancers and small businesses.',
+  keywords: [
+    'invoicing',
+    'invoice generator',
+    'billing',
+    'payments',
+    'income tracking',
+    'small business',
+    'freelancer'
+  ],
+  authors: [{ name: 'InvoiceTrackr' }],
+  creator: 'InvoiceTrackr',
+  openGraph: {
+    type: 'website',
+    siteName: 'InvoiceTrackr',
+    title: 'InvoiceTrackr',
+    description:
+      'Create professional invoices, track payments, and monitor income for freelancers and small businesses.',
+    url: '/'
+  },
+  alternates: {
+    canonical: '/'
+  }
 };
 
 export default async function RootLayout({
@@ -34,8 +63,10 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
+          <CookieConsent />
         </Providers>
       </body>
+      <GoogleAnalytics gaId="G-CSK6B9L88V" />
     </html>
   );
 }

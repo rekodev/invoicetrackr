@@ -2,17 +2,18 @@
 
 import { CameraIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import {
-  addToast,
   Avatar,
   Card,
   CardBody,
   CardHeader,
   Chip,
   Tab,
-  Tabs
+  Tabs,
+  addToast
 } from '@heroui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useRef, useState, useTransition } from 'react';
 
 import { updateUserProfilePictureAction } from '@/lib/actions/user';
@@ -24,6 +25,7 @@ type Props = {
 };
 
 const UserCard = ({ user }: Props) => {
+  const t = useTranslations('profile.user_nav_card');
   const pathname = usePathname();
 
   const [uploadedImage, setUploadedImage] = useState<File>();
@@ -129,7 +131,7 @@ const UserCard = ({ user }: Props) => {
               title={
                 <div className="flex items-center space-x-2">
                   {tab.icon}
-                  <span>{tab.name}</span>
+                  <span>{t(tab.name)}</span>
                 </div>
               }
               as={Link}

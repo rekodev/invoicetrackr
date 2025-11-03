@@ -8,7 +8,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import {
-  addToast,
   Button,
   Card,
   CardBody,
@@ -17,10 +16,12 @@ import {
   Divider,
   Radio,
   RadioGroup,
+  addToast,
   useDisclosure
 } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from 'react';
 
 import { updateUserSelectedBankAccount } from '@/api';
@@ -39,6 +40,7 @@ type Props = {
 };
 
 const BankingInformationForm = ({ user, bankAccounts }: Props) => {
+  const t = useTranslations('profile.banking_information');
   const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
@@ -57,6 +59,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     useState<BankingInformationFormModel>();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedBankAccountId(String(user.selectedBankAccountId));
   }, [user.selectedBankAccountId]);
 
@@ -98,17 +101,6 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     setCurrentBankingInformation(bankAccount);
     onOpen();
   };
-
-  const renderAddNewButton = () => (
-    <Button
-      color="secondary"
-      variant="bordered"
-      endContent={<PlusIcon className="h-4 w-4" />}
-      onPress={handleAddNewBankAccount}
-    >
-      Add New
-    </Button>
-  );
 
   const renderBankingInformationCard = ({
     id,
@@ -191,10 +183,18 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   return (
     <>
       <Card className="dark:border-default-100 w-full bg-transparent dark:border">
-        <CardHeader className="p-4 px-6">Banking Information</CardHeader>
+        <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
         <Divider />
         <CardBody className="flex flex-col items-end gap-6 p-6">
-          {renderAddNewButton()}
+          <Button
+            color="secondary"
+            variant="bordered"
+            endContent={<PlusIcon className="h-4 w-4" />}
+            onPress={handleAddNewBankAccount}
+          >
+            {t('actions.add')}
+          </Button>
+
           {renderCardBody()}
         </CardBody>
         <CardFooter className="flex w-full items-center justify-between p-6">
@@ -208,7 +208,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
               onPress={handleSave}
               className="self-end"
             >
-              Save
+              {t('actions.save')}
             </Button>
           </div>
         </CardFooter>

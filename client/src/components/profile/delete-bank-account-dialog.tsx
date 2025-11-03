@@ -1,12 +1,13 @@
 import {
-  addToast,
   Button,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
-  ModalHeader
+  ModalHeader,
+  addToast
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 
 import { deleteBankingInformationAction } from '@/lib/actions/banking-information';
@@ -25,6 +26,7 @@ const DeleteBankAccountDialog = ({
   onClose,
   bankingInformation: bankAccount
 }: Props) => {
+  const t = useTranslations('profile.banking_information.delete_dialog');
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = async () =>
@@ -50,15 +52,11 @@ const DeleteBankAccountDialog = ({
     <ModalFooter>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
-          <Button color="danger" onPress={onClose}>
-            Cancel
+          <Button variant="bordered" onPress={onClose}>
+            {t('cancel_button')}
           </Button>
-          <Button
-            isLoading={isPending}
-            color="secondary"
-            onPress={handleSubmit}
-          >
-            Delete
+          <Button isLoading={isPending} color="danger" onPress={handleSubmit}>
+            {t('confirm_button')}
           </Button>
         </div>
       </div>
@@ -69,12 +67,9 @@ const DeleteBankAccountDialog = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         <ModalHeader>
-          Are you sure you want to delete {bankAccount.accountNumber}?
+          {t('title', { bank_number: bankAccount?.accountNumber })}
         </ModalHeader>
-        <ModalBody>
-          This banking information will be deleted immediately. You can&apos;t
-          undo this action.
-        </ModalBody>
+        <ModalBody>{t('description')}</ModalBody>
         {renderModalFooter()}
       </ModalContent>
     </Modal>

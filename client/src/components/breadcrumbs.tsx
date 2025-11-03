@@ -1,10 +1,11 @@
 'use client';
 
 import {
-  Breadcrumbs as HeroUIBreadcrumbs,
-  BreadcrumbItem
+  BreadcrumbItem,
+  Breadcrumbs as HeroUIBreadcrumbs
 } from '@heroui/react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import {
   HOME_PAGE,
@@ -12,13 +13,13 @@ import {
   PAYMENT_SUCCESS_PAGE,
   RENEW_SUBSCRIPTION_PAGE
 } from '@/lib/constants/pages';
-import { capitalize } from '@/lib/utils';
 
 const splitPathnameToSegments = (pathname: string): Array<string> => {
   return pathname.slice(1).split('/');
 };
 
 const Breadcrumbs = () => {
+  const t = useTranslations('breadcrumbs');
   const pathname = usePathname();
 
   const renderBreadcrumbs = () => {
@@ -29,16 +30,18 @@ const Breadcrumbs = () => {
 
     return splitPathnameToSegments(pathname).map((segment) => {
       const splitSegments = segment.split('-');
-      const joinedSegments = splitSegments
-        .map((segment) => capitalize(segment))
-        .join(' ');
+      const joinedSegments = splitSegments.join('_');
 
       if (splitSegments.length > 1) {
-        return <BreadcrumbItem key={segment}>{joinedSegments}</BreadcrumbItem>;
+        return (
+          <BreadcrumbItem key={segment}>{t(joinedSegments)}</BreadcrumbItem>
+        );
       }
 
       return (
-        <BreadcrumbItem key={segment}>{capitalize(segment)}</BreadcrumbItem>
+        <BreadcrumbItem key={segment}>
+          {isNaN(Number(segment)) ? t(segment) : segment}
+        </BreadcrumbItem>
       );
     });
   };

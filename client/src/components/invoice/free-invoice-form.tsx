@@ -1,19 +1,19 @@
 'use client';
 
-import { EyeIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Input } from '@heroui/react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { EyeIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
 
 import { HOME_PAGE } from '@/lib/constants/pages';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import { calculateServiceTotal } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/format-date';
 
+import InvoiceModal from './invoice-modal';
 import InvoiceServicesTable from './invoice-services-table';
 import SignaturePad from '../signature-pad';
-import InvoiceModal from './invoice-modal';
 
 const FreeInvoiceForm = () => {
   const router = useRouter();
@@ -283,9 +283,7 @@ const FreeInvoiceForm = () => {
                     {...register('date')}
                     type="date"
                     label="Date"
-                    defaultValue={formatDate(
-                      new Date(Date.now()).toISOString()
-                    )}
+                    defaultValue={formatDate(new Date().toISOString())}
                     errorMessage={errors.date?.message}
                     isInvalid={!!errors.date}
                   />

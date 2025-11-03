@@ -1,39 +1,24 @@
-import { FlatCompat } from '@eslint/eslintrc';
+import { defineConfig } from 'eslint/config';
+import eslintNextPlugin from '@next/eslint-plugin-next';
+import nextVitals from 'eslint-config-next/core-web-vitals';
 
-const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname
-});
-
-const eslintConfig = [
-  ...compat.config({
-    extends: ['next'],
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  {
+    plugins: {
+      next: eslintNextPlugin
+    },
     rules: {
       'react/no-unescaped-entities': 'off',
       '@next/next/no-page-custom-font': 'off',
-      'import/order': [
-        'error',
+      'sort-imports': [
+        'warn',
         {
-          groups: [
-            ['builtin', 'external'],
-            'internal',
-            ['parent', 'sibling', 'index']
-          ],
-          pathGroups: [
-            {
-              pattern: 'components/**',
-              group: 'internal'
-            }
-          ],
-          pathGroupsExcludedImportTypes: ['builtin'],
-          'newlines-between': 'always',
-          alphabetize: {
-            order: 'asc',
-            caseInsensitive: true
-          }
+          allowSeparatedGroups: true
         }
       ]
     }
-  })
-];
+  }
+]);
 
 export default eslintConfig;

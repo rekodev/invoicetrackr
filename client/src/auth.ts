@@ -1,11 +1,11 @@
-import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import NextAuth from 'next-auth';
 import { z } from 'zod';
 
-import { loginUser } from './api';
 import { authConfig } from './auth.config';
+import { loginUser } from './api';
 
-export const { auth, signIn, signOut, unstable_update } = NextAuth({
+export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({

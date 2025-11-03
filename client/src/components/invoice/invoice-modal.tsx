@@ -1,4 +1,5 @@
-import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+'use client';
+
 import {
   Button,
   Modal,
@@ -7,9 +8,13 @@ import {
   ModalHeader
 } from '@heroui/react';
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { sendGTMEvent } from '@next/third-parties/google';
 import { useTranslations } from 'next-intl';
 
+import { CookieConsentStatus } from '@/lib/types';
 import { InvoiceModel } from '@/lib/types/models/invoice';
+import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 
 import PDFDocument from '../pdf/pdf-document';
 
@@ -33,6 +38,8 @@ const InvoiceModal = ({
   const t = useTranslations('invoices.pdf');
   const { invoiceId } = invoiceData;
 
+  const { cookieConsent } = useCookieConsent();
+
   const renderPdfDocument = () => (
     <PDFDocument
       t={t}
@@ -51,7 +58,7 @@ const InvoiceModal = ({
       onOpenChange={onOpenChange}
     >
       <ModalContent>
-        <ModalHeader className="flex items-center justify-between gap-4 pb-2">
+        <ModalHeader className="flex items-center gap-4 pb-2">
           {invoiceId}
           <PDFDownloadLink
             document={renderPdfDocument()}
@@ -59,10 +66,19 @@ const InvoiceModal = ({
           >
             <Button
               startContent={
-                <ArrowDownTrayIcon className="h-4 w-4 text-white" />
+                <ArrowDownTrayIcon className="h-4 w-4 dark:text-white" />
               }
               size="sm"
               variant="faded"
+              onPress={() => {
+                if (cookieConsent !== CookieConsentStatus.Accepted) return;
+
+                sendGTMEvent({
+                  event: 'free_invoice_pdf_download',
+                  invoice_id: invoiceData.invoiceId,
+                  total_amount: invoiceData.totalAmount
+                });
+              }}
             >
               Download PDF
             </Button>

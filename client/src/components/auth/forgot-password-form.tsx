@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/20/solid";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
@@ -11,14 +11,14 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  cn,
   Input,
   Link,
+  cn,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
-import { resetPasswordAction, ActionReturnType } from "@/lib/actions";
+import { ActionReturnType, resetPasswordAction } from "@/lib/actions";
 import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from "@/lib/constants/pages";
 
 export default function ForgotPasswordForm() {

@@ -7,13 +7,14 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Link,
   Navbar,
   NavbarBrand,
   NavbarContent,
-  Link,
   NavbarItem
 } from '@heroui/react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import {
   CREATE_INVOICE_PAGE,
@@ -23,7 +24,7 @@ import {
 } from '@/lib/constants/pages';
 
 import ThemeSwitcher from './theme-switcher';
-import AppLogo from '../icons/AppLogo.jsx';
+import AppLogo from '../icons/AppLogo';
 
 const navbarItems = [
   { name: 'Features', href: '#features' },
@@ -31,6 +32,7 @@ const navbarItems = [
 ];
 
 export default function GuestHeader() {
+  const t = useTranslations('header.guest');
   const pathname = usePathname();
 
   const renderMobileNavbarContent = () => {
@@ -50,15 +52,15 @@ export default function GuestHeader() {
             href={CREATE_INVOICE_PAGE}
             showDivider
           >
-            Create Invoice
+            {t('create_invoice')}
           </DropdownItem>
           <DropdownItem
             as={Link}
             href={LOGIN_PAGE}
-            className="flex items-center justify-center text-default-800"
+            className="text-default-800 flex items-center justify-center"
             key="login"
           >
-            Login
+            {t('login')}
           </DropdownItem>
           <DropdownItem
             key="sign-up"
@@ -66,7 +68,7 @@ export default function GuestHeader() {
             href={SIGN_UP_PAGE}
             className="text-default-800"
           >
-            Sign Up
+            {t('sign_up')}
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
@@ -77,7 +79,7 @@ export default function GuestHeader() {
     <Navbar isBordered maxWidth="xl">
       <NavbarBrand className="flex gap-2" as={Link} href={HOME_PAGE}>
         <AppLogo />
-        <p className="hidden font-bold text-default-800 sm:flex">
+        <p className="text-default-800 hidden font-bold sm:flex">
           INVOICE
           <span className="text-secondary-400 dark:text-secondary-600">
             TRACKR
@@ -98,7 +100,7 @@ export default function GuestHeader() {
                 aria-current="page"
                 color={isActive ? 'secondary' : 'foreground'}
               >
-                {item.name}
+                {t(item.name.toLowerCase())}
               </Link>
             </NavbarItem>
           );
@@ -107,19 +109,19 @@ export default function GuestHeader() {
 
       <NavbarContent as="div" justify="end">
         {renderMobileNavbarContent()}
-        <NavbarItem className="hidden border-r border-default-300 pr-4 dark:border-default-100 md:flex">
+        <NavbarItem className="border-default-300 dark:border-default-100 hidden border-r pr-4 md:flex">
           <Button
             as={Link}
             color="secondary"
             variant="faded"
             href={CREATE_INVOICE_PAGE}
           >
-            Create Invoice
+            {t('create_invoice')}
           </Button>
         </NavbarItem>
         <NavbarItem className="hidden md:flex">
           <Link className="text-secondary" href={LOGIN_PAGE}>
-            Login
+            {t('login')}
           </Link>
         </NavbarItem>
         <NavbarItem className="hidden md:flex">
@@ -129,10 +131,10 @@ export default function GuestHeader() {
             color="secondary"
             variant="flat"
           >
-            Sign Up
+            {t('sign_up')}
           </Button>
         </NavbarItem>
-        <NavbarItem className="border-l border-default-300 pl-4 dark:border-default-100">
+        <NavbarItem className="border-default-300 dark:border-default-100 border-l pl-4">
           <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>
