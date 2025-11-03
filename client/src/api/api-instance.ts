@@ -8,15 +8,13 @@ import axios, {
 
 import { getGeneralErrorMessageAction } from '@/lib/actions/general-error';
 
-export type ApiResponse<T = any> = {
-  data: T;
-  errors?: Record<string, string>;
-  message?: string;
+export type ApiError = {
+  errors: Array<{ key: string; value: string }>;
+  message: string;
 };
 
-export type ApiError = {
-  error: AxiosError;
-  errors: Array<Record<string, any>>;
+export type ApiSuccess<T> = {
+  data: T;
   message: string;
 };
 
@@ -60,7 +58,7 @@ class ApiInstance {
     url: string,
     data: any = {},
     config: AxiosRequestConfig = {}
-  ): Promise<AxiosResponse<ApiResponse<T>> | AxiosResponse<ApiError>> {
+  ): Promise<AxiosResponse<ApiSuccess<T> | ApiError>> {
     try {
       if (data instanceof FormData) {
         config.headers = {
@@ -69,7 +67,7 @@ class ApiInstance {
         };
       }
 
-      const response = await this.httpClient.request<ApiResponse<T>>({
+      const response = await this.httpClient.request({
         method,
         url,
         data: method === 'get' ? undefined : data,

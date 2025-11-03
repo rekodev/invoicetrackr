@@ -1,19 +1,19 @@
 'use client';
 
+import { SubmitHandler, UseFormSetError } from 'react-hook-form';
+import { TransitionStartFunction } from 'react';
 import { addToast } from '@heroui/react';
 import { useRouter } from 'next/navigation';
-import { TransitionStartFunction } from 'react';
-import { SubmitHandler, UseFormSetError } from 'react-hook-form';
 
-import { addInvoiceAction, updateInvoiceAction } from '@/lib/actions/invoice';
-import { INVOICES_PAGE } from '@/lib/constants/pages';
-import { ClientModel } from '@/lib/types/models/client';
-import { InvoiceModel } from '@/lib/types/models/invoice';
+import { AddInvoiceResp, UpdateInvoiceResp } from '@/lib/types/response';
 import {
   BankingInformationFormModel,
   UserModel
 } from '@/lib/types/models/user';
-import { AddInvoiceResp, UpdateInvoiceResp } from '@/lib/types/response';
+import { addInvoiceAction, updateInvoiceAction } from '@/lib/actions/invoice';
+import { ClientModel } from '@/lib/types/models/client';
+import { INVOICES_PAGE } from '@/lib/constants/pages';
+import { InvoiceModel } from '@/lib/types/models/invoice';
 import { calculateServiceTotal } from '@/lib/utils';
 
 const INITIAL_RECEIVER_DATA: ClientModel = {
@@ -82,7 +82,7 @@ const useInvoiceFormSubmissionHandler = ({
 
       if ('errors' in response) {
         response.errors.forEach((error) => {
-          setError(error.key, { message: error.value });
+          setError(error.key as keyof InvoiceModel, { message: error.value });
         });
 
         return;

@@ -18,6 +18,7 @@ import {
 } from '@/lib/constants/pages';
 
 import AppLogo from './icons/AppLogo';
+import ContactFormDialog from './contact-form-dialog';
 
 const FULL_FOOTER_PATHNAMES = [
   HOME_PAGE,
@@ -53,6 +54,12 @@ const Footer = () => {
               <p className="text-muted-foreground text-sm">
                 Simple, powerful invoicing for freelancers and small businesses.
               </p>
+            </div>
+            <div className="grid gap-8 sm:grid-cols-2 md:ml-auto">
+              <div className="grid gap-3 text-sm">
+                <div className="font-medium">Support</div>
+                <ContactFormDialog />
+              </div>
             </div>
             <div className="grid gap-8 sm:grid-cols-2 md:ml-auto">
               <div className="grid gap-3 text-sm">

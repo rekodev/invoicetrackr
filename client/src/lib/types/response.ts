@@ -107,3 +107,6 @@ export type CreateSubscriptionResp = ApiError & {
 };
 export type GetStripeCustomerIdResp = ApiError & { customerId: string };
 export type CancelStripeSubscriptionResp = ApiError & { message: string };
+
+// Contact
+export type PostContactMessageResp = ApiError & { message: string };

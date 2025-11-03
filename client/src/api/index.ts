@@ -1,11 +1,5 @@
 import { AxiosResponse } from 'axios';
 
-import { ClientFormData, ClientModel } from '@/lib/types/models/client';
-import { InvoiceFormData, InvoiceModel } from '@/lib/types/models/invoice';
-import {
-  BankingInformationFormModel,
-  UserModel
-} from '@/lib/types/models/user';
 import {
   AddBankingInformationResp,
   AddClientResp,
@@ -26,6 +20,7 @@ import {
   GetLatestInvoicesResp,
   GetStripeCustomerIdResp,
   GetUserResetPasswordTokenResp,
+  PostContactMessageResp,
   RegisterUserResponse,
   ResetPasswordResp,
   UpdateBankingInformationResp,
@@ -35,6 +30,12 @@ import {
   UpdateUserAccountSettingsResp,
   UpdateUserResp
 } from '@/lib/types/response';
+import {
+  BankingInformationFormModel,
+  UserModel
+} from '@/lib/types/models/user';
+import { ClientFormData, ClientModel } from '@/lib/types/models/client';
+import { InvoiceFormData, InvoiceModel } from '@/lib/types/models/invoice';
 
 import api, { ApiError } from './api-instance';
 
@@ -326,3 +327,16 @@ export const cancelStripeSubscription = async (
   userId: number
 ): Promise<AxiosResponse<CancelStripeSubscriptionResp>> =>
   await api.put(`/api/${userId}/cancel-subscription`);
+
+// Contact
+export const postContactMessage = async ({
+  email,
+  message
+}: {
+  email: string;
+  message: string;
+}): Promise<AxiosResponse<PostContactMessageResp>> =>
+  await api.post('/api/contact', {
+    email,
+    message
+  });
