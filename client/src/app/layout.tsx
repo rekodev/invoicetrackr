@@ -1,8 +1,9 @@
-import { GoogleAnalytics } from '@next/third-parties/google';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { getLocale, getMessages } from 'next-intl/server';
+import { GoogleAnalytics } from '@next/third-parties/google';
+import { Inter } from 'next/font/google';
+import type { Metadata } from 'next';
 import { ReactNode } from 'react';
+
 import './globals.css';
 
 import Footer from '@/components/footer';

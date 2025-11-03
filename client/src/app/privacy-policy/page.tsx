@@ -1,3 +1,25 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'InvoiceTrackr Privacy Policy',
+  description:
+    'Learn how InvoiceTrackr collects, uses, and protects your data, including cookies and analytics.',
+  keywords: ['privacy policy', 'cookies', 'data protection', 'analytics'],
+  authors: [{ name: 'InvoiceTrackr' }],
+  creator: 'InvoiceTrackr',
+  openGraph: {
+    type: 'website',
+    siteName: 'InvoiceTrackr',
+    title: 'InvoiceTrackr Privacy Policy',
+    description:
+      'Learn how InvoiceTrackr collects, uses, and protects your data, including cookies and analytics.',
+    url: '/privacy-policy'
+  },
+  alternates: {
+    canonical: '/privacy-policy'
+  }
+};
+
 const LAST_UPDATED = 'October 30, 2025';
 const CONTACT_EMAIL = 'invoicetrackr@gmail.com';
 

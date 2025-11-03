@@ -1,3 +1,31 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'InvoiceTrackr Terms of Service',
+  description:
+    'Review the terms of service for using InvoiceTrackr, including account usage, billing, and legal agreements.',
+  keywords: [
+    'terms of service',
+    'legal',
+    'agreements',
+    'billing',
+    'account usage'
+  ],
+  authors: [{ name: 'InvoiceTrackr' }],
+  creator: 'InvoiceTrackr',
+  openGraph: {
+    type: 'website',
+    siteName: 'InvoiceTrackr',
+    title: 'InvoiceTrackr Terms of Service',
+    description:
+      'Review the terms of service for using InvoiceTrackr, including account usage, billing, and legal agreements.',
+    url: '/terms-of-service'
+  },
+  alternates: {
+    canonical: '/terms-of-service'
+  }
+};
+
 const LAST_UPDATED = 'October 30, 2025';
 const CONTACT_EMAIL = 'invoicetrackr@gmail.com';
 
