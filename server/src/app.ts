@@ -13,6 +13,7 @@ import i18n from './plugins/i18n';
 import {
   bankingInformationRoutes,
   clientRoutes,
+  contactRoutes,
   invoiceRoutes,
   paymentRoutes,
   userRoutes
@@ -46,6 +47,7 @@ server.register(clientRoutes);
 server.register(userRoutes);
 server.register(bankingInformationRoutes);
 server.register(paymentRoutes);
+server.register(contactRoutes);
 server.register(i18n);
 
 server.setErrorHandler(async function (error, request, reply) {
