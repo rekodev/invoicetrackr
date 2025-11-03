@@ -1,26 +1,27 @@
 'use client';
 
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+
 import {
-  addToast,
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
   Divider,
-  Input
+  Input,
+  addToast
 } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { addBankingInformationAction } from '@/lib/actions/banking-information';
-import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 import {
   BankingInformationFormModel,
   bankingInformationSchema
 } from '@/lib/types/models/user';
+import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
+import { addBankingInformationAction } from '@/lib/actions/banking-information';
 
 type Props = {
   userId: number | undefined;

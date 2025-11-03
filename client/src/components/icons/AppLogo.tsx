@@ -7,8 +7,8 @@ type Props = {
 
 const AppLogo = ({ height = 40, width = 40 }: Props) => (
   <Image
-    width={height}
-    height={width}
+    width={width}
+    height={height}
     src="/logo.png"
     alt="App Logo"
     loading="eager"
