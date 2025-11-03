@@ -96,7 +96,7 @@ export default function ContactFormDialog() {
               {...register('message')}
               label="Message"
               placeholder="Tell us how we can help you..."
-              maxLength={500}
+              maxLength={5000}
               isInvalid={!!errors.message}
               errorMessage={errors.message?.message}
             />
