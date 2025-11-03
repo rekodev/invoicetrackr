@@ -2,6 +2,7 @@ import type { NextAuthConfig } from 'next-auth';
 
 import {
   DASHBOARD_PAGE,
+  LOGIN_PAGE,
   ONBOARDING_PAGE,
   RENEW_SUBSCRIPTION_PAGE
 } from './lib/constants/pages';
@@ -30,7 +31,7 @@ export const authConfig = {
       const isRenewPage = path.startsWith(RENEW_SUBSCRIPTION_PAGE);
 
       if (!pathIsPublic) {
-        if (!isLoggedIn) return false;
+        if (!isLoggedIn) return Response.redirect(new URL(LOGIN_PAGE, nextUrl));
 
         // Not onboarded → allow onboarding page, redirect elsewhere
         if (!isOnboarded) {
