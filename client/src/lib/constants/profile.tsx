@@ -1,8 +1,8 @@
 import {
-  UserIcon,
+  Cog6ToothIcon,
   CreditCardIcon,
   LockClosedIcon,
-  Cog6ToothIcon
+  UserIcon
 } from '@heroicons/react/24/outline';
 
 import {

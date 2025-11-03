@@ -7,10 +7,10 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Link,
   Navbar,
   NavbarBrand,
   NavbarContent,
-  Link,
   NavbarItem
 } from '@heroui/react';
 import { usePathname } from 'next/navigation';

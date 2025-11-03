@@ -3,16 +3,16 @@
 import {
   Button,
   Card,
-  CardFooter,
   CardBody,
+  CardFooter,
   CardHeader,
   Divider
 } from '@heroui/react';
 import {
   Elements,
+  PaymentElement,
   useElements,
-  useStripe,
-  PaymentElement
+  useStripe
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useTheme } from 'next-themes';

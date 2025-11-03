@@ -2,14 +2,14 @@
 
 import { CameraIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import {
-  addToast,
   Avatar,
   Card,
   CardBody,
   CardHeader,
   Chip,
   Tab,
-  Tabs
+  Tabs,
+  addToast
 } from '@heroui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

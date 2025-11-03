@@ -2,7 +2,6 @@
 
 import { CurrencyDollarIcon, LanguageIcon } from '@heroicons/react/24/outline';
 import {
-  addToast,
   Button,
   Card,
   CardBody,
@@ -10,7 +9,8 @@ import {
   CardHeader,
   Divider,
   Select,
-  SelectItem
+  SelectItem,
+  addToast
 } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import { User } from 'next-auth';

@@ -34,7 +34,7 @@ jobs:
       - name: Run Linter (client)
         run: |
           cd client
-          pnpm lint
+          pnpm exec eslint .
 
       #   - name: Run Tests (client)
       #     run: |

@@ -1,13 +1,13 @@
 'use client';
 
 import {
-  addToast,
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
-  Divider
+  Divider,
+  addToast
 } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';

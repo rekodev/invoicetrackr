@@ -2,13 +2,13 @@
 
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
-  addToast,
   Button,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
-  ModalHeader
+  ModalHeader,
+  addToast
 } from '@heroui/react';
 import { User } from 'next-auth';
 import { useTranslations } from 'next-intl';

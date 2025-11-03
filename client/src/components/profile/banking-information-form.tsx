@@ -8,7 +8,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import {
-  addToast,
   Button,
   Card,
   CardBody,
@@ -17,6 +16,7 @@ import {
   Divider,
   Radio,
   RadioGroup,
+  addToast,
   useDisclosure
 } from '@heroui/react';
 import { useRouter } from 'next/navigation';
@@ -59,6 +59,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     useState<BankingInformationFormModel>();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedBankAccountId(String(user.selectedBankAccountId));
   }, [user.selectedBankAccountId]);
 

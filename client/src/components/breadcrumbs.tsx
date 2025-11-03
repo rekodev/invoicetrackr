@@ -1,8 +1,8 @@
 'use client';
 
 import {
-  Breadcrumbs as HeroUIBreadcrumbs,
-  BreadcrumbItem
+  BreadcrumbItem,
+  Breadcrumbs as HeroUIBreadcrumbs
 } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';

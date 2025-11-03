@@ -1,9 +1,9 @@
 'use client';
 
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
 import { Button } from '@heroui/react';
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
 
 export default function ThemeSwitcher() {
   const [mounted, setMounted] = useState(false);
@@ -15,6 +15,7 @@ export default function ThemeSwitcher() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

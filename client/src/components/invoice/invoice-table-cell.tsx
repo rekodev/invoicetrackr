@@ -2,14 +2,14 @@
 
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import {
-  addToast,
   Checkbox,
   Chip,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Tooltip
+  Tooltip,
+  addToast
 } from '@heroui/react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { useTranslations } from 'next-intl';
@@ -87,6 +87,7 @@ const InvoiceTableCell = ({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsPaid(invoice.status === 'paid');
   }, [invoice.status]);
 

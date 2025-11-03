@@ -4,16 +4,16 @@ import { Bars3Icon } from '@heroicons/react/24/outline';
 import {
   Avatar,
   Button,
-  cn,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Link,
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-  Link
+  cn
 } from '@heroui/react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
