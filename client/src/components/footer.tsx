@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Link } from '@heroui/react';
+import { Link } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 
 import {
