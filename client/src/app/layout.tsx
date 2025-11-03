@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { getLocale, getMessages } from 'next-intl/server';
@@ -7,6 +8,7 @@ import './globals.css';
 import Footer from '@/components/footer';
 import Header from '@/components/header';
 
+import CookieConsent from './cookie-consent';
 import { Providers } from './providers';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -60,8 +62,10 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
+          <CookieConsent />
         </Providers>
       </body>
+      <GoogleAnalytics gaId="G-CSK6B9L88V" />
     </html>
   );
 }

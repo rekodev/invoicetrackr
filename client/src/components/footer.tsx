@@ -10,6 +10,7 @@ import {
   HOME_PAGE,
   LOGIN_PAGE,
   PRIVACY_POLICY_PAGE,
+  SIGN_UP_PAGE,
   TERMS_OF_SERVICE_PAGE
 } from '@/lib/constants/pages';
 
@@ -24,7 +25,7 @@ const FULL_FOOTER_PATHNAMES = [
   SIGN_UP_PAGE,
   FORGOT_PASSWORD_PAGE,
   CHANGE_PASSWORD_PAGE
-];
+] as const;
 
 const Footer = () => {
   const pathname = usePathname();
