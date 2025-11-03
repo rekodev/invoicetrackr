@@ -14,7 +14,7 @@ export const postContactMessage = async (
     from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
     to: 'support@ruwhia8088.resend.app',
     subject: 'New Contact Message',
-    html: `<p>You have received a new message from ${email}:</p><p>${message}</p>`
+    text: `You have received a new message from ${email}:\n\n${message}`
   });
 
   if (error) {

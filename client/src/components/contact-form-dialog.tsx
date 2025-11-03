@@ -12,24 +12,44 @@ import {
   Textarea,
   addToast
 } from '@heroui/react';
-import { FormEvent, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 
 import { postContactMessage } from '@/api';
+import { useForm } from 'react-hook-form';
+
+type ContactForm = {
+  email: string;
+  message: string;
+};
 
 export default function ContactFormDialog() {
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+    reset
+  } = useForm<ContactForm>();
   const [isOpen, setIsOpen] = useState(false);
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
   const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = (event: FormEvent) =>
+  const handleClose = () => {
+    setIsOpen(false);
+    reset();
+  };
+
+  const onSubmit = (data: ContactForm) =>
     startTransition(async () => {
-      event.preventDefault();
+      const { email, message } = data;
       const response = await postContactMessage({ email, message });
 
-      if ('errors' in response) {
+      if (response.data.errors) {
+        response.data.errors.forEach(({ key, value }) => {
+          setError(key as keyof ContactForm, { message: value });
+        });
+
         addToast({
-          title: response.data?.message,
+          title: response.data.message,
           color: 'danger'
         });
 
@@ -40,9 +60,7 @@ export default function ContactFormDialog() {
         title: response.data.message,
         color: 'success'
       });
-      setIsOpen(false);
-      setEmail('');
-      setMessage('');
+      handleClose();
     });
 
   return (
@@ -58,28 +76,33 @@ export default function ContactFormDialog() {
       <Modal
         isOpen={isOpen}
         onOpenChange={setIsOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={handleClose}
         size="lg"
       >
-        <ModalContent as={Form} onSubmit={handleSubmit}>
+        <ModalContent as={Form} onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader>Contact Us</ModalHeader>
           <ModalBody className="w-full flex-col">
             <Input
-              value={email}
-              onChange={(ev) => setEmail(ev.target.value)}
+              {...register('email')}
+              variant="faded"
               placeholder="Enter your email"
               label="Email"
               type="email"
+              isInvalid={!!errors.email}
+              errorMessage={errors.email?.message}
             />
             <Textarea
-              value={message}
-              onChange={(ev) => setMessage(ev.target.value)}
+              variant="faded"
+              {...register('message')}
               label="Message"
               placeholder="Tell us how we can help you..."
+              maxLength={500}
+              isInvalid={!!errors.message}
+              errorMessage={errors.message?.message}
             />
           </ModalBody>
           <ModalFooter className="w-full">
-            <Button variant="bordered" onPress={() => setIsOpen(false)}>
+            <Button variant="bordered" onPress={handleClose}>
               Cancel
             </Button>
             <Button
