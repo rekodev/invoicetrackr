@@ -1,6 +1,6 @@
-import { getInvoices } from '@/api';
-import { auth } from '@/auth';
 import InvoiceTable from '@/components/invoice/invoice-table';
+import { auth } from '@/auth';
+import { getInvoices } from '@/api';
 
 const InvoicesPage = async () => {
   const session = await auth();
@@ -11,14 +11,12 @@ const InvoicesPage = async () => {
   const currency = session.user.currency;
   const language = session.user.language;
 
-  const {
-    data: { invoices }
-  } = await getInvoices(userId);
+  const invoicesResp = await getInvoices(userId);
 
   return (
     <InvoiceTable
       language={language}
-      invoices={invoices || []}
+      invoices={invoicesResp.data.invoices || []}
       currency={currency}
       userId={userId}
     />

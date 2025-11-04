@@ -1,39 +1,64 @@
 'use client';
 
-import { UserIcon } from '@heroicons/react/24/outline';
 import { Card, CardBody, cn } from '@heroui/react';
+import { CheckIcon, UserIcon } from '@heroicons/react/24/outline';
 
-import { Currency } from '@/lib/types/currency';
 import { ClientModel } from '@/lib/types/models/client';
+import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
 type Props = {
+  isSelected?: boolean;
   currency?: Currency;
   client: Partial<ClientModel>;
   onClick?: () => void;
   amount?: number;
   hideIcon?: boolean;
   truncate?: boolean;
+  fullWidth?: boolean;
 };
 
 const ClientCard = ({
+  isSelected,
   truncate,
   currency,
   client,
   onClick,
   amount,
-  hideIcon
+  hideIcon,
+  fullWidth
 }: Props) => {
+  const renderSelectedIcon = () => {
+    if (!isSelected) return null;
+
+    return (
+      <div className="bg-secondary-600 absolute right-3 top-3 rounded-full p-0.5">
+        <CheckIcon className="h-4 w-4" />
+      </div>
+    );
+  };
+
   return (
     <div onClick={onClick}>
       <Card
+        onPress={onClick}
+        isPressable={!!onClick}
         isHoverable={!!onClick}
-        className={cn('border-default-200 justify-center border', {
-          'cursor-pointer': !!onClick
-        })}
+        className={cn(
+          'border-default-200 relative w-full justify-center border',
+          {
+            'cursor-pointer': !!onClick,
+            'border-secondary-600 bg-secondary/10': isSelected
+          }
+        )}
       >
+        {renderSelectedIcon()}
         <CardBody className="flex min-h-[70px] flex-row items-center justify-between gap-4">
-          <div className="max-w-2/3 flex items-center gap-3">
+          <div
+            className={cn('max-w-2/3 flex items-center gap-3', {
+              'max-w-full': fullWidth
+            })}
+          >
             {!hideIcon && (
               <div className="item-center rounded-medium border-default-200 flex border p-2">
                 <UserIcon className="h-5 w-5" />
@@ -48,7 +73,7 @@ const ClientCard = ({
               >
                 {client.name}
               </div>
-              <div className="text-default-500 flex gap-2 text-xs">
+              <div className="text-default-500 flex flex-col gap-1 text-xs">
                 {client.address && <span>{client.address}</span>}
                 <span className={cn('', { 'max-w-40 truncate': truncate })}>
                   {client.email}
