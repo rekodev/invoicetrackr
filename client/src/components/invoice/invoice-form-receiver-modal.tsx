@@ -1,6 +1,5 @@
 'use client';
 
-import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   Modal,
@@ -9,12 +8,13 @@ import {
   ModalFooter,
   ModalHeader
 } from '@heroui/react';
+import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
 import { ClientModel } from '@/lib/types/models/client';
 
-import ClientFormDialog from '../client/client-form-dialog';
 import ClientCard from '../ui/client-card';
+import ClientFormDialog from '../client/client-form-dialog';
 
 type Props = {
   userId: number;

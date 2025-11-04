@@ -23,6 +23,7 @@ import {
   PostContactMessageResp,
   RegisterUserResponse,
   ResetPasswordResp,
+  SendInvoiceEmailResp,
   UpdateBankingInformationResp,
   UpdateClientResp,
   UpdateInvoiceResp,
@@ -131,6 +132,43 @@ export const deleteInvoice = async (
   invoiceId: number
 ): Promise<AxiosResponse<DeleteInvoiceResp>> =>
   await api.delete(`/api/${userId}/invoices/${invoiceId}`);
+
+export const sendInvoiceEmail = async ({
+  id,
+  userId,
+  invoiceId,
+  recipientEmail,
+  subject,
+  message,
+  blob
+}: {
+  id: number;
+  userId: number;
+  invoiceId: string;
+  recipientEmail: string;
+  subject: string;
+  message?: string;
+  blob: Blob | null;
+}): Promise<AxiosResponse<SendInvoiceEmailResp>> => {
+  const formData = new FormData();
+  formData.append('recipientEmail', recipientEmail);
+  formData.append('subject', subject);
+  if (message) {
+    formData.append('message', message);
+  }
+  if (blob) {
+    formData.append(
+      'pdfAttachment',
+      new File([blob], `${invoiceId}.pdf`, { type: 'application/pdf' })
+    );
+  }
+
+  return await api.post(`/api/${userId}/invoices/${id}/send-email`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
 
 // Clients
 export const getClients = async (

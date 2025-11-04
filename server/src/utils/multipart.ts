@@ -71,6 +71,8 @@ export const preValidateFileAndFields = async (request: FastifyRequest) => {
 
   const file = await request.file();
 
+  if (!file) return;
+
   request.body = buildEntityFromFormData(file.fields);
   request.body['file'] = file;
 };

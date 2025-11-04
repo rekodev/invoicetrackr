@@ -1,12 +1,12 @@
 import { ApiError } from '@/api/api-instance';
 
-import { ClientModel } from './models/client';
-import { InvoiceModel } from './models/invoice';
 import {
   BankingInformationFormModel,
   ResetPasswordTokenModel,
   UserModel
 } from './models/user';
+import { ClientModel } from './models/client';
+import { InvoiceModel } from './models/invoice';
 
 export type ActionResponseModel = {
   ok: boolean;
@@ -57,6 +57,8 @@ export type UpdateInvoiceStatusResp = ApiError & {
 };
 
 export type DeleteInvoiceResp = ApiError;
+
+export type SendInvoiceEmailResp = ApiError & { message: string };
 
 export type GetClientsResp = ApiError & {
   clients: Array<ClientModel>;

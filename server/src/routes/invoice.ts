@@ -13,7 +13,8 @@ import {
   getInvoicesTotalAmountOptions,
   getInvoicesRevenueOptions,
   getLatestInvoicesOptions,
-  updateInvoiceStatusOptions
+  updateInvoiceStatusOptions,
+  sendInvoiceEmailOptions
 } from '../options';
 
 const invoiceRoutes = (
@@ -41,6 +42,8 @@ const invoiceRoutes = (
   fastify.get('/api/:userId/invoices/revenue', getInvoicesRevenueOptions);
 
   fastify.get('/api/:userId/invoices/latest', getLatestInvoicesOptions);
+
+  fastify.post('/api/:userId/invoices/:id/send-email', sendInvoiceEmailOptions);
 
   done();
 };

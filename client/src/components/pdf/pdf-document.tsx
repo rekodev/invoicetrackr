@@ -8,12 +8,12 @@ import {
   View
 } from '@react-pdf/renderer';
 
-import { InvoiceModel } from '@/lib/types/models/invoice';
-import { BankingInformationFormModel } from '@/lib/types/models/user';
 import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
+import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
+import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { InvoiceModel } from '@/lib/types/models/invoice';
 import { amountToWords } from '@/lib/utils/amount-to-words';
 import { formatDate } from '@/lib/utils/format-date';
-import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
 
 registerPdfFont();
 

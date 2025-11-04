@@ -1,6 +1,5 @@
 'use client';
 
-import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import {
   Checkbox,
   Chip,
@@ -11,16 +10,17 @@ import {
   Tooltip,
   addToast
 } from '@heroui/react';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import { useTranslations } from 'next-intl';
 import { Key, useEffect, useState, useTransition } from 'react';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
+import { useTranslations } from 'next-intl';
 
-import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
-import { statusOptions } from '@/lib/constants/table';
-import { Currency } from '@/lib/types/currency';
 import { InvoiceModel, InvoiceStatus } from '@/lib/types/models/invoice';
-import { getCurrencySymbol } from '@/lib/utils/currency';
+import { Currency } from '@/lib/types/currency';
 import { formatDate } from '@/lib/utils/format-date';
+import { getCurrencySymbol } from '@/lib/utils/currency';
+import { statusOptions } from '@/lib/constants/table';
+import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
 
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import DeleteIcon from '../icons/DeleteIcon';
@@ -28,6 +28,7 @@ import DocumentText from '../icons/DocumentText';
 import EditIcon from '../icons/EditIcon';
 import EyeIcon from '../icons/EyeIcon';
 import PDFDocument from '../pdf/pdf-document';
+import SendInvoiceEmailTableAction from './send-invoice-email-table-action';
 
 const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
   {
@@ -96,6 +97,17 @@ const InvoiceTableCell = ({
     handleChangeStatus(isPaid ? 'pending' : 'paid');
   };
 
+  const renderPdfDocument = () => (
+    <PDFDocument
+      t={t}
+      language={language}
+      senderSignatureImage={invoice.senderSignature as string}
+      bankAccount={invoice.bankingInformation}
+      currency={currency}
+      invoiceData={invoice}
+    />
+  );
+
   const cellValue =
     invoice[
       columnKey as keyof Omit<
@@ -147,43 +159,43 @@ const InvoiceTableCell = ({
       return formatDate(cellValue as string) || '';
     case 'status':
       return (
-        <Dropdown>
-          <DropdownTrigger className="[&>button]:aria-expanded:rotate-180">
-            <Chip
-              as="button"
-              isDisabled={isPending}
-              className="cursor capitalize [&>svg]:aria-expanded:rotate-180"
-              color={statusColorMap[invoice.status as InvoiceStatus]}
-              size="sm"
-              variant="flat"
-              endContent={<ChevronDownIcon className="transition-transform" />}
+        <div className="flex items-center gap-4">
+          <Dropdown>
+            <DropdownTrigger className="[&>button]:aria-expanded:rotate-180">
+              <Chip
+                as="button"
+                isDisabled={isPending}
+                className="cursor capitalize [&>svg]:aria-expanded:rotate-180"
+                color={statusColorMap[invoice.status as InvoiceStatus]}
+                size="sm"
+                variant="flat"
+                endContent={
+                  <ChevronDownIcon className="transition-transform" />
+                }
+              >
+                {cellValue as string}
+              </Chip>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Static Actions"
+              selectionMode="single"
+              selectedKeys={[cellValue]}
+              onSelectionChange={(key) =>
+                handleChangeStatus(
+                  Array.from(key)[0] as
+                    | 'paid'
+                    | 'pending'
+                    | 'canceled'
+                    | undefined
+                )
+              }
             >
-              {cellValue as string}
-            </Chip>
-          </DropdownTrigger>
-          <DropdownMenu
-            aria-label="Static Actions"
-            selectionMode="single"
-            selectedKeys={[cellValue]}
-            onSelectionChange={(key) =>
-              handleChangeStatus(
-                Array.from(key)[0] as
-                  | 'paid'
-                  | 'pending'
-                  | 'canceled'
-                  | undefined
-              )
-            }
-          >
-            {statusOptions.map((status) => (
-              <DropdownItem key={status.uid}>{status.name}</DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
-      );
-    case 'actions':
-      return (
-        <div className="relative flex items-center justify-end gap-2">
+              {statusOptions.map((status) => (
+                <DropdownItem key={status.uid}>{status.name}</DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+
           <Tooltip content={isPaid ? 'Mark as Pending' : 'Mark as Paid'}>
             <Checkbox
               className="mr-0.5 max-w-5 p-0"
@@ -194,6 +206,32 @@ const InvoiceTableCell = ({
               isDisabled={isPending}
             />
           </Tooltip>
+        </div>
+      );
+    case 'actions':
+      return (
+        <div className="relative flex items-center justify-end gap-2">
+          <BlobProvider document={renderPdfDocument()}>
+            {({ blob }) => {
+              return (
+                <SendInvoiceEmailTableAction
+                  blob={blob}
+                  userId={userId}
+                  invoice={invoice}
+                  currency={currency}
+                />
+              );
+            }}
+          </BlobProvider>
+          <Tooltip content="Download">
+            <PDFDownloadLink
+              fileName={invoice.invoiceId}
+              className="text-default-400 h-5 w-5"
+              document={renderPdfDocument()}
+            >
+              <ArrowDownTrayIcon />
+            </PDFDownloadLink>
+          </Tooltip>
           <Tooltip content="Details">
             <span
               onClick={handleViewIconClick}
@@ -201,24 +239,6 @@ const InvoiceTableCell = ({
             >
               <EyeIcon />
             </span>
-          </Tooltip>
-          <Tooltip content="Download">
-            <PDFDownloadLink
-              fileName={invoice.invoiceId}
-              className="text-default-400 h-5 w-5"
-              document={
-                <PDFDocument
-                  t={t}
-                  language={language}
-                  senderSignatureImage={invoice.senderSignature as string}
-                  bankAccount={invoice.bankingInformation}
-                  currency={currency}
-                  invoiceData={invoice}
-                />
-              }
-            >
-              <ArrowDownTrayIcon />
-            </PDFDownloadLink>
           </Tooltip>
           <Tooltip content="Edit invoice">
             <span

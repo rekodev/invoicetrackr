@@ -14,9 +14,9 @@ import {
 import { useMemo, useState } from 'react';
 
 import { columns, statusOptions } from '@/lib/constants/table';
-import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
 import { Currency } from '@/lib/types/currency';
 import { InvoiceModel } from '@/lib/types/models/invoice';
+import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
 
 import DeleteInvoiceModal from './delete-invoice-modal';
 import InvoiceModal from './invoice-modal';

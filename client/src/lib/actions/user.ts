@@ -13,8 +13,8 @@ import {
   CHANGE_PASSWORD_PAGE,
   PERSONAL_INFORMATION_PAGE
 } from '../constants/pages';
-import { UserModel } from '../types/models/user';
 import { ActionResponseModel } from '../types/response';
+import { UserModel } from '../types/models/user';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 

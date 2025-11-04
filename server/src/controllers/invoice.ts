@@ -12,6 +12,7 @@ import {
   getInvoicesRevenueFromDb,
   getInvoicesTotalAmountFromDb,
   getLatestInvoicesFromDb,
+  getUserFromDb,
   insertInvoiceInDb,
   updateInvoiceInDb,
   updateInvoiceStatusInDb
@@ -22,6 +23,7 @@ import {
   BadRequestError,
   NotFoundError
 } from '../utils/errors';
+import { resend } from '../config/resend';
 
 export const getInvoices = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -236,4 +238,50 @@ export const getLatestInvoices = async (
     throw new BadRequestError('Unable to retrieve invoices');
 
   reply.status(200).send({ invoices });
+};
+
+export const sendInvoiceEmail = async (
+  req: FastifyRequest<{
+    Params: { userId: number; id: number };
+    Body: {
+      recipientEmail: string;
+      subject: string;
+      message?: string;
+      file?: MultipartFile;
+    };
+  }>,
+  reply: FastifyReply
+) => {
+  const { userId, id } = req.params;
+  const { recipientEmail, subject, message, file } = req.body;
+
+  const [invoice, user] = await Promise.all([
+    getInvoiceFromDb(userId, id),
+    getUserFromDb(userId)
+  ]);
+
+  if (!user) throw new NotFoundError('User not found');
+  if (!invoice) throw new NotFoundError('Invoice not found');
+
+  const attachment = await file
+    .toBuffer()
+    .then((buffer) => buffer.toString('base64'));
+
+  const { error } = await resend.emails.send({
+    to: recipientEmail,
+    from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
+    replyTo: user.email,
+    subject: subject,
+    text: message || 'Please find your invoice attached.',
+    attachments: [
+      {
+        content: attachment,
+        filename: file.filename
+      }
+    ]
+  });
+
+  if (error) throw new BadRequestError('Unable to send email');
+
+  reply.status(200).send({ message: 'Email sent successfully' });
 };
