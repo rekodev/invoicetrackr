@@ -18,7 +18,6 @@ import { Currency } from '@/lib/types/currency';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
 
-import { ClientModel } from '@/lib/types/models/client';
 import DeleteInvoiceModal from './delete-invoice-modal';
 import InvoiceModal from './invoice-modal';
 import InvoiceTableBottomContent from './invoice-table-bottom-content';
