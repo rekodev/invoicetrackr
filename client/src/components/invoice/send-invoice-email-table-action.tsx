@@ -28,6 +28,7 @@ type Props = {
   userId: number;
   invoice: InvoiceModel;
   currency: Currency;
+  blob: Blob | null;
 };
 
 type SendInvoiceForm = {
@@ -37,6 +38,7 @@ type SendInvoiceForm = {
 };
 
 export default function SendInvoiceEmailTableAction({
+  blob,
   userId,
   invoice,
   currency
@@ -58,13 +60,16 @@ export default function SendInvoiceEmailTableAction({
 
   const handleCloseSendDialog = () => {
     setIsSendDialogOpen(false);
+    reset();
   };
 
   const onSubmit = (data: SendInvoiceForm) =>
     startTransition(async () => {
       const response = await sendInvoiceEmail({
+        id: invoice.id,
         userId,
-        invoiceId: invoice.id,
+        blob,
+        invoiceId: invoice.invoiceId,
         recipientEmail: data.recipientEmail,
         subject: data.subject,
         message: data.message
@@ -106,77 +111,79 @@ export default function SendInvoiceEmailTableAction({
         onClose={handleCloseSendDialog}
         size="lg"
       >
-        <ModalContent onSubmit={handleSubmit(onSubmit)} as={Form}>
-          <ModalHeader>Send Invoice {invoice.invoiceId}</ModalHeader>
-          <ModalBody className="w-full">
-            <Input
-              defaultValue={invoice.receiver.email}
-              {...register('recipientEmail')}
-              variant="faded"
-              label="Recipient Email"
-              type="email"
-              placeholder={`Enter recipient's email`}
-              isInvalid={!!errors.recipientEmail}
-              errorMessage={errors.recipientEmail?.message}
-            />
-            <Input
-              defaultValue={`Invoice ${invoice.invoiceId} ${invoice.totalAmount ? `- Amount: ${getCurrencySymbol(currency)}${invoice.totalAmount}` : ''}`}
-              {...register('subject')}
-              variant="faded"
-              label="Subject"
-              placeholder="Enter the subject"
-              isInvalid={!!errors.subject}
-              errorMessage={errors.subject?.message}
-            />
-            <Textarea
-              {...register('message')}
-              variant="faded"
-              label="Message (Optional)"
-              placeholder="Add a personal message to your client"
-              isInvalid={!!errors.message}
-              errorMessage={errors.message?.message}
-            />
-            <Card className="none border-default-100 border-2 shadow">
-              <CardBody className="flex flex-col gap-2">
-                <p>Invoice Details</p>
-                <p className="mt-2 flex items-center justify-between text-sm">
-                  <span className="text-default-500 text">Invoice:</span>{' '}
-                  {invoice.invoiceId}
-                </p>
-                <p className="flex items-center justify-between text-sm">
-                  <span className="text-default-500 text">Client:</span>{' '}
-                  {invoice.receiver.name}
-                </p>
-                <p className="flex items-center justify-between text-sm">
-                  <span className="text-default-500 text">Amount:</span>{' '}
-                  {getCurrencySymbol(currency)}
-                  {invoice.totalAmount}
-                </p>
-                <p className="flex items-center justify-between text-sm">
-                  <span className="text-default-500 text">Date:</span>
-                  {invoice.date}
-                </p>
-              </CardBody>
-            </Card>
-          </ModalBody>
-          <ModalFooter className="w-full">
-            <Button
-              onPress={handleCloseSendDialog}
-              variant="light"
-              color="danger"
-            >
-              Cancel
-            </Button>
-            <Button
-              isDisabled={isPending}
-              isLoading={isPending}
-              endContent={<PaperAirplaneIcon className="h-4 w-4" />}
-              color="secondary"
-              type="submit"
-            >
-              Send
-            </Button>
-          </ModalFooter>
+        <ModalContent>
+          <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+            <ModalHeader>Send Invoice {invoice.invoiceId}</ModalHeader>
+            <ModalBody className="w-full">
+              <Input
+                defaultValue={invoice.receiver.email}
+                {...register('recipientEmail')}
+                variant="faded"
+                label="Recipient Email"
+                type="email"
+                placeholder={`Enter recipient's email`}
+                isInvalid={!!errors.recipientEmail}
+                errorMessage={errors.recipientEmail?.message}
+              />
+              <Input
+                defaultValue={`Invoice ${invoice.invoiceId} ${invoice.totalAmount ? `- Amount: ${getCurrencySymbol(currency)}${invoice.totalAmount}` : ''}`}
+                {...register('subject')}
+                variant="faded"
+                label="Subject"
+                placeholder="Enter the subject"
+                isInvalid={!!errors.subject}
+                errorMessage={errors.subject?.message}
+              />
+              <Textarea
+                {...register('message')}
+                variant="faded"
+                label="Message (Optional)"
+                placeholder="Add a personal message to your client"
+                isInvalid={!!errors.message}
+                errorMessage={errors.message?.message}
+              />
+              <Card className="none border-default-100 border-2 shadow">
+                <CardBody className="flex flex-col gap-2">
+                  <p>Invoice Details</p>
+                  <p className="mt-2 flex items-center justify-between text-sm">
+                    <span className="text-default-500 text">Invoice:</span>{' '}
+                    {invoice.invoiceId}
+                  </p>
+                  <p className="flex items-center justify-between text-sm">
+                    <span className="text-default-500 text">Client:</span>{' '}
+                    {invoice.receiver.name}
+                  </p>
+                  <p className="flex items-center justify-between text-sm">
+                    <span className="text-default-500 text">Amount:</span>{' '}
+                    {getCurrencySymbol(currency)}
+                    {invoice.totalAmount}
+                  </p>
+                  <p className="flex items-center justify-between text-sm">
+                    <span className="text-default-500 text">Date:</span>
+                    {invoice.date}
+                  </p>
+                </CardBody>
+              </Card>
+            </ModalBody>
+            <ModalFooter className="w-full">
+              <Button
+                onPress={handleCloseSendDialog}
+                variant="light"
+                color="danger"
+              >
+                Cancel
+              </Button>
+              <Button
+                isDisabled={isPending}
+                isLoading={isPending}
+                endContent={<PaperAirplaneIcon className="h-4 w-4" />}
+                color="secondary"
+                type="submit"
+              >
+                Send
+              </Button>
+            </ModalFooter>
+          </form>
         </ModalContent>
       </Modal>
     </>

@@ -247,12 +247,13 @@ export const sendInvoiceEmail = async (
       recipientEmail: string;
       subject: string;
       message?: string;
+      file?: MultipartFile;
     };
   }>,
   reply: FastifyReply
 ) => {
   const { userId, id } = req.params;
-  const { recipientEmail, subject, message } = req.body;
+  const { recipientEmail, subject, message, file } = req.body;
 
   const [invoice, user] = await Promise.all([
     getInvoiceFromDb(userId, id),
@@ -262,12 +263,22 @@ export const sendInvoiceEmail = async (
   if (!user) throw new NotFoundError('User not found');
   if (!invoice) throw new NotFoundError('Invoice not found');
 
+  const attachment = await file
+    .toBuffer()
+    .then((buffer) => buffer.toString('base64'));
+
   const { error } = await resend.emails.send({
     to: recipientEmail,
     from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
     replyTo: user.email,
     subject: subject,
-    text: message || 'Please find your invoice attached.'
+    text: message || 'Please find your invoice attached.',
+    attachments: [
+      {
+        content: attachment,
+        filename: file.filename
+      }
+    ]
   });
 
   if (error) throw new BadRequestError('Unable to send email');

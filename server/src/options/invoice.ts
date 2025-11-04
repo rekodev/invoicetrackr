@@ -157,5 +157,6 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
     })
   },
   preHandler: authMiddleware,
+  preValidation: preValidateFileAndFields,
   handler: sendInvoiceEmail
 };

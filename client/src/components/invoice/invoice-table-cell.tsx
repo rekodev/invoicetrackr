@@ -12,7 +12,7 @@ import {
 } from '@heroui/react';
 import { Key, useEffect, useState, useTransition } from 'react';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { PDFDownloadLink } from '@react-pdf/renderer';
+import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
 import { useTranslations } from 'next-intl';
 
 import { InvoiceModel, InvoiceStatus } from '@/lib/types/models/invoice';
@@ -96,6 +96,17 @@ const InvoiceTableCell = ({
     setIsPaid(!isPaid);
     handleChangeStatus(isPaid ? 'pending' : 'paid');
   };
+
+  const renderPdfDocument = () => (
+    <PDFDocument
+      t={t}
+      language={language}
+      senderSignatureImage={invoice.senderSignature as string}
+      bankAccount={invoice.bankingInformation}
+      currency={currency}
+      invoiceData={invoice}
+    />
+  );
 
   const cellValue =
     invoice[
@@ -200,25 +211,23 @@ const InvoiceTableCell = ({
     case 'actions':
       return (
         <div className="relative flex items-center justify-end gap-2">
-          <SendInvoiceEmailTableAction
-            userId={userId}
-            invoice={invoice}
-            currency={currency}
-          />
+          <BlobProvider document={renderPdfDocument()}>
+            {({ blob }) => {
+              return (
+                <SendInvoiceEmailTableAction
+                  blob={blob}
+                  userId={userId}
+                  invoice={invoice}
+                  currency={currency}
+                />
+              );
+            }}
+          </BlobProvider>
           <Tooltip content="Download">
             <PDFDownloadLink
               fileName={invoice.invoiceId}
               className="text-default-400 h-5 w-5"
-              document={
-                <PDFDocument
-                  t={t}
-                  language={language}
-                  senderSignatureImage={invoice.senderSignature as string}
-                  bankAccount={invoice.bankingInformation}
-                  currency={currency}
-                  invoiceData={invoice}
-                />
-              }
+              document={renderPdfDocument()}
             >
               <ArrowDownTrayIcon />
             </PDFDownloadLink>
