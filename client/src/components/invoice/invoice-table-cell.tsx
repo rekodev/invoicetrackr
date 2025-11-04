@@ -200,7 +200,11 @@ const InvoiceTableCell = ({
     case 'actions':
       return (
         <div className="relative flex items-center justify-end gap-2">
-          <SendInvoiceEmailTableAction invoice={invoice} currency={currency} />
+          <SendInvoiceEmailTableAction
+            userId={userId}
+            invoice={invoice}
+            currency={currency}
+          />
           <Tooltip content="Download">
             <PDFDownloadLink
               fileName={invoice.invoiceId}

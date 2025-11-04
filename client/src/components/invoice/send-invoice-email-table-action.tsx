@@ -12,7 +12,8 @@ import {
   ModalFooter,
   ModalHeader,
   Textarea,
-  Tooltip
+  Tooltip,
+  addToast
 } from '@heroui/react';
 import { useState, useTransition } from 'react';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
@@ -21,8 +22,10 @@ import { useForm } from 'react-hook-form';
 import { Currency } from '@/lib/types/currency';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import { getCurrencySymbol } from '@/lib/utils/currency';
+import { sendInvoiceEmail } from '@/api';
 
 type Props = {
+  userId: number;
   invoice: InvoiceModel;
   currency: Currency;
 };
@@ -34,13 +37,20 @@ type SendInvoiceForm = {
 };
 
 export default function SendInvoiceEmailTableAction({
+  userId,
   invoice,
   currency
 }: Props) {
   const [isSendDialogOpen, setIsSendDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const { register, handleSubmit } = useForm<SendInvoiceForm>({});
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors }
+  } = useForm<SendInvoiceForm>();
 
   const handleOpenSendDialog = () => {
     setIsSendDialogOpen(true);
@@ -51,10 +61,32 @@ export default function SendInvoiceEmailTableAction({
   };
 
   const onSubmit = (data: SendInvoiceForm) =>
-    startTransition(() => {
-      // Implement send invoice logic here
-      console.log('Sending invoice with data:', data);
+    startTransition(async () => {
+      const response = await sendInvoiceEmail({
+        userId,
+        invoiceId: invoice.id,
+        recipientEmail: data.recipientEmail,
+        subject: data.subject,
+        message: data.message
+      });
+
+      addToast({
+        title: response.data.message,
+        color: response.data.errors ? 'danger' : 'success'
+      });
+
+      if (response.data.errors) {
+        response.data.errors.forEach((error) => {
+          setError(error.key as keyof SendInvoiceForm, {
+            message: error.value
+          });
+        });
+
+        return;
+      }
+
       setIsSendDialogOpen(false);
+      reset();
     });
 
   return (
@@ -84,19 +116,25 @@ export default function SendInvoiceEmailTableAction({
               label="Recipient Email"
               type="email"
               placeholder={`Enter recipient's email`}
+              isInvalid={!!errors.recipientEmail}
+              errorMessage={errors.recipientEmail?.message}
             />
             <Input
-              defaultValue={`Invoice ${invoice.invoiceId} ${invoice.totalAmount ? `- Amount: ${getCurrencySymbol(currency)} ${invoice.totalAmount}` : ''}`}
+              defaultValue={`Invoice ${invoice.invoiceId} ${invoice.totalAmount ? `- Amount: ${getCurrencySymbol(currency)}${invoice.totalAmount}` : ''}`}
               {...register('subject')}
               variant="faded"
               label="Subject"
               placeholder="Enter the subject"
+              isInvalid={!!errors.subject}
+              errorMessage={errors.subject?.message}
             />
             <Textarea
               {...register('message')}
               variant="faded"
               label="Message (Optional)"
               placeholder="Add a personal message to your client"
+              isInvalid={!!errors.message}
+              errorMessage={errors.message?.message}
             />
             <Card className="none border-default-100 border-2 shadow">
               <CardBody className="flex flex-col gap-2">

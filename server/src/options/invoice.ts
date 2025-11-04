@@ -9,6 +9,7 @@ import {
   getInvoicesTotalAmount,
   getLatestInvoices,
   postInvoice,
+  sendInvoiceEmail,
   updateInvoice,
   updateInvoiceStatus
 } from '../controllers';
@@ -127,4 +128,34 @@ export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
   },
   preHandler: authMiddleware,
   handler: getLatestInvoices
+};
+
+export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    response: {
+      200: Type.Object({ message: Type.String() })
+    },
+    params: Type.Object({
+      id: Type.String(),
+      userId: Type.String()
+    }),
+    body: Type.Object({
+      recipientEmail: Type.String({
+        format: 'email',
+        errorMessage: 'Invalid email'
+      }),
+      subject: Type.String({
+        minLength: 1,
+        errorMessage: 'Subject is required'
+      }),
+      message: Type.Optional(
+        Type.String({
+          maxLength: 1000,
+          errorMessage: 'Message is too long'
+        })
+      )
+    })
+  },
+  preHandler: authMiddleware,
+  handler: sendInvoiceEmail
 };
