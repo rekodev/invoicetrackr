@@ -1,4 +1,5 @@
 import { getInvoicesRevenue } from "@/api";
+import { isResponseError } from "@/lib/utils/error";
 
 import InvoiceDataBarChart from "./invoice-data-bar-chart";
 
@@ -8,6 +9,8 @@ type Props = {
 
 const RevenueChart = async ({ userId }: Props) => {
   const response = await getInvoicesRevenue(userId);
+
+  if (isResponseError(response)) throw new Error('Failed to fetch data');
 
   return (
     <div className="flex flex-col gap-6 w-full">

@@ -1,11 +1,14 @@
+import { unauthorized } from 'next/navigation';
+
 import {
   getBankingInformationEntries,
   getClients,
   getInvoice,
   getUser
 } from '@/api';
-import { auth } from '@/auth';
 import InvoiceForm from '@/components/invoice/invoice-form';
+import { auth } from '@/auth';
+import { isResponseError } from '@/lib/utils/error';
 
 type Params = Promise<{ invoiceId: string }>;
 
@@ -13,25 +16,35 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
   const { invoiceId } = await params;
   const session = await auth();
 
-  if (!session?.user?.id) return null;
+  if (!session?.user?.id) unauthorized();
 
   const numericUserId = Number(session.user.id);
 
-  const response = await getInvoice(numericUserId, Number(invoiceId));
-  const { data: user } = await getUser(numericUserId);
+  const userResponse = await getUser(numericUserId);
 
-  const [clientsResp, bankingInformationEntriesResp] = await Promise.all([
-    getClients(numericUserId),
-    getBankingInformationEntries(numericUserId)
-  ]);
+  if (isResponseError(userResponse)) unauthorized();
+
+  const [invoiceResp, clientsResp, bankingInformationEntriesResp] =
+    await Promise.all([
+      getInvoice(numericUserId, Number(invoiceId)),
+      getClients(numericUserId),
+      getBankingInformationEntries(numericUserId)
+    ]);
+
+  if (
+    isResponseError(invoiceResp) ||
+    isResponseError(clientsResp) ||
+    isResponseError(bankingInformationEntriesResp)
+  )
+    throw new Error('Failed to load data');
 
   return (
     <section>
       <InvoiceForm
-        user={user}
+        user={userResponse.data}
         clients={clientsResp.data.clients}
         currency={session.user.currency}
-        invoiceData={response.data.invoice}
+        invoiceData={invoiceResp.data.invoice}
         bankingInformationEntries={bankingInformationEntriesResp.data}
       />
     </section>

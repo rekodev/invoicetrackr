@@ -1,11 +1,10 @@
-import { AxiosResponse } from 'axios';
-
 import {
   AddBankingInformationResp,
   AddClientResp,
   AddInvoiceResp,
   CancelStripeSubscriptionResp,
   CreateCustomerResp,
+  CreateNewPasswordResp,
   CreateSubscriptionResp,
   DeleteClientResp,
   DeleteInvoiceResp,
@@ -38,7 +37,7 @@ import {
 import { ClientFormData, ClientModel } from '@/lib/types/models/client';
 import { InvoiceFormData, InvoiceModel } from '@/lib/types/models/invoice';
 
-import api, { ApiError } from './api-instance';
+import api from './api-instance';
 
 type UserModelWithPassword = UserModel & { password: string };
 
@@ -48,61 +47,60 @@ export const registerUser = async ({
   confirmedPassword
 }: Pick<UserModelWithPassword, 'email' | 'password'> & {
   confirmedPassword: string;
-}): Promise<AxiosResponse<RegisterUserResponse>> =>
-  await api.post('/api/users', { email, password, confirmedPassword });
+}) =>
+  await api.post<RegisterUserResponse>('/api/users', {
+    email,
+    password,
+    confirmedPassword
+  });
 
 // Invoices
-export const getInvoice = async (
-  userId: number,
-  invoiceId: number
-): Promise<AxiosResponse<GetInvoiceResp>> =>
-  await api.get(`/api/${userId}/invoices/${invoiceId}`);
+export const getInvoice = async (userId: number, invoiceId: number) =>
+  await api.get<GetInvoiceResp>(`/api/${userId}/invoices/${invoiceId}`);
 
-export const getInvoices = async (
-  userId: number
-): Promise<AxiosResponse<GetInvoicesResp>> =>
-  await api.get(`/api/${userId}/invoices`);
+export const getInvoices = async (userId: number) =>
+  await api.get<GetInvoicesResp>(`/api/${userId}/invoices`);
 
-export const getInvoicesTotalAmount = async (
-  userId: number
-): Promise<AxiosResponse<GetInvoicesTotalAmountResp>> =>
-  await api.get(`/api/${userId}/invoices/total-amount`);
+export const getInvoicesTotalAmount = async (userId: number) =>
+  await api.get<GetInvoicesTotalAmountResp>(
+    `/api/${userId}/invoices/total-amount`
+  );
 
-export const getInvoicesRevenue = async (
-  userId: number
-): Promise<AxiosResponse<GetInvoicesRevenueResp>> =>
-  await api.get(`/api/${userId}/invoices/revenue`);
+export const getInvoicesRevenue = async (userId: number) =>
+  await api.get<GetInvoicesRevenueResp>(`/api/${userId}/invoices/revenue`);
 
-export const getLatestInvoices = async (
-  userId: number
-): Promise<AxiosResponse<GetLatestInvoicesResp>> =>
-  await api.get(`/api/${userId}/invoices/latest`);
+export const getLatestInvoices = async (userId: number) =>
+  await api.get<GetLatestInvoicesResp>(`/api/${userId}/invoices/latest`);
 
 export const addInvoice = async (
   userId: number,
   invoiceData: InvoiceFormData,
   language: string = 'EN'
-): Promise<AxiosResponse<AddInvoiceResp>> => {
+) => {
   const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
 
-  return await api.post(`/api/${userId}/invoices`, invoiceData, {
-    headers: {
-      'Content-Type': isSignatureFile
-        ? 'multipart/form-data'
-        : 'application/json',
-      'Accept-Language': language.toLowerCase()
+  return await api.post<AddInvoiceResp>(
+    `/api/${userId}/invoices`,
+    invoiceData,
+    {
+      headers: {
+        'Content-Type': isSignatureFile
+          ? 'multipart/form-data'
+          : 'application/json',
+        'Accept-Language': language.toLowerCase()
+      }
     }
-  });
+  );
 };
 
 export const updateInvoice = async (
   userId: number,
   invoiceData: InvoiceModel,
   language: string = 'en'
-): Promise<AxiosResponse<UpdateInvoiceResp>> => {
+) => {
   const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
 
-  return await api.put(
+  return await api.put<UpdateInvoiceResp>(
     `/api/${userId}/invoices/${invoiceData.id}`,
     invoiceData,
     {
@@ -124,14 +122,14 @@ export const updateInvoiceStatus = async ({
   userId: number;
   invoiceId: number;
   newStatus: 'paid' | 'pending' | 'canceled';
-}): Promise<AxiosResponse<UpdateInvoiceStatusResp>> =>
-  api.put(`/api/${userId}/invoices/${invoiceId}/status`, { status: newStatus });
+}) =>
+  api.put<UpdateInvoiceStatusResp>(
+    `/api/${userId}/invoices/${invoiceId}/status`,
+    { status: newStatus }
+  );
 
-export const deleteInvoice = async (
-  userId: number,
-  invoiceId: number
-): Promise<AxiosResponse<DeleteInvoiceResp>> =>
-  await api.delete(`/api/${userId}/invoices/${invoiceId}`);
+export const deleteInvoice = async (userId: number, invoiceId: number) =>
+  await api.delete<DeleteInvoiceResp>(`/api/${userId}/invoices/${invoiceId}`);
 
 export const sendInvoiceEmail = async ({
   id,
@@ -149,7 +147,7 @@ export const sendInvoiceEmail = async ({
   subject: string;
   message?: string;
   blob: Blob | null;
-}): Promise<AxiosResponse<SendInvoiceEmailResp>> => {
+}) => {
   const formData = new FormData();
   formData.append('recipientEmail', recipientEmail);
   formData.append('subject', subject);
@@ -163,44 +161,37 @@ export const sendInvoiceEmail = async ({
     );
   }
 
-  return await api.post(`/api/${userId}/invoices/${id}/send-email`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
+  return await api.post<SendInvoiceEmailResp>(
+    `/api/${userId}/invoices/${id}/send-email`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     }
-  });
+  );
 };
 
 // Clients
-export const getClients = async (
-  userId: number
-): Promise<AxiosResponse<GetClientsResp>> =>
-  await api.get(`/api/${userId}/clients`);
+export const getClients = async (userId: number) =>
+  await api.get<GetClientsResp>(`/api/${userId}/clients`);
 
-export const addClient = async (
-  userId: number,
-  clientData: ClientFormData
-): Promise<AxiosResponse<AddClientResp>> =>
-  await api.post(`/api/${userId}/clients`, clientData);
+export const addClient = async (userId: number, clientData: ClientFormData) =>
+  await api.post<AddClientResp>(`/api/${userId}/clients`, clientData);
 
-export const updateClient = async (
-  userId: number,
-  clientData: ClientModel
-): Promise<AxiosResponse<UpdateClientResp>> =>
-  await api.put(`/api/${userId}/clients/${clientData.id}`, clientData);
+export const updateClient = async (userId: number, clientData: ClientModel) =>
+  await api.put<UpdateClientResp>(
+    `/api/${userId}/clients/${clientData.id}`,
+    clientData
+  );
 
-export const deleteClient = async (
-  userId: number,
-  clientId: number
-): Promise<AxiosResponse<DeleteClientResp>> =>
-  await api.delete(`/api/${userId}/clients/${clientId}`);
+export const deleteClient = async (userId: number, clientId: number) =>
+  await api.delete<DeleteClientResp>(`/api/${userId}/clients/${clientId}`);
 
-export const updateUser = async (
-  id: number,
-  userData: UserModel
-): Promise<AxiosResponse<UpdateUserResp>> => {
+export const updateUser = async (id: number, userData: UserModel) => {
   const isSignatureFile = typeof userData.signature !== 'string';
 
-  return await api.put(`/api/users/${id}`, userData, {
+  return await api.put<UpdateUserResp>(`/api/users/${id}`, userData, {
     headers: {
       'Content-Type': isSignatureFile
         ? 'multipart/form-data'
@@ -210,43 +201,48 @@ export const updateUser = async (
   });
 };
 
-export const getUser = async (id: number): Promise<AxiosResponse<UserModel>> =>
-  await api.get(`/api/users/${id}`);
+export const getUser = async (id: number) =>
+  await api.get<UserModel>(`/api/users/${id}`);
 
-export const loginUser = async (
-  email: string,
-  password: string
-): Promise<AxiosResponse<ApiError & { user: UserModelWithPassword }>> =>
-  await api.post('/api/users/login', { email, password });
+export const loginUser = async (email: string, password: string) =>
+  await api.post<UserModelWithPassword>('/api/users/login', {
+    email,
+    password
+  });
 
-export const getBankAccount = async (
-  userId: number,
-  bankAccountId: number
-): Promise<AxiosResponse<GetBankAccountResp>> =>
-  await api.get(`/api/${userId}/banking-information/${bankAccountId}`);
+export const getBankAccount = async (userId: number, bankAccountId: number) =>
+  await api.get<GetBankAccountResp>(
+    `/api/${userId}/banking-information/${bankAccountId}`
+  );
 
-export const getBankingInformationEntries = async (
-  userId: number
-): Promise<AxiosResponse<GetBankingInformationEntriesResp>> =>
-  await api.get(`/api/${userId}/banking-information`);
+export const getBankingInformationEntries = async (userId: number) =>
+  await api.get<GetBankingInformationEntriesResp>(
+    `/api/${userId}/banking-information`
+  );
 
 export const addBankingInformation = async (
   userId: number,
   bankingInformation: BankingInformationFormModel,
   hasSelectedBankAccount: boolean
-): Promise<AxiosResponse<AddBankingInformationResp>> =>
-  await api.post(`/api/${userId}/banking-information`, {
-    ...bankingInformation,
-    hasSelectedBankAccount
-  });
+) =>
+  await api.post<AddBankingInformationResp>(
+    `/api/${userId}/banking-information`,
+    {
+      ...bankingInformation,
+      hasSelectedBankAccount
+    }
+  );
 
 export const updateBankingInformation = async (
   userId: number,
   bankingInformation: BankingInformationFormModel
-): Promise<AxiosResponse<UpdateBankingInformationResp>> =>
-  await api.put(`/api/${userId}/banking-information/${bankingInformation.id}`, {
-    ...bankingInformation
-  });
+) =>
+  await api.put<UpdateBankingInformationResp>(
+    `/api/${userId}/banking-information/${bankingInformation.id}`,
+    {
+      ...bankingInformation
+    }
+  );
 
 export const deleteBankingInformation = async (
   userId: number,
@@ -256,24 +252,28 @@ export const deleteBankingInformation = async (
 export const updateUserSelectedBankAccount = async (
   userId: number,
   selectedBankAccountId: number
-): Promise<AxiosResponse<UpdateUserResp>> =>
-  await api.put(`/api/users/${userId}/selected-bank-account`, {
+) =>
+  await api.put<UpdateUserResp>(`/api/users/${userId}/selected-bank-account`, {
     selectedBankAccountId
   });
 
 export const updateUserProfilePicture = async (
   userId: number,
   formData: FormData
-): Promise<AxiosResponse<UpdateUserResp>> =>
-  await api.put(`/api/users/${userId}/profile-picture`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  });
+) =>
+  await api.put<UpdateUserResp>(
+    `/api/users/${userId}/profile-picture`,
+    formData,
+    {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }
+  );
 
 export const updateUserAccountSettings = async (
   userId: number,
   { language, currency }: { language: string; currency: string }
-): Promise<AxiosResponse<UpdateUserAccountSettingsResp>> =>
-  await api.put(
+) =>
+  await api.put<UpdateUserAccountSettingsResp>(
     `/api/users/${userId}/account-settings`,
     {
       language,
@@ -282,10 +282,8 @@ export const updateUserAccountSettings = async (
     { headers: { 'Accept-Language': language.toLowerCase() } }
   );
 
-export const deleteUserAccount = async (
-  userId: number
-): Promise<AxiosResponse<DeleteUserAccountResp>> =>
-  await api.delete(`/api/users/${userId}`);
+export const deleteUserAccount = async (userId: number) =>
+  await api.delete<DeleteUserAccountResp>(`/api/users/${userId}`);
 
 export const changeUserPassword = async ({
   userId,
@@ -299,24 +297,20 @@ export const changeUserPassword = async ({
   password: string;
   newPassword: string;
   confirmedNewPassword: string;
-}): Promise<AxiosResponse<UpdateUserResp>> =>
-  await api.put(
+}) =>
+  await api.put<UpdateUserResp>(
     `/api/users/${userId}/change-password`,
     { password, newPassword, confirmedNewPassword },
     { headers: { 'Accept-Language': language.toLowerCase() } }
   );
 
-export const resetUserPassword = async ({
-  email
-}: {
-  email: string;
-}): Promise<AxiosResponse<ResetPasswordResp>> =>
-  await api.post(`/api/forgot-password`, { email });
+export const resetUserPassword = async ({ email }: { email: string }) =>
+  await api.post<ResetPasswordResp>(`/api/forgot-password`, { email });
 
-export const getUserResetPasswordToken = async (
-  token: string
-): Promise<AxiosResponse<GetUserResetPasswordTokenResp>> =>
-  await api.get(`/api/reset-password-token/${token}`);
+export const getUserResetPasswordToken = async (token: string) =>
+  await api.get<GetUserResetPasswordTokenResp>(
+    `/api/reset-password-token/${token}`
+  );
 
 export const createNewUserPassword = async ({
   userId,
@@ -329,11 +323,14 @@ export const createNewUserPassword = async ({
   confirmedNewPassword: string;
   token: string;
 }) =>
-  await api.put(`/api/users/${userId}/create-new-password`, {
-    newPassword,
-    confirmedNewPassword,
-    token
-  });
+  await api.put<CreateNewPasswordResp>(
+    `/api/users/${userId}/create-new-password`,
+    {
+      newPassword,
+      confirmedNewPassword,
+      token
+    }
+  );
 
 // Stripe
 export const createCustomer = async ({
@@ -344,27 +341,24 @@ export const createCustomer = async ({
   userId: number;
   email: string;
   name: string;
-}): Promise<AxiosResponse<CreateCustomerResp>> =>
-  await api.post(`/api/${userId}/create-customer`, {
+}) =>
+  await api.post<CreateCustomerResp>(`/api/${userId}/create-customer`, {
     email,
     name
   });
 
-export const createSubscription = async (
-  userId: number,
-  customerId: string
-): Promise<AxiosResponse<CreateSubscriptionResp>> =>
-  await api.post(`/api/${userId}/create-subscription`, { customerId });
+export const createSubscription = async (userId: number, customerId: string) =>
+  await api.post<CreateSubscriptionResp>(`/api/${userId}/create-subscription`, {
+    customerId
+  });
 
-export const getStripeCustomerId = async (
-  userId: number
-): Promise<AxiosResponse<GetStripeCustomerIdResp>> =>
-  await api.get(`/api/${userId}/customer`);
+export const getStripeCustomerId = async (userId: number) =>
+  await api.get<GetStripeCustomerIdResp>(`/api/${userId}/customer`);
 
-export const cancelStripeSubscription = async (
-  userId: number
-): Promise<AxiosResponse<CancelStripeSubscriptionResp>> =>
-  await api.put(`/api/${userId}/cancel-subscription`);
+export const cancelStripeSubscription = async (userId: number) =>
+  await api.put<CancelStripeSubscriptionResp>(
+    `/api/${userId}/cancel-subscription`
+  );
 
 // Contact
 export const postContactMessage = async ({
@@ -373,8 +367,8 @@ export const postContactMessage = async ({
 }: {
   email: string;
   message: string;
-}): Promise<AxiosResponse<PostContactMessageResp>> =>
-  await api.post('/api/contact', {
+}) =>
+  await api.post<PostContactMessageResp>('/api/contact', {
     email,
     message
   });

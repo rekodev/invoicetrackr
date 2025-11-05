@@ -1,6 +1,7 @@
 import { getBankingInformationEntries } from '@/api';
 import { auth } from '@/auth';
 import BankingInformationForm from '@/components/profile/banking-information-form';
+import { isResponseError } from '@/lib/utils/error';
 
 async function BankingInformationPage() {
   const session = await auth();
@@ -10,6 +11,9 @@ async function BankingInformationPage() {
   const bankingInformationResp = await getBankingInformationEntries(
     Number(session.user.id)
   );
+
+  if (isResponseError(bankingInformationResp))
+    throw new Error('Failed to fetch data');
 
   return (
     <BankingInformationForm

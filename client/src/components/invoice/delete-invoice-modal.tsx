@@ -11,6 +11,7 @@ import { useTransition } from 'react';
 
 import { deleteInvoiceAction } from '@/lib/actions/invoice';
 import { InvoiceModel } from '@/lib/types/models/invoice';
+import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
   userId: number;
@@ -35,11 +36,11 @@ const DeleteInvoiceModal = ({
       });
 
       addToast({
-        title: response.message,
-        color: 'errors' in response ? 'danger' : 'success'
+        title: response.data.message,
+        color: isResponseError(response) ? 'danger' : 'success'
       });
 
-      if ('errors' in response) return;
+      if (isResponseError(response)) return;
 
       onClose();
     });

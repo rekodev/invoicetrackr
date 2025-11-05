@@ -1,5 +1,6 @@
 import { getLatestInvoices } from '@/api';
 import { Currency } from '@/lib/types/currency';
+import { isResponseError } from '@/lib/utils/error';
 
 import ViewAllInvoicesButton from './view-all-invoices-button';
 import ClientCard from '../ui/client-card';
@@ -10,9 +11,11 @@ type Props = {
 };
 
 const LatestInvoices = async ({ userId, currency }: Props) => {
-  const {
-    data: { invoices }
-  } = await getLatestInvoices(userId);
+  const response = await getLatestInvoices(userId);
+
+  if (isResponseError(response)) throw new Error('Failed to fetch data');
+
+  const { invoices } = response.data;
 
   const renderEmptyState = () => {
     return <p className="text-default-400">No invoices to display.</p>;

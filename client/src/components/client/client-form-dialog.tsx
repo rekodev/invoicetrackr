@@ -16,6 +16,7 @@ import { addClientAction, updateClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { ClientModel } from '@/lib/types/models/client';
 import { capitalize } from '@/lib/utils';
+import { isResponseError } from '@/lib/utils/error';
 
 const INITIAL_CLIENT_DATA: ClientFormData = {
   name: '',
@@ -56,11 +57,11 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
         });
 
     addToast({
-      title: response.message,
-      color: 'errors' in response ? 'danger' : 'success'
+      title: response.data.message,
+      color: isResponseError(response) ? 'danger' : 'success'
     });
 
-    if ('errors' in response) return;
+    if (isResponseError(response)) return;
 
     onClose();
   };

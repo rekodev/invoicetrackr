@@ -22,6 +22,7 @@ import { Currency } from '@/lib/types/currency';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { sendInvoiceEmail } from '@/api';
+import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
   userId: number;
@@ -76,10 +77,10 @@ export default function SendInvoiceEmailTableAction({
 
       addToast({
         title: response.data.message,
-        color: response.data.errors ? 'danger' : 'success'
+        color: isResponseError(response) ? 'danger' : 'success'
       });
 
-      if (response.data.errors) {
+      if (isResponseError(response)) {
         response.data.errors.forEach((error) => {
           setError(error.key as keyof SendInvoiceForm, {
             message: error.value

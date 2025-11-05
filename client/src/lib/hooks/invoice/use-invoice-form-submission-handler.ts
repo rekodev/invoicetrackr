@@ -5,6 +5,7 @@ import { TransitionStartFunction } from 'react';
 import { addToast } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 
+import { ApiResponse } from '@/api/api-instance';
 import { AddInvoiceResp, UpdateInvoiceResp } from '@/lib/types/response';
 import {
   BankingInformationFormModel,
@@ -15,6 +16,7 @@ import { ClientModel } from '@/lib/types/models/client';
 import { INVOICES_PAGE } from '@/lib/constants/pages';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import { calculateServiceTotal } from '@/lib/utils';
+import { isResponseError } from '@/lib/utils/error';
 
 const INITIAL_RECEIVER_DATA: ClientModel = {
   businessNumber: '',
@@ -59,7 +61,7 @@ const useInvoiceFormSubmissionHandler = ({
         bankingInformation: bankingInformation || data.bankingInformation
       };
 
-      let response: UpdateInvoiceResp | AddInvoiceResp;
+      let response: ApiResponse<UpdateInvoiceResp | AddInvoiceResp>;
 
       if (invoiceData) {
         response = await updateInvoiceAction({
@@ -76,12 +78,12 @@ const useInvoiceFormSubmissionHandler = ({
       }
 
       addToast({
-        title: response.message,
-        color: 'errors' in response ? 'danger' : 'success'
+        title: response.data.message,
+        color: isResponseError(response) ? 'danger' : 'success'
       });
 
-      if ('errors' in response) {
-        response.errors.forEach((error) => {
+      if (isResponseError(response)) {
+        response.data.errors.forEach((error) => {
           setError(error.key as keyof InvoiceModel, { message: error.value });
         });
 

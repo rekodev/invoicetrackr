@@ -1,5 +1,8 @@
+import { unauthorized } from 'next/navigation';
+
 import { getUser } from '@/api';
 import { auth } from '@/auth';
+import { isResponseError } from '@/lib/utils/error';
 
 import RenewSubscription from './renew-subscription';
 
@@ -8,7 +11,9 @@ export default async function RenewSubscriptionPage() {
 
   if (!session?.user.id) return null;
 
-  const { data: user } = await getUser(Number(session.user.id));
+  const userResp = await getUser(Number(session.user.id));
 
-  return <RenewSubscription user={user} />;
+  if (isResponseError(userResp)) unauthorized();
+
+  return <RenewSubscription user={userResp.data} />;
 }

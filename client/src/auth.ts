@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { authConfig } from './auth.config';
 import { loginUser } from './api';
+import { isResponseError } from './lib/utils/error';
 
 export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
   ...authConfig,
@@ -16,9 +17,11 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          const response = (await loginUser(email, password)).data;
+          const response = await loginUser(email, password);
 
-          const { user } = response;
+          if (isResponseError(response)) return null;
+
+          const user = response.data;
 
           if (!user) return null;
 

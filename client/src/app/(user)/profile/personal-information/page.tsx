@@ -1,15 +1,20 @@
+import { unauthorized } from 'next/navigation';
+
 import { getUser } from '@/api';
 import { auth } from '@/auth';
 import PersonalInformationForm from '@/components/profile/personal-information-form';
+import { isResponseError } from '@/lib/utils/error';
 
 async function PersonalInformationPage() {
   const session = await auth();
 
   if (!session?.user?.id) return null;
 
-  const { data: user } = await getUser(Number(session.user.id));
+  const userResp = await getUser(Number(session.user.id));
 
-  return <PersonalInformationForm defaultValues={user} />;
+  if (isResponseError(userResp)) unauthorized();
+
+  return <PersonalInformationForm defaultValues={userResp.data} />;
 }
 
 export default PersonalInformationPage;

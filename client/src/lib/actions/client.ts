@@ -4,8 +4,8 @@ import { revalidatePath } from 'next/cache';
 
 import { addClient, deleteClient, updateClient } from '@/api';
 
-import { CLIENTS_PAGE } from '../constants/pages';
 import { ClientFormData, ClientModel } from '../types/models/client';
+import { CLIENTS_PAGE } from '../constants/pages';
 
 export const addClientAction = async ({
   userId,
@@ -17,7 +17,8 @@ export const addClientAction = async ({
   const response = await addClient(userId, clientData);
 
   revalidatePath(CLIENTS_PAGE);
-  return response.data;
+
+  return response;
 };
 
 export const updateClientAction = async ({
@@ -30,7 +31,7 @@ export const updateClientAction = async ({
   const response = await updateClient(userId, clientData);
 
   revalidatePath(CLIENTS_PAGE);
-  return response.data;
+  return response;
 };
 
 export const deleteClientAction = async ({
@@ -43,5 +44,5 @@ export const deleteClientAction = async ({
   const response = await deleteClient(userId, clientId);
 
   revalidatePath(CLIENTS_PAGE);
-  return response.data;
+  return response;
 };

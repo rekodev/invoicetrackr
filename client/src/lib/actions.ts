@@ -1,14 +1,14 @@
 'use server';
 
-import { HttpStatusCode } from 'axios';
-import { redirect } from 'next/navigation';
 import { AuthError, User } from 'next-auth';
 import { getTranslations } from 'next-intl/server';
+import { redirect } from 'next/navigation';
 
 import { createNewUserPassword, registerUser, resetUserPassword } from '@/api';
 
-import { signIn, signOut, unstable_update } from '../auth';
 import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
+import { signIn, signOut, unstable_update } from '../auth';
+import { isResponseError } from './utils/error';
 
 export type ActionReturnType = {
   ok: boolean;
@@ -22,7 +22,7 @@ export async function resetPasswordAction(
   try {
     const response = await resetUserPassword({ email });
 
-    if (response.status !== HttpStatusCode.Ok) {
+    if (isResponseError(response)) {
       return { ok: false, message: response.data.message };
     }
 
@@ -54,7 +54,7 @@ export async function createNewPasswordAction(
       token
     });
 
-    if (response.status !== HttpStatusCode.Ok) {
+    if (isResponseError(response)) {
       return { ok: false, message: response.data.message };
     }
 
@@ -105,7 +105,7 @@ export async function signUp(
   try {
     const response = await registerUser(rawFormData);
 
-    if ('errors' in response.data) {
+    if (isResponseError(response)) {
       return { ok: false, message: response.data.message };
     }
 

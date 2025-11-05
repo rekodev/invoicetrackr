@@ -1,6 +1,9 @@
+import { unauthorized } from 'next/navigation';
+
 import { getBankingInformationEntries, getUser } from '@/api';
 import { auth } from '@/auth';
 import MultiStepForm from '@/components/multi-step-form';
+import { isResponseError } from '@/lib/utils/error';
 
 export default async function OnboardingPage() {
   const session = await auth();
@@ -9,17 +12,20 @@ export default async function OnboardingPage() {
 
   const userId = Number(session.user.id);
 
-  const { data: user } = await getUser(userId);
-  const { data: bankingInformation } =
-    await getBankingInformationEntries(userId);
+  const userResp = await getUser(userId);
+  const bankingInformationResp = await getBankingInformationEntries(userId);
 
-  const currentBankingInformation = bankingInformation.find(
-    (info) => info.id === user.selectedBankAccountId
+  if (isResponseError(userResp)) unauthorized();
+  if (isResponseError(bankingInformationResp))
+    throw new Error('Failed to fetch data');
+
+  const currentBankingInformation = bankingInformationResp.data.find(
+    (info) => info.id === userResp.data.selectedBankAccountId
   );
 
   return (
     <MultiStepForm
-      existingUserData={user}
+      existingUserData={userResp.data}
       existingBankingInformation={currentBankingInformation}
     />
   );
