@@ -6,6 +6,7 @@ import fastify from 'fastify';
 import { defineI18n, useI18n } from 'fastify-i18n';
 import cors from '@fastify/cors';
 import fastifyMultipart from '@fastify/multipart';
+import fastifyRateLimit from '@fastify/rate-limit';
 
 import { cloudinaryConfig } from './config/cloudinary';
 import { getPgVersion } from './database/db';
@@ -31,6 +32,27 @@ const server = fastify({
       allErrors: true
     },
     plugins: [require('ajv-errors')]
+  },
+  logger: {
+    level: 'info',
+    serializers: {
+      req: (req) => ({
+        method: req.method,
+        url: req.url,
+        headers: {
+          host: req.headers.host,
+          userAgent: req.headers['user-agent'],
+          referer: req.headers['referer'],
+          xRealIp: req.headers['x-real-ip'],
+          xForwardedFor: req.headers['x-forwarded-for']
+        },
+        remoteAddress: req.ip,
+        remotePort: req.socket?.remotePort
+      }),
+      res: (res) => ({
+        statusCode: res.statusCode
+      })
+    }
   }
 }).withTypeProvider<TypeBoxTypeProvider>();
 
@@ -49,6 +71,14 @@ server.register(bankingInformationRoutes);
 server.register(paymentRoutes);
 server.register(contactRoutes);
 server.register(i18n);
+server.register(fastifyRateLimit, {
+  max: 30,
+  timeWindow: '1 minute',
+  keyGenerator: (request) => {
+    const realIp = request.headers['x-real-ip'];
+    return (Array.isArray(realIp) ? realIp[0] : realIp) || request.ip;
+  }
+});
 
 server.setErrorHandler(async function (error, request, reply) {
   const i18n = useI18n(request);

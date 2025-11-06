@@ -5,18 +5,15 @@ import { TransitionStartFunction } from 'react';
 import { addToast } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 
-import { ApiResponse } from '@/api/api-instance';
-import { AddInvoiceResp, UpdateInvoiceResp } from '@/lib/types/response';
+import { addInvoiceAction, updateInvoiceAction } from '@/lib/actions/invoice';
 import {
   BankingInformationFormModel,
   UserModel
 } from '@/lib/types/models/user';
-import { addInvoiceAction, updateInvoiceAction } from '@/lib/actions/invoice';
 import { ClientModel } from '@/lib/types/models/client';
 import { INVOICES_PAGE } from '@/lib/constants/pages';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import { calculateServiceTotal } from '@/lib/utils';
-import { isResponseError } from '@/lib/utils/error';
 
 const INITIAL_RECEIVER_DATA: ClientModel = {
   businessNumber: '',
@@ -61,31 +58,29 @@ const useInvoiceFormSubmissionHandler = ({
         bankingInformation: bankingInformation || data.bankingInformation
       };
 
-      let response: ApiResponse<UpdateInvoiceResp | AddInvoiceResp>;
-
-      if (invoiceData) {
-        response = await updateInvoiceAction({
-          userId: user.id,
-          invoiceData: fullData,
-          lang: user.language
-        });
-      } else {
-        response = await addInvoiceAction({
-          userId: user.id,
-          invoiceData: fullData,
-          lang: user.language
-        });
-      }
+      const response = invoiceData
+        ? await updateInvoiceAction({
+            userId: user.id,
+            invoiceData: fullData,
+            lang: user.language
+          })
+        : await addInvoiceAction({
+            userId: user.id,
+            invoiceData: fullData,
+            lang: user.language
+          });
 
       addToast({
-        title: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+        title: response.message || '',
+        color: response.ok ? 'success' : 'danger'
       });
 
-      if (isResponseError(response)) {
-        response.data.errors.forEach((error) => {
-          setError(error.key as keyof InvoiceModel, { message: error.value });
-        });
+      if (!response.ok) {
+        if (response.validationErrors) {
+          Object.entries(response.validationErrors).forEach(([key, message]) => {
+            setError(key as keyof InvoiceModel, { message });
+          });
+        }
 
         return;
       }

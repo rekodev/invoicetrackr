@@ -1,7 +1,7 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { getTranslations } from 'next-intl/server';
+import { revalidatePath } from 'next/cache';
 
 import {
   addBankingInformation,
@@ -10,8 +10,8 @@ import {
 } from '@/api';
 
 import { BANKING_INFORMATION_PAGE, ONBOARDING_PAGE } from '../constants/pages';
-import { BankingInformationFormModel } from '../types/models/user';
 import { ActionResponseModel } from '../types/response';
+import { BankingInformationFormModel } from '../types/models/user';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 
@@ -77,8 +77,7 @@ export async function deleteBankingInformationAction(
     if (isResponseError(response)) {
       return {
         ok: false,
-        message: response.data.message,
-        validationErrors: mapValidationErrors(response.data.errors)
+        message: response.data.message
       };
     }
 
