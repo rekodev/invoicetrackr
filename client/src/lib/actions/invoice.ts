@@ -100,8 +100,7 @@ export const deleteInvoiceAction = async ({
   if (isResponseError(response)) {
     return {
       ok: false,
-      message: response.data.message,
-      validationErrors: mapValidationErrors(response.data.errors)
+      message: response.data.message
     };
   }
 
