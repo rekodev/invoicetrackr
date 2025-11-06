@@ -17,6 +17,7 @@ jobs:
       - name: Install Dependencies
         run: |
           docker image build \
+          --build-arg BACKEND_URL=${{ secrets.BACKEND_URL }} \
           --build-arg SERVER_PORT=${{ secrets.SERVER_PORT }} \
           --build-arg NEXT_PUBLIC_STRIPE_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLIC_KEY }} \
           --build-arg NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }} \
