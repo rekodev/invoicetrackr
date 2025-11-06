@@ -1,22 +1,22 @@
 'use client';
 
 import {
-  EllipsisVerticalIcon,
-  PencilIcon,
-  PencilSquareIcon,
-  TrashIcon
-} from '@heroicons/react/24/outline';
-import {
   Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger
 } from '@heroui/react';
+import {
+  EllipsisVerticalIcon,
+  PencilIcon,
+  PencilSquareIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
-import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 import { ClientModel } from '@/lib/types/models/client';
+import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 
 import ClientFormDialog from './client-form-dialog';
 import ClientSectionBottomContent from './client-section-bottom-content';

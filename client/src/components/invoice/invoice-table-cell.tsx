@@ -21,7 +21,6 @@ import { formatDate } from '@/lib/utils/format-date';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { statusOptions } from '@/lib/constants/table';
 import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
-import { isResponseError } from '@/lib/utils/error';
 
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import DeleteIcon from '../icons/DeleteIcon';
@@ -78,12 +77,12 @@ const InvoiceTableCell = ({
         newStatus: status
       });
 
-      if (isResponseError(response)) setIsPaid((prev) => !prev);
+      if (!response.ok) setIsPaid((prev) => !prev);
 
       addToast({
-        title: isResponseError(response) ? 'Error' : 'Success',
-        description: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+        title: response.ok ? 'Success' : 'Error',
+        description: response.message,
+        color: response.ok ? 'success' : 'danger'
       });
     });
   };
