@@ -1,5 +1,4 @@
 import axios, {
-  AxiosError,
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
@@ -22,9 +21,7 @@ class ApiInstance {
   constructor() {
     this.httpClient = axios.create({
       baseURL:
-        typeof window !== 'undefined'
-          ? undefined
-          : `http://localhost:${process.env.SERVER_PORT}`,
+        typeof window !== 'undefined' ? undefined : process.env.BACKEND_URL,
       withCredentials: true
     });
 

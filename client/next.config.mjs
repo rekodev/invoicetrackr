@@ -22,7 +22,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `http://localhost:${process.env.SERVER_PORT}/api/:path*`
+        destination: `${process.env.BACKEND_URL}/api/:path*`
       }
     ];
   }
