@@ -24,7 +24,7 @@ export const addInvoiceAction = async ({
   const response = await addInvoice(userId, invoiceData, lang);
 
   revalidatePath(INVOICES_PAGE);
-  return response.data;
+  return response;
 };
 
 export const updateInvoiceAction = async ({
@@ -40,7 +40,7 @@ export const updateInvoiceAction = async ({
 
   revalidatePath(EDIT_INVOICE_PAGE(invoiceData.id));
   revalidatePath(INVOICES_PAGE);
-  return response.data;
+  return response;
 };
 
 export const updateInvoiceStatusAction = async ({
@@ -55,7 +55,7 @@ export const updateInvoiceStatusAction = async ({
   const response = await updateInvoiceStatus({ userId, invoiceId, newStatus });
 
   revalidatePath(INVOICES_PAGE);
-  return response.data;
+  return response;
 };
 
 export const deleteInvoiceAction = async ({
@@ -68,5 +68,5 @@ export const deleteInvoiceAction = async ({
   const response = await deleteInvoice(userId, invoiceId);
 
   revalidatePath(INVOICES_PAGE);
-  return response.data;
+  return response;
 };

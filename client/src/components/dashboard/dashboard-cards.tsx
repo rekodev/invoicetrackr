@@ -8,6 +8,7 @@ import {
 import { getInvoicesTotalAmount } from '@/api';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
+import { isResponseError } from '@/lib/utils/error';
 
 import DashboardCard from './dashboard-card';
 
@@ -17,9 +18,11 @@ type Props = {
 };
 
 const DashboardCards = async ({ userId, currency }: Props) => {
-  const {
-    data: { invoices, totalClients }
-  } = await getInvoicesTotalAmount(userId);
+  const response = await getInvoicesTotalAmount(userId);
+
+  if (isResponseError(response)) throw new Error('Failed to fetch data');
+
+  const { invoices, totalClients } = response.data;
 
   const currencySymbol = getCurrencySymbol(currency);
 

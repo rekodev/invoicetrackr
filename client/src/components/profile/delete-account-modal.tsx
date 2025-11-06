@@ -15,6 +15,7 @@ import { useTransition } from 'react';
 
 import { deleteUserAccount } from '@/api';
 import { logOutAction } from '@/lib/actions';
+import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
   userId: number;
@@ -32,10 +33,10 @@ const DeleteAccountModal = ({ userId, isOpen, onClose }: Props) => {
 
       addToast({
         title: response.data.message,
-        color: 'errors' in response.data ? 'danger' : 'success'
+        color: isResponseError(response) ? 'danger' : 'success'
       });
 
-      if ('errors' in response.data) return;
+      if (isResponseError(response)) return;
 
       logOutAction();
       onClose();

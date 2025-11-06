@@ -1,0 +1,132 @@
+import {
+  CreateNewPasswordResp,
+  DeleteUserAccountResp,
+  GetUserResetPasswordTokenResp,
+  RegisterUserResponse,
+  ResetPasswordResp,
+  UpdateUserAccountSettingsResp,
+  UpdateUserResp
+} from '@/lib/types/response';
+import { UserModel } from '@/lib/types/models/user';
+
+import api from './api-instance';
+
+type UserModelWithPassword = UserModel & { password: string };
+
+export const registerUser = async ({
+  email,
+  password,
+  confirmedPassword
+}: Pick<UserModelWithPassword, 'email' | 'password'> & {
+  confirmedPassword: string;
+}) =>
+  await api.post<RegisterUserResponse>('/api/users', {
+    email,
+    password,
+    confirmedPassword
+  });
+
+export const getUser = async (id: number) =>
+  await api.get<UserModel>(`/api/users/${id}`);
+
+export const loginUser = async (email: string, password: string) =>
+  await api.post<UserModelWithPassword>('/api/users/login', {
+    email,
+    password
+  });
+
+export const updateUser = async (id: number, userData: UserModel) => {
+  const isSignatureFile = typeof userData.signature !== 'string';
+
+  return await api.put<UpdateUserResp>(`/api/users/${id}`, userData, {
+    headers: {
+      'Content-Type': isSignatureFile
+        ? 'multipart/form-data'
+        : 'application/json',
+      'Accept-Language': userData.language.toLowerCase()
+    }
+  });
+};
+
+export const updateUserSelectedBankAccount = async (
+  userId: number,
+  selectedBankAccountId: number
+) =>
+  await api.put<UpdateUserResp>(`/api/users/${userId}/selected-bank-account`, {
+    selectedBankAccountId
+  });
+
+export const updateUserProfilePicture = async (
+  userId: number,
+  formData: FormData
+) =>
+  await api.put<UpdateUserResp>(
+    `/api/users/${userId}/profile-picture`,
+    formData,
+    {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }
+  );
+
+export const updateUserAccountSettings = async (
+  userId: number,
+  { language, currency }: { language: string; currency: string }
+) =>
+  await api.put<UpdateUserAccountSettingsResp>(
+    `/api/users/${userId}/account-settings`,
+    {
+      language,
+      currency
+    },
+    { headers: { 'Accept-Language': language.toLowerCase() } }
+  );
+
+export const deleteUserAccount = async (userId: number) =>
+  await api.delete<DeleteUserAccountResp>(`/api/users/${userId}`);
+
+export const changeUserPassword = async ({
+  userId,
+  language = 'en',
+  password,
+  newPassword,
+  confirmedNewPassword
+}: {
+  userId: number;
+  language?: string;
+  password: string;
+  newPassword: string;
+  confirmedNewPassword: string;
+}) =>
+  await api.put<UpdateUserResp>(
+    `/api/users/${userId}/change-password`,
+    { password, newPassword, confirmedNewPassword },
+    { headers: { 'Accept-Language': language.toLowerCase() } }
+  );
+
+export const resetUserPassword = async ({ email }: { email: string }) =>
+  await api.post<ResetPasswordResp>(`/api/forgot-password`, { email });
+
+export const getUserResetPasswordToken = async (token: string) =>
+  await api.get<GetUserResetPasswordTokenResp>(
+    `/api/reset-password-token/${token}`
+  );
+
+export const createNewUserPassword = async ({
+  userId,
+  newPassword,
+  confirmedNewPassword,
+  token
+}: {
+  userId: number;
+  newPassword: string;
+  confirmedNewPassword: string;
+  token: string;
+}) =>
+  await api.put<CreateNewPasswordResp>(
+    `/api/users/${userId}/create-new-password`,
+    {
+      newPassword,
+      confirmedNewPassword,
+      token
+    }
+  );

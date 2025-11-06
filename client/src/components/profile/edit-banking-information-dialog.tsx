@@ -51,7 +51,7 @@ const EditBankingInformationDialog = ({
 
       addToast({
         title: response.message,
-        color: 'errors' in response ? 'danger' : 'success'
+        color: response.ok ? 'success' : 'danger'
       });
 
       if (!response.ok) return;

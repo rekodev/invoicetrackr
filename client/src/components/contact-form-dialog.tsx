@@ -16,6 +16,7 @@ import { useState, useTransition } from 'react';
 
 import { postContactMessage } from '@/api';
 import { useForm } from 'react-hook-form';
+import { isResponseError } from '@/lib/utils/error';
 
 type ContactForm = {
   email: string;
@@ -43,7 +44,7 @@ export default function ContactFormDialog() {
       const { email, message } = data;
       const response = await postContactMessage({ email, message });
 
-      if (response.data.errors) {
+      if (isResponseError(response)) {
         response.data.errors.forEach(({ key, value }) => {
           setError(key as keyof ContactForm, { message: value });
         });

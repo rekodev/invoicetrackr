@@ -176,6 +176,9 @@ export const getUserResetPasswordTokenOptions: RouteShorthandOptionsWithHandler 
 
 export const createNewUserPasswordOptions: RouteShorthandOptionsWithHandler = {
   schema: {
+    response: {
+      200: Type.Object({ message: Type.String() })
+    },
     body: Type.Object({
       newPassword: Type.String({
         minLength: 1,

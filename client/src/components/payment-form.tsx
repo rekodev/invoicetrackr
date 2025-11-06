@@ -24,6 +24,7 @@ import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
 import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
 import { UserModel } from '@/lib/types/models/user';
 import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
+import { isResponseError } from '@/lib/utils/error';
 
 import Loader from './ui/loader';
 
@@ -64,9 +65,14 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
 
       let stripeCustomerId;
 
-      const {
-        data: { customerId: existingCustomerId }
-      } = await getStripeCustomerId(user.id);
+      const getCustomerResp = await getStripeCustomerId(user.id);
+
+      if (isResponseError(getCustomerResp)) {
+        setErrorMessage('Failed to get customer');
+        return;
+      }
+
+      const { customerId: existingCustomerId } = getCustomerResp.data;
 
       if (existingCustomerId) {
         stripeCustomerId = existingCustomerId;
@@ -77,7 +83,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
           name: user.name
         });
 
-        if ('errors' in createCustomerResp) {
+        if (isResponseError(createCustomerResp)) {
           setErrorMessage('Failed to create customer');
           return;
         }
@@ -89,6 +95,11 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
         user.id,
         stripeCustomerId
       );
+
+      if (isResponseError(subscriptionCreationResp)) {
+        setErrorMessage('Failed to create subscription');
+        return;
+      }
 
       const { error } = await stripe.confirmPayment({
         elements,

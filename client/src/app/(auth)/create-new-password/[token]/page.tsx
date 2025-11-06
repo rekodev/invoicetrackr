@@ -6,6 +6,7 @@ import { getUserResetPasswordToken } from '@/api';
 import CreateNewPasswordForm from '@/components/auth/create-new-password-form';
 import InvalidTokenCard from '@/components/auth/invalid-token-card';
 import AppLogo from '@/components/icons/AppLogo';
+import { isResponseError } from '@/lib/utils/error';
 
 export const metadata: Metadata = {
   title: 'Create new password',
@@ -29,7 +30,7 @@ export default async function CreateNewPasswordPage({ params }: Props) {
 
   const response = await getUserResetPasswordToken(token);
 
-  if (response.status !== HttpStatusCode.Ok) {
+  if (isResponseError(response)) {
     return (
       <section className="flex flex-col items-center justify-center gap-4 px-6 py-8">
         <AppLogo height={80} width={80} />

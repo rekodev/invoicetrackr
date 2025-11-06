@@ -78,7 +78,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
 
       addToast({
         title: response.data.message,
-        color: 'errors' in response.data ? 'danger' : 'success'
+        color: isResponseError(response) ? 'danger' : 'success'
       });
 
       if (isResponseError(response)) return;

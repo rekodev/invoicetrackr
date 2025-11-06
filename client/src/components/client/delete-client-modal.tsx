@@ -13,6 +13,7 @@ import { useTransition } from 'react';
 
 import { deleteClientAction } from '@/lib/actions/client';
 import { ClientModel } from '@/lib/types/models/client';
+import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
   userId: number;
@@ -34,11 +35,11 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
       });
 
       addToast({
-        title: response.message,
-        color: 'errors' in response ? 'danger' : 'success'
+        title: response.data.message,
+        color: isResponseError(response) ? 'danger' : 'success'
       });
 
-      if ('errors' in response) return;
+      if (isResponseError(response)) return;
 
       onClose();
     });

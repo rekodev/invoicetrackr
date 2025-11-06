@@ -17,6 +17,7 @@ import { useTransition } from 'react';
 import { cancelStripeSubscription } from '@/api';
 import { updateSession } from '@/lib/actions';
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
+import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
   user: User;
@@ -38,10 +39,10 @@ const CancelSubscriptionModal = ({ user, isOpen, onClose }: Props) => {
 
       addToast({
         title: response.data.message,
-        color: 'errors' in response.data ? 'danger' : 'success'
+        color: isResponseError(response) ? 'danger' : 'success'
       });
 
-      if ('errors' in response.data) return;
+      if (isResponseError(response)) return;
 
       await updateSession({
         newSession: {
