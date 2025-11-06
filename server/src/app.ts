@@ -53,7 +53,8 @@ const server = fastify({
         statusCode: res.statusCode
       })
     }
-  }
+  },
+  trustProxy: true
 }).withTypeProvider<TypeBoxTypeProvider>();
 
 defineI18n(server, {
@@ -75,8 +76,12 @@ server.register(fastifyRateLimit, {
   max: 30,
   timeWindow: '1 minute',
   keyGenerator: (request) => {
-    const realIp = request.headers['x-real-ip'];
-    return (Array.isArray(realIp) ? realIp[0] : realIp) || request.ip;
+    const forwardedFor = request.headers['x-forwarded-for'];
+    return forwardedFor
+      ? (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor)
+          .split(',')[0]
+          .trim()
+      : request.ip;
   }
 });
 
