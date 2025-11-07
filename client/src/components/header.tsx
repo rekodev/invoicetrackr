@@ -14,7 +14,7 @@ export default async function Header() {
 
   const response = await getUser(Number(session?.user.id));
 
-  if (isResponseError(response)) unauthorized();
+  if (isResponseError(response)) return <GuestHeader />;
 
   return <UserHeader user={response.data} />;
 }

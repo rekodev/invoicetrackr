@@ -1,9 +1,18 @@
-import { UserModel, ResetPasswordTokenModel } from '../models/user';
+import {
+  ResetPasswordTokenModel,
+  UserModel,
+  UserModelWithPassword
+} from '../models/user';
 
 export type ActionResponseModel = {
   ok: boolean;
   message?: string;
   validationErrors?: Record<string, string>;
+};
+
+export type LoginUserResp = {
+  user: UserModelWithPassword;
+  message: string;
 };
 
 export type RegisterUserResponse = {
