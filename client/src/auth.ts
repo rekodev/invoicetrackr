@@ -3,8 +3,8 @@ import NextAuth from 'next-auth';
 import { z } from 'zod';
 
 import { authConfig } from './auth.config';
-import { loginUser } from './api';
 import { isResponseError } from './lib/utils/error';
+import { loginUser } from './api';
 
 export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
   ...authConfig,
@@ -21,7 +21,7 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
 
           if (isResponseError(response)) return null;
 
-          const user = response.data;
+          const user = response.data.user;
 
           if (!user) return null;
 

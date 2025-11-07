@@ -2,16 +2,15 @@ import {
   CreateNewPasswordResp,
   DeleteUserAccountResp,
   GetUserResetPasswordTokenResp,
+  LoginUserResp,
   RegisterUserResponse,
   ResetPasswordResp,
   UpdateUserAccountSettingsResp,
   UpdateUserResp
 } from '@/lib/types/response';
-import { UserModel } from '@/lib/types/models/user';
+import { UserModel, UserModelWithPassword } from '@/lib/types/models/user';
 
 import api from './api-instance';
-
-type UserModelWithPassword = UserModel & { password: string };
 
 export const registerUser = async ({
   email,
@@ -30,7 +29,7 @@ export const getUser = async (id: number) =>
   await api.get<UserModel>(`/api/users/${id}`);
 
 export const loginUser = async (email: string, password: string) =>
-  await api.post<UserModelWithPassword>('/api/users/login', {
+  await api.post<LoginUserResp>('/api/users/login', {
     email,
     password
   });

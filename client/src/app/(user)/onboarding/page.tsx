@@ -1,8 +1,8 @@
 import { unauthorized } from 'next/navigation';
 
 import { getBankingInformationEntries, getUser } from '@/api';
-import { auth } from '@/auth';
 import MultiStepForm from '@/components/multi-step-form';
+import { auth } from '@/auth';
 import { isResponseError } from '@/lib/utils/error';
 
 export default async function OnboardingPage() {
