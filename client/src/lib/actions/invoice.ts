@@ -17,14 +17,12 @@ import { mapValidationErrors } from '../utils/validation';
 
 export const addInvoiceAction = async ({
   userId,
-  invoiceData,
-  lang
+  invoiceData
 }: {
   userId: number;
   invoiceData: InvoiceModel;
-  lang: string;
 }): Promise<ActionResponseModel> => {
-  const response = await addInvoice(userId, invoiceData, lang);
+  const response = await addInvoice(userId, invoiceData);
 
   if (isResponseError(response)) {
     return {
@@ -41,14 +39,12 @@ export const addInvoiceAction = async ({
 
 export const updateInvoiceAction = async ({
   userId,
-  invoiceData,
-  lang
+  invoiceData
 }: {
   userId: number;
   invoiceData: InvoiceModel;
-  lang: string;
 }): Promise<ActionResponseModel> => {
-  const response = await updateInvoice(userId, invoiceData, lang);
+  const response = await updateInvoice(userId, invoiceData);
 
   if (isResponseError(response)) {
     return {

@@ -1,4 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { useI18n } from 'fastify-i18n';
 import {
   AlreadyExistsError,
   BadRequestError,
@@ -24,6 +25,7 @@ export const createCustomer = async (
 ) => {
   const { userId } = req.params;
   const { email, name } = req.body;
+  const i18n = await useI18n(req);
 
   const existingCustomerId = await getStripeCustomerIdFromDb(userId);
 
@@ -48,7 +50,7 @@ export const createCustomer = async (
   const customerIdFromDb = await createStripeCustomerInDb(userId, customer.id);
 
   if (!customer || !customerIdFromDb)
-    throw new BadRequestError('Unable to create customer');
+    throw new BadRequestError(i18n.t('error.payment.unableToCreateCustomer'));
 
   reply.status(200).send({ customerId: customer.id });
 };
@@ -62,6 +64,7 @@ export const createSubscription = async (
 ) => {
   const { customerId } = req.body;
   const { userId } = req.params;
+  const i18n = await useI18n(req);
 
   const currency = await getUserCurrencyFromDb(userId);
 
@@ -80,7 +83,7 @@ export const createSubscription = async (
       await stripe.subscriptions.retrieve(existingSubId);
 
     if (existingSubscription.status === 'active')
-      throw new AlreadyExistsError('Subscription already active');
+      throw new AlreadyExistsError(i18n.t('error.payment.subscriptionAlreadyActive'));
   }
 
   const subscription = await stripe.subscriptions.create({
@@ -98,7 +101,7 @@ export const createSubscription = async (
   );
 
   if (!subscription || !updatedSubscriptionId)
-    throw new BadRequestError('Unable to create subscription');
+    throw new BadRequestError(i18n.t('error.payment.unableToCreateSubscription'));
 
   reply.status(200).send({
     type: 'payment',
@@ -114,10 +117,11 @@ export const getStripeCustomerId = async (
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
+  const i18n = await useI18n(req);
 
   const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
 
-  if (!stripeCustomerId) throw new NotFoundError('Customer not found.');
+  if (!stripeCustomerId) throw new NotFoundError(i18n.t('error.payment.customerNotFound'));
 
   reply.status(200).send({ customerId: stripeCustomerId });
 };
@@ -127,13 +131,14 @@ export const cancelStripeSubscription = async (
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
+  const i18n = await useI18n(req);
 
   const stripeSubscriptionId =
     await getStripeCustomerSubscriptionIdFromDb(userId);
 
-  if (!stripeSubscriptionId) throw NotFoundError('Subscription not found.');
+  if (!stripeSubscriptionId) throw new NotFoundError(i18n.t('error.payment.subscriptionNotFound'));
 
   await stripe.subscriptions.cancel(stripeSubscriptionId);
 
-  reply.status(200).send({ message: 'Subscription canceled successfuly' });
+  reply.status(200).send({ message: i18n.t('success.payment.subscriptionCanceled') });
 };

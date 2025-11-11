@@ -61,13 +61,11 @@ const useInvoiceFormSubmissionHandler = ({
       const response = invoiceData
         ? await updateInvoiceAction({
             userId: user.id,
-            invoiceData: fullData,
-            lang: user.language
+            invoiceData: fullData
           })
         : await addInvoiceAction({
             userId: user.id,
-            invoiceData: fullData,
-            lang: user.language
+            invoiceData: fullData
           });
 
       addToast({

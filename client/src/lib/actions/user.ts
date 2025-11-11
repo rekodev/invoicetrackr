@@ -90,20 +90,17 @@ export async function updateUserProfilePictureAction({
 
 export async function changeUserPasswordAction({
   userId,
-  language,
   password,
   newPassword,
   confirmedNewPassword
 }: {
   userId: number;
-  language: string;
   password: string;
   newPassword: string;
   confirmedNewPassword: string;
 }) {
   const response = await changeUserPassword({
     userId,
-    language,
     password,
     newPassword,
     confirmedNewPassword

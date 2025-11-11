@@ -34,11 +34,12 @@ export const getUser = async (
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
+  const i18n = await useI18n(req);
   const user = await getUserFromDb(userId);
 
-  if (!user) throw new BadRequestError('User not found');
+  if (!user) throw new BadRequestError(i18n.t('error.user.notFound'));
 
-  reply.status(200).send(user);
+  reply.status(200).send({ user });
 };
 
 export const loginUser = async (
@@ -46,12 +47,13 @@ export const loginUser = async (
   reply: FastifyReply
 ) => {
   const { email, password } = req.body;
+  const i18n = await useI18n(req);
   const user = await getUserByEmailFromDb(email);
 
-  if (!user) throw new UnauthorizedError('Invalid credentials');
+  if (!user) throw new UnauthorizedError(i18n.t('error.user.invalidCredentials'));
 
   const isValidPassword = await bcrypt.compare(password, user.password);
-  if (!isValidPassword) throw new UnauthorizedError('Invalid credentials');
+  if (!isValidPassword) throw new UnauthorizedError(i18n.t('error.user.invalidCredentials'));
 
   let isSubscriptionActive = false;
 
@@ -79,22 +81,23 @@ export const postUser = async (
   reply: FastifyReply
 ) => {
   const { email, password, confirmedPassword } = req.body;
+  const i18n = await useI18n(req);
 
   if (password !== confirmedPassword)
-    throw new BadRequestError('Passwords do not match');
+    throw new BadRequestError(i18n.t('error.user.passwordsDoNotMatch'));
 
   const user = await getUserByEmailFromDb(email);
 
-  if (!!user) throw new BadRequestError('User already exists');
+  if (!!user) throw new BadRequestError(i18n.t('error.user.alreadyExists'));
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const createdUser = await registerUser({ email, password: hashedPassword });
 
-  if (!createdUser) throw new BadRequestError('Unable to create user');
+  if (!createdUser) throw new BadRequestError(i18n.t('error.user.unableToCreate'));
 
   return reply
     .status(201)
-    .send({ email, message: 'User created successfully' });
+    .send({ email, message: i18n.t('success.user.created') });
 };
 
 export const updateUser = async (
@@ -107,6 +110,7 @@ export const updateUser = async (
   const { userId } = req.params;
   const file = req.body.file;
   const user = req.body;
+  const i18n = await useI18n(req);
 
   let uploadedSignature: UploadApiResponse;
 
@@ -118,12 +122,12 @@ export const updateUser = async (
     );
 
     if (!uploadedSignature)
-      throw new BadRequestError('Unable to upload signature');
+      throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
   }
 
   const foundUser = await getUserFromDb(userId);
 
-  if (!foundUser) throw new NotFoundError('User not found');
+  if (!foundUser) throw new NotFoundError(i18n.t('error.user.notFound'));
 
   const signatureUrl = uploadedSignature?.url
     ? uploadedSignature.url.replace('http://', 'https://')
@@ -132,11 +136,11 @@ export const updateUser = async (
   const updatedUser = await updateUserInDb(user, signatureUrl);
 
   if (!updatedUser)
-    throw new BadRequestError('Unable to update user information');
+    throw new BadRequestError(i18n.t('error.user.unableToUpdate'));
 
   reply.status(200).send({
     user: updatedUser,
-    message: 'User information updated successfully'
+    message: i18n.t('success.user.updated')
   });
 };
 
@@ -145,6 +149,7 @@ export const deleteUser = async (
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
+  const i18n = await useI18n(req);
 
   const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
   await stripe.customers.del(stripeCustomerId);
@@ -153,10 +158,10 @@ export const deleteUser = async (
 
   if (!deletedUserId)
     throw new BadRequestError(
-      'Unable to delete account at this time. Please try again later'
+      i18n.t('error.user.unableToDelete')
     );
 
-  reply.status(200).send({ message: 'Account deleted successfully' });
+  reply.status(200).send({ message: i18n.t('success.user.deleted') });
 };
 
 export const updateUserSelectedBankAccount = async (
@@ -168,19 +173,20 @@ export const updateUserSelectedBankAccount = async (
 ) => {
   const { userId } = req.params;
   const { selectedBankAccountId } = req.body;
+  const i18n = await useI18n(req);
 
   const foundUser = await getUserFromDb(userId);
 
-  if (!foundUser) return reply.status(400).send({ message: 'User not found' });
+  if (!foundUser) throw new NotFoundError(i18n.t('error.user.notFound'));
 
   const updatedUserSelectedBankAccount =
     await updateUserSelectedBankAccountInDb(userId, selectedBankAccountId);
 
   if (!updatedUserSelectedBankAccount)
-    throw new BadRequestError('Unable to update user bank account selection');
+    throw new BadRequestError(i18n.t('error.user.unableToUpdateSelectedBankAccount'));
 
   reply.status(200).send({
-    message: 'User bank account selection updated successfully'
+    message: i18n.t('success.user.selectedBankAccountUpdated')
   });
 };
 
@@ -190,6 +196,7 @@ export const updateUserProfilePicture = async (
 ) => {
   const { userId } = req.params;
   const profilePicture = await req.file();
+  const i18n = await useI18n(req);
 
   let uploadedProfilePicture: UploadApiResponse;
 
@@ -203,9 +210,7 @@ export const updateUserProfilePicture = async (
     );
 
     if (!uploadedProfilePicture)
-      return reply
-        .status(400)
-        .send({ message: 'Unable to upload profile picture' });
+      throw new BadRequestError(i18n.t('error.user.unableToUpdateProfilePicture'));
   }
 
   const urlWithHttps = uploadedProfilePicture?.url.replace(
@@ -216,11 +221,11 @@ export const updateUserProfilePicture = async (
   const updatedUser = await updateUserProfilePictureInDb(userId, urlWithHttps);
 
   if (!updatedUser)
-    throw new BadRequestError('Unable to update profile picture');
+    throw new BadRequestError(i18n.t('error.user.unableToUpdateProfilePicture'));
 
   reply.status(200).send({
     user: updatedUser,
-    message: 'Profile picture updated successfully'
+    message: i18n.t('success.user.profilePictureUpdated')
   });
 };
 
@@ -242,11 +247,11 @@ export const updateUserAccountSettings = async (
   );
 
   if (!updatedUser)
-    throw new BadRequestError('errors.user.accountSettings.update.badRequest');
+    throw new BadRequestError(i18n.t('error.user.unableToUpdateAccountSettings'));
 
   reply
     .status(200)
-    .send({ message: i18n.t('errors.user.accountSettings.update.success') });
+    .send({ message: i18n.t('success.user.accountSettingsUpdated') });
 };
 
 export const changeUserPassword = async (
@@ -266,7 +271,7 @@ export const changeUserPassword = async (
 
   if (newPassword !== confirmedNewPassword)
     throw new BadRequestError(
-      i18n.t('errors.user.changePassword.newAndConfirmed')
+      i18n.t('error.user.newPasswordMismatch')
     );
 
   const currentPasswordHash = await getUserPasswordHashFromDb(userId);
@@ -274,7 +279,7 @@ export const changeUserPassword = async (
 
   if (!isPasswordValid)
     throw new BadRequestError(
-      i18n.t('errors.user.changePassword.currentPassword')
+      i18n.t('error.user.currentPasswordIncorrect')
     );
 
   const hashedNewPassword = await bcrypt.hash(newPassword, 10);
@@ -284,11 +289,11 @@ export const changeUserPassword = async (
   );
 
   if (!changedPassword)
-    throw new BadRequestError(i18n.t('errors.user.changePassword.badRequest'));
+    throw new BadRequestError(i18n.t('error.user.unableToChangePassword'));
 
   reply
     .status(200)
-    .send({ message: i18n.t('errors.user.changePassword.success') });
+    .send({ message: i18n.t('success.user.passwordChanged') });
 };
 
 export const resetUserPassword = async (
@@ -300,7 +305,7 @@ export const resetUserPassword = async (
   const i18n = await useI18n(req);
 
   if (!user)
-    throw new NotFoundError(i18n.t('errors.user.resetPassword.notFound'));
+    throw new NotFoundError(i18n.t('error.user.notFound'));
 
   const resetToken = crypto.randomUUID();
   const tokenExpiresAt = new Date(Date.now() + 3600000).toISOString();
@@ -318,12 +323,12 @@ export const resetUserPassword = async (
 
   if (error) {
     console.error({ error });
-    throw new BadRequestError(i18n.t('errors.user.resetPassword.failure'));
+    throw new BadRequestError(i18n.t('error.user.unableToSendResetLink'));
   }
 
   reply
     .status(200)
-    .send({ message: i18n.t('errors.user.resetPassword.success') });
+    .send({ message: i18n.t('success.user.resetLinkSent') });
 };
 
 export const getUserResetPasswordToken = async (
@@ -331,16 +336,17 @@ export const getUserResetPasswordToken = async (
   reply: FastifyReply
 ) => {
   const { token } = req.params;
+  const i18n = await useI18n(req);
   const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
 
   if (!tokenFromDb)
-    throw new BadRequestError('errors.user.resetPassword.token.invalid');
+    throw new BadRequestError(i18n.t('error.user.tokenInvalid'));
 
   const currentDate = new Date();
   const tokenExpirationDate = new Date(tokenFromDb.expiresAt);
 
   if (currentDate > tokenExpirationDate)
-    throw new BadRequestError('errors.user.resetPassword.token.expired');
+    throw new BadRequestError(i18n.t('error.user.tokenExpired'));
 
   reply.status(200).send(tokenFromDb);
 };
@@ -358,14 +364,14 @@ export const createNewUserPassword = async (
 
   if (newPassword !== confirmedNewPassword)
     throw new BadRequestError(
-      i18n.t('errors.user.changePassword.newAndConfirmed')
+      i18n.t('error.user.newPasswordMismatch')
     );
 
   const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
 
   if (!token || !tokenFromDb)
     throw new BadRequestError(
-      i18n.t('errors.user.resetPassword.token.invalid')
+      i18n.t('error.user.tokenInvalid')
     );
 
   const currentDate = new Date();
@@ -373,7 +379,7 @@ export const createNewUserPassword = async (
 
   if (currentDate > tokenExpirationDate)
     throw new BadRequestError(
-      i18n.t('errors.user.resetPassword.token.expired')
+      i18n.t('error.user.tokenExpired')
     );
 
   const hashedNewPassword = await bcrypt.hash(newPassword, 10);
@@ -383,11 +389,11 @@ export const createNewUserPassword = async (
   );
 
   if (!changedPassword)
-    throw new BadRequestError(i18n.t('errors.user.changePassword.badRequest'));
+    throw new BadRequestError(i18n.t('error.user.unableToChangePassword'));
 
   await invalidateTokenInDb(userId, token);
 
   reply
     .status(200)
-    .send({ message: i18n.t('errors.user.changePassword.success') });
+    .send({ message: i18n.t('success.user.passwordChanged') });
 };

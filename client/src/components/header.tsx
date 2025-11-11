@@ -16,5 +16,5 @@ export default async function Header() {
 
   if (isResponseError(response)) return <GuestHeader />;
 
-  return <UserHeader user={response.data} />;
+  return <UserHeader user={response.data.user} />;
 }

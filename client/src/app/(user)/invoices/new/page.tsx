@@ -36,8 +36,8 @@ const AddNewInvoicePage = async () => {
   return (
     <section className="w-full">
       <InvoiceForm
-        user={userResp.data}
-        bankingInformationEntries={bankingInformationEntriesResp.data}
+        user={userResp.data.user}
+        bankingInformationEntries={bankingInformationEntriesResp.data.bankAccounts}
         currency={session.user.currency}
         clients={clientsResp.data.clients}
         latestInvoiceId={latestInvoices.data.invoices?.at(0)?.invoiceId}

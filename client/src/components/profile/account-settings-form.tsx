@@ -96,6 +96,10 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
           currency: data.currency
         }
       });
+      
+      // Update localStorage with new language preference
+      localStorage.setItem('language', data.language);
+      
       refresh();
     });
 

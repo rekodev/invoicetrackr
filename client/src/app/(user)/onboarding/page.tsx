@@ -19,13 +19,13 @@ export default async function OnboardingPage() {
   if (isResponseError(bankingInformationResp))
     throw new Error('Failed to fetch data');
 
-  const currentBankingInformation = bankingInformationResp.data.find(
-    (info) => info.id === userResp.data.selectedBankAccountId
+  const currentBankingInformation = bankingInformationResp.data.bankAccounts.find(
+    (info) => info.id === userResp.data.user.selectedBankAccountId
   );
 
   return (
     <MultiStepForm
-      existingUserData={userResp.data}
+      existingUserData={userResp.data.user}
       existingBankingInformation={currentBankingInformation}
     />
   );

@@ -8,6 +8,8 @@ import './globals.css';
 import Footer from '@/components/footer';
 import GoogleAnalytics from '@/components/providers/google-analytics';
 import Header from '@/components/header';
+import LanguageSync from '@/components/language-sync';
+import { auth } from '@/auth';
 
 import CookieConsent from './cookie-consent';
 import { Providers } from './providers';
@@ -52,12 +54,14 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const session = await auth();
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
         <div className="bg-radial-[at_0%_100%] fixed inset-0 -z-10 min-h-screen from-purple-900 from-[-35%] via-transparent to-transparent" />
         <Providers messages={messages}>
+          <LanguageSync userLanguage={session?.user?.language} />
           <Header />
           <main className="mx-auto flex w-full flex-grow flex-col py-6">
             {children}

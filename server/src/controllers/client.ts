@@ -1,4 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { useI18n } from 'fastify-i18n';
 
 import {
   deleteClientFromDb,
@@ -27,12 +28,13 @@ export const getClient = async (
   reply: FastifyReply
 ) => {
   const { userId, id } = req.params;
+  const i18n = await useI18n(req);
 
   const client = await getClientFromDb(userId, id);
 
-  if (!client) throw new NotFoundError('Client not found');
+  if (!client) throw new NotFoundError(i18n.t('error.client.notFound'));
 
-  reply.status(200).send(client);
+  reply.status(200).send({ client });
 };
 
 export const postClient = async (
@@ -41,18 +43,19 @@ export const postClient = async (
 ) => {
   const { userId } = req.params;
   const clientData = req.body;
+  const i18n = await useI18n(req);
 
   const foundClient = await findClientByEmail(userId, clientData.email);
 
-  if (foundClient) throw new BadRequestError('Client already exists');
+  if (foundClient) throw new BadRequestError(i18n.t('error.client.alreadyExists'));
 
   const insertedClient = await insertClientInDb(userId, clientData);
 
-  if (!insertedClient) throw new BadRequestError('Unable to add client');
+  if (!insertedClient) throw new BadRequestError(i18n.t('error.client.unableToCreate'));
 
   reply.status(200).send({
     client: insertedClient,
-    message: 'Client added successfully'
+    message: i18n.t('success.client.created')
   });
 };
 
@@ -65,13 +68,14 @@ export const updateClient = async (
 ) => {
   const { userId, id } = req.params;
   const clientData = req.body;
+  const i18n = await useI18n(req);
 
   const updatedClient = await updateClientInDb(userId, id, clientData);
 
-  if (!updatedClient) throw new BadRequestError('Unable to update client');
+  if (!updatedClient) throw new BadRequestError(i18n.t('error.client.unableToUpdate'));
 
   reply.status(200).send({
-    message: 'Client updated successfully',
+    message: i18n.t('success.client.updated'),
     client: updatedClient
   });
 };
@@ -81,10 +85,11 @@ export const deleteClient = async (
   reply: FastifyReply
 ) => {
   const { userId, id } = req.params;
+  const i18n = await useI18n(req);
 
   const deletedClient = await deleteClientFromDb(userId, id);
 
-  if (!deletedClient) throw new BadRequestError('Unable to delete client');
+  if (!deletedClient) throw new BadRequestError(i18n.t('error.client.unableToDelete'));
 
-  reply.status(200).send({ message: 'Client deleted successfully' });
+  reply.status(200).send({ message: i18n.t('success.client.deleted') });
 };

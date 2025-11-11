@@ -2,6 +2,7 @@ import {
   CreateNewPasswordResp,
   DeleteUserAccountResp,
   GetUserResetPasswordTokenResp,
+  GetUserResp,
   LoginUserResp,
   RegisterUserResponse,
   ResetPasswordResp,
@@ -26,7 +27,7 @@ export const registerUser = async ({
   });
 
 export const getUser = async (id: number) =>
-  await api.get<UserModel>(`/api/users/${id}`);
+  await api.get<GetUserResp>(`/api/users/${id}`);
 
 export const loginUser = async (email: string, password: string) =>
   await api.post<LoginUserResp>('/api/users/login', {
@@ -41,8 +42,7 @@ export const updateUser = async (id: number, userData: UserModel) => {
     headers: {
       'Content-Type': isSignatureFile
         ? 'multipart/form-data'
-        : 'application/json',
-      'Accept-Language': userData.language.toLowerCase()
+        : 'application/json'
     }
   });
 };
@@ -76,8 +76,7 @@ export const updateUserAccountSettings = async (
     {
       language,
       currency
-    },
-    { headers: { 'Accept-Language': language.toLowerCase() } }
+    }
   );
 
 export const deleteUserAccount = async (userId: number) =>
@@ -85,21 +84,18 @@ export const deleteUserAccount = async (userId: number) =>
 
 export const changeUserPassword = async ({
   userId,
-  language = 'en',
   password,
   newPassword,
   confirmedNewPassword
 }: {
   userId: number;
-  language?: string;
   password: string;
   newPassword: string;
   confirmedNewPassword: string;
 }) =>
   await api.put<UpdateUserResp>(
     `/api/users/${userId}/change-password`,
-    { password, newPassword, confirmedNewPassword },
-    { headers: { 'Accept-Language': language.toLowerCase() } }
+    { password, newPassword, confirmedNewPassword }
   );
 
 export const resetUserPassword = async ({ email }: { email: string }) =>

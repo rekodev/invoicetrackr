@@ -2,6 +2,7 @@ import { RouteShorthandOptionsWithHandler } from 'fastify';
 import { Type } from '@sinclair/typebox';
 
 import { postContactMessage } from '../controllers';
+import { MessageResponse } from '../types/responses';
 
 export const postContactMessageOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -19,7 +20,7 @@ export const postContactMessageOptions: RouteShorthandOptionsWithHandler = {
       })
     }),
     response: {
-      200: { message: Type.String() }
+      200: MessageResponse
     }
   },
   handler: postContactMessage

@@ -1,6 +1,8 @@
 'use server';
 
 import { AuthError, User } from 'next-auth';
+import { auth } from '@/auth';
+import { cookies } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 
@@ -136,4 +138,26 @@ export const updateSession = async ({
   if (redirectPath) {
     redirect(redirectPath);
   }
+};
+
+export const getServerRequestHeaders = async () => {
+  const [awaitedCookies, session] = await Promise.all([cookies(), auth()]);
+
+  const authToken =
+    awaitedCookies.get('__Secure-authjs.session-token')?.value ||
+    awaitedCookies.get('authjs.session-token')?.value;
+
+  const isCookieSecure = !!awaitedCookies.get('__Secure-authjs.session-token')
+    ?.value;
+
+  const headers: Record<string, string> = {};
+
+  if (authToken) {
+    headers['Cookie'] =
+      `${isCookieSecure ? '__Secure-' : ''}authjs.session-token=${authToken}`;
+  }
+
+  headers['Accept-Language'] = session?.user?.language?.toLowerCase() || 'en';
+
+  return headers;
 };

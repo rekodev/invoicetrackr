@@ -11,6 +11,7 @@ import fastifyRateLimit from '@fastify/rate-limit';
 import { cloudinaryConfig } from './config/cloudinary';
 import { getPgVersion } from './database/db';
 import i18n from './plugins/i18n';
+import { languageMiddleware } from './middleware';
 import {
   bankingInformationRoutes,
   clientRoutes,
@@ -65,6 +66,7 @@ defineI18n(server, {
 server.register(cors);
 server.register(fastifyMultipart);
 server.register(fastifyCookie);
+
 server.register(invoiceRoutes);
 server.register(clientRoutes);
 server.register(userRoutes);
@@ -84,7 +86,7 @@ server.register(fastifyRateLimit, {
       : request.ip;
   }
 });
-
+server.addHook('onRequest', languageMiddleware);
 server.setErrorHandler(async function (error, request, reply) {
   const i18n = useI18n(request);
 
@@ -95,7 +97,7 @@ server.setErrorHandler(async function (error, request, reply) {
         const key = err.instancePath.substring(1).replace(/\//g, '.');
         const keyPrefix = getTranslationKeyPrefix(request.url);
         const nonDynamicKeyWithPrefix =
-          `validationErrors.${keyPrefix}.${key}`.replace(/\.?\d+/g, '');
+          `validation.${keyPrefix}.${key}`.replace(/\.?\d+/g, '');
 
         return {
           key,

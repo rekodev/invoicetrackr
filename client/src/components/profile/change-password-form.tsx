@@ -20,10 +20,9 @@ import PasswordInput from '../password-input';
 
 type Props = {
   userId: number;
-  language: string;
 };
 
-export default function ChangePasswordForm({ userId, language }: Props) {
+export default function ChangePasswordForm({ userId }: Props) {
   const t = useTranslations('profile.change_password');
   const {
     register,
@@ -40,7 +39,6 @@ export default function ChangePasswordForm({ userId, language }: Props) {
     startTransition(async () => {
       const response = await changeUserPasswordAction({
         userId,
-        language,
         password: data.password,
         newPassword: data.newPassword,
         confirmedNewPassword: data.confirmedNewPassword

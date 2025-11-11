@@ -21,7 +21,7 @@ export default async function ProfilePageLayout({
 
   return (
     <section className="flex flex-col gap-6 sm:flex-row">
-      <UserNavCard user={response.data} />
+      <UserNavCard user={response.data.user} />
       {children}
     </section>
   );

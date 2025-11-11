@@ -33,8 +33,7 @@ export const getLatestInvoices = async (userId: number) =>
 
 export const addInvoice = async (
   userId: number,
-  invoiceData: InvoiceFormData,
-  language: string = 'EN'
+  invoiceData: InvoiceFormData
 ) => {
   const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
 
@@ -45,8 +44,7 @@ export const addInvoice = async (
       headers: {
         'Content-Type': isSignatureFile
           ? 'multipart/form-data'
-          : 'application/json',
-        'Accept-Language': language.toLowerCase()
+          : 'application/json'
       }
     }
   );
@@ -54,8 +52,7 @@ export const addInvoice = async (
 
 export const updateInvoice = async (
   userId: number,
-  invoiceData: InvoiceModel,
-  language: string = 'en'
+  invoiceData: InvoiceModel
 ) => {
   const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
 
@@ -66,8 +63,7 @@ export const updateInvoice = async (
       headers: {
         'Content-Type': isSignatureFile
           ? 'multipart/form-data'
-          : 'application/json',
-        'Accept-Language': language.toLowerCase()
+          : 'application/json'
       }
     }
   );

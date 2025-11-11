@@ -15,6 +15,10 @@ export type LoginUserResp = {
   message: string;
 };
 
+export type GetUserResp = {
+  user: UserModel;
+};
+
 export type RegisterUserResponse = {
   email: string;
   message: string;

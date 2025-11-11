@@ -8,6 +8,7 @@ import {
   updateClient
 } from '../controllers';
 import { Client } from '../types/models';
+import { MessageResponse } from '../types/responses';
 import { authMiddleware } from '../middleware/auth';
 
 export const getClientsOptions: RouteShorthandOptionsWithHandler = {
@@ -23,7 +24,7 @@ export const getClientsOptions: RouteShorthandOptionsWithHandler = {
 export const getClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Client
+      200: Type.Object({ client: Client })
     }
   },
   preHandler: authMiddleware,
@@ -34,7 +35,10 @@ export const postClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Type.Omit(Client, ['id']),
     response: {
-      201: Type.Object({ client: Client, message: Type.String() })
+      201: Type.Intersect([
+        Type.Object({ client: Client }),
+        MessageResponse
+      ])
     }
   },
   preHandler: authMiddleware,
@@ -45,7 +49,10 @@ export const updateClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Client,
     response: {
-      200: Type.Object({ client: Client, message: Type.String() })
+      200: Type.Intersect([
+        Type.Object({ client: Client }),
+        MessageResponse
+      ])
     }
   },
   preHandler: authMiddleware,
@@ -55,7 +62,7 @@ export const updateClientOptions: RouteShorthandOptionsWithHandler = {
 export const deleteClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ message: Type.String() })
+      200: MessageResponse
     }
   },
   preHandler: authMiddleware,
