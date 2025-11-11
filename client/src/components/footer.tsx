@@ -1,6 +1,7 @@
 'use client';
 
 import { Link } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 
 import {
@@ -35,6 +36,7 @@ const FULL_FOOTER_PATHNAMES = [
 ] as const;
 
 const Footer = () => {
+  const t = useTranslations('footer');
   const pathname = usePathname();
 
   return (
@@ -52,32 +54,32 @@ const Footer = () => {
                 </p>
               </div>
               <p className="text-muted-foreground text-sm">
-                Simple, powerful invoicing for freelancers and small businesses.
+                {t('tagline')}
               </p>
             </div>
             <div className="grid gap-8 sm:grid-cols-2 md:ml-auto">
               <div className="grid gap-3 text-sm">
-                <div className="font-medium">Support</div>
+                <div className="font-medium">{t('support')}</div>
                 <ContactFormDialog />
               </div>
             </div>
             <div className="grid gap-8 sm:grid-cols-2 md:ml-auto">
               <div className="grid gap-3 text-sm">
-                <div className="font-medium">Legal</div>
+                <div className="font-medium">{t('legal')}</div>
                 <nav className="grid gap-2">
                   <Link
                     color="foreground"
                     href={PRIVACY_POLICY_PAGE}
                     className="text-sm hover:underline"
                   >
-                    Privacy Policy
+                    {t('privacy_policy')}
                   </Link>
                   <Link
                     color="foreground"
                     href={TERMS_OF_SERVICE_PAGE}
                     className="text-sm hover:underline"
                   >
-                    Terms of Service
+                    {t('terms_of_service')}
                   </Link>
                 </nav>
               </div>
@@ -88,7 +90,7 @@ const Footer = () => {
       <div className="border-t-1 border-t-default-300 dark:border-t-default-100 flex w-full flex-col gap-4 py-6 md:flex-row md:items-center">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-6">
           <div className="text-muted-foreground text-center text-xs">
-            © {new Date().getFullYear()} InvoiceTrackr. All rights reserved.
+            {t('copyright', { year: new Date().getFullYear() })}
           </div>
         </div>
       </div>

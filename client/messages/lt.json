@@ -42,6 +42,95 @@
     "terms_of_service": "Paslaugų teikimo sąlygos"
   },
   "general_error": "Ajajai! Kažkas negerai...",
+  "cookie_consent": {
+    "message": "Mes naudojame slapukus, kad suteiktume geriausią patirtį. Paspaudę \"Priimti viską\" sutinkate su mūsų slapukų naudojimu, įskaitant analitikos duomenis, aprašytus mūsų",
+    "privacy_policy": "Privatumo Politikoje",
+    "accept": "Priimti viską",
+    "decline": "Atmesti"
+  },
+  "not_found": {
+    "title": "Puslapis nerastas",
+    "description": "Atsiprašome, bet puslapio, kurio ieškote, nepavyko rasti. Jis galėjo būti perkeltas arba ištrintas.",
+    "go_home": "Grįžti į pradžią"
+  },
+  "error_page": {
+    "title": "Kažkas nutiko",
+    "description": "Susidūrėme su netikėta klaida. Pabandykite atnaujinti puslapį arba susisiekite su palaikymu, jei problema išlieka.",
+    "try_again": "Bandyti dar kartą"
+  },
+  "home": {
+    "hero": {
+      "title": "Sukurkite Profesionalias Sąskaitas Per Kelias Minutes",
+      "subtitle": "Paprastas, galingas ir nemokamas sąskaitų generatorius laisviems samdomiems ir mažam verslui. Pradėkite be registracijos.",
+      "cta_primary": "Sukurti Nemokamą Sąskaitą",
+      "cta_secondary": "Peržiūrėti Premium Funkcijas"
+    },
+    "features": {
+      "title": "Viskas ko Reikia Profesionaliam Sąskaitų Faktūrų Išrašymui",
+      "subtitle": "Mūsų intuityvus sąskaitų generatorius padeda kurti, pritaikyti ir eksportuoti profesionalias sąskaitas per sekundes.",
+      "save_edit": {
+        "title": "Išsaugokite ir Redaguokite Sąskaitas",
+        "description": "Lengvai kurkite, išsaugokite ir redaguokite sąskaitas kai tik reikia, užtikrindami lankstumo jūsų atsiskaitymo procese."
+      },
+      "dashboard": {
+        "title": "Pajamų Suvestinė",
+        "description": "Gaukite aiškų savo pajamų vaizdą su vizualia pajamų suvestine, rodančia mėnesinius pokyčius ir naujausias sąskaitas."
+      },
+      "multi_currency": {
+        "title": "Kelios Valiutos ir Kalbos",
+        "description": "Pritaikykite sąskaitas su pageidaujama valiuta ir kalba, kad tiktų tarptautiniams klientams."
+      }
+    },
+    "pricing": {
+      "title": "Paprastas, Skaidrus Kainodaras",
+      "subtitle": "Pradėkite nemokamai, atnaujinkite kai reikia daugiau funkcijų.",
+      "free": {
+        "title": "Nemokama",
+        "subtitle": "Kurkite ir eksportuokite pagrindines sąskaitas",
+        "price_label": "Visam laikui nemokamai",
+        "features": {
+          "unlimited": "Kurkite neribotą sąskaitų skaičių",
+          "template": "Pagrindinis sąskaitos šablonas",
+          "export": "Eksportuokite į PDF",
+          "signature": "Pridėkite savo parašą"
+        },
+        "cta": "Pradėti"
+      },
+      "premium": {
+        "title": "Premium",
+        "subtitle": "Viskas ko reikia efektyviam sąskaitų išrašymui",
+        "price_label": "per mėnesį",
+        "features": {
+          "everything": "Viskas iš Nemokamos",
+          "save": "Išsaugokite ir redaguokite sąskaitas",
+          "clients": "Saugokite klientų informaciją",
+          "contracts": "Kurkite ir valdykite sutartis",
+          "currency": "Pasirinkite valiutą ir kalbą",
+          "email": "Siųskite sąskaitas el. paštu"
+        },
+        "cta": "Atnaujinti Dabar"
+      }
+    },
+    "cta": {
+      "title": "Pasirengę supaprastinti sąskaitų išrašymo procesą?",
+      "subtitle": "Pradėkite kurti profesionalias sąskaitas šiandien, kredito kortelės nereikia.",
+      "button": "Išbandyti Nemokamai"
+    },
+    "testimonial": {
+      "label": "Atsiliepimas",
+      "quote": "InvoiceTrackr visiškai pakeitė kaip tvarkau sąskaitų išrašymą. Nemokama versija puiki pradėti, bet premium funkcijos sutaupo valandas kiekvieną mėnesį.",
+      "author": "Nikita K.",
+      "role": "Laisvai Samdomas Duomenų Analitikas"
+    }
+  },
+  "footer": {
+    "tagline": "Paprastas, galingas sąskaitų išrašymas laisviems samdomiems ir mažam verslui.",
+    "support": "Pagalba",
+    "legal": "Teisiniai",
+    "privacy_policy": "Privatumo Politika",
+    "terms_of_service": "Naudojimosi Sąlygos",
+    "copyright": "© {year} InvoiceTrackr. Visos teisės saugomos."
+  },
   "login": {
     "page_title": "Prisijungti",
     "page_description": "Prisijunkite prie savo InvoiceTrackr paskyros.",
@@ -108,7 +197,23 @@
       "total_clients": "Viso klientų"
     },
     "revenue_chart": {
-      "title": "Naujausi įplaukos"
+      "title": "Naujausi įplaukos",
+      "chart_label": "Sąskaitų faktūrų įplaukos pagal mėnesį",
+      "revenue": "Įplaukos",
+      "months": {
+        "january": "Sausis",
+        "february": "Vasaris",
+        "march": "Kovas",
+        "april": "Balandis",
+        "may": "Gegužė",
+        "june": "Birželis",
+        "july": "Liepa",
+        "august": "Rugpjūtis",
+        "september": "Rugsėjis",
+        "october": "Spalis",
+        "november": "Lapkritis",
+        "december": "Gruodis"
+      }
     },
     "latest_invoices": {
       "title": "Naujausios sąskaitos faktūros",
@@ -202,6 +307,9 @@
   },
   "clients": {
     "page_title": "Klientai",
+    "edit": "Redaguoti",
+    "remove": "Pašalinti",
+    "no_clients": "Klientų nerasta",
     "top_content": {
       "search_placeholder": "Ieškoti pagal pavadinimą...",
       "add_new": "Pridėti naują",
@@ -398,6 +506,9 @@
     "description": "Šis puslapis vis dar kuriamas ir bus prieinamas netrukus. Dėkojame už kantrybę."
   },
   "components": {
+    "password_input": {
+      "toggle_visibility": "Perjungti slaptažodžio matomumą"
+    },
     "signature_pad": {
       "edit_signature": "Redaguoti parašą",
       "add_signature": "Pridėti parašą",
@@ -470,6 +581,386 @@
     },
     "subscription_status_card": {
       "title": "Prenumeratos būsena"
+    }
+  },
+  "privacy_policy": {
+    "title": "Privatumo politika",
+    "last_updated": "Paskutinį kartą atnaujinta: {date}",
+    "sections": {
+      "introduction": {
+        "heading": "1. Įvadas",
+        "content": "Sveiki atvykę į InvoiceTrackr (\"mes\", \"mūsų\" arba \"mus\"). Mes įsipareigoję saugoti jūsų privatumą ir užtikrinti jūsų asmeninės informacijos saugumą. Ši Privatumo politika paaiškina, kaip renkame, naudojame, atskleidžiame ir saugome jūsų informaciją, kai naudojatės mūsų sąskaitų faktūrų sekimo ir valdymo paslauga."
+      },
+      "information_we_collect": {
+        "heading": "2. Informacija, kurią renkame",
+        "personal_info": {
+          "heading": "2.1 Asmeninė informacija",
+          "intro": "Kai registruojatės paskyroje, renkame:",
+          "items": {
+            "name": "Vardą ir verslo informaciją",
+            "email": "El. pašto adresą",
+            "business_type": "Verslo tipą (individualus ar verslo subjektas)",
+            "registration": "Verslo registracijos numerį",
+            "address": "Verslo adresą",
+            "profile": "Profilio nuotrauką (neprivaloma)",
+            "signature": "Skaitmeninį parašą (neprivaloma)",
+            "preferences": "Kalbos ir valiutos nuostatas"
+          }
+        },
+        "financial_info": {
+          "heading": "2.2 Finansinė informacija",
+          "intro": "Norint įgalinti sąskaitų faktūrų funkcionalumą, renkame:",
+          "items": {
+            "banking": "Bankinę informaciją (banko pavadinimas, kodas ir sąskaitos numeris)",
+            "invoice": "Sąskaitų faktūrų duomenis, įskaitant sumas, datas ir mokėjimo būsenas",
+            "client": "Kliento informaciją sąskaitų faktūrų tikslais"
+          }
+        },
+        "payment_info": {
+          "heading": "2.3 Mokėjimo informacija",
+          "content": "Mokėjimų apdorojimą atlieka Stripe, trečiosios šalies mokėjimo procesorius. Mes nesaugome jūsų kredito kortelės informacijos. Mes tik saugome jūsų Stripe kliento ID ir prenumeratos ID paskyros valdymo tikslais."
+        },
+        "usage_info": {
+          "heading": "2.4 Naudojimo informacija",
+          "intro": "Mes automatiškai renkame tam tikrą informaciją apie jūsų įrenginį ir kaip sąveikaujate su mūsų paslauga:",
+          "items": {
+            "ip": "IP adresą ir įrenginio informaciją",
+            "browser": "Naršyklės tipą ir versiją",
+            "pages": "Peržiūrėtus puslapius ir naudotas funkcijas",
+            "time": "Apsilankymų laiką ir datą",
+            "referring": "Nukreipiančių svetainių adresus"
+          }
+        },
+        "analytics_data": {
+          "heading": "2.5 Analitikos duomenys",
+          "intro": "Mes naudojame Google Analytics, kad suprastume, kaip lankytojai naudoja mūsų svetainę. Google Analytics renka informaciją, pvz., kaip dažnai naudotojai lanko mūsų svetainę, kokius puslapius jie aplanko ir kokias kitas svetaines jie naudojo prieš apsilankydami. Mes naudojame šią informaciją, kad pagerintume mūsų paslaugą ir naudotojo patirtį. Google Analytics gali naudoti slapukus ir kitas stebėjimo technologijas. Galite sužinoti daugiau apie Google privatumo praktikas"
+        }
+      },
+      "how_we_use": {
+        "heading": "3. Kaip naudojame jūsų informaciją",
+        "intro": "Mes naudojame surinktą informaciją šiais tikslais:",
+        "items": {
+          "provide": "Teikti, valdyti ir palaikyti mūsų sąskaitų faktūrų sekimo paslaugą",
+          "create": "Kurti ir valdyti jūsų paskyrą",
+          "process": "Apdoroti jūsų operacijas ir valdyti prenumeratas",
+          "generate": "Generuoti, saugoti ir eksportuoti sąskaitas faktūras ir sutartis",
+          "send": "Siųsti su sąskaitomis faktūromis susijusius el. laiškus jūsų klientams",
+          "display": "Rodyti jūsų pajamų valdymo skydelį ir finansinę analitiką",
+          "support": "Teikti klientų palaikymą ir atsakyti į jūsų užklausas",
+          "admin": "Siųsti administracinę informaciją ir paslaugos atnaujinimus",
+          "improve": "Gerinti mūsų paslaugą ir kurti naujas funkcijas",
+          "analyze": "Analizuoti naudojimo modelius ir tendencijas",
+          "detect": "Aptikti ir užkirsti kelią sukčiavimui ar neteisėtai prieigai",
+          "comply": "Laikytis teisinių įsipareigojimų"
+        }
+      },
+      "how_we_share": {
+        "heading": "4. Kaip dalinamės jūsų informacija",
+        "intro": "Mes neparduodame jūsų asmeninės informacijos. Galime dalytis jūsų informacija šiais atvejais:",
+        "service_providers": {
+          "heading": "4.1 Paslaugų teikėjai",
+          "intro": "Dalinamės informacija su trečiųjų šalių paslaugų teikėjais, kurie teikia paslaugas mūsų vardu:",
+          "items": {
+            "stripe": "Mokėjimų apdorojimas prenumeratos valdymui",
+            "cloudinary": "Vaizdų talpinimas profilio nuotraukoms ir kitai medijai",
+            "analytics": "Svetainės analitika ir lankytojų sekimas",
+            "email": "El. pašto paslaugų teikėjai"
+          }
+        },
+        "legal": {
+          "heading": "4.2 Teisiniai reikalavimai",
+          "content": "Galime atskleisti jūsų informaciją, jei to reikalaujama pagal įstatymą arba atsižvelgiant į galiojančius viešųjų valdžios institucijų prašymus (pvz., teismo ar vyriausybės agentūros)."
+        },
+        "business_transfers": {
+          "heading": "4.3 Verslo perdavimai",
+          "content": "Susijungimo, įsigijimo ar viso ar dalies mūsų turto pardavimo atveju jūsų informacija gali būti perduota kaip tos transakcijos dalis."
+        }
+      },
+      "data_security": {
+        "heading": "5. Duomenų sauga",
+        "intro": "Mes įgyvendiname atitinkamas technines ir organizacines saugumo priemones, kad apsaugotume jūsų informaciją nuo neteisėtos prieigos, pakeitimo, atskleidimo ar sunaikinimo. Šios priemonės apima:",
+        "items": {
+          "encryption": "Duomenų perdavimo šifravimas naudojant SSL/TLS",
+          "hashing": "Slaptažodžių maišymas naudojant pramonės standartus atitinkančius algoritmus",
+          "assessments": "Reguliarūs saugumo vertinimai ir atnaujinimai",
+          "access": "Prieigos kontrolė ir autentifikavimo mechanizmai"
+        },
+        "disclaimer": "Tačiau joks perdavimo per internetą ar elektroninio saugojimo metodas nėra 100% saugus. Nors stengiamės apsaugoti jūsų informaciją, negalime garantuoti jos absoliutaus saugumo."
+      },
+      "data_retention": {
+        "heading": "6. Duomenų saugojimas",
+        "content": "Saugome jūsų asmeninę informaciją tiek, kiek reikia šioje Privatumo politikoje nurodytiems tikslams įgyvendinti, nebent ilgesnis saugojimo laikotarpis reikalingas arba leidžiamas pagal įstatymus. Kai ištri nate savo paskyrą, mes ištriname arba anonimuojame jūsų asmeninę informaciją, išskyrus atvejus, kai privalome ją išsaugoti dėl teisinių, mokesčių ar apskaitos tikslų."
+      },
+      "your_rights": {
+        "heading": "7. Jūsų teisės ir pasirinkimai",
+        "intro": "Priklausomai nuo jūsų buvimo vietos, galite turėti šias teises dėl savo asmeninės informacijos:",
+        "items": {
+          "access": {
+            "title": "Prieiga",
+            "description": "Prašyti prieigos prie savo asmeninės informacijos"
+          },
+          "correction": {
+            "title": "Taisymas",
+            "description": "Prašyti pataisyti netikslią informaciją"
+          },
+          "deletion": {
+            "title": "Ištrynimas",
+            "description": "Prašyti ištrinti savo asmeninę informaciją"
+          },
+          "portability": {
+            "title": "Perkeliamumas",
+            "description": "Prašyti savo duomenų kopijos struktūrizuotu formatu"
+          },
+          "opt_out": {
+            "title": "Atsisakymas",
+            "description": "Atsisakyti rinkodaros pranešimų"
+          },
+          "withdraw": {
+            "title": "Sutikimo atšaukimas",
+            "description": "Atšaukti sutikimą, kai apdorojimas grindžiamas sutikimu"
+          }
+        },
+        "outro": "Norėdami pasinaudoti šiomis teisėmis, susisiekite su mumis naudodami informaciją, pateiktą skyriuje \"Susisiekite su mumis\" žemiau."
+      },
+      "cookies": {
+        "heading": "8. Slapukai ir stebėjimo technologijos",
+        "content": "Mes naudojame slapukus ir panašias stebėjimo technologijas, kad sektume veiklą mūsų paslaugoje ir saugotume tam tikrą informaciją. Slapukai yra failai su nedideliu duomenų kiekiu, kurie saugomi jūsų įrenginyje. Galite nurodyti savo naršyklei atsisakyti visų slapukų arba nurodyti, kada slapukas siunčiamas. Tačiau, jei nesutinkate su slapukais, galite negalėti naudoti kai kurių mūsų paslaugos funkcijų."
+      },
+      "third_party_links": {
+        "heading": "9. Trečiųjų šalių nuorodos",
+        "content": "Mūsų paslauga gali turėti nuorodų į trečiųjų šalių svetaines ar paslaugas. Mes neatsakome už šių trečiųjų šalių privatumo praktiką ar turinį. Raginame perskaityti bet kurių jūsų aplankytų trečiųjų šalių svetainių privatumo politiką."
+      },
+      "children_privacy": {
+        "heading": "10. Vaikų privatumas",
+        "content": "Mūsų paslauga nėra skirta asmenims jaunesniems nei 18 metų. Mes sąmoningai nerenkame asmeninės informacijos iš vaikų jaunesnių nei 18 metų. Jei esate tėvas ar globėjas ir manote, kad jūsų vaikas pateikė mums asmeninės informacijos, susisiekite su mumis, kad galėtume ją ištrinti."
+      },
+      "international_transfers": {
+        "heading": "11. Tarptautiniai duomenų perdavimai",
+        "content": "Jūsų informacija gali būti perduota ir apdorota kitose šalyse nei jūsų gyvenamoji šalis. Šiose šalyse gali būti duomenų apsaugos įstatymai, kurie skiriasi nuo jūsų šalies įstatymų. Imamės atitinkamų priemonių, kad užtikrintume, jog jūsų asmeninė informacija liktų apsaugota pagal šią Privatumo politiką."
+      },
+      "changes": {
+        "heading": "12. Šios Privatumo politikos pakeitimai",
+        "content": "Galime retkarčiais atnaujinti šią Privatumo politiką, kad atspindėtume mūsų praktikos ar teisinių reikalavimų pokyčius. Apie bet kokius esminius pakeitimus pranešime paskelbdami naują Privatumo politiką šiame puslapyje ir atnaujindami datą \"Paskutinį kartą atnaujinta\". Raginame periodiškai peržiūrėti šią Privatumo politiką, ar nėra pakeitimų."
+      },
+      "contact": {
+        "heading": "13. Susisiekite su mumis",
+        "intro": "Jei turite klausimų apie šią Privatumo politiką ar mūsų privatumo praktiką, susisiekite su mumis:",
+        "company": "InvoiceTrackr",
+        "email": "El. paštas: {email}"
+      }
+    }
+  },
+  "terms_of_service": {
+    "title": "Paslaugų teikimo sąlygos",
+    "last_updated": "Paskutinį kartą atnaujinta: {date}",
+    "sections": {
+      "agreement": {
+        "heading": "1. Sutikimas su sąlygomis",
+        "content": "Prisijungdami ar naudodamiesi InvoiceTrackr (\"Paslauga\", \"mes\", \"mūsų\" arba \"mus\"), sutinkate laikytis šių Paslaugų teikimo sąlygų (\"Sąlygos\"). Jei nesutinkate su šiomis Sąlygomis, negalite prisijungti ar naudotis Paslauga."
+      },
+      "description": {
+        "heading": "2. Paslaugos aprašymas",
+        "intro": "InvoiceTrackr yra internetinė sąskaitų faktūrų generavimo, sekimo ir valdymo platforma, skirta laisviems samdiniams ir mažoms įmonėms. Mūsų Paslauga suteikia:",
+        "items": {
+          "creation": "Sąskaitų faktūrų kūrimas, redagavimas ir valdymas",
+          "tracking": "Sąskaitų faktūrų būsenos sekimas (apmokėta, laukiama, atšaukta)",
+          "clients": "Klientų informacijos valdymas",
+          "dashboard": "Finansinė suvestinė su pajamų analize ir diagramomis",
+          "contracts": "Sutarčių kūrimas ir valdymas (premium funkcija)",
+          "pdf": "PDF sąskaitų faktūrų generavimas ir eksportavimas",
+          "email": "Sąskaitų faktūrų pristatymas el. paštu",
+          "multi": "Kelių valiutų ir kalbų palaikymas",
+          "banking": "Banko informacijos saugojimas sąskaitų faktūrų tikslais",
+          "signature": "Skaitmeninio parašo funkcionalumas"
+        }
+      },
+      "account_registration": {
+        "heading": "3. Paskyros registracija",
+        "creation": {
+          "heading": "3.1 Paskyros sukūrimas",
+          "intro": "Norėdami pasiekti tam tikras Paslaugos funkcijas, turite užsiregistruoti paskyrą. Sutinkate:",
+          "items": {
+            "accurate": "Pateikti tikslią, dabartinę ir išsamią informaciją",
+            "security": "Palaikyti savo slaptažodžio ir paskyros saugumą",
+            "responsibility": "Prisiimti visą atsakomybę už veiklą, vykstančią jūsų paskyroje",
+            "notify": "Nedelsiant pranešti mums apie bet kokį neteisėtą jūsų paskyros naudojimą",
+            "maintain": "Palaikyti ir nedelsiant atnaujinti savo paskyros informaciją"
+          }
+        },
+        "eligibility": {
+          "heading": "3.2 Paskyros tinkamumas",
+          "content": "Turite būti bent 18 metų amžiaus, kad galėtumėte sukurti paskyrą ir naudotis Paslauga. Kurdami paskyrą pareiškiate ir užtikrinat, kad atitinkate šį amžiaus reikalavimą."
+        }
+      },
+      "subscription": {
+        "heading": "4. Prenumeratos planai",
+        "free": {
+          "heading": "4.1 Nemokamas planas",
+          "content": "Mūsų nemokamas planas leidžia kurti neribotą kiekį sąskaitų faktūrų, naudoti pagrindinius šablonus, eksportuoti į PDF ir pridėti savo parašą."
+        },
+        "premium": {
+          "heading": "4.2 Premium planas",
+          "content": "Mūsų premium planas ($4.99/mėn.) apima visas nemokamas funkcijas ir galimybę išsaugoti bei redaguoti sąskaitas faktūras, saugoti klientų informaciją, kurti ir valdyti sutartis, pasirinkti valiutą ir kalbos nuostatas bei siųsti sąskaitas faktūras tiesiogiai klientams el. paštu."
+        },
+        "payment": {
+          "heading": "4.3 Mokėjimo sąlygos",
+          "content": "Premium prenumeratos apmokestinamos kas mėnesį iš anksto. Mokėjimų apdorojimą saugiai atlieka Stripe, trečiosios šalies mokėjimų procesorius. Prenumeruodami premium planą, įgaliojate mus reguliariai nuskaityti mokesčius iš jūsų mokėjimo būdo."
+        },
+        "cancellation": {
+          "heading": "4.4 Atšaukimas ir grąžinimai",
+          "content": "Galite atšaukti savo prenumeratą bet kuriuo metu per savo paskyros nustatymus. Atšaukimai įsigalios dabartinio atsiskaitymo laikotarpio pabaigoje. Negrąžiname pinigų už dalinius mėnesio ar nepanaudotas funkcijas."
+        }
+      },
+      "user_content": {
+        "heading": "5. Naudotojo turinys ir duomenys",
+        "your_content": {
+          "heading": "5.1 Jūsų turinys",
+          "content": "Išlaikote visas teises į turinį, kurį sukuriate, įkeliate ar saugote per Paslaugą, įskaitant sąskaitas faktūras, klientų informaciją ir kitus duomenis (\"Jūsų turinys\"). Naudodamiesi Paslauga, suteikiate mums ribotą licenciją naudoti, saugoti ir apdoroti Jūsų turinį tik siekiant teikti ir tobulinti Paslaugą."
+        },
+        "responsibility": {
+          "heading": "5.2. Turinio atsakomybė",
+          "intro": "Esate vienintelis atsakingas už Jūsų turinį ir jo paskelbimo ar publikavimo pasekmes. Pareiškiate ir užtikrinat, kad:",
+          "items": {
+            "own": "Esate Jūsų turinio savininkas arba turite reikalingas teises",
+            "rights": "Turite reikalingas teises į Jūsų turinį",
+            "laws": "Jūsų turinys nepažeidžia jokių galiojančių įstatymų ar taisyklių",
+            "viruses": "Jūsų turinys neturi virusų ar kenkėjiško kodo"
+          }
+        },
+        "backup": {
+          "heading": "5.3 Duomenų atsarginė kopija",
+          "content": "Nors įgyvendiname atsarginių kopijų procedūras, esate atsakingas už savo Jūsų turinio atsarginių kopijų palaikymą. Nesame atsakingi už bet kokį Jūsų turinio praradimą ar sugadinimą."
+        }
+      },
+      "acceptable_use": {
+        "heading": "6. Priimtino naudojimo politika",
+        "intro": "Sutinkate NENAUDOTI Paslaugos:",
+        "items": {
+          "violate": "Pažeisti bet kokius įstatymus ar taisykles",
+          "infringe": "Pažeisti kitų teises",
+          "transmit": "Perduoti apgaulingą, klaidingą ar klaidinančią informaciją",
+          "fraudulent": "Kurti apgaulingas sąskaitas faktūras ar užsiimti finansiniu sukčiavimu",
+          "viruses": "Įkelti virusus ar kenkėjišką kodą",
+          "unauthorized": "Bandyti gauti neteisėtą prieigą prie Paslaugos ar kitų naudotojų paskyrų",
+          "interfere": "Trukdyti ar trikdyti Paslaugą ar serverius",
+          "automated": "Naudoti automatines sistemas (botus, scraperių) be mūsų raštiško leidimo",
+          "resell": "Perparduoti ar platinti Paslaugą be įgaliojimo",
+          "illegal": "Naudoti Paslaugą bet kokiais neteisėtais ar neleistinais tikslais"
+        }
+      },
+      "intellectual_property": {
+        "heading": "7. Intelektinės nuosavybės teisės",
+        "our_rights": {
+          "heading": "7.1 Mūsų teisės",
+          "content": "Paslauga ir jos originalus turinys, funkcijos ir funkcionalumas priklauso InvoiceTrackr ir yra saugomi tarptautinių autorių teisių, prekių ženklų, patentų, komercinės paslapties ir kitų intelektinės nuosavybės įstatymų. Mūsų prekių ženklai ir prekybos įvaizdis negali būti naudojami be mūsų išankstinio raštiško leidimo."
+        },
+        "feedback": {
+          "heading": "7.2 Atsiliepimai",
+          "content": "Jei pateikiate mums atsiliepimus, pasiūlymus ar idėjas apie Paslaugą, suteikiate mums teisę naudoti tokius atsiliepimus be jokių įsipareigojimų jums."
+        }
+      },
+      "third_party": {
+        "heading": "8. Trečiųjų šalių paslaugos",
+        "intro": "Paslauga integruojasi arba remiasi trečiųjų šalių paslaugomis, įskaitant:",
+        "stripe": "Mokėjimų apdorojimas",
+        "cloudinary": "Vaizdų saugojimas ir valdymas",
+        "analytics": "Svetainės analizė ir naudojimo sekimas",
+        "disclaimer": "Jūsų naudojimasis šiomis trečiųjų šalių paslaugomis yra jų atitinkamų paslaugų teikimo sąlygų ir privatumo politikų objektas. Mes nesame atsakingi už šių trečiųjų šalių paslaugų prieinamumą, funkcionalumą ar praktiką."
+      },
+      "service_availability": {
+        "heading": "9. Paslaugos prieinamumas ir modifikacijos",
+        "availability": {
+          "heading": "9.1 Paslaugos prieinamumas",
+          "content": "Stengiamės išlaikyti aukštą paslaugos prieinamumą, bet negarantuojame, kad Paslauga bus nepertraukiama, saugi ar be klaidų. Galime sustabdyti ar nutraukti Paslaugą bet kuriuo metu dėl priežiūros, atnaujinimų ar kitų priežasčių."
+        },
+        "modifications": {
+          "heading": "9.2 Paslaugos modifikacijos",
+          "content": "Pasiliekame teisę modifikuoti, sustabdyti ar nutraukti bet kurį Paslaugos aspektą bet kuriuo metu be pranešimo. Taip pat galime modifikuoti šias Sąlygas bet kuriuo metu. Jūsų tęstinis Paslaugos naudojimas po tokių modifikacijų reiškia atnaujintų Sąlygų priėmimą."
+        }
+      },
+      "disclaimers": {
+        "heading": "10. Atsakomybės apribojimai",
+        "intro": "PASLAUGA TEIKIAMA \"TOKIA, KOKIA YRA\" IR \"KAIP PRIEINAMA\" BE JOKIŲ GARANTIJŲ, AIŠKIŲ AR NUMANOMŲ. VISA APIMTYJE, LEIDŽIAMA PAGAL ĮSTATYMĄ, MES ATSISAKOME VISŲ GARANTIJŲ, ĮSKAITANT BET NEPRASIBOJIMU:",
+        "items": {
+          "merchantability": "Prekybingumo, tinkamumo konkrečiam tikslui ir nepažeidžiamumo garantijos",
+          "accuracy": "Garantijos dėl Paslaugos tikslumo, patikimumo ar išsamumo",
+          "uninterrupted": "Garantijos, kad Paslauga bus nepertraukiama ar be klaidų",
+          "defects": "Garantijos, kad defektai bus ištaisyti"
+        },
+        "disclaimer": "Pripažįstate, kad InvoiceTrackr yra sąskaitų faktūrų valdymo įrankis ir kad esate atsakingi už savo sukurtų sąskaitų faktūrų tikslumą ir teisėtumą. Mes neteikiame finansinių, teisinių ar mokesčių konsultacijų."
+      },
+      "limitation": {
+        "heading": "11. Atsakomybės apribojimas",
+        "intro": "VISA APIMTYJE, LEIDŽIAMA PAGAL ĮSTATYMĄ, INVOICETRACKR NEBUS ATSAKINGAS UŽ:",
+        "items": {
+          "indirect": "Bet kokius netiesioginius, atsitiktinius, specialius, pasekminius ar baudžiamuosius nuostolius",
+          "loss": "Pelno, pajamų, duomenų ar naudojimo praradimą",
+          "content": "Jūsų turinio praradimą ar sugadinimą",
+          "use": "Bet kokius nuostolius, kylančius iš jūsų naudojimosi ar nesugebėjimo naudotis Paslauga",
+          "third_party": "Bet kokius nuostolius, kylančius iš trečiųjų šalių paslaugų ar integracijų"
+        },
+        "cap": "JOKIU ATVEJU MŪSŲ BENDRA ATSAKOMYBĖ NEVIRŠYS SUMOS, KURIĄ SUMOKĖJOTE MUMS PER DVYLIKA (12) MĖNESIŲ PRIEŠ ĮVYKĮ, SUKĖLUSĮ ATSAKOMYBĘ, ARBA 100 USD, PRIKLAUSOMAI NUO TO, KURI SUMA DIDESNĖ."
+      },
+      "indemnification": {
+        "heading": "12. Atlyginimas",
+        "intro": "Sutinkate atlyginti, ginti ir apsaugoti InvoiceTrackr bei jo pareigūnus, direktorius, darbuotojus ir agentus nuo bet kokių pretenzijų, įsipareigojimų, žalos, nuostolių ir išlaidų, įskaitant pagrįstus advokatų honorarus, kylančius iš ar bet kokiu būdu susijusių su:",
+        "items": {
+          "access": "Jūsų prieiga ar naudojimasis Paslauga",
+          "violation": "Jūsų šių Sąlygų pažeidimu",
+          "third_party": "Jūsų trečiųjų šalių teisių pažeidimu",
+          "content": "Jūsų turiniu ar bet kokiomis jūsų sukurtomis sąskaitomis faktūroms"
+        }
+      },
+      "termination": {
+        "heading": "13. Nutraukimas",
+        "by_you": {
+          "heading": "13.1 Nutraukimas jūsų",
+          "content": "Galite nutraukti savo paskyrą bet kuriuo metu susisiekdami su mumis arba per savo paskyros nustatymus."
+        },
+        "by_us": {
+          "heading": "13.2 Nutraukimas mūsų",
+          "intro": "Galime sustabdyti ar nutraukti jūsų prieigą prie Paslaugos bet kuriuo metu, su ar be priežasties ar pranešimo, įskaitant, jei:",
+          "items": {
+            "violation": "Pažeidžiate šias Sąlygas",
+            "security": "Jūsų naudojimasis Paslauga kelia saugumo riziką",
+            "fraud": "Užsiimate sukčiavimo ar neteisėta veikla",
+            "law": "Turime tai padaryti pagal įstatymą"
+          }
+        },
+        "effect": {
+          "heading": "13.3 Nutraukimo poveikis",
+          "content": "Nutraukus, jūsų teisė naudotis Paslauga nedelsiant nustos. Galime ištrinti Jūsų turinį pagal mūsų duomenų saugojimo politiką. Šių Sąlygų nuostatos, kurios pagal savo pobūdį turėtų išlikti po nutraukimo, išliks, įskaitant intelektinės nuosavybės teises, atsakomybės apribojimus ir ginčų sprendimo nuostatas."
+        }
+      },
+      "governing_law": {
+        "heading": "14. Taikoma teisė ir ginčų sprendimas",
+        "content": "Šios Sąlygos turi būti aiškinamos ir taikomos pagal jurisdikcijos, kurioje veikia InvoiceTrackr, įstatymus, neatsižvelgiant į jos įstatymų konfliktą. Bet kokie ginčai, kylantys iš šių Sąlygų ar jūsų naudojimosi Paslauga, turi būti sprendžiami per privalomą arbitražą, išskyrus tai, kad bet kuri šalis gali kreiptis į teismą dėl intelektinės nuosavybės pažeidimo ar šių Sąlygų pažeidimų."
+      },
+      "general": {
+        "heading": "15. Bendrosios nuostatos",
+        "entire": {
+          "heading": "15.1 Visas susitarimas",
+          "content": "Šios Sąlygos kartu su mūsų Privatumo politika sudaro visą susitarimą tarp jūsų ir InvoiceTrackr dėl Paslaugos."
+        },
+        "severability": {
+          "heading": "15.2 Atskiriamumas",
+          "content": "Jei bet kuri šių Sąlygų nuostata bus pripažinta nevykdytina, ta nuostata bus apribota ar pašalinta minimaliai reikalinga apimtimi, o likusios nuostatos išliks visiškai galiojančios."
+        },
+        "waiver": {
+          "heading": "15.3 Atsisakymas",
+          "content": "Mūsų nepajėgumas įgyvendinti bet kokios šių Sąlygų teisės ar nuostatos nebus laikomas tokios teisės ar nuostatos atsisakymu."
+        },
+        "assignment": {
+          "heading": "15.4 Perleidimas",
+          "content": "Negalite perleisti ar perduoti šių Sąlygų ar savo teisių pagal jas be mūsų išankstinio raštiško sutikimo. Mes galime perleisti šias Sąlygas be apribojimų."
+        }
+      },
+      "contact": {
+        "heading": "16. Kontaktinė informacija",
+        "intro": "Jei turite klausimų apie šias Paslaugų teikimo sąlygas, susisiekite su mumis:",
+        "company": "InvoiceTrackr",
+        "email": "El. paštas: {email}"
+      }
     }
   }
 }

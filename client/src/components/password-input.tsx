@@ -2,6 +2,7 @@
 
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { Input } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 
@@ -24,6 +25,7 @@ export default function PasswordInput({
   errorMessage,
   autoComplete
 }: Props) {
+  const t = useTranslations('components.password_input');
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => setIsVisible((prev) => !prev);
@@ -45,7 +47,7 @@ export default function PasswordInput({
           className="focus:outline-none"
           type="button"
           onClick={toggleVisibility}
-          aria-label="toggle password visibility"
+          aria-label={t('toggle_visibility')}
         >
           {isVisible ? (
             <EyeIcon className="text-default-400 pointer-events-none h-5 w-5" />

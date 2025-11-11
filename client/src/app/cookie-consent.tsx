@@ -1,6 +1,7 @@
 'use client';
 
 import { Alert, Button, Link } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { CookieConsentStatus } from '@/lib/types';
@@ -8,6 +9,7 @@ import { PRIVACY_POLICY_PAGE } from '@/lib/constants/pages';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 
 export default function CookieConsent() {
+  const t = useTranslations('cookie_consent');
   const { cookieConsent, updateCookieConsent } = useCookieConsent();
   const [isVisible, setIsVisible] = useState(true);
 
@@ -35,14 +37,12 @@ export default function CookieConsent() {
         >
           <div className="flex flex-col gap-6 md:flex-row">
             <p className="text-sm">
-              We use cookies to provide the best experience. By clicking “Accept
-              All,” you agree to our use of cookies, including the analytics
-              data described in our{' '}
+              {t('message')}{' '}
               <Link
                 className="text-secondary text-sm"
                 href={PRIVACY_POLICY_PAGE}
               >
-                Privacy Policy
+                {t('privacy_policy')}
               </Link>
               .
             </p>
@@ -53,7 +53,7 @@ export default function CookieConsent() {
                 variant="solid"
                 onPress={handleAccept}
               >
-                Accept All
+                {t('accept')}
               </Button>
               <Button
                 className="w-full md:max-w-max"
@@ -61,7 +61,7 @@ export default function CookieConsent() {
                 variant="bordered"
                 onPress={handleDecline}
               >
-                Decline
+                {t('decline')}
               </Button>
             </div>
           </div>

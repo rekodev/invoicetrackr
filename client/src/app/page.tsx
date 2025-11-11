@@ -1,13 +1,16 @@
 'use client';
 
-import { CheckIcon } from '@heroicons/react/24/outline';
 import { Button, Link } from '@heroui/react';
+import { CheckIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
 import { getCurrencySymbol, getUserCurrency } from '@/lib/utils/currency';
 
 export default function Home() {
+  const t = useTranslations('home');
+
   const renderDivider = () => (
     <div className="border-default-300 dark:border-default-100 w-full border-t" />
   );
@@ -20,11 +23,10 @@ export default function Home() {
             <div className="flex flex-col justify-center space-y-6">
               <div className="space-y-4">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                  Create Professional Invoices in Minutes
+                  {t('hero.title')}
                 </h1>
                 <p className="text-muted-foreground max-w-[600px] md:text-xl">
-                  Simple, powerful, and free invoice generator for freelancers
-                  and small businesses. No account required to get started.
+                  {t('hero.subtitle')}
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
@@ -35,10 +37,10 @@ export default function Home() {
                   color="secondary"
                   className="px-8"
                 >
-                  Create Free Invoice
+                  {t('hero.cta_primary')}
                 </Button>
                 <Button as={Link} href="#pricing" variant="ghost" size="lg">
-                  See Premium Features
+                  {t('hero.cta_secondary')}
                 </Button>
               </div>
             </div>
@@ -62,11 +64,10 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-                Everything You Need for Professional Invoicing
+                {t('features.title')}
               </h2>
               <p className="text-muted-foreground mx-auto max-w-[700px] md:text-xl">
-                Our intuitive invoice generator helps you create, customize, and
-                export professional invoices in seconds.
+                {t('features.subtitle')}
               </p>
             </div>
           </div>
@@ -86,10 +87,11 @@ export default function Home() {
                     <CheckIcon className="text-secondary h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold">Save & Edit Invoices</h3>
+                    <h3 className="font-bold">
+                      {t('features.save_edit.title')}
+                    </h3>
                     <p className="text-muted-foreground">
-                      Easily create, save, and edit invoices whenever needed,
-                      ensuring flexibility in your billing process.
+                      {t('features.save_edit.description')}
                     </p>
                   </div>
                 </li>
@@ -98,10 +100,11 @@ export default function Home() {
                     <CheckIcon className="text-secondary h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold">Income Dashboard</h3>
+                    <h3 className="font-bold">
+                      {t('features.dashboard.title')}
+                    </h3>
                     <p className="text-muted-foreground">
-                      Get a clear overview of your earnings with a visual income
-                      dashboard displaying monthly trends and recent invoices.
+                      {t('features.dashboard.description')}
                     </p>
                   </div>
                 </li>
@@ -110,10 +113,11 @@ export default function Home() {
                     <CheckIcon className="text-secondary h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold">Multi-Currency & Language</h3>
+                    <h3 className="font-bold">
+                      {t('features.multi_currency.title')}
+                    </h3>
                     <p className="text-muted-foreground">
-                      Customize invoices with your preferred currency and
-                      language to suit international clients.
+                      {t('features.multi_currency.description')}
                     </p>
                   </div>
                 </li>
@@ -131,10 +135,10 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-                Simple, Transparent Pricing
+                {t('pricing.title')}
               </h2>
               <p className="text-muted-foreground mx-auto max-w-[700px] md:text-xl">
-                Start for free, upgrade when you need more features.
+                {t('pricing.subtitle')}
               </p>
             </div>
           </div>
@@ -142,80 +146,86 @@ export default function Home() {
             <div className="bg-card text-card-foreground border-default-300 dark:border-default-100 flex min-h-[472px] w-full max-w-md flex-col justify-between rounded-lg border shadow-sm">
               <div>
                 <div className="flex flex-col space-y-1.5 p-6">
-                  <h3 className="text-2xl font-bold">Free</h3>
+                  <h3 className="text-2xl font-bold">
+                    {t('pricing.free.title')}
+                  </h3>
                   <p className="text-muted-foreground">
-                    Create and export basic invoices
+                    {t('pricing.free.subtitle')}
                   </p>
                 </div>
                 <div className="p-6 pt-0">
                   <div className="text-4xl font-bold">
                     {getCurrencySymbol(getUserCurrency())}0
                   </div>
-                  <div className="text-muted-foreground">Forever free</div>
+                  <div className="text-muted-foreground">
+                    {t('pricing.free.price_label')}
+                  </div>
                 </div>
                 <div className="p-6 pt-0">
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
                       <CheckIcon className="text-secondary h-4 w-4" />
-                      <span>Create unlimited invoices</span>
+                      <span>{t('pricing.free.features.unlimited')}</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckIcon className="text-secondary h-4 w-4" />
-                      <span>Basic invoice template</span>
+                      <span>{t('pricing.free.features.template')}</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckIcon className="text-secondary h-4 w-4" />
-                      <span>Export to PDF</span>
+                      <span>{t('pricing.free.features.export')}</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckIcon className="text-secondary h-4 w-4" />
-                      <span>Add your signature</span>
+                      <span>{t('pricing.free.features.signature')}</span>
                     </li>
                   </ul>
                 </div>
               </div>
               <div className="flex flex-col p-6 pt-0">
                 <Button as={Link} href={CREATE_INVOICE_PAGE}>
-                  Get Started
+                  {t('pricing.free.cta')}
                 </Button>
               </div>
             </div>
             <div className="border-secondary-500 bg-secondary-50 flex w-full max-w-md flex-col rounded-lg border bg-opacity-50 shadow-sm dark:bg-opacity-100">
               <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-bold">Premium</h3>
-                <p>Everything you need for efficient invoicing</p>
+                <h3 className="text-2xl font-bold">
+                  {t('pricing.premium.title')}
+                </h3>
+                <p>{t('pricing.premium.subtitle')}</p>
               </div>
               <div className="p-6 pt-0">
                 <div className="text-4xl font-bold">
                   {getCurrencySymbol(getUserCurrency())}4.99
                 </div>
-                <div>per month</div>
+                <div>{t('pricing.premium.price_label')}</div>
               </div>
               <div className="p-6 pt-0">
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2">
                     <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
-                    <span>Everything in Free</span>
+                    <span>{t('pricing.premium.features.everything')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
-                    <span>Save and edit invoices</span>
+                    <span>{t('pricing.premium.features.save')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
-                    <span>Store client information</span>
+                    <span>{t('pricing.premium.features.clients')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
-                    <span>Create and manage contracts</span>
+                    <span>{t('pricing.premium.features.contracts')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
-                    <span>Choose currency and language</span>
+                    <span>{t('pricing.premium.features.currency')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
-                    <span>Email invoices directly</span>
+                    <span>{t('pricing.premium.features.email')}</span>
                   </li>
                 </ul>
               </div>
@@ -226,7 +236,7 @@ export default function Home() {
                   variant="solid"
                   color="secondary"
                 >
-                  Upgrade Now
+                  {t('pricing.premium.cta')}
                 </Button>
               </div>
             </div>
@@ -239,11 +249,10 @@ export default function Home() {
           <div className="grid gap-12 md:gap-16 lg:grid-cols-2">
             <div className="space-y-6">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-                Ready to streamline your invoicing process?
+                {t('cta.title')}
               </h2>
               <p className="text-muted-foreground md:text-xl">
-                Start creating professional invoices today, no credit card
-                required.
+                {t('cta.subtitle')}
               </p>
               <Button
                 as={Link}
@@ -251,17 +260,15 @@ export default function Home() {
                 size="lg"
                 className="px-8"
               >
-                Try For Free
+                {t('cta.button')}
               </Button>
             </div>
             <div className="flex flex-col items-start space-y-4">
               <div className="bg-background inline-block rounded-lg px-3 py-1 text-sm">
-                Testimonial
+                {t('testimonial.label')}
               </div>
               <blockquote className="text-lg font-semibold">
-                "InvoiceTrackr has completely transformed how I handle
-                invoicing. The free version is great to start, but the premium
-                features save me hours every month."
+                {t('testimonial.quote')}
               </blockquote>
               <div className="flex items-center gap-4">
                 <div className="bg-muted-foreground/20 rounded-full p-1">
@@ -282,9 +289,9 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <div className="font-semibold">Nikita K.</div>
+                  <div className="font-semibold">{t('testimonial.author')}</div>
                   <div className="text-muted-foreground text-sm">
-                    Freelance Data Analyst
+                    {t('testimonial.role')}
                   </div>
                 </div>
               </div>

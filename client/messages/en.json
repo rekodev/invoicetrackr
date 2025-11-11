@@ -42,6 +42,95 @@
     "terms_of_service": "Terms of Service"
   },
   "general_error": "Uh oh! Something went wrong...",
+  "cookie_consent": {
+    "message": "We use cookies to provide the best experience. By clicking \"Accept All,\" you agree to our use of cookies, including the analytics data described in our",
+    "privacy_policy": "Privacy Policy",
+    "accept": "Accept All",
+    "decline": "Decline"
+  },
+  "not_found": {
+    "title": "Page not found",
+    "description": "Sorry, we couldn't find the page you were looking for. It may have been moved or deleted.",
+    "go_home": "Go back home"
+  },
+  "error_page": {
+    "title": "Something went wrong",
+    "description": "We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.",
+    "try_again": "Try again"
+  },
+  "home": {
+    "hero": {
+      "title": "Create Professional Invoices in Minutes",
+      "subtitle": "Simple, powerful, and free invoice generator for freelancers and small businesses. No account required to get started.",
+      "cta_primary": "Create Free Invoice",
+      "cta_secondary": "See Premium Features"
+    },
+    "features": {
+      "title": "Everything You Need for Professional Invoicing",
+      "subtitle": "Our intuitive invoice generator helps you create, customize, and export professional invoices in seconds.",
+      "save_edit": {
+        "title": "Save & Edit Invoices",
+        "description": "Easily create, save, and edit invoices whenever needed, ensuring flexibility in your billing process."
+      },
+      "dashboard": {
+        "title": "Income Dashboard",
+        "description": "Get a clear overview of your earnings with a visual income dashboard displaying monthly trends and recent invoices."
+      },
+      "multi_currency": {
+        "title": "Multi-Currency & Language",
+        "description": "Customize invoices with your preferred currency and language to suit international clients."
+      }
+    },
+    "pricing": {
+      "title": "Simple, Transparent Pricing",
+      "subtitle": "Start for free, upgrade when you need more features.",
+      "free": {
+        "title": "Free",
+        "subtitle": "Create and export basic invoices",
+        "price_label": "Forever free",
+        "features": {
+          "unlimited": "Create unlimited invoices",
+          "template": "Basic invoice template",
+          "export": "Export to PDF",
+          "signature": "Add your signature"
+        },
+        "cta": "Get Started"
+      },
+      "premium": {
+        "title": "Premium",
+        "subtitle": "Everything you need for efficient invoicing",
+        "price_label": "per month",
+        "features": {
+          "everything": "Everything in Free",
+          "save": "Save and edit invoices",
+          "clients": "Store client information",
+          "contracts": "Create and manage contracts",
+          "currency": "Choose currency and language",
+          "email": "Email invoices directly"
+        },
+        "cta": "Upgrade Now"
+      }
+    },
+    "cta": {
+      "title": "Ready to streamline your invoicing process?",
+      "subtitle": "Start creating professional invoices today, no credit card required.",
+      "button": "Try For Free"
+    },
+    "testimonial": {
+      "label": "Testimonial",
+      "quote": "InvoiceTrackr has completely transformed how I handle invoicing. The free version is great to start, but the premium features save me hours every month.",
+      "author": "Nikita K.",
+      "role": "Freelance Data Analyst"
+    }
+  },
+  "footer": {
+    "tagline": "Simple, powerful invoicing for freelancers and small businesses.",
+    "support": "Support",
+    "legal": "Legal",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service",
+    "copyright": "© {year} InvoiceTrackr. All rights reserved."
+  },
   "login": {
     "page_title": "Log In",
     "page_description": "Access your InvoiceTrackr account.",
@@ -108,7 +197,23 @@
       "total_clients": "Total Clients"
     },
     "revenue_chart": {
-      "title": "Recent Revenue"
+      "title": "Recent Revenue",
+      "chart_label": "Invoice Revenue by Month",
+      "revenue": "Revenue",
+      "months": {
+        "january": "January",
+        "february": "February",
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "june": "June",
+        "july": "July",
+        "august": "August",
+        "september": "September",
+        "october": "October",
+        "november": "November",
+        "december": "December"
+      }
     },
     "latest_invoices": {
       "title": "Latest Invoices",
@@ -202,6 +307,9 @@
   },
   "clients": {
     "page_title": "Clients",
+    "edit": "Edit",
+    "remove": "Remove",
+    "no_clients": "No clients found",
     "top_content": {
       "search_placeholder": "Search by name...",
       "add_new": "Add New",
@@ -398,6 +506,9 @@
     "description": "This page is still in development and is going to be available soon. Thank you for your patience."
   },
   "components": {
+    "password_input": {
+      "toggle_visibility": "Toggle password visibility"
+    },
     "signature_pad": {
       "edit_signature": "Edit Signature",
       "add_signature": "Add a Signature",
@@ -470,6 +581,386 @@
     },
     "subscription_status_card": {
       "title": "Subscription Status"
+    }
+  },
+  "privacy_policy": {
+    "title": "Privacy Policy",
+    "last_updated": "Last Updated: {date}",
+    "sections": {
+      "introduction": {
+        "heading": "1. Introduction",
+        "content": "Welcome to InvoiceTrackr (\"we,\" \"our,\" or \"us\"). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our invoice tracking and management service."
+      },
+      "information_we_collect": {
+        "heading": "2. Information We Collect",
+        "personal_info": {
+          "heading": "2.1 Personal Information",
+          "intro": "When you register for an account, we collect:",
+          "items": {
+            "name": "Name and business information",
+            "email": "Email address",
+            "business_type": "Business type (individual or business entity)",
+            "registration": "Business registration number",
+            "address": "Business address",
+            "profile": "Profile picture (optional)",
+            "signature": "Digital signature (optional)",
+            "preferences": "Language and currency preferences"
+          }
+        },
+        "financial_info": {
+          "heading": "2.2 Financial Information",
+          "intro": "To enable invoice functionality, we collect:",
+          "items": {
+            "banking": "Banking information (bank name, code, and account number)",
+            "invoice": "Invoice data including amounts, dates, and payment statuses",
+            "client": "Client information for invoicing purposes"
+          }
+        },
+        "payment_info": {
+          "heading": "2.3 Payment Information",
+          "content": "Payment processing is handled by Stripe, a third-party payment processor. We do not store your credit card information. We only retain your Stripe customer ID and subscription ID for account management purposes."
+        },
+        "usage_info": {
+          "heading": "2.4 Usage Information",
+          "intro": "We automatically collect certain information about your device and how you interact with our service:",
+          "items": {
+            "ip": "IP address and device information",
+            "browser": "Browser type and version",
+            "pages": "Pages viewed and features used",
+            "time": "Time and date of visits",
+            "referring": "Referring website addresses"
+          }
+        },
+        "analytics_data": {
+          "heading": "2.5 Analytics Data",
+          "intro": "We use Google Analytics to understand how visitors use our website. Google Analytics collects information such as how often users visit our site, what pages they visit, and what other sites they used prior to visiting. We use this information to improve our service and user experience. Google Analytics may use cookies and other tracking technologies. You can learn more about Google's privacy practices at"
+        }
+      },
+      "how_we_use": {
+        "heading": "3. How We Use Your Information",
+        "intro": "We use the collected information for the following purposes:",
+        "items": {
+          "provide": "To provide, operate, and maintain our invoice tracking service",
+          "create": "To create and manage your account",
+          "process": "To process your transactions and manage subscriptions",
+          "generate": "To generate, store, and export invoices and contracts",
+          "send": "To send invoice-related emails to your clients",
+          "display": "To display your income dashboard and financial analytics",
+          "support": "To provide customer support and respond to your inquiries",
+          "admin": "To send administrative information and service updates",
+          "improve": "To improve our service and develop new features",
+          "analyze": "To analyze usage patterns and trends",
+          "detect": "To detect and prevent fraud or unauthorized access",
+          "comply": "To comply with legal obligations"
+        }
+      },
+      "how_we_share": {
+        "heading": "4. How We Share Your Information",
+        "intro": "We do not sell your personal information. We may share your information in the following circumstances:",
+        "service_providers": {
+          "heading": "4.1 Service Providers",
+          "intro": "We share information with third-party service providers who perform services on our behalf:",
+          "items": {
+            "stripe": "Payment processing for subscription management",
+            "cloudinary": "Image hosting for profile pictures and other media",
+            "analytics": "Website analytics and visitor tracking",
+            "email": "Email service providers"
+          }
+        },
+        "legal": {
+          "heading": "4.2 Legal Requirements",
+          "content": "We may disclose your information if required to do so by law or in response to valid requests by public authorities (e.g., a court or government agency)."
+        },
+        "business_transfers": {
+          "heading": "4.3 Business Transfers",
+          "content": "In the event of a merger, acquisition, or sale of all or a portion of our assets, your information may be transferred as part of that transaction."
+        }
+      },
+      "data_security": {
+        "heading": "5. Data Security",
+        "intro": "We implement appropriate technical and organizational security measures to protect your information against unauthorized access, alteration, disclosure, or destruction. These measures include:",
+        "items": {
+          "encryption": "Encryption of data in transit using SSL/TLS",
+          "hashing": "Password hashing using industry-standard algorithms",
+          "assessments": "Regular security assessments and updates",
+          "access": "Access controls and authentication mechanisms"
+        },
+        "disclaimer": "However, no method of transmission over the Internet or electronic storage is 100% secure. While we strive to protect your information, we cannot guarantee its absolute security."
+      },
+      "data_retention": {
+        "heading": "6. Data Retention",
+        "content": "We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law. When you delete your account, we will delete or anonymize your personal information, except where we are required to retain it for legal, tax, or accounting purposes."
+      },
+      "your_rights": {
+        "heading": "7. Your Rights and Choices",
+        "intro": "Depending on your location, you may have the following rights regarding your personal information:",
+        "items": {
+          "access": {
+            "title": "Access",
+            "description": "Request access to your personal information"
+          },
+          "correction": {
+            "title": "Correction",
+            "description": "Request correction of inaccurate information"
+          },
+          "deletion": {
+            "title": "Deletion",
+            "description": "Request deletion of your personal information"
+          },
+          "portability": {
+            "title": "Portability",
+            "description": "Request a copy of your data in a structured format"
+          },
+          "opt_out": {
+            "title": "Opt-out",
+            "description": "Opt-out of marketing communications"
+          },
+          "withdraw": {
+            "title": "Withdraw consent",
+            "description": "Withdraw consent where processing is based on consent"
+          }
+        },
+        "outro": "To exercise these rights, please contact us using the information provided in the \"Contact Us\" section below."
+      },
+      "cookies": {
+        "heading": "8. Cookies and Tracking Technologies",
+        "content": "We use cookies and similar tracking technologies to track activity on our service and store certain information. Cookies are files with a small amount of data that are stored on your device. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some features of our service."
+      },
+      "third_party_links": {
+        "heading": "9. Third-Party Links",
+        "content": "Our service may contain links to third-party websites or services. We are not responsible for the privacy practices or content of these third parties. We encourage you to read the privacy policies of any third-party sites you visit."
+      },
+      "children_privacy": {
+        "heading": "10. Children's Privacy",
+        "content": "Our service is not intended for individuals under the age of 18. We do not knowingly collect personal information from children under 18. If you are a parent or guardian and believe your child has provided us with personal information, please contact us so we can delete it."
+      },
+      "international_transfers": {
+        "heading": "11. International Data Transfers",
+        "content": "Your information may be transferred to and processed in countries other than your country of residence. These countries may have data protection laws that are different from the laws of your country. We take appropriate measures to ensure that your personal information remains protected in accordance with this Privacy Policy."
+      },
+      "changes": {
+        "heading": "12. Changes to This Privacy Policy",
+        "content": "We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. We will notify you of any material changes by posting the new Privacy Policy on this page and updating the \"Last Updated\" date. We encourage you to review this Privacy Policy periodically for any changes."
+      },
+      "contact": {
+        "heading": "13. Contact Us",
+        "intro": "If you have any questions about this Privacy Policy or our privacy practices, please contact us at:",
+        "company": "InvoiceTrackr",
+        "email": "Email: {email}"
+      }
+    }
+  },
+  "terms_of_service": {
+    "title": "Terms of Service",
+    "last_updated": "Last Updated: {date}",
+    "sections": {
+      "agreement": {
+        "heading": "1. Agreement to Terms",
+        "content": "By accessing or using InvoiceTrackr (\"Service,\" \"we,\" \"our,\" or \"us\"), you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree to these Terms, you may not access or use the Service."
+      },
+      "description": {
+        "heading": "2. Description of Service",
+        "intro": "InvoiceTrackr is an online invoice generation, tracking, and management platform designed for freelancers and small businesses. Our Service provides:",
+        "items": {
+          "creation": "Invoice creation, editing, and management",
+          "tracking": "Invoice status tracking (paid, pending, canceled)",
+          "clients": "Client information management",
+          "dashboard": "Financial dashboard with income analytics and charts",
+          "contracts": "Contract creation and management (premium feature)",
+          "pdf": "PDF invoice generation and export",
+          "email": "Email invoice delivery",
+          "multi": "Multi-currency and multi-language support",
+          "banking": "Banking information storage for invoicing purposes",
+          "signature": "Digital signature functionality"
+        }
+      },
+      "account_registration": {
+        "heading": "3. Account Registration",
+        "creation": {
+          "heading": "3.1 Account Creation",
+          "intro": "To access certain features of the Service, you must register for an account. You agree to:",
+          "items": {
+            "accurate": "Provide accurate, current, and complete information",
+            "security": "Maintain the security of your password and account",
+            "responsibility": "Accept all responsibility for activities that occur under your account",
+            "notify": "Notify us immediately of any unauthorized use of your account",
+            "maintain": "Maintain and promptly update your account information"
+          }
+        },
+        "eligibility": {
+          "heading": "3.2 Account Eligibility",
+          "content": "You must be at least 18 years old to create an account and use the Service. By creating an account, you represent and warrant that you meet this age requirement."
+        }
+      },
+      "subscription": {
+        "heading": "4. Subscription Plans",
+        "free": {
+          "heading": "4.1 Free Plan",
+          "content": "Our free plan allows you to create unlimited invoices, use basic invoice templates, export to PDF, and add your signature."
+        },
+        "premium": {
+          "heading": "4.2 Premium Plan",
+          "content": "Our premium plan ($4.99/month) includes all free features plus the ability to save and edit invoices, store client information, create and manage contracts, choose currency and language preferences, and email invoices directly to clients."
+        },
+        "payment": {
+          "heading": "4.3 Payment Terms",
+          "content": "Premium subscriptions are billed monthly in advance. Payment processing is handled securely by Stripe, a third-party payment processor. By subscribing to a premium plan, you authorize us to charge your payment method on a recurring basis."
+        },
+        "cancellation": {
+          "heading": "4.4 Cancellation and Refunds",
+          "content": "You may cancel your subscription at any time through your account settings. Cancellations will take effect at the end of your current billing period. We do not provide refunds for partial months of service or unused features."
+        }
+      },
+      "user_content": {
+        "heading": "5. User Content and Data",
+        "your_content": {
+          "heading": "5.1 Your Content",
+          "content": "You retain all rights to the content you create, upload, or store through the Service, including invoices, client information, and other data (\"Your Content\"). By using the Service, you grant us a limited license to use, store, and process Your Content solely to provide and improve the Service."
+        },
+        "responsibility": {
+          "heading": "5.2 Content Responsibility",
+          "intro": "You are solely responsible for Your Content and the consequences of posting or publishing it. You represent and warrant that:",
+          "items": {
+            "own": "You own or have the necessary rights to Your Content",
+            "rights": "You own or have the necessary rights to Your Content",
+            "laws": "Your Content does not violate any applicable laws or regulations",
+            "viruses": "Your Content does not contain viruses or malicious code"
+          }
+        },
+        "backup": {
+          "heading": "5.3 Data Backup",
+          "content": "While we implement backup procedures, you are responsible for maintaining your own backups of Your Content. We are not liable for any loss or corruption of Your Content."
+        }
+      },
+      "acceptable_use": {
+        "heading": "6. Acceptable Use Policy",
+        "intro": "You agree not to use the Service to:",
+        "items": {
+          "violate": "Violate any laws or regulations",
+          "infringe": "Infringe upon the rights of others",
+          "transmit": "Transmit fraudulent, false, or misleading information",
+          "fraudulent": "Create fraudulent invoices or engage in financial fraud",
+          "viruses": "Upload viruses or malicious code",
+          "unauthorized": "Attempt to gain unauthorized access to the Service or other users' accounts",
+          "interfere": "Interfere with or disrupt the Service or servers",
+          "automated": "Use automated systems (bots, scrapers) without our written permission",
+          "resell": "Resell or redistribute the Service without authorization",
+          "illegal": "Use the Service for any illegal or unauthorized purpose"
+        }
+      },
+      "intellectual_property": {
+        "heading": "7. Intellectual Property Rights",
+        "our_rights": {
+          "heading": "7.1 Our Rights",
+          "content": "The Service and its original content, features, and functionality are owned by InvoiceTrackr and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws. Our trademarks and trade dress may not be used without our prior written permission."
+        },
+        "feedback": {
+          "heading": "7.2 Feedback",
+          "content": "If you provide us with feedback, suggestions, or ideas about the Service, you grant us the right to use such feedback without any obligation to you."
+        }
+      },
+      "third_party": {
+        "heading": "8. Third-Party Services",
+        "intro": "The Service integrates with or relies on third-party services, including:",
+        "stripe": "Payment processing",
+        "cloudinary": "Image hosting and management",
+        "analytics": "Website analytics and usage tracking",
+        "disclaimer": "Your use of these third-party services is subject to their respective terms of service and privacy policies. We are not responsible for the availability, functionality, or practices of these third-party services."
+      },
+      "service_availability": {
+        "heading": "9. Service Availability and Modifications",
+        "availability": {
+          "heading": "9.1 Service Availability",
+          "content": "We strive to maintain high service availability, but we do not guarantee that the Service will be uninterrupted, secure, or error-free. We may suspend or discontinue the Service at any time for maintenance, updates, or other reasons."
+        },
+        "modifications": {
+          "heading": "9.2 Service Modifications",
+          "content": "We reserve the right to modify, suspend, or discontinue any aspect of the Service at any time without notice. We may also modify these Terms at any time. Your continued use of the Service after such modifications constitutes acceptance of the updated Terms."
+        }
+      },
+      "disclaimers": {
+        "heading": "10. Disclaimers",
+        "intro": "THE SERVICE IS PROVIDED \"AS IS\" AND \"AS AVAILABLE\" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY LAW, WE DISCLAIM ALL WARRANTIES, INCLUDING BUT NOT LIMITED TO:",
+        "items": {
+          "merchantability": "Warranties of merchantability, fitness for a particular purpose, and non-infringement",
+          "accuracy": "Warranties regarding the accuracy, reliability, or completeness of the Service",
+          "uninterrupted": "Warranties that the Service will be uninterrupted or error-free",
+          "defects": "Warranties that defects will be corrected"
+        },
+        "disclaimer": "You acknowledge that InvoiceTrackr is a tool for invoice management and that you are responsible for the accuracy and legality of the invoices you create. We do not provide financial, legal, or tax advice."
+      },
+      "limitation": {
+        "heading": "11. Limitation of Liability",
+        "intro": "TO THE FULLEST EXTENT PERMITTED BY LAW, INVOICETRACKR SHALL NOT BE LIABLE FOR:",
+        "items": {
+          "indirect": "Any indirect, incidental, special, consequential, or punitive damages",
+          "loss": "Loss of profits, revenue, data, or use",
+          "content": "Loss of or damage to Your Content",
+          "use": "Any damages resulting from your use or inability to use the Service",
+          "third_party": "Any damages resulting from third-party services or integrations"
+        },
+        "cap": "IN NO EVENT SHALL OUR TOTAL LIABILITY EXCEED THE AMOUNT YOU PAID TO US IN THE TWELVE (12) MONTHS PRECEDING THE EVENT GIVING RISE TO THE LIABILITY, OR $100, WHICHEVER IS GREATER."
+      },
+      "indemnification": {
+        "heading": "12. Indemnification",
+        "intro": "You agree to indemnify, defend, and hold harmless InvoiceTrackr and its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses, including reasonable attorneys' fees, arising out of or in any way connected with:",
+        "items": {
+          "access": "Your access to or use of the Service",
+          "violation": "Your violation of these Terms",
+          "third_party": "Your violation of any third-party rights",
+          "content": "Your Content or any invoices you create"
+        }
+      },
+      "termination": {
+        "heading": "13. Termination",
+        "by_you": {
+          "heading": "13.1 Termination by You",
+          "content": "You may terminate your account at any time by contacting us or through your account settings."
+        },
+        "by_us": {
+          "heading": "13.2 Termination by Us",
+          "intro": "We may suspend or terminate your access to the Service at any time, with or without cause or notice, including if:",
+          "items": {
+            "violation": "You violate these Terms",
+            "security": "Your use of the Service poses a security risk",
+            "fraud": "You engage in fraudulent or illegal activities",
+            "law": "We are required to do so by law"
+          }
+        },
+        "effect": {
+          "heading": "13.3 Effect of Termination",
+          "content": "Upon termination, your right to use the Service will immediately cease. We may delete Your Content in accordance with our data retention policies. Provisions of these Terms that by their nature should survive termination shall survive, including intellectual property rights, disclaimers, limitations of liability, and dispute resolution provisions."
+        }
+      },
+      "governing_law": {
+        "heading": "14. Governing Law and Dispute Resolution",
+        "content": "These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which InvoiceTrackr operates, without regard to its conflict of law provisions. Any disputes arising from these Terms or your use of the Service shall be resolved through binding arbitration, except that either party may seek injunctive relief in court for intellectual property infringement or violations of these Terms."
+      },
+      "general": {
+        "heading": "15. General Provisions",
+        "entire": {
+          "heading": "15.1 Entire Agreement",
+          "content": "These Terms, together with our Privacy Policy, constitute the entire agreement between you and InvoiceTrackr regarding the Service."
+        },
+        "severability": {
+          "heading": "15.2 Severability",
+          "content": "If any provision of these Terms is found to be unenforceable, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect."
+        },
+        "waiver": {
+          "heading": "15.3 Waiver",
+          "content": "Our failure to enforce any right or provision of these Terms shall not be deemed a waiver of such right or provision."
+        },
+        "assignment": {
+          "heading": "15.4 Assignment",
+          "content": "You may not assign or transfer these Terms or your rights under them without our prior written consent. We may assign these Terms without restriction."
+        }
+      },
+      "contact": {
+        "heading": "16. Contact Information",
+        "intro": "If you have any questions about these Terms of Service, please contact us at:",
+        "company": "InvoiceTrackr",
+        "email": "Email: {email}"
+      }
     }
   }
 }
