@@ -20,7 +20,7 @@ export default function GoogleAnalytics({ gaId }: Props) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const url = pathname + (searchParams ? searchParams.toString() : '');
+    const url = pathname + (searchParams ? `?${searchParams.toString()}` : '');
 
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('config', gaId, {

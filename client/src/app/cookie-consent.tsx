@@ -39,7 +39,6 @@ export default function CookieConsent() {
               All,” you agree to our use of cookies, including the analytics
               data described in our{' '}
               <Link
-                as="span"
                 className="text-secondary text-sm"
                 href={PRIVACY_POLICY_PAGE}
               >
