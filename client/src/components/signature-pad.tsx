@@ -13,6 +13,7 @@ import {
   cn,
   useDisclosure
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
@@ -35,6 +36,7 @@ const SignaturePad = ({
   errorMessage,
   isChipVisible = false
 }: Props) => {
+  const t = useTranslations('components.signature_pad');
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const [signatureImage, setSignatureImage] = useState('');
 
@@ -121,18 +123,18 @@ const SignaturePad = ({
               <>
                 <Image
                   src={signatureImgUrl}
-                  alt="Signature"
+                  alt={t('signature_alt')}
                   className="z-0 rounded-none"
                 />
                 <div className="absolute hidden h-full w-full flex-col items-center justify-center gap-2 bg-black/50 text-white group-hover:flex dark:bg-black/75">
                   <PencilSquareIcon className="h-10 w-10" />
-                  <p className="font-medium">Edit Signature</p>
+                  <p className="font-medium">{t('edit_signature')}</p>
                 </div>
               </>
             ) : (
               <>
                 <PencilSquareIcon className="h-8 w-8" />
-                <p className="font-medium">Add a Signature</p>
+                <p className="font-medium">{t('add_signature')}</p>
               </>
             )}
           </CardBody>
@@ -144,7 +146,7 @@ const SignaturePad = ({
             color="secondary"
             variant="faded"
           >
-            Use Profile Signature
+            {t('use_profile_signature')}
           </Chip>
         )}
         {isInvalid && (
@@ -156,7 +158,7 @@ const SignaturePad = ({
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
         <ModalContent>
-          <ModalHeader>Signature</ModalHeader>
+          <ModalHeader>{t('modal_title')}</ModalHeader>
           <ModalBody>
             <SignatureCanvas
               ref={signatureRef}
@@ -175,10 +177,10 @@ const SignaturePad = ({
               color="danger"
               onPress={() => signatureRef.current?.clear()}
             >
-              Clear
+              {t('clear')}
             </Button>
             <Button color="secondary" onPress={saveSignature}>
-              Save
+              {t('save')}
             </Button>
           </ModalFooter>
         </ModalContent>

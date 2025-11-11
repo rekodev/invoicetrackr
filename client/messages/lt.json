@@ -10,8 +10,8 @@
       "signed_in_as": "Prisijungęs vartotojas"
     },
     "guest": {
-      "login": "Log In",
-      "sign_up": "Sign Up",
+      "login": "Prisijungti",
+      "sign_up": "Registruotis",
       "create_invoice": "Sukurti sąskaitą faktūrą",
       "features": "Privalumai",
       "pricing": "Kainos"
@@ -42,32 +42,204 @@
     "terms_of_service": "Paslaugų teikimo sąlygos"
   },
   "general_error": "Ajajai! Kažkas negerai...",
+  "login": {
+    "page_title": "Prisijungti",
+    "page_description": "Prisijunkite prie savo InvoiceTrackr paskyros.",
+    "welcome": "Sveiki",
+    "subtitle": "Prisijunkite prie savo paskyros, kad tęstumėte",
+    "form": {
+      "title": "Prisijungti",
+      "email": "El. paštas",
+      "email_placeholder": "Įveskite savo el. pašto adresą",
+      "password": "Slaptažodis",
+      "password_placeholder": "Įveskite slaptažodį",
+      "submit": "Prisijungti",
+      "forgot_password": "Pamiršote slaptažodį?",
+      "need_account": "Reikia sukurti paskyrą?",
+      "sign_up_link": "Registruotis"
+    }
+  },
+  "sign_up": {
+    "page_title": "Registruotis",
+    "page_description": "Sukurkite savo InvoiceTrackr paskyrą.",
+    "form": {
+      "title": "Registruotis",
+      "email": "El. paštas",
+      "email_placeholder": "Įveskite savo el. pašto adresą",
+      "password": "Slaptažodis",
+      "password_placeholder": "Įveskite slaptažodį",
+      "confirm_password": "Patvirtinti slaptažodį",
+      "confirm_password_placeholder": "Patvirtinkite slaptažodį",
+      "submit": "Registruotis",
+      "already_have_account": "Jau turite paskyrą?",
+      "login_link": "Prisijungti"
+    },
+    "multi_step": {
+      "steps": {
+        "account": {
+          "name": "Sukurti paskyrą",
+          "description": "Kuriame pagrindą"
+        },
+        "personal": {
+          "name": "Asmeninė informacija",
+          "description": "Papasakokite apie save"
+        },
+        "banking": {
+          "name": "Bankiniai duomenys",
+          "description": "Pridėkite bankinę informaciją"
+        },
+        "payment": {
+          "name": "Atlikti mokėjimą",
+          "description": "Užbaikite registraciją"
+        }
+      },
+      "actions": {
+        "back": "Atgal",
+        "next": "Toliau",
+        "skip": "Praleisti"
+      }
+    }
+  },
+  "dashboard": {
+    "cards": {
+      "paid": "Sumokėta",
+      "pending": "Laukiama",
+      "total_invoices": "Viso sąskaitų faktūrų",
+      "total_clients": "Viso klientų"
+    },
+    "revenue_chart": {
+      "title": "Naujausi įplaukos"
+    },
+    "latest_invoices": {
+      "title": "Naujausios sąskaitos faktūros",
+      "view_all": "Žiūrėti visas",
+      "empty_state": "Nėra sąskaitų faktūrų rodymui."
+    }
+  },
   "invoices": {
+    "table": {
+      "columns": {
+        "id": "ID",
+        "receiver": "GAVĖJAS",
+        "amount": "SUMA",
+        "date": "DATA",
+        "status": "BŪSENA",
+        "actions": "VEIKSMAI"
+      },
+      "status": {
+        "paid": "Sumokėta",
+        "canceled": "Atšaukta",
+        "pending": "Laukiama"
+      },
+      "search_placeholder": "Ieškoti pagal gavėją...",
+      "rows_per_page": "Eilučių puslapyje:",
+      "total": "Viso",
+      "selected": "iš",
+      "actions": {
+        "view": "Peržiūrėti",
+        "edit": "Redaguoti",
+        "delete": "Ištrinti",
+        "download": "Atsisiųsti PDF"
+      },
+      "filters": {
+        "status": "Būsena",
+        "columns": "Stulpeliai",
+        "clear": "Išvalyti filtrus"
+      },
+      "empty_state": "Sąskaitų faktūrų nerasta."
+    },
+    "delete_modal": {
+      "title": "Ištrinti sąskaitą",
+      "description": "Ar tikrai norite ištrinti sąskaitą {invoiceId}? Ši sąskaita bus ištrinta nedelsiant. Šio veiksmo negalima atšaukti.",
+      "confirm": "Ištrinti",
+      "cancel": "Atšaukti"
+    },
+    "top_content": {
+      "search_placeholder": "Ieškoti pagal sąskaitos faktūros ID...",
+      "add_new": "Pridėti naują",
+      "total_singular": "Viso 1 sąskaita faktūra",
+      "total_plural": "Viso {count} sąskaitų faktūrų"
+    },
+    "bottom_content": {
+      "previous": "Ankstesnis",
+      "next": "Kitas"
+    },
+    "cell": {
+      "actions": {
+        "tooltip_view": "Išsami informacija",
+        "tooltip_edit": "Redaguoti sąskaitą faktūrą",
+        "tooltip_delete": "Ištrinti sąskaitą faktūrą",
+        "tooltip_download": "Atsisiųsti",
+        "mark_as_paid": "Pažymėti kaip sumokėtą",
+        "mark_as_pending": "Pažymėti kaip laukiamą"
+      }
+    },
     "pdf": {
       "individualTitle": "SĄSKAITA FAKTŪRA",
       "businessTitle": "PVM SĄSKAITA FAKTŪRA",
-      "title": "PVM SĄSKAITA FAKTŪRA",
       "series_label": "Sąskaitos serija",
       "invoice_number_label": "Nr.",
       "provider_label": "Tiekėjas:",
       "business_number_business": "Įmonės kodas:",
-      "business_number_individual": "IV Pažymos Nr.:",
+      "business_number_individual": "Individualios veiklos pažymėjimo Nr.:",
       "address_label": "Adresas:",
-      "invoice_date_label": "Sąskaitos išrašymo data:",
+      "invoice_date_label": "Sąskaitos data:",
       "payer_label": "Mokėtojas:",
-      "position_label": "Poz",
+      "position_label": "Eil. Nr.",
       "description_label": "Aprašymas",
-      "unit_label": "Mato vnt.",
+      "unit_label": "Vnt.",
       "quantity_label": "Kiekis",
       "amount_label": "Suma",
       "total_amount": "Viso",
-      "cents": "{cents} ct.",
+      "cents": "{cents} ct",
       "invoice_issued_by_label": "Sąskaitą išrašė:",
-      "invoice_received_by_label": "Sąskaitą gavo:",
+      "invoice_received_by_label": "Sąskaitą priėmė:",
       "signature_label": "(parašas)",
       "name_label": "(vardas, pavardė)",
-      "payment_terms_label": "Apmokėjimo sąlygos: {days} d.",
-      "bank_info_label": "{bank_name}, banko kodas {bank_code}; Atsiskaitomoji sąskaita: {bank_account_number}"
+      "payment_terms_label": "Apmokėjimo terminas: {days} dienų",
+      "bank_info_label": "{bank_name}, banko kodas {bank_code}; Sąskaitos numeris: {bank_account_number}"
+    }
+  },
+  "clients": {
+    "page_title": "Klientai",
+    "top_content": {
+      "search_placeholder": "Ieškoti pagal pavadinimą...",
+      "add_new": "Pridėti naują",
+      "type_filter": "Tipas",
+      "total_singular": "Viso 1 klientas",
+      "total_plural": "Viso {count} klientų"
+    },
+    "bottom_content": {
+      "previous": "Ankstesnis",
+      "next": "Kitas"
+    },
+    "delete_modal": {
+      "title": "Ištrinti klientą",
+      "description": "Ar tikrai norite ištrinti {clientName}? Šis klientas bus ištrintas nedelsiant. Šio veiksmo negalima atšaukti.",
+      "confirm": "Ištrinti",
+      "cancel": "Atšaukti"
+    },
+    "form_dialog": {
+      "title_add": "Pridėti naują klientą",
+      "title_edit": "Redaguoti klientą",
+      "fields": {
+        "name": "Pavadinimas",
+        "business_type": "Verslo tipas",
+        "business_number": "Verslo numeris",
+        "address": "Adresas",
+        "email": "El. paštas"
+      },
+      "business_types": {
+        "business": "Įmonė",
+        "individual": "Individualus"
+      },
+      "cancel": "Atšaukti",
+      "submit_add": "Pridėti",
+      "submit_edit": "Išsaugoti"
+    },
+    "actions": {
+      "tooltip_edit": "Redaguoti klientą",
+      "tooltip_delete": "Ištrinti klientą"
     }
   },
   "profile": {
@@ -219,6 +391,85 @@
       "submit": "Atstatyti slaptažodį",
       "remember_your_password": "Prisiminate slaptažodį?",
       "sign_in": "Prisijungti"
+    }
+  },
+  "under_construction": {
+    "title": "Kuriama",
+    "description": "Šis puslapis vis dar kuriamas ir bus prieinamas netrukus. Dėkojame už kantrybę."
+  },
+  "components": {
+    "signature_pad": {
+      "edit_signature": "Redaguoti parašą",
+      "add_signature": "Pridėti parašą",
+      "use_profile_signature": "Naudoti profilio parašą",
+      "modal_title": "Parašas",
+      "clear": "Išvalyti",
+      "save": "Išsaugoti",
+      "signature_alt": "Parašas"
+    },
+    "complete_profile": {
+      "title": "Užpildykite savo profilį",
+      "description": "Prieš kurdami savo pirmąjį {title}, užpildykite savo asmeninę informaciją profilyje.",
+      "go_to_profile": "Eiti į profilį"
+    },
+    "payment_form": {
+      "title": "Mokėjimas",
+      "processing": "Apdorojama...",
+      "pay": "Mokėti {amount}"
+    },
+    "contact_form": {
+      "title": "Susisiekite su mumis",
+      "email_label": "El. paštas",
+      "email_placeholder": "Įveskite savo el. paštą",
+      "message_label": "Žinutė",
+      "message_placeholder": "Papasakokite, kaip galime jums padėti...",
+      "cancel": "Atšaukti",
+      "send": "Siųsti"
+    },
+    "send_invoice_email": {
+      "tooltip": "Siųsti sąskaitą faktūrą",
+      "modal_title": "Siųsti sąskaitą faktūrą {invoiceId}",
+      "recipient_email": "Gavėjo el. paštas",
+      "recipient_placeholder": "Įveskite gavėjo el. paštą",
+      "subject_label": "Tema",
+      "subject_placeholder": "Įveskite temą",
+      "message_label": "Žinutė (Neprivaloma)",
+      "message_placeholder": "Pridėkite asmeninę žinutę savo klientui",
+      "invoice_details": "Sąskaitos faktūros informacija",
+      "invoice": "Sąskaita faktūra",
+      "client": "Klientas",
+      "amount": "Suma",
+      "date": "Data",
+      "cancel": "Atšaukti",
+      "send": "Siųsti"
+    },
+    "invoice_services_table": {
+      "column_number": "#",
+      "column_description": "APRAŠYMAS",
+      "column_unit": "VIENETAS",
+      "column_quantity": "KIEKIS",
+      "column_amount": "SUMA",
+      "column_actions": "VEIKSMAI",
+      "add_service": "Pridėti paslaugą",
+      "grand_total": "Bendra suma",
+      "delete_service": "Ištrinti paslaugą",
+      "aria_table": "Sąskaitos faktūros paslaugų lentelė",
+      "aria_number": "Numeris",
+      "aria_description": "Aprašymas",
+      "aria_unit": "Vienetas",
+      "aria_quantity": "Kiekis",
+      "aria_amount": "Suma",
+      "aria_actions": "Veiksmai"
+    },
+    "invoice_form": {
+      "services_heading": "Paslaugos",
+      "signature_heading": "Parašas",
+      "banking_details": "Bankinė informacija",
+      "invoice_details": "Sąskaitos faktūros informacija",
+      "select_client": "Pasirinkti klientą"
+    },
+    "subscription_status_card": {
+      "title": "Prenumeratos būsena"
     }
   }
 }

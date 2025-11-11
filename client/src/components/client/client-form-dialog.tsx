@@ -10,12 +10,12 @@ import {
   SelectItem,
   addToast
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { addClientAction, updateClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { ClientModel } from '@/lib/types/models/client';
-import { capitalize } from '@/lib/utils';
 
 const INITIAL_CLIENT_DATA: ClientFormData = {
   name: '',
@@ -36,6 +36,9 @@ type Props = {
 type ClientFormData = ClientModel;
 
 const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
+  const t = useTranslations('clients.form_dialog');
+  const tTypes = useTranslations('clients.form_dialog.business_types');
+  
   const {
     register,
     handleSubmit,
@@ -70,45 +73,45 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader>
-            {!!clientData ? 'Edit Client' : 'Add New Client'}
+            {!!clientData ? t('title_edit') : t('title_add')}
           </ModalHeader>
           <ModalBody>
             <Input
               {...register('name')}
               type="text"
-              label="Name"
+              label={t('fields.name')}
               variant="bordered"
               isRequired
             />
             <Select
               {...register('businessType')}
-              label="Business Type"
+              label={t('fields.business_type')}
               variant="bordered"
               defaultSelectedKeys={clientData ? [clientData.businessType] : []}
               isRequired
             >
               {CLIENT_BUSINESS_TYPES.map((type) => (
-                <SelectItem key={type}>{capitalize(type)}</SelectItem>
+                <SelectItem key={type}>{tTypes(type)}</SelectItem>
               ))}
             </Select>
             <Input
               {...register('businessNumber')}
               type="text"
-              label="Business Number"
+              label={t('fields.business_number')}
               variant="bordered"
               isRequired
             />
             <Input
               {...register('address')}
               type="text"
-              label="Address"
+              label={t('fields.address')}
               variant="bordered"
               isRequired
             />
             <Input
               {...register('email')}
               type="email"
-              label="Email"
+              label={t('fields.email')}
               variant="bordered"
             />
           </ModalBody>
@@ -116,7 +119,7 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
             <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
               <div className="flex w-full justify-end gap-1">
                 <Button color="danger" variant="light" onPress={onClose}>
-                  Cancel
+                  {t('cancel')}
                 </Button>
                 <Button
                   isDisabled={isLoading || !isDirty}
@@ -124,7 +127,7 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
                   color="secondary"
                   type="submit"
                 >
-                  Save
+                  {!!clientData ? t('submit_edit') : t('submit_add')}
                 </Button>
               </div>
             </div>

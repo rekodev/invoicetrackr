@@ -46,7 +46,7 @@ export default function SubscriptionStatusCard({
   return (
     <>
       <Card className="border-default-200 bg-default-100 border-2 shadow-sm">
-        <CardHeader>Subscription Status</CardHeader>
+        <CardHeader>{t('title')}</CardHeader>
         <CardBody className="gap-6">
           <div>
             <div className="flex items-center gap-2">

@@ -9,6 +9,7 @@ import {
   Input,
   Selection
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 
 import { ClientModel } from '@/lib/types/models/client';
@@ -41,6 +42,8 @@ const ClientSectionTopContent = ({
   typeFilters,
   setTypeFilters
 }: Props) => {
+  const t = useTranslations('clients.top_content');
+  const tTypes = useTranslations('clients.form_dialog.business_types');
   const [isAddNewClientModalOpen, setIsAddNewClientModalOpen] = useState(false);
 
   const handleAddNewClient = () => {
@@ -51,6 +54,12 @@ const ClientSectionTopContent = ({
     setIsAddNewClientModalOpen(false);
   };
 
+  const totalClientsText = clients
+    ? clients.length === 1
+      ? t('total_singular')
+      : t('total_plural', { count: clients.length })
+    : t('total_plural', { count: 0 });
+
   const renderTypeFilterSelect = () => (
     <Dropdown>
       <DropdownTrigger className="hidden sm:flex">
@@ -58,7 +67,7 @@ const ClientSectionTopContent = ({
           endContent={<ChevronDownIcon className="text-small" />}
           variant="flat"
         >
-          Type
+          {t('type_filter')}
         </Button>
       </DropdownTrigger>
       <DropdownMenu
@@ -71,7 +80,7 @@ const ClientSectionTopContent = ({
       >
         {filters.map((filter) => (
           <DropdownItem key={filter} className="capitalize">
-            {capitalize(filter)}
+            {tTypes(filter as 'business' | 'individual')}
           </DropdownItem>
         ))}
       </DropdownMenu>
@@ -85,7 +94,7 @@ const ClientSectionTopContent = ({
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder={t('search_placeholder')}
             startContent={<SearchIcon width={16} height={16} />}
             value={searchTerm}
             onChange={onSearch}
@@ -98,17 +107,13 @@ const ClientSectionTopContent = ({
               endContent={<PlusIcon width={16} height={16} />}
               onPress={handleAddNewClient}
             >
-              Add New
+              {t('add_new')}
             </Button>
           </div>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-small text-default-400">
-            {clients
-              ? clients.length === 1
-                ? `Total 1 client`
-                : `Total ${clients.length} clients`
-              : 'Total 0 clients'}
+            {totalClientsText}
           </span>
         </div>
       </div>

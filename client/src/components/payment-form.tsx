@@ -15,6 +15,7 @@ import {
   useStripe
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { FormEvent, useState } from 'react';
 
@@ -39,6 +40,7 @@ type Props = {
 };
 
 function PaymentFormInsideElements({ user }: { user: UserModel }) {
+  const t = useTranslations('components.payment_form');
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState('');
@@ -144,7 +146,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
 
   return (
     <Card as="form" className="mx-auto max-w-4xl" onSubmit={handleSubmit}>
-      <CardHeader className="p-4 px-6">Payment</CardHeader>
+      <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
       <Divider />
       <CardBody className="px-5 py-4">
         {isFormLoading ? (
@@ -166,8 +168,10 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
           isDisabled={!stripe || isLoading}
         >
           {isLoading
-            ? 'Processing...'
-            : `Pay ${getCurrencySymbol(user.currency)}${SUBSCRIPTION_AMOUNT}`}
+            ? t('processing')
+            : t('pay', { 
+                amount: `${getCurrencySymbol(user.currency)}${SUBSCRIPTION_AMOUNT}` 
+              })}
         </Button>
       </CardFooter>
     </Card>

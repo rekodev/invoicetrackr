@@ -6,11 +6,11 @@ import {
   DropdownTrigger,
   Input
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 
 import { ADD_NEW_INVOICE_PAGE } from '@/lib/constants/pages';
-import { columns, statusOptions } from '@/lib/constants/table';
 import { capitalize } from '@/lib/utils';
 
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
@@ -18,6 +18,8 @@ import { PlusIcon } from '../icons/PlusIcon';
 import SearchIcon from '../icons/SearchIcon';
 
 type Props = {
+  columns: Array<{ name: string; uid: string; sortable?: boolean }>;
+  statusOptions: Array<{ name: string; uid: string }>;
   filterValue: string;
   setFilterValue: Dispatch<SetStateAction<string>>;
   statusFilter: string;
@@ -30,6 +32,8 @@ type Props = {
 };
 
 const InvoiceTableTopContent = ({
+  columns,
+  statusOptions,
   filterValue,
   setFilterValue,
   visibleColumns,
@@ -40,12 +44,14 @@ const InvoiceTableTopContent = ({
   setRowsPerPage,
   invoicesLength
 }: Props) => {
+  const t = useTranslations('invoices');
   const router = useRouter();
+  
   const totalInvoicesText = invoicesLength
     ? invoicesLength === 1
-      ? 'Total 1 invoice'
-      : `Total ${invoicesLength} invoices`
-    : 'Total 0 invoices';
+      ? t('top_content.total_singular')
+      : t('top_content.total_plural', { count: invoicesLength })
+    : t('top_content.total_plural', { count: 0 });
 
   const handleAddNewInvoice = () => {
     router.push(ADD_NEW_INVOICE_PAGE);
@@ -82,7 +88,7 @@ const InvoiceTableTopContent = ({
         <Input
           isClearable
           className="w-full sm:max-w-[44%]"
-          placeholder="Search by invoice ID..."
+          placeholder={t('top_content.search_placeholder')}
           startContent={<SearchIcon width={16} height={16} />}
           value={filterValue}
           onClear={() => onClear()}
@@ -95,7 +101,7 @@ const InvoiceTableTopContent = ({
                 endContent={<ChevronDownIcon className="text-small" />}
                 variant="flat"
               >
-                Status
+                {t('table.filters.status')}
               </Button>
             </DropdownTrigger>
             <DropdownMenu
@@ -119,7 +125,7 @@ const InvoiceTableTopContent = ({
                 endContent={<ChevronDownIcon className="text-small" />}
                 variant="flat"
               >
-                Columns
+                {t('table.filters.columns')}
               </Button>
             </DropdownTrigger>
             <DropdownMenu
@@ -142,14 +148,14 @@ const InvoiceTableTopContent = ({
             endContent={<PlusIcon width={16} height={16} />}
             onPress={handleAddNewInvoice}
           >
-            Add New
+            {t('top_content.add_new')}
           </Button>
         </div>
       </div>
       <div className="flex items-center justify-between">
         <span className="text-small text-default-400">{totalInvoicesText}</span>
         <label className="text-small text-default-400 flex items-center">
-          Rows per page:
+          {t('table.rows_per_page')}
           <select
             className="text-small text-default-400 bg-transparent outline-none"
             onChange={onRowsPerPageChange}

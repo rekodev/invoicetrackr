@@ -12,6 +12,7 @@ import {
   Textarea,
   addToast
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 
 import { postContactMessage } from '@/api';
@@ -24,6 +25,7 @@ type ContactForm = {
 };
 
 export default function ContactFormDialog() {
+  const t = useTranslations('components.contact_form');
   const {
     register,
     handleSubmit,
@@ -71,7 +73,7 @@ export default function ContactFormDialog() {
         className="max-w-min"
         color="secondary"
       >
-        Contact Us
+        {t('title')}
       </Button>
 
       <Modal
@@ -81,13 +83,13 @@ export default function ContactFormDialog() {
         size="lg"
       >
         <ModalContent as={Form} onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Contact Us</ModalHeader>
+          <ModalHeader>{t('title')}</ModalHeader>
           <ModalBody className="w-full flex-col">
             <Input
               {...register('email')}
               variant="faded"
-              placeholder="Enter your email"
-              label="Email"
+              placeholder={t('email_placeholder')}
+              label={t('email_label')}
               type="email"
               isInvalid={!!errors.email}
               errorMessage={errors.email?.message}
@@ -95,8 +97,8 @@ export default function ContactFormDialog() {
             <Textarea
               variant="faded"
               {...register('message')}
-              label="Message"
-              placeholder="Tell us how we can help you..."
+              label={t('message_label')}
+              placeholder={t('message_placeholder')}
               maxLength={5000}
               isInvalid={!!errors.message}
               errorMessage={errors.message?.message}
@@ -104,7 +106,7 @@ export default function ContactFormDialog() {
           </ModalBody>
           <ModalFooter className="w-full">
             <Button variant="bordered" onPress={handleClose}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               isLoading={isPending}
@@ -112,7 +114,7 @@ export default function ContactFormDialog() {
               type="submit"
               color="secondary"
             >
-              Send
+              {t('send')}
             </Button>
           </ModalFooter>
         </ModalContent>

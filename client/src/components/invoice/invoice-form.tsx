@@ -13,6 +13,7 @@ import {
   FormProvider,
   useForm
 } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
 import { statusOptions } from '@/lib/constants/table';
 import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
@@ -57,6 +58,7 @@ const InvoiceForm = ({
   bankingInformationEntries,
   latestInvoiceId
 }: Props) => {
+  const t = useTranslations('components.invoice_form');
   const methods = useForm<InvoiceModel>({
     defaultValues: invoiceData || {
       sender: user,
@@ -272,7 +274,7 @@ const InvoiceForm = ({
 
   const renderInvoiceServices = () => (
     <div className="col-span-4 flex flex-col gap-4">
-      <h4>Services</h4>
+      <h4>{t('services_heading')}</h4>
       <InvoiceServicesTable
         currency={currency}
         invoiceServices={invoiceData?.services}
@@ -285,7 +287,7 @@ const InvoiceForm = ({
   const renderBankingInformation = () => (
     <div className="col-span-4 flex flex-col gap-4">
       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
-        <h4>Banking Details</h4>
+        <h4>{t('banking_details')}</h4>
         <Button
           size="sm"
           variant="faded"
@@ -355,7 +357,7 @@ const InvoiceForm = ({
 
   const renderInvoiceSignature = () => (
     <div className="col-span-4 flex flex-col gap-4 sm:col-span-1">
-      <h4>Signature</h4>
+      <h4>{t('signature_heading')}</h4>
       <SignaturePad
         signature={senderSignature}
         profileSignature={user?.signature as string | undefined}
@@ -400,7 +402,7 @@ const InvoiceForm = ({
             encType="multipart/form-data"
           >
             <div className="col-span-4 flex flex-col gap-4">
-              <h4>Invoice Details</h4>
+              <h4>{t('invoice_details')}</h4>
               <div className="flex flex-col gap-4 md:flex-row">
                 <Controller
                   name="invoiceId"

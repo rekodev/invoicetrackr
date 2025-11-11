@@ -42,7 +42,138 @@
     "terms_of_service": "Terms of Service"
   },
   "general_error": "Uh oh! Something went wrong...",
+  "login": {
+    "page_title": "Log In",
+    "page_description": "Access your InvoiceTrackr account.",
+    "welcome": "Welcome",
+    "subtitle": "Log into your account to continue",
+    "form": {
+      "title": "Log In",
+      "email": "Email",
+      "email_placeholder": "Enter your email address",
+      "password": "Password",
+      "password_placeholder": "Enter password",
+      "submit": "Log in",
+      "forgot_password": "Forgot Password?",
+      "need_account": "Need to create an account?",
+      "sign_up_link": "Sign Up"
+    }
+  },
+  "sign_up": {
+    "page_title": "Sign up",
+    "page_description": "Create your InvoiceTrackr account.",
+    "form": {
+      "title": "Sign Up",
+      "email": "Email",
+      "email_placeholder": "Enter your email address",
+      "password": "Password",
+      "password_placeholder": "Enter your password",
+      "confirm_password": "Confirm Password",
+      "confirm_password_placeholder": "Confirm your password",
+      "submit": "Sign Up",
+      "already_have_account": "Already have an account?",
+      "login_link": "Log In"
+    },
+    "multi_step": {
+      "steps": {
+        "account": {
+          "name": "Create an account",
+          "description": "Setting up your foundation"
+        },
+        "personal": {
+          "name": "Personal Information",
+          "description": "Tell us about yourself"
+        },
+        "banking": {
+          "name": "Banking Details",
+          "description": "Add your banking information"
+        },
+        "payment": {
+          "name": "Make a Payment",
+          "description": "Finalize your registration"
+        }
+      },
+      "actions": {
+        "back": "Back",
+        "next": "Next",
+        "skip": "Skip"
+      }
+    }
+  },
+  "dashboard": {
+    "cards": {
+      "paid": "Paid",
+      "pending": "Pending",
+      "total_invoices": "Total Invoices",
+      "total_clients": "Total Clients"
+    },
+    "revenue_chart": {
+      "title": "Recent Revenue"
+    },
+    "latest_invoices": {
+      "title": "Latest Invoices",
+      "view_all": "View All",
+      "empty_state": "No invoices to display."
+    }
+  },
   "invoices": {
+    "table": {
+      "columns": {
+        "id": "ID",
+        "receiver": "RECEIVER",
+        "amount": "AMOUNT",
+        "date": "DATE",
+        "status": "STATUS",
+        "actions": "ACTIONS"
+      },
+      "status": {
+        "paid": "Paid",
+        "canceled": "Canceled",
+        "pending": "Pending"
+      },
+      "search_placeholder": "Search by receiver...",
+      "rows_per_page": "Rows per page:",
+      "total": "Total",
+      "selected": "of",
+      "actions": {
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "download": "Download PDF"
+      },
+      "filters": {
+        "status": "Status",
+        "columns": "Columns",
+        "clear": "Clear filters"
+      },
+      "empty_state": "No invoices found."
+    },
+    "delete_modal": {
+      "title": "Delete Invoice",
+      "description": "Are you sure you want to delete invoice {invoiceId}? This invoice will be deleted immediately. You can't undo this action.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "top_content": {
+      "search_placeholder": "Search by invoice ID...",
+      "add_new": "Add New",
+      "total_singular": "Total 1 invoice",
+      "total_plural": "Total {count} invoices"
+    },
+    "bottom_content": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "cell": {
+      "actions": {
+        "tooltip_view": "Details",
+        "tooltip_edit": "Edit invoice",
+        "tooltip_delete": "Delete invoice",
+        "tooltip_download": "Download",
+        "mark_as_paid": "Mark as Paid",
+        "mark_as_pending": "Mark as Pending"
+      }
+    },
     "pdf": {
       "businessTitle": "VAT INVOICE",
       "individualTitle": "INVOICE",
@@ -67,6 +198,48 @@
       "name_label": "(name, surname)",
       "payment_terms_label": "Payment terms: {days} days",
       "bank_info_label": "{bank_name}, bank code {bank_code}; Account number: {bank_account_number}"
+    }
+  },
+  "clients": {
+    "page_title": "Clients",
+    "top_content": {
+      "search_placeholder": "Search by name...",
+      "add_new": "Add New",
+      "type_filter": "Type",
+      "total_singular": "Total 1 client",
+      "total_plural": "Total {count} clients"
+    },
+    "bottom_content": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "delete_modal": {
+      "title": "Delete Client",
+      "description": "Are you sure you want to delete {clientName}? This client will be deleted immediately. You can't undo this action.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "form_dialog": {
+      "title_add": "Add New Client",
+      "title_edit": "Edit Client",
+      "fields": {
+        "name": "Name",
+        "business_type": "Business Type",
+        "business_number": "Business Number",
+        "address": "Address",
+        "email": "Email"
+      },
+      "business_types": {
+        "business": "Business",
+        "individual": "Individual"
+      },
+      "cancel": "Cancel",
+      "submit_add": "Add",
+      "submit_edit": "Save"
+    },
+    "actions": {
+      "tooltip_edit": "Edit client",
+      "tooltip_delete": "Delete client"
     }
   },
   "profile": {
@@ -218,6 +391,85 @@
       "submit": "Reset Password",
       "remember_your_password": "Remember your password?",
       "sign_in": "Sign in"
+    }
+  },
+  "under_construction": {
+    "title": "Under Construction",
+    "description": "This page is still in development and is going to be available soon. Thank you for your patience."
+  },
+  "components": {
+    "signature_pad": {
+      "edit_signature": "Edit Signature",
+      "add_signature": "Add a Signature",
+      "use_profile_signature": "Use Profile Signature",
+      "modal_title": "Signature",
+      "clear": "Clear",
+      "save": "Save",
+      "signature_alt": "Signature"
+    },
+    "complete_profile": {
+      "title": "Complete Your Profile",
+      "description": "Before you can create your first {title}, please complete your personal information in your profile.",
+      "go_to_profile": "Go to Profile"
+    },
+    "payment_form": {
+      "title": "Payment",
+      "processing": "Processing...",
+      "pay": "Pay {amount}"
+    },
+    "contact_form": {
+      "title": "Contact Us",
+      "email_label": "Email",
+      "email_placeholder": "Enter your email",
+      "message_label": "Message",
+      "message_placeholder": "Tell us how we can help you...",
+      "cancel": "Cancel",
+      "send": "Send"
+    },
+    "send_invoice_email": {
+      "tooltip": "Send Invoice",
+      "modal_title": "Send Invoice {invoiceId}",
+      "recipient_email": "Recipient Email",
+      "recipient_placeholder": "Enter recipient's email",
+      "subject_label": "Subject",
+      "subject_placeholder": "Enter the subject",
+      "message_label": "Message (Optional)",
+      "message_placeholder": "Add a personal message to your client",
+      "invoice_details": "Invoice Details",
+      "invoice": "Invoice",
+      "client": "Client",
+      "amount": "Amount",
+      "date": "Date",
+      "cancel": "Cancel",
+      "send": "Send"
+    },
+    "invoice_services_table": {
+      "column_number": "#",
+      "column_description": "DESCRIPTION",
+      "column_unit": "UNIT",
+      "column_quantity": "QUANTITY",
+      "column_amount": "AMOUNT",
+      "column_actions": "ACTION",
+      "add_service": "Add Service",
+      "grand_total": "Grand Total",
+      "delete_service": "Delete service",
+      "aria_table": "Invoice Services Table",
+      "aria_number": "Number",
+      "aria_description": "Description",
+      "aria_unit": "Unit",
+      "aria_quantity": "Quantity",
+      "aria_amount": "Amount",
+      "aria_actions": "Actions"
+    },
+    "invoice_form": {
+      "services_heading": "Services",
+      "signature_heading": "Signature",
+      "banking_details": "Banking Details",
+      "invoice_details": "Invoice Details",
+      "select_client": "Select Client"
+    },
+    "subscription_status_card": {
+      "title": "Subscription Status"
     }
   }
 }

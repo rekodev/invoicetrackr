@@ -9,6 +9,7 @@ import {
   CardHeader,
   cn
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 import {
@@ -26,29 +27,6 @@ import PaymentForm from './payment-form';
 import BankAccountForm from './profile/bank-account-form';
 import PersonalInformationForm from './profile/personal-information-form';
 
-const steps = [
-  {
-    id: 'account',
-    name: 'Create an account',
-    description: 'Setting up your foundation'
-  },
-  {
-    id: 'personal',
-    name: 'Personal Information',
-    description: 'Tell us about yourself'
-  },
-  {
-    id: 'banking',
-    name: 'Banking Details',
-    description: 'Add your banking information'
-  },
-  {
-    id: 'payment',
-    name: 'Make a Payment',
-    description: 'Finalize your registration'
-  }
-];
-
 type Props = {
   existingUserData?: UserModel;
   existingBankingInformation?: BankingInformationFormModel;
@@ -58,6 +36,30 @@ export default function MultiStepForm({
   existingUserData,
   existingBankingInformation
 }: Props) {
+  const t = useTranslations('sign_up.multi_step');
+  
+  const steps = [
+    {
+      id: 'account',
+      name: t('steps.account.name'),
+      description: t('steps.account.description')
+    },
+    {
+      id: 'personal',
+      name: t('steps.personal.name'),
+      description: t('steps.personal.description')
+    },
+    {
+      id: 'banking',
+      name: t('steps.banking.name'),
+      description: t('steps.banking.description')
+    },
+    {
+      id: 'payment',
+      name: t('steps.payment.name'),
+      description: t('steps.payment.description')
+    }
+  ];
   const initialCurrentStep = useMemo(() => {
     if (!existingUserData) return 0;
     if (isUserPersonalInformationSetUp(existingUserData)) {
@@ -160,7 +162,7 @@ export default function MultiStepForm({
             onPress={() => setCurrentStep((prev) => (prev <= 0 ? 0 : prev - 1))}
           >
             <ArrowLeftIcon className="h-5 w-5" />
-            Back
+            {t('actions.back')}
           </Button>
           <div className="hidden md:block">
             <div className="flex items-center gap-2">

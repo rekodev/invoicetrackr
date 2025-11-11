@@ -10,6 +10,7 @@ import {
 } from '@heroui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { ClientModel } from '@/lib/types/models/client';
 
@@ -31,6 +32,7 @@ const InvoiceFormPartyModal = ({
   onClose,
   onReceiverSelect
 }: Props) => {
+  const t = useTranslations('components.invoice_form');
   const [isAddNewClientModalOpen, setIsAddNewClientModalOpen] = useState(false);
 
   const renderBody = () => {
@@ -55,7 +57,7 @@ const InvoiceFormPartyModal = ({
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader>Select Client</ModalHeader>
+          <ModalHeader>{t('select_client')}</ModalHeader>
           <ModalBody>{renderBody()}</ModalBody>
           <ModalFooter>
             <Button

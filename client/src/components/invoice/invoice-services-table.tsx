@@ -14,6 +14,7 @@ import {
 } from '@heroui/react';
 import { Key, useEffect, useMemo } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
 import { InvoiceFormData, InvoiceService } from '@/lib/types/models/invoice';
@@ -45,6 +46,7 @@ const InvoiceServicesTable = ({
   errorMessage,
   currency
 }: Props) => {
+  const t = useTranslations('components.invoice_services_table');
   const {
     register,
     control,
@@ -56,6 +58,15 @@ const InvoiceServicesTable = ({
     name: 'services',
     control
   });
+
+  const INVOICE_SERVICE_COLUMNS = [
+    { name: t('column_number'), uid: 'no' },
+    { name: t('column_description'), uid: 'description' },
+    { name: t('column_unit'), uid: 'unit' },
+    { name: t('column_quantity'), uid: 'quantity' },
+    { name: t('column_amount'), uid: 'amount' },
+    { name: t('column_actions'), uid: 'actions' }
+  ];
 
   // watching the entire services array doesn't work, individual services have to be selected
   const serviceAmounts = fields.map(
@@ -93,10 +104,10 @@ const InvoiceServicesTable = ({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <Button variant="faded" color="secondary" onPress={handleAddService}>
         <PlusIcon height={2} width={2} />
-        Add Service
+        {t('add_service')}
       </Button>
       <div className="flex gap-6 self-end pr-3">
-        <p>Grand Total:</p>
+        <p>{t('grand_total')}:</p>
         <p>
           {getCurrencySymbol(currency)}
           {totalAmount.toFixed(2)}
@@ -108,12 +119,12 @@ const InvoiceServicesTable = ({
   const renderCell = (columnKey: Key, index: number) => {
     switch (columnKey as (typeof INVOICE_SERVICE_COLUMNS)[number]['uid']) {
       case 'no':
-        return <div aria-label="Number">{index + 1}</div>;
+        return <div aria-label={t('aria_number')}>{index + 1}</div>;
       case 'description':
         return (
           <Input
             className="min-w-44"
-            aria-label="Description"
+            aria-label={t('aria_description')}
             type="text"
             maxLength={200}
             defaultValue={fields[index].description || ''}
@@ -127,7 +138,7 @@ const InvoiceServicesTable = ({
         return (
           <Input
             className="min-w-44"
-            aria-label="Unit"
+            aria-label={t('aria_unit')}
             type="text"
             maxLength={20}
             defaultValue={fields[index].unit || ''}
@@ -140,7 +151,7 @@ const InvoiceServicesTable = ({
       case 'quantity':
         return (
           <Input
-            aria-label="Quantity"
+            aria-label={t('aria_quantity')}
             type="number"
             defaultValue={fields[index].quantity?.toString() || ''}
             variant="bordered"
@@ -152,7 +163,7 @@ const InvoiceServicesTable = ({
       case 'amount':
         return (
           <Input
-            aria-label="Amount"
+            aria-label={t('aria_amount')}
             type="number"
             defaultValue={fields[index].amount?.toString() || ''}
             variant="bordered"
@@ -164,10 +175,10 @@ const InvoiceServicesTable = ({
       case 'actions':
         return (
           <div
-            aria-label="Actions"
+            aria-label={t('aria_actions')}
             className="relative flex items-center gap-2"
           >
-            <Tooltip color="danger" content="Delete service">
+            <Tooltip color="danger" content={t('delete_service')}>
               <Button
                 onPress={() => handleRemoveService(index)}
                 variant="light"
@@ -186,7 +197,7 @@ const InvoiceServicesTable = ({
   return (
     <>
       <Table
-        aria-label="Invoice Services Table"
+        aria-label={t('aria_table')}
         bottomContent={renderBottomContent()}
         bottomContentPlacement="outside"
       >

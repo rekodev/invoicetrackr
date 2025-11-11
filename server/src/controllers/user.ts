@@ -50,10 +50,12 @@ export const loginUser = async (
   const i18n = await useI18n(req);
   const user = await getUserByEmailFromDb(email);
 
-  if (!user) throw new UnauthorizedError(i18n.t('error.user.invalidCredentials'));
+  if (!user)
+    throw new UnauthorizedError(i18n.t('error.user.invalidCredentials'));
 
   const isValidPassword = await bcrypt.compare(password, user.password);
-  if (!isValidPassword) throw new UnauthorizedError(i18n.t('error.user.invalidCredentials'));
+  if (!isValidPassword)
+    throw new UnauthorizedError(i18n.t('error.user.invalidCredentials'));
 
   let isSubscriptionActive = false;
 
@@ -93,7 +95,8 @@ export const postUser = async (
   const hashedPassword = await bcrypt.hash(password, 10);
   const createdUser = await registerUser({ email, password: hashedPassword });
 
-  if (!createdUser) throw new BadRequestError(i18n.t('error.user.unableToCreate'));
+  if (!createdUser)
+    throw new BadRequestError(i18n.t('error.user.unableToCreate'));
 
   return reply
     .status(201)
@@ -157,9 +160,7 @@ export const deleteUser = async (
   const deletedUserId = await deleteUserFromDb(userId);
 
   if (!deletedUserId)
-    throw new BadRequestError(
-      i18n.t('error.user.unableToDelete')
-    );
+    throw new BadRequestError(i18n.t('error.user.unableToDelete'));
 
   reply.status(200).send({ message: i18n.t('success.user.deleted') });
 };
@@ -183,7 +184,9 @@ export const updateUserSelectedBankAccount = async (
     await updateUserSelectedBankAccountInDb(userId, selectedBankAccountId);
 
   if (!updatedUserSelectedBankAccount)
-    throw new BadRequestError(i18n.t('error.user.unableToUpdateSelectedBankAccount'));
+    throw new BadRequestError(
+      i18n.t('error.user.unableToUpdateSelectedBankAccount')
+    );
 
   reply.status(200).send({
     message: i18n.t('success.user.selectedBankAccountUpdated')
@@ -210,7 +213,9 @@ export const updateUserProfilePicture = async (
     );
 
     if (!uploadedProfilePicture)
-      throw new BadRequestError(i18n.t('error.user.unableToUpdateProfilePicture'));
+      throw new BadRequestError(
+        i18n.t('error.user.unableToUpdateProfilePicture')
+      );
   }
 
   const urlWithHttps = uploadedProfilePicture?.url.replace(
@@ -221,7 +226,9 @@ export const updateUserProfilePicture = async (
   const updatedUser = await updateUserProfilePictureInDb(userId, urlWithHttps);
 
   if (!updatedUser)
-    throw new BadRequestError(i18n.t('error.user.unableToUpdateProfilePicture'));
+    throw new BadRequestError(
+      i18n.t('error.user.unableToUpdateProfilePicture')
+    );
 
   reply.status(200).send({
     user: updatedUser,
@@ -247,7 +254,7 @@ export const updateUserAccountSettings = async (
   );
 
   if (!updatedUser)
-    throw new BadRequestError(i18n.t('error.user.unableToUpdateAccountSettings'));
+    throw new BadRequestError('errors.user.accountSettings.update.badRequest');
 
   reply
     .status(200)
@@ -270,17 +277,13 @@ export const changeUserPassword = async (
   const i18n = await useI18n(req);
 
   if (newPassword !== confirmedNewPassword)
-    throw new BadRequestError(
-      i18n.t('error.user.newPasswordMismatch')
-    );
+    throw new BadRequestError(i18n.t('error.user.newPasswordMismatch'));
 
   const currentPasswordHash = await getUserPasswordHashFromDb(userId);
   const isPasswordValid = await bcrypt.compare(password, currentPasswordHash);
 
   if (!isPasswordValid)
-    throw new BadRequestError(
-      i18n.t('error.user.currentPasswordIncorrect')
-    );
+    throw new BadRequestError(i18n.t('error.user.currentPasswordIncorrect'));
 
   const hashedNewPassword = await bcrypt.hash(newPassword, 10);
   const changedPassword = await changeUserPasswordInDb(
@@ -291,9 +294,7 @@ export const changeUserPassword = async (
   if (!changedPassword)
     throw new BadRequestError(i18n.t('error.user.unableToChangePassword'));
 
-  reply
-    .status(200)
-    .send({ message: i18n.t('success.user.passwordChanged') });
+  reply.status(200).send({ message: i18n.t('success.user.passwordChanged') });
 };
 
 export const resetUserPassword = async (
@@ -304,8 +305,7 @@ export const resetUserPassword = async (
   const user = await getUserByEmailFromDb(email);
   const i18n = await useI18n(req);
 
-  if (!user)
-    throw new NotFoundError(i18n.t('error.user.notFound'));
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
 
   const resetToken = crypto.randomUUID();
   const tokenExpiresAt = new Date(Date.now() + 3600000).toISOString();
@@ -326,9 +326,7 @@ export const resetUserPassword = async (
     throw new BadRequestError(i18n.t('error.user.unableToSendResetLink'));
   }
 
-  reply
-    .status(200)
-    .send({ message: i18n.t('success.user.resetLinkSent') });
+  reply.status(200).send({ message: i18n.t('success.user.resetLinkSent') });
 };
 
 export const getUserResetPasswordToken = async (
@@ -363,24 +361,18 @@ export const createNewUserPassword = async (
   const i18n = await useI18n(req);
 
   if (newPassword !== confirmedNewPassword)
-    throw new BadRequestError(
-      i18n.t('error.user.newPasswordMismatch')
-    );
+    throw new BadRequestError(i18n.t('error.user.newPasswordMismatch'));
 
   const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
 
   if (!token || !tokenFromDb)
-    throw new BadRequestError(
-      i18n.t('error.user.tokenInvalid')
-    );
+    throw new BadRequestError(i18n.t('error.user.tokenInvalid'));
 
   const currentDate = new Date();
   const tokenExpirationDate = new Date(tokenFromDb.expiresAt);
 
   if (currentDate > tokenExpirationDate)
-    throw new BadRequestError(
-      i18n.t('error.user.tokenExpired')
-    );
+    throw new BadRequestError(i18n.t('error.user.tokenExpired'));
 
   const hashedNewPassword = await bcrypt.hash(newPassword, 10);
   const changedPassword = await changeUserPasswordInDb(
@@ -393,7 +385,5 @@ export const createNewUserPassword = async (
 
   await invalidateTokenInDb(userId, token);
 
-  reply
-    .status(200)
-    .send({ message: i18n.t('success.user.passwordChanged') });
+  reply.status(200).send({ message: i18n.t('success.user.passwordChanged') });
 };

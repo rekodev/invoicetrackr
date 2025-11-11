@@ -5,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { HOME_PAGE } from '@/lib/constants/pages';
 import { InvoiceModel } from '@/lib/types/models/invoice';
@@ -16,6 +17,7 @@ import InvoiceServicesTable from './invoice-services-table';
 import SignaturePad from '../signature-pad';
 
 const FreeInvoiceForm = () => {
+  const t = useTranslations('components.invoice_form');
   const router = useRouter();
   const methods = useForm<InvoiceModel>({
     defaultValues: {
@@ -162,7 +164,7 @@ const FreeInvoiceForm = () => {
 
   const renderInvoiceServices = () => (
     <div className="col-span-4 flex flex-col gap-4">
-      <h4>Services</h4>
+      <h4>{t('services_heading')}</h4>
       <InvoiceServicesTable
         currency="usd"
         isInvalid={!!errors.services}
@@ -173,7 +175,7 @@ const FreeInvoiceForm = () => {
 
   const renderBankingInformation = () => (
     <div className="col-span-4 flex flex-col gap-4">
-      <h4>Banking Details</h4>
+      <h4>{t('banking_details')}</h4>
       <div className="flex flex-col gap-4 md:flex-row">
         <Input
           label="Bank Name"
@@ -216,7 +218,7 @@ const FreeInvoiceForm = () => {
 
   const renderInvoiceSignature = () => (
     <div className="col-span-4 flex w-full flex-col gap-4 sm:col-span-1">
-      <h4>Signature</h4>
+      <h4>{t('signature_heading')}</h4>
       <SignaturePad
         signature={senderSignature}
         onSignatureChange={handleSignatureChange}
@@ -265,7 +267,7 @@ const FreeInvoiceForm = () => {
               encType="multipart/form-data"
             >
               <div className="col-span-4 flex flex-col gap-4">
-                <h4>Invoice Details</h4>
+                <h4>{t('invoice_details')}</h4>
                 <div className="col-span-4 flex flex-col gap-2 md:flex-row">
                   <Input
                     className="w-full"

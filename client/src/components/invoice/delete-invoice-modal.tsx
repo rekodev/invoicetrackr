@@ -7,6 +7,7 @@ import {
   ModalHeader,
   addToast
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 
 import { deleteInvoiceAction } from '@/lib/actions/invoice';
@@ -25,6 +26,7 @@ const DeleteInvoiceModal = ({
   onClose,
   invoiceData
 }: Props) => {
+  const t = useTranslations('invoices.delete_modal');
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = () =>
@@ -49,14 +51,14 @@ const DeleteInvoiceModal = ({
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
           <Button color="danger" onPress={onClose}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             isLoading={isPending}
             color="secondary"
             onPress={handleSubmit}
           >
-            Delete
+            {t('confirm')}
           </Button>
         </div>
       </div>
@@ -67,11 +69,10 @@ const DeleteInvoiceModal = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         <ModalHeader>
-          Are you sure you want to delete {invoiceData.invoiceId}?
+          {t('title')}
         </ModalHeader>
         <ModalBody>
-          This invoice will be deleted immediately. You can&apos;t undo this
-          action.
+          {t('description', { invoiceId: invoiceData.invoiceId })}
         </ModalBody>
         {renderModalFooter()}
       </ModalContent>

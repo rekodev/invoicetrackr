@@ -1,4 +1,5 @@
 import { Button, Pagination } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useCallback } from 'react';
 
 type Props = {
@@ -13,9 +14,9 @@ const InvoiceTableBottomContent = ({
   page,
   setPage,
   pages,
-  // selectedKeys,
   filteredItemsLength
 }: Props) => {
+  const t = useTranslations('invoices.bottom_content');
   const prevButtonDisabled = page === 1;
   const nextButtonDisabled = page === pages;
 
@@ -52,7 +53,7 @@ const InvoiceTableBottomContent = ({
           variant="flat"
           onPress={onPreviousPage}
         >
-          Previous
+          {t('previous')}
         </Button>
         <Button
           isDisabled={nextButtonDisabled}
@@ -60,7 +61,7 @@ const InvoiceTableBottomContent = ({
           variant="flat"
           onPress={onNextPage}
         >
-          Next
+          {t('next')}
         </Button>
       </div>
     </div>

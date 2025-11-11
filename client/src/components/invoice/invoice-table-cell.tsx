@@ -58,7 +58,8 @@ const InvoiceTableCell = ({
   onEdit,
   onDelete
 }: Props) => {
-  const t = useTranslations('invoices.pdf');
+  const tPdf = useTranslations('invoices.pdf');
+  const tCell = useTranslations('invoices.cell.actions');
   const [isPaid, setIsPaid] = useState(invoice.status === 'paid');
   const [isPending, startTransition] = useTransition();
 
@@ -99,7 +100,7 @@ const InvoiceTableCell = ({
 
   const renderPdfDocument = () => (
     <PDFDocument
-      t={t}
+      t={tPdf}
       language={language}
       senderSignatureImage={invoice.senderSignature as string}
       bankAccount={invoice.bankingInformation}
@@ -196,7 +197,7 @@ const InvoiceTableCell = ({
             </DropdownMenu>
           </Dropdown>
 
-          <Tooltip content={isPaid ? 'Mark as Pending' : 'Mark as Paid'}>
+          <Tooltip content={isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid')}>
             <Checkbox
               className="mr-0.5 max-w-5 p-0"
               size="sm"
@@ -223,7 +224,7 @@ const InvoiceTableCell = ({
               );
             }}
           </BlobProvider>
-          <Tooltip content="Download">
+          <Tooltip content={tCell('tooltip_download')}>
             <PDFDownloadLink
               fileName={invoice.invoiceId}
               className="text-default-400 h-5 w-5"
@@ -232,7 +233,7 @@ const InvoiceTableCell = ({
               <ArrowDownTrayIcon />
             </PDFDownloadLink>
           </Tooltip>
-          <Tooltip content="Details">
+          <Tooltip content={tCell('tooltip_view')}>
             <span
               onClick={handleViewIconClick}
               className="text-default-400 cursor-pointer text-lg active:opacity-50"
@@ -240,7 +241,7 @@ const InvoiceTableCell = ({
               <EyeIcon />
             </span>
           </Tooltip>
-          <Tooltip content="Edit invoice">
+          <Tooltip content={tCell('tooltip_edit')}>
             <span
               className="text-default-400 cursor-pointer text-lg active:opacity-50"
               onClick={handleEditInvoiceClick}
@@ -248,7 +249,7 @@ const InvoiceTableCell = ({
               <EditIcon />
             </span>
           </Tooltip>
-          <Tooltip color="danger" content="Delete invoice">
+          <Tooltip color="danger" content={tCell('tooltip_delete')}>
             <span
               className="text-danger cursor-pointer text-lg active:opacity-50"
               onClick={handleDeleteInvoiceClick}
