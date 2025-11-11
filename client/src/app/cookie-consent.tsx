@@ -22,40 +22,51 @@ export default function CookieConsent() {
   };
 
   return (
-    <div className="fixed bottom-0 flex w-full items-center justify-center p-6">
-      <Alert
-        className="bg-default border-default-300 max-w-7xl items-center border"
-        color="default"
-        variant="solid"
-        hideIcon
-        description={
-          <div>
-            We use cookies to provide the best experience. By clicking “Accept
-            All,” you agree to our use of cookies, including the analytics data
-            described in our{' '}
-            <Link className="text-secondary text-sm" href={PRIVACY_POLICY_PAGE}>
-              Privacy Policy
-            </Link>
-            .
+    <div className="fixed bottom-0 z-10 w-full">
+      <div className="mx-auto max-w-7xl p-6">
+        <Alert
+          className="bg-default border-default-300 border"
+          color="default"
+          variant="solid"
+          hideIcon
+          isClosable
+          isVisible={isVisible && cookieConsent === null}
+          onClose={() => setIsVisible(false)}
+        >
+          <div className="flex flex-col gap-6 md:flex-row">
+            <p className="text-sm">
+              We use cookies to provide the best experience. By clicking “Accept
+              All,” you agree to our use of cookies, including the analytics
+              data described in our{' '}
+              <Link
+                className="text-secondary text-sm"
+                href={PRIVACY_POLICY_PAGE}
+              >
+                Privacy Policy
+              </Link>
+              .
+            </p>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button
+                className="w-full md:max-w-max"
+                color="secondary"
+                variant="solid"
+                onPress={handleAccept}
+              >
+                Accept All
+              </Button>
+              <Button
+                className="w-full md:max-w-max"
+                color="secondary"
+                variant="bordered"
+                onPress={handleDecline}
+              >
+                Decline
+              </Button>
+            </div>
           </div>
-        }
-        isVisible={isVisible && cookieConsent === null}
-        onClose={() => setIsVisible(false)}
-        endContent={
-          <div className="flex gap-2">
-            <Button color="secondary" variant="solid" onPress={handleAccept}>
-              Accept All
-            </Button>
-            <Button
-              color="secondary"
-              variant="bordered"
-              onPress={handleDecline}
-            >
-              Decline
-            </Button>
-          </div>
-        }
-      />
+        </Alert>
+      </div>
     </div>
   );
 }

@@ -19,5 +19,18 @@ export default function useCookieConsent() {
     setCookieConsent(consent as CookieConsentStatus | null);
   }, []);
 
+  useEffect(() => {
+    if (cookieConsent === undefined) return;
+
+    const analyticsStorage =
+      cookieConsent === CookieConsentStatus.Accepted ? 'granted' : 'denied';
+
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('consent', 'update', {
+        analytics_storage: analyticsStorage
+      });
+    }
+  }, [cookieConsent]);
+
   return { cookieConsent, updateCookieConsent };
 }
