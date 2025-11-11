@@ -9,7 +9,6 @@ import {
 } from '@heroui/react';
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { sendGTMEvent } from '@next/third-parties/google';
 import { useTranslations } from 'next-intl';
 
 import { CookieConsentStatus } from '@/lib/types';
@@ -73,7 +72,7 @@ const InvoiceModal = ({
               onPress={() => {
                 if (cookieConsent !== CookieConsentStatus.Accepted) return;
 
-                sendGTMEvent({
+                window.dataLayer?.push({
                   event: 'free_invoice_pdf_download',
                   invoice_id: invoiceData.invoiceId,
                   total_amount: invoiceData.totalAmount

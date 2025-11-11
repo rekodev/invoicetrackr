@@ -1,12 +1,12 @@
+import { ReactNode, Suspense } from 'react';
 import { getLocale, getMessages } from 'next-intl/server';
-import { GoogleAnalytics } from '@next/third-parties/google';
 import { Inter } from 'next/font/google';
 import type { Metadata } from 'next';
-import { ReactNode } from 'react';
 
 import './globals.css';
 
 import Footer from '@/components/footer';
+import GoogleAnalytics from '@/components/providers/google-analytics';
 import Header from '@/components/header';
 
 import CookieConsent from './cookie-consent';
@@ -66,7 +66,9 @@ export default async function RootLayout({
           <CookieConsent />
         </Providers>
       </body>
-      <GoogleAnalytics gaId="G-CSK6B9L88V" />
+      <Suspense>
+        <GoogleAnalytics gaId="G-CSK6B9L88V" />
+      </Suspense>
     </html>
   );
 }
