@@ -22,7 +22,8 @@ import { UserModel } from '../types';
 import {
   BadRequestError,
   NotFoundError,
-  UnauthorizedError
+  UnauthorizedError,
+  ValidationErrorCause
 } from '../utils/errors';
 import { saveResetTokenToDb } from '../database/password-reset';
 import { resend } from '../config/resend';
@@ -111,13 +112,22 @@ export const postUser = async (
 export const updateUser = async (
   req: FastifyRequest<{
     Params: { userId: number };
-    Body: UserModel & { file: MultipartFile };
+    Body: Pick<
+      UserModel,
+      | 'email'
+      | 'name'
+      | 'businessType'
+      | 'businessNumber'
+      | 'address'
+      | 'signature'
+    > & { file: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const file = req.body.file;
-  const user = req.body;
+  const { email, name, businessType, businessNumber, address, signature } =
+    req.body;
   const i18n = await useI18n(req);
 
   let uploadedSignature: UploadApiResponse;
@@ -139,9 +149,12 @@ export const updateUser = async (
 
   const signatureUrl = uploadedSignature?.url
     ? uploadedSignature.url.replace('http://', 'https://')
-    : user.signature;
+    : signature;
 
-  const updatedUser = await updateUserInDb(user, signatureUrl);
+  const updatedUser = await updateUserInDb(
+    { id: userId, email, name, businessType, businessNumber, address },
+    signatureUrl
+  );
 
   if (!updatedUser)
     throw new BadRequestError(i18n.t('error.user.unableToUpdate'));
@@ -282,7 +295,12 @@ export const changeUserPassword = async (
   const i18n = await useI18n(req);
 
   if (newPassword !== confirmedNewPassword)
-    throw new BadRequestError(i18n.t('error.user.newPasswordMismatch'));
+    throw new BadRequestError(i18n.t('validation.general'), {
+      cause: new ValidationErrorCause({
+        key: 'confirmedNewPassword',
+        value: i18n.t('validation.user.passwordMismatch')
+      })
+    });
 
   const currentPasswordHash = await getUserPasswordHashFromDb(userId);
   const isPasswordValid = await bcrypt.compare(password, currentPasswordHash);
@@ -366,7 +384,12 @@ export const createNewUserPassword = async (
   const i18n = await useI18n(req);
 
   if (newPassword !== confirmedNewPassword)
-    throw new BadRequestError(i18n.t('error.user.newPasswordMismatch'));
+    throw new BadRequestError(i18n.t('validation.general'), {
+      cause: new ValidationErrorCause({
+        key: 'confirmedNewPassword',
+        value: i18n.t('validation.user.passwordMismatch')
+      })
+    });
 
   const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
 

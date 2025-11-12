@@ -1,17 +1,13 @@
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
-
-import { v2 as cloudinary } from 'cloudinary';
+import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 import fastify from 'fastify';
-import { defineI18n, useI18n } from 'fastify-i18n';
-import cors from '@fastify/cors';
+import fastifyCookie from '@fastify/cookie';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyRateLimit from '@fastify/rate-limit';
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { defineI18n } from 'fastify-i18n';
+import { v2 as cloudinary } from 'cloudinary';
 
-import { cloudinaryConfig } from './config/cloudinary';
-import { getPgVersion } from './database/db';
-import i18n from './plugins/i18n';
-import { languageMiddleware } from './middleware';
 import {
   bankingInformationRoutes,
   clientRoutes,
@@ -20,8 +16,12 @@ import {
   paymentRoutes,
   userRoutes
 } from './routes';
-import { getTranslationKeyPrefix } from './utils/url';
-import fastifyCookie from '@fastify/cookie';
+import i18n from './plugins/i18n';
+import { cloudinaryConfig } from './config/cloudinary';
+import { errorHandler } from './utils/errors';
+import { getPgVersion } from './database/db';
+import { languageMiddleware } from './middleware';
+import { rateLimitPluginOptions } from './utils/rate-limit';
 
 dotenv.config();
 cloudinary.config(cloudinaryConfig);
@@ -58,63 +58,28 @@ const server = fastify({
   trustProxy: true
 }).withTypeProvider<TypeBoxTypeProvider>();
 
+// Register Plugins
 defineI18n(server, {
   en: import('./locales/en'),
   lt: import('./locales/lt')
 });
-
+server.register(i18n);
 server.register(cors);
 server.register(fastifyMultipart);
 server.register(fastifyCookie);
+server.register(fastifyRateLimit, rateLimitPluginOptions);
 
+// Register Middleware and Error Handler
+server.addHook('onRequest', languageMiddleware);
+server.setErrorHandler(errorHandler);
+
+// Register Routes
 server.register(invoiceRoutes);
 server.register(clientRoutes);
 server.register(userRoutes);
 server.register(bankingInformationRoutes);
 server.register(paymentRoutes);
 server.register(contactRoutes);
-server.register(i18n);
-server.register(fastifyRateLimit, {
-  max: 30,
-  timeWindow: '1 minute',
-  keyGenerator: (request) => {
-    const forwardedFor = request.headers['x-forwarded-for'];
-    return forwardedFor
-      ? (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor)
-          .split(',')[0]
-          .trim()
-      : request.ip;
-  }
-});
-server.addHook('onRequest', languageMiddleware);
-server.setErrorHandler(async function (error, request, reply) {
-  const i18n = useI18n(request);
-
-  if (error.validation) {
-    return reply.status(400).send({
-      message: i18n.t('validation.general'),
-      errors: error.validation.map((err) => {
-        const key = err.instancePath.substring(1).replace(/\//g, '.');
-        const keyPrefix = getTranslationKeyPrefix(request.url);
-        const nonDynamicKeyWithPrefix =
-          `validation.${keyPrefix}.${key}`.replace(/\.?\d+/g, '');
-
-        return {
-          key,
-          value:
-            i18n.t(nonDynamicKeyWithPrefix) === nonDynamicKeyWithPrefix
-              ? err.message || i18n.t('validation.reviewField')
-              : i18n.t(nonDynamicKeyWithPrefix)
-        };
-      }),
-      code: error.code
-    });
-  }
-
-  return reply
-    .status(error.statusCode || 500)
-    .send({ errors: [], message: error.message, code: error.code });
-});
 
 getPgVersion();
 

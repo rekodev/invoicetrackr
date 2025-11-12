@@ -5,17 +5,17 @@ export const BankAccount = Type.Object({
   name: Type.String({
     minLength: 1,
     maxLength: 255,
-    errorMessage: 'validation.bankAccount.name'
+    errorMessage: 'validation.bankingInformation.name'
   }),
   code: Type.String({
     minLength: 1,
     maxLength: 255,
-    errorMessage: 'validation.bankAccount.code'
+    errorMessage: 'validation.bankingInformation.code'
   }),
   accountNumber: Type.String({
     minLength: 1,
     maxLength: 255,
-    errorMessage: 'validation.bankAccount.accountNumber'
+    errorMessage: 'validation.bankingInformation.accountNumber'
   })
 });
 

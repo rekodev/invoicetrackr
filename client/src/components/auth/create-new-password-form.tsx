@@ -1,10 +1,5 @@
-"use client";
+'use client';
 
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-} from "@heroicons/react/24/outline";
 import {
   Button,
   Card,
@@ -13,13 +8,19 @@ import {
   CardHeader,
   Input,
   Link,
-  cn,
-} from "@heroui/react";
-import { useTranslations } from "next-intl";
-import { useActionState } from "react";
+  cn
+} from '@heroui/react';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon
+} from '@heroicons/react/24/outline';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 
-import { ActionReturnType, createNewPasswordAction } from "@/lib/actions";
-import { LOGIN_PAGE } from "@/lib/constants/pages";
+import { ActionResponseModel } from '@/lib/types/response/action';
+import { LOGIN_PAGE } from '@/lib/constants/pages';
+import { createNewPasswordAction } from '@/lib/actions';
 
 type Props = {
   userId: number;
@@ -27,17 +28,17 @@ type Props = {
 };
 
 export default function CreateNewPasswordForm({ userId, token }: Props) {
-  const t = useTranslations("create_new_password.form");
+  const t = useTranslations('create_new_password.form');
   const [response, formAction, isPending] = useActionState(
-    (prevState: ActionReturnType | undefined, formData: FormData) => {
+    (prevState: ActionResponseModel | undefined, formData: FormData) => {
       const newFormData = new FormData();
       formData.forEach((value, key) => newFormData.append(key, value));
-      newFormData.append("userId", String(userId));
-      newFormData.append("token", token);
+      newFormData.append('userId', String(userId));
+      newFormData.append('token', token);
 
       return createNewPasswordAction(prevState, newFormData);
     },
-    undefined,
+    undefined
   );
 
   return (
@@ -46,7 +47,7 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
       isBlurred
     >
       <CardHeader className="p-8 pb-0">
-        <h1 className="text-3xl font-medium">{t("title")}</h1>
+        <h1 className="text-3xl font-medium">{t('title')}</h1>
       </CardHeader>
       <CardBody className="p-8 pb-0">
         <form action={formAction} className="flex flex-col gap-4">
@@ -56,10 +57,10 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
             id="newPassword"
             type="password"
             name="newPassword"
-            label={t("new_password")}
-            placeholder={t("new_password_placeholder")}
-            required
-            minLength={6}
+            label={t('new_password')}
+            placeholder={t('new_password_placeholder')}
+            isInvalid={!!response?.validationErrors?.newPassword}
+            errorMessage={response?.validationErrors?.newPassword}
           />
           <Input
             labelPlacement="outside"
@@ -67,10 +68,10 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
             id="confirmedNewPassword"
             type="password"
             name="confirmedNewPassword"
-            label={t("confirmed_new_password")}
-            placeholder={t("confirmed_new_password_placeholder")}
-            required
-            minLength={6}
+            label={t('confirmed_new_password')}
+            placeholder={t('confirmed_new_password_placeholder')}
+            isInvalid={!!response?.validationErrors?.confirmedNewPassword}
+            errorMessage={response?.validationErrors?.confirmedNewPassword}
           />
           <Button
             className="w-full justify-between"
@@ -80,20 +81,20 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
             endContent={<ArrowRightIcon className="h-5 w-5" />}
             color="secondary"
           >
-            {t("submit")}
+            {t('submit')}
           </Button>
           <div aria-live="polite" aria-atomic="true">
             {response?.message && (
-              <div className="flex items-center gap-1 mb-6">
+              <div className="mb-6 flex items-center gap-1">
                 {response.ok ? (
-                  <CheckCircleIcon className="h-5 w-5 text-success-500" />
+                  <CheckCircleIcon className="text-success-500 h-5 w-5" />
                 ) : (
                   <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
                 )}
                 <p
-                  className={cn("text-sm", {
-                    "text-red-500": !response.ok,
-                    "text-success-500": response.ok,
+                  className={cn('text-sm', {
+                    'text-red-500': !response.ok,
+                    'text-success-500': response.ok
                   })}
                 >
                   {response.message}
@@ -103,11 +104,11 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
           </div>
         </form>
       </CardBody>
-      <CardFooter className="flex flex-col items-center justify-center pt-0 pb-8 gap-1">
+      <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
         <div className="flex gap-1">
-          <p className="text-md">{t("remember_your_password")}</p>{" "}
+          <p className="text-md">{t('remember_your_password')}</p>{' '}
           <Link color="secondary" href={LOGIN_PAGE}>
-            {t("sign_in")}
+            {t('sign_in')}
           </Link>
         </div>
       </CardFooter>

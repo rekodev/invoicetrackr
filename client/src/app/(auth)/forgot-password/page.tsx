@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { useTranslations } from 'next-intl';
 
+import AppLogo from '@/components/app-logo';
 import ForgotPasswordForm from '@/components/auth/forgot-password-form';
-import AppLogo from '@/components/icons/AppLogo';
 
 export const metadata: Metadata = {
   title: 'Forgot password',

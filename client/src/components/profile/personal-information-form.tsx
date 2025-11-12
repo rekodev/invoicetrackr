@@ -12,14 +12,14 @@ import {
   SelectItem,
   addToast
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState, useTransition } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
-import { updateUserAction } from '@/lib/actions/user';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { UserModel } from '@/lib/types/models/user';
 import { capitalize } from '@/lib/utils';
+import { updateUserAction } from '@/lib/actions/user';
 
 import SignaturePad from '../signature-pad';
 
@@ -28,14 +28,12 @@ type Props = {
   onSuccess?: () => void;
 };
 
-// TODO: Improve form and add validation
-
 const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
   const t = useTranslations('profile.personal_information.form');
   const {
     register,
     handleSubmit,
-    formState: { isDirty },
+    formState: { isDirty, isSubmitting, errors },
     reset,
     setError
   } = useForm<UserModel>({
@@ -44,41 +42,35 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
   const [formSignature, setFormSignature] = useState<
     File | string | undefined
   >();
-  const [isPending, startTransition] = useTransition();
 
-  const onSubmit: SubmitHandler<UserModel> = async (data) =>
-    startTransition(async () => {
-      if (!defaultValues?.id) return;
+  const onSubmit: SubmitHandler<UserModel> = async (data) => {
+    if (!defaultValues?.id) return;
 
-      const response = await updateUserAction({
-        user: data,
-        signature: formSignature || defaultValues.signature
-      });
-
-      addToast({
-        title: response.message,
-        color: response.ok ? 'success' : 'danger'
-      });
-
-      if (!response?.ok) {
-        if (response.validationErrors) {
-          Object.keys(response.validationErrors).forEach((key) => {
-            setError(key as keyof UserModel, {
-              message: response.validationErrors!.key
-            });
-          });
-        }
-
-        return;
-      }
-
-      onSuccess?.();
+    const response = await updateUserAction({
+      user: data,
+      signature: formSignature || defaultValues.signature
     });
 
-  // When form is updated and user is re-fetched, reset the form to match the new user data
-  useEffect(() => {
-    reset(defaultValues);
-  }, [reset, defaultValues]);
+    addToast({
+      title: response.message,
+      color: response.ok ? 'success' : 'danger'
+    });
+
+    if (!response?.ok) {
+      if (response.validationErrors) {
+        Object.entries(response.validationErrors).forEach(([key, message]) => {
+          setError(key as keyof UserModel, {
+            message
+          });
+        });
+      }
+
+      return;
+    }
+
+    reset(data);
+    onSuccess?.();
+  };
 
   const renderCardBodyAndFooter = () => {
     return (
@@ -91,6 +83,8 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
             placeholder={t('email_placeholder')}
             labelPlacement="outside"
             variant="faded"
+            isInvalid={Boolean(errors.email)}
+            errorMessage={errors.email?.message}
           />
           <Input
             {...register('name')}
@@ -98,6 +92,8 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
             placeholder={t('name_placeholder')}
             labelPlacement="outside"
             variant="faded"
+            isInvalid={Boolean(errors.name)}
+            errorMessage={errors.name?.message}
           />
           <Select
             {...register('businessType')}
@@ -110,6 +106,8 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
                 ? [`${defaultValues?.businessType}`]
                 : undefined
             }
+            isInvalid={Boolean(errors.businessType)}
+            errorMessage={errors.businessType?.message}
           >
             {CLIENT_BUSINESS_TYPES.map((type) => (
               <SelectItem key={type}>{capitalize(type)}</SelectItem>
@@ -121,6 +119,8 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
             placeholder={t('business_number_placeholder')}
             labelPlacement="outside"
             variant="faded"
+            isInvalid={Boolean(errors.businessNumber)}
+            errorMessage={errors.businessNumber?.message}
           />
           <Input
             {...register('address')}
@@ -128,6 +128,8 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
             placeholder={t('address_placeholder')}
             labelPlacement="outside"
             variant="faded"
+            isInvalid={Boolean(errors.address)}
+            errorMessage={errors.address?.message}
           />
           <div className="mt-[-0.25rem] flex flex-col gap-2">
             <label className="self-start text-sm">Signature</label>
@@ -141,7 +143,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
           <Button
             isDisabled={!isDirty && !Boolean(formSignature)}
             type="submit"
-            isLoading={isPending}
+            isLoading={isSubmitting}
             color="secondary"
             className="self-end"
           >

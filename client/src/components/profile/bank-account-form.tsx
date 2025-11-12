@@ -44,7 +44,7 @@ export default function BankAccountForm({
     register,
     handleSubmit,
     setError,
-    formState: { isSubmitting }
+    formState: { isSubmitting, isDirty, errors }
   } = useForm<BankingInformationFormModel>({
     defaultValues,
     resolver: zodResolver(bankingInformationSchema)
@@ -86,10 +86,7 @@ export default function BankAccountForm({
 
   return (
     <Card className="w-full bg-transparent dark:border dark:border-neutral-800">
-      <form
-        aria-label={t('a11y.form_label')}
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
         <CardHeader className="p-4 px-6">{t('title.create')}</CardHeader>
         <Divider />
         <CardBody className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2">
@@ -99,6 +96,8 @@ export default function BankAccountForm({
             variant="faded"
             labelPlacement="outside"
             placeholder={t('bank_name_placeholder')}
+            isInvalid={!!errors.name}
+            errorMessage={errors.name?.message}
           />
           <Input
             {...register('code')}
@@ -106,6 +105,8 @@ export default function BankAccountForm({
             variant="faded"
             labelPlacement="outside"
             placeholder={t('bank_code_placeholder')}
+            isInvalid={!!errors.code}
+            errorMessage={errors.code?.message}
           />
           <Input
             {...register('accountNumber')}
@@ -113,6 +114,8 @@ export default function BankAccountForm({
             variant="faded"
             labelPlacement="outside"
             placeholder={t('bank_account_number_placeholder')}
+            isInvalid={!!errors.accountNumber}
+            errorMessage={errors.accountNumber?.message}
           />
         </CardBody>
         <CardFooter className="justify-end gap-2 p-6">
@@ -126,7 +129,12 @@ export default function BankAccountForm({
                 {t('actions.cancel')}
               </Button>
             )}
-            <Button type="submit" color="secondary" isLoading={isSubmitting}>
+            <Button
+              type="submit"
+              color="secondary"
+              isDisabled={!isDirty}
+              isLoading={isSubmitting}
+            >
               {t('actions.save')}
             </Button>
           </div>

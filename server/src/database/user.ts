@@ -94,14 +94,19 @@ export const registerUser = async ({
   return users.at(0);
 };
 
-export const updateUserInDb = async (user: UserModel, signature: string) => {
-  const { name, address, businessNumber, businessType, type, email } = user;
+export const updateUserInDb = async (
+  user: Pick<
+    UserModel,
+    'id' | 'email' | 'name' | 'businessType' | 'businessNumber' | 'address'
+  >,
+  signature: string
+) => {
+  const { name, address, businessNumber, businessType, email } = user;
 
   const users = await db
     .update(usersTable)
     .set({
       name,
-      type,
       businessType,
       businessNumber,
       address,

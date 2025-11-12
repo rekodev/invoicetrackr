@@ -1,11 +1,10 @@
-import { HttpStatusCode } from 'axios';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
-import { getUserResetPasswordToken } from '@/api';
+import AppLogo from '@/components/app-logo';
 import CreateNewPasswordForm from '@/components/auth/create-new-password-form';
 import InvalidTokenCard from '@/components/auth/invalid-token-card';
-import AppLogo from '@/components/icons/AppLogo';
+import { getUserResetPasswordToken } from '@/api';
 import { isResponseError } from '@/lib/utils/error';
 
 export const metadata: Metadata = {

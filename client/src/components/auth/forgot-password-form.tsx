@@ -1,10 +1,6 @@
-"use client";
+'use client';
 
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
   Button,
   Card,
@@ -13,20 +9,25 @@ import {
   CardHeader,
   Input,
   Link,
-  cn,
-} from "@heroui/react";
-import { useTranslations } from "next-intl";
-import { useActionState } from "react";
+  cn
+} from '@heroui/react';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon
+} from '@heroicons/react/24/outline';
+import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 
-import { ActionReturnType, resetPasswordAction } from "@/lib/actions";
-import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from "@/lib/constants/pages";
+import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
+import { ActionResponseModel } from '@/lib/types/response/action';
+import { resetPasswordAction } from '@/lib/actions';
 
 export default function ForgotPasswordForm() {
-  const t = useTranslations("forgot_password");
+  const t = useTranslations('forgot_password');
   const [response, formAction, isPending] = useActionState(
-    (prevState: ActionReturnType | undefined, formData: FormData) =>
-      resetPasswordAction(prevState, formData.get("email") as string),
-    undefined,
+    (prevState: ActionResponseModel | undefined, formData: FormData) =>
+      resetPasswordAction(prevState, formData.get('email') as string),
+    undefined
   );
 
   return (
@@ -35,7 +36,7 @@ export default function ForgotPasswordForm() {
       isBlurred
     >
       <CardHeader className="p-8 pb-0">
-        <h1 className="text-3xl font-medium">{t("card_header")}</h1>
+        <h1 className="text-3xl font-medium">{t('card_header')}</h1>
       </CardHeader>
       <CardBody className="p-8 pb-0">
         <form action={formAction} className="flex flex-col gap-4">
@@ -45,9 +46,8 @@ export default function ForgotPasswordForm() {
             id="email"
             type="email"
             name="email"
-            label={t("email")}
-            placeholder={t("email_placeholder")}
-            required
+            label={t('email')}
+            placeholder={t('email_placeholder')}
           />
           <Button
             className="w-full justify-between"
@@ -57,20 +57,20 @@ export default function ForgotPasswordForm() {
             endContent={<ArrowRightIcon className="h-5 w-5" />}
             color="secondary"
           >
-            {t("reset_link")}
+            {t('reset_link')}
           </Button>
           <div aria-live="polite" aria-atomic="true">
             {response?.message && (
-              <div className="flex items-center gap-1 mb-6">
+              <div className="mb-6 flex items-center gap-1">
                 {response.ok ? (
-                  <CheckCircleIcon className="h-5 w-5 text-success-400" />
+                  <CheckCircleIcon className="text-success-400 h-5 w-5" />
                 ) : (
                   <ExclamationCircleIcon className="h-5 w-5 text-rose-500" />
                 )}
                 <p
-                  className={cn("text-sm", {
-                    "text-success-400": response.ok,
-                    "text-rose-500": !response.ok,
+                  className={cn('text-sm', {
+                    'text-success-400': response.ok,
+                    'text-rose-500': !response.ok
                   })}
                 >
                   {response.message}
@@ -80,14 +80,14 @@ export default function ForgotPasswordForm() {
           </div>
         </form>
       </CardBody>
-      <CardFooter className="flex flex-col items-center justify-center pt-0 pb-8 gap-1">
+      <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
         <Link color="secondary" href={FORGOT_PASSWORD_PAGE}>
-          <ArrowLeftIcon className="w-4 h-4 mr-1" /> {t("login")}
+          <ArrowLeftIcon className="mr-1 h-4 w-4" /> {t('login')}
         </Link>
         <div className="flex gap-1">
-          <p className="text-md">{t("create_account")}</p>
+          <p className="text-md">{t('create_account')}</p>
           <Link color="secondary" href={SIGN_UP_PAGE}>
-            {t("sign_up")}
+            {t('sign_up')}
           </Link>
         </div>
       </CardFooter>

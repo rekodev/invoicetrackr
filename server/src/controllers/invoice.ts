@@ -22,7 +22,8 @@ import { InvoiceModel } from '../types';
 import {
   AlreadyExistsError,
   BadRequestError,
-  NotFoundError
+  NotFoundError,
+  ValidationErrorCause
 } from '../utils/errors';
 import { resend } from '../config/resend';
 
@@ -80,9 +81,16 @@ export const postInvoice = async (
   );
 
   if (foundInvoice)
-    throw new AlreadyExistsError(
-      i18n.t('error.invoice.alreadyExists')
-    );
+    throw new AlreadyExistsError(i18n.t('error.invoice.alreadyExists'));
+
+  if (new Date(invoiceData.dueDate) < new Date(invoiceData.date)) {
+    throw new BadRequestError(i18n.t('validation.general'), {
+      cause: new ValidationErrorCause({
+        key: 'dueDate',
+        value: i18n.t('validation.invoice.dueDateAfterDate')
+      })
+    });
+  }
 
   const signatureUrl = uploadedSignature?.url
     ? uploadedSignature.url.replace('http://', 'https://')
@@ -94,7 +102,8 @@ export const postInvoice = async (
     signatureUrl
   );
 
-  if (!insertedInvoice) throw new BadRequestError(i18n.t('error.invoice.unableToCreate'));
+  if (!insertedInvoice)
+    throw new BadRequestError(i18n.t('error.invoice.unableToCreate'));
 
   reply.status(200).send({
     invoice: insertedInvoice,
@@ -114,6 +123,21 @@ export const updateInvoice = async (
   const signatureFile = req.body.file;
   const i18n = await useI18n(req);
 
+  const foundInvoice = await findInvoiceById(userId, invoiceData.id);
+
+  if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+
+  if (new Date(invoiceData.dueDate) < new Date(invoiceData.date)) {
+    throw new BadRequestError(i18n.t('validation.general'), {
+      cause: new Error(
+        JSON.stringify({
+          key: 'dueDate',
+          value: i18n.t('validation.invoice.dueDateAfterDate')
+        })
+      )
+    });
+  }
+
   let uploadedSignature: UploadApiResponse;
 
   if (signatureFile) {
@@ -127,10 +151,6 @@ export const updateInvoice = async (
       throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
   }
 
-  const foundInvoice = await findInvoiceById(userId, invoiceData.id);
-
-  if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
-
   const signatureUrl = uploadedSignature?.url
     ? uploadedSignature.url.replace('http://', 'https://')
     : invoiceData.senderSignature;
@@ -142,7 +162,8 @@ export const updateInvoice = async (
     signatureUrl
   );
 
-  if (!updatedInvoice) throw new BadRequestError(i18n.t('error.invoice.unableToUpdate'));
+  if (!updatedInvoice)
+    throw new BadRequestError(i18n.t('error.invoice.unableToUpdate'));
 
   reply.status(200).send({
     invoice: updatedInvoice,
@@ -181,7 +202,8 @@ export const deleteInvoice = async (
   const i18n = await useI18n(req);
   const deletedInvoice = await deleteInvoiceFromDb(userId, id);
 
-  if (!deletedInvoice) throw new BadRequestError(i18n.t('error.invoice.unableToDelete'));
+  if (!deletedInvoice)
+    throw new BadRequestError(i18n.t('error.invoice.unableToDelete'));
 
   reply.status(200).send({ message: i18n.t('success.invoice.deleted') });
 };
@@ -291,7 +313,8 @@ export const sendInvoiceEmail = async (
     ]
   });
 
-  if (error) throw new BadRequestError(i18n.t('error.invoice.unableToSendEmail'));
+  if (error)
+    throw new BadRequestError(i18n.t('error.invoice.unableToSendEmail'));
 
   reply.status(200).send({ message: i18n.t('success.invoice.emailSent') });
 };

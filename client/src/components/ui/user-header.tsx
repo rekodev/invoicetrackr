@@ -32,7 +32,7 @@ import { logOutAction } from '@/lib/actions';
 import LanguageSwitcher from './language-switcher';
 import ThemeSwitcher from './theme-switcher';
 
-import AppLogo from '../icons/AppLogo';
+import AppLogo from '../app-logo';
 
 const navbarItems = [
   { name: 'Dashboard', href: DASHBOARD_PAGE },
@@ -132,7 +132,10 @@ export default function UserHeader({ user }: Props) {
             />
           </DropdownTrigger>
           <form action={logOutAction}>
-            <DropdownMenu aria-label={t('a11y.profile_actions_label')} variant="flat">
+            <DropdownMenu
+              aria-label={t('a11y.profile_actions_label')}
+              variant="flat"
+            >
               <DropdownItem key="signed-in-as" className="h-14 gap-2">
                 <p className="font-semibold">{t('signed_in_as')}</p>
                 <p className="font-semibold">{user.email}</p>

@@ -23,7 +23,7 @@ import {
   SIGN_UP_PAGE
 } from '@/lib/constants/pages';
 
-import AppLogo from '../icons/AppLogo';
+import AppLogo from '../app-logo';
 import LanguageSwitcher from './language-switcher';
 import ThemeSwitcher from './theme-switcher';
 

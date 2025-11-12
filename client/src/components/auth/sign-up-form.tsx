@@ -60,7 +60,6 @@ export default function SignUpForm() {
       <CardBody className="p-8 pb-0">
         <form action={formAction} className="flex flex-col gap-4">
           <Input
-            isRequired
             labelPlacement="outside"
             variant="faded"
             id="email"
@@ -68,10 +67,8 @@ export default function SignUpForm() {
             name="email"
             label={t('email')}
             placeholder={t('email_placeholder')}
-            required
           />
           <Input
-            isRequired
             labelPlacement="outside"
             variant="faded"
             id="password"
@@ -79,11 +76,9 @@ export default function SignUpForm() {
             name="password"
             label={t('password')}
             placeholder={t('password_placeholder')}
-            required
             minLength={6}
           />
           <Input
-            isRequired
             labelPlacement="outside"
             variant="faded"
             id="confirm-password"
@@ -91,7 +86,6 @@ export default function SignUpForm() {
             name="confirm-password"
             label={t('confirm_password')}
             placeholder={t('confirm_password_placeholder')}
-            required
             minLength={6}
           />
           <Button

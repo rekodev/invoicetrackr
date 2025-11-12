@@ -9,12 +9,11 @@ import {
   Divider,
   addToast
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
-import { useTransition } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
-import { changeUserPasswordAction } from '@/lib/actions/user';
 import { ChangePasswordFormModel } from '@/lib/types/models/user';
+import { changeUserPasswordAction } from '@/lib/actions/user';
 
 import PasswordInput from '../password-input';
 
@@ -27,40 +26,39 @@ export default function ChangePasswordForm({ userId }: Props) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, isSubmitting },
     setError,
     reset
   } = useForm<ChangePasswordFormModel>({
     defaultValues: { password: '', newPassword: '', confirmedNewPassword: '' }
   });
-  const [isPending, startTransition] = useTransition();
 
-  const onSubmit: SubmitHandler<ChangePasswordFormModel> = async (data) =>
-    startTransition(async () => {
-      const response = await changeUserPasswordAction({
-        userId,
-        password: data.password,
-        newPassword: data.newPassword,
-        confirmedNewPassword: data.confirmedNewPassword
-      });
+  const onSubmit: SubmitHandler<ChangePasswordFormModel> = async (data) => {
+    const response = await changeUserPasswordAction({
+      userId,
+      password: data.password,
+      newPassword: data.newPassword,
+      confirmedNewPassword: data.confirmedNewPassword
+    });
 
-      addToast({
-        title: response.message,
-        color: response.ok ? 'success' : 'danger'
-      });
+    addToast({
+      title: response.message,
+      color: response.ok ? 'success' : 'danger'
+    });
 
-      if (!response.ok) {
-        if (response.validationErrors) {
-          Object.entries(response.validationErrors).forEach(([key, value]) => {
-            setError(key as keyof ChangePasswordFormModel, { message: value });
-          });
-        }
-
-        return;
+    if (!response.ok) {
+      console.log({ responseValidationErrors: response.validationErrors });
+      if (response.validationErrors) {
+        Object.entries(response.validationErrors).forEach(([key, value]) => {
+          setError(key as keyof ChangePasswordFormModel, { message: value });
+        });
       }
 
-      reset();
-    });
+      return;
+    }
+
+    reset();
+  };
 
   const renderCardBodyAndFooter = () => {
     const registeredPassword = { ...register('password') };
@@ -103,7 +101,7 @@ export default function ChangePasswordForm({ userId }: Props) {
             <Button
               isDisabled={!isDirty}
               type="submit"
-              isLoading={isPending}
+              isLoading={isSubmitting}
               color="secondary"
               className="self-end"
             >

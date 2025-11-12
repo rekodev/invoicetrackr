@@ -18,7 +18,7 @@ import {
   TERMS_OF_SERVICE_PAGE
 } from '@/lib/constants/pages';
 
-import AppLogo from './icons/AppLogo';
+import AppLogo from './app-logo';
 import ContactFormDialog from './contact-form-dialog';
 
 const FULL_FOOTER_PATHNAMES = [

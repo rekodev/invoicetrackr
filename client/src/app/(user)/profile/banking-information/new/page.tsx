@@ -1,5 +1,5 @@
-import { auth } from '@/auth';
 import BankAccountForm from '@/components/profile/bank-account-form';
+import { auth } from '@/auth';
 
 const AddNewBankAccount = async () => {
   const session = await auth();

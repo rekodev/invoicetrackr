@@ -1,10 +1,11 @@
-import { getLatestInvoices } from '@/api';
-import { Currency } from '@/lib/types/currency';
-import { isResponseError } from '@/lib/utils/error';
 import { getTranslations } from 'next-intl/server';
 
-import ViewAllInvoicesButton from './view-all-invoices-button';
+import { Currency } from '@/lib/types/currency';
+import { getLatestInvoices } from '@/api';
+import { isResponseError } from '@/lib/utils/error';
+
 import ClientCard from '../ui/client-card';
+import ViewAllInvoicesButton from './view-all-invoices-button';
 
 type Props = {
   userId: number;
