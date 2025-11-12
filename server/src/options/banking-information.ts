@@ -1,6 +1,6 @@
 import { Type } from '@sinclair/typebox';
-import { BankAccount } from '../types/models';
-import { MessageResponse } from '../types/responses';
+import { BankAccount } from '../types';
+import { MessageResponse } from '../types/response';
 import {
   deleteBankAccount,
   getBankAccount,

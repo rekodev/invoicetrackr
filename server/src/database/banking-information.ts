@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 
-import { BankAccountModel } from '../types/models';
+import { BankAccountModel } from '../types';
 import { db } from './db';
 import { bankingInformationTable } from './schema';
 

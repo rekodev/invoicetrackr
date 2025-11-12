@@ -92,7 +92,7 @@ server.setErrorHandler(async function (error, request, reply) {
 
   if (error.validation) {
     return reply.status(400).send({
-      message: 'Review fields and retry',
+      message: i18n.t('validation.general'),
       errors: error.validation.map((err) => {
         const key = err.instancePath.substring(1).replace(/\//g, '.');
         const keyPrefix = getTranslationKeyPrefix(request.url);
@@ -103,7 +103,7 @@ server.setErrorHandler(async function (error, request, reply) {
           key,
           value:
             i18n.t(nonDynamicKeyWithPrefix) === nonDynamicKeyWithPrefix
-              ? err.message || 'Review field'
+              ? err.message || i18n.t('validation.reviewField')
               : i18n.t(nonDynamicKeyWithPrefix)
         };
       }),

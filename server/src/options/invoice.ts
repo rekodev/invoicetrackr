@@ -13,8 +13,8 @@ import {
   updateInvoice,
   updateInvoiceStatus
 } from '../controllers';
-import { Invoice } from '../types/models';
-import { MessageResponse } from '../types/responses';
+import { Invoice } from '../types';
+import { MessageResponse } from '../types/response';
 import { preValidateFileAndFields } from '../utils/multipart';
 import { authMiddleware } from '../middleware/auth';
 
@@ -149,16 +149,16 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
     body: Type.Object({
       recipientEmail: Type.String({
         format: 'email',
-        errorMessage: 'Invalid email'
+        errorMessage: 'validation.invoice.email.format'
       }),
       subject: Type.String({
         minLength: 1,
-        errorMessage: 'Subject is required'
+        errorMessage: 'validation.invoice.email.subject'
       }),
       message: Type.Optional(
         Type.String({
           maxLength: 1000,
-          errorMessage: 'Message is too long'
+          errorMessage: 'validation.invoice.email.message'
         })
       )
     })

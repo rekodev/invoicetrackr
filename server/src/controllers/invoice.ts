@@ -18,7 +18,7 @@ import {
   updateInvoiceInDb,
   updateInvoiceStatusInDb
 } from '../database';
-import { InvoiceModel } from '../types/models';
+import { InvoiceModel } from '../types';
 import {
   AlreadyExistsError,
   BadRequestError,

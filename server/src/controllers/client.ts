@@ -9,7 +9,7 @@ import {
   insertClientInDb,
   updateClientInDb
 } from '../database';
-import { ClientModel } from '../types/models';
+import { ClientModel } from '../types';
 import { BadRequestError, NotFoundError } from '../utils/errors';
 
 export const getClients = async (

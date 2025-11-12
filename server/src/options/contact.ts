@@ -2,7 +2,7 @@ import { RouteShorthandOptionsWithHandler } from 'fastify';
 import { Type } from '@sinclair/typebox';
 
 import { postContactMessage } from '../controllers';
-import { MessageResponse } from '../types/responses';
+import { MessageResponse } from '../types/response';
 
 export const postContactMessageOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -11,12 +11,12 @@ export const postContactMessageOptions: RouteShorthandOptionsWithHandler = {
         format: 'email',
         maxLength: 255,
         minLength: 5,
-        errorMessage: 'Invalid email'
+        errorMessage: 'validation.contact.email'
       }),
       message: Type.String({
         minLength: 1,
         maxLength: 5000,
-        errorMessage: 'Message must be between 1 and 5000 characters long'
+        errorMessage: 'validation.contact.message'
       })
     }),
     response: {

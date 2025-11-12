@@ -18,7 +18,7 @@ import {
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb
 } from '../database';
-import { UserModel } from '../types/models';
+import { UserModel } from '../types';
 import {
   BadRequestError,
   NotFoundError,

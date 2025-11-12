@@ -7,8 +7,8 @@ import {
   postClient,
   updateClient
 } from '../controllers';
-import { Client } from '../types/models';
-import { MessageResponse } from '../types/responses';
+import { Client } from '../types';
+import { MessageResponse } from '../types/response';
 import { authMiddleware } from '../middleware/auth';
 
 export const getClientsOptions: RouteShorthandOptionsWithHandler = {

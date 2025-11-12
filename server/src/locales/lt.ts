@@ -6,21 +6,77 @@ export default {
     }
   },
   validation: {
+    general: 'Peržiūrėkite laukus ir bandykite dar kartą',
+    reviewField: 'Peržiūrėkite lauką',
     invoice: {
-      name: 'Vardas arba pavadinimas yra privalomas',
-      status: 'Būsena yra privaloma',
+      invoiceId: 'Turi atitikti formatą "ABC123"',
+      date: 'Reikalinga tinkama data',
+      dueDate: 'Reikalinga tinkama data',
+      status: 'Tinkama būsena yra privaloma',
+      businessType: 'Reikalingas "Verslas" arba "Fizinis asmuo"',
+      partyType: 'Tinkamas šalies tipas yra privalomas',
+      totalAmount: 'Bendra suma yra privaloma',
+      sender: {
+        required: 'Siuntėjas yra privalomas',
+        name: 'Vardas arba pavadinimas yra privalomas',
+        businessNumber: 'Įmonės kodas yra privalomas',
+        address: 'Adresas yra privalomas',
+        email: 'Tinkamas el. pašto adresas yra privalomas'
+      },
+      receiver: {
+        required: 'Gavėjas yra privalomas',
+        name: 'Vardas arba pavadinimas yra privalomas',
+        businessNumber: 'Įmonės kodas iki 15 simbolių yra privalomas',
+        address: 'Adresas iki 255 simbolių yra privalomas',
+        email: 'Tinkamas el. pašto adresas yra privalomas'
+      },
       services: {
-        description: 'Aprašymas yra privalomas',
-        amount: 'Kiekis yra privalomas'
+        required: 'Būtina bent viena paslauga',
+        description: 'Aprašymas iki 200 simbolių yra privalomas',
+        unit: 'Vienetas iki 20 simbolių yra privalomas',
+        quantity: 'Kiekis tarp 0.0001 ir 10,000 yra privalomas',
+        amount: 'Suma tarp 0.01 ir 1,000,000 yra privaloma'
+      },
+      bankingInformation: {
+        required: 'Banko informacija yra privaloma',
+        name: 'Banko pavadinimas yra privalomas',
+        code: 'Banko kodas yra privalomas',
+        accountNumber: 'Banko sąskaitos numeris yra privalomas'
+      },
+      email: {
+        format: 'Neteisingas el. pašto adresas',
+        subject: 'Tema yra privaloma',
+        message: 'Žinutė per ilga'
       }
     },
     client: {
+      name: 'Vardas arba pavadinimas yra privalomas',
+      businessNumber: 'Įmonės kodas yra privalomas',
+      address: 'Adresas yra privalomas',
       email: 'Turi būti tinkamas el. pašto adresas'
     },
+    bankAccount: {
+      name: 'Banko pavadinimas yra privalomas',
+      code: 'Banko kodas yra privalomas',
+      accountNumber: 'Banko sąskaitos numeris yra privalomas'
+    },
     user: {
+      name: 'Vardas arba pavadinimas yra privalomas',
+      businessNumber: 'Įmonės kodas yra privalomas',
+      address: 'Adresas yra privalomas',
+      email: 'Tinkamas el. pašto adresas yra privalomas',
       password: 'Dabartinis slaptažodis yra privalomas',
       newPassword: 'Naujas slaptažodis yra privalomas',
-      confirmedNewPassword: 'Naujas patvirtintas slaptažodis yra privalomas'
+      confirmedNewPassword: 'Naujas patvirtintas slaptažodis yra privalomas',
+      loginPassword: 'Slaptažodis turi būti bent 6 simbolių ilgio',
+      registerPassword: 'Slaptažodis turi būti bent 6 simbolių ilgio',
+      confirmedPassword: 'Turi sutapti su slaptažodžiu',
+      currency: 'Valiuta yra privaloma',
+      language: 'Kalba yra privaloma'
+    },
+    contact: {
+      email: 'Neteisingas el. pašto adresas',
+      message: 'Žinutė turi būti nuo 1 iki 5000 simbolių ilgio'
     }
   },
   success: {

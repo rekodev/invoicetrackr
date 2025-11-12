@@ -6,21 +6,77 @@ export default {
     }
   },
   validation: {
+    general: 'Review fields and retry',
+    reviewField: 'Review field',
     invoice: {
-      name: 'Name is required',
-      status: 'Status is required',
+      invoiceId: 'Required to match format "ABC123"',
+      date: 'Valid date is required',
+      dueDate: 'Valid date is required',
+      status: 'Valid status is required',
+      businessType: '"Business" or "Individual" required',
+      partyType: 'Valid party type is required',
+      totalAmount: 'Total amount is required',
+      sender: {
+        required: 'Sender is required',
+        name: 'Name is required',
+        businessNumber: 'Business number is required',
+        address: 'Address is required',
+        email: 'Valid email is required'
+      },
+      receiver: {
+        required: 'Receiver is required',
+        name: 'Name is required',
+        businessNumber: 'Business number up to 15 characters is required',
+        address: 'Address up to 255 characters is required',
+        email: 'Valid email is required'
+      },
       services: {
-        description: 'Description is required',
-        amount: 'Amount is required'
+        required: 'At least one service is required',
+        description: 'Description up to 200 characters is required',
+        unit: 'Unit up to 20 characters is required',
+        quantity: 'Quantity between 0.0001 and 10,000 is required',
+        amount: 'Amount between 0.01 and 1,000,000 is required'
+      },
+      bankingInformation: {
+        required: 'Banking information is required',
+        name: 'Bank name is required',
+        code: 'Bank code is required',
+        accountNumber: 'Bank account number is required'
+      },
+      email: {
+        format: 'Invalid email',
+        subject: 'Subject is required',
+        message: 'Message is too long'
       }
     },
     client: {
+      name: 'Name is required',
+      businessNumber: 'Business number is required',
+      address: 'Address is required',
       email: 'Must be a valid email address'
     },
+    bankAccount: {
+      name: 'Bank name is required',
+      code: 'Bank code is required',
+      accountNumber: 'Bank account number is required'
+    },
     user: {
+      name: 'Name is required',
+      businessNumber: 'Business number is required',
+      address: 'Address is required',
+      email: 'Valid email is required',
       password: 'Current password is required',
       newPassword: 'New password is required',
-      confirmedNewPassword: 'Confirmed new password is required'
+      confirmedNewPassword: 'Confirmed new password is required',
+      loginPassword: 'Password must be at least 6 characters long',
+      registerPassword: 'Password must be at least 6 characters long',
+      confirmedPassword: 'Must match password',
+      currency: 'Currency is required',
+      language: 'Language is required'
+    },
+    contact: {
+      email: 'Invalid email',
+      message: 'Message must be between 1 and 5000 characters long'
     }
   },
   success: {
