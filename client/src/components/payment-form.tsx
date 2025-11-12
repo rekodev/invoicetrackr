@@ -129,8 +129,6 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
       try {
         await updateSessionAction({
           newSession: {
-            ...user,
-            id: String(user.id),
             isOnboarded: true,
             isSubscriptionActive: true
           },

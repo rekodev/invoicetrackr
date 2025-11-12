@@ -1,13 +1,6 @@
 'use client';
 
 import {
-  LockClosedIcon,
-  PencilSquareIcon,
-  PlusIcon,
-  TrashIcon
-} from '@heroicons/react/24/outline';
-import { PlusCircleIcon } from '@heroicons/react/24/solid';
-import {
   Button,
   Card,
   CardBody,
@@ -19,16 +12,23 @@ import {
   addToast,
   useDisclosure
 } from '@heroui/react';
-import { useRouter } from 'next/navigation';
-import { User } from 'next-auth';
-import { useTranslations } from 'next-intl';
+import {
+  LockClosedIcon,
+  PencilSquareIcon,
+  PlusIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline';
 import { useEffect, useState, useTransition } from 'react';
+import { PlusCircleIcon } from '@heroicons/react/24/solid';
+import { User } from 'next-auth';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
-import { updateUserSelectedBankAccount } from '@/api';
-import { updateSession } from '@/lib/actions';
 import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 import { isResponseError } from '@/lib/utils/error';
+import { updateSessionAction } from '@/lib/actions';
+import { updateUserSelectedBankAccount } from '@/api';
 
 import DeleteBankAccountDialog from './delete-bank-account-dialog';
 import EditBankingInformationDialog from './edit-banking-information-dialog';
@@ -83,9 +83,8 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
 
       if (isResponseError(response)) return;
 
-      await updateSession({
+      await updateSessionAction({
         newSession: {
-          ...user,
           selectedBankAccountId: Number(selectedBankAccountId)
         }
       });
@@ -153,8 +152,8 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
       return (
         <EmptyState
           icon={<PlusCircleIcon className="text-secondary-500 h-10 w-10" />}
-          title="No bank accounts"
-          description='You have no bank accounts added. To add one, click on the "Add New +" button'
+          title={t('empty_state.title')}
+          description={t('empty_state.description')}
         />
       );
 

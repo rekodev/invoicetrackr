@@ -3,7 +3,6 @@ import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 
 import Breadcrumbs from '@/components/breadcrumbs';
-import LanguageSync from '@/components/language-sync';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
 import { auth } from '@/auth';
 
@@ -31,7 +30,6 @@ export default async function UserLayout({
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col px-6">
-      <LanguageSync userLanguage={session?.user?.language} />
       <Breadcrumbs />
       {children}
     </main>

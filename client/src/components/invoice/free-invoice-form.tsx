@@ -226,7 +226,7 @@ const FreeInvoiceForm = () => {
           variant="light"
           onPress={() => router.push(HOME_PAGE)}
         >
-          Cancel
+          {t('buttons.cancel')}
         </Button>
         <Button
           type="button"
@@ -234,7 +234,7 @@ const FreeInvoiceForm = () => {
           onPress={() => setIsInvoiceModalOpen(true)}
         >
           <EyeIcon className="h-5 w-5" />
-          Preview
+          {t('buttons.preview')}
         </Button>
       </div>
     </div>

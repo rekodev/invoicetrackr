@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Button,
   Input,
@@ -10,8 +12,8 @@ import {
   SelectItem,
   addToast
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
 import { addClientAction, updateClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
@@ -38,11 +40,12 @@ type ClientFormData = ClientModel;
 const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
   const t = useTranslations('clients.form_dialog');
   const tTypes = useTranslations('clients.form_dialog.business_types');
-  
+
   const {
     register,
     handleSubmit,
-    formState: { isDirty, isLoading }
+    formState: { isDirty, isLoading, errors },
+    setError
   } = useForm<ClientFormData>({
     defaultValues: clientData || INITIAL_CLIENT_DATA
   });
@@ -63,7 +66,19 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
       color: response.ok ? 'success' : 'danger'
     });
 
-    if (!response.ok) return;
+    if (!response.ok) {
+      if (response.validationErrors) {
+        Object.entries(response?.validationErrors)?.forEach(
+          ([key, message]) => {
+            setError(key as keyof ClientFormData, {
+              message
+            });
+          }
+        );
+      }
+
+      return;
+    }
 
     onClose();
   };
@@ -81,14 +96,16 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
               type="text"
               label={t('fields.name')}
               variant="bordered"
-              isRequired
+              isInvalid={!!errors.name}
+              errorMessage={errors.name?.message}
             />
             <Select
               {...register('businessType')}
               label={t('fields.business_type')}
               variant="bordered"
               defaultSelectedKeys={clientData ? [clientData.businessType] : []}
-              isRequired
+              isInvalid={!!errors.businessType}
+              errorMessage={errors.businessType?.message}
             >
               {CLIENT_BUSINESS_TYPES.map((type) => (
                 <SelectItem key={type}>{tTypes(type)}</SelectItem>
@@ -99,20 +116,24 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
               type="text"
               label={t('fields.business_number')}
               variant="bordered"
-              isRequired
+              isInvalid={!!errors.businessNumber}
+              errorMessage={errors.businessNumber?.message}
             />
             <Input
               {...register('address')}
               type="text"
               label={t('fields.address')}
               variant="bordered"
-              isRequired
+              isInvalid={!!errors.address}
+              errorMessage={errors.address?.message}
             />
             <Input
               {...register('email')}
               type="email"
               label={t('fields.email')}
               variant="bordered"
+              isInvalid={!!errors.email}
+              errorMessage={errors.email?.message}
             />
           </ModalBody>
           <ModalFooter>

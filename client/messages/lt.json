@@ -183,6 +183,10 @@
       "login_link": "Prisijungti"
     },
     "multi_step": {
+      "branding": {
+        "app_name": "InvoiceTrackr",
+        "tagline": "Tvarkykite sąskaitas faktūras ir stebėkite pajamas lengvai"
+      },
       "steps": {
         "account": {
           "name": "Sukurti paskyrą",
@@ -216,7 +220,7 @@
       "total_clients": "Viso klientų"
     },
     "revenue_chart": {
-      "title": "Naujausi įplaukos",
+      "title": "Naujausios įplaukos",
       "chart_label": "Sąskaitų faktūrų įplaukos pagal mėnesį",
       "revenue": "Įplaukos",
       "months": {
@@ -494,6 +498,10 @@
         "add": "Pridėti naują",
         "save": "Išsaugoti"
       },
+      "empty_state": {
+        "title": "Nėra banko sąskaitų",
+        "description": "Neturite pridėtų banko sąskaitų. Norėdami pridėti, spustelėkite mygtuką \"Pridėti naują +\""
+      },
       "delete_dialog": {
         "title": "Ištrinti bankinę informaciją {bank_number}",
         "description": "Ar tikrai norite ištrinti šią bankinę informaciją? Šis veiksmas yra negrįžtamas.",
@@ -501,6 +509,9 @@
         "cancel_button": "Atšaukti"
       },
       "form": {
+        "a11y": {
+          "form_label": "Bankinės informacijos forma"
+        },
         "title": {
           "create": "Pridėti bankinę informaciją",
           "edit": "Redaguoti bankinę informaciją"

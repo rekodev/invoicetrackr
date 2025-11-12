@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-const LAST_UPDATED = 'October 30, 2025';
+const LAST_UPDATED = '10/30/2025';
 const CONTACT_EMAIL = 'invoicetrackr@gmail.com';
 
 export function TermsOfServiceContent() {
@@ -58,10 +58,18 @@ export function TermsOfServiceContent() {
             {t('sections.account_registration.creation.intro')}
           </p>
           <ul className="mb-4 ml-6 list-disc space-y-2 text-gray-700 dark:text-gray-300">
-            <li>{t('sections.account_registration.creation.items.accurate')}</li>
-            <li>{t('sections.account_registration.creation.items.maintain')}</li>
-            <li>{t('sections.account_registration.creation.items.security')}</li>
-            <li>{t('sections.account_registration.creation.items.responsibility')}</li>
+            <li>
+              {t('sections.account_registration.creation.items.accurate')}
+            </li>
+            <li>
+              {t('sections.account_registration.creation.items.maintain')}
+            </li>
+            <li>
+              {t('sections.account_registration.creation.items.security')}
+            </li>
+            <li>
+              {t('sections.account_registration.creation.items.responsibility')}
+            </li>
             <li>{t('sections.account_registration.creation.items.notify')}</li>
           </ul>
 
@@ -193,10 +201,12 @@ export function TermsOfServiceContent() {
               <strong>Stripe:</strong> {t('sections.third_party.stripe')}
             </li>
             <li>
-              <strong>Cloudinary:</strong> {t('sections.third_party.cloudinary')}
+              <strong>Cloudinary:</strong>{' '}
+              {t('sections.third_party.cloudinary')}
             </li>
             <li>
-              <strong>Google Analytics:</strong> {t('sections.third_party.analytics')}
+              <strong>Google Analytics:</strong>{' '}
+              {t('sections.third_party.analytics')}
             </li>
           </ul>
           <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-const LAST_UPDATED = 'October 30, 2025';
+const LAST_UPDATED = '10/30/2025';
 const CONTACT_EMAIL = 'invoicetrackr@gmail.com';
 
 export function PrivacyPolicyContent() {

@@ -47,7 +47,10 @@ export default {
         format: 'Invalid email',
         subject: 'Subject is required',
         message: 'Message is too long'
-      }
+      },
+      recipientEmail: 'Valid recipient email is required',
+      subject: 'Subject is required',
+      message: 'Message must not exceed 1000 characters'
     },
     client: {
       name: 'Name is required',

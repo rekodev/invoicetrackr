@@ -1,4 +1,4 @@
-import UnderConstruction from '@/pages/under-construction';
+import UnderConstruction from '@/components/under-construction';
 
 const ContractsPage = () => {
   return <UnderConstruction />;

@@ -149,16 +149,16 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
     body: Type.Object({
       recipientEmail: Type.String({
         format: 'email',
-        errorMessage: 'validation.invoice.email.format'
+        errorMessage: 'validation.invoice.recipientEmail'
       }),
       subject: Type.String({
         minLength: 1,
-        errorMessage: 'validation.invoice.email.subject'
+        errorMessage: 'validation.invoice.subject'
       }),
       message: Type.Optional(
         Type.String({
           maxLength: 1000,
-          errorMessage: 'validation.invoice.email.message'
+          errorMessage: 'validation.invoice.message'
         })
       )
     })

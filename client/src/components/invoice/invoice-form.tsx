@@ -373,10 +373,10 @@ const InvoiceForm = ({
     <div className="col-span-4 flex w-full items-center justify-between gap-5 overflow-x-hidden">
       <div className="flex w-full flex-col justify-end gap-1 sm:flex-row">
         <Button color="danger" variant="light" onPress={redirectToInvoicesPage}>
-          Cancel
+          {t('buttons.cancel')}
         </Button>
         <Button type="submit" isLoading={isPending} color="secondary">
-          Save
+          {t('buttons.save')}
         </Button>
       </div>
     </div>
@@ -427,7 +427,7 @@ const InvoiceForm = ({
                             }
                             onPress={() => handleNextInvoiceIdSelect(field)}
                           >
-                            Use Next
+                            {t('buttons.use_next')}
                           </Button>
                         )
                       }

@@ -84,6 +84,7 @@ export const postUser = async (
 ) => {
   const { email, password, confirmedPassword } = req.body;
   const i18n = await useI18n(req);
+  const language = req.headers['accept-language'] || 'en';
 
   if (password !== confirmedPassword)
     throw new BadRequestError(i18n.t('error.user.passwordsDoNotMatch'));
@@ -93,7 +94,11 @@ export const postUser = async (
   if (!!user) throw new BadRequestError(i18n.t('error.user.alreadyExists'));
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const createdUser = await registerUser({ email, password: hashedPassword });
+  const createdUser = await registerUser({
+    email,
+    password: hashedPassword,
+    language
+  });
 
   if (!createdUser)
     throw new BadRequestError(i18n.t('error.user.unableToCreate'));

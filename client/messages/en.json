@@ -183,6 +183,10 @@
       "login_link": "Log In"
     },
     "multi_step": {
+      "branding": {
+        "app_name": "InvoiceTrackr",
+        "tagline": "Manage invoices and track your income seamlessly"
+      },
       "steps": {
         "account": {
           "name": "Create an account",
@@ -494,6 +498,10 @@
         "add": "Add New",
         "save": "Save"
       },
+      "empty_state": {
+        "title": "No bank accounts",
+        "description": "You have no bank accounts added. To add one, click on the \"Add New +\" button"
+      },
       "delete_dialog": {
         "title": "Delete Banking Information {bank_number}",
         "description": "Are you sure you want to delete this banking information? This action is irreversible.",
@@ -501,6 +509,9 @@
         "cancel_button": "Cancel"
       },
       "form": {
+        "a11y": {
+          "form_label": "Banking Information Form"
+        },
         "title": {
           "create": "Add Banking Information",
           "edit": "Edit Banking Information"

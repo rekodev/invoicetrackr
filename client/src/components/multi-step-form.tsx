@@ -169,9 +169,9 @@ export default function MultiStepForm({
               <AppLogo height={60} width={60} />
 
               <div className="flex flex-col">
-                <h3 className="text-2xl font-bold">InvoiceTrackr</h3>
+                <h3 className="text-2xl font-bold">{t('branding.app_name')}</h3>
                 <p className="text-default-500">
-                  Manage invoices and track your income seamlessly
+                  {t('branding.tagline')}
                 </p>
               </div>
             </div>

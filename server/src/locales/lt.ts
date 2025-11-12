@@ -47,7 +47,10 @@ export default {
         format: 'Neteisingas el. pašto adresas',
         subject: 'Tema yra privaloma',
         message: 'Žinutė per ilga'
-      }
+      },
+      recipientEmail: 'Tinkamas gavėjo el. pašto adresas yra privalomas',
+      subject: 'Tema yra privaloma',
+      message: 'Žinutė negali viršyti 1000 simbolių'
     },
     client: {
       name: 'Vardas arba pavadinimas yra privalomas',
@@ -87,8 +90,10 @@ export default {
       profilePictureUpdated: 'Profilio nuotrauka atnaujinta sėkmingai',
       accountSettingsUpdated: 'Paskyros nustatymai atnaujinti sėkmingai',
       passwordChanged: 'Slaptažodis pakeistas sėkmingai',
-      resetLinkSent: 'Slaptažodžio atstatymo nuoroda išsiųsta į nurodytą el. paštą',
-      selectedBankAccountUpdated: 'Pagrindinė banko sąskaita atnaujinta sėkmingai'
+      resetLinkSent:
+        'Slaptažodžio atstatymo nuoroda išsiųsta į nurodytą el. paštą',
+      selectedBankAccountUpdated:
+        'Pagrindinė banko sąskaita atnaujinta sėkmingai'
     },
     invoice: {
       created: 'Sąskaita faktūra pridėta sėkmingai',
@@ -104,7 +109,8 @@ export default {
     },
     bankAccount: {
       created: 'Banko sąskaita pridėta sėkmingai',
-      createdWithWarning: 'Banko sąskaita pridėta sėkmingai. Pasirinkite ją kaip pagrindinę sąskaitą.',
+      createdWithWarning:
+        'Banko sąskaita pridėta sėkmingai. Pasirinkite ją kaip pagrindinę sąskaitą.',
       updated: 'Banko sąskaita atnaujinta sėkmingai',
       deleted: 'Banko sąskaita ištrinta sėkmingai'
     },
@@ -122,18 +128,21 @@ export default {
       invalidCredentials: 'Neteisingi prisijungimo duomenys',
       passwordsDoNotMatch: 'Slaptažodžiai nesutampa',
       currentPasswordIncorrect: 'Dabartinis slaptažodis neteisingas',
-      newPasswordMismatch: 'Naujas ir naujas patvirtintas slaptažodžiai nesutampa',
+      newPasswordMismatch:
+        'Naujas ir naujas patvirtintas slaptažodžiai nesutampa',
       unableToCreate: 'Nepavyko sukurti vartotojo',
       unableToUpdate: 'Nepavyko atnaujinti vartotojo informacijos',
       unableToDelete: 'Šiuo metu nepavyko ištrinti paskyros. Bandykite vėliau',
       unableToUpdateProfilePicture: 'Nepavyko atnaujinti profilio nuotraukos',
       unableToUpdateAccountSettings: 'Nepavyko atnaujinti paskyros nustatymų',
       unableToChangePassword: 'Nepavyko pakeisti slaptažodžio',
-      unableToSendResetLink: 'Nepavyko išsiųsti nuorodos slaptažodžiui atkurti. Bandykite vėliau',
+      unableToSendResetLink:
+        'Nepavyko išsiųsti nuorodos slaptažodžiui atkurti. Bandykite vėliau',
       tokenInvalid: 'Raktas yra neteisingas',
       tokenExpired: 'Rakto galiojimo laikas pasibaigė',
       unableToUploadSignature: 'Nepavyko įkelti parašo',
-      unableToUpdateSelectedBankAccount: 'Nepavyko atnaujinti pagrindinės banko sąskaitos'
+      unableToUpdateSelectedBankAccount:
+        'Nepavyko atnaujinti pagrindinės banko sąskaitos'
     },
     invoice: {
       notFound: 'Sąskaita faktūra nerasta',
@@ -154,7 +163,8 @@ export default {
     },
     bankAccount: {
       notFound: 'Banko sąskaita nerasta',
-      alreadyExists: 'Banko sąskaita su nurodytu sąskaitos numeriu jau egzistuoja',
+      alreadyExists:
+        'Banko sąskaita su nurodytu sąskaitos numeriu jau egzistuoja',
       unableToCreate: 'Nepavyko pridėti banko sąskaitos',
       unableToUpdate: 'Nepavyko atnaujinti banko sąskaitos',
       unableToDelete: 'Nepavyko ištrinti banko sąskaitos',

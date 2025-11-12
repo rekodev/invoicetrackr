@@ -1,5 +1,6 @@
 'use client';
 
+import { BlobProvider, PDFDownloadLink } from '@react-pdf/renderer';
 import {
   Checkbox,
   Chip,
@@ -12,7 +13,6 @@ import {
 } from '@heroui/react';
 import { Key, useEffect, useState, useTransition } from 'react';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
 import { useTranslations } from 'next-intl';
 
 import { InvoiceModel, InvoiceStatus } from '@/lib/types/models/invoice';
@@ -82,8 +82,7 @@ const InvoiceTableCell = ({
       if (!response.ok) setIsPaid((prev) => !prev);
 
       addToast({
-        title: response.ok ? 'Success' : 'Error',
-        description: response.message,
+        title: response.message,
         color: response.ok ? 'success' : 'danger'
       });
     });
@@ -198,7 +197,9 @@ const InvoiceTableCell = ({
             </DropdownMenu>
           </Dropdown>
 
-          <Tooltip content={isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid')}>
+          <Tooltip
+            content={isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid')}
+          >
             <Checkbox
               className="mr-0.5 max-w-5 p-0"
               size="sm"

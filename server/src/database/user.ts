@@ -71,15 +71,16 @@ export const getUserByEmailFromDb = async (email: string) => {
 
 export const registerUser = async ({
   email,
-  password
-}: Pick<UserModel, 'email' | 'password'>) => {
+  password,
+  language
+}: Pick<UserModel, 'email' | 'password' | 'language'>) => {
   const users = await db
     .insert(usersTable)
     .values({
       email,
       password,
       currency: 'usd',
-      language: 'en',
+      language,
       type: 'sender',
       businessType: 'individual',
       businessNumber: '',
