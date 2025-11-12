@@ -18,7 +18,7 @@ export const authMiddleware = async (
 
   const decodedToken = await decode({
     token: authToken,
-    secret: process.env.AUTH_SECRET,
+    secret: process.env.AUTH_SECRET!,
     salt: isCookieSecure ? SECURE_AUTH_COOKIE : AUTH_COOKIE
   });
 

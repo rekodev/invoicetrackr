@@ -9,7 +9,10 @@ import {
   insertBankAccountInDb,
   updateBankAccountInDb
 } from '../database/banking-information';
-import { getUserFromDb, updateUserSelectedBankAccountInDb } from '../database/user';
+import {
+  getUserFromDb,
+  updateUserSelectedBankAccountInDb
+} from '../database/user';
 import {
   AlreadyExistsError,
   BadRequestError,
@@ -117,7 +120,7 @@ export const deleteBankAccount = async (
   const i18n = await useI18n(req);
   const user = await getUserFromDb(userId);
 
-  if (user.selectedBankAccountId === Number(id))
+  if (user?.selectedBankAccountId === Number(id))
     throw new BadRequestError(i18n.t('error.bankAccount.cannotDeleteSelected'));
 
   const bankAccount = await deleteBankAccountFromDb(userId, id);

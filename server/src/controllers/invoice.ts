@@ -62,7 +62,7 @@ export const postInvoice = async (
   const signatureFile = req.body.file;
   const i18n = await useI18n(req);
 
-  let uploadedSignature: UploadApiResponse;
+  let uploadedSignature: UploadApiResponse | undefined;
 
   if (signatureFile) {
     const fileBuffer = await signatureFile.toBuffer();
@@ -123,7 +123,7 @@ export const updateInvoice = async (
   const signatureFile = req.body.file;
   const i18n = await useI18n(req);
 
-  const foundInvoice = await findInvoiceById(userId, invoiceData.id);
+  const foundInvoice = await findInvoiceById(userId, Number(invoiceData.id));
 
   if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
@@ -138,7 +138,7 @@ export const updateInvoice = async (
     });
   }
 
-  let uploadedSignature: UploadApiResponse;
+  let uploadedSignature: UploadApiResponse | undefined;
 
   if (signatureFile) {
     const fileBuffer = await signatureFile.toBuffer();
@@ -295,9 +295,9 @@ export const sendInvoiceEmail = async (
   if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
   if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
-  const attachment = await file
-    .toBuffer()
-    .then((buffer) => buffer.toString('base64'));
+  const attachment = file
+    ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
+    : undefined;
 
   const { error } = await resend.emails.send({
     to: recipientEmail,
@@ -308,7 +308,7 @@ export const sendInvoiceEmail = async (
     attachments: [
       {
         content: attachment,
-        filename: file.filename
+        filename: file?.filename
       }
     ]
   });

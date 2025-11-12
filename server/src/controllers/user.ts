@@ -90,7 +90,7 @@ export const postUser = async (
   if (password !== confirmedPassword)
     throw new BadRequestError(i18n.t('error.user.passwordsDoNotMatch'));
 
-  const user = await getUserByEmailFromDb(email);
+  const user = await getUserByEmailFromDb(email || '');
 
   if (!!user) throw new BadRequestError(i18n.t('error.user.alreadyExists'));
 
@@ -130,7 +130,7 @@ export const updateUser = async (
     req.body;
   const i18n = await useI18n(req);
 
-  let uploadedSignature: UploadApiResponse;
+  let uploadedSignature: UploadApiResponse | undefined;
 
   if (file) {
     const fileBuffer = await file.toBuffer();
@@ -153,7 +153,7 @@ export const updateUser = async (
 
   const updatedUser = await updateUserInDb(
     { id: userId, email, name, businessType, businessNumber, address },
-    signatureUrl
+    signatureUrl || ''
   );
 
   if (!updatedUser)
@@ -219,7 +219,7 @@ export const updateUserProfilePicture = async (
   const profilePicture = await req.file();
   const i18n = await useI18n(req);
 
-  let uploadedProfilePicture: UploadApiResponse;
+  let uploadedProfilePicture: UploadApiResponse | undefined;
 
   if (profilePicture) {
     const profilePictureBuffer = await profilePicture.toBuffer();
@@ -241,7 +241,10 @@ export const updateUserProfilePicture = async (
     'https://'
   );
 
-  const updatedUser = await updateUserProfilePictureInDb(userId, urlWithHttps);
+  const updatedUser = await updateUserProfilePictureInDb(
+    userId,
+    urlWithHttps || ''
+  );
 
   if (!updatedUser)
     throw new BadRequestError(
@@ -303,6 +306,10 @@ export const changeUserPassword = async (
     });
 
   const currentPasswordHash = await getUserPasswordHashFromDb(userId);
+
+  if (!currentPasswordHash)
+    throw new NotFoundError(i18n.t('error.user.notFound'));
+
   const isPasswordValid = await bcrypt.compare(password, currentPasswordHash);
 
   if (!isPasswordValid)

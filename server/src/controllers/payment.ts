@@ -71,9 +71,9 @@ export const createSubscription = async (
   let priceId = '';
 
   if (currency === 'eur') {
-    priceId = process.env.STRIPE_EUR_PRICE;
+    priceId = process.env.STRIPE_EUR_PRICE!;
   } else {
-    priceId = process.env.STRIPE_USD_PRICE;
+    priceId = process.env.STRIPE_USD_PRICE!;
   }
 
   const existingSubId = await getStripeCustomerSubscriptionIdFromDb(userId);
@@ -111,7 +111,7 @@ export const createSubscription = async (
     type: 'payment',
     clientSecret:
       typeof subscription.latest_invoice !== 'string'
-        ? subscription.latest_invoice.confirmation_secret.client_secret
+        ? subscription.latest_invoice?.confirmation_secret?.client_secret
         : ''
   });
 };

@@ -21,7 +21,7 @@ const parseNestedKey = (
     let entityFieldObject = entity[`${parentKey}`];
 
     if (entityFieldObject) {
-      entity[`${parentKey}`][`${childKey}`] = value;
+      entity[`${parentKey}`]![`${childKey}`] = value;
     } else {
       entity[`${parentKey}`] = { [`${childKey}`]: value };
     }
@@ -46,7 +46,7 @@ const parseNestedKey = (
       entityFieldArray.push({});
     }
 
-    entity[`${parentKey}`][index][`${childKey}`] = value;
+    entity[`${parentKey}`]![index][`${childKey}`] = value;
 
     return;
   }
@@ -74,5 +74,5 @@ export const preValidateFileAndFields = async (request: FastifyRequest) => {
   if (!file) return;
 
   request.body = buildEntityFromFormData(file.fields);
-  request.body['file'] = file;
+  request.body!['file'] = file;
 };

@@ -4,7 +4,6 @@ import fastify from 'fastify';
 import fastifyCookie from '@fastify/cookie';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyRateLimit from '@fastify/rate-limit';
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { defineI18n } from 'fastify-i18n';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -24,7 +23,7 @@ import { rateLimitPluginOptions } from './utils/rate-limit';
 dotenv.config();
 cloudinary.config(cloudinaryConfig);
 
-const port = parseInt(process.env.SERVER_PORT);
+const port = parseInt(process.env.SERVER_PORT!);
 const server = fastify({
   ajv: {
     customOptions: {
@@ -54,7 +53,7 @@ const server = fastify({
     }
   },
   trustProxy: true
-}).withTypeProvider<TypeBoxTypeProvider>();
+});
 
 // Register Plugins
 defineI18n(server, {

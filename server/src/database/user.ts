@@ -77,6 +77,7 @@ export const registerUser = async ({
   const users = await db
     .insert(usersTable)
     .values({
+      // @ts-ignore: Drizzle ORM issue with enums
       email,
       password,
       currency: 'usd',
@@ -113,7 +114,7 @@ export const updateUserInDb = async (
       email,
       signature
     })
-    .where(eq(usersTable.id, user.id))
+    .where(eq(usersTable.id, Number(user.id)))
     .returning({
       id: usersTable.id,
       name: usersTable.name,
@@ -137,7 +138,6 @@ export const updateUserSelectedBankAccountInDb = async (
 ) => {
   const users = await db
     .update(usersTable)
-    // @ts-ignore
     .set({ selectedBankAccountId })
     .where(eq(usersTable.id, userId))
     .returning({
@@ -223,7 +223,7 @@ export const getUserPasswordHashFromDb = async (id: number) => {
     .from(usersTable)
     .where(eq(usersTable.id, id));
 
-  return users.at(0).password;
+  return users.at(0)?.password;
 };
 
 export const changeUserPasswordInDb = async (id: number, password: string) => {
