@@ -76,7 +76,6 @@ export default function SignUpForm() {
             name="password"
             label={t('password')}
             placeholder={t('password_placeholder')}
-            minLength={6}
           />
           <Input
             labelPlacement="outside"
@@ -86,7 +85,6 @@ export default function SignUpForm() {
             name="confirm-password"
             label={t('confirm_password')}
             placeholder={t('confirm_password_placeholder')}
-            minLength={6}
           />
           <Button
             className="w-full justify-between"

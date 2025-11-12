@@ -42,7 +42,6 @@ export default function LoginForm() {
             name="email"
             label={t('email')}
             placeholder={t('email_placeholder')}
-            required
           />
           <Input
             labelPlacement="outside"
@@ -52,8 +51,6 @@ export default function LoginForm() {
             name="password"
             label={t('password')}
             placeholder={t('password_placeholder')}
-            required
-            minLength={6}
           />
           <Button
             className="w-full justify-between"

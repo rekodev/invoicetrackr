@@ -47,7 +47,6 @@ export default function ChangePasswordForm({ userId }: Props) {
     });
 
     if (!response.ok) {
-      console.log({ responseValidationErrors: response.validationErrors });
       if (response.validationErrors) {
         Object.entries(response.validationErrors).forEach(([key, value]) => {
           setError(key as keyof ChangePasswordFormModel, { message: value });

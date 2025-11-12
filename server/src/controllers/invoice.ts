@@ -129,12 +129,10 @@ export const updateInvoice = async (
 
   if (new Date(invoiceData.dueDate) < new Date(invoiceData.date)) {
     throw new BadRequestError(i18n.t('validation.general'), {
-      cause: new Error(
-        JSON.stringify({
-          key: 'dueDate',
-          value: i18n.t('validation.invoice.dueDateAfterDate')
-        })
-      )
+      cause: new ValidationErrorCause({
+        key: 'dueDate',
+        value: i18n.t('validation.invoice.dueDateAfterDate')
+      })
     });
   }
 
