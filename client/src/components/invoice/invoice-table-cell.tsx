@@ -1,5 +1,13 @@
 'use client';
 
+import {
+  ArrowDownTrayIcon,
+  ChevronDownIcon,
+  DocumentTextIcon,
+  EyeIcon,
+  PencilSquareIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline';
 import { BlobProvider, PDFDownloadLink } from '@react-pdf/renderer';
 import {
   Checkbox,
@@ -12,7 +20,6 @@ import {
   addToast
 } from '@heroui/react';
 import { Key, useEffect, useState, useTransition } from 'react';
-import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
 
 import { InvoiceModel, InvoiceStatus } from '@/lib/types/models/invoice';
@@ -22,11 +29,6 @@ import { getCurrencySymbol } from '@/lib/utils/currency';
 import { statusOptions } from '@/lib/constants/table';
 import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
 
-import { ChevronDownIcon } from '../icons/ChevronDownIcon';
-import DeleteIcon from '../icons/DeleteIcon';
-import DocumentText from '../icons/DocumentText';
-import EditIcon from '../icons/EditIcon';
-import EyeIcon from '../icons/EyeIcon';
 import PDFDocument from '../pdf/pdf-document';
 import SendInvoiceEmailTableAction from './send-invoice-email-table-action';
 
@@ -134,7 +136,7 @@ const InvoiceTableCell = ({
     case 'id':
       return (
         <div className="flex">
-          <DocumentText />
+          <DocumentTextIcon className="h-5 w-5" />
           &nbsp;
           <p className="text-bold text-small capitalize">{invoice.invoiceId}</p>
         </div>
@@ -240,7 +242,7 @@ const InvoiceTableCell = ({
               onClick={handleViewIconClick}
               className="text-default-400 cursor-pointer text-lg active:opacity-50"
             >
-              <EyeIcon />
+              <EyeIcon className="h-5 w-5" />
             </span>
           </Tooltip>
           <Tooltip content={tCell('tooltip_edit')}>
@@ -248,7 +250,7 @@ const InvoiceTableCell = ({
               className="text-default-400 cursor-pointer text-lg active:opacity-50"
               onClick={handleEditInvoiceClick}
             >
-              <EditIcon />
+              <PencilSquareIcon className="h-5 w-5" />
             </span>
           </Tooltip>
           <Tooltip color="danger" content={tCell('tooltip_delete')}>
@@ -256,7 +258,7 @@ const InvoiceTableCell = ({
               className="text-danger cursor-pointer text-lg active:opacity-50"
               onClick={handleDeleteInvoiceClick}
             >
-              <DeleteIcon />
+              <TrashIcon className="h-5 w-5" />
             </span>
           </Tooltip>
         </div>

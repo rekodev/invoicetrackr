@@ -17,13 +17,14 @@ import {
   updateUserInDb,
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb
-} from '../database';
-import { UserModel } from '../types';
+} from '../database/user';
+import { UserModel } from '../types/user';
 import {
   BadRequestError,
   NotFoundError,
-  UnauthorizedError
-} from '../utils/errors';
+  UnauthorizedError,
+  ValidationErrorCause
+} from '../utils/error';
 import { saveResetTokenToDb } from '../database/password-reset';
 import { resend } from '../config/resend';
 import { stripe } from '../config/stripe';
@@ -89,7 +90,7 @@ export const postUser = async (
   if (password !== confirmedPassword)
     throw new BadRequestError(i18n.t('error.user.passwordsDoNotMatch'));
 
-  const user = await getUserByEmailFromDb(email);
+  const user = await getUserByEmailFromDb(email || '');
 
   if (!!user) throw new BadRequestError(i18n.t('error.user.alreadyExists'));
 
@@ -111,16 +112,25 @@ export const postUser = async (
 export const updateUser = async (
   req: FastifyRequest<{
     Params: { userId: number };
-    Body: UserModel & { file: MultipartFile };
+    Body: Pick<
+      UserModel,
+      | 'email'
+      | 'name'
+      | 'businessType'
+      | 'businessNumber'
+      | 'address'
+      | 'signature'
+    > & { file: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const file = req.body.file;
-  const user = req.body;
+  const { email, name, businessType, businessNumber, address, signature } =
+    req.body;
   const i18n = await useI18n(req);
 
-  let uploadedSignature: UploadApiResponse;
+  let uploadedSignature: UploadApiResponse | undefined;
 
   if (file) {
     const fileBuffer = await file.toBuffer();
@@ -139,9 +149,12 @@ export const updateUser = async (
 
   const signatureUrl = uploadedSignature?.url
     ? uploadedSignature.url.replace('http://', 'https://')
-    : user.signature;
+    : signature;
 
-  const updatedUser = await updateUserInDb(user, signatureUrl);
+  const updatedUser = await updateUserInDb(
+    { id: userId, email, name, businessType, businessNumber, address },
+    signatureUrl || ''
+  );
 
   if (!updatedUser)
     throw new BadRequestError(i18n.t('error.user.unableToUpdate'));
@@ -206,7 +219,7 @@ export const updateUserProfilePicture = async (
   const profilePicture = await req.file();
   const i18n = await useI18n(req);
 
-  let uploadedProfilePicture: UploadApiResponse;
+  let uploadedProfilePicture: UploadApiResponse | undefined;
 
   if (profilePicture) {
     const profilePictureBuffer = await profilePicture.toBuffer();
@@ -228,7 +241,10 @@ export const updateUserProfilePicture = async (
     'https://'
   );
 
-  const updatedUser = await updateUserProfilePictureInDb(userId, urlWithHttps);
+  const updatedUser = await updateUserProfilePictureInDb(
+    userId,
+    urlWithHttps || ''
+  );
 
   if (!updatedUser)
     throw new BadRequestError(
@@ -282,9 +298,18 @@ export const changeUserPassword = async (
   const i18n = await useI18n(req);
 
   if (newPassword !== confirmedNewPassword)
-    throw new BadRequestError(i18n.t('error.user.newPasswordMismatch'));
+    throw new BadRequestError(i18n.t('validation.general'), {
+      cause: new ValidationErrorCause({
+        key: 'confirmedNewPassword',
+        value: i18n.t('validation.user.passwordMismatch')
+      })
+    });
 
   const currentPasswordHash = await getUserPasswordHashFromDb(userId);
+
+  if (!currentPasswordHash)
+    throw new NotFoundError(i18n.t('error.user.notFound'));
+
   const isPasswordValid = await bcrypt.compare(password, currentPasswordHash);
 
   if (!isPasswordValid)
@@ -366,7 +391,12 @@ export const createNewUserPassword = async (
   const i18n = await useI18n(req);
 
   if (newPassword !== confirmedNewPassword)
-    throw new BadRequestError(i18n.t('error.user.newPasswordMismatch'));
+    throw new BadRequestError(i18n.t('validation.general'), {
+      cause: new ValidationErrorCause({
+        key: 'confirmedNewPassword',
+        value: i18n.t('validation.user.passwordMismatch')
+      })
+    });
 
   const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
 

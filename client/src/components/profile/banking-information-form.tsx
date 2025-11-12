@@ -28,7 +28,7 @@ import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 import { isResponseError } from '@/lib/utils/error';
 import { updateSessionAction } from '@/lib/actions';
-import { updateUserSelectedBankAccount } from '@/api';
+import { updateUserSelectedBankAccount } from '@/api/user';
 
 import DeleteBankAccountDialog from './delete-bank-account-dialog';
 import EditBankingInformationDialog from './edit-banking-information-dialog';

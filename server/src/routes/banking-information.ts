@@ -10,7 +10,7 @@ import {
   getBankAccountsOptions,
   postBankAccountOptions,
   updateBankAccountOptions
-} from '../options';
+} from '../options/banking-information';
 
 const clientRoutes = (
   fastify: FastifyInstance,

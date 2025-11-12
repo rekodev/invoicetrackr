@@ -1,6 +1,7 @@
 import { unauthorized } from 'next/navigation';
 
-import { getBankingInformationEntries, getUser } from '@/api';
+import { getBankingInformationEntries } from '@/api/banking-information';
+import { getUser } from '@/api/user';
 import MultiStepForm from '@/components/multi-step-form';
 import { auth } from '@/auth';
 import { isResponseError } from '@/lib/utils/error';

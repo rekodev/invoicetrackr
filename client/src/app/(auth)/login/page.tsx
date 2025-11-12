@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
+import AppLogo from '@/components/app-logo';
 import LoginForm from '@/components/auth/login-form';
-import AppLogo from '@/components/icons/AppLogo';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('login');
@@ -15,11 +15,11 @@ export async function generateMetadata(): Promise<Metadata> {
       follow: false,
       googleBot: { index: false, follow: false }
     },
-    alternates: { 
+    alternates: {
       canonical: '/login',
       languages: {
-        'en': '/login',
-        'lt': '/login'
+        en: '/login',
+        lt: '/login'
       }
     }
   };

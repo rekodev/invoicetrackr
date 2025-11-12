@@ -1,9 +1,7 @@
-import {
-  getBankingInformationEntries,
-  getClients,
-  getLatestInvoices,
-  getUser
-} from '@/api';
+import { getBankingInformationEntries } from '@/api/banking-information';
+import { getClients } from '@/api/client';
+import { getLatestInvoices } from '@/api/invoice';
+import { getUser } from '@/api/user';
 import InvoiceForm from '@/components/invoice/invoice-form';
 import { auth } from '@/auth';
 import { isResponseError } from '@/lib/utils/error';

@@ -20,7 +20,7 @@ import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
 
 import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
-import { createCustomer, createSubscription, getStripeCustomerId } from '@/api';
+import { createCustomer, createSubscription, getStripeCustomerId } from '@/api/payment';
 import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
 import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
 import { UserModel } from '@/lib/types/models/user';

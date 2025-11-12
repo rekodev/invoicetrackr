@@ -13,24 +13,14 @@ import {
   Tooltip
 } from '@heroui/react';
 import { Key, useEffect, useMemo } from 'react';
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 
-import { Currency } from '@/lib/types/currency';
 import { InvoiceFormData, InvoiceService } from '@/lib/types/models/invoice';
+import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
-import DeleteIcon from '../icons/DeleteIcon';
-import { PlusIcon } from '../icons/PlusIcon';
-
-const INVOICE_SERVICE_COLUMNS = [
-  { name: '#', uid: 'no' },
-  { name: 'DESCRIPTION', uid: 'description' },
-  { name: 'UNIT', uid: 'unit' },
-  { name: 'QUANTITY', uid: 'quantity' },
-  { name: 'AMOUNT', uid: 'amount' },
-  { name: 'ACTION', uid: 'actions' }
-];
 const INITIAL_GRAND_TOTAL = 0;
 
 type Props = {
@@ -103,7 +93,7 @@ const InvoiceServicesTable = ({
   const renderBottomContent = () => (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <Button variant="faded" color="secondary" onPress={handleAddService}>
-        <PlusIcon height={2} width={2} />
+        <PlusIcon className="h-5 w-5" />
         {t('add_service')}
       </Button>
       <div className="flex gap-6 self-end pr-3">
@@ -184,7 +174,7 @@ const InvoiceServicesTable = ({
                 variant="light"
                 className="text-danger min-w-min cursor-pointer p-3 text-lg active:opacity-50"
               >
-                <DeleteIcon />
+                <TrashIcon className="h-5 w-5" />
               </Button>
             </Tooltip>
           </div>

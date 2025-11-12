@@ -6,21 +6,17 @@ import { cookies } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 
-import { createNewUserPassword, registerUser, resetUserPassword } from '@/api';
+import { createNewUserPassword, registerUser, resetUserPassword } from '@/api/user';
 
 import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
 import { signIn, signOut, unstable_update } from '../auth';
+import { ActionResponseModel } from './types/response/action';
 import { isResponseError } from './utils/error';
 
-export type ActionReturnType = {
-  ok: boolean;
-  message?: string;
-};
-
 export async function resetPasswordAction(
-  _prevState: ActionReturnType | undefined,
+  _prevState: ActionResponseModel | undefined,
   email: string
-): Promise<ActionReturnType> {
+): Promise<ActionResponseModel> {
   try {
     const response = await resetUserPassword({ email });
 
@@ -36,9 +32,9 @@ export async function resetPasswordAction(
 }
 
 export async function createNewPasswordAction(
-  _prevState: ActionReturnType | undefined,
+  _prevState: ActionResponseModel | undefined,
   formData: FormData
-): Promise<ActionReturnType> {
+): Promise<ActionResponseModel> {
   const rawFormData = {
     userId: formData.get('userId'),
     newPassword: formData.get('newPassword') as string,

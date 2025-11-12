@@ -13,7 +13,7 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { deleteUserAccount } from '@/api';
+import { deleteUserAccount } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 import { logOutAction } from '@/lib/actions';
 

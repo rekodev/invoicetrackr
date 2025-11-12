@@ -13,8 +13,8 @@ import {
   updateUserAccountSettings,
   updateUserProfilePicture,
   updateUserSelectedBankAccount
-} from '../controllers';
-import { User } from '../types';
+} from '../controllers/user';
+import { User } from '../types/user';
 import { MessageResponse } from '../types/response';
 import { preValidateFileAndFields } from '../utils/multipart';
 import { authMiddleware } from '../middleware/auth';
@@ -80,10 +80,23 @@ export const postUserOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: User,
+    body: Type.Pick(User, [
+      'name',
+      'businessType',
+      'businessNumber',
+      'address',
+      'email',
+      'signature'
+    ]),
     response: {
       200: Type.Intersect([
-        Type.Object({ user: User }),
+        Type.Object({
+          user: Type.Omit(User, [
+            'password',
+            'stripeCustomerId',
+            'stripeSubscriptionId'
+          ])
+        }),
         MessageResponse
       ])
     }
@@ -167,7 +180,10 @@ export const changeUserPasswordOptions: RouteShorthandOptionsWithHandler = {
 export const resetUserPasswordOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Type.Object({
-      email: Type.String({ minLength: 1, errorMessage: 'validation.user.email' })
+      email: Type.String({
+        minLength: 1,
+        errorMessage: 'validation.user.email'
+      })
     }),
     response: {
       200: MessageResponse

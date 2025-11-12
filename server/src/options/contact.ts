@@ -1,7 +1,7 @@
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import { Type } from '@sinclair/typebox';
 
-import { postContactMessage } from '../controllers';
+import { postContactMessage } from '../controllers/contact';
 import { MessageResponse } from '../types/response';
 
 export const postContactMessageOptions: RouteShorthandOptionsWithHandler = {

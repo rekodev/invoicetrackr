@@ -6,8 +6,8 @@ import {
   getClients,
   postClient,
   updateClient
-} from '../controllers';
-import { Client } from '../types';
+} from '../controllers/client';
+import { Client } from '../types/client';
 import { MessageResponse } from '../types/response';
 import { authMiddleware } from '../middleware/auth';
 

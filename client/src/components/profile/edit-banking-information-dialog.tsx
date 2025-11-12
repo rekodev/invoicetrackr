@@ -8,11 +8,11 @@ import {
   ModalHeader,
   addToast
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { ChangeEvent, useState, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 
-import { updateBankingInformationAction } from '@/lib/actions/banking-information';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { updateBankingInformationAction } from '@/lib/actions/banking-information';
 
 type Props = {
   userId: number;

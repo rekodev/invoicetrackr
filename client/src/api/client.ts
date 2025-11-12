@@ -3,7 +3,7 @@ import {
   DeleteClientResp,
   GetClientsResp,
   UpdateClientResp
-} from '@/lib/types/response';
+} from '@/lib/types/response/client';
 import { ClientFormData, ClientModel } from '@/lib/types/models/client';
 
 import api from './api-instance';

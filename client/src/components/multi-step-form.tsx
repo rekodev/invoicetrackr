@@ -21,7 +21,7 @@ import {
   isUserPersonalInformationSetUp
 } from '@/lib/utils/user';
 
-import AppLogo from './icons/AppLogo';
+import AppLogo from './app-logo';
 import BankAccountForm from './profile/bank-account-form';
 import PaymentForm from './payment-form';
 import PersonalInformationForm from './profile/personal-information-form';
@@ -170,9 +170,7 @@ export default function MultiStepForm({
 
               <div className="flex flex-col">
                 <h3 className="text-2xl font-bold">{t('branding.app_name')}</h3>
-                <p className="text-default-500">
-                  {t('branding.tagline')}
-                </p>
+                <p className="text-default-500">{t('branding.tagline')}</p>
               </div>
             </div>
           </div>

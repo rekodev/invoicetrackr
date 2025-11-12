@@ -6,16 +6,17 @@ import {
   DropdownTrigger,
   Input
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
+import {
+  ChevronDownIcon,
+  MagnifyingGlassIcon,
+  PlusIcon
+} from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import { ADD_NEW_INVOICE_PAGE } from '@/lib/constants/pages';
 import { capitalize } from '@/lib/utils';
-
-import { ChevronDownIcon } from '../icons/ChevronDownIcon';
-import { PlusIcon } from '../icons/PlusIcon';
-import SearchIcon from '../icons/SearchIcon';
 
 type Props = {
   columns: Array<{ name: string; uid: string; sortable?: boolean }>;
@@ -46,7 +47,7 @@ const InvoiceTableTopContent = ({
 }: Props) => {
   const t = useTranslations('invoices');
   const router = useRouter();
-  
+
   const totalInvoicesText = invoicesLength
     ? invoicesLength === 1
       ? t('top_content.total_singular')
@@ -89,7 +90,7 @@ const InvoiceTableTopContent = ({
           isClearable
           className="w-full sm:max-w-[44%]"
           placeholder={t('top_content.search_placeholder')}
-          startContent={<SearchIcon width={16} height={16} />}
+          startContent={<MagnifyingGlassIcon className="h-4 w-4" />}
           value={filterValue}
           onClear={() => onClear()}
           onValueChange={onSearchChange}
@@ -145,7 +146,7 @@ const InvoiceTableTopContent = ({
           </Dropdown>
           <Button
             color="secondary"
-            endContent={<PlusIcon width={16} height={16} />}
+            endContent={<PlusIcon className="h-4 w-4" />}
             onPress={handleAddNewInvoice}
           >
             {t('top_content.add_new')}

@@ -13,8 +13,8 @@ import {
 } from '@heroui/react';
 import { CurrencyDollarIcon, LanguageIcon } from '@heroicons/react/24/outline';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useState, useTransition } from 'react';
 import { User } from 'next-auth';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { AccountSettingsFormModel } from '@/lib/types/models/user';
@@ -34,12 +34,12 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
   const {
     register,
     handleSubmit,
-    formState: { isDirty, errors },
-    setError
+    formState: { isDirty, errors, isSubmitting },
+    setError,
+    reset
   } = useForm<AccountSettingsFormModel>({
     defaultValues: { language: user?.language, currency: user?.currency }
   });
-  const [isPending, startTransition] = useTransition();
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
 
@@ -61,27 +61,32 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
     }
   ] as const;
 
-  const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) =>
-    startTransition(async () => {
-      if (!user?.id) return;
+  const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) => {
+    if (!user?.id) return;
 
-      const response = await updateUserAccountSettingsAction({
-        userId: Number(user.id),
-        language: data.language,
-        currency: data.currency
-      });
+    const response = await updateUserAccountSettingsAction({
+      userId: Number(user.id),
+      language: data.language,
+      currency: data.currency
+    });
 
-      addToast({
-        title: response.message,
-        color: response.ok ? 'success' : 'danger'
-      });
+    addToast({
+      title: response.message,
+      color: response.ok ? 'success' : 'danger'
+    });
 
-      if (!response.ok && response.validationErrors) {
+    if (!response.ok) {
+      if (response.validationErrors) {
         Object.entries(response.validationErrors).forEach(([key, message]) => {
           setError(key as keyof AccountSettingsFormModel, { message });
         });
       }
-    });
+
+      return;
+    }
+
+    reset(data);
+  };
 
   const renderCardBodyAndFooter = () => (
     <>
@@ -144,7 +149,7 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
           <Button
             isDisabled={!isDirty}
             type="submit"
-            isLoading={isPending}
+            isLoading={isSubmitting}
             color="secondary"
             className="w-full md:w-min"
           >

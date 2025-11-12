@@ -12,6 +12,7 @@ export default {
       invoiceId: 'Turi atitikti formatą "ABC123"',
       date: 'Reikalinga tinkama data',
       dueDate: 'Reikalinga tinkama data',
+      dueDateAfterDate: 'Terminas neturi būti ankstesnis už sąskaitos datą',
       status: 'Tinkama būsena yra privaloma',
       businessType: 'Reikalingas "Verslas" arba "Fizinis asmuo"',
       partyType: 'Tinkamas šalies tipas yra privalomas',
@@ -58,7 +59,7 @@ export default {
       address: 'Adresas yra privalomas',
       email: 'Turi būti tinkamas el. pašto adresas'
     },
-    bankAccount: {
+    bankingInformation: {
       name: 'Banko pavadinimas yra privalomas',
       code: 'Banko kodas yra privalomas',
       accountNumber: 'Banko sąskaitos numeris yra privalomas'
@@ -71,6 +72,8 @@ export default {
       password: 'Dabartinis slaptažodis yra privalomas',
       newPassword: 'Naujas slaptažodis yra privalomas',
       confirmedNewPassword: 'Naujas patvirtintas slaptažodis yra privalomas',
+      passwordMismatch:
+        'Patvirtintas slaptažodis nesutampa su nauju slaptažodžiu',
       loginPassword: 'Slaptažodis turi būti bent 6 simbolių ilgio',
       registerPassword: 'Slaptažodis turi būti bent 6 simbolių ilgio',
       confirmedPassword: 'Turi sutapti su slaptažodžiu',
@@ -128,8 +131,6 @@ export default {
       invalidCredentials: 'Neteisingi prisijungimo duomenys',
       passwordsDoNotMatch: 'Slaptažodžiai nesutampa',
       currentPasswordIncorrect: 'Dabartinis slaptažodis neteisingas',
-      newPasswordMismatch:
-        'Naujas ir naujas patvirtintas slaptažodžiai nesutampa',
       unableToCreate: 'Nepavyko sukurti vartotojo',
       unableToUpdate: 'Nepavyko atnaujinti vartotojo informacijos',
       unableToDelete: 'Šiuo metu nepavyko ištrinti paskyros. Bandykite vėliau',

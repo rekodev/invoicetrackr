@@ -1,14 +1,14 @@
 import { Suspense } from 'react';
 
-import { auth } from '@/auth';
-import DashboardCards from '@/components/dashboard/dashboard-cards';
-import LatestInvoices from '@/components/dashboard/latest-invoices';
-import RevenueChart from '@/components/dashboard/revenue-chart';
 import {
   DashboardCardsSkeleton,
   LatestInvoicesSkeleton,
   RevenueChartSkeleton
 } from '@/components/ui/skeletons';
+import DashboardCards from '@/components/dashboard/dashboard-cards';
+import LatestInvoices from '@/components/dashboard/latest-invoices';
+import RevenueChart from '@/components/dashboard/revenue-chart';
+import { auth } from '@/auth';
 
 const DashboardPage = async () => {
   const session = await auth();

@@ -4,7 +4,7 @@ import {
   AlreadyExistsError,
   BadRequestError,
   NotFoundError
-} from '../utils/errors';
+} from '../utils/error';
 import {
   createStripeCustomerInDb,
   deleteStripeAccountFromDb,
@@ -13,7 +13,7 @@ import {
   updateStripeSubscriptionForUserInDb
 } from '../database/payment';
 import { stripe } from '../config/stripe';
-import { getUserCurrencyFromDb } from '../database';
+import { getUserCurrencyFromDb } from '../database/user';
 import 'dotenv/config';
 
 export const createCustomer = async (
@@ -71,9 +71,9 @@ export const createSubscription = async (
   let priceId = '';
 
   if (currency === 'eur') {
-    priceId = process.env.STRIPE_EUR_PRICE;
+    priceId = process.env.STRIPE_EUR_PRICE!;
   } else {
-    priceId = process.env.STRIPE_USD_PRICE;
+    priceId = process.env.STRIPE_USD_PRICE!;
   }
 
   const existingSubId = await getStripeCustomerSubscriptionIdFromDb(userId);
@@ -111,7 +111,7 @@ export const createSubscription = async (
     type: 'payment',
     clientSecret:
       typeof subscription.latest_invoice !== 'string'
-        ? subscription.latest_invoice.confirmation_secret.client_secret
+        ? subscription.latest_invoice?.confirmation_secret?.client_secret
         : ''
   });
 };

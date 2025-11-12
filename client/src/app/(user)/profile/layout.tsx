@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { unauthorized } from 'next/navigation';
 
-import { getUser } from '@/api';
+import { getUser } from '@/api/user';
 import { auth } from '@/auth';
 import UserNavCard from '@/components/profile/user-nav-card';
 import { isResponseError } from '@/lib/utils/error';

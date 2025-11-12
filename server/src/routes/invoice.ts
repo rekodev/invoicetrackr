@@ -15,7 +15,7 @@ import {
   getLatestInvoicesOptions,
   updateInvoiceStatusOptions,
   sendInvoiceEmailOptions
-} from '../options';
+} from '../options/invoice';
 
 const invoiceRoutes = (
   fastify: FastifyInstance,

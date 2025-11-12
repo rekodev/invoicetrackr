@@ -12,7 +12,7 @@ import {
   FormProvider,
   useForm
 } from 'react-hook-form';
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -71,13 +71,12 @@ const InvoiceForm = ({
     register,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     clearErrors,
     setValue,
     control
   } = methods;
 
-  const [isPending, startTransition] = useTransition();
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
   const [isBankingInformationModalOpen, setIsBankingInformationModalOpen] =
     useState(false);
@@ -88,7 +87,6 @@ const InvoiceForm = ({
   const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({
     invoiceData,
     user,
-    onTransitionStart: startTransition,
     setError
   });
 
@@ -375,7 +373,7 @@ const InvoiceForm = ({
         <Button color="danger" variant="light" onPress={redirectToInvoicesPage}>
           {t('buttons.cancel')}
         </Button>
-        <Button type="submit" isLoading={isPending} color="secondary">
+        <Button type="submit" isLoading={isSubmitting} color="secondary">
           {t('buttons.save')}
         </Button>
       </div>

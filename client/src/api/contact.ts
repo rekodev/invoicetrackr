@@ -1,4 +1,4 @@
-import { PostContactMessageResp } from '@/lib/types/response';
+import { PostContactMessageResp } from '@/lib/types/response/contact';
 
 import api from './api-instance';
 

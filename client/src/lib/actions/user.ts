@@ -7,14 +7,14 @@ import {
   updateUser,
   updateUserAccountSettings,
   updateUserProfilePicture
-} from '@/api';
+} from '@/api/user';
 
 import {
   ACCOUNT_SETTINGS_PAGE,
   CHANGE_PASSWORD_PAGE,
   PERSONAL_INFORMATION_PAGE
 } from '../constants/pages';
-import { ActionResponseModel } from '../types/response';
+import { ActionResponseModel } from '../types/response/action';
 import { Currency } from '../types/currency';
 import { UserModel } from '../types/models/user';
 import { isResponseError } from '../utils/error';

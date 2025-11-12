@@ -1,4 +1,4 @@
-import { getInvoicesRevenue } from '@/api';
+import { getInvoicesRevenue } from '@/api/invoice';
 import { getTranslations } from 'next-intl/server';
 import { isResponseError } from '@/lib/utils/error';
 

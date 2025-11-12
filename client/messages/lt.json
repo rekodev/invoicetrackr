@@ -66,6 +66,11 @@
     "description": "Atsiprašome, bet puslapio, kurio ieškote, nepavyko rasti. Jis galėjo būti perkeltas arba ištrintas.",
     "go_home": "Grįžti į pradžią"
   },
+  "unauthorized": {
+    "title": "Prieiga uždrausta",
+    "description": "Neturite leidimo pasiekti šio puslapio. Kreipkitės į administratorių, jei manote, kad tai klaida.",
+    "go_home": "Grįžti į pradžią"
+  },
   "error_page": {
     "title": "Kažkas nutiko",
     "description": "Susidūrėme su netikėta klaida. Pabandykite atnaujinti puslapį arba susisiekite su palaikymu, jei problema išlieka.",

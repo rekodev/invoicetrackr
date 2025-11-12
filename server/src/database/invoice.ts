@@ -10,7 +10,7 @@ import {
 import { NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 
-import { InvoiceModel } from '../types';
+import { InvoiceModel } from '../types/invoice';
 import { jsonAgg } from '../utils/json-agg';
 import { db } from './db';
 import {
@@ -219,7 +219,7 @@ export const insertInvoiceInDb = async (
       })
       .returning({ id: invoicesTable.id });
 
-    const insertedInvoiceId = invoices.at(0).id;
+    const insertedInvoiceId = invoices.at(0)?.id;
 
     // Invoice sender insert
     const senders = await tx
@@ -238,8 +238,9 @@ export const insertInvoiceInDb = async (
     // Invoice receiver insert
     const receivers = await tx
       .insert(invoiceReceiversTable)
+      // @ts-ignore: Says that property does not exist, but it does
       .values({
-        invoiceId: insertedInvoiceId,
+        invoiceId: Number(insertedInvoiceId),
         name: invoiceData.receiver.name,
         email: invoiceData.receiver.email,
         address: invoiceData.receiver.address,
@@ -253,7 +254,7 @@ export const insertInvoiceInDb = async (
     const bankAccounts = await tx
       .insert(invoiceBankingInformationTable)
       .values({
-        invoiceId: insertedInvoiceId,
+        invoiceId: Number(insertedInvoiceId),
         accountName: invoiceData.bankingInformation.name,
         accountNumber: invoiceData.bankingInformation.accountNumber,
         bankCode: invoiceData.bankingInformation.code
@@ -267,22 +268,22 @@ export const insertInvoiceInDb = async (
         amount: String(service.amount),
         unit: service.unit,
         description: service.description,
-        invoiceId: insertedInvoiceId
+        invoiceId: Number(insertedInvoiceId)
       });
     }
 
     await tx
       .update(invoicesTable)
       .set({
-        senderId: senders.at(0).id,
-        receiverId: receivers.at(0).id,
-        bankAccountId: bankAccounts.at(0).id
+        senderId: senders.at(0)?.id,
+        receiverId: receivers.at(0)?.id,
+        bankAccountId: bankAccounts.at(0)?.id
       })
-      .where(eq(invoicesTable.id, insertedInvoiceId));
+      .where(eq(invoicesTable.id, Number(insertedInvoiceId)));
 
     const insertedInvoice = await getInvoiceFromDb(
       userId,
-      insertedInvoiceId,
+      Number(insertedInvoiceId),
       tx
     );
 
@@ -356,6 +357,7 @@ export const updateInvoiceInDb = async (
     } else {
       const insertedReceiver = await tx
         .insert(invoiceReceiversTable)
+        // @ts-ignore: Says that property does not exist, but it does
         .values({
           invoiceId: id,
           name: invoiceData.receiver.name,
@@ -436,7 +438,7 @@ export const updateInvoiceInDb = async (
     }
 
     for (const service of invoiceData.services) {
-      if (existingServiceIds.includes(service.id)) {
+      if (existingServiceIds.includes(Number(service.id))) {
         await tx
           .update(invoiceServicesTable)
           .set({
@@ -445,7 +447,7 @@ export const updateInvoiceInDb = async (
             quantity: service.quantity,
             unit: service.unit
           })
-          .where(eq(invoiceServicesTable.id, service.id));
+          .where(eq(invoiceServicesTable.id, Number(service.id)));
       } else {
         await tx.insert(invoiceServicesTable).values({
           description: service.description,

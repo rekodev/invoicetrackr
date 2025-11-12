@@ -1,6 +1,6 @@
 import InvoiceTable from '@/components/invoice/invoice-table';
 import { auth } from '@/auth';
-import { getInvoices } from '@/api';
+import { getInvoices } from '@/api/invoice';
 import { isResponseError } from '@/lib/utils/error';
 
 const InvoicesPage = async () => {

@@ -1,4 +1,4 @@
-import { getBankingInformationEntries } from '@/api';
+import { getBankingInformationEntries } from '@/api/banking-information';
 import { auth } from '@/auth';
 import BankingInformationForm from '@/components/profile/banking-information-form';
 import { isResponseError } from '@/lib/utils/error';

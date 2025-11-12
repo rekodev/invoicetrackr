@@ -3,7 +3,7 @@ import {
   CreateCustomerResp,
   CreateSubscriptionResp,
   GetStripeCustomerIdResp
-} from '@/lib/types/response';
+} from '@/lib/types/response/payment';
 
 import api from './api-instance';
 

@@ -9,17 +9,18 @@ import {
   Input,
   Selection
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
+import {
+  ChevronDownIcon,
+  MagnifyingGlassIcon,
+  PlusIcon
+} from '@heroicons/react/24/outline';
+import { useTranslations } from 'next-intl';
 
 import { ClientModel } from '@/lib/types/models/client';
 import { InvoicePartyBusinessType } from '@/lib/types/models/invoice';
-import { capitalize } from '@/lib/utils';
 
 import ClientFormDialog from './client-form-dialog';
-import { ChevronDownIcon } from '../icons/ChevronDownIcon';
-import { PlusIcon } from '../icons/PlusIcon';
-import SearchIcon from '../icons/SearchIcon';
 
 const filters = ['business', 'individual'];
 
@@ -95,7 +96,7 @@ const ClientSectionTopContent = ({
             isClearable
             className="w-full sm:max-w-[44%]"
             placeholder={t('search_placeholder')}
-            startContent={<SearchIcon width={16} height={16} />}
+            startContent={<MagnifyingGlassIcon className="h-4 w-4" />}
             value={searchTerm}
             onChange={onSearch}
             onClear={onClear}
@@ -104,7 +105,7 @@ const ClientSectionTopContent = ({
             {renderTypeFilterSelect()}
             <Button
               color="secondary"
-              endContent={<PlusIcon width={16} height={16} />}
+              endContent={<PlusIcon className="h-4 w-4" />}
               onPress={handleAddNewClient}
             >
               {t('add_new')}

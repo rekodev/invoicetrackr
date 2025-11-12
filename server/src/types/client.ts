@@ -10,7 +10,10 @@ export const Client = Type.Object({
     minLength: 1,
     errorMessage: 'validation.client.businessNumber'
   }),
-  address: Type.String({ minLength: 1, errorMessage: 'validation.client.address' }),
+  address: Type.String({
+    minLength: 1,
+    errorMessage: 'validation.client.address'
+  }),
   email: Type.Union([
     Type.String({ maxLength: 0 }),
     Type.String({

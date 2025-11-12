@@ -12,6 +12,7 @@ export default {
       invoiceId: 'Required to match format "ABC123"',
       date: 'Valid date is required',
       dueDate: 'Valid date is required',
+      dueDateAfterDate: 'Due date must be after invoice date',
       status: 'Valid status is required',
       businessType: '"Business" or "Individual" required',
       partyType: 'Valid party type is required',
@@ -58,7 +59,7 @@ export default {
       address: 'Address is required',
       email: 'Must be a valid email address'
     },
-    bankAccount: {
+    bankingInformation: {
       name: 'Bank name is required',
       code: 'Bank code is required',
       accountNumber: 'Bank account number is required'
@@ -71,6 +72,7 @@ export default {
       password: 'Current password is required',
       newPassword: 'New password is required',
       confirmedNewPassword: 'Confirmed new password is required',
+      passwordMismatch: 'Confirmed password does not match new password',
       loginPassword: 'Password must be at least 6 characters long',
       registerPassword: 'Password must be at least 6 characters long',
       confirmedPassword: 'Must match password',
@@ -126,8 +128,6 @@ export default {
       invalidCredentials: 'Invalid credentials',
       passwordsDoNotMatch: 'Passwords do not match',
       currentPasswordIncorrect: 'Current password is incorrect',
-      newPasswordMismatch:
-        'New password and confirmed new password do not match',
       unableToCreate: 'Unable to create user',
       unableToUpdate: 'Unable to update user information',
       unableToDelete:

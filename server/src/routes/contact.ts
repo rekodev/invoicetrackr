@@ -4,7 +4,7 @@ import {
   FastifyPluginOptions
 } from 'fastify';
 
-import { postContactMessageOptions } from '../options';
+import { postContactMessageOptions } from '../options/contact';
 
 const contactRoutes = (
   fastify: FastifyInstance,

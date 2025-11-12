@@ -1,6 +1,6 @@
 import { Button, Pagination } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   page: number;

@@ -54,11 +54,25 @@ export const Invoice = Type.Object({
     {
       id: Type.Optional(Type.Number()),
       type: InvoicePartyType,
-      name: Type.String({ minLength: 1, errorMessage: 'validation.invoice.sender.name' }),
+      name: Type.String({
+        minLength: 1,
+        errorMessage: 'validation.invoice.sender.name'
+      }),
       businessType: InvoicePartyBusinessType,
-      businessNumber: Type.String({ minLength: 1, errorMessage: 'validation.invoice.sender.businessNumber' }),
-      address: Type.String({ minLength: 1, errorMessage: 'validation.invoice.sender.address' }),
-      email: Type.Optional(Type.String({ format: 'email', errorMessage: 'validation.invoice.sender.email' })),
+      businessNumber: Type.String({
+        minLength: 1,
+        errorMessage: 'validation.invoice.sender.businessNumber'
+      }),
+      address: Type.String({
+        minLength: 1,
+        errorMessage: 'validation.invoice.sender.address'
+      }),
+      email: Type.Optional(
+        Type.String({
+          format: 'email',
+          errorMessage: 'validation.invoice.sender.email'
+        })
+      ),
       signature: Type.Optional(Type.String()),
       selectedBankAccountId: Type.Optional(Type.Number()),
       password: Type.Optional(Type.String()),
@@ -78,7 +92,10 @@ export const Invoice = Type.Object({
     {
       id: Type.Optional(Type.Number()),
       type: InvoicePartyType,
-      name: Type.String({ minLength: 1, errorMessage: 'validation.invoice.receiver.name' }),
+      name: Type.String({
+        minLength: 1,
+        errorMessage: 'validation.invoice.receiver.name'
+      }),
       businessType: InvoicePartyBusinessType,
       businessNumber: Type.String({
         minLength: 1,
@@ -114,9 +131,18 @@ export const Invoice = Type.Object({
   bankingInformation: Type.Object(
     {
       id: Type.Optional(Type.Number()),
-      name: Type.String({ minLength: 1, errorMessage: 'validation.invoice.bankingInformation.name' }),
-      code: Type.String({ minLength: 1, errorMessage: 'validation.invoice.bankingInformation.code' }),
-      accountNumber: Type.String({ minLength: 1, errorMessage: 'validation.invoice.bankingInformation.accountNumber' })
+      name: Type.String({
+        minLength: 1,
+        errorMessage: 'validation.invoice.bankingInformation.name'
+      }),
+      code: Type.String({
+        minLength: 1,
+        errorMessage: 'validation.invoice.bankingInformation.code'
+      }),
+      accountNumber: Type.String({
+        minLength: 1,
+        errorMessage: 'validation.invoice.bankingInformation.accountNumber'
+      })
     },
     {
       minProperties: 1,

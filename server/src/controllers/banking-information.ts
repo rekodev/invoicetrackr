@@ -1,21 +1,23 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
-import { BankAccountModel } from '../types';
+import { BankAccountModel } from '../types/banking-information';
 import {
   deleteBankAccountFromDb,
   findBankAccountByAccountNumber,
   getBankAccountFromDb,
   getBankAccountsFromDb,
-  getUserFromDb,
   insertBankAccountInDb,
-  updateBankAccountInDb,
+  updateBankAccountInDb
+} from '../database/banking-information';
+import {
+  getUserFromDb,
   updateUserSelectedBankAccountInDb
-} from '../database';
+} from '../database/user';
 import {
   AlreadyExistsError,
   BadRequestError,
   NotFoundError
-} from '../utils/errors';
+} from '../utils/error';
 
 export const getBankAccounts = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -37,7 +39,8 @@ export const getBankAccount = async (
 
   const bankAccount = await getBankAccountFromDb(userId, id);
 
-  if (!bankAccount) throw new NotFoundError(i18n.t('error.bankAccount.notFound'));
+  if (!bankAccount)
+    throw new NotFoundError(i18n.t('error.bankAccount.notFound'));
 
   reply.status(200).send({ bankAccount });
 };
@@ -60,9 +63,7 @@ export const postBankAccount = async (
   );
 
   if (foundBankAccount)
-    throw new AlreadyExistsError(
-      i18n.t('error.bankAccount.alreadyExists')
-    );
+    throw new AlreadyExistsError(i18n.t('error.bankAccount.alreadyExists'));
 
   const insertedBankAccount = await insertBankAccountInDb(
     userId,
@@ -79,8 +80,7 @@ export const postBankAccount = async (
     if (!updatedUserSelectedBankAccount)
       return reply.status(200).send({
         bankAccount: updatedUserSelectedBankAccount,
-        message:
-          i18n.t('success.bankAccount.createdWithWarning')
+        message: i18n.t('success.bankAccount.createdWithWarning')
       });
   }
 
@@ -103,7 +103,8 @@ export const updateBankAccount = async (
 
   const bankAccount = await updateBankAccountInDb(userId, id, bankAccountData);
 
-  if (!bankAccount) throw new BadRequestError(i18n.t('error.bankAccount.unableToUpdate'));
+  if (!bankAccount)
+    throw new BadRequestError(i18n.t('error.bankAccount.unableToUpdate'));
 
   reply.status(200).send({
     bankAccount,
@@ -119,12 +120,13 @@ export const deleteBankAccount = async (
   const i18n = await useI18n(req);
   const user = await getUserFromDb(userId);
 
-  if (user.selectedBankAccountId === Number(id))
+  if (user?.selectedBankAccountId === Number(id))
     throw new BadRequestError(i18n.t('error.bankAccount.cannotDeleteSelected'));
 
   const bankAccount = await deleteBankAccountFromDb(userId, id);
 
-  if (!bankAccount) throw new BadRequestError(i18n.t('error.bankAccount.unableToDelete'));
+  if (!bankAccount)
+    throw new BadRequestError(i18n.t('error.bankAccount.unableToDelete'));
 
   return reply.send({ message: i18n.t('success.bankAccount.deleted') });
 };
