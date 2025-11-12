@@ -159,7 +159,7 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
     <>
       <Card
         as="form"
-        aria-label="Account Settings Form"
+        aria-label={t('a11y.form_label')}
         onSubmit={handleSubmit(onSubmit)}
         className="dark:border-default-100 w-full bg-transparent dark:border"
       >

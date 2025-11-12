@@ -1,9 +1,9 @@
 'use client';
 
+import { Bar } from 'react-chartjs-2';
 import { CategoryScale } from 'chart.js';
 import Chart from 'chart.js/auto';
 import { useTranslations } from 'next-intl';
-import { Bar } from 'react-chartjs-2';
 
 Chart.register(CategoryScale);
 
@@ -13,9 +13,9 @@ type Props = {
 
 const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
   const t = useTranslations('dashboard.revenue_chart');
-  
+
   const currentMonthIndex = new Date().getMonth();
-  
+
   const MONTHS = [
     t('months.january'),
     t('months.february'),
@@ -30,7 +30,7 @@ const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
     t('months.november'),
     t('months.december')
   ];
-  
+
   const labels = MONTHS.slice(0, currentMonthIndex).concat(
     MONTHS.slice(currentMonthIndex)
   );

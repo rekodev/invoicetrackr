@@ -14,18 +14,18 @@ import {
   useElements,
   useStripe
 } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-import { useTranslations } from 'next-intl';
-import { useTheme } from 'next-themes';
 import { FormEvent, useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { useTheme } from 'next-themes';
+import { useTranslations } from 'next-intl';
 
+import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
 import { createCustomer, createSubscription, getStripeCustomerId } from '@/api';
-import { updateSession } from '@/lib/actions';
 import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
 import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
 import { UserModel } from '@/lib/types/models/user';
-import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
 import { isResponseError } from '@/lib/utils/error';
+import { updateSessionAction } from '@/lib/actions';
 
 import Loader from './ui/loader';
 
@@ -127,7 +127,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
 
     if (shouldUpdateSession) {
       try {
-        await updateSession({
+        await updateSessionAction({
           newSession: {
             ...user,
             id: String(user.id),
@@ -169,8 +169,8 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
         >
           {isLoading
             ? t('processing')
-            : t('pay', { 
-                amount: `${getCurrencySymbol(user.currency)}${SUBSCRIPTION_AMOUNT}` 
+            : t('pay', {
+                amount: `${getCurrencySymbol(user.currency)}${SUBSCRIPTION_AMOUNT}`
               })}
         </Button>
       </CardFooter>

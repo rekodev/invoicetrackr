@@ -1,8 +1,8 @@
-import { getInvoicesRevenue } from "@/api";
-import { isResponseError } from "@/lib/utils/error";
-import { getTranslations } from "next-intl/server";
+import { getInvoicesRevenue } from '@/api';
+import { getTranslations } from 'next-intl/server';
+import { isResponseError } from '@/lib/utils/error';
 
-import InvoiceDataBarChart from "./invoice-data-bar-chart";
+import InvoiceDataBarChart from './invoice-data-bar-chart';
 
 type Props = {
   userId: number;
@@ -15,7 +15,7 @@ const RevenueChart = async ({ userId }: Props) => {
   if (isResponseError(response)) throw new Error('Failed to fetch data');
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex w-full flex-col gap-6">
       <h2 className="text-2xl">{t('title')}</h2>
       <InvoiceDataBarChart revenueByMonth={response.data.revenueByMonth} />
     </div>

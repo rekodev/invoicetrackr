@@ -22,8 +22,8 @@ import { useTranslations } from 'next-intl';
 import { Currency } from '@/lib/types/currency';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import { getCurrencySymbol } from '@/lib/utils/currency';
-import { sendInvoiceEmail } from '@/api';
 import { isResponseError } from '@/lib/utils/error';
+import { sendInvoiceEmail } from '@/api';
 
 type Props = {
   userId: number;
@@ -115,7 +115,9 @@ export default function SendInvoiceEmailTableAction({
       >
         <ModalContent>
           <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-            <ModalHeader>{t('modal_title', { invoiceId: invoice.invoiceId })}</ModalHeader>
+            <ModalHeader>
+              {t('modal_title', { invoiceId: invoice.invoiceId })}
+            </ModalHeader>
             <ModalBody className="w-full">
               <Input
                 defaultValue={invoice.receiver.email}
@@ -148,15 +150,21 @@ export default function SendInvoiceEmailTableAction({
                 <CardBody className="flex flex-col gap-2">
                   <p>{t('invoice_details')}</p>
                   <p className="mt-2 flex items-center justify-between text-sm">
-                    <span className="text-default-500 text">{t('invoice')}:</span>{' '}
+                    <span className="text-default-500 text">
+                      {t('invoice')}:
+                    </span>{' '}
                     {invoice.invoiceId}
                   </p>
                   <p className="flex items-center justify-between text-sm">
-                    <span className="text-default-500 text">{t('client')}:</span>{' '}
+                    <span className="text-default-500 text">
+                      {t('client')}:
+                    </span>{' '}
                     {invoice.receiver.name}
                   </p>
                   <p className="flex items-center justify-between text-sm">
-                    <span className="text-default-500 text">{t('amount')}:</span>{' '}
+                    <span className="text-default-500 text">
+                      {t('amount')}:
+                    </span>{' '}
                     {getCurrencySymbol(currency)}
                     {invoice.totalAmount}
                   </p>

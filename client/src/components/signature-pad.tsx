@@ -1,4 +1,3 @@
-import { CheckCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import {
   Button,
   Card,
@@ -13,9 +12,10 @@ import {
   cn,
   useDisclosure
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
+import { CheckCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
+import { useTranslations } from 'next-intl';
 
 import { base64ToFile, imageUrlToBase64 } from '@/lib/utils/base64';
 

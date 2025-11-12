@@ -75,7 +75,7 @@ export default function LanguageSwitcher({ user }: Props) {
     <Dropdown className="min-w-max">
       <DropdownTrigger>
         <Button
-          aria-label={t('aria_label')}
+          aria-label={t('a11y.label')}
           isIconOnly
           className="max-w-min"
           variant="flat"

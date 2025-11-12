@@ -72,7 +72,7 @@ const ClientSectionTopContent = ({
       </DropdownTrigger>
       <DropdownMenu
         disallowEmptySelection
-        aria-label="Table Columns"
+        aria-label={t('a11y.columns_label')}
         closeOnSelect={false}
         selectionMode="multiple"
         selectedKeys={typeFilters}

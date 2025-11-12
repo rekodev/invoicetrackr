@@ -118,7 +118,7 @@ export default function ChangePasswordForm({ userId }: Props) {
   return (
     <Card
       as="form"
-      aria-label={t('aria_label')}
+      aria-label={t('a11y.form_label')}
       onSubmit={handleSubmit(onSubmit)}
       className="dark:border-default-100 w-full bg-transparent dark:border"
     >

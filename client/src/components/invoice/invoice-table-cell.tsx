@@ -60,6 +60,7 @@ const InvoiceTableCell = ({
 }: Props) => {
   const tPdf = useTranslations('invoices.pdf');
   const tCell = useTranslations('invoices.cell.actions');
+  const tForm = useTranslations('components.invoice_form');
   const [isPaid, setIsPaid] = useState(invoice.status === 'paid');
   const [isPending, startTransition] = useTransition();
 
@@ -178,7 +179,7 @@ const InvoiceTableCell = ({
               </Chip>
             </DropdownTrigger>
             <DropdownMenu
-              aria-label="Static Actions"
+              aria-label={tForm('a11y.static_actions_label')}
               selectionMode="single"
               selectedKeys={[cellValue]}
               onSelectionChange={(key) =>

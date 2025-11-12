@@ -119,12 +119,12 @@ const InvoiceServicesTable = ({
   const renderCell = (columnKey: Key, index: number) => {
     switch (columnKey as (typeof INVOICE_SERVICE_COLUMNS)[number]['uid']) {
       case 'no':
-        return <div aria-label={t('aria_number')}>{index + 1}</div>;
+        return <div aria-label={t('a11y.number_label')}>{index + 1}</div>;
       case 'description':
         return (
           <Input
             className="min-w-44"
-            aria-label={t('aria_description')}
+            aria-label={t('a11y.description_label')}
             type="text"
             maxLength={200}
             defaultValue={fields[index].description || ''}
@@ -138,7 +138,7 @@ const InvoiceServicesTable = ({
         return (
           <Input
             className="min-w-44"
-            aria-label={t('aria_unit')}
+            aria-label={t('a11y.unit_label')}
             type="text"
             maxLength={20}
             defaultValue={fields[index].unit || ''}
@@ -151,7 +151,7 @@ const InvoiceServicesTable = ({
       case 'quantity':
         return (
           <Input
-            aria-label={t('aria_quantity')}
+            aria-label={t('a11y.quantity_label')}
             type="number"
             defaultValue={fields[index].quantity?.toString() || ''}
             variant="bordered"
@@ -163,7 +163,7 @@ const InvoiceServicesTable = ({
       case 'amount':
         return (
           <Input
-            aria-label={t('aria_amount')}
+            aria-label={t('a11y.amount_label')}
             type="number"
             defaultValue={fields[index].amount?.toString() || ''}
             variant="bordered"
@@ -175,7 +175,7 @@ const InvoiceServicesTable = ({
       case 'actions':
         return (
           <div
-            aria-label={t('aria_actions')}
+            aria-label={t('a11y.actions_label')}
             className="relative flex items-center gap-2"
           >
             <Tooltip color="danger" content={t('delete_service')}>
@@ -197,7 +197,7 @@ const InvoiceServicesTable = ({
   return (
     <>
       <Table
-        aria-label={t('aria_table')}
+        aria-label={t('a11y.table_label')}
         bottomContent={renderBottomContent()}
         bottomContentPlacement="outside"
       >

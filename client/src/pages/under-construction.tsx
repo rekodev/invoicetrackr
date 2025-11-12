@@ -1,4 +1,8 @@
+import { useTranslations } from 'next-intl';
+
 const UnderConstruction = () => {
+  const t = useTranslations('under_construction');
+
   return (
     <section>
       <div className="mx-auto max-w-screen-md px-4 py-8 text-center lg:px-12 lg:py-16">
@@ -13,11 +17,10 @@ const UnderConstruction = () => {
           />
         </svg>
         <h1 className="mb-4 text-4xl font-bold leading-none tracking-tight text-gray-900 dark:text-white md:text-5xl lg:mb-6 xl:text-6xl">
-          Under Construction
+          {t('title')}
         </h1>
         <p className="font-light text-gray-500 dark:text-gray-400 md:text-lg xl:text-xl">
-          This page is still in development and is going to be available soon.
-          Thank you for your patience.
+          {t('description')}
         </p>
       </div>
     </section>

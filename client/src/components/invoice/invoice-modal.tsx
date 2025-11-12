@@ -79,7 +79,7 @@ const InvoiceModal = ({
                 });
               }}
             >
-              Download PDF
+              {t('buttons.download_pdf')}
             </Button>
           </PDFDownloadLink>
         </ModalHeader>

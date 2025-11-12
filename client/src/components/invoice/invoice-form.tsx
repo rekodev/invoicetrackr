@@ -6,31 +6,31 @@ import {
   UserGroupIcon
 } from '@heroicons/react/24/outline';
 import { Button, Card, Input, Select, SelectItem } from '@heroui/react';
-import { useState, useTransition } from 'react';
 import {
   Controller,
   ControllerRenderProps,
   FormProvider,
   useForm
 } from 'react-hook-form';
+import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { statusOptions } from '@/lib/constants/table';
-import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
-import { Currency } from '@/lib/types/currency';
-import { ClientModel } from '@/lib/types/models/client';
-import { InvoiceModel } from '@/lib/types/models/invoice';
 import {
   BankingInformationFormModel,
   UserModel
 } from '@/lib/types/models/user';
+import { ClientModel } from '@/lib/types/models/client';
+import { Currency } from '@/lib/types/currency';
+import { InvoiceModel } from '@/lib/types/models/invoice';
 import { formatDate } from '@/lib/utils/format-date';
+import { statusOptions } from '@/lib/constants/table';
+import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
 
 import BankingInformationDialog from './banking-information-dialog';
+import CompleteProfile from '../ui/complete-profile';
 import InvoiceFormReceiverModal from './invoice-form-receiver-modal';
 import InvoiceServicesTable from './invoice-services-table';
 import SignaturePad from '../signature-pad';
-import CompleteProfile from '../ui/complete-profile';
 
 type Props = {
   user: UserModel;
@@ -138,16 +138,16 @@ const InvoiceForm = ({
 
   const renderSenderAndReceiverFields = () => (
     <div className="col-span-4 flex w-full flex-col gap-4">
-      <h4>Sender and Receiver Data</h4>
+      <h4>{t('headings.sender_receiver_data')}</h4>
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
         <Card className="flex w-full flex-col gap-4 p-4">
           <div className="flex min-h-8 items-center justify-between">
-            <p className="text-default-500 text-sm">From:</p>
+            <p className="text-default-500 text-sm">{t('headings.from')}</p>
           </div>
           <Input
-            label="Sender's Name"
+            label={t('labels.sender_name')}
             size="sm"
-            aria-label="Sender's Name"
+            aria-label={t('a11y.sender_name_label')}
             type="text"
             maxLength={20}
             variant="bordered"
@@ -156,9 +156,9 @@ const InvoiceForm = ({
             errorMessage={errors.sender?.name?.message}
           />
           <Input
-            label="Sender's Business Number"
+            label={t('labels.sender_business_number')}
             size="sm"
-            aria-label="Sender's Business Number"
+            aria-label={t('a11y.sender_business_number_label')}
             type="text"
             maxLength={20}
             variant="bordered"
@@ -167,9 +167,9 @@ const InvoiceForm = ({
             errorMessage={errors.sender?.businessNumber?.message}
           />
           <Input
-            label="Sender's Address"
+            label={t('labels.sender_address')}
             size="sm"
-            aria-label="Sender's Address"
+            aria-label={t('a11y.sender_address_label')}
             type="text"
             maxLength={20}
             variant="bordered"
@@ -178,9 +178,9 @@ const InvoiceForm = ({
             errorMessage={errors.sender?.address?.message}
           />
           <Input
-            label="Sender's Email"
+            label={t('labels.sender_email')}
             size="sm"
-            aria-label="Sender's Email"
+            aria-label={t('a11y.sender_email_label')}
             type="text"
             maxLength={20}
             variant="bordered"
@@ -191,7 +191,7 @@ const InvoiceForm = ({
         </Card>
         <Card className="flex w-full flex-col gap-4 p-4">
           <div className="flex items-center justify-between">
-            <p className="text-default-500 text-sm">To:</p>
+            <p className="text-default-500 text-sm">{t('headings.to')}</p>
             <Button
               size="sm"
               variant="faded"
@@ -199,7 +199,7 @@ const InvoiceForm = ({
               onPress={handleOpenReceiverModal}
             >
               <UserGroupIcon className="h-4 w-4" />
-              Select Client
+              {t('modals.select_client')}
             </Button>
           </div>
           <Controller
@@ -208,9 +208,9 @@ const InvoiceForm = ({
             render={({ field }) => (
               <Input
                 {...field}
-                label="Receiver's Name"
+                label={t('labels.receiver_name')}
                 size="sm"
-                aria-label="Receiver's Name"
+                aria-label={t('a11y.receiver_name_label')}
                 type="text"
                 maxLength={20}
                 variant="bordered"
@@ -225,9 +225,9 @@ const InvoiceForm = ({
             render={({ field }) => (
               <Input
                 {...field}
-                label="Receiver's Business Number"
+                label={t('labels.receiver_business_number')}
                 size="sm"
-                aria-label="Receiver's Business Number"
+                aria-label={t('a11y.receiver_business_number_label')}
                 type="text"
                 variant="bordered"
                 isInvalid={!!errors.receiver?.businessNumber}
@@ -241,9 +241,9 @@ const InvoiceForm = ({
             render={({ field }) => (
               <Input
                 {...field}
-                label="Receiver's Address"
+                label={t('labels.receiver_address')}
                 size="sm"
-                aria-label="Receiver's Address"
+                aria-label={t('a11y.receiver_address_label')}
                 type="text"
                 variant="bordered"
                 isInvalid={!!errors.receiver?.address}
@@ -257,9 +257,9 @@ const InvoiceForm = ({
             render={({ field }) => (
               <Input
                 {...field}
-                label="Receiver's Email"
+                label={t('labels.receiver_email')}
                 size="sm"
-                aria-label="Receiver's Email"
+                aria-label={t('a11y.receiver_email_label')}
                 type="text"
                 variant="bordered"
                 isInvalid={!!errors.receiver?.email}
@@ -295,7 +295,7 @@ const InvoiceForm = ({
           onPress={() => setIsBankingInformationModalOpen(true)}
           startContent={<BuildingLibraryIcon className="min-h-4 min-w-4" />}
         >
-          Select Bank Account
+          {t('modals.select_bank_account')}
         </Button>
       </div>
       <div className="flex flex-col gap-4 md:flex-row">
@@ -305,11 +305,11 @@ const InvoiceForm = ({
           render={({ field }) => (
             <Input
               {...field}
-              label="Bank Name"
+              label={t('labels.bank_name')}
               labelPlacement="inside"
-              aria-label="Bank Name"
+              aria-label={t('a11y.bank_name_label')}
               type="text"
-              placeholder="e.g., Swedbank"
+              placeholder={t('placeholders.bank_name')}
               maxLength={20}
               variant="flat"
               isInvalid={!!errors.bankingInformation?.name}
@@ -324,11 +324,11 @@ const InvoiceForm = ({
           render={({ field }) => (
             <Input
               {...field}
-              label="Bank Code"
-              aria-label="Bank Code"
+              label={t('labels.bank_code')}
+              aria-label={t('a11y.bank_code_label')}
               type="text"
               maxLength={20}
-              placeholder="e.g., HABALT22"
+              placeholder={t('placeholders.bank_code')}
               isInvalid={!!errors.bankingInformation?.code}
               errorMessage={errors.bankingInformation?.code?.message}
             />
@@ -341,9 +341,9 @@ const InvoiceForm = ({
           render={({ field }) => (
             <Input
               {...field}
-              label="Bank Account Number"
-              aria-label="Bank Account Number"
-              placeholder="e.g., LT121000011101001000"
+              label={t('labels.bank_account_number')}
+              aria-label={t('a11y.bank_account_number_label')}
+              placeholder={t('placeholders.bank_account_number')}
               type="text"
               maxLength={20}
               isInvalid={!!errors.bankingInformation?.accountNumber}
@@ -396,7 +396,7 @@ const InvoiceForm = ({
       <FormProvider {...methods}>
         <Card className="dark:border-default-100 bg-transparent p-4 sm:p-8 dark:border">
           <form
-            aria-label="Add New Invoice Form"
+            aria-label={t('a11y.form_label')}
             className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
             onSubmit={handleSubmit(onSubmit)}
             encType="multipart/form-data"
@@ -411,9 +411,9 @@ const InvoiceForm = ({
                   render={({ field }) => (
                     <Input
                       {...field}
-                      aria-label="Invoice ID"
-                      label="Invoice ID"
-                      placeholder="e.g., INV001"
+                      aria-label={t('a11y.invoice_id_label')}
+                      label={t('labels.invoice_id')}
+                      placeholder={t('placeholders.invoice_id')}
                       isInvalid={!!errors.invoiceId}
                       errorMessage={errors.invoiceId?.message}
                       endContent={
@@ -435,10 +435,10 @@ const InvoiceForm = ({
                   )}
                 />
                 <Select
-                  aria-label="Status"
+                  aria-label={t('a11y.status_label')}
                   {...register('status')}
-                  label="Status"
-                  placeholder="Select status"
+                  label={t('labels.status')}
+                  placeholder={t('placeholders.select_status')}
                   defaultSelectedKeys={
                     invoiceData?.status ? [`${invoiceData.status}`] : undefined
                   }
@@ -450,10 +450,10 @@ const InvoiceForm = ({
                   ))}
                 </Select>
                 <Input
-                  aria-label="Date"
+                  aria-label={t('a11y.date_label')}
                   {...register('date')}
                   type="date"
-                  label="Date"
+                  label={t('labels.date')}
                   defaultValue={
                     invoiceData?.date ? formatDate(invoiceData.date) : ''
                   }
@@ -461,10 +461,10 @@ const InvoiceForm = ({
                   isInvalid={!!errors.date}
                 />
                 <Input
-                  aria-label="Due Date"
+                  aria-label={t('a11y.due_date_label')}
                   {...register('dueDate')}
                   type="date"
-                  label="Due Date"
+                  label={t('labels.due_date')}
                   defaultValue={
                     invoiceData?.dueDate ? formatDate(invoiceData.dueDate) : ''
                   }

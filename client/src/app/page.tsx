@@ -48,7 +48,7 @@ export default function Home() {
               src="https://res.cloudinary.com/dpc8mowbo/image/upload/fl_preserve_transparency/v1742077159/amyxvmvgwypog08nu4mp.jpg?_s=public-apps"
               width={850}
               height={550}
-              alt="Invoice app dashboard preview"
+              alt={t('hero.a11y.dashboard_preview_alt')}
               className="mx-auto overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
               unoptimized
             />
@@ -76,7 +76,7 @@ export default function Home() {
               src="https://res.cloudinary.com/dpc8mowbo/image/upload/fl_preserve_transparency/v1742079914/bmnbendbuwp8ydtusijr.jpg?_s=public-apps"
               width={850}
               height={550}
-              alt="Invoice editor interface"
+              alt={t('features.a11y.editor_interface_alt')}
               className="mx-auto overflow-hidden rounded-xl object-cover object-center sm:w-full"
               unoptimized
             />

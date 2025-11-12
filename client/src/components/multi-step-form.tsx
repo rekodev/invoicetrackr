@@ -9,8 +9,8 @@ import {
   CardHeader,
   cn
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import {
   BankingInformationFormModel,
@@ -21,11 +21,11 @@ import {
   isUserPersonalInformationSetUp
 } from '@/lib/utils/user';
 
-import SignUpForm from './auth/sign-up-form';
 import AppLogo from './icons/AppLogo';
-import PaymentForm from './payment-form';
 import BankAccountForm from './profile/bank-account-form';
+import PaymentForm from './payment-form';
 import PersonalInformationForm from './profile/personal-information-form';
+import SignUpForm from './auth/sign-up-form';
 
 type Props = {
   existingUserData?: UserModel;
@@ -37,7 +37,7 @@ export default function MultiStepForm({
   existingBankingInformation
 }: Props) {
   const t = useTranslations('sign_up.multi_step');
-  
+
   const steps = [
     {
       id: 'account',

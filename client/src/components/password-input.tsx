@@ -2,9 +2,9 @@
 
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { Input } from '@heroui/react';
-import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   label: string;

@@ -1,7 +1,12 @@
 {
   "header": {
+    "a11y": {
+      "app_logo_alt": "Programėlės logotipas"
+    },
     "language_switcher": {
-      "aria_label": "Pakeisti kalbą",
+      "a11y": {
+        "label": "Pakeisti kalbą"
+      },
       "en": "Anglų",
       "lt": "Lietuvių"
     },
@@ -12,7 +17,10 @@
       "contracts": "Kontraktai",
       "my_profile": "Mano profilis",
       "log_out": "Atsijungti",
-      "signed_in_as": "Prisijungęs vartotojas"
+      "signed_in_as": "Prisijungęs vartotojas",
+      "a11y": {
+        "profile_actions_label": "Profilio veiksmai"
+      }
     },
     "guest": {
       "login": "Prisijungti",
@@ -68,11 +76,17 @@
       "title": "Sukurkite Profesionalias Sąskaitas Per Kelias Minutes",
       "subtitle": "Paprastas, galingas ir nemokamas sąskaitų generatorius laisviems samdomiems ir mažam verslui. Pradėkite be registracijos.",
       "cta_primary": "Sukurti Nemokamą Sąskaitą",
-      "cta_secondary": "Peržiūrėti Premium Funkcijas"
+      "cta_secondary": "Peržiūrėti Premium Funkcijas",
+      "a11y": {
+        "dashboard_preview_alt": "Sąskaitų programėlės valdymo skydas"
+      }
     },
     "features": {
       "title": "Viskas ko Reikia Profesionaliam Sąskaitų Faktūrų Išrašymui",
       "subtitle": "Mūsų intuityvus sąskaitų generatorius padeda kurti, pritaikyti ir eksportuoti profesionalias sąskaitas per sekundes.",
+      "a11y": {
+        "editor_interface_alt": "Sąskaitų redaktoriaus sąsaja"
+      },
       "save_edit": {
         "title": "Išsaugokite ir Redaguokite Sąskaitas",
         "description": "Lengvai kurkite, išsaugokite ir redaguokite sąskaitas kai tik reikia, užtikrindami lankstumo jūsų atsiskaitymo procese."
@@ -228,6 +242,9 @@
   },
   "invoices": {
     "table": {
+      "a11y": {
+        "table_label": "Sąskaitų faktūrų lentelė su pasirinktiniu turiniu, puslapiavimu ir rikiuojimu"
+      },
       "columns": {
         "id": "ID",
         "receiver": "GAVĖJAS",
@@ -254,7 +271,11 @@
       "filters": {
         "status": "Būsena",
         "columns": "Stulpeliai",
-        "clear": "Išvalyti filtrus"
+        "clear": "Išvalyti filtrus",
+        "a11y": {
+          "status_label": "Būsena",
+          "columns_label": "Lentelės stulpeliai"
+        }
       },
       "empty_state": "Sąskaitų faktūrų nerasta."
     },
@@ -307,7 +328,10 @@
       "signature_label": "(parašas)",
       "name_label": "(vardas, pavardė)",
       "payment_terms_label": "Apmokėjimo terminas: {days} dienų",
-      "bank_info_label": "{bank_name}, banko kodas {bank_code}; Sąskaitos numeris: {bank_account_number}"
+      "bank_info_label": "{bank_name}, banko kodas {bank_code}; Sąskaitos numeris: {bank_account_number}",
+      "buttons": {
+        "download_pdf": "Atsisiųsti PDF"
+      }
     }
   },
   "clients": {
@@ -315,12 +339,18 @@
     "edit": "Redaguoti",
     "remove": "Pašalinti",
     "no_clients": "Klientų nerasta",
+    "a11y": {
+      "actions_label": "Veiksmai"
+    },
     "top_content": {
       "search_placeholder": "Ieškoti pagal pavadinimą...",
       "add_new": "Pridėti naują",
       "type_filter": "Tipas",
       "total_singular": "Viso 1 klientas",
-      "total_plural": "Viso {count} klientų"
+      "total_plural": "Viso {count} klientų",
+      "a11y": {
+        "columns_label": "Lentelės stulpeliai"
+      }
     },
     "bottom_content": {
       "previous": "Ankstesnis",
@@ -357,6 +387,9 @@
   },
   "profile": {
     "user_nav_card": {
+      "a11y": {
+        "actions_label": "Veiksmai"
+      },
       "personal_information": {
         "title": "Asmeninė informacija"
       },
@@ -372,6 +405,9 @@
     },
     "personal_information": {
       "form": {
+        "a11y": {
+          "form_label": "Asmeninės informacijos forma"
+        },
         "title": "Asmeninė informacija",
         "email": "El. paštas",
         "email_placeholder": "Įveskite savo el. pašto adresą",
@@ -388,6 +424,9 @@
       }
     },
     "account_settings": {
+      "a11y": {
+        "form_label": "Paskyros nustatymų forma"
+      },
       "title": "Paskyros Nustatymai",
       "currency": "Valiuta",
       "language": "Kalba",
@@ -433,7 +472,9 @@
       }
     },
     "change_password": {
-      "aria_label": "Slaptažodžio keitimo forma",
+      "a11y": {
+        "form_label": "Slaptažodžio keitimo forma"
+      },
       "title": "Pakeisti Slaptažodį",
       "current_password": "Dabartinis Slaptažodis",
       "current_password_placeholder": "Įveskite dabartinį slaptažodį",
@@ -445,6 +486,9 @@
       "password_requirements": "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną skaičių, didžiąją raidę, mažąją raidę ir specialų simbolį."
     },
     "banking_information": {
+      "a11y": {
+        "form_label": "Bankinės informacijos forma"
+      },
       "title": "Bankinė informacija",
       "actions": {
         "add": "Pridėti naują",
@@ -569,15 +613,83 @@
       "add_service": "Pridėti paslaugą",
       "grand_total": "Bendra suma",
       "delete_service": "Ištrinti paslaugą",
-      "aria_table": "Sąskaitos faktūros paslaugų lentelė",
-      "aria_number": "Numeris",
-      "aria_description": "Aprašymas",
-      "aria_unit": "Vienetas",
-      "aria_quantity": "Kiekis",
-      "aria_amount": "Suma",
-      "aria_actions": "Veiksmai"
+      "a11y": {
+        "table_label": "Sąskaitos faktūros paslaugų lentelė",
+        "number_label": "Numeris",
+        "description_label": "Aprašymas",
+        "unit_label": "Vienetas",
+        "quantity_label": "Kiekis",
+        "amount_label": "Suma",
+        "actions_label": "Veiksmai"
+      }
     },
     "invoice_form": {
+      "a11y": {
+        "form_label": "Pridėti naują sąskaitą faktūrą forma",
+        "sender_name_label": "Siuntėjo vardas",
+        "sender_business_number_label": "Siuntėjo įmonės numeris",
+        "sender_address_label": "Siuntėjo adresas",
+        "sender_email_label": "Siuntėjo el. paštas",
+        "receiver_name_label": "Gavėjo vardas",
+        "receiver_business_number_label": "Gavėjo įmonės numeris",
+        "receiver_address_label": "Gavėjo adresas",
+        "receiver_email_label": "Gavėjo el. paštas",
+        "bank_name_label": "Banko pavadinimas",
+        "bank_code_label": "Banko kodas",
+        "bank_account_number_label": "Banko sąskaitos numeris",
+        "invoice_id_label": "Sąskaitos faktūros ID",
+        "date_label": "Data",
+        "due_date_label": "Mokėjimo terminas",
+        "status_label": "Būsena",
+        "static_actions_label": "Statiniai veiksmai"
+      },
+      "labels": {
+        "sender_name": "Siuntėjo vardas",
+        "sender_business_number": "Siuntėjo įmonės numeris",
+        "sender_address": "Siuntėjo adresas",
+        "sender_email": "Siuntėjo el. paštas",
+        "receiver_name": "Gavėjo vardas",
+        "receiver_business_number": "Gavėjo įmonės numeris",
+        "receiver_address": "Gavėjo adresas",
+        "receiver_email": "Gavėjo el. paštas",
+        "bank_name": "Banko pavadinimas",
+        "bank_code": "Banko kodas",
+        "bank_account_number": "Banko sąskaitos numeris",
+        "invoice_id": "Sąskaitos faktūros ID",
+        "date": "Data",
+        "due_date": "Mokėjimo terminas",
+        "status": "Būsena"
+      },
+      "placeholders": {
+        "bank_name": "pvz., Swedbank",
+        "bank_code": "pvz., HABALT22",
+        "bank_account_number": "pvz., LT121000011101001000",
+        "invoice_id": "pvz., SF001",
+        "select_status": "Pasirinkite būseną"
+      },
+      "headings": {
+        "sender_receiver_data": "Siuntėjo ir gavėjo duomenys",
+        "from": "Nuo:",
+        "to": "Kam:"
+      },
+      "buttons": {
+        "cancel": "Atšaukti",
+        "save": "Išsaugoti",
+        "preview": "Peržiūrėti",
+        "use_next": "Naudoti kitą",
+        "add_new": "Pridėti naują",
+        "download_pdf": "Atsisiųsti PDF"
+      },
+      "modals": {
+        "select_client": "Pasirinkti klientą",
+        "select_bank_account": "Pasirinkti banko sąskaitą",
+        "no_clients": "Neturite klientų. Sukurkite vieną, kad pradėtumėte.",
+        "no_bank_accounts": "Neturite banko sąskaitų. Sukurkite vieną, kad pradėtumėte."
+      },
+      "free_invoice": {
+        "title": "Sukurti sąskaitą faktūrą",
+        "description": "Sukurkite, peržiūrėkite ir atsisiųskite sąskaitą faktūrą nemokamai"
+      },
       "services_heading": "Paslaugos",
       "signature_heading": "Parašas",
       "banking_details": "Bankinė informacija",

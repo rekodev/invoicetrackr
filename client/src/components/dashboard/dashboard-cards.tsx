@@ -6,9 +6,9 @@ import {
 } from '@heroicons/react/24/outline';
 import { getTranslations } from 'next-intl/server';
 
-import { getInvoicesTotalAmount } from '@/api';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
+import { getInvoicesTotalAmount } from '@/api';
 import { isResponseError } from '@/lib/utils/error';
 
 import DashboardCard from './dashboard-card';

@@ -117,7 +117,7 @@ const UserCard = ({ user }: Props) => {
       <CardHeader className="flex-col">{renderUserDetails()}</CardHeader>
       <CardBody className="flex justify-center p-0 px-2">
         <Tabs
-          aria-label="Actions"
+          aria-label={t('a11y.actions_label')}
           isVertical
           selectedKey={currentPath}
           fullWidth

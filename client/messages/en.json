@@ -1,7 +1,12 @@
 {
   "header": {
+    "a11y": {
+      "app_logo_alt": "App Logo"
+    },
     "language_switcher": {
-      "aria_label": "Select language",
+      "a11y": {
+        "label": "Select language"
+      },
       "en": "English",
       "lt": "Lithuanian"
     },
@@ -12,7 +17,10 @@
       "contracts": "Contracts",
       "my_profile": "My Profile",
       "log_out": "Log Out",
-      "signed_in_as": "Signed in as"
+      "signed_in_as": "Signed in as",
+      "a11y": {
+        "profile_actions_label": "Profile Actions"
+      }
     },
     "guest": {
       "login": "Log In",
@@ -68,11 +76,17 @@
       "title": "Create Professional Invoices in Minutes",
       "subtitle": "Simple, powerful, and free invoice generator for freelancers and small businesses. No account required to get started.",
       "cta_primary": "Create Free Invoice",
-      "cta_secondary": "See Premium Features"
+      "cta_secondary": "See Premium Features",
+      "a11y": {
+        "dashboard_preview_alt": "Invoice app dashboard preview"
+      }
     },
     "features": {
       "title": "Everything You Need for Professional Invoicing",
       "subtitle": "Our intuitive invoice generator helps you create, customize, and export professional invoices in seconds.",
+      "a11y": {
+        "editor_interface_alt": "Invoice editor interface"
+      },
       "save_edit": {
         "title": "Save & Edit Invoices",
         "description": "Easily create, save, and edit invoices whenever needed, ensuring flexibility in your billing process."
@@ -228,6 +242,9 @@
   },
   "invoices": {
     "table": {
+      "a11y": {
+        "table_label": "Invoice table with custom cells, pagination and sorting"
+      },
       "columns": {
         "id": "ID",
         "receiver": "RECEIVER",
@@ -254,7 +271,11 @@
       "filters": {
         "status": "Status",
         "columns": "Columns",
-        "clear": "Clear filters"
+        "clear": "Clear filters",
+        "a11y": {
+          "status_label": "Status",
+          "columns_label": "Table Columns"
+        }
       },
       "empty_state": "No invoices found."
     },
@@ -307,7 +328,10 @@
       "signature_label": "(signature)",
       "name_label": "(name, surname)",
       "payment_terms_label": "Payment terms: {days} days",
-      "bank_info_label": "{bank_name}, bank code {bank_code}; Account number: {bank_account_number}"
+      "bank_info_label": "{bank_name}, bank code {bank_code}; Account number: {bank_account_number}",
+      "buttons": {
+        "download_pdf": "Download PDF"
+      }
     }
   },
   "clients": {
@@ -315,12 +339,18 @@
     "edit": "Edit",
     "remove": "Remove",
     "no_clients": "No clients found",
+    "a11y": {
+      "actions_label": "Actions"
+    },
     "top_content": {
       "search_placeholder": "Search by name...",
       "add_new": "Add New",
       "type_filter": "Type",
       "total_singular": "Total 1 client",
-      "total_plural": "Total {count} clients"
+      "total_plural": "Total {count} clients",
+      "a11y": {
+        "columns_label": "Table Columns"
+      }
     },
     "bottom_content": {
       "previous": "Previous",
@@ -357,6 +387,9 @@
   },
   "profile": {
     "user_nav_card": {
+      "a11y": {
+        "actions_label": "Actions"
+      },
       "personal_information": {
         "title": "Personal Information"
       },
@@ -372,6 +405,9 @@
     },
     "personal_information": {
       "form": {
+        "a11y": {
+          "form_label": "Personal Information Form"
+        },
         "title": "Personal Information",
         "email": "Email",
         "email_placeholder": "Enter your email address",
@@ -388,6 +424,9 @@
       }
     },
     "account_settings": {
+      "a11y": {
+        "form_label": "Account Settings Form"
+      },
       "title": "Account Settings",
       "currency": "Currency",
       "language": "Language",
@@ -433,7 +472,9 @@
       }
     },
     "change_password": {
-      "aria_label": "Change password form",
+      "a11y": {
+        "form_label": "Change password form"
+      },
       "title": "Change Password",
       "current_password": "Current Password",
       "current_password_placeholder": "Enter current password",
@@ -445,6 +486,9 @@
       "password_requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
     },
     "banking_information": {
+      "a11y": {
+        "form_label": "Banking Information Form"
+      },
       "title": "Banking Information",
       "actions": {
         "add": "Add New",
@@ -569,15 +613,83 @@
       "add_service": "Add Service",
       "grand_total": "Grand Total",
       "delete_service": "Delete service",
-      "aria_table": "Invoice Services Table",
-      "aria_number": "Number",
-      "aria_description": "Description",
-      "aria_unit": "Unit",
-      "aria_quantity": "Quantity",
-      "aria_amount": "Amount",
-      "aria_actions": "Actions"
+      "a11y": {
+        "table_label": "Invoice Services Table",
+        "number_label": "Number",
+        "description_label": "Description",
+        "unit_label": "Unit",
+        "quantity_label": "Quantity",
+        "amount_label": "Amount",
+        "actions_label": "Actions"
+      }
     },
     "invoice_form": {
+      "a11y": {
+        "form_label": "Add New Invoice Form",
+        "sender_name_label": "Sender's Name",
+        "sender_business_number_label": "Sender's Business Number",
+        "sender_address_label": "Sender's Address",
+        "sender_email_label": "Sender's Email",
+        "receiver_name_label": "Receiver's Name",
+        "receiver_business_number_label": "Receiver's Business Number",
+        "receiver_address_label": "Receiver's Address",
+        "receiver_email_label": "Receiver's Email",
+        "bank_name_label": "Bank Name",
+        "bank_code_label": "Bank Code",
+        "bank_account_number_label": "Bank Account Number",
+        "invoice_id_label": "Invoice ID",
+        "date_label": "Date",
+        "due_date_label": "Due Date",
+        "status_label": "Status",
+        "static_actions_label": "Static Actions"
+      },
+      "labels": {
+        "sender_name": "Sender's Name",
+        "sender_business_number": "Sender's Business Number",
+        "sender_address": "Sender's Address",
+        "sender_email": "Sender's Email",
+        "receiver_name": "Receiver's Name",
+        "receiver_business_number": "Receiver's Business Number",
+        "receiver_address": "Receiver's Address",
+        "receiver_email": "Receiver's Email",
+        "bank_name": "Bank Name",
+        "bank_code": "Bank Code",
+        "bank_account_number": "Bank Account Number",
+        "invoice_id": "Invoice ID",
+        "date": "Date",
+        "due_date": "Due Date",
+        "status": "Status"
+      },
+      "placeholders": {
+        "bank_name": "e.g., Swedbank",
+        "bank_code": "e.g., HABALT22",
+        "bank_account_number": "e.g., LT121000011101001000",
+        "invoice_id": "e.g., INV001",
+        "select_status": "Select status"
+      },
+      "headings": {
+        "sender_receiver_data": "Sender and Receiver Data",
+        "from": "From:",
+        "to": "To:"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "save": "Save",
+        "preview": "Preview",
+        "use_next": "Use Next",
+        "add_new": "Add New",
+        "download_pdf": "Download PDF"
+      },
+      "modals": {
+        "select_client": "Select Client",
+        "select_bank_account": "Select Bank Account",
+        "no_clients": "You have no clients. Create one to get started.",
+        "no_bank_accounts": "You have no bank accounts. Create one to get started."
+      },
+      "free_invoice": {
+        "title": "Create Invoice",
+        "description": "Create, preview and download an invoice for free"
+      },
       "services_heading": "Services",
       "signature_heading": "Signature",
       "banking_details": "Banking Details",

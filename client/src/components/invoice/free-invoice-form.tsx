@@ -50,16 +50,16 @@ const FreeInvoiceForm = () => {
 
   const renderSenderAndReceiverFields = () => (
     <div className="col-span-4 flex w-full flex-col gap-4">
-      <h4>Sender and Receiver Data</h4>
+      <h4>{t('headings.sender_receiver_data')}</h4>
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
         <Card className="flex w-full flex-col gap-4 p-4">
           <div className="flex min-h-8 items-center justify-between">
-            <p className="text-default-500 text-sm">From:</p>
+            <p className="text-default-500 text-sm">{t('headings.from')}</p>
           </div>
           <Input
-            label="Sender's Name"
+            label={t('labels.sender_name')}
             size="sm"
-            aria-label="Sender's Name"
+            aria-label={t('a11y.sender_name_label')}
             type="text"
             maxLength={20}
             defaultValue=""
@@ -69,36 +69,33 @@ const FreeInvoiceForm = () => {
             errorMessage={errors.sender?.name?.message}
           />
           <Input
-            label="Sender's Business Number"
+            label={t('labels.sender_business_number')}
             size="sm"
-            aria-label="Sender's Business Number"
+            aria-label={t('a11y.sender_business_number_label')}
             type="text"
             maxLength={20}
-            defaultValue=""
             variant="bordered"
             {...register('sender.businessNumber')}
             isInvalid={!!errors.sender?.businessNumber}
             errorMessage={errors.sender?.businessNumber?.message}
           />
           <Input
-            label="Sender's Address"
+            label={t('labels.sender_address')}
             size="sm"
-            aria-label="Sender's Address"
+            aria-label={t('a11y.sender_address_label')}
             type="text"
             maxLength={20}
-            defaultValue=""
             variant="bordered"
             {...register('sender.address')}
             isInvalid={!!errors.sender?.address}
             errorMessage={errors.sender?.address?.message}
           />
           <Input
-            label="Sender's Email"
+            label={t('labels.sender_email')}
             size="sm"
-            aria-label="Sender's Email"
+            aria-label={t('a11y.sender_email_label')}
             type="text"
             maxLength={20}
-            defaultValue=""
             variant="bordered"
             {...register('sender.email')}
             isInvalid={!!errors.sender?.email}
@@ -107,51 +104,47 @@ const FreeInvoiceForm = () => {
         </Card>
         <Card className="flex w-full flex-col gap-4 p-4">
           <div className="flex min-h-8 items-center justify-between">
-            <p className="text-default-500 text-sm">To:</p>
+            <p className="text-default-500 text-sm">{t('headings.to')}</p>
           </div>
           <Input
-            label="Receiver's Name"
+            label={t('labels.receiver_name')}
             size="sm"
-            aria-label="Receiver's Name"
+            aria-label={t('a11y.receiver_name_label')}
             type="text"
             maxLength={20}
-            defaultValue=""
             variant="bordered"
             {...register('receiver.name')}
             isInvalid={!!errors.receiver?.name}
             errorMessage={errors.receiver?.name?.message}
           />
           <Input
-            label="Receiver's Business Number"
+            label={t('labels.receiver_business_number')}
             size="sm"
-            aria-label="Receiver's Business Number"
+            aria-label={t('a11y.receiver_business_number_label')}
             type="text"
             maxLength={20}
-            defaultValue=""
             variant="bordered"
             {...register('receiver.businessNumber')}
             isInvalid={!!errors.receiver?.businessNumber}
             errorMessage={errors.receiver?.businessNumber?.message}
           />
           <Input
-            label="Receiver's Address"
+            label={t('labels.receiver_address')}
             size="sm"
-            aria-label="Receiver's Address"
+            aria-label={t('a11y.receiver_address_label')}
             type="text"
             maxLength={20}
-            defaultValue=""
             variant="bordered"
             {...register('receiver.address')}
             isInvalid={!!errors.receiver?.address}
             errorMessage={errors.receiver?.address?.message}
           />
           <Input
-            label="Receiver's Email"
+            label={t('labels.receiver_email')}
             size="sm"
-            aria-label="Receiver's Email"
+            aria-label={t('a11y.receiver_email_label')}
             type="text"
             maxLength={20}
-            defaultValue=""
             variant="bordered"
             {...register('receiver.email')}
             isInvalid={!!errors.receiver?.email}
@@ -178,36 +171,33 @@ const FreeInvoiceForm = () => {
       <h4>{t('banking_details')}</h4>
       <div className="flex flex-col gap-4 md:flex-row">
         <Input
-          label="Bank Name"
+          label={t('labels.bank_name')}
           labelPlacement="inside"
-          aria-label="Bank Name"
+          aria-label={t('a11y.bank_name_label')}
           type="text"
-          placeholder="e.g., Swedbank"
+          placeholder={t('placeholders.bank_name')}
           maxLength={20}
-          defaultValue=""
           variant="flat"
           {...register('bankingInformation.name')}
           isInvalid={!!errors.bankingInformation?.name}
           errorMessage={errors.bankingInformation?.name?.message}
         />
         <Input
-          label="Bank Code"
-          aria-label="Bank Code"
+          label={t('labels.bank_code')}
+          aria-label={t('a11y.bank_code_label')}
           type="text"
           maxLength={20}
-          placeholder="e.g., HABALT22"
-          defaultValue=""
+          placeholder={t('placeholders.bank_code')}
           {...register('bankingInformation.code')}
           isInvalid={!!errors.bankingInformation?.code}
           errorMessage={errors.bankingInformation?.code?.message}
         />
         <Input
-          label="Bank Account Number"
-          aria-label="Bank Account Number"
-          placeholder="e.g., LT121000011101001000"
+          label={t('labels.bank_account_number')}
+          aria-label={t('a11y.bank_account_number_label')}
+          placeholder={t('placeholders.bank_account_number')}
           type="text"
           maxLength={20}
-          defaultValue=""
           {...register('bankingInformation.accountNumber')}
           isInvalid={!!errors.bankingInformation?.accountNumber}
           errorMessage={errors.bankingInformation?.accountNumber?.message}
@@ -255,14 +245,14 @@ const FreeInvoiceForm = () => {
       <FormProvider {...methods}>
         <div className="mx-auto max-w-5xl p-6">
           <div className="flex flex-col gap-2">
-            <h1 className="text-3xl font-semibold">Create Invoice</h1>
-            <p className="text-default-500">
-              Create, preview and download an invoice for free
-            </p>
+            <h1 className="text-3xl font-semibold">
+              {t('free_invoice.title')}
+            </h1>
+            <p className="text-default-500">{t('free_invoice.description')}</p>
           </div>
           <Card className="dark:border-default-100 mt-8 bg-transparent p-4 sm:p-8 dark:border">
             <form
-              aria-label="Add New Invoice Form"
+              aria-label={t('a11y.form_label')}
               className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
               encType="multipart/form-data"
             >
@@ -271,31 +261,29 @@ const FreeInvoiceForm = () => {
                 <div className="col-span-4 flex flex-col gap-2 md:flex-row">
                   <Input
                     className="w-full"
-                    aria-label="Invoice ID"
+                    aria-label={t('a11y.invoice_id_label')}
                     {...register('invoiceId')}
-                    label="Invoice ID"
-                    placeholder="e.g., INV001"
-                    defaultValue=""
+                    label={t('labels.invoice_id')}
+                    placeholder={t('placeholders.invoice_id')}
                     isInvalid={!!errors.invoiceId}
                     errorMessage={errors.invoiceId?.message}
                   />
                   <Input
                     className="w-full"
-                    aria-label="Date"
+                    aria-label={t('a11y.date_label')}
                     {...register('date')}
                     type="date"
-                    label="Date"
+                    label={t('labels.date')}
                     defaultValue={formatDate(new Date().toISOString())}
                     errorMessage={errors.date?.message}
                     isInvalid={!!errors.date}
                   />
                   <Input
                     className="w-full"
-                    aria-label="Due Date"
+                    aria-label={t('a11y.due_date_label')}
                     {...register('dueDate')}
                     type="date"
-                    label="Due Date"
-                    defaultValue=""
+                    label={t('labels.due_date')}
                     isInvalid={!!errors.dueDate}
                     errorMessage={errors.dueDate?.message}
                   />

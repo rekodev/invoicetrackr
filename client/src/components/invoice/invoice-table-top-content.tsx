@@ -106,7 +106,7 @@ const InvoiceTableTopContent = ({
             </DropdownTrigger>
             <DropdownMenu
               disallowEmptySelection
-              aria-label="Table Columns"
+              aria-label={t('table.filters.a11y.status_label')}
               closeOnSelect={false}
               selectedKeys={statusFilter}
               selectionMode="multiple"
@@ -130,7 +130,7 @@ const InvoiceTableTopContent = ({
             </DropdownTrigger>
             <DropdownMenu
               disallowEmptySelection
-              aria-label="Table Columns"
+              aria-label={t('table.filters.a11y.columns_label')}
               closeOnSelect={false}
               selectedKeys={visibleColumns}
               selectionMode="multiple"

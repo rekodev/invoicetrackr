@@ -37,11 +37,7 @@ const InvoiceFormPartyModal = ({
 
   const renderBody = () => {
     if (!clients?.length) {
-      return (
-        <p className="text-default-500">
-          You have no clients. Create one to get started.
-        </p>
-      );
+      return <p className="text-default-500">{t('modals.no_clients')}</p>;
     }
 
     return clients?.map((client) => (
@@ -57,7 +53,7 @@ const InvoiceFormPartyModal = ({
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader>{t('select_client')}</ModalHeader>
+          <ModalHeader>{t('modals.select_client')}</ModalHeader>
           <ModalBody>{renderBody()}</ModalBody>
           <ModalFooter>
             <Button
@@ -65,7 +61,7 @@ const InvoiceFormPartyModal = ({
               onPress={() => setIsAddNewClientModalOpen(true)}
               startContent={<PlusCircleIcon className="h-5 w-5" />}
             >
-              Add New
+              {t('buttons.add_new')}
             </Button>
           </ModalFooter>
         </ModalContent>

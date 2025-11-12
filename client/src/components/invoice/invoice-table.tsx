@@ -173,7 +173,7 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
   return (
     <section>
       <Table
-        aria-label="Example table with custom cells, pagination and sorting"
+        aria-label={t('a11y.table_label')}
         isHeaderSticky
         bottomContent={renderBottomContent()}
         bottomContentPlacement="outside"

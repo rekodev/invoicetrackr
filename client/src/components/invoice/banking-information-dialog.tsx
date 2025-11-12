@@ -15,6 +15,7 @@ import {
   ModalHeader
 } from '@heroui/react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
@@ -35,12 +36,13 @@ const BankingInformationDialog = ({
   bankingInformationEntries
 }: Props) => {
   const router = useRouter();
+  const t = useTranslations('components.invoice_form');
 
   const renderBody = () => {
     if (!bankingInformationEntries?.length) {
       return (
         <p className="text-default-500">
-          You have no bank accounts. Create one to get started.
+          {t('modals.no_bank_accounts')}
         </p>
       );
     }
@@ -75,7 +77,7 @@ const BankingInformationDialog = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
-        <ModalHeader>Select Bank Account</ModalHeader>
+        <ModalHeader>{t('modals.select_bank_account')}</ModalHeader>
         <ModalBody>{renderBody()}</ModalBody>
         <ModalFooter>
           <Button
@@ -83,7 +85,7 @@ const BankingInformationDialog = ({
             onPress={() => router.push(BANKING_INFORMATION_PAGE)}
             startContent={<PlusCircleIcon className="h-5 w-5" />}
           >
-            Add New
+            {t('buttons.add_new')}
           </Button>
         </ModalFooter>
       </ModalContent>
