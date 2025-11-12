@@ -107,12 +107,13 @@ export default {
     },
     bankAccount: {
       created: 'Bank account added successfully',
-      createdWithWarning: 'Bank account added succesfully. Please select it as your main account.',
+      createdWithWarning:
+        'Bank account added successfully. Please select it as your main account.',
       updated: 'Bank account updated successfully',
       deleted: 'Bank account deleted successfully'
     },
     payment: {
-      subscriptionCanceled: 'Subscription canceled successfuly'
+      subscriptionCanceled: 'Subscription canceled successfully'
     },
     contact: {
       messageSent: 'Message sent successfully'
@@ -125,10 +126,12 @@ export default {
       invalidCredentials: 'Invalid credentials',
       passwordsDoNotMatch: 'Passwords do not match',
       currentPasswordIncorrect: 'Current password is incorrect',
-      newPasswordMismatch: 'New password and confirmed new password do not match',
+      newPasswordMismatch:
+        'New password and confirmed new password do not match',
       unableToCreate: 'Unable to create user',
       unableToUpdate: 'Unable to update user information',
-      unableToDelete: 'Unable to delete account at this time. Please try again later',
+      unableToDelete:
+        'Unable to delete account at this time. Please try again later',
       unableToUpdateProfilePicture: 'Unable to update profile picture',
       unableToUpdateAccountSettings: 'Unable to update account settings',
       unableToChangePassword: 'Unable to change password',
@@ -136,7 +139,8 @@ export default {
       tokenInvalid: 'Token is invalid',
       tokenExpired: 'Token has expired',
       unableToUploadSignature: 'Unable to upload signature',
-      unableToUpdateSelectedBankAccount: 'Unable to update selected bank account'
+      unableToUpdateSelectedBankAccount:
+        'Unable to update selected bank account'
     },
     invoice: {
       notFound: 'Invoice not found',

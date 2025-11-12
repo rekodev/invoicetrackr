@@ -83,7 +83,9 @@ export const createSubscription = async (
       await stripe.subscriptions.retrieve(existingSubId);
 
     if (existingSubscription.status === 'active')
-      throw new AlreadyExistsError(i18n.t('error.payment.subscriptionAlreadyActive'));
+      throw new AlreadyExistsError(
+        i18n.t('error.payment.subscriptionAlreadyActive')
+      );
   }
 
   const subscription = await stripe.subscriptions.create({
@@ -101,7 +103,9 @@ export const createSubscription = async (
   );
 
   if (!subscription || !updatedSubscriptionId)
-    throw new BadRequestError(i18n.t('error.payment.unableToCreateSubscription'));
+    throw new BadRequestError(
+      i18n.t('error.payment.unableToCreateSubscription')
+    );
 
   reply.status(200).send({
     type: 'payment',
@@ -121,7 +125,8 @@ export const getStripeCustomerId = async (
 
   const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
 
-  if (!stripeCustomerId) throw new NotFoundError(i18n.t('error.payment.customerNotFound'));
+  if (!stripeCustomerId)
+    throw new NotFoundError(i18n.t('error.payment.customerNotFound'));
 
   reply.status(200).send({ customerId: stripeCustomerId });
 };
@@ -136,9 +141,12 @@ export const cancelStripeSubscription = async (
   const stripeSubscriptionId =
     await getStripeCustomerSubscriptionIdFromDb(userId);
 
-  if (!stripeSubscriptionId) throw new NotFoundError(i18n.t('error.payment.subscriptionNotFound'));
+  if (!stripeSubscriptionId)
+    throw new NotFoundError(i18n.t('error.payment.subscriptionNotFound'));
 
   await stripe.subscriptions.cancel(stripeSubscriptionId);
 
-  reply.status(200).send({ message: i18n.t('success.payment.subscriptionCanceled') });
+  reply
+    .status(200)
+    .send({ message: i18n.t('success.payment.subscriptionCanceled') });
 };
