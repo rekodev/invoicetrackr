@@ -17,7 +17,7 @@ import {
   updateUserOptions,
   updateUserProfilePictureOptions,
   updateUserSelectedBankAccountOptions
-} from '../options';
+} from '../options/user';
 
 const userRoutes = (
   fastify: FastifyInstance,

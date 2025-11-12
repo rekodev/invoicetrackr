@@ -13,8 +13,8 @@ import {
   updateUserAccountSettings,
   updateUserProfilePicture,
   updateUserSelectedBankAccount
-} from '../controllers';
-import { User } from '../types';
+} from '../controllers/user';
+import { User } from '../types/user';
 import { MessageResponse } from '../types/response';
 import { preValidateFileAndFields } from '../utils/multipart';
 import { authMiddleware } from '../middleware/auth';

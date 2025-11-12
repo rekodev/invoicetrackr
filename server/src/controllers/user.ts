@@ -17,14 +17,14 @@ import {
   updateUserInDb,
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb
-} from '../database';
-import { UserModel } from '../types';
+} from '../database/user';
+import { UserModel } from '../types/user';
 import {
   BadRequestError,
   NotFoundError,
   UnauthorizedError,
   ValidationErrorCause
-} from '../utils/errors';
+} from '../utils/error';
 import { saveResetTokenToDb } from '../database/password-reset';
 import { resend } from '../config/resend';
 import { stripe } from '../config/stripe';

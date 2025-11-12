@@ -10,7 +10,7 @@ import {
 import { NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 
-import { InvoiceModel } from '../types';
+import { InvoiceModel } from '../types/invoice';
 import { jsonAgg } from '../utils/json-agg';
 import { db } from './db';
 import {

@@ -1,5 +1,5 @@
 import { Type } from '@sinclair/typebox';
-import { BankAccount } from '../types';
+import { BankAccount } from '../types/banking-information';
 import { MessageResponse } from '../types/response';
 import {
   deleteBankAccount,
@@ -7,7 +7,7 @@ import {
   getBankAccounts,
   postBankAccount,
   updateBankAccount
-} from '../controllers';
+} from '../controllers/banking-information';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import { authMiddleware } from '../middleware/auth';
 

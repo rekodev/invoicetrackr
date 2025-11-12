@@ -12,8 +12,8 @@ import {
   sendInvoiceEmail,
   updateInvoice,
   updateInvoiceStatus
-} from '../controllers';
-import { Invoice } from '../types';
+} from '../controllers/invoice';
+import { Invoice } from '../types/invoice';
 import { MessageResponse } from '../types/response';
 import { preValidateFileAndFields } from '../utils/multipart';
 import { authMiddleware } from '../middleware/auth';

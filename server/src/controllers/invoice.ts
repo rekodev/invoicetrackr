@@ -7,24 +7,24 @@ import {
   deleteInvoiceFromDb,
   findInvoiceById,
   findInvoiceByInvoiceId,
-  getClientsFromDb,
   getInvoiceFromDb,
   getInvoicesFromDb,
   getInvoicesRevenueFromDb,
   getInvoicesTotalAmountFromDb,
   getLatestInvoicesFromDb,
-  getUserFromDb,
   insertInvoiceInDb,
   updateInvoiceInDb,
   updateInvoiceStatusInDb
-} from '../database';
-import { InvoiceModel } from '../types';
+} from '../database/invoice';
+import { getClientsFromDb } from '../database/client';
+import { getUserFromDb } from '../database/user';
+import { InvoiceModel } from '../types/invoice';
 import {
   AlreadyExistsError,
   BadRequestError,
   NotFoundError,
   ValidationErrorCause
-} from '../utils/errors';
+} from '../utils/error';
 import { resend } from '../config/resend';
 
 export const getInvoices = async (

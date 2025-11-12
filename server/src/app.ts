@@ -8,19 +8,17 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { defineI18n } from 'fastify-i18n';
 import { v2 as cloudinary } from 'cloudinary';
 
-import {
-  bankingInformationRoutes,
-  clientRoutes,
-  contactRoutes,
-  invoiceRoutes,
-  paymentRoutes,
-  userRoutes
-} from './routes';
+import bankingInformationRoutes from './routes/banking-information';
+import clientRoutes from './routes/client';
+import contactRoutes from './routes/contact';
+import invoiceRoutes from './routes/invoice';
+import paymentRoutes from './routes/payment';
+import userRoutes from './routes/user';
 import i18n from './plugins/i18n';
 import { cloudinaryConfig } from './config/cloudinary';
-import { errorHandler } from './utils/errors';
+import { errorHandler } from './utils/error';
 import { getPgVersion } from './database/db';
-import { languageMiddleware } from './middleware';
+import { languageMiddleware } from './middleware/language';
 import { rateLimitPluginOptions } from './utils/rate-limit';
 
 dotenv.config();

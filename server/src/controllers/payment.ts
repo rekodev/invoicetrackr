@@ -4,7 +4,7 @@ import {
   AlreadyExistsError,
   BadRequestError,
   NotFoundError
-} from '../utils/errors';
+} from '../utils/error';
 import {
   createStripeCustomerInDb,
   deleteStripeAccountFromDb,
@@ -13,7 +13,7 @@ import {
   updateStripeSubscriptionForUserInDb
 } from '../database/payment';
 import { stripe } from '../config/stripe';
-import { getUserCurrencyFromDb } from '../database';
+import { getUserCurrencyFromDb } from '../database/user';
 import 'dotenv/config';
 
 export const createCustomer = async (

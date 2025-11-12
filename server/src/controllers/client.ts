@@ -8,9 +8,9 @@ import {
   getClientsFromDb,
   insertClientInDb,
   updateClientInDb
-} from '../database';
-import { ClientModel } from '../types';
-import { BadRequestError, NotFoundError } from '../utils/errors';
+} from '../database/client';
+import { ClientModel } from '../types/client';
+import { BadRequestError, NotFoundError } from '../utils/error';
 
 export const getClients = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -47,11 +47,13 @@ export const postClient = async (
 
   const foundClient = await findClientByEmail(userId, clientData.email);
 
-  if (foundClient) throw new BadRequestError(i18n.t('error.client.alreadyExists'));
+  if (foundClient)
+    throw new BadRequestError(i18n.t('error.client.alreadyExists'));
 
   const insertedClient = await insertClientInDb(userId, clientData);
 
-  if (!insertedClient) throw new BadRequestError(i18n.t('error.client.unableToCreate'));
+  if (!insertedClient)
+    throw new BadRequestError(i18n.t('error.client.unableToCreate'));
 
   reply.status(200).send({
     client: insertedClient,
@@ -72,7 +74,8 @@ export const updateClient = async (
 
   const updatedClient = await updateClientInDb(userId, id, clientData);
 
-  if (!updatedClient) throw new BadRequestError(i18n.t('error.client.unableToUpdate'));
+  if (!updatedClient)
+    throw new BadRequestError(i18n.t('error.client.unableToUpdate'));
 
   reply.status(200).send({
     message: i18n.t('success.client.updated'),
@@ -89,7 +92,8 @@ export const deleteClient = async (
 
   const deletedClient = await deleteClientFromDb(userId, id);
 
-  if (!deletedClient) throw new BadRequestError(i18n.t('error.client.unableToDelete'));
+  if (!deletedClient)
+    throw new BadRequestError(i18n.t('error.client.unableToDelete'));
 
   reply.status(200).send({ message: i18n.t('success.client.deleted') });
 };

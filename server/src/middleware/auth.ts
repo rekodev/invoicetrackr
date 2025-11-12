@@ -2,7 +2,7 @@ import { FastifyRequest } from 'fastify';
 import { decode } from 'next-auth/jwt';
 import 'dotenv/config';
 
-import { UnauthorizedError } from '../utils/errors';
+import { UnauthorizedError } from '../utils/error';
 
 const AUTH_COOKIE = 'authjs.session-token';
 const SECURE_AUTH_COOKIE = `__Secure-${AUTH_COOKIE}`;

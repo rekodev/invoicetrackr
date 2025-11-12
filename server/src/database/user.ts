@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 
-import { UserModel } from '../types';
+import { UserModel } from '../types/user';
 import { db } from './db';
 import {
   passwordResetTokensTable,

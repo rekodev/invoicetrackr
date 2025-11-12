@@ -10,7 +10,7 @@ import {
   postClientOptions,
   updateClientOptions,
   deleteClientOptions
-} from '../options';
+} from '../options/client';
 
 const clientRoutes = (
   fastify: FastifyInstance,
