@@ -7,10 +7,10 @@ import {
   deleteInvoice,
   updateInvoice,
   updateInvoiceStatus
-} from '@/api';
+} from '@/api/invoice';
 
 import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '../constants/pages';
-import { ActionResponseModel } from '../types/response';
+import { ActionResponseModel } from '../types/response/action';
 import { InvoiceModel } from '../types/models/invoice';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';

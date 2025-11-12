@@ -8,7 +8,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
-import { getInvoicesTotalAmount } from '@/api';
+import { getInvoicesTotalAmount } from '@/api/invoice';
 import { isResponseError } from '@/lib/utils/error';
 
 import DashboardCard from './dashboard-card';

@@ -15,7 +15,7 @@ import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
-import { cancelStripeSubscription } from '@/api';
+import { cancelStripeSubscription } from '@/api/payment';
 import { isResponseError } from '@/lib/utils/error';
 import { updateSessionAction } from '@/lib/actions';
 

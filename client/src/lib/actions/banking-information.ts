@@ -7,10 +7,10 @@ import {
   addBankingInformation,
   deleteBankingInformation,
   updateBankingInformation
-} from '@/api';
+} from '@/api/banking-information';
 
 import { BANKING_INFORMATION_PAGE, ONBOARDING_PAGE } from '../constants/pages';
-import { ActionResponseModel } from '../types/response';
+import { ActionResponseModel } from '../types/response/action';
 import { BankingInformationFormModel } from '../types/models/user';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';

@@ -1,4 +1,4 @@
-import { getClients } from '@/api';
+import { getClients } from '@/api/client';
 import { auth } from '@/auth';
 import ClientSection from '@/components/client/client-section';
 import { isResponseError } from '@/lib/utils/error';

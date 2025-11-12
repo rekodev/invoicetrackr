@@ -23,7 +23,7 @@ import { Currency } from '@/lib/types/currency';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { isResponseError } from '@/lib/utils/error';
-import { sendInvoiceEmail } from '@/api';
+import { sendInvoiceEmail } from '@/api/invoice';
 
 type Props = {
   userId: number;

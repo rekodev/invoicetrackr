@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import AppLogo from '@/components/app-logo';
 import CreateNewPasswordForm from '@/components/auth/create-new-password-form';
 import InvalidTokenCard from '@/components/auth/invalid-token-card';
-import { getUserResetPasswordToken } from '@/api';
+import { getUserResetPasswordToken } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
 export const metadata: Metadata = {

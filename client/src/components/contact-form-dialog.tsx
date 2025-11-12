@@ -16,7 +16,7 @@ import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { isResponseError } from '@/lib/utils/error';
-import { postContactMessage } from '@/api';
+import { postContactMessage } from '@/api/contact';
 import { useForm } from 'react-hook-form';
 
 type ContactForm = {

@@ -1,6 +1,6 @@
 import { unauthorized } from 'next/navigation';
 
-import { getUser } from '@/api';
+import { getUser } from '@/api/user';
 import { auth } from '@/auth';
 import { isResponseError } from '@/lib/utils/error';
 

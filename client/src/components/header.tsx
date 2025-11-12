@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { getUser } from '@/api';
+import { getUser } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
 import GuestHeader from './ui/guest-header';

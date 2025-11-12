@@ -2,10 +2,10 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { addClient, deleteClient, updateClient } from '@/api';
+import { addClient, deleteClient, updateClient } from '@/api/client';
 
 import { ClientFormData, ClientModel } from '../types/models/client';
-import { ActionResponseModel } from '../types/response';
+import { ActionResponseModel } from '../types/response/action';
 import { CLIENTS_PAGE } from '../constants/pages';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';

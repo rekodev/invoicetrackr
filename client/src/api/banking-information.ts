@@ -4,7 +4,7 @@ import {
   GetBankAccountResp,
   GetBankingInformationEntriesResp,
   UpdateBankingInformationResp
-} from '@/lib/types/response';
+} from '@/lib/types/response/banking-information';
 import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 import api from './api-instance';

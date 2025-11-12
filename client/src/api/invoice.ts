@@ -9,7 +9,7 @@ import {
   SendInvoiceEmailResp,
   UpdateInvoiceResp,
   UpdateInvoiceStatusResp
-} from '@/lib/types/response';
+} from '@/lib/types/response/invoice';
 import { InvoiceFormData, InvoiceModel } from '@/lib/types/models/invoice';
 
 import api from './api-instance';

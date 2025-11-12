@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { authConfig } from './auth.config';
 import { isResponseError } from './lib/utils/error';
-import { loginUser } from './api';
+import { loginUser } from './api/user';
 
 export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
   ...authConfig,

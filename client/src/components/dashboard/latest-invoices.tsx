@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 
 import { Currency } from '@/lib/types/currency';
-import { getLatestInvoices } from '@/api';
+import { getLatestInvoices } from '@/api/invoice';
 import { isResponseError } from '@/lib/utils/error';
 
 import ClientCard from '../ui/client-card';

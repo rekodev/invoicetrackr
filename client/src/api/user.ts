@@ -8,7 +8,7 @@ import {
   ResetPasswordResp,
   UpdateUserAccountSettingsResp,
   UpdateUserResp
-} from '@/lib/types/response';
+} from '@/lib/types/response/user';
 import { UserModel, UserModelWithPassword } from '@/lib/types/models/user';
 
 import api from './api-instance';
@@ -39,7 +39,7 @@ export const updateUser = async (
   id: number,
   userData: Pick<
     UserModel,
-    'email' | 'name' | 'businessType' | 'businessNumber' | 'address' | 'signature'
+    'email' | 'name' | 'businessType' | 'businessNumber' | 'address' | 'signature' | 'type'
   >
 ) => {
   const isSignatureFile = typeof userData.signature !== 'string';

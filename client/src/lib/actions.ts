@@ -6,7 +6,7 @@ import { cookies } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 
-import { createNewUserPassword, registerUser, resetUserPassword } from '@/api';
+import { createNewUserPassword, registerUser, resetUserPassword } from '@/api/user';
 
 import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
 import { signIn, signOut, unstable_update } from '../auth';

@@ -1,6 +1,6 @@
 import { unauthorized } from 'next/navigation';
 
-import { getUser } from '@/api';
+import { getUser } from '@/api/user';
 import { auth } from '@/auth';
 import PersonalInformationForm from '@/components/profile/personal-information-form';
 import { isResponseError } from '@/lib/utils/error';
