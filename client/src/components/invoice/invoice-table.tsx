@@ -11,8 +11,8 @@ import {
   TableRow,
   useDisclosure
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
 import { InvoiceModel } from '@/lib/types/models/invoice';
@@ -43,22 +43,25 @@ type Props = {
 
 const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
   const t = useTranslations('invoices.table');
-  
-  const columns = [
-    { name: t('columns.id'), uid: 'id', sortable: true },
-    { name: t('columns.receiver'), uid: 'receiver', sortable: true },
-    { name: t('columns.amount'), uid: 'totalAmount', sortable: true },
-    { name: t('columns.date'), uid: 'date', sortable: true },
-    { name: t('columns.status'), uid: 'status', sortable: true },
-    { name: t('columns.actions'), uid: 'actions' }
-  ];
+
+  const columns = useMemo(
+    () => [
+      { name: t('columns.id'), uid: 'id', sortable: true },
+      { name: t('columns.receiver'), uid: 'receiver', sortable: true },
+      { name: t('columns.amount'), uid: 'totalAmount', sortable: true },
+      { name: t('columns.date'), uid: 'date', sortable: true },
+      { name: t('columns.status'), uid: 'status', sortable: true },
+      { name: t('columns.actions'), uid: 'actions' }
+    ],
+    [t]
+  );
 
   const statusOptions = [
     { name: t('status.paid'), uid: 'paid' },
     { name: t('status.canceled'), uid: 'canceled' },
     { name: t('status.pending'), uid: 'pending' }
   ];
-  
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
 
@@ -93,7 +96,7 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid)
     );
-  }, [visibleColumns]);
+  }, [visibleColumns, columns]);
 
   const filteredItems = useMemo(() => {
     if (!invoices) return [];
@@ -118,7 +121,13 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
     }
 
     return filteredInvoices;
-  }, [filterValue, statusFilter, hasSearchFilter, invoices]);
+  }, [
+    filterValue,
+    statusFilter,
+    hasSearchFilter,
+    invoices,
+    statusOptions.length
+  ]);
 
   const pages =
     filteredItems.length === 0 || !filteredItems
