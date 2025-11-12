@@ -1,6 +1,5 @@
 'use client';
 
-import { Bars3Icon } from '@heroicons/react/24/outline';
 import {
   Button,
   Dropdown,
@@ -13,6 +12,7 @@ import {
   NavbarContent,
   NavbarItem
 } from '@heroui/react';
+import { Bars3Icon } from '@heroicons/react/24/outline';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -23,8 +23,9 @@ import {
   SIGN_UP_PAGE
 } from '@/lib/constants/pages';
 
-import ThemeSwitcher from './theme-switcher';
 import AppLogo from '../icons/AppLogo';
+import LanguageSwitcher from './language-switcher';
+import ThemeSwitcher from './theme-switcher';
 
 const navbarItems = [
   { name: 'Features', href: '#features' },
@@ -134,7 +135,9 @@ export default function GuestHeader() {
             {t('sign_up')}
           </Button>
         </NavbarItem>
-        <NavbarItem className="border-default-300 dark:border-default-100 border-l pl-4">
+        <div className="border-default-100 border-l-1 h-10" />
+        <LanguageSwitcher />
+        <NavbarItem className="-ml-2">
           <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>

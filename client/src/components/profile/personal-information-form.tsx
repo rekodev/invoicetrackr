@@ -155,7 +155,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
   return (
     <Card
       as="form"
-      aria-label="Personal Information Form"
+      aria-label={t('a11y.form_label')}
       onSubmit={handleSubmit(onSubmit)}
       className="dark:border-default-100 w-full bg-transparent dark:border"
       encType="multipart/form-data"

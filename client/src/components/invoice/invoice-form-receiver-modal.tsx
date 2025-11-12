@@ -10,6 +10,7 @@ import {
 } from '@heroui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { ClientModel } from '@/lib/types/models/client';
 
@@ -31,15 +32,12 @@ const InvoiceFormPartyModal = ({
   onClose,
   onReceiverSelect
 }: Props) => {
+  const t = useTranslations('components.invoice_form');
   const [isAddNewClientModalOpen, setIsAddNewClientModalOpen] = useState(false);
 
   const renderBody = () => {
     if (!clients?.length) {
-      return (
-        <p className="text-default-500">
-          You have no clients. Create one to get started.
-        </p>
-      );
+      return <p className="text-default-500">{t('modals.no_clients')}</p>;
     }
 
     return clients?.map((client) => (
@@ -55,7 +53,7 @@ const InvoiceFormPartyModal = ({
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader>Select Client</ModalHeader>
+          <ModalHeader>{t('modals.select_client')}</ModalHeader>
           <ModalBody>{renderBody()}</ModalBody>
           <ModalFooter>
             <Button
@@ -63,7 +61,7 @@ const InvoiceFormPartyModal = ({
               onPress={() => setIsAddNewClientModalOpen(true)}
               startContent={<PlusCircleIcon className="h-5 w-5" />}
             >
-              Add New
+              {t('buttons.add_new')}
             </Button>
           </ModalFooter>
         </ModalContent>

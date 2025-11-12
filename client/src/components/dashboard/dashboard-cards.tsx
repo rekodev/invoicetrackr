@@ -4,10 +4,11 @@ import {
   DocumentCurrencyDollarIcon,
   UsersIcon
 } from '@heroicons/react/24/outline';
+import { getTranslations } from 'next-intl/server';
 
-import { getInvoicesTotalAmount } from '@/api';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
+import { getInvoicesTotalAmount } from '@/api';
 import { isResponseError } from '@/lib/utils/error';
 
 import DashboardCard from './dashboard-card';
@@ -18,6 +19,7 @@ type Props = {
 };
 
 const DashboardCards = async ({ userId, currency }: Props) => {
+  const t = await getTranslations('dashboard.cards');
   const response = await getInvoicesTotalAmount(userId);
 
   if (isResponseError(response)) throw new Error('Failed to fetch data');
@@ -48,7 +50,7 @@ const DashboardCards = async ({ userId, currency }: Props) => {
         title={
           <div className="flex items-center gap-1">
             <BanknotesIcon className="h-5 w-5" />
-            <h4>Paid</h4>
+            <h4>{t('paid')}</h4>
           </div>
         }
         text={`${currencySymbol}${totalInvoiceRevenue?.paid.toFixed(2) || '0'}`}
@@ -57,7 +59,7 @@ const DashboardCards = async ({ userId, currency }: Props) => {
         title={
           <div className="flex items-center gap-1">
             <ClockIcon className="h-5 w-5" />
-            <h4>Pending</h4>
+            <h4>{t('pending')}</h4>
           </div>
         }
         text={`${currencySymbol}${
@@ -68,7 +70,7 @@ const DashboardCards = async ({ userId, currency }: Props) => {
         title={
           <div className="flex items-center gap-1">
             <DocumentCurrencyDollarIcon className="h-5 w-5" />
-            <h4>Total Invoices</h4>
+            <h4>{t('total_invoices')}</h4>
           </div>
         }
         text={`${invoices?.length || '0'}`}
@@ -77,7 +79,7 @@ const DashboardCards = async ({ userId, currency }: Props) => {
         title={
           <div className="flex items-center gap-1">
             <UsersIcon className="h-5 w-5" />
-            <h4>Total Clients</h4>
+            <h4>{t('total_clients')}</h4>
           </div>
         }
         text={`${totalClients || '0'}`}

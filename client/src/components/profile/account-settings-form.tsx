@@ -1,6 +1,5 @@
 'use client';
 
-import { CurrencyDollarIcon, LanguageIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   Card,
@@ -12,16 +11,15 @@ import {
   SelectItem,
   addToast
 } from '@heroui/react';
-import { useRouter } from 'next/navigation';
+import { CurrencyDollarIcon, LanguageIcon } from '@heroicons/react/24/outline';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useState, useTransition } from 'react';
 import { User } from 'next-auth';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState, useTransition } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { updateSession } from '@/lib/actions';
-import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 import { AccountSettingsFormModel } from '@/lib/types/models/user';
 import { getCurrencySymbol } from '@/lib/utils/currency';
+import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 
 import DeleteAccountModal from './delete-account-modal';
 import SubscriptionStatusCard from './subscription-status-card';
@@ -31,15 +29,13 @@ type Props = {
   isSubscriptionActive: boolean;
 };
 
-// TODO: Improve form and add validation
 const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
-  const { refresh } = useRouter();
   const t = useTranslations('profile.account_settings');
   const {
     register,
     handleSubmit,
-    formState: { isDirty },
-    reset
+    formState: { isDirty, errors },
+    setError
   } = useForm<AccountSettingsFormModel>({
     defaultValues: { language: user?.language, currency: user?.currency }
   });
@@ -80,29 +76,12 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
         color: response.ok ? 'success' : 'danger'
       });
 
-      if (!response.ok) {
-        // response.data.errors.forEach((error) => {
-        //   setError(error.key, { message: error.value });
-        // });
-
-        return;
+      if (!response.ok && response.validationErrors) {
+        Object.entries(response.validationErrors).forEach(([key, message]) => {
+          setError(key as keyof AccountSettingsFormModel, { message });
+        });
       }
-
-      await updateSession({
-        newSession: {
-          ...user,
-          id: String(user.id),
-          language: data.language,
-          currency: data.currency
-        }
-      });
-      refresh();
     });
-
-  // When form is updated and user is re-fetched, reset the form to match the new user data
-  useEffect(() => {
-    reset(user);
-  }, [reset, user]);
 
   const renderCardBodyAndFooter = () => (
     <>
@@ -117,6 +96,8 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
           labelPlacement="outside"
           variant="faded"
           defaultSelectedKeys={user?.language ? [user.language] : undefined}
+          isInvalid={!!errors.language}
+          errorMessage={errors.language?.message}
         >
           {availableLanguages.map((language) => (
             <SelectItem key={language.code} textValue={language.name}>
@@ -134,6 +115,8 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
           labelPlacement="outside"
           variant="faded"
           defaultSelectedKeys={user?.currency ? [user.currency] : undefined}
+          isInvalid={!!errors.currency}
+          errorMessage={errors.currency?.message}
         >
           {availableCurrencies.map((currency) => (
             <SelectItem key={currency.code} textValue={currency.name}>
@@ -176,7 +159,7 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
     <>
       <Card
         as="form"
-        aria-label="Account Settings Form"
+        aria-label={t('a11y.form_label')}
         onSubmit={handleSubmit(onSubmit)}
         className="dark:border-default-100 w-full bg-transparent dark:border"
       >

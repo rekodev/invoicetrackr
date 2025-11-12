@@ -41,11 +41,11 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
   return (
     <section>
       <InvoiceForm
-        user={userResponse.data}
+        user={userResponse.data.user}
         clients={clientsResp.data.clients}
         currency={session.user.currency}
         invoiceData={invoiceResp.data.invoice}
-        bankingInformationEntries={bankingInformationEntriesResp.data}
+        bankingInformationEntries={bankingInformationEntriesResp.data.bankAccounts}
       />
     </section>
   );

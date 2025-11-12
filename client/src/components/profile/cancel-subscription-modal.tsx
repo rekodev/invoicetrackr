@@ -1,6 +1,5 @@
 'use client';
 
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   Modal,
@@ -10,14 +9,15 @@ import {
   ModalHeader,
   addToast
 } from '@heroui/react';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { User } from 'next-auth';
-import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 
-import { cancelStripeSubscription } from '@/api';
-import { updateSession } from '@/lib/actions';
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
+import { cancelStripeSubscription } from '@/api';
 import { isResponseError } from '@/lib/utils/error';
+import { updateSessionAction } from '@/lib/actions';
 
 type Props = {
   user: User;
@@ -44,7 +44,7 @@ const CancelSubscriptionModal = ({ user, isOpen, onClose }: Props) => {
 
       if (isResponseError(response)) return;
 
-      await updateSession({
+      await updateSessionAction({
         newSession: {
           ...user,
           id: String(user.id),

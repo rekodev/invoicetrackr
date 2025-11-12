@@ -13,6 +13,7 @@ import {
   PencilSquareIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { ClientModel } from '@/lib/types/models/client';
@@ -32,6 +33,7 @@ type Props = {
 };
 
 const ClientSection = ({ userId, clients }: Props) => {
+  const t = useTranslations('clients');
   const {
     page,
     setPage,
@@ -80,7 +82,7 @@ const ClientSection = ({ userId, clients }: Props) => {
         >
           <div className="flex items-center gap-1">
             <PencilIcon className="h-4 w-4" />
-            Edit
+            {t('edit')}
           </div>
         </DropdownItem>
         <DropdownItem
@@ -90,7 +92,7 @@ const ClientSection = ({ userId, clients }: Props) => {
         >
           <div className="flex items-center gap-1">
             <TrashIcon className="h-4 w-4" />
-            Remove
+            {t('remove')}
           </div>
         </DropdownItem>
       </DropdownMenu>
@@ -139,7 +141,7 @@ const ClientSection = ({ userId, clients }: Props) => {
 
   const renderSectionContent = () => {
     if (!clients?.length)
-      return <div className="min-h-[480px]">No clients found</div>;
+      return <div className="min-h-[480px]">{t('no_clients')}</div>;
 
     return (
       <div className="min-h-[480px]">

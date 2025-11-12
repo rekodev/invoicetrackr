@@ -1,10 +1,5 @@
 'use client';
 
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon
-} from '@heroicons/react/24/outline';
 import {
   Button,
   Card,
@@ -14,9 +9,16 @@ import {
   Input,
   Link
 } from '@heroui/react';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon
+} from '@heroicons/react/24/outline';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
 
-import { signUp } from '@/lib/actions';
+import { LOGIN_PAGE } from '@/lib/constants/pages';
+import { signUpAction } from '@/lib/actions';
 
 const initialState = {
   message: '',
@@ -24,7 +26,11 @@ const initialState = {
 };
 
 export default function SignUpForm() {
-  const [state, formAction, isPending] = useActionState(signUp, initialState);
+  const t = useTranslations('sign_up.form');
+  const [state, formAction, isPending] = useActionState(
+    signUpAction,
+    initialState
+  );
 
   const renderSubmissionMessage = () => {
     if (!state?.message) return null;
@@ -32,24 +38,24 @@ export default function SignUpForm() {
     if (!state.ok) {
       return (
         <div className="mb-6 flex items-center gap-1">
-          <ExclamationCircleIcon className="h-5 w-5 text-danger-500" />
-          <p className="text-sm text-danger-500">{state.message}</p>
+          <ExclamationCircleIcon className="text-danger-500 h-5 w-5" />
+          <p className="text-danger-500 text-sm">{state.message}</p>
         </div>
       );
     }
 
     return (
       <div className="mb-6 flex items-center gap-1">
-        <CheckCircleIcon className="h-5 w-5 text-success-500" />
-        <p className="text-sm text-success-500">{state.message}</p>
+        <CheckCircleIcon className="text-success-500 h-5 w-5" />
+        <p className="text-success-500 text-sm">{state.message}</p>
       </div>
     );
   };
 
   return (
-    <Card className="w-full dark:border dark:border-default-100" isBlurred>
+    <Card className="dark:border-default-100 w-full dark:border" isBlurred>
       <CardHeader className="p-8 pb-0">
-        <h1 className="text-3xl font-medium">Sign Up</h1>
+        <h1 className="text-3xl font-medium">{t('title')}</h1>
       </CardHeader>
       <CardBody className="p-8 pb-0">
         <form action={formAction} className="flex flex-col gap-4">
@@ -60,8 +66,8 @@ export default function SignUpForm() {
             id="email"
             type="email"
             name="email"
-            label="Email"
-            placeholder="Enter your email address"
+            label={t('email')}
+            placeholder={t('email_placeholder')}
             required
           />
           <Input
@@ -71,8 +77,8 @@ export default function SignUpForm() {
             id="password"
             type="password"
             name="password"
-            label="Password"
-            placeholder="Enter your password"
+            label={t('password')}
+            placeholder={t('password_placeholder')}
             required
             minLength={6}
           />
@@ -83,8 +89,8 @@ export default function SignUpForm() {
             id="confirm-password"
             type="password"
             name="confirm-password"
-            label="Confirm Password"
-            placeholder="Confirm your password"
+            label={t('confirm_password')}
+            placeholder={t('confirm_password_placeholder')}
             required
             minLength={6}
           />
@@ -96,7 +102,7 @@ export default function SignUpForm() {
             endContent={<ArrowRightIcon className="h-5 w-5" />}
             color="secondary"
           >
-            Sign Up
+            {t('submit')}
           </Button>
           <div aria-live="polite" aria-atomic="true">
             {renderSubmissionMessage()}
@@ -105,9 +111,9 @@ export default function SignUpForm() {
       </CardBody>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
         <div className="flex flex-col items-center gap-1 sm:flex-row">
-          <p className="text-md">Already have an account?</p>{' '}
-          <Link color="secondary" href="/login">
-            Log In
+          <p className="text-md">{t('already_have_account')}</p>{' '}
+          <Link color="secondary" href={LOGIN_PAGE}>
+            {t('login_link')}
           </Link>
         </div>
       </CardFooter>

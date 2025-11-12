@@ -6,12 +6,7 @@ const ChangePasswordPage = async () => {
 
   if (!session?.user?.id) return null;
 
-  return (
-    <ChangePasswordForm
-      userId={Number(session.user.id)}
-      language={session.user.language}
-    />
-  );
+  return <ChangePasswordForm userId={Number(session.user.id)} />;
 };
 
 export default ChangePasswordPage;

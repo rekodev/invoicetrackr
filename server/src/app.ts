@@ -11,6 +11,7 @@ import fastifyRateLimit from '@fastify/rate-limit';
 import { cloudinaryConfig } from './config/cloudinary';
 import { getPgVersion } from './database/db';
 import i18n from './plugins/i18n';
+import { languageMiddleware } from './middleware';
 import {
   bankingInformationRoutes,
   clientRoutes,
@@ -65,6 +66,7 @@ defineI18n(server, {
 server.register(cors);
 server.register(fastifyMultipart);
 server.register(fastifyCookie);
+
 server.register(invoiceRoutes);
 server.register(clientRoutes);
 server.register(userRoutes);
@@ -84,24 +86,24 @@ server.register(fastifyRateLimit, {
       : request.ip;
   }
 });
-
+server.addHook('onRequest', languageMiddleware);
 server.setErrorHandler(async function (error, request, reply) {
   const i18n = useI18n(request);
 
   if (error.validation) {
     return reply.status(400).send({
-      message: 'Review fields and retry',
+      message: i18n.t('validation.general'),
       errors: error.validation.map((err) => {
         const key = err.instancePath.substring(1).replace(/\//g, '.');
         const keyPrefix = getTranslationKeyPrefix(request.url);
         const nonDynamicKeyWithPrefix =
-          `validationErrors.${keyPrefix}.${key}`.replace(/\.?\d+/g, '');
+          `validation.${keyPrefix}.${key}`.replace(/\.?\d+/g, '');
 
         return {
           key,
           value:
             i18n.t(nonDynamicKeyWithPrefix) === nonDynamicKeyWithPrefix
-              ? err.message || 'Review field'
+              ? err.message || i18n.t('validation.reviewField')
               : i18n.t(nonDynamicKeyWithPrefix)
         };
       }),

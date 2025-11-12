@@ -14,7 +14,7 @@ async function PersonalInformationPage() {
 
   if (isResponseError(userResp)) unauthorized();
 
-  return <PersonalInformationForm defaultValues={userResp.data} />;
+  return <PersonalInformationForm defaultValues={userResp.data.user} />;
 }
 
 export default PersonalInformationPage;

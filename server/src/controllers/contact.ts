@@ -1,4 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { useI18n } from 'fastify-i18n';
 import { resend } from '../config/resend';
 import { BadRequestError } from '../utils/errors';
 
@@ -9,6 +10,7 @@ export const postContactMessage = async (
   reply: FastifyReply
 ) => {
   const { email, message } = req.body;
+  const i18n = await useI18n(req);
 
   const { error } = await resend.emails.send({
     from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
@@ -19,10 +21,10 @@ export const postContactMessage = async (
 
   if (error) {
     console.error({ error });
-    throw new BadRequestError('Failed to send message');
+    throw new BadRequestError(i18n.t('error.contact.unableToSendMessage'));
   }
 
   reply.status(200).send({
-    message: 'Message sent successfully'
+    message: i18n.t('success.contact.messageSent')
   });
 };

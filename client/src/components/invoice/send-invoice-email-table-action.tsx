@@ -17,12 +17,13 @@ import {
 import { useState, useTransition } from 'react';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
 import { InvoiceModel } from '@/lib/types/models/invoice';
 import { getCurrencySymbol } from '@/lib/utils/currency';
-import { sendInvoiceEmail } from '@/api';
 import { isResponseError } from '@/lib/utils/error';
+import { sendInvoiceEmail } from '@/api';
 
 type Props = {
   userId: number;
@@ -43,6 +44,7 @@ export default function SendInvoiceEmailTableAction({
   invoice,
   currency
 }: Props) {
+  const t = useTranslations('components.send_invoice_email');
   const [isSendDialogOpen, setIsSendDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -96,7 +98,7 @@ export default function SendInvoiceEmailTableAction({
 
   return (
     <>
-      <Tooltip content="Send Invoice">
+      <Tooltip content={t('tooltip')}>
         <span
           onClick={handleOpenSendDialog}
           className="text-default-400 cursor-pointer text-lg active:opacity-50"
@@ -113,15 +115,17 @@ export default function SendInvoiceEmailTableAction({
       >
         <ModalContent>
           <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-            <ModalHeader>Send Invoice {invoice.invoiceId}</ModalHeader>
+            <ModalHeader>
+              {t('modal_title', { invoiceId: invoice.invoiceId })}
+            </ModalHeader>
             <ModalBody className="w-full">
               <Input
                 defaultValue={invoice.receiver.email}
                 {...register('recipientEmail')}
                 variant="faded"
-                label="Recipient Email"
+                label={t('recipient_email')}
                 type="email"
-                placeholder={`Enter recipient's email`}
+                placeholder={t('recipient_placeholder')}
                 isInvalid={!!errors.recipientEmail}
                 errorMessage={errors.recipientEmail?.message}
               />
@@ -129,37 +133,43 @@ export default function SendInvoiceEmailTableAction({
                 defaultValue={`Invoice ${invoice.invoiceId} ${invoice.totalAmount ? `- Amount: ${getCurrencySymbol(currency)}${invoice.totalAmount}` : ''}`}
                 {...register('subject')}
                 variant="faded"
-                label="Subject"
-                placeholder="Enter the subject"
+                label={t('subject_label')}
+                placeholder={t('subject_placeholder')}
                 isInvalid={!!errors.subject}
                 errorMessage={errors.subject?.message}
               />
               <Textarea
                 {...register('message')}
                 variant="faded"
-                label="Message (Optional)"
-                placeholder="Add a personal message to your client"
+                label={t('message_label')}
+                placeholder={t('message_placeholder')}
                 isInvalid={!!errors.message}
                 errorMessage={errors.message?.message}
               />
               <Card className="none border-default-100 border-2 shadow">
                 <CardBody className="flex flex-col gap-2">
-                  <p>Invoice Details</p>
+                  <p>{t('invoice_details')}</p>
                   <p className="mt-2 flex items-center justify-between text-sm">
-                    <span className="text-default-500 text">Invoice:</span>{' '}
+                    <span className="text-default-500 text">
+                      {t('invoice')}:
+                    </span>{' '}
                     {invoice.invoiceId}
                   </p>
                   <p className="flex items-center justify-between text-sm">
-                    <span className="text-default-500 text">Client:</span>{' '}
+                    <span className="text-default-500 text">
+                      {t('client')}:
+                    </span>{' '}
                     {invoice.receiver.name}
                   </p>
                   <p className="flex items-center justify-between text-sm">
-                    <span className="text-default-500 text">Amount:</span>{' '}
+                    <span className="text-default-500 text">
+                      {t('amount')}:
+                    </span>{' '}
                     {getCurrencySymbol(currency)}
                     {invoice.totalAmount}
                   </p>
                   <p className="flex items-center justify-between text-sm">
-                    <span className="text-default-500 text">Date:</span>
+                    <span className="text-default-500 text">{t('date')}:</span>
                     {invoice.date}
                   </p>
                 </CardBody>
@@ -171,7 +181,7 @@ export default function SendInvoiceEmailTableAction({
                 variant="light"
                 color="danger"
               >
-                Cancel
+                {t('cancel')}
               </Button>
               <Button
                 isDisabled={isPending}
@@ -180,7 +190,7 @@ export default function SendInvoiceEmailTableAction({
                 color="secondary"
                 type="submit"
               >
-                Send
+                {t('send')}
               </Button>
             </ModalFooter>
           </form>

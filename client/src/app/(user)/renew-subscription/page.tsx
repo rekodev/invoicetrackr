@@ -15,5 +15,5 @@ export default async function RenewSubscriptionPage() {
 
   if (isResponseError(userResp)) unauthorized();
 
-  return <RenewSubscription user={userResp.data} />;
+  return <RenewSubscription user={userResp.data.user} />;
 }

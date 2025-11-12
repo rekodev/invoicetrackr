@@ -9,6 +9,7 @@ import {
   ModalHeader,
   addToast
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 
 import { deleteClientAction } from '@/lib/actions/client';
@@ -22,6 +23,7 @@ type Props = {
 };
 
 const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
+  const t = useTranslations('clients.delete_modal');
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = async () =>
@@ -48,10 +50,10 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
           <Button color="danger" variant="light" onPress={onClose}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button isLoading={isPending} color="danger" onPress={handleSubmit}>
-            Delete
+            {t('confirm')}
           </Button>
         </div>
       </div>
@@ -62,11 +64,10 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         <ModalHeader>
-          Are you sure you want to delete {clientData.name}?
+          {t('title')}
         </ModalHeader>
         <ModalBody>
-          This client will be deleted immediately. You can&apos;t undo this
-          action.
+          {t('description', { clientName: clientData.name })}
         </ModalBody>
         {renderModalFooter()}
       </ModalContent>

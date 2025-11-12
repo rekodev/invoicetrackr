@@ -7,6 +7,7 @@ import {
   createSubscription,
   getStripeCustomerId
 } from '../controllers/payment';
+import { MessageResponse } from '../types/response';
 import { authMiddleware } from '../middleware/auth';
 
 export const createCustomerOptions: RouteShorthandOptionsWithHandler = {
@@ -27,7 +28,7 @@ export const createSubscriptionOptions: RouteShorthandOptionsWithHandler = {
 export const getStripeCustomerIdOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: { customerId: Type.String() }
+      200: Type.Object({ customerId: Type.String() })
     }
   },
   preHandler: authMiddleware,
@@ -38,7 +39,7 @@ export const cancelStripeSubscriptionOptions: RouteShorthandOptionsWithHandler =
   {
     schema: {
       response: {
-        200: { message: Type.String() }
+        200: MessageResponse
       }
     },
     preHandler: authMiddleware,

@@ -6,6 +6,7 @@ import axios, {
 } from 'axios';
 
 import { getGeneralErrorMessageAction } from '@/lib/actions/general-error';
+import { getRequestHeadersAction } from '@/lib/actions';
 
 export type ApiError = {
   code: string;
@@ -28,23 +29,8 @@ class ApiInstance {
     });
 
     this.httpClient.interceptors.request.use(async (config) => {
-      if (typeof window === 'undefined') {
-        const { cookies } = await import('next/headers');
-        const awaitedCookies = await cookies();
-
-        const authToken =
-          awaitedCookies.get('__Secure-authjs.session-token')?.value ||
-          awaitedCookies.get('authjs.session-token')?.value;
-
-        const isCookieSecure = !!awaitedCookies.get(
-          '__Secure-authjs.session-token'
-        )?.value;
-
-        if (authToken) {
-          config.headers['Cookie'] =
-            `${isCookieSecure ? '__Secure-' : ''}authjs.session-token=${authToken}`;
-        }
-      }
+      const requestHeaders = await getRequestHeadersAction();
+      Object.assign(config.headers, requestHeaders);
 
       return config;
     });

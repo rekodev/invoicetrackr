@@ -5,6 +5,7 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import { Button } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
 export default function Error({
@@ -14,6 +15,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations('error_page');
+  
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -27,17 +30,16 @@ export default function Error({
 
         <div className="space-y-4">
           <h1 className="text-4xl font-semibold tracking-tight">
-            Something went wrong
+            {t('title')}
           </h1>
           <p className="text-default-500">
-            We encountered an unexpected error. Please try refreshing the page
-            or contact support if the problem persists.
+            {t('description')}
           </p>
         </div>
 
         <Button onPress={reset} variant="ghost" className="gap-2">
           <ArrowPathIcon className="size-4" />
-          Try again
+          {t('try_again')}
         </Button>
       </div>
     </div>

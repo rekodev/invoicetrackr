@@ -1,5 +1,5 @@
 import { desc, eq, and } from 'drizzle-orm';
-import { ClientModel } from '../types/models';
+import { ClientModel } from '../types';
 import { db } from './db';
 import { clientsTable } from './schema';
 

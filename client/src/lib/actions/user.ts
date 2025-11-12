@@ -10,13 +10,16 @@ import {
 } from '@/api';
 
 import {
+  ACCOUNT_SETTINGS_PAGE,
   CHANGE_PASSWORD_PAGE,
   PERSONAL_INFORMATION_PAGE
 } from '../constants/pages';
 import { ActionResponseModel } from '../types/response';
+import { Currency } from '../types/currency';
 import { UserModel } from '../types/models/user';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
+import { updateSessionAction } from '../actions';
 
 export async function updateUserAction({
   user,
@@ -60,11 +63,19 @@ export async function updateUserAccountSettingsAction({
   if (isResponseError(response)) {
     return {
       ok: false,
-      message: response.data.message
+      message: response.data.message,
+      validationErrors: mapValidationErrors(response.data.errors)
     };
   }
 
-  revalidatePath(PERSONAL_INFORMATION_PAGE);
+  await updateSessionAction({
+    newSession: {
+      language,
+      currency: currency as Currency
+    }
+  });
+
+  revalidatePath(ACCOUNT_SETTINGS_PAGE);
   return { ok: true, message: response.data.message };
 }
 
@@ -90,20 +101,17 @@ export async function updateUserProfilePictureAction({
 
 export async function changeUserPasswordAction({
   userId,
-  language,
   password,
   newPassword,
   confirmedNewPassword
 }: {
   userId: number;
-  language: string;
   password: string;
   newPassword: string;
   confirmedNewPassword: string;
 }) {
   const response = await changeUserPassword({
     userId,
-    language,
     password,
     newPassword,
     confirmedNewPassword

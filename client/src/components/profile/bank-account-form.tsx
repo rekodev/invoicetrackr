@@ -87,7 +87,7 @@ export default function BankAccountForm({
   return (
     <Card className="w-full bg-transparent dark:border dark:border-neutral-800">
       <form
-        aria-label="Banking Information Form"
+        aria-label={t('a11y.form_label')}
         onSubmit={handleSubmit(onSubmit)}
       >
         <CardHeader className="p-4 px-6">{t('title.create')}</CardHeader>

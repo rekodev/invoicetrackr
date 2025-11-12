@@ -18,7 +18,7 @@ async function BankingInformationPage() {
   return (
     <BankingInformationForm
       user={session.user}
-      bankAccounts={bankingInformationResp.data}
+      bankAccounts={bankingInformationResp.data.bankAccounts}
     />
   );
 }

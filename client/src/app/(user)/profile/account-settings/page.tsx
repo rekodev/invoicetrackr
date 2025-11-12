@@ -1,5 +1,5 @@
-import { auth } from '@/auth';
 import AccountSettingsForm from '@/components/profile/account-settings-form';
+import { auth } from '@/auth';
 
 const AccountSettingsPage = async () => {
   const session = await auth();
@@ -10,6 +10,7 @@ const AccountSettingsPage = async () => {
 
   return (
     <AccountSettingsForm
+      key={`${session.user.language}-${session.user.currency}`}
       user={session.user}
       isSubscriptionActive={!!isSubscriptionActive}
     />

@@ -1,6 +1,5 @@
 'use client';
 
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   Modal,
@@ -10,12 +9,13 @@ import {
   ModalHeader,
   addToast
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { deleteUserAccount } from '@/api';
-import { logOutAction } from '@/lib/actions';
 import { isResponseError } from '@/lib/utils/error';
+import { logOutAction } from '@/lib/actions';
 
 type Props = {
   userId: number;

@@ -14,17 +14,18 @@ import {
   useElements,
   useStripe
 } from '@stripe/react-stripe-js';
+import { FormEvent, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { useTheme } from 'next-themes';
-import { FormEvent, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
+import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
 import { createCustomer, createSubscription, getStripeCustomerId } from '@/api';
-import { updateSession } from '@/lib/actions';
 import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
 import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
 import { UserModel } from '@/lib/types/models/user';
-import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
 import { isResponseError } from '@/lib/utils/error';
+import { updateSessionAction } from '@/lib/actions';
 
 import Loader from './ui/loader';
 
@@ -39,6 +40,7 @@ type Props = {
 };
 
 function PaymentFormInsideElements({ user }: { user: UserModel }) {
+  const t = useTranslations('components.payment_form');
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState('');
@@ -125,10 +127,8 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
 
     if (shouldUpdateSession) {
       try {
-        await updateSession({
+        await updateSessionAction({
           newSession: {
-            ...user,
-            id: String(user.id),
             isOnboarded: true,
             isSubscriptionActive: true
           },
@@ -144,7 +144,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
 
   return (
     <Card as="form" className="mx-auto max-w-4xl" onSubmit={handleSubmit}>
-      <CardHeader className="p-4 px-6">Payment</CardHeader>
+      <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
       <Divider />
       <CardBody className="px-5 py-4">
         {isFormLoading ? (
@@ -166,8 +166,10 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
           isDisabled={!stripe || isLoading}
         >
           {isLoading
-            ? 'Processing...'
-            : `Pay ${getCurrencySymbol(user.currency)}${SUBSCRIPTION_AMOUNT}`}
+            ? t('processing')
+            : t('pay', {
+                amount: `${getCurrencySymbol(user.currency)}${SUBSCRIPTION_AMOUNT}`
+              })}
         </Button>
       </CardFooter>
     </Card>

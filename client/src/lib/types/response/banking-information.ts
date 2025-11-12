@@ -4,8 +4,9 @@ export type GetBankAccountResp = {
   bankAccount: BankingInformationFormModel;
 };
 
-export type GetBankingInformationEntriesResp =
-  Array<BankingInformationFormModel>;
+export type GetBankingInformationEntriesResp = {
+  bankAccounts: Array<BankingInformationFormModel>;
+};
 
 export type AddBankingInformationResp = {
   bankingInformation: BankingInformationFormModel;

@@ -1,6 +1,7 @@
 import { MultipartFile } from '@fastify/multipart';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { useI18n } from 'fastify-i18n';
 
 import {
   deleteInvoiceFromDb,
@@ -17,7 +18,7 @@ import {
   updateInvoiceInDb,
   updateInvoiceStatusInDb
 } from '../database';
-import { InvoiceModel } from '../types/models';
+import { InvoiceModel } from '../types';
 import {
   AlreadyExistsError,
   BadRequestError,
@@ -40,9 +41,10 @@ export const getInvoice = async (
   reply: FastifyReply
 ) => {
   const { userId, id } = req.params;
+  const i18n = await useI18n(req);
   const invoice = await getInvoiceFromDb(userId, id);
 
-  if (!invoice) throw new NotFoundError('Invoice not found');
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
   reply.status(200).send({ invoice });
 };
@@ -57,6 +59,7 @@ export const postInvoice = async (
   const { userId } = req.params;
   const invoiceData = req.body;
   const signatureFile = req.body.file;
+  const i18n = await useI18n(req);
 
   let uploadedSignature: UploadApiResponse;
 
@@ -68,7 +71,7 @@ export const postInvoice = async (
     );
 
     if (!uploadedSignature)
-      throw new BadRequestError('Unable to upload signature');
+      throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
   }
 
   const foundInvoice = await findInvoiceByInvoiceId(
@@ -78,7 +81,7 @@ export const postInvoice = async (
 
   if (foundInvoice)
     throw new AlreadyExistsError(
-      'Invoice with provided invoice ID already exists'
+      i18n.t('error.invoice.alreadyExists')
     );
 
   const signatureUrl = uploadedSignature?.url
@@ -91,11 +94,11 @@ export const postInvoice = async (
     signatureUrl
   );
 
-  if (!insertedInvoice) throw new BadRequestError('Unable to add invoice');
+  if (!insertedInvoice) throw new BadRequestError(i18n.t('error.invoice.unableToCreate'));
 
   reply.status(200).send({
     invoice: insertedInvoice,
-    message: 'Invoice added successfully'
+    message: i18n.t('success.invoice.created')
   });
 };
 
@@ -109,6 +112,7 @@ export const updateInvoice = async (
   const { userId, id } = req.params;
   const invoiceData = req.body;
   const signatureFile = req.body.file;
+  const i18n = await useI18n(req);
 
   let uploadedSignature: UploadApiResponse;
 
@@ -120,12 +124,12 @@ export const updateInvoice = async (
     );
 
     if (!uploadedSignature)
-      throw new BadRequestError('Unable to upload signature');
+      throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
   }
 
   const foundInvoice = await findInvoiceById(userId, invoiceData.id);
 
-  if (!foundInvoice) throw new NotFoundError('Invoice not found');
+  if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
   const signatureUrl = uploadedSignature?.url
     ? uploadedSignature.url.replace('http://', 'https://')
@@ -138,11 +142,11 @@ export const updateInvoice = async (
     signatureUrl
   );
 
-  if (!updatedInvoice) throw new BadRequestError('Unable to update invoice');
+  if (!updatedInvoice) throw new BadRequestError(i18n.t('error.invoice.unableToUpdate'));
 
   reply.status(200).send({
     invoice: updatedInvoice,
-    message: 'Invoice updated successfully'
+    message: i18n.t('success.invoice.updated')
   });
 };
 
@@ -155,17 +159,18 @@ export async function updateInvoiceStatus(
 ) {
   const { userId, id } = req.params;
   const { status } = req.body;
+  const i18n = await useI18n(req);
 
   const foundInvoice = await findInvoiceById(userId, id);
 
-  if (!foundInvoice) throw new NotFoundError('Invoice not found');
+  if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
   const updatedInvoice = await updateInvoiceStatusInDb(userId, id, status);
 
   if (!updatedInvoice)
-    throw new BadRequestError('Unable to update invoice status');
+    throw new BadRequestError(i18n.t('error.invoice.unableToUpdateStatus'));
 
-  reply.status(200).send({ message: 'Invoice status updated successfully' });
+  reply.status(200).send({ message: i18n.t('success.invoice.statusUpdated') });
 }
 
 export const deleteInvoice = async (
@@ -173,11 +178,12 @@ export const deleteInvoice = async (
   reply: FastifyReply
 ) => {
   const { userId, id } = req.params;
+  const i18n = await useI18n(req);
   const deletedInvoice = await deleteInvoiceFromDb(userId, id);
 
-  if (!deletedInvoice) throw new BadRequestError('Unable to delete invoice');
+  if (!deletedInvoice) throw new BadRequestError(i18n.t('error.invoice.unableToDelete'));
 
-  reply.status(200).send({ message: 'Invoice deleted successfully' });
+  reply.status(200).send({ message: i18n.t('success.invoice.deleted') });
 };
 
 export const getInvoicesTotalAmount = async (
@@ -185,11 +191,12 @@ export const getInvoicesTotalAmount = async (
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
+  const i18n = await useI18n(req);
   const invoices = await getInvoicesTotalAmountFromDb(userId);
   const clients = await getClientsFromDb(userId);
 
   if (!invoices.length)
-    throw new BadRequestError('Unable to retrieve invoice data');
+    throw new BadRequestError(i18n.t('error.invoice.unableToRetrieveData'));
 
   reply.status(200).send({ invoices, totalClients: clients.length });
 };
@@ -199,10 +206,11 @@ export const getInvoicesRevenue = async (
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
+  const i18n = await useI18n(req);
   const invoices = await getInvoicesRevenueFromDb(userId);
 
   if (!invoices.length)
-    throw new BadRequestError('Unable to retrieve invoice data');
+    throw new BadRequestError(i18n.t('error.invoice.unableToRetrieveData'));
 
   const revenueByMonth = {
     0: 0,
@@ -232,10 +240,11 @@ export const getLatestInvoices = async (
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
+  const i18n = await useI18n(req);
   const invoices = await getLatestInvoicesFromDb(userId);
 
   if (!invoices.length)
-    throw new BadRequestError('Unable to retrieve invoices');
+    throw new BadRequestError(i18n.t('error.invoice.unableToRetrieveData'));
 
   reply.status(200).send({ invoices });
 };
@@ -254,14 +263,15 @@ export const sendInvoiceEmail = async (
 ) => {
   const { userId, id } = req.params;
   const { recipientEmail, subject, message, file } = req.body;
+  const i18n = await useI18n(req);
 
   const [invoice, user] = await Promise.all([
     getInvoiceFromDb(userId, id),
     getUserFromDb(userId)
   ]);
 
-  if (!user) throw new NotFoundError('User not found');
-  if (!invoice) throw new NotFoundError('Invoice not found');
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
   const attachment = await file
     .toBuffer()
@@ -281,7 +291,7 @@ export const sendInvoiceEmail = async (
     ]
   });
 
-  if (error) throw new BadRequestError('Unable to send email');
+  if (error) throw new BadRequestError(i18n.t('error.invoice.unableToSendEmail'));
 
-  reply.status(200).send({ message: 'Email sent successfully' });
+  reply.status(200).send({ message: i18n.t('success.invoice.emailSent') });
 };

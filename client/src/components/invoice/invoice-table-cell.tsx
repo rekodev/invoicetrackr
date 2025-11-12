@@ -1,5 +1,6 @@
 'use client';
 
+import { BlobProvider, PDFDownloadLink } from '@react-pdf/renderer';
 import {
   Checkbox,
   Chip,
@@ -12,7 +13,6 @@ import {
 } from '@heroui/react';
 import { Key, useEffect, useState, useTransition } from 'react';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
 import { useTranslations } from 'next-intl';
 
 import { InvoiceModel, InvoiceStatus } from '@/lib/types/models/invoice';
@@ -58,7 +58,9 @@ const InvoiceTableCell = ({
   onEdit,
   onDelete
 }: Props) => {
-  const t = useTranslations('invoices.pdf');
+  const tPdf = useTranslations('invoices.pdf');
+  const tCell = useTranslations('invoices.cell.actions');
+  const tForm = useTranslations('components.invoice_form');
   const [isPaid, setIsPaid] = useState(invoice.status === 'paid');
   const [isPending, startTransition] = useTransition();
 
@@ -80,8 +82,7 @@ const InvoiceTableCell = ({
       if (!response.ok) setIsPaid((prev) => !prev);
 
       addToast({
-        title: response.ok ? 'Success' : 'Error',
-        description: response.message,
+        title: response.message,
         color: response.ok ? 'success' : 'danger'
       });
     });
@@ -99,7 +100,7 @@ const InvoiceTableCell = ({
 
   const renderPdfDocument = () => (
     <PDFDocument
-      t={t}
+      t={tPdf}
       language={language}
       senderSignatureImage={invoice.senderSignature as string}
       bankAccount={invoice.bankingInformation}
@@ -177,7 +178,7 @@ const InvoiceTableCell = ({
               </Chip>
             </DropdownTrigger>
             <DropdownMenu
-              aria-label="Static Actions"
+              aria-label={tForm('a11y.static_actions_label')}
               selectionMode="single"
               selectedKeys={[cellValue]}
               onSelectionChange={(key) =>
@@ -196,7 +197,9 @@ const InvoiceTableCell = ({
             </DropdownMenu>
           </Dropdown>
 
-          <Tooltip content={isPaid ? 'Mark as Pending' : 'Mark as Paid'}>
+          <Tooltip
+            content={isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid')}
+          >
             <Checkbox
               className="mr-0.5 max-w-5 p-0"
               size="sm"
@@ -223,7 +226,7 @@ const InvoiceTableCell = ({
               );
             }}
           </BlobProvider>
-          <Tooltip content="Download">
+          <Tooltip content={tCell('tooltip_download')}>
             <PDFDownloadLink
               fileName={invoice.invoiceId}
               className="text-default-400 h-5 w-5"
@@ -232,7 +235,7 @@ const InvoiceTableCell = ({
               <ArrowDownTrayIcon />
             </PDFDownloadLink>
           </Tooltip>
-          <Tooltip content="Details">
+          <Tooltip content={tCell('tooltip_view')}>
             <span
               onClick={handleViewIconClick}
               className="text-default-400 cursor-pointer text-lg active:opacity-50"
@@ -240,7 +243,7 @@ const InvoiceTableCell = ({
               <EyeIcon />
             </span>
           </Tooltip>
-          <Tooltip content="Edit invoice">
+          <Tooltip content={tCell('tooltip_edit')}>
             <span
               className="text-default-400 cursor-pointer text-lg active:opacity-50"
               onClick={handleEditInvoiceClick}
@@ -248,7 +251,7 @@ const InvoiceTableCell = ({
               <EditIcon />
             </span>
           </Tooltip>
-          <Tooltip color="danger" content="Delete invoice">
+          <Tooltip color="danger" content={tCell('tooltip_delete')}>
             <span
               className="text-danger cursor-pointer text-lg active:opacity-50"
               onClick={handleDeleteInvoiceClick}

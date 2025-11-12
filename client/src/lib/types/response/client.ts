@@ -1,5 +1,9 @@
 import { ClientModel } from '../models/client';
 
+export type GetClientResp = {
+  client: ClientModel;
+};
+
 export type GetClientsResp = {
   clients: Array<ClientModel>;
 };

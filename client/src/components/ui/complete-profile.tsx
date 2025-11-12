@@ -7,6 +7,7 @@ import {
   CardHeader,
   Link
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 
 import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
 
@@ -15,16 +16,17 @@ type Props = {
 };
 
 const CompleteProfile = ({ title }: Props) => {
+  const t = useTranslations('components.complete_profile');
+  
   return (
     <Card className="mx-auto max-w-lg gap-4 bg-transparent">
       <CardHeader className="flex-col justify-center gap-4 p-6 pb-0 text-center text-3xl font-bold text-foreground">
         <UserIcon className="size-12 text-secondary-500" />
-        Complete Your Profile
+        {t('title')}
       </CardHeader>
       <CardBody className="px-6 pt-0 text-center">
         <p className="text-muted-foreground">
-          Before you can create your first {title}, please complete your
-          personal information in your profile.
+          {t('description', { title })}
         </p>
       </CardBody>
       <CardFooter className="justify-center p-6 pt-0 text-center">
@@ -34,7 +36,7 @@ const CompleteProfile = ({ title }: Props) => {
           color="secondary"
           showAnchorIcon
         >
-          Go to Profile
+          {t('go_to_profile')}
         </Button>
       </CardFooter>
     </Card>

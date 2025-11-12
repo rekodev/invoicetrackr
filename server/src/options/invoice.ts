@@ -13,7 +13,8 @@ import {
   updateInvoice,
   updateInvoiceStatus
 } from '../controllers';
-import { Invoice } from '../types/models';
+import { Invoice } from '../types';
+import { MessageResponse } from '../types/response';
 import { preValidateFileAndFields } from '../utils/multipart';
 import { authMiddleware } from '../middleware/auth';
 
@@ -41,7 +42,10 @@ export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Invoice,
     response: {
-      201: Type.Object({ invoice: Invoice, message: Type.String() })
+      201: Type.Intersect([
+        Type.Object({ invoice: Invoice }),
+        MessageResponse
+      ])
     }
   },
   preHandler: authMiddleware,
@@ -53,7 +57,10 @@ export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Invoice,
     response: {
-      200: Type.Object({ invoice: Invoice, message: Type.String() })
+      200: Type.Intersect([
+        Type.Object({ invoice: Invoice }),
+        MessageResponse
+      ])
     }
   },
   preHandler: authMiddleware,
@@ -65,7 +72,7 @@ export const updateInvoiceStatusOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: Type.Object({ status: Type.String() }),
     response: {
-      200: Type.Object({ message: Type.String() })
+      200: MessageResponse
     }
   },
   preHandler: authMiddleware,
@@ -76,7 +83,7 @@ export const updateInvoiceStatusOptions: RouteShorthandOptionsWithHandler = {
 export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ message: Type.String() })
+      200: MessageResponse
     }
   },
   preHandler: authMiddleware,
@@ -133,7 +140,7 @@ export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
 export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ message: Type.String() })
+      200: MessageResponse
     },
     params: Type.Object({
       id: Type.String(),
@@ -142,16 +149,16 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
     body: Type.Object({
       recipientEmail: Type.String({
         format: 'email',
-        errorMessage: 'Invalid email'
+        errorMessage: 'validation.invoice.recipientEmail'
       }),
       subject: Type.String({
         minLength: 1,
-        errorMessage: 'Subject is required'
+        errorMessage: 'validation.invoice.subject'
       }),
       message: Type.Optional(
         Type.String({
           maxLength: 1000,
-          errorMessage: 'Message is too long'
+          errorMessage: 'validation.invoice.message'
         })
       )
     })

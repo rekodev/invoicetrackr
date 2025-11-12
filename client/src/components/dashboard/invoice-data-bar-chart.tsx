@@ -1,32 +1,36 @@
 'use client';
 
+import { Bar } from 'react-chartjs-2';
 import { CategoryScale } from 'chart.js';
 import Chart from 'chart.js/auto';
-import { Bar } from 'react-chartjs-2';
+import { useTranslations } from 'next-intl';
 
 Chart.register(CategoryScale);
-
-const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-];
 
 type Props = {
   revenueByMonth: Record<number, number> | undefined;
 };
 
 const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
+  const t = useTranslations('dashboard.revenue_chart');
+
   const currentMonthIndex = new Date().getMonth();
+
+  const MONTHS = [
+    t('months.january'),
+    t('months.february'),
+    t('months.march'),
+    t('months.april'),
+    t('months.may'),
+    t('months.june'),
+    t('months.july'),
+    t('months.august'),
+    t('months.september'),
+    t('months.october'),
+    t('months.november'),
+    t('months.december')
+  ];
+
   const labels = MONTHS.slice(0, currentMonthIndex).concat(
     MONTHS.slice(currentMonthIndex)
   );
@@ -41,7 +45,7 @@ const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
     labels,
     datasets: [
       {
-        label: 'Invoice Revenue by Month',
+        label: t('chart_label'),
         data: dataByMonth,
         backgroundColor: '#71717A',
         borderWidth: 1
@@ -57,7 +61,7 @@ const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
         callbacks: {
           label: (tooltipItem: any) => {
             const revenue = tooltipItem.raw;
-            return `Revenue: $${revenue}`;
+            return `${t('revenue')}: $${revenue}`;
           }
         }
       }

@@ -11,12 +11,14 @@ import {
   Input,
   Link,
 } from "@heroui/react";
+import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
 import { authenticateAction } from "@/lib/actions";
 import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from "@/lib/constants/pages";
 
 export default function LoginForm() {
+  const t = useTranslations("login.form");
   const [errorMessage, formAction, isPending] = useActionState(
     authenticateAction,
     undefined,
@@ -28,7 +30,7 @@ export default function LoginForm() {
       isBlurred
     >
       <CardHeader className="p-8 pb-0">
-        <h1 className="text-3xl font-medium">Log In</h1>
+        <h1 className="text-3xl font-medium">{t("title")}</h1>
       </CardHeader>
       <CardBody className="p-8 pb-0">
         <form action={formAction} className="flex flex-col gap-4">
@@ -38,8 +40,8 @@ export default function LoginForm() {
             id="email"
             type="email"
             name="email"
-            label="Email"
-            placeholder="Enter your email address"
+            label={t("email")}
+            placeholder={t("email_placeholder")}
             required
           />
           <Input
@@ -48,8 +50,8 @@ export default function LoginForm() {
             id="password"
             type="password"
             name="password"
-            label="Password"
-            placeholder="Enter password"
+            label={t("password")}
+            placeholder={t("password_placeholder")}
             required
             minLength={6}
           />
@@ -61,7 +63,7 @@ export default function LoginForm() {
             endContent={<ArrowRightIcon className="h-5 w-5" />}
             color="secondary"
           >
-            Log in
+            {t("submit")}
           </Button>
           <div aria-live="polite" aria-atomic="true">
             {errorMessage && (
@@ -75,12 +77,12 @@ export default function LoginForm() {
       </CardBody>
       <CardFooter className="flex flex-col items-center justify-center pt-0 pb-8 gap-1">
         <Link color="secondary" href={FORGOT_PASSWORD_PAGE}>
-          Forgot Password?
+          {t("forgot_password")}
         </Link>
         <div className="flex gap-1">
-          <p className="text-md">Need to create an account?</p>{" "}
+          <p className="text-md">{t("need_account")}</p>{" "}
           <Link color="secondary" href={SIGN_UP_PAGE}>
-            Sign Up
+            {t("sign_up_link")}
           </Link>
         </div>
       </CardFooter>

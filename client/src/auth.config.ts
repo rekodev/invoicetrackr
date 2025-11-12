@@ -1,10 +1,16 @@
 import type { NextAuthConfig } from 'next-auth';
 
 import {
+  CREATE_INVOICE_PAGE,
   DASHBOARD_PAGE,
+  FORGOT_PASSWORD_PAGE,
+  HOME_PAGE,
   LOGIN_PAGE,
   ONBOARDING_PAGE,
-  RENEW_SUBSCRIPTION_PAGE
+  PRIVACY_POLICY_PAGE,
+  RENEW_SUBSCRIPTION_PAGE,
+  SIGN_UP_PAGE,
+  TERMS_OF_SERVICE_PAGE
 } from './lib/constants/pages';
 import { Currency } from './lib/types/currency';
 
@@ -12,14 +18,16 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
+      const sharedPaths = [PRIVACY_POLICY_PAGE, TERMS_OF_SERVICE_PAGE];
       const publicPaths = [
-        '/login',
-        '/sign-up',
-        '/forgot-password',
-        '/',
-        '/create-invoice',
-        '/privacy-policy',
-        '/terms-of-service'
+        ...sharedPaths,
+        LOGIN_PAGE,
+        SIGN_UP_PAGE,
+        FORGOT_PASSWORD_PAGE,
+        HOME_PAGE,
+        CREATE_INVOICE_PAGE,
+        PRIVACY_POLICY_PAGE,
+        TERMS_OF_SERVICE_PAGE
       ];
       const path = nextUrl.pathname;
       const pathIsPublic =
@@ -55,8 +63,8 @@ export const authConfig = {
         return true;
       }
 
-      // Logged in but accessing public path → send to dashboard
-      if (isLoggedIn) {
+      // Logged in but accessing public path → send to dashboard (except shared paths)
+      if (isLoggedIn && !sharedPaths.includes(path)) {
         return Response.redirect(new URL(DASHBOARD_PAGE, nextUrl));
       }
 
