@@ -1,6 +1,5 @@
 'use client';
 
-import { Bars3Icon } from '@heroicons/react/24/outline';
 import {
   Avatar,
   Button,
@@ -16,9 +15,9 @@ import {
   cn
 } from '@heroui/react';
 import { usePathname, useRouter } from 'next/navigation';
+import { Bars3Icon } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
 
-import { logOutAction } from '@/lib/actions';
 import {
   CLIENTS_PAGE,
   CONTRACTS_PAGE,
@@ -28,8 +27,11 @@ import {
   PERSONAL_INFORMATION_PAGE
 } from '@/lib/constants/pages';
 import { UserModel } from '@/lib/types/models/user';
+import { logOutAction } from '@/lib/actions';
 
+import LanguageSwitcher from './language-switcher';
 import ThemeSwitcher from './theme-switcher';
+
 import AppLogo from '../icons/AppLogo';
 
 const navbarItems = [
@@ -40,7 +42,7 @@ const navbarItems = [
 ];
 
 type Props = {
-  user: Partial<UserModel>;
+  user: UserModel;
 };
 
 export default function UserHeader({ user }: Props) {
@@ -150,7 +152,9 @@ export default function UserHeader({ user }: Props) {
             </DropdownMenu>
           </form>
         </Dropdown>
-        <NavbarItem className="border-default-300 dark:border-default-100 border-l pl-4">
+        <div className="border-default-100 border-l-1 h-10" />
+        <LanguageSwitcher user={user} />
+        <NavbarItem className="-ml-2">
           <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>

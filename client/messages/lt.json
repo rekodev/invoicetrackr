@@ -1,5 +1,10 @@
 {
   "header": {
+    "language_switcher": {
+      "aria_label": "Pakeisti kalbą",
+      "en": "Anglų",
+      "lt": "Lietuvių"
+    },
     "user": {
       "dashboard": "Skydelis",
       "invoices": "Sąskaitos faktūros",

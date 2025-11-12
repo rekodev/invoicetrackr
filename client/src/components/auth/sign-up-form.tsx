@@ -18,7 +18,7 @@ import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { LOGIN_PAGE } from '@/lib/constants/pages';
-import { signUp } from '@/lib/actions';
+import { signUpAction } from '@/lib/actions';
 
 const initialState = {
   message: '',
@@ -27,7 +27,10 @@ const initialState = {
 
 export default function SignUpForm() {
   const t = useTranslations('sign_up.form');
-  const [state, formAction, isPending] = useActionState(signUp, initialState);
+  const [state, formAction, isPending] = useActionState(
+    signUpAction,
+    initialState
+  );
 
   const renderSubmissionMessage = () => {
     if (!state?.message) return null;

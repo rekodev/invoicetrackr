@@ -1,7 +1,5 @@
-import { unauthorized } from 'next/navigation';
-
-import { getUser } from '@/api';
 import { auth } from '@/auth';
+import { getUser } from '@/api';
 import { isResponseError } from '@/lib/utils/error';
 
 import GuestHeader from './ui/guest-header';

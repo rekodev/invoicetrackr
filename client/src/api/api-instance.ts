@@ -6,7 +6,7 @@ import axios, {
 } from 'axios';
 
 import { getGeneralErrorMessageAction } from '@/lib/actions/general-error';
-import { getServerRequestHeaders } from '@/lib/actions';
+import { getRequestHeadersAction } from '@/lib/actions';
 
 export type ApiError = {
   code: string;
@@ -29,13 +29,8 @@ class ApiInstance {
     });
 
     this.httpClient.interceptors.request.use(async (config) => {
-      if (typeof window === 'undefined') {
-        const serverHeaders = await getServerRequestHeaders();
-        Object.assign(config.headers, serverHeaders);
-      } else {
-        const language = localStorage.getItem('language') || 'en';
-        config.headers['Accept-Language'] = language.toLowerCase();
-      }
+      const requestHeaders = await getRequestHeadersAction();
+      Object.assign(config.headers, requestHeaders);
 
       return config;
     });

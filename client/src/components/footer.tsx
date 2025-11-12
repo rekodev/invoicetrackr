@@ -1,8 +1,8 @@
 'use client';
 
 import { Link } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import {
   ACCOUNT_SETTINGS_PAGE,
@@ -45,7 +45,7 @@ const Footer = () => {
         (name) => pathname && name.includes(pathname)
       ) && (
         <div className="border-t-1 border-default-300 dark:border-default-100 w-full gap-4 py-10 md:flex-row md:gap-8 md:py-12">
-          <div className="m-auto flex w-full max-w-7xl flex-col items-center justify-between gap-8 px-6 text-center sm:flex-row sm:text-start">
+          <div className="m-auto flex w-full max-w-7xl flex-col items-start justify-between gap-8 px-6 text-center sm:flex-row sm:text-start">
             <div className="flex flex-col gap-6">
               <div className="mx-auto flex items-center gap-2 sm:mx-0">
                 <AppLogo />
@@ -53,19 +53,19 @@ const Footer = () => {
                   INVOICE<span className="text-secondary-600">TRACKR</span>
                 </p>
               </div>
-              <p className="text-muted-foreground text-sm">
-                {t('tagline')}
-              </p>
+              <p className="text-muted-foreground text-sm">{t('tagline')}</p>
             </div>
             <div className="grid gap-8 sm:grid-cols-2 md:ml-auto">
               <div className="grid gap-3 text-sm">
-                <div className="font-medium">{t('support')}</div>
+                <div className="text-default-500 font-medium">
+                  {t('support')}
+                </div>
                 <ContactFormDialog />
               </div>
             </div>
             <div className="grid gap-8 sm:grid-cols-2 md:ml-auto">
               <div className="grid gap-3 text-sm">
-                <div className="font-medium">{t('legal')}</div>
+                <div className="text-default-500 font-medium">{t('legal')}</div>
                 <nav className="grid gap-2">
                   <Link
                     color="foreground"

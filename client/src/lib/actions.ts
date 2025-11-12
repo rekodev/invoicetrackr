@@ -94,7 +94,7 @@ export async function logOutAction() {
   await signOut({ redirect: true, redirectTo: '/' });
 }
 
-export async function signUp(
+export async function signUpAction(
   _prevState: { message: string; ok: boolean } | undefined,
   formData: FormData
 ) {
@@ -120,18 +120,19 @@ export async function signUp(
   }
 }
 
-export const updateSession = async ({
+export const updateSessionAction = async ({
   newSession,
   redirectPath
 }: {
-  newSession: User;
+  newSession: Partial<User>;
   redirectPath?: string;
 }) => {
+  const session = await auth();
+
   await unstable_update({
     user: {
-      ...newSession,
-      isOnboarded: true,
-      id: String(newSession.id)
+      ...session?.user,
+      ...newSession
     }
   });
 
@@ -140,14 +141,14 @@ export const updateSession = async ({
   }
 };
 
-export const getServerRequestHeaders = async () => {
-  const [awaitedCookies, session] = await Promise.all([cookies(), auth()]);
+export const getRequestHeadersAction = async () => {
+  const cookieStore = await cookies();
 
   const authToken =
-    awaitedCookies.get('__Secure-authjs.session-token')?.value ||
-    awaitedCookies.get('authjs.session-token')?.value;
+    cookieStore.get('__Secure-authjs.session-token')?.value ||
+    cookieStore.get('authjs.session-token')?.value;
 
-  const isCookieSecure = !!awaitedCookies.get('__Secure-authjs.session-token')
+  const isCookieSecure = !!cookieStore.get('__Secure-authjs.session-token')
     ?.value;
 
   const headers: Record<string, string> = {};
@@ -157,7 +158,19 @@ export const getServerRequestHeaders = async () => {
       `${isCookieSecure ? '__Secure-' : ''}authjs.session-token=${authToken}`;
   }
 
-  headers['Accept-Language'] = session?.user?.language?.toLowerCase() || 'en';
+  headers['Accept-Language'] = cookieStore.get('locale')?.value || 'en';
 
   return headers;
 };
+
+export async function setLocaleCookieAction(locale: string) {
+  const cookieStore = await cookies();
+
+  cookieStore.set('locale', locale || 'en');
+}
+
+export async function getLocaleCookieAction() {
+  const cookieStore = await cookies();
+
+  return cookieStore.get('locale')?.value || 'en';
+}
