@@ -18,12 +18,11 @@ import {
 } from '../database/invoice';
 import { getClientsFromDb } from '../database/client';
 import { getUserFromDb } from '../database/user';
-import { InvoiceModel } from '../types/invoice';
+import { InvoiceType } from '../types/invoice';
 import {
   AlreadyExistsError,
   BadRequestError,
-  NotFoundError,
-  ValidationErrorCause
+  NotFoundError
 } from '../utils/error';
 import { resend } from '../config/resend';
 
@@ -53,7 +52,7 @@ export const getInvoice = async (
 export const postInvoice = async (
   req: FastifyRequest<{
     Params: { userId: number };
-    Body: InvoiceModel & { file: MultipartFile };
+    Body: InvoiceType & { file: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {
@@ -83,15 +82,6 @@ export const postInvoice = async (
   if (foundInvoice)
     throw new AlreadyExistsError(i18n.t('error.invoice.alreadyExists'));
 
-  if (new Date(invoiceData.dueDate) < new Date(invoiceData.date)) {
-    throw new BadRequestError(i18n.t('validation.general'), {
-      cause: new ValidationErrorCause({
-        key: 'dueDate',
-        value: i18n.t('validation.invoice.dueDateAfterDate')
-      })
-    });
-  }
-
   const signatureUrl = uploadedSignature?.url
     ? uploadedSignature.url.replace('http://', 'https://')
     : invoiceData.senderSignature;
@@ -114,7 +104,7 @@ export const postInvoice = async (
 export const updateInvoice = async (
   req: FastifyRequest<{
     Params: { userId: number; id: number };
-    Body: InvoiceModel & { file: MultipartFile };
+    Body: InvoiceType & { file: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {
@@ -126,15 +116,6 @@ export const updateInvoice = async (
   const foundInvoice = await findInvoiceById(userId, Number(invoiceData.id));
 
   if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
-
-  if (new Date(invoiceData.dueDate) < new Date(invoiceData.date)) {
-    throw new BadRequestError(i18n.t('validation.general'), {
-      cause: new ValidationErrorCause({
-        key: 'dueDate',
-        value: i18n.t('validation.invoice.dueDateAfterDate')
-      })
-    });
-  }
 
   let uploadedSignature: UploadApiResponse | undefined;
 

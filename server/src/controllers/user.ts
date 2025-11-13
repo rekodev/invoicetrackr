@@ -18,12 +18,11 @@ import {
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb
 } from '../database/user';
-import { UserModel } from '../types/user';
+import { UserType } from '../types/user';
 import {
   BadRequestError,
   NotFoundError,
-  UnauthorizedError,
-  ValidationErrorCause
+  UnauthorizedError
 } from '../utils/error';
 import { saveResetTokenToDb } from '../database/password-reset';
 import { resend } from '../config/resend';
@@ -79,7 +78,7 @@ export const loginUser = async (
 
 export const postUser = async (
   req: FastifyRequest<{
-    Body: Pick<UserModel, 'email' | 'password'> & { confirmedPassword: string };
+    Body: Pick<UserType, 'email' | 'password'> & { confirmedPassword: string };
   }>,
   reply: FastifyReply
 ) => {
@@ -113,7 +112,7 @@ export const updateUser = async (
   req: FastifyRequest<{
     Params: { userId: number };
     Body: Pick<
-      UserModel,
+      UserType,
       | 'email'
       | 'name'
       | 'businessType'
@@ -298,12 +297,7 @@ export const changeUserPassword = async (
   const i18n = await useI18n(req);
 
   if (newPassword !== confirmedNewPassword)
-    throw new BadRequestError(i18n.t('validation.general'), {
-      cause: new ValidationErrorCause({
-        key: 'confirmedNewPassword',
-        value: i18n.t('validation.user.passwordMismatch')
-      })
-    });
+    throw new BadRequestError(i18n.t('error.user.passwordsDoNotMatch'));
 
   const currentPasswordHash = await getUserPasswordHashFromDb(userId);
 
@@ -391,12 +385,7 @@ export const createNewUserPassword = async (
   const i18n = await useI18n(req);
 
   if (newPassword !== confirmedNewPassword)
-    throw new BadRequestError(i18n.t('validation.general'), {
-      cause: new ValidationErrorCause({
-        key: 'confirmedNewPassword',
-        value: i18n.t('validation.user.passwordMismatch')
-      })
-    });
+    throw new BadRequestError(i18n.t('error.user.passwordsDoNotMatch'));
 
   const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
 

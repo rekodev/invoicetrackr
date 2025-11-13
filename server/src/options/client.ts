@@ -1,5 +1,5 @@
-import { Type } from '@sinclair/typebox';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
+import z from 'zod/v4';
 import {
   deleteClient,
   getClient,
@@ -7,14 +7,14 @@ import {
   postClient,
   updateClient
 } from '../controllers/client';
-import { Client } from '../types/client';
-import { MessageResponse } from '../types/response';
+import { clientSchema } from '../types/client';
+import { messageResponseSchema } from '../types/response';
 import { authMiddleware } from '../middleware/auth';
 
 export const getClientsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ clients: Type.Array(Client) })
+      200: z.object({ clients: z.array(clientSchema) })
     }
   },
   preHandler: authMiddleware,
@@ -24,7 +24,7 @@ export const getClientsOptions: RouteShorthandOptionsWithHandler = {
 export const getClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ client: Client })
+      200: z.object({ client: clientSchema })
     }
   },
   preHandler: authMiddleware,
@@ -33,12 +33,12 @@ export const getClientOptions: RouteShorthandOptionsWithHandler = {
 
 export const postClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Type.Omit(Client, ['id']),
+    body: clientSchema.omit({ id: true }),
     response: {
-      201: Type.Intersect([
-        Type.Object({ client: Client }),
-        MessageResponse
-      ])
+      201: z.intersection(
+        z.object({ client: clientSchema }),
+        messageResponseSchema
+      )
     }
   },
   preHandler: authMiddleware,
@@ -47,12 +47,12 @@ export const postClientOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Client,
+    body: clientSchema,
     response: {
-      200: Type.Intersect([
-        Type.Object({ client: Client }),
-        MessageResponse
-      ])
+      200: z.intersection(
+        z.object({ client: clientSchema }),
+        messageResponseSchema
+      )
     }
   },
   preHandler: authMiddleware,
@@ -62,7 +62,7 @@ export const updateClientOptions: RouteShorthandOptionsWithHandler = {
 export const deleteClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: MessageResponse
+      200: messageResponseSchema
     }
   },
   preHandler: authMiddleware,

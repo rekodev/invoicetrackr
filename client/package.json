@@ -28,8 +28,7 @@
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.66.0",
-    "react-signature-canvas": "^1.1.0-alpha.1",
-    "zod": "^4.1.12"
+    "react-signature-canvas": "^1.1.0-alpha.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

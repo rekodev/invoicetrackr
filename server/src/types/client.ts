@@ -1,27 +1,20 @@
-import { Static, Type } from '@sinclair/typebox';
-import { InvoicePartyBusinessType, InvoicePartyType } from './invoice';
+import z from 'zod/v4';
+import {
+  invoicePartyBusinessTypeSchema,
+  invoicePartyTypeSchema
+} from './invoice';
 
-export const Client = Type.Object({
-  id: Type.Number(),
-  type: InvoicePartyType,
-  name: Type.String({ minLength: 1, errorMessage: 'validation.client.name' }),
-  businessType: InvoicePartyBusinessType,
-  businessNumber: Type.String({
-    minLength: 1,
-    errorMessage: 'validation.client.businessNumber'
-  }),
-  address: Type.String({
-    minLength: 1,
-    errorMessage: 'validation.client.address'
-  }),
-  email: Type.Union([
-    Type.String({ maxLength: 0 }),
-    Type.String({
-      minLength: 1,
-      format: 'email',
-      errorMessage: 'validation.client.email'
-    })
+export const clientSchema = z.object({
+  id: z.number(),
+  type: invoicePartyTypeSchema,
+  name: z.string().min(1, 'validation.client.name'),
+  businessType: invoicePartyBusinessTypeSchema,
+  businessNumber: z.string().min(1, 'validation.client.businessNumber'),
+  address: z.string().min(1, 'validation.client.address'),
+  email: z.union([
+    z.string().max(0),
+    z.string().min(1).email('validation.client.email')
   ])
 });
 
-export type ClientModel = Static<typeof Client>;
+export type ClientType = z.infer<typeof clientSchema>;

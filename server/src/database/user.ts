@@ -1,8 +1,9 @@
 import { and, eq } from 'drizzle-orm';
 
-import { UserModel } from '../types/user';
+import { UserType } from '../types/user';
 import { db } from './db';
 import {
+  InsertUser,
   passwordResetTokensTable,
   stripeAccountsTable,
   usersTable
@@ -73,11 +74,10 @@ export const registerUser = async ({
   email,
   password,
   language
-}: Pick<UserModel, 'email' | 'password' | 'language'>) => {
+}: Pick<InsertUser, 'email' | 'password' | 'language'>) => {
   const users = await db
     .insert(usersTable)
     .values({
-      // @ts-ignore: Drizzle ORM issue with enums
       email,
       password,
       currency: 'usd',
@@ -97,7 +97,7 @@ export const registerUser = async ({
 
 export const updateUserInDb = async (
   user: Pick<
-    UserModel,
+    UserType,
     'id' | 'email' | 'name' | 'businessType' | 'businessNumber' | 'address'
   >,
   signature: string

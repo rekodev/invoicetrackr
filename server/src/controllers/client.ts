@@ -9,7 +9,7 @@ import {
   insertClientInDb,
   updateClientInDb
 } from '../database/client';
-import { ClientModel } from '../types/client';
+import { ClientType } from '../types/client';
 import { BadRequestError, NotFoundError } from '../utils/error';
 
 export const getClients = async (
@@ -38,7 +38,7 @@ export const getClient = async (
 };
 
 export const postClient = async (
-  req: FastifyRequest<{ Params: { userId: number }; Body: ClientModel }>,
+  req: FastifyRequest<{ Params: { userId: number }; Body: ClientType }>,
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
@@ -64,7 +64,7 @@ export const postClient = async (
 export const updateClient = async (
   req: FastifyRequest<{
     Params: { userId: number; id: number };
-    Body: ClientModel;
+    Body: ClientType;
   }>,
   reply: FastifyReply
 ) => {

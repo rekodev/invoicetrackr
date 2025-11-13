@@ -1,7 +1,7 @@
-import { Type, Static } from '@sinclair/typebox';
+import z from 'zod/v4';
 
-export const MessageResponse = Type.Object({
-  message: Type.String()
+export const messageResponseSchema = z.object({
+  message: z.string()
 });
 
-export type MessageResponseType = Static<typeof MessageResponse>;
+export type MessageResponseType = z.infer<typeof messageResponseSchema>;

@@ -1,5 +1,5 @@
-import { Type } from '@sinclair/typebox';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
+import z from 'zod/v4';
 import {
   changeUserPassword,
   createNewUserPassword,
@@ -14,15 +14,20 @@ import {
   updateUserProfilePicture,
   updateUserSelectedBankAccount
 } from '../controllers/user';
-import { User } from '../types/user';
-import { MessageResponse } from '../types/response';
+import { userSchema } from '../types/user';
+import { messageResponseSchema } from '../types/response';
 import { preValidateFileAndFields } from '../utils/multipart';
 import { authMiddleware } from '../middleware/auth';
+import {
+  passwordSchema,
+  loginPasswordSchema,
+  currentPasswordSchema
+} from '../types/common';
 
 export const getUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ user: User })
+      200: z.object({ user: userSchema })
     }
   },
   preHandler: authMiddleware,
@@ -31,20 +36,12 @@ export const getUserOptions: RouteShorthandOptionsWithHandler = {
 
 export const loginUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Type.Object({
-      email: Type.String({
-        format: 'email',
-        maxLength: 255,
-        minLength: 5,
-        errorMessage: 'validation.user.email'
-      }),
-      password: Type.String({
-        minLength: 6,
-        errorMessage: 'validation.user.loginPassword'
-      })
+    body: z.object({
+      email: z.string().email('validation.user.email').max(255).min(5),
+      password: loginPasswordSchema
     }),
     response: {
-      200: { user: User }
+      200: { user: userSchema }
     }
   },
   handler: loginUser
@@ -52,27 +49,21 @@ export const loginUserOptions: RouteShorthandOptionsWithHandler = {
 
 export const postUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Type.Object({
-      email: Type.String({
-        format: 'email',
-        maxLength: 255,
-        minLength: 5,
-        errorMessage: 'validation.user.email'
-      }),
-      password: Type.String({
-        minLength: 6,
-        errorMessage: 'validation.user.registerPassword'
-      }),
-      confirmedPassword: Type.String({
-        minLength: 6,
-        errorMessage: 'validation.user.confirmedPassword'
+    body: z
+      .object({
+        email: z.string().email('validation.user.email').max(255).min(5),
+        password: passwordSchema,
+        confirmedPassword: passwordSchema
       })
-    }),
+      .refine((data) => data.password === data.confirmedPassword, {
+        message: 'validation.password.mismatch',
+        path: ['confirmedPassword']
+      }),
     response: {
-      201: Type.Intersect([
-        Type.Object({ email: Type.String() }),
-        MessageResponse
-      ])
+      201: z.intersection(
+        z.object({ email: z.string() }),
+        messageResponseSchema
+      )
     }
   },
   handler: postUser
@@ -80,25 +71,25 @@ export const postUserOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Type.Pick(User, [
-      'name',
-      'businessType',
-      'businessNumber',
-      'address',
-      'email',
-      'signature'
-    ]),
+    body: userSchema.pick({
+      name: true,
+      businessType: true,
+      businessNumber: true,
+      address: true,
+      email: true,
+      signature: true
+    }),
     response: {
-      200: Type.Intersect([
-        Type.Object({
-          user: Type.Omit(User, [
-            'password',
-            'stripeCustomerId',
-            'stripeSubscriptionId'
-          ])
+      200: z.intersection(
+        z.object({
+          user: userSchema.omit({
+            password: true,
+            stripeCustomerId: true,
+            stripeSubscriptionId: true
+          })
         }),
-        MessageResponse
-      ])
+        messageResponseSchema
+      )
     }
   },
   preValidation: preValidateFileAndFields,
@@ -109,7 +100,7 @@ export const updateUserOptions: RouteShorthandOptionsWithHandler = {
 export const deleteUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: MessageResponse
+      200: messageResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -120,7 +111,7 @@ export const updateUserSelectedBankAccountOptions: RouteShorthandOptionsWithHand
   {
     schema: {
       response: {
-        200: MessageResponse
+        200: messageResponseSchema
       }
     },
     preHandler: authMiddleware,
@@ -131,7 +122,7 @@ export const updateUserProfilePictureOptions: RouteShorthandOptionsWithHandler =
   {
     schema: {
       response: {
-        200: MessageResponse
+        200: messageResponseSchema
       }
     },
     preHandler: authMiddleware,
@@ -141,12 +132,12 @@ export const updateUserProfilePictureOptions: RouteShorthandOptionsWithHandler =
 export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler =
   {
     schema: {
-      body: Type.Object({
-        currency: Type.String({ maxLength: 3, minLength: 3 }),
-        language: Type.String({ maxLength: 2, minLength: 2 })
+      body: z.object({
+        currency: z.string().max(3).min(3),
+        language: z.string().max(2).min(2)
       }),
       response: {
-        200: MessageResponse
+        200: messageResponseSchema
       }
     },
     preHandler: authMiddleware,
@@ -155,22 +146,18 @@ export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler 
 
 export const changeUserPasswordOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Type.Object({
-      password: Type.String({
-        minLength: 1,
-        errorMessage: 'validation.user.password'
-      }),
-      newPassword: Type.String({
-        minLength: 1,
-        errorMessage: 'validation.user.newPassword'
-      }),
-      confirmedNewPassword: Type.String({
-        minLength: 1,
-        errorMessage: 'validation.user.confirmedNewPassword'
+    body: z
+      .object({
+        password: currentPasswordSchema,
+        newPassword: passwordSchema,
+        confirmedNewPassword: passwordSchema
       })
-    }),
+      .refine((data) => data.newPassword === data.confirmedNewPassword, {
+        message: 'validation.password.mismatch',
+        path: ['confirmedNewPassword']
+      }),
     response: {
-      200: MessageResponse
+      200: messageResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -179,14 +166,11 @@ export const changeUserPasswordOptions: RouteShorthandOptionsWithHandler = {
 
 export const resetUserPasswordOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Type.Object({
-      email: Type.String({
-        minLength: 1,
-        errorMessage: 'validation.user.email'
-      })
+    body: z.object({
+      email: z.string().min(1, 'validation.user.email')
     }),
     response: {
-      200: MessageResponse
+      200: messageResponseSchema
     }
   },
   handler: resetUserPassword
@@ -200,19 +184,18 @@ export const getUserResetPasswordTokenOptions: RouteShorthandOptionsWithHandler 
 export const createNewUserPasswordOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: MessageResponse
+      200: messageResponseSchema
     },
-    body: Type.Object({
-      newPassword: Type.String({
-        minLength: 1,
-        errorMessage: 'validation.user.newPassword'
-      }),
-      confirmedNewPassword: Type.String({
-        minLength: 1,
-        errorMessage: 'validation.user.confirmedNewPassword'
-      }),
-      token: Type.String()
-    })
+    body: z
+      .object({
+        newPassword: passwordSchema,
+        confirmedNewPassword: passwordSchema,
+        token: z.string()
+      })
+      .refine((data) => data.newPassword === data.confirmedNewPassword, {
+        message: 'validation.password.mismatch',
+        path: ['confirmedNewPassword']
+      })
   },
   preHandler: authMiddleware,
   handler: createNewUserPassword

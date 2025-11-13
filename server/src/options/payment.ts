@@ -1,5 +1,5 @@
-import { Type } from '@sinclair/typebox';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
+import z from 'zod/v4';
 
 import {
   cancelStripeSubscription,
@@ -7,13 +7,13 @@ import {
   createSubscription,
   getStripeCustomerId
 } from '../controllers/payment';
-import { MessageResponse } from '../types/response';
+import { messageResponseSchema } from '../types/response';
 import { authMiddleware } from '../middleware/auth';
 
 export const createCustomerOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: { customerId: Type.String() }
+      200: { customerId: z.string() }
     }
   },
   preHandler: authMiddleware,
@@ -28,7 +28,7 @@ export const createSubscriptionOptions: RouteShorthandOptionsWithHandler = {
 export const getStripeCustomerIdOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ customerId: Type.String() })
+      200: z.object({ customerId: z.string() })
     }
   },
   preHandler: authMiddleware,
@@ -39,7 +39,7 @@ export const cancelStripeSubscriptionOptions: RouteShorthandOptionsWithHandler =
   {
     schema: {
       response: {
-        200: MessageResponse
+        200: messageResponseSchema
       }
     },
     preHandler: authMiddleware,

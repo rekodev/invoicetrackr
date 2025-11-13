@@ -50,7 +50,7 @@ const useInvoiceFormSubmissionHandler = ({
       sender: user,
       senderSignature: data.senderSignature || '',
       receiver: data?.receiver || INITIAL_RECEIVER_DATA,
-      totalAmount: calculateServiceTotal(data.services),
+      totalAmount: calculateServiceTotal(data.services).toString(),
       bankingInformation: bankingInformation || data.bankingInformation
     };
 

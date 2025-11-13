@@ -1,6 +1,5 @@
-import { Type } from '@sinclair/typebox';
-import { BankAccount } from '../types/banking-information';
-import { MessageResponse } from '../types/response';
+import { bankAccountSchema } from '../types/banking-information';
+import { messageResponseSchema } from '../types/response';
 import {
   deleteBankAccount,
   getBankAccount,
@@ -10,11 +9,12 @@ import {
 } from '../controllers/banking-information';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import { authMiddleware } from '../middleware/auth';
+import z from 'zod/v4';
 
 export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ bankAccounts: Type.Array(BankAccount) })
+      200: z.object({ bankAccounts: z.array(bankAccountSchema) })
     }
   },
   preHandler: authMiddleware,
@@ -24,7 +24,7 @@ export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
 export const getBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: Type.Object({ bankAccount: BankAccount })
+      200: bankAccountSchema
     }
   },
   preHandler: authMiddleware,
@@ -33,11 +33,11 @@ export const getBankAccountOptions: RouteShorthandOptionsWithHandler = {
 
 export const postBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: BankAccount,
+    body: bankAccountSchema,
     response: {
-      201: Type.Intersect([
-        Type.Object({ bankAccount: BankAccount }),
-        MessageResponse
+      201: z.union([
+        z.object({ bankAccount: bankAccountSchema }),
+        messageResponseSchema
       ])
     }
   },
@@ -47,12 +47,12 @@ export const postBankAccountOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: BankAccount,
+    body: bankAccountSchema,
     response: {
-      200: Type.Intersect([
-        Type.Object({ bankAccount: BankAccount }),
-        MessageResponse
-      ])
+      200: z.intersection(
+        z.object({ bankAccount: bankAccountSchema }),
+        messageResponseSchema
+      )
     }
   },
   preHandler: authMiddleware,
@@ -62,7 +62,7 @@ export const updateBankAccountOptions: RouteShorthandOptionsWithHandler = {
 export const deleteBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: MessageResponse
+      200: messageResponseSchema
     }
   },
   preHandler: authMiddleware,

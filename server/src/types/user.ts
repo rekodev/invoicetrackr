@@ -1,38 +1,26 @@
-import { Static, Type } from '@sinclair/typebox';
-import { InvoicePartyBusinessType, InvoicePartyType } from './invoice';
+import z from 'zod/v4';
+import {
+  invoicePartyBusinessTypeSchema,
+  invoicePartyTypeSchema
+} from './invoice';
+import { passwordSchema } from './common';
 
-export const User = Type.Object({
-  id: Type.Optional(Type.Number()),
-  type: InvoicePartyType,
-  name: Type.String({ minLength: 1, errorMessage: 'validation.user.name' }),
-  businessType: InvoicePartyBusinessType,
-  businessNumber: Type.String({
-    minLength: 1,
-    errorMessage: 'validation.user.businessNumber'
-  }),
-  address: Type.String({
-    minLength: 1,
-    errorMessage: 'validation.user.address'
-  }),
-  email: Type.Optional(
-    Type.String({ format: 'email', errorMessage: 'validation.user.email' })
-  ),
-  signature: Type.Optional(Type.String()),
-  selectedBankAccountId: Type.Optional(Type.Number()),
-  password: Type.Optional(
-    Type.String({ minLength: 1, errorMessage: 'validation.user.password' })
-  ),
-  profilePictureUrl: Type.String(),
-  currency: Type.String({
-    minLength: 1,
-    errorMessage: 'validation.user.currency'
-  }),
-  language: Type.String({
-    minLength: 1,
-    errorMessage: 'validation.user.language'
-  }),
-  stripeCustomerId: Type.String(),
-  stripeSubscriptionId: Type.String()
+export const userSchema = z.object({
+  id: z.number().optional(),
+  type: invoicePartyTypeSchema,
+  name: z.string().min(1, 'validation.user.name'),
+  businessType: invoicePartyBusinessTypeSchema,
+  businessNumber: z.string().min(1, 'validation.user.businessNumber'),
+  address: z.string().min(1, 'validation.user.address'),
+  email: z.string().email('validation.user.email').optional(),
+  signature: z.string().optional(),
+  selectedBankAccountId: z.number().optional(),
+  password: passwordSchema.optional(),
+  profilePictureUrl: z.string(),
+  currency: z.string().min(1, 'validation.user.currency'),
+  language: z.string().min(1, 'validation.user.language'),
+  stripeCustomerId: z.string(),
+  stripeSubscriptionId: z.string()
 });
 
-export type UserModel = Static<typeof User>;
+export type UserType = z.infer<typeof userSchema>;

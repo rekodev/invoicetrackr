@@ -1,5 +1,5 @@
 import { desc, eq, and } from 'drizzle-orm';
-import { ClientModel } from '../types/client';
+import { ClientType } from '../types/client';
 import { db } from './db';
 import { clientsTable } from './schema';
 
@@ -35,7 +35,7 @@ export const getClientFromDb = async (userId: number, clientId: number) => {
 
 export const insertClientInDb = async (
   userId: number,
-  { name, address, businessNumber, businessType, type, email }: ClientModel
+  { name, address, businessNumber, businessType, type, email }: ClientType
 ) => {
   const clients = await db
     .insert(clientsTable)
@@ -56,7 +56,7 @@ export const insertClientInDb = async (
 export const updateClientInDb = async (
   userId: number,
   clientId: number,
-  { name, address, businessNumber, businessType, type, email }: ClientModel
+  { name, address, businessNumber, businessType, type, email }: ClientType
 ) => {
   const clients = await db
     .update(clientsTable)

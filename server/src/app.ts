@@ -19,6 +19,11 @@ import { errorHandler } from './utils/error';
 import { getPgVersion } from './database/db';
 import { languageMiddleware } from './middleware/language';
 import { rateLimitPluginOptions } from './utils/rate-limit';
+import { bankAccountSchema } from './types/banking-information';
+import {
+  serializerCompiler,
+  validatorCompiler
+} from 'fastify-type-provider-zod';
 
 dotenv.config();
 cloudinary.config(cloudinaryConfig);
@@ -69,6 +74,9 @@ server.register(fastifyRateLimit, rateLimitPluginOptions);
 // Register Middleware and Error Handler
 server.addHook('onRequest', languageMiddleware);
 server.setErrorHandler(errorHandler);
+
+server.setValidatorCompiler(validatorCompiler);
+server.setSerializerCompiler(serializerCompiler);
 
 // Register Routes
 server.register(invoiceRoutes);

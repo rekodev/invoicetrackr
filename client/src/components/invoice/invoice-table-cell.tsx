@@ -155,7 +155,7 @@ const InvoiceTableCell = ({
           <span className="text-success-700">
             {getCurrencySymbol(currency)}
           </span>
-          {(invoice.totalAmount || 0).toFixed(2)}
+          {(Number(invoice.totalAmount) || 0).toFixed(2)}
         </p>
       );
     case 'date':
