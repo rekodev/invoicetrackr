@@ -31,10 +31,15 @@ jobs:
           cd client
           pnpm tsc
 
-      - name: Run Linter (client)
+      - name: Run ESLint (client)
         run: |
           cd client
           pnpm exec eslint .
+
+      - name: Run Build (client)
+        run: |
+          cd client
+          pnpm build
 
       #   - name: Run Tests (client)
       #     run: |
@@ -47,10 +52,15 @@ jobs:
           cd server
           pnpm tsc
 
-    #   - name: Run Linter (server)
-    #     run: |
-    #       cd server
-    #       pnpm lint
+      - name: Run ESLint (server)
+        run: |
+          cd server
+          pnpm lint
+
+      - name: Run Build (server)
+        run: |
+          cd server
+          pnpm build
 
     #   - name: Run Tests (server)
     #     run: |
