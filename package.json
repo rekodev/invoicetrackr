@@ -25,6 +25,12 @@
     "tabWidth": 2,
     "trailingComma": "none"
   },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.0.2",
+      "@types/react-dom": "19.0.2"
+    }
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "next-auth": "5.0.0-beta.30",

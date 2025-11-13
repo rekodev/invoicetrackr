@@ -1,12 +1,13 @@
 {
   "name": "@invoicetrackr/server",
   "version": "0.0.1",
+  "type": "module",
   "description": "The backend for rekodev's InvoiceTrackr app",
   "main": "dist/app.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/app.js",
-    "dev": "tsc && nodemon src/app.ts",
+    "dev": "tsx watch src/app.ts",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
     "lint": "eslint src",

@@ -15,11 +15,11 @@ const baseConfig = defineConfig([
     rules: {
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'warn',
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      'prefer-const': 'warn',
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'prefer-const': 'error',
       'no-var': 'error',
       'sort-imports': [
-        'warn',
+        'error',
         {
           allowSeparatedGroups: true,
           ignoreCase: false,

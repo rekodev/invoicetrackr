@@ -283,7 +283,6 @@ export const updateInvoiceInDb = async (
   senderSignature: string
 ) => {
   const updatedInvoice = await db.transaction(async (tx) => {
-    let senderId = userId;
     const existingSender = await tx
       .select({ id: invoiceSendersTable.id })
       .from(invoiceSendersTable)
@@ -306,9 +305,8 @@ export const updateInvoiceInDb = async (
           businessNumber: invoiceData.sender.businessNumber
         })
         .where(eq(invoiceSendersTable.invoiceId, id));
-      senderId = existingSender[0].id;
     } else {
-      const insertedSender = await tx
+      await tx
         .insert(invoiceSendersTable)
         .values({
           invoiceId: id,
@@ -320,7 +318,6 @@ export const updateInvoiceInDb = async (
           businessNumber: invoiceData.sender.businessNumber
         })
         .returning({ id: invoiceSendersTable.id });
-      senderId = insertedSender[0].id;
     }
 
     let receiverId = invoiceData.receiver.id;
@@ -392,7 +389,7 @@ export const updateInvoiceInDb = async (
       .set({
         userId,
         invoiceId: invoiceData.invoiceId,
-        senderId,
+        senderId: userId,
         receiverId,
         date: invoiceData.date,
         dueDate: invoiceData.dueDate,
