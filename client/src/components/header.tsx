@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { auth } from '@/auth';
 import { getUser } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';

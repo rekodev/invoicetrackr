@@ -33,9 +33,8 @@
 
 ### Schema Naming Conventions
 
-- **Get schemas:** `userGetSchema`, `invoiceGetSchema` - Used for response validation and type inference.
-- **Body schemas:** `userBodySchema`, `invoiceBodySchema` - Used for request body validation.
-- **Response schemas:** `getUserResponseSchema`, `postInvoiceResponseSchema` - Defined in `shared/types/src/response.ts`.
+- **Body schemas:** `userBodySchema`, `invoiceBodySchema` - Used for both request and response validation. All body schemas have `id` field as optional, making them suitable for both creating new records (omit `id`) and returning existing records (include `id`).
+- **Response schemas:** `getUserResponseSchema`, `postInvoiceResponseSchema` - Defined in `shared/types/src/response.ts` and composed from body schemas.
 
 Example:
 ```typescript
@@ -45,6 +44,8 @@ import { userBodySchema, getUserResponseSchema, User } from '@invoicetrackr/type
 // Client imports only types
 import { User, GetUserResponse } from '@invoicetrackr/types';
 ```
+
+**Note:** Get schemas have been removed. Body schemas with optional `id` fields are used everywhere.
 
 ---
 
@@ -100,13 +101,13 @@ To create a new API endpoint, follow this step-by-step process:
 ### 2. Define Schemas in Shared Types (if needed)
 - **Path:** `shared/types/src/`  
 - If creating a new entity, define schemas in the appropriate file (e.g., `shared/types/src/invoice.ts`).
-- Create both **get** and **body** schemas:
-  - `entityGetSchema` - For response validation
-  - `entityBodySchema` - For request body validation
+- Create **body schema** with optional `id` field:
+  - `entityBodySchema` - Used for both request and response validation
+  - Make `id` field optional: `id: z.number().optional()`
 - Define response schemas in `shared/types/src/response.ts`:
-  - `getEntityResponseSchema` - For GET endpoints
-  - `postEntityResponseSchema` - For POST endpoints  
-  - `updateEntityResponseSchema` - For PUT endpoints
+  - `getEntityResponseSchema` - For GET endpoints (composes body schema)
+  - `postEntityResponseSchema` - For POST endpoints (composes body schema)
+  - `updateEntityResponseSchema` - For PUT endpoints (composes body schema)
 - Export inferred types for client usage.
 
 ### 3. Define the Options

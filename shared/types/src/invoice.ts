@@ -44,7 +44,10 @@ export const invoiceSenderBodySchema = z.object(
       .string()
       .min(1, 'validation.invoice.sender.businessNumber'),
     address: z.string().min(1, 'validation.invoice.sender.address'),
-    email: z.email('validation.invoice.sender.email').optional(),
+    email: z
+      .email('validation.invoice.sender.email')
+      .optional()
+      .or(z.literal('')),
     signature: z.string().optional(),
     selectedBankAccountId: z.number().optional(),
     password: z.string().optional(),
@@ -65,7 +68,10 @@ export const invoiceReceiverBodySchema = z.object(
       .string()
       .min(1, 'validation.invoice.receiver.businessNumber'),
     address: z.string().min(1, 'validation.invoice.receiver.address'),
-    email: z.email('validation.invoice.receiver.email').optional()
+    email: z
+      .email('validation.invoice.receiver.email')
+      .optional()
+      .or(z.literal(''))
   },
   { message: 'validation.invoice.receiver.required' }
 );
@@ -79,8 +85,8 @@ export const invoiceBodySchema = z
         /^[A-Za-z]{3}(0[0-9]{2}|[1-9][0-9]{2}|[1-9]0{2})$/,
         'validation.invoice.invoiceId'
       ),
-    date: z.string(),
-    dueDate: z.string(),
+    date: z.iso.date('validation.invoice.date'),
+    dueDate: z.iso.date('validation.invoice.dueDate'),
     sender: invoiceSenderBodySchema,
     senderSignature: z.any().optional(),
     receiver: invoiceReceiverBodySchema,

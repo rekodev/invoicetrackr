@@ -130,7 +130,6 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
             />
             <Input
               {...register('email')}
-              type="email"
               label={t('fields.email')}
               variant="bordered"
               isInvalid={!!errors.email}

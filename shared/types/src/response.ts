@@ -25,7 +25,7 @@ export const registerUserResponseSchema = z.object({
 });
 
 export const updateUserResponseSchema = z.object({
-  user: userBodySchema,
+  user: userBodySchema.pick({ id: true }),
   message: z.string()
 });
 

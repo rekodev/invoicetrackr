@@ -11,7 +11,7 @@ export const clientBodySchema = z.object({
   businessType: invoicePartyBusinessTypeSchema,
   businessNumber: z.string().min(1, 'validation.client.businessNumber'),
   address: z.string().min(1, 'validation.client.address'),
-  email: z.email('validation.client.email').optional()
+  email: z.email('validation.client.email').optional().or(z.literal(''))
 });
 
 // Types

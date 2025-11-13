@@ -124,7 +124,6 @@ export default function SendInvoiceEmailTableAction({
                 {...register('recipientEmail')}
                 variant="faded"
                 label={t('recipient_email')}
-                type="email"
                 placeholder={t('recipient_placeholder')}
                 isInvalid={!!errors.recipientEmail}
                 errorMessage={errors.recipientEmail?.message}

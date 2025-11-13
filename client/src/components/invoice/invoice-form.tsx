@@ -146,7 +146,6 @@ const InvoiceForm = ({
             label={t('labels.sender_name')}
             size="sm"
             aria-label={t('a11y.sender_name_label')}
-            type="text"
             maxLength={20}
             variant="bordered"
             {...register('sender.name')}
@@ -157,7 +156,6 @@ const InvoiceForm = ({
             label={t('labels.sender_business_number')}
             size="sm"
             aria-label={t('a11y.sender_business_number_label')}
-            type="text"
             maxLength={20}
             variant="bordered"
             {...register('sender.businessNumber')}
@@ -168,7 +166,6 @@ const InvoiceForm = ({
             label={t('labels.sender_address')}
             size="sm"
             aria-label={t('a11y.sender_address_label')}
-            type="text"
             maxLength={20}
             variant="bordered"
             {...register('sender.address')}
@@ -179,7 +176,6 @@ const InvoiceForm = ({
             label={t('labels.sender_email')}
             size="sm"
             aria-label={t('a11y.sender_email_label')}
-            type="text"
             maxLength={20}
             variant="bordered"
             {...register('sender.email')}
