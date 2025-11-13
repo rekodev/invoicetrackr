@@ -6,6 +6,12 @@ on:
 jobs:
   cache-and-install:
     runs-on: ubuntu-latest
+    
+    env:
+      BACKEND_URL: ${{ secrets.BACKEND_URL }}
+      SERVER_PORT: ${{ secrets.SERVER_PORT }}
+      NEXT_PUBLIC_STRIPE_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLIC_KEY }}
+      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
 
     steps:
       - name: Checkout
