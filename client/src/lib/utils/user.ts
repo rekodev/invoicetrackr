@@ -1,6 +1,6 @@
-import { UserModel } from '../types/models/user';
+import { User } from '@invoicetrackr/types';
 
-export function isUserPersonalInformationSetUp(user: Partial<UserModel>) {
+export function isUserPersonalInformationSetUp(user: Partial<User>) {
   if (
     user.name &&
     user.businessType &&
@@ -13,6 +13,6 @@ export function isUserPersonalInformationSetUp(user: Partial<UserModel>) {
   return false;
 }
 
-export function isUserBankingDetailsSetUp(user: Partial<UserModel>) {
+export function isUserBankingDetailsSetUp(user: Partial<User>) {
   return Boolean(user.selectedBankAccountId);
 }

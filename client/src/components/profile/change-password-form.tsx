@@ -12,7 +12,7 @@ import {
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 
-import { ChangePasswordFormModel } from '@/lib/types/models/user';
+import { ChangePasswordFormModel } from '@/lib/types/models';
 import { changeUserPasswordAction } from '@/lib/actions/user';
 
 import PasswordInput from '../password-input';

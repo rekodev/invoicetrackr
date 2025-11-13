@@ -10,8 +10,8 @@ import {
 
 import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
 import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
-import { BankingInformationFormModel } from '@/lib/types/models/user';
-import { InvoiceModel, InvoiceService } from '@/lib/types/models/invoice';
+import { BankAccount } from '@invoicetrackr/types';
+import { Invoice, InvoiceService } from '@invoicetrackr/types';
 import { amountToWords } from '@/lib/utils/amount-to-words';
 import { formatDate } from '@/lib/utils/format-date';
 
@@ -19,9 +19,9 @@ registerPdfFont();
 
 type Props = {
   t: any;
-  invoiceData: InvoiceModel;
+  invoiceData: Invoice;
   senderSignatureImage: string;
-  bankAccount: BankingInformationFormModel | undefined;
+  bankAccount: BankAccount | undefined;
   currency: string;
   language: string;
 };

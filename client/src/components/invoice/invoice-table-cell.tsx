@@ -22,7 +22,7 @@ import {
 import { Key, useEffect, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { InvoiceModel, InvoiceStatus } from '@/lib/types/models/invoice';
+import { Invoice, InvoiceStatus } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
 import { formatDate } from '@/lib/utils/format-date';
 import { getCurrencySymbol } from '@/lib/utils/currency';
@@ -43,11 +43,11 @@ type Props = {
   userId: number;
   currency: Currency;
   language: string;
-  invoice: InvoiceModel;
+  invoice: Invoice;
   columnKey: Key;
-  onView: (invoice: InvoiceModel) => void;
-  onEdit: (invoice: InvoiceModel) => void;
-  onDelete: (invoice: InvoiceModel) => void;
+  onView: (invoice: Invoice) => void;
+  onEdit: (invoice: Invoice) => void;
+  onDelete: (invoice: Invoice) => void;
 };
 
 const InvoiceTableCell = ({
@@ -114,7 +114,7 @@ const InvoiceTableCell = ({
   const cellValue =
     invoice[
       columnKey as keyof Omit<
-        InvoiceModel,
+        Invoice,
         | 'actions'
         | 'sender'
         | 'receiver'
@@ -124,7 +124,7 @@ const InvoiceTableCell = ({
       >
     ];
 
-  switch (columnKey as keyof InvoiceModel | 'actions') {
+  switch (columnKey as keyof Invoice | 'actions') {
     case 'bankingInformation':
       return;
     case 'senderSignature':

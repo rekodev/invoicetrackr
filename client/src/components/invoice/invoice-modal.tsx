@@ -12,7 +12,7 @@ import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
 
 import { CookieConsentStatus } from '@/lib/types';
-import { InvoiceModel } from '@/lib/types/models/invoice';
+import { Invoice } from '@invoicetrackr/types';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 
 import PDFDocument from '../pdf/pdf-document';
@@ -22,7 +22,7 @@ type Props = {
   language: string;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  invoiceData: InvoiceModel;
+  invoiceData: Invoice;
   senderSignatureImage: string;
 };
 

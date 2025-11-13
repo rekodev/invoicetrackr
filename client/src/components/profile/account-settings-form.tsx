@@ -17,7 +17,7 @@ import { User } from 'next-auth';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { AccountSettingsFormModel } from '@/lib/types/models/user';
+import { AccountSettingsFormModel } from '@/lib/types/models';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 

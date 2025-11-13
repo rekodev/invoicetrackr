@@ -1,4 +1,4 @@
-import { InvoiceService } from '../types/models/invoice';
+import { InvoiceService } from '@invoicetrackr/types';
 
 export const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);

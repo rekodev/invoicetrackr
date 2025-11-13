@@ -14,11 +14,11 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { getLocaleCookieAction, setLocaleCookieAction } from '@/lib/actions';
-import { UserModel } from '@/lib/types/models/user';
+import { User } from '@invoicetrackr/types';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 
 type Props = {
-  user?: UserModel;
+  user?: User;
 };
 
 export default function LanguageSwitcher({ user }: Props) {

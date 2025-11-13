@@ -5,10 +5,10 @@ import { useEffect } from 'react';
 
 import PaymentForm from '@/components/payment-form';
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
-import { UserModel } from '@/lib/types/models/user';
+import { User } from '@invoicetrackr/types';
 
 type Props = {
-  user: UserModel;
+  user: User;
 };
 
 export default function RenewSubscription({ user }: Props) {

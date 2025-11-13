@@ -3,14 +3,14 @@
 import { Card, CardBody, cn } from '@heroui/react';
 import { CheckIcon, UserIcon } from '@heroicons/react/24/outline';
 
-import { ClientModel } from '@/lib/types/models/client';
+import { Client } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
 type Props = {
   isSelected?: boolean;
   currency?: Currency;
-  client: Partial<ClientModel>;
+  client: Partial<Client>;
   onClick?: () => void;
   amount?: number;
   hideIcon?: boolean;

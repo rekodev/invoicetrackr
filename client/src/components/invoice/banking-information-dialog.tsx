@@ -18,15 +18,15 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
-import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { BankAccount } from '@invoicetrackr/types';
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onBankAccountSelect: (
-    bankingInformation: BankingInformationFormModel
+    bankingInformation: BankAccount
   ) => void;
-  bankingInformationEntries?: Array<BankingInformationFormModel>;
+  bankingInformationEntries?: Array<BankAccount>;
 };
 
 const BankingInformationDialog = ({

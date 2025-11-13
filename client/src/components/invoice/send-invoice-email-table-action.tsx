@@ -20,14 +20,14 @@ import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
-import { InvoiceModel } from '@/lib/types/models/invoice';
+import { Invoice } from '@invoicetrackr/types';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { isResponseError } from '@/lib/utils/error';
 import { sendInvoiceEmail } from '@/api/invoice';
 
 type Props = {
   userId: number;
-  invoice: InvoiceModel;
+  invoice: Invoice;
   currency: Currency;
   blob: Blob | null;
 };

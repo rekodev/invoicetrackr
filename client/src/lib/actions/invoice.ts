@@ -11,7 +11,7 @@ import {
 
 import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '../constants/pages';
 import { ActionResponseModel } from '../types/response/action';
-import { InvoiceModel } from '../types/models/invoice';
+import { Invoice } from '@invoicetrackr/types';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 
@@ -20,7 +20,7 @@ export const addInvoiceAction = async ({
   invoiceData
 }: {
   userId: number;
-  invoiceData: InvoiceModel;
+  invoiceData: Invoice;
 }): Promise<ActionResponseModel> => {
   const response = await addInvoice(userId, invoiceData);
 
@@ -42,7 +42,7 @@ export const updateInvoiceAction = async ({
   invoiceData
 }: {
   userId: number;
-  invoiceData: InvoiceModel;
+  invoiceData: Invoice;
 }): Promise<ActionResponseModel> => {
   const response = await updateInvoice(userId, invoiceData);
 

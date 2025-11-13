@@ -5,7 +5,7 @@ import {
   GetBankingInformationEntriesResp,
   UpdateBankingInformationResp
 } from '@/lib/types/response/banking-information';
-import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { BankAccount } from '@invoicetrackr/types';
 
 import api from './api-instance';
 
@@ -21,7 +21,7 @@ export const getBankingInformationEntries = async (userId: number) =>
 
 export const addBankingInformation = async (
   userId: number,
-  bankingInformation: BankingInformationFormModel,
+  bankingInformation: BankAccount,
   hasSelectedBankAccount: boolean
 ) =>
   await api.post<AddBankingInformationResp>(
@@ -34,7 +34,7 @@ export const addBankingInformation = async (
 
 export const updateBankingInformation = async (
   userId: number,
-  bankingInformation: BankingInformationFormModel
+  bankingInformation: BankAccount
 ) =>
   await api.put<UpdateBankingInformationResp>(
     `/api/${userId}/banking-information/${bankingInformation.id}`,

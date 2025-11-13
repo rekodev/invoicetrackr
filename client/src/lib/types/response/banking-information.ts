@@ -1,20 +1,20 @@
-import { BankingInformationFormModel } from '../models/user';
+import { BankAccount } from '@invoicetrackr/types';
 
 export type GetBankAccountResp = {
-  bankAccount: BankingInformationFormModel;
+  bankAccount: BankAccount;
 };
 
 export type GetBankingInformationEntriesResp = {
-  bankAccounts: Array<BankingInformationFormModel>;
+  bankAccounts: Array<BankAccount>;
 };
 
 export type AddBankingInformationResp = {
-  bankingInformation: BankingInformationFormModel;
+  bankingInformation: BankAccount;
   message: string;
 };
 
 export type UpdateBankingInformationResp = {
-  bankingInformation: BankingInformationFormModel;
+  bankingInformation: BankAccount;
   message: string;
 };
 

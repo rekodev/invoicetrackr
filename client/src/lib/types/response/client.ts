@@ -1,21 +1,21 @@
-import { ClientModel } from '../models/client';
+import { Client } from '@invoicetrackr/types';
 
 export type GetClientResp = {
-  client: ClientModel;
+  client: Client;
 };
 
 export type GetClientsResp = {
-  clients: Array<ClientModel>;
+  clients: Array<Client>;
 };
 
 export type AddClientResp = {
-  client: ClientModel;
+  client: Client;
   message: string;
 };
 
 export type UpdateClientResp = {
   message: string;
-  client: ClientModel;
+  client: Client;
 };
 
 export type DeleteClientResp = { message: string };

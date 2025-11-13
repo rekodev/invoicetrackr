@@ -11,13 +11,13 @@ import {
 
 import { BANKING_INFORMATION_PAGE, ONBOARDING_PAGE } from '../constants/pages';
 import { ActionResponseModel } from '../types/response/action';
-import { BankingInformationFormModel } from '../types/models/user';
+import { BankAccount } from '@invoicetrackr/types';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 
 export async function addBankingInformationAction(
   userId: number,
-  bankingInformation: BankingInformationFormModel,
+  bankingInformation: BankAccount,
   hasSelectedBankAccount: boolean,
   isUserOnboarding?: boolean
 ): Promise<ActionResponseModel> {
@@ -49,7 +49,7 @@ export async function addBankingInformationAction(
 
 export async function updateBankingInformationAction(
   userId: number,
-  bankingInformation: BankingInformationFormModel
+  bankingInformation: BankAccount
 ): Promise<ActionResponseModel> {
   const response = await updateBankingInformation(userId, bankingInformation);
 

@@ -4,7 +4,8 @@ import {
   GetClientsResp,
   UpdateClientResp
 } from '@/lib/types/response/client';
-import { ClientFormData, ClientModel } from '@/lib/types/models/client';
+import { ClientFormData } from '@/lib/types/models';
+import { Client } from '@invoicetrackr/types';
 
 import api from './api-instance';
 
@@ -14,7 +15,7 @@ export const getClients = async (userId: number) =>
 export const addClient = async (userId: number, clientData: ClientFormData) =>
   await api.post<AddClientResp>(`/api/${userId}/clients`, clientData);
 
-export const updateClient = async (userId: number, clientData: ClientModel) =>
+export const updateClient = async (userId: number, clientData: Client) =>
   await api.put<UpdateClientResp>(
     `/api/${userId}/clients/${clientData.id}`,
     clientData

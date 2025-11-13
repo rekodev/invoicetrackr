@@ -18,10 +18,10 @@ import { useRef, useState, useTransition } from 'react';
 
 import { updateUserProfilePictureAction } from '@/lib/actions/user';
 import { profileMenuTabs } from '@/lib/constants/profile';
-import { UserModel } from '@/lib/types/models/user';
+import { User } from '@invoicetrackr/types';
 
 type Props = {
-  user: UserModel;
+  user: User;
 };
 
 const UserCard = ({ user }: Props) => {

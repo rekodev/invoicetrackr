@@ -15,14 +15,14 @@ import {
   addToast
 } from '@heroui/react';
 
-import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { BankAccount } from '@invoicetrackr/types';
 import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 import { addBankingInformationAction } from '@/lib/actions/banking-information';
 
 type Props = {
   userId: number | undefined;
   userSelectedBankAccountId?: number;
-  defaultValues?: BankingInformationFormModel;
+  defaultValues?: BankAccount;
   onSuccess?: () => void;
   isUserOnboarding?: boolean;
 };
@@ -41,11 +41,11 @@ export default function BankAccountForm({
     handleSubmit,
     setError,
     formState: { isSubmitting, isDirty, errors }
-  } = useForm<BankingInformationFormModel>({
+  } = useForm<BankAccount>({
     defaultValues
   });
 
-  const onSubmit: SubmitHandler<BankingInformationFormModel> = async (data) => {
+  const onSubmit: SubmitHandler<BankAccount> = async (data) => {
     if (!userId) return;
 
     const response = await addBankingInformationAction(
@@ -63,7 +63,7 @@ export default function BankAccountForm({
     if (!response.ok) {
       if (response.validationErrors) {
         Object.keys(response.validationErrors).map((key) => {
-          setError(key as keyof BankingInformationFormModel, {
+          setError(key as keyof BankAccount, {
             message: response.validationErrors?.[key]
           });
         });

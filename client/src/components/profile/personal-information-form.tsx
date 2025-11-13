@@ -17,14 +17,14 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
-import { UserModel } from '@/lib/types/models/user';
+import { User } from '@invoicetrackr/types';
 import { capitalize } from '@/lib/utils';
 import { updateUserAction } from '@/lib/actions/user';
 
 import SignaturePad from '../signature-pad';
 
 type Props = {
-  defaultValues?: Partial<UserModel> | undefined;
+  defaultValues?: Partial<User> | undefined;
   onSuccess?: () => void;
 };
 
@@ -36,14 +36,14 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
     formState: { isDirty, isSubmitting, errors },
     reset,
     setError
-  } = useForm<UserModel>({
+  } = useForm<User>({
     defaultValues
   });
   const [formSignature, setFormSignature] = useState<
     File | string | undefined
   >();
 
-  const onSubmit: SubmitHandler<UserModel> = async (data) => {
+  const onSubmit: SubmitHandler<User> = async (data) => {
     if (!defaultValues?.id) return;
 
     const response = await updateUserAction({
@@ -59,7 +59,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
     if (!response?.ok) {
       if (response.validationErrors) {
         Object.entries(response.validationErrors).forEach(([key, message]) => {
-          setError(key as keyof UserModel, {
+          setError(key as keyof User, {
             message
           });
         });

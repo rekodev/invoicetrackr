@@ -40,8 +40,19 @@ export const userBodySchema = z.object({
   stripeSubscriptionId: z.string()
 });
 
+// Reset Password Token Schema
+export const resetPasswordTokenGetSchema = z.object({
+  id: z.number(),
+  userId: z.number(),
+  token: z.string(),
+  expiresAt: z.string(),
+  createdAt: z.string()
+});
+
 // Types
 export type UserGet = z.infer<typeof userGetSchema>;
 export type UserBody = z.infer<typeof userBodySchema>;
 export type User = UserGet;
 export type UserWithPassword = UserBody;
+export type ResetPasswordTokenGet = z.infer<typeof resetPasswordTokenGetSchema>;
+export type ResetPasswordToken = ResetPasswordTokenGet;

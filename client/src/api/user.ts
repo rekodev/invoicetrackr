@@ -9,7 +9,7 @@ import {
   UpdateUserAccountSettingsResp,
   UpdateUserResp
 } from '@/lib/types/response/user';
-import { UserModel, UserModelWithPassword } from '@/lib/types/models/user';
+import { User } from '@invoicetrackr/types';
 
 import api from './api-instance';
 
@@ -40,7 +40,7 @@ export const loginUser = async (email: string, password: string) =>
 export const updateUser = async (
   id: number,
   userData: Pick<
-    UserModel,
+    User,
     'email' | 'name' | 'businessType' | 'businessNumber' | 'address' | 'type'
   > & { signature: string | File | undefined }
 ) => {

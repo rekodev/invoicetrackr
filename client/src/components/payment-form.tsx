@@ -27,7 +27,7 @@ import {
 } from '@/api/payment';
 import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
 import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
-import { UserModel } from '@/lib/types/models/user';
+import { User } from '@invoicetrackr/types';
 import { isResponseError } from '@/lib/utils/error';
 import { updateSessionAction } from '@/lib/actions';
 
@@ -41,10 +41,10 @@ if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
 type Props = {
-  user: UserModel | undefined;
+  user: User | undefined;
 };
 
-function PaymentFormInsideElements({ user }: { user: UserModel }) {
+function PaymentFormInsideElements({ user }: { user: User }) {
   const t = useTranslations('components.payment_form');
   const stripe = useStripe();
   const elements = useElements();

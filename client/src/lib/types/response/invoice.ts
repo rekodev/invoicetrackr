@@ -1,16 +1,16 @@
-import { InvoiceModel } from '../models/invoice';
-import { ClientModel } from '../models/client';
+import { Invoice } from '@invoicetrackr/types';
+import { Client } from '@invoicetrackr/types';
 
 export type GetInvoiceResp = {
-  invoice: InvoiceModel;
+  invoice: Invoice;
 };
 
 export type GetInvoicesResp = {
-  invoices: Array<InvoiceModel>;
+  invoices: Array<Invoice>;
 };
 
 export type GetInvoicesTotalAmountResp = {
-  invoices: Array<Pick<InvoiceModel, 'totalAmount' | 'status'>> | undefined;
+  invoices: Array<Pick<Invoice, 'totalAmount' | 'status'>> | undefined;
   totalClients: number | undefined;
 };
 
@@ -21,19 +21,19 @@ export type GetInvoicesRevenueResp = {
 export type GetLatestInvoicesResp = {
   invoices:
     | Array<
-        Pick<InvoiceModel, 'id' | 'totalAmount' | 'invoiceId'> &
-          Pick<ClientModel, 'name' | 'email'>
+        Pick<Invoice, 'id' | 'totalAmount' | 'invoiceId'> &
+          Pick<Client, 'name' | 'email'>
       >
     | undefined;
 };
 
 export type AddInvoiceResp = {
-  invoice: InvoiceModel;
+  invoice: Invoice;
   message: string;
 };
 
 export type UpdateInvoiceResp = {
-  invoice: InvoiceModel;
+  invoice: Invoice;
   message: string;
 };
 

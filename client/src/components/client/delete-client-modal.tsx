@@ -13,11 +13,11 @@ import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 
 import { deleteClientAction } from '@/lib/actions/client';
-import { ClientModel } from '@/lib/types/models/client';
+import { Client } from '@invoicetrackr/types';
 
 type Props = {
   userId: number;
-  clientData: ClientModel;
+  clientData: Client;
   isOpen: boolean;
   onClose: () => void;
 };

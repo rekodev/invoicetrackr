@@ -3,16 +3,16 @@
 import { Card, CardBody, CardHeader, Chip } from '@heroui/react';
 import { ReactNode } from 'react';
 
-import { ClientModel } from '@/lib/types/models/client';
-import { UserModel } from '@/lib/types/models/user';
+import { Client } from '@invoicetrackr/types';
+import { User } from '@invoicetrackr/types';
 
 /* 
   InvoicePartyCard accepts a renderActions prop which renders actions on the top right of the card
-  The renderActions can have either UserModel or ClientModel as args if at least one action depends on the data inside of the card
+  The renderActions can have either User or Client as args if at least one action depends on the data inside of the card
   Or it can have no actions at all if all the logic can be handled outside
 */
 
-type PartyData = UserModel | ClientModel;
+type PartyData = User | Client;
 
 type Props = {
   partyType: 'sender' | 'receiver';

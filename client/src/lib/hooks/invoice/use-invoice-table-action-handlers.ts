@@ -2,10 +2,10 @@ import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
 import { EDIT_INVOICE_PAGE } from '@/lib/constants/pages';
-import { InvoiceModel } from '@/lib/types/models/invoice';
+import { Invoice } from '@invoicetrackr/types';
 
 type Props = {
-  setCurrentInvoice: Dispatch<SetStateAction<InvoiceModel | undefined>>;
+  setCurrentInvoice: Dispatch<SetStateAction<Invoice | undefined>>;
   onOpen: () => void;
 };
 
@@ -18,7 +18,7 @@ const useInvoiceTableActionHandlers = ({
     useState(false);
 
   const handleViewInvoice = useCallback(
-    (invoice: InvoiceModel) => {
+    (invoice: Invoice) => {
       setCurrentInvoice(invoice);
       onOpen();
     },
@@ -26,7 +26,7 @@ const useInvoiceTableActionHandlers = ({
   );
 
   const handleEditInvoice = useCallback(
-    (invoice: InvoiceModel) => {
+    (invoice: Invoice) => {
       setCurrentInvoice(invoice);
       router.push(EDIT_INVOICE_PAGE(invoice.id));
     },
@@ -38,7 +38,7 @@ const useInvoiceTableActionHandlers = ({
   };
 
   const handleDeleteInvoice = useCallback(
-    (invoice: InvoiceModel) => {
+    (invoice: Invoice) => {
       setCurrentInvoice(invoice);
       setIsDeleteInvoiceModalOpen(true);
     },

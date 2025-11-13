@@ -17,7 +17,7 @@ import { useTranslations } from 'next-intl';
 
 import { addClientAction, updateClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
-import { ClientModel } from '@/lib/types/models/client';
+import { Client } from '@invoicetrackr/types';
 
 const INITIAL_CLIENT_DATA: ClientFormData = {
   id: 0,
@@ -33,10 +33,10 @@ type Props = {
   userId: number;
   isOpen: boolean;
   onClose: () => void;
-  clientData?: ClientModel;
+  clientData?: Client;
 };
 
-type ClientFormData = ClientModel;
+type ClientFormData = Client;
 
 const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
   const t = useTranslations('clients.form_dialog');

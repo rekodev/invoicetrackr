@@ -10,7 +10,8 @@ import {
   UpdateInvoiceResp,
   UpdateInvoiceStatusResp
 } from '@/lib/types/response/invoice';
-import { InvoiceFormData, InvoiceModel } from '@/lib/types/models/invoice';
+import { InvoiceFormData } from '@/lib/types/models';
+import { Invoice } from '@invoicetrackr/types';
 
 import api from './api-instance';
 
@@ -52,7 +53,7 @@ export const addInvoice = async (
 
 export const updateInvoice = async (
   userId: number,
-  invoiceData: InvoiceModel
+  invoiceData: Invoice
 ) => {
   const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
 

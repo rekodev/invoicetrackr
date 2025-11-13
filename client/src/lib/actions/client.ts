@@ -4,7 +4,8 @@ import { revalidatePath } from 'next/cache';
 
 import { addClient, deleteClient, updateClient } from '@/api/client';
 
-import { ClientFormData, ClientModel } from '../types/models/client';
+import { ClientFormData } from '@/lib/types/models';
+import { Client } from '@invoicetrackr/types';
 import { ActionResponseModel } from '../types/response/action';
 import { CLIENTS_PAGE } from '../constants/pages';
 import { isResponseError } from '../utils/error';
@@ -37,7 +38,7 @@ export const updateClientAction = async ({
   clientData
 }: {
   userId: number;
-  clientData: ClientModel;
+  clientData: Client;
 }): Promise<ActionResponseModel> => {
   const response = await updateClient(userId, clientData);
 

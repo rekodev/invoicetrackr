@@ -11,11 +11,11 @@ import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 
 import { deleteInvoiceAction } from '@/lib/actions/invoice';
-import { InvoiceModel } from '@/lib/types/models/invoice';
+import { Invoice } from '@invoicetrackr/types';
 
 type Props = {
   userId: number;
-  invoiceData: InvoiceModel;
+  invoiceData: Invoice;
   isOpen: boolean;
   onClose: () => void;
 };

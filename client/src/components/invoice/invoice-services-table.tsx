@@ -17,7 +17,8 @@ import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 
-import { InvoiceFormData, InvoiceService } from '@/lib/types/models/invoice';
+import { InvoiceFormData } from '@/lib/types/models';
+import { InvoiceService } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 

@@ -11,11 +11,11 @@ import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 
 import { deleteBankingInformationAction } from '@/lib/actions/banking-information';
-import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { BankAccount } from '@invoicetrackr/types';
 
 type Props = {
   userId: number;
-  bankingInformation: BankingInformationFormModel;
+  bankingInformation: BankAccount;
   isOpen: boolean;
   onClose: () => void;
 };

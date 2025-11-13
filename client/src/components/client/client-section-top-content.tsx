@@ -17,8 +17,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
 
-import { ClientModel } from '@/lib/types/models/client';
-import { InvoicePartyBusinessType } from '@/lib/types/models/invoice';
+import { Client } from '@invoicetrackr/types';
+import { InvoicePartyBusinessType } from '@invoicetrackr/types';
 
 import ClientFormDialog from './client-form-dialog';
 
@@ -26,7 +26,7 @@ const filters = ['business', 'individual'];
 
 type Props = {
   userId: number;
-  clients: Array<ClientModel> | undefined;
+  clients: Array<Client> | undefined;
   searchTerm: string;
   onSearch: (event: ChangeEvent<HTMLInputElement>) => void;
   onClear: () => void;

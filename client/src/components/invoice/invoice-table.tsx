@@ -15,7 +15,7 @@ import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
-import { InvoiceModel } from '@/lib/types/models/invoice';
+import { Invoice } from '@invoicetrackr/types';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
 
 import DeleteInvoiceModal from './delete-invoice-modal';
@@ -36,7 +36,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 type Props = {
   userId: number;
-  invoices: Array<InvoiceModel>;
+  invoices: Array<Invoice>;
   currency: Currency;
   language: string;
 };
@@ -63,7 +63,7 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
   ];
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [currentInvoice, setCurrentInvoice] = useState<InvoiceModel>();
+  const [currentInvoice, setCurrentInvoice] = useState<Invoice>();
 
   const [filterValue, setFilterValue] = useState('');
   const [selectedKeys, _setSelectedKeys] = useState<Set<never> | 'all'>(

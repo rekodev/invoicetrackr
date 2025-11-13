@@ -11,14 +11,14 @@ import {
 import { ChangeEvent, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { BankAccount } from '@invoicetrackr/types';
 import { updateBankingInformationAction } from '@/lib/actions/banking-information';
 
 type Props = {
   userId: number;
   isOpen: boolean;
   onClose: () => void;
-  bankingInformation: BankingInformationFormModel;
+  bankingInformation: BankAccount;
 };
 
 const EditBankingInformationDialog = ({
@@ -30,13 +30,13 @@ const EditBankingInformationDialog = ({
   const t = useTranslations('profile.banking_information.form');
   const [isPending, startTransition] = useTransition();
   const [newBankingInformation, setNewBankingInformation] =
-    useState<BankingInformationFormModel>(bankingInformation);
+    useState<BankAccount>(bankingInformation);
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    field: keyof Omit<BankingInformationFormModel, 'id'>
+    field: keyof Omit<BankAccount, 'id'>
   ) => {
-    setNewBankingInformation((prev) => ({
+    setNewBankingInformation((prev: BankAccount) => ({
       ...prev,
       [field]: event.target.value
     }));
