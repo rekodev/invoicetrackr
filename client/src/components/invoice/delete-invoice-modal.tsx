@@ -7,15 +7,15 @@ import {
   ModalHeader,
   addToast
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
+import { InvoiceBody } from '@invoicetrackr/types';
 import { useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { deleteInvoiceAction } from '@/lib/actions/invoice';
-import { Invoice } from '@invoicetrackr/types';
 
 type Props = {
   userId: number;
-  invoiceData: Invoice;
+  invoiceData: InvoiceBody;
   isOpen: boolean;
   onClose: () => void;
 };
@@ -33,7 +33,7 @@ const DeleteInvoiceModal = ({
     startTransition(async () => {
       const response = await deleteInvoiceAction({
         userId,
-        invoiceId: invoiceData.id
+        invoiceId: Number(invoiceData.id)
       });
 
       addToast({
@@ -68,9 +68,7 @@ const DeleteInvoiceModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
-        <ModalHeader>
-          {t('title')}
-        </ModalHeader>
+        <ModalHeader>{t('title')}</ModalHeader>
         <ModalBody>
           {t('description', { invoiceId: invoiceData.invoiceId })}
         </ModalBody>

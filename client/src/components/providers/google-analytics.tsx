@@ -5,6 +5,7 @@ import Script from 'next/script';
 import { useEffect } from 'react';
 
 declare global {
+  // eslint-disable-next-line no-unused-vars
   interface Window {
     gtag: any;
     dataLayer?: Object[];

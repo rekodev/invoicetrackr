@@ -1,5 +1,13 @@
-import { bankAccountBodySchema } from '@invoicetrackr/types';
-import { messageResponseSchema } from '@invoicetrackr/types';
+import {
+  bankAccountBodySchema,
+  getBankAccountResponseSchema,
+  getBankAccountsResponseSchema,
+  messageResponseSchema,
+  postBankAccountResponseSchema,
+  updateBankAccountResponseSchema
+} from '@invoicetrackr/types';
+import { RouteShorthandOptionsWithHandler } from 'fastify';
+
 import {
   deleteBankAccount,
   getBankAccount,
@@ -7,14 +15,12 @@ import {
   postBankAccount,
   updateBankAccount
 } from '../controllers/banking-information';
-import { RouteShorthandOptionsWithHandler } from 'fastify';
 import { authMiddleware } from '../middleware/auth';
-import z from 'zod/v4';
 
 export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ bankAccounts: z.array(bankAccountBodySchema) })
+      200: getBankAccountsResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -24,7 +30,7 @@ export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
 export const getBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: bankAccountBodySchema
+      200: getBankAccountResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -35,10 +41,7 @@ export const postBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: bankAccountBodySchema,
     response: {
-      201: z.union([
-        z.object({ bankAccount: bankAccountBodySchema }),
-        messageResponseSchema
-      ])
+      201: postBankAccountResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -49,10 +52,7 @@ export const updateBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: bankAccountBodySchema,
     response: {
-      200: z.intersection(
-        z.object({ bankAccount: bankAccountBodySchema }),
-        messageResponseSchema
-      )
+      200: updateBankAccountResponseSchema
     }
   },
   preHandler: authMiddleware,

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+
 import { TermsOfServiceContent } from './terms-of-service-content';
 
 export async function generateMetadata(): Promise<Metadata> {

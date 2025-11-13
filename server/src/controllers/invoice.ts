@@ -1,8 +1,14 @@
-import { MultipartFile } from '@fastify/multipart';
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
+import { InvoiceBody } from '@invoicetrackr/types';
+import { MultipartFile } from '@fastify/multipart';
 import { useI18n } from 'fastify-i18n';
 
+import {
+  AlreadyExistsError,
+  BadRequestError,
+  NotFoundError
+} from '../utils/error';
 import {
   deleteInvoiceFromDb,
   findInvoiceById,
@@ -18,12 +24,6 @@ import {
 } from '../database/invoice';
 import { getClientsFromDb } from '../database/client';
 import { getUserFromDb } from '../database/user';
-import { InvoiceBody } from '@invoicetrackr/types';
-import {
-  AlreadyExistsError,
-  BadRequestError,
-  NotFoundError
-} from '../utils/error';
 import { resend } from '../config/resend';
 
 export const getInvoices = async (

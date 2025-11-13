@@ -11,10 +11,7 @@
   "keywords": [],
   "author": "rekodev",
   "license": "ISC",
-  "dependencies": {
+  "peerDependencies": {
     "zod": "^4.1.12"
-  },
-  "devDependencies": {
-    "typescript": "^5.8.2"
   }
 }

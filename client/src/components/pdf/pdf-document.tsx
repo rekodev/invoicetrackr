@@ -1,6 +1,11 @@
 'use client';
 
 import {
+  BankAccountBody,
+  InvoiceBody,
+  InvoiceServiceBody
+} from '@invoicetrackr/types';
+import {
   Document,
   Image as PDFImage,
   Page,
@@ -10,8 +15,6 @@ import {
 
 import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
 import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
-import { BankAccount } from '@invoicetrackr/types';
-import { Invoice, InvoiceService } from '@invoicetrackr/types';
 import { amountToWords } from '@/lib/utils/amount-to-words';
 import { formatDate } from '@/lib/utils/format-date';
 
@@ -19,9 +22,9 @@ registerPdfFont();
 
 type Props = {
   t: any;
-  invoiceData: Invoice;
+  invoiceData: InvoiceBody;
   senderSignatureImage: string;
-  bankAccount: BankAccount | undefined;
+  bankAccount: BankAccountBody | undefined;
   currency: string;
   language: string;
 };
@@ -165,7 +168,7 @@ export default function PDFDocument({
           </View>
         </View>
 
-        {services.map((service: InvoiceService, index: number) =>
+        {services.map((service: InvoiceServiceBody, index: number) =>
           renderTableRow(
             index,
             service.description,

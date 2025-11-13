@@ -1,5 +1,5 @@
-import createError, { FastifyError } from '@fastify/error';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import createError, { FastifyError } from '@fastify/error';
 import { useI18n } from 'fastify-i18n';
 
 export const BadRequestError = createError('BAD_REQUEST', '%s', 400);

@@ -50,7 +50,7 @@ export const invoicePartyGetSchema = z.object({
   businessType: invoicePartyBusinessTypeSchema,
   businessNumber: z.string(),
   address: z.string(),
-  email: z.string().optional()
+  email: z.email().optional()
 });
 
 export const invoiceSenderBodySchema = z.object(
@@ -63,7 +63,7 @@ export const invoiceSenderBodySchema = z.object(
       .string()
       .min(1, 'validation.invoice.sender.businessNumber'),
     address: z.string().min(1, 'validation.invoice.sender.address'),
-    email: z.string().email('validation.invoice.sender.email').optional(),
+    email: z.email('validation.invoice.sender.email').optional(),
     signature: z.string().optional(),
     selectedBankAccountId: z.number().optional(),
     password: z.string().optional(),
@@ -84,7 +84,7 @@ export const invoiceReceiverBodySchema = z.object(
       .string()
       .min(1, 'validation.invoice.receiver.businessNumber'),
     address: z.string().min(1, 'validation.invoice.receiver.address'),
-    email: z.string().email('validation.invoice.receiver.email').optional()
+    email: z.email('validation.invoice.receiver.email').optional()
   },
   { message: 'validation.invoice.receiver.required' }
 );
@@ -158,13 +158,13 @@ export type InvoicePartyType = z.infer<typeof invoicePartyTypeSchema>;
 
 export type InvoiceServiceGet = z.infer<typeof invoiceServiceGetSchema>;
 export type InvoiceServiceBody = z.infer<typeof invoiceServiceBodySchema>;
-export type InvoiceService = InvoiceServiceGet; // Default for client
+export type InvoiceService = InvoiceServiceGet;
 
 export type InvoicePartyGet = z.infer<typeof invoicePartyGetSchema>;
 export type InvoiceSenderBody = z.infer<typeof invoiceSenderBodySchema>;
 export type InvoiceReceiverBody = z.infer<typeof invoiceReceiverBodySchema>;
-export type InvoiceParty = InvoicePartyGet; // Default for client
+export type InvoiceParty = InvoicePartyGet;
 
 export type InvoiceGet = z.infer<typeof invoiceGetSchema>;
 export type InvoiceBody = z.infer<typeof invoiceBodySchema>;
-export type Invoice = InvoiceGet; // Default for client
+export type Invoice = InvoiceGet;

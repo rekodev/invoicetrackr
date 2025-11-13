@@ -1,4 +1,4 @@
-import { PostContactMessageResp } from '@/lib/types/response/contact';
+import { PostContactResponse } from '@invoicetrackr/types';
 
 import api from './api-instance';
 
@@ -9,7 +9,7 @@ export const postContactMessage = async ({
   email: string;
   message: string;
 }) =>
-  await api.post<PostContactMessageResp>('/api/contact', {
+  await api.post<PostContactResponse>('/api/contact', {
     email,
     message
   });

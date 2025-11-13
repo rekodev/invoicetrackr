@@ -12,10 +12,10 @@ import {
   useDisclosure
 } from '@heroui/react';
 import { useMemo, useState } from 'react';
+import { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
-import { Invoice } from '@invoicetrackr/types';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
 
 import DeleteInvoiceModal from './delete-invoice-modal';
@@ -36,7 +36,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 type Props = {
   userId: number;
-  invoices: Array<Invoice>;
+  invoices: Array<InvoiceBody>;
   currency: Currency;
   language: string;
 };
@@ -63,12 +63,10 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
   ];
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [currentInvoice, setCurrentInvoice] = useState<Invoice>();
+  const [currentInvoice, setCurrentInvoice] = useState<InvoiceBody>();
 
   const [filterValue, setFilterValue] = useState('');
-  const [selectedKeys, _setSelectedKeys] = useState<Set<never> | 'all'>(
-    new Set([])
-  );
+  const [selectedKeys] = useState<Set<never> | 'all'>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Set<string> | 'all'>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
@@ -190,10 +188,10 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
           wrapper:
             'min-h-[480px] bg-transparent dark:border dark:border-default-100'
         }}
-        sortDescriptor={sortDescriptor as any}
+        sortDescriptor={sortDescriptor}
         topContent={renderTopContent()}
         topContentPlacement="outside"
-        onSortChange={setSortDescriptor as (descriptor: SortDescriptor) => any}
+        onSortChange={setSortDescriptor}
       >
         <TableHeader columns={headerColumns}>
           {(column) => (

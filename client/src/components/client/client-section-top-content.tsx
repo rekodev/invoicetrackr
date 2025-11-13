@@ -15,10 +15,8 @@ import {
   MagnifyingGlassIcon,
   PlusIcon
 } from '@heroicons/react/24/outline';
+import { ClientBody, InvoicePartyBusinessType } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-
-import { Client } from '@invoicetrackr/types';
-import { InvoicePartyBusinessType } from '@invoicetrackr/types';
 
 import ClientFormDialog from './client-form-dialog';
 
@@ -26,9 +24,9 @@ const filters = ['business', 'individual'];
 
 type Props = {
   userId: number;
-  clients: Array<Client> | undefined;
+  clients: Array<ClientBody> | undefined;
   searchTerm: string;
-  onSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  onSearch: (_event: ChangeEvent<HTMLInputElement>) => void;
   onClear: () => void;
   typeFilters: Set<InvoicePartyBusinessType>;
   setTypeFilters: Dispatch<SetStateAction<Set<InvoicePartyBusinessType>>>;
@@ -77,7 +75,7 @@ const ClientSectionTopContent = ({
         closeOnSelect={false}
         selectionMode="multiple"
         selectedKeys={typeFilters}
-        onSelectionChange={setTypeFilters as (keys: Selection) => any}
+        onSelectionChange={setTypeFilters as (_keys: Selection) => any}
       >
         {filters.map((filter) => (
           <DropdownItem key={filter} className="capitalize">

@@ -18,15 +18,13 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
-import { BankAccount } from '@invoicetrackr/types';
+import { BankAccountBody } from '@invoicetrackr/types';
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onBankAccountSelect: (
-    bankingInformation: BankAccount
-  ) => void;
-  bankingInformationEntries?: Array<BankAccount>;
+  onBankAccountSelect: (_bankingInformation: BankAccountBody) => void;
+  bankingInformationEntries?: Array<BankAccountBody>;
 };
 
 const BankingInformationDialog = ({
@@ -40,11 +38,7 @@ const BankingInformationDialog = ({
 
   const renderBody = () => {
     if (!bankingInformationEntries?.length) {
-      return (
-        <p className="text-default-500">
-          {t('modals.no_bank_accounts')}
-        </p>
-      );
+      return <p className="text-default-500">{t('modals.no_bank_accounts')}</p>;
     }
 
     return bankingInformationEntries?.map((bankingInformation) => (

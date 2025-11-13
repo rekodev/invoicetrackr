@@ -1,13 +1,13 @@
 import { and, eq } from 'drizzle-orm';
 
-import { UserBody } from '@invoicetrackr/types';
-import { db } from './db';
 import {
   InsertUser,
   passwordResetTokensTable,
   stripeAccountsTable,
   usersTable
 } from './schema';
+import { UserBody } from '@invoicetrackr/types';
+import { db } from './db';
 
 export const getUserFromDb = async (id: number) => {
   const users = await db

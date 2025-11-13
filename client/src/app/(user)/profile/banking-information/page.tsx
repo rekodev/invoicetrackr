@@ -1,6 +1,6 @@
-import { getBankingInformationEntries } from '@/api/banking-information';
-import { auth } from '@/auth';
 import BankingInformationForm from '@/components/profile/banking-information-form';
+import { auth } from '@/auth';
+import { getBankingInformationEntries } from '@/api/banking-information';
 import { isResponseError } from '@/lib/utils/error';
 
 async function BankingInformationPage() {
@@ -18,7 +18,7 @@ async function BankingInformationPage() {
   return (
     <BankingInformationForm
       user={session.user}
-      bankAccounts={bankingInformationResp.data.bankAccounts}
+      bankAccounts={bankingInformationResp.data?.bankAccounts}
     />
   );
 }

@@ -1,6 +1,5 @@
 import z from 'zod/v4';
 
-// Password schemas with validation messages (for server)
 export const passwordSchema = z
   .string()
   .min(8, 'validation.password.tooShort')
@@ -9,6 +8,10 @@ export const passwordSchema = z
   .regex(/[a-z]/, 'validation.password.requireLowercase')
   .regex(/[0-9]/, 'validation.password.requireNumber');
 
-export const loginPasswordSchema = z.string().min(1, 'validation.password.required');
+export const loginPasswordSchema = z
+  .string()
+  .min(1, 'validation.password.required');
 
-export const currentPasswordSchema = z.string().min(1, 'validation.password.currentRequired');
+export const currentPasswordSchema = z
+  .string()
+  .min(1, 'validation.password.currentRequired');

@@ -1,7 +1,7 @@
 import { unauthorized } from 'next/navigation';
 
-import { getUser } from '@/api/user';
 import { auth } from '@/auth';
+import { getUser } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
 import RenewSubscription from './renew-subscription';

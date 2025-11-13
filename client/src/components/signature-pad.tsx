@@ -22,7 +22,7 @@ import { base64ToFile, imageUrlToBase64 } from '@/lib/utils/base64';
 type Props = {
   signature?: File | string;
   profileSignature?: string;
-  onSignatureChange: (signature: File | string) => void;
+  onSignatureChange: (_signature: File | string) => void;
   isInvalid?: boolean;
   errorMessage?: string;
   isChipVisible?: boolean;

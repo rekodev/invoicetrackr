@@ -1,8 +1,6 @@
 import { and, desc, eq, gte, inArray, sql } from 'drizzle-orm';
-import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import { InvoiceBody } from '@invoicetrackr/types';
 
-import { jsonAgg } from '../utils/json';
-import { db } from './db';
 import {
   invoiceBankingInformationTable,
   invoiceReceiversTable,
@@ -10,7 +8,8 @@ import {
   invoiceServicesTable,
   invoicesTable
 } from './schema';
-import { InvoiceBody } from '@invoicetrackr/types';
+import { db } from './db';
+import { jsonAgg } from '../utils/json';
 
 export const findInvoiceById = async (userId: number, id: number) => {
   const invoices = await db

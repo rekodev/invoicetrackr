@@ -12,7 +12,7 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { Client } from '@invoicetrackr/types';
+import { ClientBody } from '@invoicetrackr/types';
 
 import ClientCard from '../ui/client-card';
 import ClientFormDialog from '../client/client-form-dialog';
@@ -20,9 +20,9 @@ import ClientFormDialog from '../client/client-form-dialog';
 type Props = {
   userId: number;
   isOpen: boolean;
-  clients: Array<Client>;
+  clients: Array<ClientBody>;
   onClose: () => void;
-  onReceiverSelect: (client: Client) => void;
+  onReceiverSelect: (_client: ClientBody) => void;
 };
 
 const InvoiceFormPartyModal = ({

@@ -1,5 +1,5 @@
 export type ActionResponseModel = {
   ok: boolean;
-  message?: string;
+  message: string;
   validationErrors?: Record<string, string>;
 };

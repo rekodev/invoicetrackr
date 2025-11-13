@@ -1,8 +1,8 @@
 import { and, eq } from 'drizzle-orm';
 
 import { BankAccountBody } from '@invoicetrackr/types';
-import { db } from './db';
 import { bankingInformationTable } from './schema';
+import { db } from './db';
 
 export const findBankAccountByAccountNumber = async (
   userId: number,

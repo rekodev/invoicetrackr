@@ -1,5 +1,7 @@
+import 'dotenv/config';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
+
 import {
   AlreadyExistsError,
   BadRequestError,
@@ -12,9 +14,8 @@ import {
   getStripeCustomerSubscriptionIdFromDb,
   updateStripeSubscriptionForUserInDb
 } from '../database/payment';
-import { stripe } from '../config/stripe';
 import { getUserCurrencyFromDb } from '../database/user';
-import 'dotenv/config';
+import { stripe } from '../config/stripe';
 
 export const createCustomer = async (
   req: FastifyRequest<{

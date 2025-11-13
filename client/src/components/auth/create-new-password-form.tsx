@@ -18,7 +18,7 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { ActionResponseModel } from '@/lib/types/response/action';
+import { ActionResponseModel } from '@/lib/types/action';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
 import { createNewPasswordAction } from '@/lib/actions';
 

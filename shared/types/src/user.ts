@@ -29,7 +29,7 @@ export const userBodySchema = z.object({
   businessType: invoicePartyBusinessTypeSchema,
   businessNumber: z.string().min(1, 'validation.user.businessNumber'),
   address: z.string().min(1, 'validation.user.address'),
-  email: z.string().email('validation.user.email').optional(),
+  email: z.email('validation.user.email').optional(),
   signature: z.string().optional(),
   selectedBankAccountId: z.number().optional(),
   password: passwordSchema.optional(),

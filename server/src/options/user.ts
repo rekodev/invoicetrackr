@@ -1,12 +1,24 @@
+import {
+  currentPasswordSchema,
+  getUserResponseSchema,
+  loginPasswordSchema,
+  loginUserResponseSchema,
+  messageResponseSchema,
+  passwordSchema,
+  registerUserResponseSchema,
+  updateUserResponseSchema,
+  userBodySchema
+} from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
+
 import {
   changeUserPassword,
   createNewUserPassword,
   deleteUser,
   getUser,
-  loginUser,
   getUserResetPasswordToken,
+  loginUser,
   postUser,
   resetUserPassword,
   updateUser,
@@ -14,20 +26,13 @@ import {
   updateUserProfilePicture,
   updateUserSelectedBankAccount
 } from '../controllers/user';
-import { userBodySchema } from '@invoicetrackr/types';
-import { messageResponseSchema } from '@invoicetrackr/types';
-import { preValidateFileAndFields } from '../utils/multipart';
 import { authMiddleware } from '../middleware/auth';
-import {
-  passwordSchema,
-  loginPasswordSchema,
-  currentPasswordSchema
-} from '@invoicetrackr/types';
+import { preValidateFileAndFields } from '../utils/multipart';
 
 export const getUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ user: userBodySchema })
+      200: getUserResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -41,7 +46,7 @@ export const loginUserOptions: RouteShorthandOptionsWithHandler = {
       password: loginPasswordSchema
     }),
     response: {
-      200: { user: userBodySchema }
+      200: loginUserResponseSchema
     }
   },
   handler: loginUser
@@ -60,10 +65,7 @@ export const postUserOptions: RouteShorthandOptionsWithHandler = {
         path: ['confirmedPassword']
       }),
     response: {
-      201: z.intersection(
-        z.object({ email: z.string() }),
-        messageResponseSchema
-      )
+      201: registerUserResponseSchema
     }
   },
   handler: postUser
@@ -80,16 +82,7 @@ export const updateUserOptions: RouteShorthandOptionsWithHandler = {
       signature: true
     }),
     response: {
-      200: z.intersection(
-        z.object({
-          user: userBodySchema.omit({
-            password: true,
-            stripeCustomerId: true,
-            stripeSubscriptionId: true
-          })
-        }),
-        messageResponseSchema
-      )
+      200: updateUserResponseSchema
     }
   },
   preValidation: preValidateFileAndFields,

@@ -46,7 +46,7 @@ export const insertClientInDb = async (
       businessNumber,
       businessType,
       type,
-      email,
+      email: email || '',
       userId
     })
     .returning();

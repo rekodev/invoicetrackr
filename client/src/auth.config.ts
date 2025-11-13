@@ -119,5 +119,5 @@ export const authConfig = {
     }
   },
   session: {},
-  providers: [] // Add providers with an empty array for now
+  providers: []
 } satisfies NextAuthConfig;

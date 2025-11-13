@@ -11,7 +11,7 @@ export const clientGetSchema = z.object({
   businessType: invoicePartyBusinessTypeSchema,
   businessNumber: z.string(),
   address: z.string(),
-  email: z.string()
+  email: z.email().optional()
 });
 
 export const clientBodySchema = z.object({
@@ -21,10 +21,7 @@ export const clientBodySchema = z.object({
   businessType: invoicePartyBusinessTypeSchema,
   businessNumber: z.string().min(1, 'validation.client.businessNumber'),
   address: z.string().min(1, 'validation.client.address'),
-  email: z.union([
-    z.string().max(0),
-    z.string().min(1).email('validation.client.email')
-  ])
+  email: z.email('validation.client.email').optional()
 });
 
 // Types

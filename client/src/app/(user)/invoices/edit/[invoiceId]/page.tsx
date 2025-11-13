@@ -1,11 +1,11 @@
 import { unauthorized } from 'next/navigation';
 
+import InvoiceForm from '@/components/invoice/invoice-form';
+import { auth } from '@/auth';
 import { getBankingInformationEntries } from '@/api/banking-information';
 import { getClients } from '@/api/client';
 import { getInvoice } from '@/api/invoice';
 import { getUser } from '@/api/user';
-import InvoiceForm from '@/components/invoice/invoice-form';
-import { auth } from '@/auth';
 import { isResponseError } from '@/lib/utils/error';
 
 type Params = Promise<{ invoiceId: string }>;
@@ -43,7 +43,9 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
         clients={clientsResp.data.clients}
         currency={session.user.currency}
         invoiceData={invoiceResp.data.invoice}
-        bankingInformationEntries={bankingInformationEntriesResp.data.bankAccounts}
+        bankingInformationEntries={
+          bankingInformationEntriesResp.data.bankAccounts
+        }
       />
     </section>
   );

@@ -36,7 +36,7 @@ import EmptyState from '../ui/empty-state';
 
 type Props = {
   user: User;
-  bankAccounts: Array<BankAccount> | undefined;
+  bankAccounts: Array<Omit<BankAccount, 'id'> & { id?: number }> | undefined;
 };
 
 const BankingInformationForm = ({ user, bankAccounts }: Props) => {
@@ -168,7 +168,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
             const { id, name, code, accountNumber } = account;
 
             return renderBankingInformationCard({
-              id,
+              id: id || 0,
               name,
               code,
               accountNumber

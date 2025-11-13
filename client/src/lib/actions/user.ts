@@ -14,7 +14,7 @@ import {
   CHANGE_PASSWORD_PAGE,
   PERSONAL_INFORMATION_PAGE
 } from '../constants/pages';
-import { ActionResponseModel } from '../types/response/action';
+import { ActionResponseModel } from '../types/action';
 import { Currency } from '../types/currency';
 import { User } from '@invoicetrackr/types';
 import { isResponseError } from '../utils/error';

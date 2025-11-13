@@ -16,12 +16,13 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import {
-  BankAccount,
+  BankAccountBody,
+  ClientBody,
+  InvoiceBody,
   User
 } from '@invoicetrackr/types';
 import { Client } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
-import { Invoice } from '@invoicetrackr/types';
 import { formatDate } from '@/lib/utils/format-date';
 import { statusOptions } from '@/lib/constants/table';
 import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
@@ -34,9 +35,9 @@ import SignaturePad from '../signature-pad';
 
 type Props = {
   user: User;
-  clients: Array<Client>;
-  bankingInformationEntries: Array<BankAccount>;
-  invoiceData?: Invoice;
+  clients: Array<ClientBody>;
+  bankingInformationEntries: Array<BankAccountBody>;
+  invoiceData?: InvoiceBody;
   currency: Currency;
   latestInvoiceId?: string;
 };
@@ -60,7 +61,7 @@ const InvoiceForm = ({
   latestInvoiceId
 }: Props) => {
   const t = useTranslations('components.invoice_form');
-  const methods = useForm<Invoice>({
+  const methods = useForm<InvoiceBody>({
     defaultValues: invoiceData || {
       sender: user,
       receiver: INITIAL_RECEIVER_DATA,
@@ -99,7 +100,7 @@ const InvoiceForm = ({
     setIsReceiverModalOpen(false);
   };
 
-  const handleSelectReceiver = (receiver: Client) => {
+  const handleSelectReceiver = (receiver: ClientBody) => {
     setValue('receiver.name', receiver.name);
     setValue('receiver.businessNumber', receiver.businessNumber);
     setValue('receiver.address', receiver.address);
@@ -107,9 +108,7 @@ const InvoiceForm = ({
     setIsReceiverModalOpen(false);
   };
 
-  const handleBankAccountSelect = (
-    bankAccount: BankAccount
-  ) => {
+  const handleBankAccountSelect = (bankAccount: BankAccountBody) => {
     setValue('bankingInformation.name', bankAccount.name);
     setValue('bankingInformation.code', bankAccount.code);
     setValue('bankingInformation.accountNumber', bankAccount.accountNumber);
@@ -123,7 +122,7 @@ const InvoiceForm = ({
   };
 
   const handleNextInvoiceIdSelect = (
-    field: ControllerRenderProps<Invoice, 'invoiceId'>
+    field: ControllerRenderProps<InvoiceBody, 'invoiceId'>
   ) => {
     if (!latestInvoiceId) return;
 

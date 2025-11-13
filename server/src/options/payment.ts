@@ -1,5 +1,10 @@
+import {
+  cancelStripeSubscriptionResponseSchema,
+  createCustomerResponseSchema,
+  createSubscriptionResponseSchema,
+  getStripeCustomerIdResponseSchema
+} from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
-import z from 'zod/v4';
 
 import {
   cancelStripeSubscription,
@@ -7,13 +12,12 @@ import {
   createSubscription,
   getStripeCustomerId
 } from '../controllers/payment';
-import { messageResponseSchema } from '@invoicetrackr/types';
 import { authMiddleware } from '../middleware/auth';
 
 export const createCustomerOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: { customerId: z.string() }
+      201: createCustomerResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -21,6 +25,11 @@ export const createCustomerOptions: RouteShorthandOptionsWithHandler = {
 };
 
 export const createSubscriptionOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    response: {
+      201: createSubscriptionResponseSchema
+    }
+  },
   preHandler: authMiddleware,
   handler: createSubscription
 };
@@ -28,7 +37,7 @@ export const createSubscriptionOptions: RouteShorthandOptionsWithHandler = {
 export const getStripeCustomerIdOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ customerId: z.string() })
+      200: getStripeCustomerIdResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -39,7 +48,7 @@ export const cancelStripeSubscriptionOptions: RouteShorthandOptionsWithHandler =
   {
     schema: {
       response: {
-        200: messageResponseSchema
+        200: cancelStripeSubscriptionResponseSchema
       }
     },
     preHandler: authMiddleware,

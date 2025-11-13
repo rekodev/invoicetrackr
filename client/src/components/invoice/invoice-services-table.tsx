@@ -12,20 +12,19 @@ import {
   TableRow,
   Tooltip
 } from '@heroui/react';
+import { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
 import { Key, useEffect, useMemo } from 'react';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 
-import { InvoiceFormData } from '@/lib/types/models';
-import { InvoiceService } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
 const INITIAL_GRAND_TOTAL = 0;
 
 type Props = {
-  invoiceServices?: Array<InvoiceService>;
+  invoiceServices?: Array<InvoiceServiceBody>;
   isInvalid?: boolean;
   errorMessage?: string;
   currency: Currency;
@@ -44,7 +43,7 @@ const InvoiceServicesTable = ({
     watch,
     clearErrors,
     formState: { errors }
-  } = useFormContext<InvoiceFormData>();
+  } = useFormContext<InvoiceBody>();
   const { fields, append, remove, replace } = useFieldArray({
     name: 'services',
     control
@@ -118,7 +117,9 @@ const InvoiceServicesTable = ({
             aria-label={t('a11y.description_label')}
             type="text"
             maxLength={200}
-            defaultValue={(fields[index] as InvoiceService).description || ''}
+            defaultValue={
+              (fields[index] as InvoiceServiceBody).description || ''
+            }
             variant="bordered"
             {...register(`services.${index}.description`)}
             isInvalid={!!errors.services?.[index]?.description}
@@ -132,7 +133,7 @@ const InvoiceServicesTable = ({
             aria-label={t('a11y.unit_label')}
             type="text"
             maxLength={20}
-            defaultValue={(fields[index] as InvoiceService).unit || ''}
+            defaultValue={(fields[index] as InvoiceServiceBody).unit || ''}
             variant="bordered"
             {...register(`services.${index}.unit`)}
             isInvalid={!!errors.services?.[index]?.unit}
@@ -145,7 +146,7 @@ const InvoiceServicesTable = ({
             aria-label={t('a11y.quantity_label')}
             type="number"
             defaultValue={
-              (fields[index] as InvoiceService).quantity?.toString() || ''
+              (fields[index] as InvoiceServiceBody).quantity?.toString() || ''
             }
             variant="bordered"
             {...register(`services.${index}.quantity`)}
@@ -159,7 +160,7 @@ const InvoiceServicesTable = ({
             aria-label={t('a11y.amount_label')}
             type="number"
             defaultValue={
-              (fields[index] as InvoiceService).amount?.toString() || ''
+              (fields[index] as InvoiceServiceBody).amount?.toString() || ''
             }
             variant="bordered"
             {...register(`services.${index}.amount`)}

@@ -1,9 +1,15 @@
-import { MultipartFile } from '@fastify/multipart';
-import bcrypt from 'bcryptjs';
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
+import { MultipartFile } from '@fastify/multipart';
+import { UserBody } from '@invoicetrackr/types';
+import bcrypt from 'bcryptjs';
 import { useI18n } from 'fastify-i18n';
 
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError
+} from '../utils/error';
 import {
   changeUserPasswordInDb,
   deleteUserFromDb,
@@ -18,16 +24,10 @@ import {
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb
 } from '../database/user';
-import { UserBody } from '@invoicetrackr/types';
-import {
-  BadRequestError,
-  NotFoundError,
-  UnauthorizedError
-} from '../utils/error';
-import { saveResetTokenToDb } from '../database/password-reset';
-import { resend } from '../config/resend';
-import { stripe } from '../config/stripe';
 import { getStripeCustomerIdFromDb } from '../database/payment';
+import { resend } from '../config/resend';
+import { saveResetTokenToDb } from '../database/password-reset';
+import { stripe } from '../config/stripe';
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { userId: number } }>,

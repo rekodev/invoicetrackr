@@ -1,6 +1,6 @@
 import { ChangeEvent, useMemo, useState } from 'react';
 
-import { Client } from '@invoicetrackr/types';
+import { ClientBody } from '@invoicetrackr/types';
 import { InvoicePartyBusinessType } from '@invoicetrackr/types';
 
 const INVOICE_PARTY_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
@@ -8,7 +8,7 @@ const INVOICE_PARTY_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
   'business'
 ];
 
-const useClientSearchAndFilter = (clients: Array<Client> | undefined) => {
+const useClientSearchAndFilter = (clients: Array<ClientBody> | undefined) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [typeFilters, setTypeFilters] = useState<Set<InvoicePartyBusinessType>>(

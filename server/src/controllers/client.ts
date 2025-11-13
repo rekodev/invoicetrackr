@@ -45,7 +45,7 @@ export const postClient = async (
   const clientData = req.body;
   const i18n = await useI18n(req);
 
-  const foundClient = await findClientByEmail(userId, clientData.email);
+  const foundClient = await findClientByEmail(userId, clientData.email || '');
 
   if (foundClient)
     throw new BadRequestError(i18n.t('error.client.alreadyExists'));

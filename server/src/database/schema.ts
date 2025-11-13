@@ -1,4 +1,3 @@
-import { sql } from 'drizzle-orm';
 import {
   check,
   date,
@@ -12,6 +11,7 @@ import {
   unique,
   varchar
 } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const invoiceServicesTable = pgTable(
   'invoice_services',

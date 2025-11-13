@@ -1,9 +1,9 @@
 import { unauthorized } from 'next/navigation';
 
-import { getBankingInformationEntries } from '@/api/banking-information';
-import { getUser } from '@/api/user';
 import MultiStepForm from '@/components/multi-step-form';
 import { auth } from '@/auth';
+import { getBankingInformationEntries } from '@/api/banking-information';
+import { getUser } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
 export default async function OnboardingPage() {
@@ -20,9 +20,10 @@ export default async function OnboardingPage() {
   if (isResponseError(bankingInformationResp))
     throw new Error('Failed to fetch data');
 
-  const currentBankingInformation = bankingInformationResp.data.bankAccounts.find(
-    (info) => info.id === userResp.data.user.selectedBankAccountId
-  );
+  const currentBankingInformation =
+    bankingInformationResp.data.bankAccounts.find(
+      (info) => info.id === userResp.data.user.selectedBankAccountId
+    );
 
   return (
     <MultiStepForm

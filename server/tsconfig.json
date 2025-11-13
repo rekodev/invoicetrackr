@@ -5,7 +5,4 @@
     "strict": false,
     "module": "commonjs"
   },
-  "include": [
-    "src/**/*.ts"
-  ]
 }

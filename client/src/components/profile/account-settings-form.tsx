@@ -17,12 +17,17 @@ import { User } from 'next-auth';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { AccountSettingsFormModel } from '@/lib/types/models';
+import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 
 import DeleteAccountModal from './delete-account-modal';
 import SubscriptionStatusCard from './subscription-status-card';
+
+type AccountSettingsFormModel = {
+  language: string;
+  currency: Currency;
+};
 
 type Props = {
   user: User;

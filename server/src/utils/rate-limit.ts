@@ -1,5 +1,5 @@
-import { RateLimitPluginOptions } from '@fastify/rate-limit';
 import { FastifyRegisterOptions } from 'fastify';
+import { RateLimitPluginOptions } from '@fastify/rate-limit';
 
 export const rateLimitPluginOptions: FastifyRegisterOptions<RateLimitPluginOptions> =
   {

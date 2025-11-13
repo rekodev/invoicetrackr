@@ -1,3 +1,14 @@
+import {
+  getInvoiceResponseSchema,
+  getInvoicesResponseSchema,
+  getInvoicesRevenueResponseSchema,
+  getInvoicesTotalAmountResponseSchema,
+  getLatestInvoicesResponseSchema,
+  invoiceBodySchema,
+  messageResponseSchema,
+  postInvoiceResponseSchema,
+  updateInvoiceResponseSchema
+} from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
@@ -13,15 +24,13 @@ import {
   updateInvoice,
   updateInvoiceStatus
 } from '../controllers/invoice';
-import { invoiceBodySchema } from '@invoicetrackr/types';
-import { messageResponseSchema } from '@invoicetrackr/types';
-import { preValidateFileAndFields } from '../utils/multipart';
 import { authMiddleware } from '../middleware/auth';
+import { preValidateFileAndFields } from '../utils/multipart';
 
 export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ invoices: z.array(invoiceBodySchema) })
+      200: getInvoicesResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -31,7 +40,7 @@ export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
 export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ invoice: invoiceBodySchema })
+      200: getInvoiceResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -42,10 +51,7 @@ export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: invoiceBodySchema,
     response: {
-      201: z.intersection(
-        z.object({ invoice: invoiceBodySchema }),
-        messageResponseSchema
-      )
+      201: postInvoiceResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -57,10 +63,7 @@ export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: invoiceBodySchema,
     response: {
-      200: z.intersection(
-        z.object({ invoice: invoiceBodySchema }),
-        messageResponseSchema
-      )
+      200: updateInvoiceResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -93,12 +96,7 @@ export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {
 export const getInvoicesTotalAmountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({
-        invoices: z.array(
-          z.object({ totalAmount: z.string(), status: z.string() })
-        ),
-        totalClients: z.number()
-      })
+      200: getInvoicesTotalAmountResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -108,9 +106,7 @@ export const getInvoicesTotalAmountOptions: RouteShorthandOptionsWithHandler = {
 export const getInvoicesRevenueOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({
-        revenueByMonth: z.record(z.string(), z.number())
-      })
+      200: getInvoicesRevenueResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -120,17 +116,7 @@ export const getInvoicesRevenueOptions: RouteShorthandOptionsWithHandler = {
 export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({
-        invoices: z.array(
-          z.object({
-            id: z.number(),
-            totalAmount: z.string(),
-            name: z.string(),
-            email: z.string(),
-            invoiceId: z.string()
-          })
-        )
-      })
+      200: getLatestInvoicesResponseSchema
     }
   },
   preHandler: authMiddleware,

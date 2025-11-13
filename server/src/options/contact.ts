@@ -1,8 +1,8 @@
 import { RouteShorthandOptionsWithHandler } from 'fastify';
+import { postContactResponseSchema } from '@invoicetrackr/types';
 import z from 'zod/v4';
 
 import { postContactMessage } from '../controllers/contact';
-import { messageResponseSchema } from '@invoicetrackr/types';
 
 export const postContactMessageOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -11,7 +11,7 @@ export const postContactMessageOptions: RouteShorthandOptionsWithHandler = {
       message: z.string().min(1, 'validation.contact.message').max(5000)
     }),
     response: {
-      200: messageResponseSchema
+      201: postContactResponseSchema
     }
   },
   handler: postContactMessage

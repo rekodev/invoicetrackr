@@ -15,6 +15,7 @@ import {
   useStripe
 } from '@stripe/react-stripe-js';
 import { FormEvent, useState } from 'react';
+import { User } from '@invoicetrackr/types';
 import { loadStripe } from '@stripe/stripe-js';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
@@ -25,14 +26,13 @@ import {
   createSubscription,
   getStripeCustomerId
 } from '@/api/payment';
+import { Currency } from '@/lib/types/currency';
 import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
 import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
-import { User } from '@invoicetrackr/types';
 import { isResponseError } from '@/lib/utils/error';
 import { updateSessionAction } from '@/lib/actions';
 
 import Loader from './ui/loader';
-import { Currency } from '@/lib/types/currency';
 
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
   throw new Error('NEXT_PUBLIC_STRIPLE_PUBLIC_KEY is not defined');

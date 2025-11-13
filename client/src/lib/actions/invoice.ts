@@ -1,17 +1,16 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
-
 import {
   addInvoice,
   deleteInvoice,
   updateInvoice,
   updateInvoiceStatus
 } from '@/api/invoice';
+import { InvoiceBody } from '@invoicetrackr/types';
+import { revalidatePath } from 'next/cache';
 
 import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '../constants/pages';
-import { ActionResponseModel } from '../types/response/action';
-import { Invoice } from '@invoicetrackr/types';
+import { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 
@@ -20,7 +19,7 @@ export const addInvoiceAction = async ({
   invoiceData
 }: {
   userId: number;
-  invoiceData: Invoice;
+  invoiceData: InvoiceBody;
 }): Promise<ActionResponseModel> => {
   const response = await addInvoice(userId, invoiceData);
 
@@ -42,7 +41,7 @@ export const updateInvoiceAction = async ({
   invoiceData
 }: {
   userId: number;
-  invoiceData: Invoice;
+  invoiceData: InvoiceBody;
 }): Promise<ActionResponseModel> => {
   const response = await updateInvoice(userId, invoiceData);
 
@@ -54,7 +53,7 @@ export const updateInvoiceAction = async ({
     };
   }
 
-  revalidatePath(EDIT_INVOICE_PAGE(invoiceData.id));
+  revalidatePath(EDIT_INVOICE_PAGE(Number(invoiceData.id)));
   revalidatePath(INVOICES_PAGE);
 
   return { ok: true, message: response.data.message };

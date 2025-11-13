@@ -1,8 +1,8 @@
 import { unauthorized } from 'next/navigation';
 
-import { getUser } from '@/api/user';
-import { auth } from '@/auth';
 import PersonalInformationForm from '@/components/profile/personal-information-form';
+import { auth } from '@/auth';
+import { getUser } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
 async function PersonalInformationPage() {

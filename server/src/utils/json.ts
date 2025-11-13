@@ -1,4 +1,4 @@
-import { AnyColumn, InferColumnsDataTypes, sql, SQL } from 'drizzle-orm';
+import { AnyColumn, InferColumnsDataTypes, SQL, sql } from 'drizzle-orm';
 
 export function jsonAgg<T extends Record<string, AnyColumn>>(select: T) {
   const chunks: SQL[] = [];

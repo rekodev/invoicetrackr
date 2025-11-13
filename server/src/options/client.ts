@@ -1,5 +1,13 @@
+import {
+  clientBodySchema,
+  getClientResponseSchema,
+  getClientsResponseSchema,
+  messageResponseSchema,
+  postClientResponseSchema,
+  updateClientResponseSchema
+} from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
-import z from 'zod/v4';
+
 import {
   deleteClient,
   getClient,
@@ -7,14 +15,12 @@ import {
   postClient,
   updateClient
 } from '../controllers/client';
-import { clientBodySchema } from '@invoicetrackr/types';
-import { messageResponseSchema } from '@invoicetrackr/types';
 import { authMiddleware } from '../middleware/auth';
 
 export const getClientsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ clients: z.array(clientBodySchema) })
+      200: getClientsResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -24,7 +30,7 @@ export const getClientsOptions: RouteShorthandOptionsWithHandler = {
 export const getClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ client: clientBodySchema })
+      200: getClientResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -35,10 +41,7 @@ export const postClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: clientBodySchema.omit({ id: true }),
     response: {
-      201: z.intersection(
-        z.object({ client: clientBodySchema }),
-        messageResponseSchema
-      )
+      201: postClientResponseSchema
     }
   },
   preHandler: authMiddleware,
@@ -49,10 +52,7 @@ export const updateClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: clientBodySchema,
     response: {
-      200: z.intersection(
-        z.object({ client: clientBodySchema }),
-        messageResponseSchema
-      )
+      200: updateClientResponseSchema
     }
   },
   preHandler: authMiddleware,

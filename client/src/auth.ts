@@ -13,7 +13,7 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
     Credentials({
       async authorize(credentials) {
         const parsedCredentials = z
-          .object({ email: z.string().email(), password: z.string().min(6) })
+          .object({ email: z.email(), password: z.string().min(6) })
           .safeParse(credentials);
 
         if (parsedCredentials.success) {
@@ -26,7 +26,6 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
 
           if (!user || !user.email) return null;
 
-          // Map to next-auth User type
           return {
             id: String(user.id),
             name: user.name,

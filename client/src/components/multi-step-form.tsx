@@ -12,10 +12,7 @@ import {
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import {
-  BankAccount,
-  User
-} from '@invoicetrackr/types';
+import { BankAccountBody, User } from '@invoicetrackr/types';
 import {
   isUserBankingDetailsSetUp,
   isUserPersonalInformationSetUp
@@ -29,7 +26,7 @@ import SignUpForm from './auth/sign-up-form';
 
 type Props = {
   existingUserData?: User;
-  existingBankingInformation?: BankAccount;
+  existingBankingInformation?: BankAccountBody;
 };
 
 export default function MultiStepForm({

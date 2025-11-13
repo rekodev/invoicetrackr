@@ -13,10 +13,10 @@ import {
   PencilSquareIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
-import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
-import { Client } from '@invoicetrackr/types';
+import { ClientBody } from '@invoicetrackr/types';
 import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 
 import ClientFormDialog from './client-form-dialog';
@@ -29,7 +29,7 @@ const PER_PAGE = 8;
 
 type Props = {
   userId: number;
-  clients: Array<Client>;
+  clients: Array<ClientBody>;
 };
 
 const ClientSection = ({ userId, clients }: Props) => {
@@ -45,7 +45,7 @@ const ClientSection = ({ userId, clients }: Props) => {
     handleClearSearch
   } = useClientSearchAndFilter(clients);
 
-  const [currentClientData, setCurrentClientData] = useState<Client>();
+  const [currentClientData, setCurrentClientData] = useState<ClientBody>();
   const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false);
   const [isDeleteClientModalOpen, setIsDeleteClientModalOpen] = useState(false);
 
@@ -53,7 +53,7 @@ const ClientSection = ({ userId, clients }: Props) => {
     setIsEditClientModalOpen(false);
   };
 
-  const handleOpenDeleteClientModal = (clientData: Client) => {
+  const handleOpenDeleteClientModal = (clientData: ClientBody) => {
     setCurrentClientData(clientData);
     setIsDeleteClientModalOpen(true);
   };
@@ -62,12 +62,12 @@ const ClientSection = ({ userId, clients }: Props) => {
     setIsDeleteClientModalOpen(false);
   };
 
-  const handleEditClient = (clientData: Client) => {
+  const handleEditClient = (clientData: ClientBody) => {
     setCurrentClientData(clientData);
     setIsEditClientModalOpen(true);
   };
 
-  const renderMobileClientCardActions = (clientData: Client) => (
+  const renderMobileClientCardActions = (clientData: ClientBody) => (
     <Dropdown>
       <DropdownTrigger className="absolute right-2 top-2">
         <Button variant="light" size="sm" isIconOnly className="sm:hidden">
@@ -99,7 +99,7 @@ const ClientSection = ({ userId, clients }: Props) => {
     </Dropdown>
   );
 
-  const renderClientCardActions = (clientData: Client) => (
+  const renderClientCardActions = (clientData: ClientBody) => (
     <>
       {renderMobileClientCardActions(clientData)}
       <div className="absolute right-2 top-2 z-10 hidden gap-0.5 sm:flex">
@@ -123,7 +123,7 @@ const ClientSection = ({ userId, clients }: Props) => {
     </>
   );
 
-  const renderClient = (client: Client, index: number) => {
+  const renderClient = (client: ClientBody, index: number) => {
     const isItemInCurrentPageRange =
       index >= (page - 1) * PER_PAGE && index < page * PER_PAGE;
 

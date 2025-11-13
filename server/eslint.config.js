@@ -1,6 +1,7 @@
 import { defineConfig } from 'eslint/config';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+
 import baseConfig from '../eslint.config.js';
 
 const eslintConfig = defineConfig([
@@ -10,13 +11,9 @@ const eslintConfig = defineConfig([
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        project: './tsconfig.json',
-        ecmaVersion: 'latest',
-        sourceType: 'module'
+        project: './tsconfig.json'
       },
       globals: {
-        console: 'readonly',
-        process: 'readonly',
         Buffer: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
@@ -31,8 +28,8 @@ const eslintConfig = defineConfig([
     rules: {
       ...tsPlugin.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-      'no-console': 'off' // Allow console in server
+      'no-unused-vars': 'off',
+      'no-console': 'off'
     }
   }
 ]);

@@ -1,6 +1,9 @@
+import {
+  AlreadyExistsError,
+  BadRequestError,
+  NotFoundError
+} from '../utils/error';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { useI18n } from 'fastify-i18n';
-import { BankAccountBody } from '@invoicetrackr/types';
 import {
   deleteBankAccountFromDb,
   findBankAccountByAccountNumber,
@@ -13,11 +16,8 @@ import {
   getUserFromDb,
   updateUserSelectedBankAccountInDb
 } from '../database/user';
-import {
-  AlreadyExistsError,
-  BadRequestError,
-  NotFoundError
-} from '../utils/error';
+import { BankAccountBody } from '@invoicetrackr/types';
+import { useI18n } from 'fastify-i18n';
 
 export const getBankAccounts = async (
   req: FastifyRequest<{ Params: { userId: number } }>,

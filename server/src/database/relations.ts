@@ -1,9 +1,10 @@
 import { relations } from 'drizzle-orm/relations';
+
 import {
   bankingInformationTable,
   clientsTable,
-  invoicesTable,
   invoiceServicesTable,
+  invoicesTable,
   usersTable
 } from './schema';
 

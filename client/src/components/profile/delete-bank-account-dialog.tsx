@@ -7,11 +7,11 @@ import {
   ModalHeader,
   addToast
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
+import { BankAccount } from '@invoicetrackr/types';
 import { useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { deleteBankingInformationAction } from '@/lib/actions/banking-information';
-import { BankAccount } from '@invoicetrackr/types';
 
 type Props = {
   userId: number;

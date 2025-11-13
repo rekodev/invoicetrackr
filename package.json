@@ -1,6 +1,7 @@
 {
   "name": "invoicetrackr",
   "version": "1.0.0",
+  "type": "module",
   "description": "InvoiceTrackr App",
   "main": "index.js",
   "scripts": {

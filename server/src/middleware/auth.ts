@@ -1,6 +1,6 @@
+import 'dotenv/config';
 import { FastifyRequest } from 'fastify';
 import { decode } from 'next-auth/jwt';
-import 'dotenv/config';
 
 import { UnauthorizedError } from '../utils/error';
 
