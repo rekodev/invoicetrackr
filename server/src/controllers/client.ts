@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
+import { BadRequestError, NotFoundError } from '../utils/error';
 import {
   deleteClientFromDb,
   findClientByEmail,
@@ -9,8 +10,7 @@ import {
   insertClientInDb,
   updateClientInDb
 } from '../database/client';
-import { ClientType } from '../types/client';
-import { BadRequestError, NotFoundError } from '../utils/error';
+import { ClientBody } from '@invoicetrackr/types';
 
 export const getClients = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -38,7 +38,7 @@ export const getClient = async (
 };
 
 export const postClient = async (
-  req: FastifyRequest<{ Params: { userId: number }; Body: ClientType }>,
+  req: FastifyRequest<{ Params: { userId: number }; Body: ClientBody }>,
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
@@ -64,7 +64,7 @@ export const postClient = async (
 export const updateClient = async (
   req: FastifyRequest<{
     Params: { userId: number; id: number };
-    Body: ClientType;
+    Body: ClientBody;
   }>,
   reply: FastifyReply
 ) => {

@@ -18,7 +18,7 @@ import {
 } from '../database/invoice';
 import { getClientsFromDb } from '../database/client';
 import { getUserFromDb } from '../database/user';
-import { InvoiceType } from '../types/invoice';
+import { InvoiceBody } from '@invoicetrackr/types';
 import {
   AlreadyExistsError,
   BadRequestError,
@@ -52,7 +52,7 @@ export const getInvoice = async (
 export const postInvoice = async (
   req: FastifyRequest<{
     Params: { userId: number };
-    Body: InvoiceType & { file: MultipartFile };
+    Body: InvoiceBody & { file: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {
@@ -104,7 +104,7 @@ export const postInvoice = async (
 export const updateInvoice = async (
   req: FastifyRequest<{
     Params: { userId: number; id: number };
-    Body: InvoiceType & { file: MultipartFile };
+    Body: InvoiceBody & { file: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {

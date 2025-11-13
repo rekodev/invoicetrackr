@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
-import { BankAccountType } from '../types/banking-information';
+import { BankAccountBody } from '@invoicetrackr/types';
 import {
   deleteBankAccountFromDb,
   findBankAccountByAccountNumber,
@@ -48,7 +48,7 @@ export const getBankAccount = async (
 export const postBankAccount = async (
   req: FastifyRequest<{
     Params: { userId: number };
-    Body: Omit<BankAccountType, 'id'> & { hasSelectedBankAccount: boolean };
+    Body: Omit<BankAccountBody, 'id'> & { hasSelectedBankAccount: boolean };
   }>,
   reply: FastifyReply
 ) => {
@@ -93,7 +93,7 @@ export const postBankAccount = async (
 export const updateBankAccount = async (
   req: FastifyRequest<{
     Params: { userId: number; id: number };
-    Body: BankAccountType;
+    Body: BankAccountBody;
   }>,
   reply: FastifyReply
 ) => {

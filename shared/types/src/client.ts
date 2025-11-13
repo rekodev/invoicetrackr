@@ -4,8 +4,18 @@ import {
   invoicePartyTypeSchema
 } from './invoice';
 
-export const clientSchema = z.object({
+export const clientGetSchema = z.object({
   id: z.number(),
+  type: invoicePartyTypeSchema,
+  name: z.string(),
+  businessType: invoicePartyBusinessTypeSchema,
+  businessNumber: z.string(),
+  address: z.string(),
+  email: z.string()
+});
+
+export const clientBodySchema = z.object({
+  id: z.number().optional(),
   type: invoicePartyTypeSchema,
   name: z.string().min(1, 'validation.client.name'),
   businessType: invoicePartyBusinessTypeSchema,
@@ -17,4 +27,7 @@ export const clientSchema = z.object({
   ])
 });
 
-export type ClientType = z.infer<typeof clientSchema>;
+// Types
+export type ClientGet = z.infer<typeof clientGetSchema>;
+export type ClientBody = z.infer<typeof clientBodySchema>;
+export type Client = ClientGet;

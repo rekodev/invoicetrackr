@@ -17,7 +17,9 @@ export const registerUser = async ({
   email,
   password,
   confirmedPassword
-}: Pick<UserModelWithPassword, 'email' | 'password'> & {
+}: {
+  email: string;
+  password: string;
   confirmedPassword: string;
 }) =>
   await api.post<RegisterUserResponse>('/api/users', {
@@ -39,8 +41,8 @@ export const updateUser = async (
   id: number,
   userData: Pick<
     UserModel,
-    'email' | 'name' | 'businessType' | 'businessNumber' | 'address' | 'signature' | 'type'
-  >
+    'email' | 'name' | 'businessType' | 'businessNumber' | 'address' | 'type'
+  > & { signature: string | File | undefined }
 ) => {
   const isSignatureFile = typeof userData.signature !== 'string';
 
@@ -99,10 +101,11 @@ export const changeUserPassword = async ({
   newPassword: string;
   confirmedNewPassword: string;
 }) =>
-  await api.put<UpdateUserResp>(
-    `/api/users/${userId}/change-password`,
-    { password, newPassword, confirmedNewPassword }
-  );
+  await api.put<UpdateUserResp>(`/api/users/${userId}/change-password`, {
+    password,
+    newPassword,
+    confirmedNewPassword
+  });
 
 export const resetUserPassword = async ({ email }: { email: string }) =>
   await api.post<ResetPasswordResp>(`/api/forgot-password`, { email });

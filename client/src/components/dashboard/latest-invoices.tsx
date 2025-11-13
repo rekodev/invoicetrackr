@@ -41,7 +41,7 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
                   email: invoiceData.email,
                   name: invoiceData.name
                 }}
-                amount={invoiceData.totalAmount}
+                amount={Number(invoiceData.totalAmount)}
                 hideIcon
               />
             ))

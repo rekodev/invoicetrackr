@@ -42,6 +42,7 @@ type Props = {
 };
 
 const INITIAL_RECEIVER_DATA: ClientModel = {
+  id: 0,
   businessNumber: '',
   businessType: 'business',
   address: '',
@@ -361,7 +362,7 @@ const InvoiceForm = ({
         profileSignature={user?.signature as string | undefined}
         onSignatureChange={handleSignatureChange}
         isInvalid={!!errors.senderSignature}
-        errorMessage={errors.senderSignature?.message}
+        errorMessage={errors.senderSignature?.message as string}
         isChipVisible={user?.signature !== senderSignature}
       />
     </div>

@@ -14,12 +14,8 @@ import {
   Input,
   addToast
 } from '@heroui/react';
-import { zodResolver } from '@hookform/resolvers/zod';
 
-import {
-  BankingInformationFormModel,
-  bankingInformationSchema
-} from '@/lib/types/models/user';
+import { BankingInformationFormModel } from '@/lib/types/models/user';
 import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 import { addBankingInformationAction } from '@/lib/actions/banking-information';
 
@@ -46,8 +42,7 @@ export default function BankAccountForm({
     setError,
     formState: { isSubmitting, isDirty, errors }
   } = useForm<BankingInformationFormModel>({
-    defaultValues,
-    resolver: zodResolver(bankingInformationSchema)
+    defaultValues
   });
 
   const onSubmit: SubmitHandler<BankingInformationFormModel> = async (data) => {

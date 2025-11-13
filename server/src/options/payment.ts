@@ -7,7 +7,7 @@ import {
   createSubscription,
   getStripeCustomerId
 } from '../controllers/payment';
-import { messageResponseSchema } from '../types/response';
+import { messageResponseSchema } from '@invoicetrackr/types';
 import { authMiddleware } from '../middleware/auth';
 
 export const createCustomerOptions: RouteShorthandOptionsWithHandler = {

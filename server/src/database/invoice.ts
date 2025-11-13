@@ -1,14 +1,5 @@
-import {
-  and,
-  desc,
-  eq,
-  ExtractTablesWithRelations,
-  gte,
-  inArray,
-  sql
-} from 'drizzle-orm';
-import { NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
-import { PgTransaction } from 'drizzle-orm/pg-core';
+import { and, desc, eq, gte, inArray, sql } from 'drizzle-orm';
+import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
 
 import { jsonAgg } from '../utils/json';
 import { db } from './db';
@@ -19,7 +10,7 @@ import {
   invoiceServicesTable,
   invoicesTable
 } from './schema';
-import { InvoiceType } from '../types/invoice';
+import { InvoiceBody } from '@invoicetrackr/types';
 
 export const findInvoiceById = async (userId: number, id: number) => {
   const invoices = await db
@@ -120,11 +111,7 @@ export const getInvoicesFromDb = async (userId: number) => {
 export const getInvoiceFromDb = async (
   userId: number,
   id: number,
-  transaction?: PgTransaction<
-    NeonQueryResultHKT,
-    any,
-    ExtractTablesWithRelations<Record<string, never>>
-  >
+  transaction?: Parameters<Parameters<typeof db.transaction>[0]>[0]
 ) => {
   const invoices = await (transaction ? transaction : db)
     .select({
@@ -196,7 +183,7 @@ export const getInvoiceFromDb = async (
 };
 
 export const insertInvoiceInDb = async (
-  invoiceData: InvoiceType,
+  invoiceData: InvoiceBody,
   userId: number,
   senderSignature: string
 ) => {
@@ -293,7 +280,7 @@ export const insertInvoiceInDb = async (
 export const updateInvoiceInDb = async (
   userId: number,
   id: number,
-  invoiceData: InvoiceType,
+  invoiceData: InvoiceBody,
   senderSignature: string
 ) => {
   const updatedInvoice = await db.transaction(async (tx) => {

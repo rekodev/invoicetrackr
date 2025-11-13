@@ -18,7 +18,7 @@ import {
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb
 } from '../database/user';
-import { UserType } from '../types/user';
+import { UserBody } from '@invoicetrackr/types';
 import {
   BadRequestError,
   NotFoundError,
@@ -78,7 +78,7 @@ export const loginUser = async (
 
 export const postUser = async (
   req: FastifyRequest<{
-    Body: Pick<UserType, 'email' | 'password'> & { confirmedPassword: string };
+    Body: Pick<UserBody, 'email' | 'password'> & { confirmedPassword: string };
   }>,
   reply: FastifyReply
 ) => {
@@ -112,7 +112,7 @@ export const updateUser = async (
   req: FastifyRequest<{
     Params: { userId: number };
     Body: Pick<
-      UserType,
+      UserBody,
       | 'email'
       | 'name'
       | 'businessType'

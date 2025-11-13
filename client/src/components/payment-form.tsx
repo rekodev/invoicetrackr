@@ -20,7 +20,11 @@ import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
 
 import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
-import { createCustomer, createSubscription, getStripeCustomerId } from '@/api/payment';
+import {
+  createCustomer,
+  createSubscription,
+  getStripeCustomerId
+} from '@/api/payment';
 import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
 import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
 import { UserModel } from '@/lib/types/models/user';
@@ -28,6 +32,7 @@ import { isResponseError } from '@/lib/utils/error';
 import { updateSessionAction } from '@/lib/actions';
 
 import Loader from './ui/loader';
+import { Currency } from '@/lib/types/currency';
 
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
   throw new Error('NEXT_PUBLIC_STRIPLE_PUBLIC_KEY is not defined');
@@ -81,7 +86,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
       } else {
         const createCustomerResp = await createCustomer({
           userId: user.id,
-          email: user.email,
+          email: user.email || '',
           name: user.name
         });
 
@@ -168,7 +173,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
           {isLoading
             ? t('processing')
             : t('pay', {
-                amount: `${getCurrencySymbol(user.currency)}${SUBSCRIPTION_AMOUNT}`
+                amount: `${getCurrencySymbol(user.currency as Currency)}${SUBSCRIPTION_AMOUNT}`
               })}
         </Button>
       </CardFooter>

@@ -13,15 +13,15 @@ import {
   updateInvoice,
   updateInvoiceStatus
 } from '../controllers/invoice';
-import { invoiceSchema } from '../types/invoice';
-import { messageResponseSchema } from '../types/response';
+import { invoiceBodySchema } from '@invoicetrackr/types';
+import { messageResponseSchema } from '@invoicetrackr/types';
 import { preValidateFileAndFields } from '../utils/multipart';
 import { authMiddleware } from '../middleware/auth';
 
 export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ invoices: z.array(invoiceSchema) })
+      200: z.object({ invoices: z.array(invoiceBodySchema) })
     }
   },
   preHandler: authMiddleware,
@@ -31,7 +31,7 @@ export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
 export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ invoice: invoiceSchema })
+      200: z.object({ invoice: invoiceBodySchema })
     }
   },
   preHandler: authMiddleware,
@@ -40,10 +40,10 @@ export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {
 
 export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: invoiceSchema,
+    body: invoiceBodySchema,
     response: {
       201: z.intersection(
-        z.object({ invoice: invoiceSchema }),
+        z.object({ invoice: invoiceBodySchema }),
         messageResponseSchema
       )
     }
@@ -55,10 +55,10 @@ export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: invoiceSchema,
+    body: invoiceBodySchema,
     response: {
       200: z.intersection(
-        z.object({ invoice: invoiceSchema }),
+        z.object({ invoice: invoiceBodySchema }),
         messageResponseSchema
       )
     }

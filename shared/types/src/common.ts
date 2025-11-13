@@ -1,5 +1,6 @@
 import z from 'zod/v4';
 
+// Password schemas with validation messages (for server)
 export const passwordSchema = z
   .string()
   .min(8, 'validation.password.tooShort')

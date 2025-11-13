@@ -1,5 +1,5 @@
-import { bankAccountSchema } from '../types/banking-information';
-import { messageResponseSchema } from '../types/response';
+import { bankAccountBodySchema } from '@invoicetrackr/types';
+import { messageResponseSchema } from '@invoicetrackr/types';
 import {
   deleteBankAccount,
   getBankAccount,
@@ -14,7 +14,7 @@ import z from 'zod/v4';
 export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ bankAccounts: z.array(bankAccountSchema) })
+      200: z.object({ bankAccounts: z.array(bankAccountBodySchema) })
     }
   },
   preHandler: authMiddleware,
@@ -24,7 +24,7 @@ export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
 export const getBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: bankAccountSchema
+      200: bankAccountBodySchema
     }
   },
   preHandler: authMiddleware,
@@ -33,10 +33,10 @@ export const getBankAccountOptions: RouteShorthandOptionsWithHandler = {
 
 export const postBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: bankAccountSchema,
+    body: bankAccountBodySchema,
     response: {
       201: z.union([
-        z.object({ bankAccount: bankAccountSchema }),
+        z.object({ bankAccount: bankAccountBodySchema }),
         messageResponseSchema
       ])
     }
@@ -47,10 +47,10 @@ export const postBankAccountOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: bankAccountSchema,
+    body: bankAccountBodySchema,
     response: {
       200: z.intersection(
-        z.object({ bankAccount: bankAccountSchema }),
+        z.object({ bankAccount: bankAccountBodySchema }),
         messageResponseSchema
       )
     }

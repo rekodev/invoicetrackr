@@ -5,7 +5,24 @@ import {
 } from './invoice';
 import { passwordSchema } from './common';
 
-export const userSchema = z.object({
+export const userGetSchema = z.object({
+  id: z.number(),
+  type: invoicePartyTypeSchema,
+  name: z.string(),
+  businessType: invoicePartyBusinessTypeSchema,
+  businessNumber: z.string(),
+  address: z.string(),
+  email: z.string().optional(),
+  signature: z.string().optional(),
+  selectedBankAccountId: z.number().optional(),
+  profilePictureUrl: z.string(),
+  currency: z.string(),
+  language: z.string(),
+  stripeCustomerId: z.string(),
+  stripeSubscriptionId: z.string()
+});
+
+export const userBodySchema = z.object({
   id: z.number().optional(),
   type: invoicePartyTypeSchema,
   name: z.string().min(1, 'validation.user.name'),
@@ -23,4 +40,8 @@ export const userSchema = z.object({
   stripeSubscriptionId: z.string()
 });
 
-export type UserType = z.infer<typeof userSchema>;
+// Types
+export type UserGet = z.infer<typeof userGetSchema>;
+export type UserBody = z.infer<typeof userBodySchema>;
+export type User = UserGet;
+export type UserWithPassword = UserBody;

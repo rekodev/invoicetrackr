@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 
-import { UserType } from '../types/user';
+import { UserBody } from '@invoicetrackr/types';
 import { db } from './db';
 import {
   InsertUser,
@@ -97,7 +97,7 @@ export const registerUser = async ({
 
 export const updateUserInDb = async (
   user: Pick<
-    UserType,
+    UserBody,
     'id' | 'email' | 'name' | 'businessType' | 'businessNumber' | 'address'
   >,
   signature: string

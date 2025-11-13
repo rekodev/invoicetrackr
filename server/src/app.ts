@@ -19,7 +19,7 @@ import { errorHandler } from './utils/error';
 import { getPgVersion } from './database/db';
 import { languageMiddleware } from './middleware/language';
 import { rateLimitPluginOptions } from './utils/rate-limit';
-import { bankAccountSchema } from './types/banking-information';
+import { bankAccountBodySchema } from '@invoicetrackr/types';
 import {
   serializerCompiler,
   validatorCompiler

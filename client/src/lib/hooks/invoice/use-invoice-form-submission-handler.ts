@@ -15,6 +15,7 @@ import { InvoiceModel } from '@/lib/types/models/invoice';
 import { calculateServiceTotal } from '@/lib/utils';
 
 const INITIAL_RECEIVER_DATA: ClientModel = {
+  id: 0,
   businessNumber: '',
   businessType: 'business',
   address: '',

@@ -7,14 +7,14 @@ import {
   postClient,
   updateClient
 } from '../controllers/client';
-import { clientSchema } from '../types/client';
-import { messageResponseSchema } from '../types/response';
+import { clientBodySchema } from '@invoicetrackr/types';
+import { messageResponseSchema } from '@invoicetrackr/types';
 import { authMiddleware } from '../middleware/auth';
 
 export const getClientsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ clients: z.array(clientSchema) })
+      200: z.object({ clients: z.array(clientBodySchema) })
     }
   },
   preHandler: authMiddleware,
@@ -24,7 +24,7 @@ export const getClientsOptions: RouteShorthandOptionsWithHandler = {
 export const getClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ client: clientSchema })
+      200: z.object({ client: clientBodySchema })
     }
   },
   preHandler: authMiddleware,
@@ -33,10 +33,10 @@ export const getClientOptions: RouteShorthandOptionsWithHandler = {
 
 export const postClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: clientSchema.omit({ id: true }),
+    body: clientBodySchema.omit({ id: true }),
     response: {
       201: z.intersection(
-        z.object({ client: clientSchema }),
+        z.object({ client: clientBodySchema }),
         messageResponseSchema
       )
     }
@@ -47,10 +47,10 @@ export const postClientOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: clientSchema,
+    body: clientBodySchema,
     response: {
       200: z.intersection(
-        z.object({ client: clientSchema }),
+        z.object({ client: clientBodySchema }),
         messageResponseSchema
       )
     }

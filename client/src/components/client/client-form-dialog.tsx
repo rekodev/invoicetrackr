@@ -20,6 +20,7 @@ import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { ClientModel } from '@/lib/types/models/client';
 
 const INITIAL_CLIENT_DATA: ClientFormData = {
+  id: 0,
   name: '',
   type: 'receiver',
   businessType: 'business',

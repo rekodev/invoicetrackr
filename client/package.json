@@ -11,6 +11,7 @@
     "lint": "pnpm exec eslint ."
   },
   "dependencies": {
+    "@invoicetrackr/types": "workspace:*",
     "@heroicons/react": "^2.2.0",
     "@heroui/react": "^2.8.4",
     "@hookform/resolvers": "^5.2.2",

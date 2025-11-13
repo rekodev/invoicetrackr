@@ -80,7 +80,7 @@ const InvoiceServicesTable = ({
   }, [invoiceServices, replace]);
 
   const handleAddService = () => {
-    append({ amount: 0, description: '', quantity: 0, unit: '' });
+    append({ id: 0, amount: 0, description: '', quantity: 0, unit: '' });
 
     // Clear errors if there are no services
     if (!serviceAmounts.length) clearErrors('services');
@@ -117,7 +117,7 @@ const InvoiceServicesTable = ({
             aria-label={t('a11y.description_label')}
             type="text"
             maxLength={200}
-            defaultValue={fields[index].description || ''}
+            defaultValue={(fields[index] as InvoiceService).description || ''}
             variant="bordered"
             {...register(`services.${index}.description`)}
             isInvalid={!!errors.services?.[index]?.description}
@@ -131,7 +131,7 @@ const InvoiceServicesTable = ({
             aria-label={t('a11y.unit_label')}
             type="text"
             maxLength={20}
-            defaultValue={fields[index].unit || ''}
+            defaultValue={(fields[index] as InvoiceService).unit || ''}
             variant="bordered"
             {...register(`services.${index}.unit`)}
             isInvalid={!!errors.services?.[index]?.unit}
@@ -143,7 +143,9 @@ const InvoiceServicesTable = ({
           <Input
             aria-label={t('a11y.quantity_label')}
             type="number"
-            defaultValue={fields[index].quantity?.toString() || ''}
+            defaultValue={
+              (fields[index] as InvoiceService).quantity?.toString() || ''
+            }
             variant="bordered"
             {...register(`services.${index}.quantity`)}
             isInvalid={!!errors.services?.[index]?.quantity}
@@ -155,7 +157,9 @@ const InvoiceServicesTable = ({
           <Input
             aria-label={t('a11y.amount_label')}
             type="number"
-            defaultValue={fields[index].amount?.toString() || ''}
+            defaultValue={
+              (fields[index] as InvoiceService).amount?.toString() || ''
+            }
             variant="bordered"
             {...register(`services.${index}.amount`)}
             isInvalid={!!errors.services?.[index]?.amount}

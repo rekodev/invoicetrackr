@@ -14,20 +14,20 @@ import {
   updateUserProfilePicture,
   updateUserSelectedBankAccount
 } from '../controllers/user';
-import { userSchema } from '../types/user';
-import { messageResponseSchema } from '../types/response';
+import { userBodySchema } from '@invoicetrackr/types';
+import { messageResponseSchema } from '@invoicetrackr/types';
 import { preValidateFileAndFields } from '../utils/multipart';
 import { authMiddleware } from '../middleware/auth';
 import {
   passwordSchema,
   loginPasswordSchema,
   currentPasswordSchema
-} from '../types/common';
+} from '@invoicetrackr/types';
 
 export const getUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
-      200: z.object({ user: userSchema })
+      200: z.object({ user: userBodySchema })
     }
   },
   preHandler: authMiddleware,
@@ -41,7 +41,7 @@ export const loginUserOptions: RouteShorthandOptionsWithHandler = {
       password: loginPasswordSchema
     }),
     response: {
-      200: { user: userSchema }
+      200: { user: userBodySchema }
     }
   },
   handler: loginUser
@@ -71,7 +71,7 @@ export const postUserOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: userSchema.pick({
+    body: userBodySchema.pick({
       name: true,
       businessType: true,
       businessNumber: true,
@@ -82,7 +82,7 @@ export const updateUserOptions: RouteShorthandOptionsWithHandler = {
     response: {
       200: z.intersection(
         z.object({
-          user: userSchema.omit({
+          user: userBodySchema.omit({
             password: true,
             stripeCustomerId: true,
             stripeSubscriptionId: true

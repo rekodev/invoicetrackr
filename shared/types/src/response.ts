@@ -4,4 +4,4 @@ export const messageResponseSchema = z.object({
   message: z.string()
 });
 
-export type MessageResponseType = z.infer<typeof messageResponseSchema>;
+export type MessageResponse = z.infer<typeof messageResponseSchema>;

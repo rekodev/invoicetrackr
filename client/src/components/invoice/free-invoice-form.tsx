@@ -213,7 +213,7 @@ const FreeInvoiceForm = () => {
         signature={senderSignature}
         onSignatureChange={handleSignatureChange}
         isInvalid={!!errors.senderSignature}
-        errorMessage={errors.senderSignature?.message}
+        errorMessage={errors.senderSignature?.message as string}
       />
     </div>
   );
@@ -302,7 +302,7 @@ const FreeInvoiceForm = () => {
       <InvoiceModal
         invoiceData={{
           ...getValues(),
-          totalAmount: calculateServiceTotal(getValues('services'))
+          totalAmount: calculateServiceTotal(getValues('services')).toString()
         }}
         currency="usd"
         language="en"
