@@ -11,6 +11,7 @@
     "lint": "pnpm exec eslint ."
   },
   "dependencies": {
+    "@invoicetrackr/types": "workspace:*",
     "@heroicons/react": "^2.2.0",
     "@heroui/react": "^2.8.4",
     "@hookform/resolvers": "^5.2.2",
@@ -28,8 +29,7 @@
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.66.0",
-    "react-signature-canvas": "^1.1.0-alpha.1",
-    "zod": "^4.1.12"
+    "react-signature-canvas": "^1.1.0-alpha.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -44,11 +44,5 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.0.2",
-      "@types/react-dom": "19.0.2"
-    }
   }
 }

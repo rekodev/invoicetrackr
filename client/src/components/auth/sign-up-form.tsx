@@ -63,7 +63,6 @@ export default function SignUpForm() {
             labelPlacement="outside"
             variant="faded"
             id="email"
-            type="email"
             name="email"
             label={t('email')}
             placeholder={t('email_placeholder')}

@@ -1,4 +1,4 @@
-import NextAuth, { DefaultSession } from 'next-auth';
+import { DefaultSession } from 'next-auth';
 
 import { Currency } from './currency';
 
@@ -24,6 +24,7 @@ declare module 'next-auth' {
     isSubscriptionActive?: boolean;
   }
 
+  // eslint-disable-next-line no-unused-vars
   interface Session {
     user: User & DefaultSession['user'];
     accessToken: string;

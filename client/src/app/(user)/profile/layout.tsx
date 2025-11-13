@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 import { unauthorized } from 'next/navigation';
 
-import { getUser } from '@/api/user';
-import { auth } from '@/auth';
 import UserNavCard from '@/components/profile/user-nav-card';
+import { auth } from '@/auth';
+import { getUser } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
 export default async function ProfilePageLayout({

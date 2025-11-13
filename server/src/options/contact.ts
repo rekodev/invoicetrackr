@@ -1,26 +1,17 @@
 import { RouteShorthandOptionsWithHandler } from 'fastify';
-import { Type } from '@sinclair/typebox';
+import { postContactResponseSchema } from '@invoicetrackr/types';
+import z from 'zod/v4';
 
 import { postContactMessage } from '../controllers/contact';
-import { MessageResponse } from '../types/response';
 
 export const postContactMessageOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: Type.Object({
-      email: Type.String({
-        format: 'email',
-        maxLength: 255,
-        minLength: 5,
-        errorMessage: 'validation.contact.email'
-      }),
-      message: Type.String({
-        minLength: 1,
-        maxLength: 5000,
-        errorMessage: 'validation.contact.message'
-      })
+    body: z.object({
+      email: z.string().email('validation.contact.email').max(255).min(5),
+      message: z.string().min(1, 'validation.contact.message').max(5000)
     }),
     response: {
-      200: MessageResponse
+      201: postContactResponseSchema
     }
   },
   handler: postContactMessage

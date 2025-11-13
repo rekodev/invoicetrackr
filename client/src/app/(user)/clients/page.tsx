@@ -1,6 +1,6 @@
-import { getClients } from '@/api/client';
-import { auth } from '@/auth';
 import ClientSection from '@/components/client/client-section';
+import { auth } from '@/auth';
+import { getClients } from '@/api/client';
 import { isResponseError } from '@/lib/utils/error';
 
 const ClientsPage = async () => {

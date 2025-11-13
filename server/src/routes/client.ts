@@ -5,11 +5,11 @@ import {
 } from 'fastify';
 
 import {
-  getClientsOptions,
+  deleteClientOptions,
   getClientOptions,
+  getClientsOptions,
   postClientOptions,
-  updateClientOptions,
-  deleteClientOptions
+  updateClientOptions
 } from '../options/client';
 
 const clientRoutes = (

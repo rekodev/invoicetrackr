@@ -68,7 +68,7 @@ export function numberToWordsLt(n: number): string {
   let group = 0;
 
   while (n > 0) {
-    let currentGroup = n % 1000;
+    const currentGroup = n % 1000;
 
     if (currentGroup !== 0) {
       let groupWords = convertHundredsLt(currentGroup);

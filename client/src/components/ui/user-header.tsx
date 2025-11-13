@@ -26,7 +26,7 @@ import {
   INVOICES_PAGE,
   PERSONAL_INFORMATION_PAGE
 } from '@/lib/constants/pages';
-import { UserModel } from '@/lib/types/models/user';
+import { User } from '@invoicetrackr/types';
 import { logOutAction } from '@/lib/actions';
 
 import LanguageSwitcher from './language-switcher';
@@ -42,7 +42,7 @@ const navbarItems = [
 ];
 
 type Props = {
-  user: UserModel;
+  user: User;
 };
 
 export default function UserHeader({ user }: Props) {

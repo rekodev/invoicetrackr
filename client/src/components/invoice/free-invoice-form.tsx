@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { HOME_PAGE } from '@/lib/constants/pages';
-import { InvoiceModel } from '@/lib/types/models/invoice';
+import { InvoiceBody } from '@invoicetrackr/types';
 import { calculateServiceTotal } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/format-date';
 
@@ -19,7 +19,7 @@ import SignaturePad from '../signature-pad';
 const FreeInvoiceForm = () => {
   const t = useTranslations('components.invoice_form');
   const router = useRouter();
-  const methods = useForm<InvoiceModel>({
+  const methods = useForm<InvoiceBody>({
     defaultValues: {
       services: [{ amount: 0, quantity: 0, description: '', unit: '' }]
     }
@@ -213,7 +213,7 @@ const FreeInvoiceForm = () => {
         signature={senderSignature}
         onSignatureChange={handleSignatureChange}
         isInvalid={!!errors.senderSignature}
-        errorMessage={errors.senderSignature?.message}
+        errorMessage={errors.senderSignature?.message as string}
       />
     </div>
   );
@@ -302,7 +302,7 @@ const FreeInvoiceForm = () => {
       <InvoiceModal
         invoiceData={{
           ...getValues(),
-          totalAmount: calculateServiceTotal(getValues('services'))
+          totalAmount: calculateServiceTotal(getValues('services')).toString()
         }}
         currency="usd"
         language="en"

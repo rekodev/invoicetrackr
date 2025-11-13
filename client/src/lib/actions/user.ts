@@ -14,9 +14,9 @@ import {
   CHANGE_PASSWORD_PAGE,
   PERSONAL_INFORMATION_PAGE
 } from '../constants/pages';
-import { ActionResponseModel } from '../types/response/action';
+import { ActionResponseModel } from '../types/action';
 import { Currency } from '../types/currency';
-import { UserModel } from '../types/models/user';
+import { User } from '@invoicetrackr/types';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 import { updateSessionAction } from '../actions';
@@ -25,7 +25,7 @@ export async function updateUserAction({
   user,
   signature
 }: {
-  user: UserModel;
+  user: User;
   signature: string | File | undefined;
 }): Promise<ActionResponseModel> {
   const response = await updateUser(user.id!, {

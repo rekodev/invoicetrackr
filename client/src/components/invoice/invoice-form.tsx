@@ -16,12 +16,13 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import {
-  BankingInformationFormModel,
-  UserModel
-} from '@/lib/types/models/user';
-import { ClientModel } from '@/lib/types/models/client';
+  BankAccountBody,
+  ClientBody,
+  InvoiceBody,
+  User
+} from '@invoicetrackr/types';
+import { Client } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
-import { InvoiceModel } from '@/lib/types/models/invoice';
 import { formatDate } from '@/lib/utils/format-date';
 import { statusOptions } from '@/lib/constants/table';
 import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
@@ -33,15 +34,16 @@ import InvoiceServicesTable from './invoice-services-table';
 import SignaturePad from '../signature-pad';
 
 type Props = {
-  user: UserModel;
-  clients: Array<ClientModel>;
-  bankingInformationEntries: Array<BankingInformationFormModel>;
-  invoiceData?: InvoiceModel;
+  user: User;
+  clients: Array<ClientBody>;
+  bankingInformationEntries: Array<BankAccountBody>;
+  invoiceData?: InvoiceBody;
   currency: Currency;
   latestInvoiceId?: string;
 };
 
-const INITIAL_RECEIVER_DATA: ClientModel = {
+const INITIAL_RECEIVER_DATA: Client = {
+  id: 0,
   businessNumber: '',
   businessType: 'business',
   address: '',
@@ -59,7 +61,7 @@ const InvoiceForm = ({
   latestInvoiceId
 }: Props) => {
   const t = useTranslations('components.invoice_form');
-  const methods = useForm<InvoiceModel>({
+  const methods = useForm<InvoiceBody>({
     defaultValues: invoiceData || {
       sender: user,
       receiver: INITIAL_RECEIVER_DATA,
@@ -98,7 +100,7 @@ const InvoiceForm = ({
     setIsReceiverModalOpen(false);
   };
 
-  const handleSelectReceiver = (receiver: ClientModel) => {
+  const handleSelectReceiver = (receiver: ClientBody) => {
     setValue('receiver.name', receiver.name);
     setValue('receiver.businessNumber', receiver.businessNumber);
     setValue('receiver.address', receiver.address);
@@ -106,9 +108,7 @@ const InvoiceForm = ({
     setIsReceiverModalOpen(false);
   };
 
-  const handleBankAccountSelect = (
-    bankAccount: BankingInformationFormModel
-  ) => {
+  const handleBankAccountSelect = (bankAccount: BankAccountBody) => {
     setValue('bankingInformation.name', bankAccount.name);
     setValue('bankingInformation.code', bankAccount.code);
     setValue('bankingInformation.accountNumber', bankAccount.accountNumber);
@@ -122,7 +122,7 @@ const InvoiceForm = ({
   };
 
   const handleNextInvoiceIdSelect = (
-    field: ControllerRenderProps<InvoiceModel, 'invoiceId'>
+    field: ControllerRenderProps<InvoiceBody, 'invoiceId'>
   ) => {
     if (!latestInvoiceId) return;
 
@@ -146,7 +146,6 @@ const InvoiceForm = ({
             label={t('labels.sender_name')}
             size="sm"
             aria-label={t('a11y.sender_name_label')}
-            type="text"
             maxLength={20}
             variant="bordered"
             {...register('sender.name')}
@@ -157,7 +156,6 @@ const InvoiceForm = ({
             label={t('labels.sender_business_number')}
             size="sm"
             aria-label={t('a11y.sender_business_number_label')}
-            type="text"
             maxLength={20}
             variant="bordered"
             {...register('sender.businessNumber')}
@@ -168,7 +166,6 @@ const InvoiceForm = ({
             label={t('labels.sender_address')}
             size="sm"
             aria-label={t('a11y.sender_address_label')}
-            type="text"
             maxLength={20}
             variant="bordered"
             {...register('sender.address')}
@@ -179,7 +176,6 @@ const InvoiceForm = ({
             label={t('labels.sender_email')}
             size="sm"
             aria-label={t('a11y.sender_email_label')}
-            type="text"
             maxLength={20}
             variant="bordered"
             {...register('sender.email')}
@@ -361,7 +357,7 @@ const InvoiceForm = ({
         profileSignature={user?.signature as string | undefined}
         onSignatureChange={handleSignatureChange}
         isInvalid={!!errors.senderSignature}
-        errorMessage={errors.senderSignature?.message}
+        errorMessage={errors.senderSignature?.message as string}
         isChipVisible={user?.signature !== senderSignature}
       />
     </div>

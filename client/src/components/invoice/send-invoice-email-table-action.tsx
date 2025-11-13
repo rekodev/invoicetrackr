@@ -20,14 +20,14 @@ import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
-import { InvoiceModel } from '@/lib/types/models/invoice';
+import { InvoiceBody } from '@invoicetrackr/types';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { isResponseError } from '@/lib/utils/error';
 import { sendInvoiceEmail } from '@/api/invoice';
 
 type Props = {
   userId: number;
-  invoice: InvoiceModel;
+  invoice: InvoiceBody;
   currency: Currency;
   blob: Blob | null;
 };
@@ -68,7 +68,7 @@ export default function SendInvoiceEmailTableAction({
   const onSubmit = (data: SendInvoiceForm) =>
     startTransition(async () => {
       const response = await sendInvoiceEmail({
-        id: invoice.id,
+        id: Number(invoice.id),
         userId,
         blob,
         invoiceId: invoice.invoiceId,
@@ -124,7 +124,6 @@ export default function SendInvoiceEmailTableAction({
                 {...register('recipientEmail')}
                 variant="faded"
                 label={t('recipient_email')}
-                type="email"
                 placeholder={t('recipient_placeholder')}
                 isInvalid={!!errors.recipientEmail}
                 errorMessage={errors.recipientEmail?.message}

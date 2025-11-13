@@ -19,7 +19,7 @@ import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
-import { ActionResponseModel } from '@/lib/types/response/action';
+import { ActionResponseModel } from '@/lib/types/action';
 import { resetPasswordAction } from '@/lib/actions';
 
 export default function ForgotPasswordForm() {
@@ -44,7 +44,6 @@ export default function ForgotPasswordForm() {
             labelPlacement="outside"
             variant="faded"
             id="email"
-            type="email"
             name="email"
             label={t('email')}
             placeholder={t('email_placeholder')}

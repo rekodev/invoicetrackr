@@ -1,11 +1,11 @@
 'use server';
 
+import { ClientBody } from '@invoicetrackr/types';
 import { revalidatePath } from 'next/cache';
 
 import { addClient, deleteClient, updateClient } from '@/api/client';
 
-import { ClientFormData, ClientModel } from '../types/models/client';
-import { ActionResponseModel } from '../types/response/action';
+import { ActionResponseModel } from '../types/action';
 import { CLIENTS_PAGE } from '../constants/pages';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
@@ -15,7 +15,7 @@ export const addClientAction = async ({
   clientData
 }: {
   userId: number;
-  clientData: ClientFormData;
+  clientData: ClientBody;
 }): Promise<ActionResponseModel> => {
   const response = await addClient(userId, clientData);
 
@@ -37,7 +37,7 @@ export const updateClientAction = async ({
   clientData
 }: {
   userId: number;
-  clientData: ClientModel;
+  clientData: ClientBody;
 }): Promise<ActionResponseModel> => {
   const response = await updateClient(userId, clientData);
 

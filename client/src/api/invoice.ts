@@ -1,43 +1,40 @@
 import {
-  AddInvoiceResp,
-  DeleteInvoiceResp,
-  GetInvoiceResp,
-  GetInvoicesResp,
-  GetInvoicesRevenueResp,
-  GetInvoicesTotalAmountResp,
-  GetLatestInvoicesResp,
-  SendInvoiceEmailResp,
-  UpdateInvoiceResp,
-  UpdateInvoiceStatusResp
-} from '@/lib/types/response/invoice';
-import { InvoiceFormData, InvoiceModel } from '@/lib/types/models/invoice';
+  AddInvoiceResponse,
+  DeleteInvoiceResponse,
+  GetInvoiceResponse,
+  GetInvoicesResponse,
+  GetInvoicesRevenueResponse,
+  GetInvoicesTotalAmountResponse,
+  GetLatestInvoicesResponse,
+  SendInvoiceEmailResponse,
+  UpdateInvoiceResponse,
+  UpdateInvoiceStatusResponse
+} from '@invoicetrackr/types';
+import { InvoiceBody } from '@invoicetrackr/types';
 
 import api from './api-instance';
 
 export const getInvoice = async (userId: number, invoiceId: number) =>
-  await api.get<GetInvoiceResp>(`/api/${userId}/invoices/${invoiceId}`);
+  await api.get<GetInvoiceResponse>(`/api/${userId}/invoices/${invoiceId}`);
 
 export const getInvoices = async (userId: number) =>
-  await api.get<GetInvoicesResp>(`/api/${userId}/invoices`);
+  await api.get<GetInvoicesResponse>(`/api/${userId}/invoices`);
 
 export const getInvoicesTotalAmount = async (userId: number) =>
-  await api.get<GetInvoicesTotalAmountResp>(
+  await api.get<GetInvoicesTotalAmountResponse>(
     `/api/${userId}/invoices/total-amount`
   );
 
 export const getInvoicesRevenue = async (userId: number) =>
-  await api.get<GetInvoicesRevenueResp>(`/api/${userId}/invoices/revenue`);
+  await api.get<GetInvoicesRevenueResponse>(`/api/${userId}/invoices/revenue`);
 
 export const getLatestInvoices = async (userId: number) =>
-  await api.get<GetLatestInvoicesResp>(`/api/${userId}/invoices/latest`);
+  await api.get<GetLatestInvoicesResponse>(`/api/${userId}/invoices/latest`);
 
-export const addInvoice = async (
-  userId: number,
-  invoiceData: InvoiceFormData
-) => {
+export const addInvoice = async (userId: number, invoiceData: InvoiceBody) => {
   const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
 
-  return await api.post<AddInvoiceResp>(
+  return await api.post<AddInvoiceResponse>(
     `/api/${userId}/invoices`,
     invoiceData,
     {
@@ -52,11 +49,11 @@ export const addInvoice = async (
 
 export const updateInvoice = async (
   userId: number,
-  invoiceData: InvoiceModel
+  invoiceData: InvoiceBody
 ) => {
   const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
 
-  return await api.put<UpdateInvoiceResp>(
+  return await api.put<UpdateInvoiceResponse>(
     `/api/${userId}/invoices/${invoiceData.id}`,
     invoiceData,
     {
@@ -78,13 +75,15 @@ export const updateInvoiceStatus = async ({
   invoiceId: number;
   newStatus: 'paid' | 'pending' | 'canceled';
 }) =>
-  api.put<UpdateInvoiceStatusResp>(
+  api.put<UpdateInvoiceStatusResponse>(
     `/api/${userId}/invoices/${invoiceId}/status`,
     { status: newStatus }
   );
 
 export const deleteInvoice = async (userId: number, invoiceId: number) =>
-  await api.delete<DeleteInvoiceResp>(`/api/${userId}/invoices/${invoiceId}`);
+  await api.delete<DeleteInvoiceResponse>(
+    `/api/${userId}/invoices/${invoiceId}`
+  );
 
 export const sendInvoiceEmail = async ({
   id,
@@ -116,7 +115,7 @@ export const sendInvoiceEmail = async ({
     );
   }
 
-  return await api.post<SendInvoiceEmailResp>(
+  return await api.post<SendInvoiceEmailResponse>(
     `/api/${userId}/invoices/${id}/send-email`,
     formData,
     {

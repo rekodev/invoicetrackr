@@ -1,14 +1,17 @@
 {
   "name": "@invoicetrackr/server",
   "version": "0.0.1",
+  "type": "module",
   "description": "The backend for rekodev's InvoiceTrackr app",
   "main": "dist/app.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/app.js",
-    "dev": "tsc && nodemon src/app.ts",
+    "dev": "tsx watch src/app.ts",
     "generate": "drizzle-kit generate",
-    "migrate": "drizzle-kit migrate"
+    "migrate": "drizzle-kit migrate",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
   },
   "author": "rekodev",
   "license": "ISC",
@@ -18,9 +21,8 @@
     "@fastify/error": "^4.2.0",
     "@fastify/multipart": "^9.3.0",
     "@fastify/rate-limit": "^10.3.0",
-    "@fastify/type-provider-typebox": "^6.1.0",
+    "@invoicetrackr/types": "workspace:*",
     "@neondatabase/serverless": "^1.0.2",
-    "@sinclair/typebox": "^0.34.41",
     "ajv-errors": "^3.0.0",
     "cloudinary": "^2.8.0",
     "dotenv": "^16.4.7",
@@ -28,6 +30,7 @@
     "fastify": "^5.6.2",
     "fastify-i18n": "^3.0.0",
     "fastify-plugin": "^5.1.0",
+    "fastify-type-provider-zod": "^6.1.0",
     "pg": "^8.16.3",
     "resend": "^6.4.2",
     "stripe": "^19.3.1",

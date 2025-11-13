@@ -12,19 +12,19 @@ import {
   TableRow,
   Tooltip
 } from '@heroui/react';
+import { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
 import { Key, useEffect, useMemo } from 'react';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 
-import { InvoiceFormData, InvoiceService } from '@/lib/types/models/invoice';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
 const INITIAL_GRAND_TOTAL = 0;
 
 type Props = {
-  invoiceServices?: Array<InvoiceService>;
+  invoiceServices?: Array<InvoiceServiceBody>;
   isInvalid?: boolean;
   errorMessage?: string;
   currency: Currency;
@@ -43,7 +43,7 @@ const InvoiceServicesTable = ({
     watch,
     clearErrors,
     formState: { errors }
-  } = useFormContext<InvoiceFormData>();
+  } = useFormContext<InvoiceBody>();
   const { fields, append, remove, replace } = useFieldArray({
     name: 'services',
     control
@@ -80,7 +80,7 @@ const InvoiceServicesTable = ({
   }, [invoiceServices, replace]);
 
   const handleAddService = () => {
-    append({ amount: 0, description: '', quantity: 0, unit: '' });
+    append({ id: 0, amount: 0, description: '', quantity: 0, unit: '' });
 
     // Clear errors if there are no services
     if (!serviceAmounts.length) clearErrors('services');
@@ -117,7 +117,9 @@ const InvoiceServicesTable = ({
             aria-label={t('a11y.description_label')}
             type="text"
             maxLength={200}
-            defaultValue={fields[index].description || ''}
+            defaultValue={
+              (fields[index] as InvoiceServiceBody).description || ''
+            }
             variant="bordered"
             {...register(`services.${index}.description`)}
             isInvalid={!!errors.services?.[index]?.description}
@@ -131,7 +133,7 @@ const InvoiceServicesTable = ({
             aria-label={t('a11y.unit_label')}
             type="text"
             maxLength={20}
-            defaultValue={fields[index].unit || ''}
+            defaultValue={(fields[index] as InvoiceServiceBody).unit || ''}
             variant="bordered"
             {...register(`services.${index}.unit`)}
             isInvalid={!!errors.services?.[index]?.unit}
@@ -143,7 +145,9 @@ const InvoiceServicesTable = ({
           <Input
             aria-label={t('a11y.quantity_label')}
             type="number"
-            defaultValue={fields[index].quantity?.toString() || ''}
+            defaultValue={
+              (fields[index] as InvoiceServiceBody).quantity?.toString() || ''
+            }
             variant="bordered"
             {...register(`services.${index}.quantity`)}
             isInvalid={!!errors.services?.[index]?.quantity}
@@ -155,7 +159,9 @@ const InvoiceServicesTable = ({
           <Input
             aria-label={t('a11y.amount_label')}
             type="number"
-            defaultValue={fields[index].amount?.toString() || ''}
+            defaultValue={
+              (fields[index] as InvoiceServiceBody).amount?.toString() || ''
+            }
             variant="bordered"
             {...register(`services.${index}.amount`)}
             isInvalid={!!errors.services?.[index]?.amount}

@@ -1,11 +1,11 @@
-import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { InvoiceBody } from '@invoicetrackr/types';
+import { useRouter } from 'next/navigation';
 
 import { EDIT_INVOICE_PAGE } from '@/lib/constants/pages';
-import { InvoiceModel } from '@/lib/types/models/invoice';
 
 type Props = {
-  setCurrentInvoice: Dispatch<SetStateAction<InvoiceModel | undefined>>;
+  setCurrentInvoice: Dispatch<SetStateAction<InvoiceBody | undefined>>;
   onOpen: () => void;
 };
 
@@ -18,7 +18,7 @@ const useInvoiceTableActionHandlers = ({
     useState(false);
 
   const handleViewInvoice = useCallback(
-    (invoice: InvoiceModel) => {
+    (invoice: InvoiceBody) => {
       setCurrentInvoice(invoice);
       onOpen();
     },
@@ -26,9 +26,9 @@ const useInvoiceTableActionHandlers = ({
   );
 
   const handleEditInvoice = useCallback(
-    (invoice: InvoiceModel) => {
+    (invoice: InvoiceBody) => {
       setCurrentInvoice(invoice);
-      router.push(EDIT_INVOICE_PAGE(invoice.id));
+      router.push(EDIT_INVOICE_PAGE(Number(invoice.id)));
     },
     [router, setCurrentInvoice]
   );
@@ -38,7 +38,7 @@ const useInvoiceTableActionHandlers = ({
   };
 
   const handleDeleteInvoice = useCallback(
-    (invoice: InvoiceModel) => {
+    (invoice: InvoiceBody) => {
       setCurrentInvoice(invoice);
       setIsDeleteInvoiceModalOpen(true);
     },

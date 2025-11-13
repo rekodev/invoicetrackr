@@ -15,15 +15,20 @@ import {
   useStripe
 } from '@stripe/react-stripe-js';
 import { FormEvent, useState } from 'react';
+import { User } from '@invoicetrackr/types';
 import { loadStripe } from '@stripe/stripe-js';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
 
 import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
-import { createCustomer, createSubscription, getStripeCustomerId } from '@/api/payment';
+import {
+  createCustomer,
+  createSubscription,
+  getStripeCustomerId
+} from '@/api/payment';
+import { Currency } from '@/lib/types/currency';
 import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
 import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
-import { UserModel } from '@/lib/types/models/user';
 import { isResponseError } from '@/lib/utils/error';
 import { updateSessionAction } from '@/lib/actions';
 
@@ -36,10 +41,10 @@ if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
 type Props = {
-  user: UserModel | undefined;
+  user: User | undefined;
 };
 
-function PaymentFormInsideElements({ user }: { user: UserModel }) {
+function PaymentFormInsideElements({ user }: { user: User }) {
   const t = useTranslations('components.payment_form');
   const stripe = useStripe();
   const elements = useElements();
@@ -81,7 +86,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
       } else {
         const createCustomerResp = await createCustomer({
           userId: user.id,
-          email: user.email,
+          email: user.email || '',
           name: user.name
         });
 
@@ -168,7 +173,7 @@ function PaymentFormInsideElements({ user }: { user: UserModel }) {
           {isLoading
             ? t('processing')
             : t('pay', {
-                amount: `${getCurrencySymbol(user.currency)}${SUBSCRIPTION_AMOUNT}`
+                amount: `${getCurrencySymbol(user.currency as Currency)}${SUBSCRIPTION_AMOUNT}`
               })}
         </Button>
       </CardFooter>

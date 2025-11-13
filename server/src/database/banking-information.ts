@@ -1,8 +1,8 @@
 import { and, eq } from 'drizzle-orm';
 
-import { BankAccountModel } from '../types/banking-information';
-import { db } from './db';
+import { BankAccountBody } from '@invoicetrackr/types';
 import { bankingInformationTable } from './schema';
+import { db } from './db';
 
 export const findBankAccountByAccountNumber = async (
   userId: number,
@@ -59,7 +59,7 @@ export const getBankAccountFromDb = async (
 
 export const insertBankAccountInDb = async (
   userId: number,
-  { name, accountNumber, code }: Omit<BankAccountModel, 'id'>
+  { name, accountNumber, code }: Omit<BankAccountBody, 'id'>
 ) => {
   const bankAccounts = await db
     .insert(bankingInformationTable)
@@ -82,7 +82,7 @@ export const insertBankAccountInDb = async (
 export const updateBankAccountInDb = async (
   userId: number,
   bankAccountId: number,
-  { name, accountNumber, code }: Omit<BankAccountModel, 'id'>
+  { name, accountNumber, code }: Omit<BankAccountBody, 'id'>
 ) => {
   const bankAccounts = await db
     .update(bankingInformationTable)

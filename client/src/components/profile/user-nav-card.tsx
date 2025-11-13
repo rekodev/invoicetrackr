@@ -1,6 +1,5 @@
 'use client';
 
-import { CameraIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import {
   Avatar,
   Card,
@@ -11,17 +10,18 @@ import {
   Tabs,
   addToast
 } from '@heroui/react';
+import { CameraIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { useRef, useState, useTransition } from 'react';
 import Link from 'next/link';
+import { User } from '@invoicetrackr/types';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useRef, useState, useTransition } from 'react';
 
-import { updateUserProfilePictureAction } from '@/lib/actions/user';
 import { profileMenuTabs } from '@/lib/constants/profile';
-import { UserModel } from '@/lib/types/models/user';
+import { updateUserProfilePictureAction } from '@/lib/actions/user';
 
 type Props = {
-  user: UserModel;
+  user: User;
 };
 
 const UserCard = ({ user }: Props) => {

@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
+import { BadRequestError, NotFoundError } from '../utils/error';
 import {
   deleteClientFromDb,
   findClientByEmail,
@@ -9,8 +10,7 @@ import {
   insertClientInDb,
   updateClientInDb
 } from '../database/client';
-import { ClientModel } from '../types/client';
-import { BadRequestError, NotFoundError } from '../utils/error';
+import { ClientBody } from '@invoicetrackr/types';
 
 export const getClients = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -38,14 +38,14 @@ export const getClient = async (
 };
 
 export const postClient = async (
-  req: FastifyRequest<{ Params: { userId: number }; Body: ClientModel }>,
+  req: FastifyRequest<{ Params: { userId: number }; Body: ClientBody }>,
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const clientData = req.body;
   const i18n = await useI18n(req);
 
-  const foundClient = await findClientByEmail(userId, clientData.email);
+  const foundClient = await findClientByEmail(userId, clientData.email || '');
 
   if (foundClient)
     throw new BadRequestError(i18n.t('error.client.alreadyExists'));
@@ -64,7 +64,7 @@ export const postClient = async (
 export const updateClient = async (
   req: FastifyRequest<{
     Params: { userId: number; id: number };
-    Body: ClientModel;
+    Body: ClientBody;
   }>,
   reply: FastifyReply
 ) => {

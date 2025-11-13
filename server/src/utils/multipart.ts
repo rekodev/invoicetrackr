@@ -18,7 +18,7 @@ const parseNestedKey = (
   if (keys.length === 2) {
     const parentKey = keys[0];
     const childKey = keys[1];
-    let entityFieldObject = entity[`${parentKey}`];
+    const entityFieldObject = entity[`${parentKey}`];
 
     if (entityFieldObject) {
       entity[`${parentKey}`]![`${childKey}`] = value;

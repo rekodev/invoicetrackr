@@ -6,6 +6,12 @@ on:
 jobs:
   cache-and-install:
     runs-on: ubuntu-latest
+    
+    env:
+      BACKEND_URL: ${{ secrets.BACKEND_URL }}
+      SERVER_PORT: ${{ secrets.SERVER_PORT }}
+      NEXT_PUBLIC_STRIPE_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLIC_KEY }}
+      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
 
     steps:
       - name: Checkout
@@ -25,16 +31,31 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Run TypeScript Compiler (types)
+        run: |
+          cd shared/types
+          pnpm tsc
+
+      - name: Run Build (types)
+        run: |
+          cd shared/types
+          pnpm build
+
       # Steps for the Client Folder
       - name: Run TypeScript Compiler (client)
         run: |
           cd client
           pnpm tsc
 
-      - name: Run Linter (client)
+      - name: Run ESLint (client)
         run: |
           cd client
           pnpm exec eslint .
+
+      - name: Run Build (client)
+        run: |
+          cd client
+          pnpm build
 
       #   - name: Run Tests (client)
       #     run: |
@@ -47,10 +68,15 @@ jobs:
           cd server
           pnpm tsc
 
-    #   - name: Run Linter (server)
-    #     run: |
-    #       cd server
-    #       pnpm lint
+      - name: Run ESLint (server)
+        run: |
+          cd server
+          pnpm lint
+
+      - name: Run Build (server)
+        run: |
+          cd server
+          pnpm build
 
     #   - name: Run Tests (server)
     #     run: |

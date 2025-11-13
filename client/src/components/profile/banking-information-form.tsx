@@ -25,7 +25,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
-import { BankingInformationFormModel } from '@/lib/types/models/user';
+import { BankAccount } from '@invoicetrackr/types';
 import { isResponseError } from '@/lib/utils/error';
 import { updateSessionAction } from '@/lib/actions';
 import { updateUserSelectedBankAccount } from '@/api/user';
@@ -36,7 +36,7 @@ import EmptyState from '../ui/empty-state';
 
 type Props = {
   user: User;
-  bankAccounts: Array<BankingInformationFormModel> | undefined;
+  bankAccounts: Array<Omit<BankAccount, 'id'> & { id?: number }> | undefined;
 };
 
 const BankingInformationForm = ({ user, bankAccounts }: Props) => {
@@ -56,7 +56,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   );
 
   const [currentBankingInformation, setCurrentBankingInformation] =
-    useState<BankingInformationFormModel>();
+    useState<BankAccount>();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -91,12 +91,12 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
       router.refresh();
     });
 
-  const handleEdit = (bankAccount: BankingInformationFormModel) => {
+  const handleEdit = (bankAccount: BankAccount) => {
     setCurrentBankingInformation(bankAccount);
     onEditOpen();
   };
 
-  const handleTrashIconClick = (bankAccount: BankingInformationFormModel) => {
+  const handleTrashIconClick = (bankAccount: BankAccount) => {
     setCurrentBankingInformation(bankAccount);
     onOpen();
   };
@@ -106,7 +106,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     name,
     code,
     accountNumber
-  }: BankingInformationFormModel) => (
+  }: BankAccount) => (
     <Card key={id} className="col-span-2 lg:col-span-1">
       <CardBody className="flex flex-row items-center gap-2">
         <Radio color="secondary" value={String(id || 0)} />
@@ -168,7 +168,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
             const { id, name, code, accountNumber } = account;
 
             return renderBankingInformationCard({
-              id,
+              id: id || 0,
               name,
               code,
               accountNumber

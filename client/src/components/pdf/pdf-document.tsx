@@ -1,6 +1,11 @@
 'use client';
 
 import {
+  BankAccountBody,
+  InvoiceBody,
+  InvoiceServiceBody
+} from '@invoicetrackr/types';
+import {
   Document,
   Image as PDFImage,
   Page,
@@ -10,8 +15,6 @@ import {
 
 import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
 import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
-import { BankingInformationFormModel } from '@/lib/types/models/user';
-import { InvoiceModel } from '@/lib/types/models/invoice';
 import { amountToWords } from '@/lib/utils/amount-to-words';
 import { formatDate } from '@/lib/utils/format-date';
 
@@ -19,9 +22,9 @@ registerPdfFont();
 
 type Props = {
   t: any;
-  invoiceData: InvoiceModel;
+  invoiceData: InvoiceBody;
   senderSignatureImage: string;
-  bankAccount: BankingInformationFormModel | undefined;
+  bankAccount: BankAccountBody | undefined;
   currency: string;
   language: string;
 };
@@ -41,7 +44,7 @@ export default function PDFDocument({
   const series = splitId[0];
   const number = splitId[1];
 
-  const cents = Math.floor(totalAmount * 100) % 100;
+  const cents = Math.floor(Number(totalAmount) * 100) % 100;
 
   const renderBusinessNumberLabel = (party: 'sender' | 'receiver') =>
     invoiceData?.[party]?.businessType === 'business'
@@ -165,7 +168,7 @@ export default function PDFDocument({
           </View>
         </View>
 
-        {services.map((service, index) =>
+        {services.map((service: InvoiceServiceBody, index: number) =>
           renderTableRow(
             index,
             service.description,

@@ -1,9 +1,9 @@
 import {
-  CancelStripeSubscriptionResp,
-  CreateCustomerResp,
-  CreateSubscriptionResp,
-  GetStripeCustomerIdResp
-} from '@/lib/types/response/payment';
+  CancelStripeSubscriptionResponse,
+  CreateCustomerResponse,
+  CreateSubscriptionResponse,
+  GetStripeCustomerIdResponse
+} from '@invoicetrackr/types';
 
 import api from './api-instance';
 
@@ -16,20 +16,23 @@ export const createCustomer = async ({
   email: string;
   name: string;
 }) =>
-  await api.post<CreateCustomerResp>(`/api/${userId}/create-customer`, {
+  await api.post<CreateCustomerResponse>(`/api/${userId}/create-customer`, {
     email,
     name
   });
 
 export const createSubscription = async (userId: number, customerId: string) =>
-  await api.post<CreateSubscriptionResp>(`/api/${userId}/create-subscription`, {
-    customerId
-  });
+  await api.post<CreateSubscriptionResponse>(
+    `/api/${userId}/create-subscription`,
+    {
+      customerId
+    }
+  );
 
 export const getStripeCustomerId = async (userId: number) =>
-  await api.get<GetStripeCustomerIdResp>(`/api/${userId}/customer`);
+  await api.get<GetStripeCustomerIdResponse>(`/api/${userId}/customer`);
 
 export const cancelStripeSubscription = async (userId: number) =>
-  await api.put<CancelStripeSubscriptionResp>(
+  await api.put<CancelStripeSubscriptionResponse>(
     `/api/${userId}/cancel-subscription`
   );

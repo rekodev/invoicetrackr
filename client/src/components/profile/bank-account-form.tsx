@@ -1,9 +1,5 @@
 'use client';
 
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-
 import {
   Button,
   Card,
@@ -14,19 +10,18 @@ import {
   Input,
   addToast
 } from '@heroui/react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { BankAccountBody } from '@invoicetrackr/types';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
-import {
-  BankingInformationFormModel,
-  bankingInformationSchema
-} from '@/lib/types/models/user';
 import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 import { addBankingInformationAction } from '@/lib/actions/banking-information';
 
 type Props = {
   userId: number | undefined;
   userSelectedBankAccountId?: number;
-  defaultValues?: BankingInformationFormModel;
+  defaultValues?: BankAccountBody;
   onSuccess?: () => void;
   isUserOnboarding?: boolean;
 };
@@ -45,12 +40,11 @@ export default function BankAccountForm({
     handleSubmit,
     setError,
     formState: { isSubmitting, isDirty, errors }
-  } = useForm<BankingInformationFormModel>({
-    defaultValues,
-    resolver: zodResolver(bankingInformationSchema)
+  } = useForm<BankAccountBody>({
+    defaultValues
   });
 
-  const onSubmit: SubmitHandler<BankingInformationFormModel> = async (data) => {
+  const onSubmit: SubmitHandler<BankAccountBody> = async (data) => {
     if (!userId) return;
 
     const response = await addBankingInformationAction(
@@ -68,7 +62,7 @@ export default function BankAccountForm({
     if (!response.ok) {
       if (response.validationErrors) {
         Object.keys(response.validationErrors).map((key) => {
-          setError(key as keyof BankingInformationFormModel, {
+          setError(key as keyof BankAccountBody, {
             message: response.validationErrors?.[key]
           });
         });

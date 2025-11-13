@@ -1,8 +1,8 @@
 import { numberToWordsEn } from './en';
 import { numberToWordsLt } from './lt';
 
-export function amountToWords(amount: number, lang: string): string {
-  const whole = Math.floor(amount);
+export function amountToWords(amount: string, lang: string): string {
+  const whole = Math.floor(Number(amount));
   let wholeInWords = '';
 
   if (lang === 'en') {

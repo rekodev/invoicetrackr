@@ -1,4 +1,4 @@
-import { InvoiceService } from '../types/models/invoice';
+import { InvoiceServiceBody } from '@invoicetrackr/types';
 
 export const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -26,7 +26,7 @@ export const getDaysUntilDueDate = (date: string, dueDate: string) => {
   return diffDays;
 };
 
-export const calculateServiceTotal = (services: Array<InvoiceService>) =>
+export const calculateServiceTotal = (services: Array<InvoiceServiceBody>) =>
   services.reduce(
     (acc, currentValue) =>
       acc + Number(currentValue.amount * Number(currentValue.quantity)),

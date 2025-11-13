@@ -3,32 +3,30 @@
 import { AuthError, User } from 'next-auth';
 import { auth } from '@/auth';
 import { cookies } from 'next/headers';
-import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 
-import { createNewUserPassword, registerUser, resetUserPassword } from '@/api/user';
+import {
+  createNewUserPassword,
+  registerUser,
+  resetUserPassword
+} from '@/api/user';
 
 import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
 import { signIn, signOut, unstable_update } from '../auth';
-import { ActionResponseModel } from './types/response/action';
+import { ActionResponseModel } from './types/action';
 import { isResponseError } from './utils/error';
 
 export async function resetPasswordAction(
   _prevState: ActionResponseModel | undefined,
   email: string
 ): Promise<ActionResponseModel> {
-  try {
-    const response = await resetUserPassword({ email });
+  const response = await resetUserPassword({ email });
 
-    if (isResponseError(response)) {
-      return { ok: false, message: response.data.message };
-    }
-
-    return { ok: true, message: response.data.message };
-  } catch (error) {
-    const t = await getTranslations();
-    return { ok: false, message: t('general_error') };
+  if (isResponseError(response)) {
+    return { ok: false, message: response.data.message };
   }
+
+  return { ok: true, message: response.data.message };
 }
 
 export async function createNewPasswordAction(
@@ -44,23 +42,18 @@ export async function createNewPasswordAction(
 
   const { userId, newPassword, confirmedNewPassword, token } = rawFormData;
 
-  try {
-    const response = await createNewUserPassword({
-      userId: Number(userId),
-      newPassword,
-      confirmedNewPassword,
-      token
-    });
+  const response = await createNewUserPassword({
+    userId: Number(userId),
+    newPassword,
+    confirmedNewPassword,
+    token
+  });
 
-    if (isResponseError(response)) {
-      return { ok: false, message: response.data.message };
-    }
-
-    return { ok: true, message: response.data.message };
-  } catch {
-    const t = await getTranslations();
-    return { ok: false, message: t('general_error') };
+  if (isResponseError(response)) {
+    return { ok: false, message: response.data.message };
   }
+
+  return { ok: true, message: response.data.message };
 }
 
 export async function authenticateAction(

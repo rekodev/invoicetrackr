@@ -1,12 +1,17 @@
 {
   "name": "invoicetrackr",
   "version": "1.0.0",
+  "type": "module",
   "description": "InvoiceTrackr App",
   "main": "index.js",
   "scripts": {
     "client": "pnpm --filter @invoicetrackr/client",
     "server": "pnpm --filter @invoicetrackr/server",
-    "dev": "concurrently \"pnpm run server dev\" \"pnpm run client dev:turbo\""
+    "types": "pnpm --filter @invoicetrackr/types",
+    "dev": "concurrently \"pnpm run types dev\" \"pnpm run server dev\" \"pnpm run client dev:turbo\"",
+    "build": "pnpm run types build && pnpm run server build && pnpm run client build",
+    "lint": "pnpm run client lint && pnpm run server lint",
+    "lint:fix": "pnpm run client lint:fix && pnpm run server lint:fix"
   },
   "keywords": [],
   "author": "rekodev",
@@ -20,13 +25,23 @@
     "tabWidth": 2,
     "trailingComma": "none"
   },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.0.2",
+      "@types/react-dom": "19.0.2"
+    }
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
-    "next-auth": "5.0.0-beta.30"
+    "next-auth": "5.0.0-beta.30",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/node": "^22.13.14",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
     "concurrently": "^9.1.0",
+    "eslint": "^9.23.0",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "typescript": "^5.8.2"

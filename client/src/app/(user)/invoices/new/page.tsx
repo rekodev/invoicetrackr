@@ -1,11 +1,12 @@
+import { unauthorized } from 'next/navigation';
+
+import InvoiceForm from '@/components/invoice/invoice-form';
+import { auth } from '@/auth';
 import { getBankingInformationEntries } from '@/api/banking-information';
 import { getClients } from '@/api/client';
 import { getLatestInvoices } from '@/api/invoice';
 import { getUser } from '@/api/user';
-import InvoiceForm from '@/components/invoice/invoice-form';
-import { auth } from '@/auth';
 import { isResponseError } from '@/lib/utils/error';
-import { unauthorized } from 'next/navigation';
 
 const AddNewInvoicePage = async () => {
   const session = await auth();
@@ -35,7 +36,9 @@ const AddNewInvoicePage = async () => {
     <section className="w-full">
       <InvoiceForm
         user={userResp.data.user}
-        bankingInformationEntries={bankingInformationEntriesResp.data.bankAccounts}
+        bankingInformationEntries={
+          bankingInformationEntriesResp.data.bankAccounts
+        }
         currency={session.user.currency}
         clients={clientsResp.data.clients}
         latestInvoiceId={latestInvoices.data.invoices?.at(0)?.invoiceId}

@@ -5,16 +5,16 @@ import {
 } from 'fastify';
 
 import {
-  getInvoicesOptions,
-  getInvoiceOptions,
-  postInvoiceOptions,
-  updateInvoiceOptions,
   deleteInvoiceOptions,
-  getInvoicesTotalAmountOptions,
+  getInvoiceOptions,
+  getInvoicesOptions,
   getInvoicesRevenueOptions,
+  getInvoicesTotalAmountOptions,
   getLatestInvoicesOptions,
-  updateInvoiceStatusOptions,
-  sendInvoiceEmailOptions
+  postInvoiceOptions,
+  sendInvoiceEmailOptions,
+  updateInvoiceOptions,
+  updateInvoiceStatusOptions
 } from '../options/invoice';
 
 const invoiceRoutes = (

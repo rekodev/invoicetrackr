@@ -90,7 +90,6 @@ export default function ContactFormDialog() {
               variant="faded"
               placeholder={t('email_placeholder')}
               label={t('email_label')}
-              type="email"
               isInvalid={!!errors.email}
               errorMessage={errors.email?.message}
             />

@@ -7,15 +7,15 @@ import {
   ModalHeader,
   addToast
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
+import { BankAccount } from '@invoicetrackr/types';
 import { useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { deleteBankingInformationAction } from '@/lib/actions/banking-information';
-import { BankingInformationFormModel } from '@/lib/types/models/user';
 
 type Props = {
   userId: number;
-  bankingInformation: BankingInformationFormModel;
+  bankingInformation: BankAccount;
   isOpen: boolean;
   onClose: () => void;
 };

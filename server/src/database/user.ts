@@ -1,12 +1,13 @@
 import { and, eq } from 'drizzle-orm';
 
-import { UserModel } from '../types/user';
-import { db } from './db';
 import {
+  InsertUser,
   passwordResetTokensTable,
   stripeAccountsTable,
   usersTable
 } from './schema';
+import { UserBody } from '@invoicetrackr/types';
+import { db } from './db';
 
 export const getUserFromDb = async (id: number) => {
   const users = await db
@@ -73,11 +74,10 @@ export const registerUser = async ({
   email,
   password,
   language
-}: Pick<UserModel, 'email' | 'password' | 'language'>) => {
+}: Pick<InsertUser, 'email' | 'password' | 'language'>) => {
   const users = await db
     .insert(usersTable)
     .values({
-      // @ts-ignore: Drizzle ORM issue with enums
       email,
       password,
       currency: 'usd',
@@ -97,7 +97,7 @@ export const registerUser = async ({
 
 export const updateUserInDb = async (
   user: Pick<
-    UserModel,
+    UserBody,
     'id' | 'email' | 'name' | 'businessType' | 'businessNumber' | 'address'
   >,
   signature: string
@@ -115,19 +115,7 @@ export const updateUserInDb = async (
       signature
     })
     .where(eq(usersTable.id, Number(user.id)))
-    .returning({
-      id: usersTable.id,
-      name: usersTable.name,
-      type: usersTable.type,
-      businessType: usersTable.businessType,
-      businessNumber: usersTable.businessNumber,
-      address: usersTable.address,
-      email: usersTable.email,
-      signature: usersTable.signature,
-      profilePictureUrl: usersTable.profilePictureUrl,
-      currency: usersTable.currency,
-      language: usersTable.language
-    });
+    .returning({ id: usersTable.id });
 
   return users.at(0);
 };

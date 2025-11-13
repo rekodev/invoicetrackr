@@ -2,6 +2,7 @@ import Credentials from 'next-auth/providers/credentials';
 import NextAuth from 'next-auth';
 import { z } from 'zod';
 
+import { Currency } from './lib/types/currency';
 import { authConfig } from './auth.config';
 import { isResponseError } from './lib/utils/error';
 import { loginUser } from './api/user';
@@ -12,7 +13,7 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
     Credentials({
       async authorize(credentials) {
         const parsedCredentials = z
-          .object({ email: z.string().email(), password: z.string().min(6) })
+          .object({ email: z.email(), password: z.string().min(6) })
           .safeParse(credentials);
 
         if (parsedCredentials.success) {
@@ -23,9 +24,22 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
 
           const user = response.data.user;
 
-          if (!user) return null;
+          if (!user || !user.email) return null;
 
-          return { ...user, id: String(user.id) };
+          return {
+            id: String(user.id),
+            name: user.name,
+            email: user.email,
+            language: user.language,
+            currency: user.currency as Currency,
+            type: user.type,
+            businessType: user.businessType,
+            businessNumber: user.businessNumber,
+            selectedBankAccountId: user.selectedBankAccountId || 0,
+            address: user.address,
+            stripeCustomerId: user.stripeCustomerId,
+            stripeSubscriptionId: user.stripeSubscriptionId
+          };
         }
 
         return null;

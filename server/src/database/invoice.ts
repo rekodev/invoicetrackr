@@ -1,26 +1,15 @@
-import {
-  and,
-  desc,
-  eq,
-  ExtractTablesWithRelations,
-  gte,
-  inArray,
-  sql
-} from 'drizzle-orm';
-import { NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
-import { PgTransaction } from 'drizzle-orm/pg-core';
+import { and, desc, eq, gte, inArray, sql } from 'drizzle-orm';
+import { InvoiceBody } from '@invoicetrackr/types';
 
-import { InvoiceModel } from '../types/invoice';
-import { jsonAgg } from '../utils/json-agg';
-import { db } from './db';
 import {
-  bankingInformationTable,
   invoiceBankingInformationTable,
   invoiceReceiversTable,
   invoiceSendersTable,
   invoiceServicesTable,
   invoicesTable
 } from './schema';
+import { db } from './db';
+import { jsonAgg } from '../utils/json';
 
 export const findInvoiceById = async (userId: number, id: number) => {
   const invoices = await db
@@ -121,11 +110,7 @@ export const getInvoicesFromDb = async (userId: number) => {
 export const getInvoiceFromDb = async (
   userId: number,
   id: number,
-  transaction?: PgTransaction<
-    NeonQueryResultHKT,
-    any,
-    ExtractTablesWithRelations<Record<string, never>>
-  >
+  transaction?: Parameters<Parameters<typeof db.transaction>[0]>[0]
 ) => {
   const invoices = await (transaction ? transaction : db)
     .select({
@@ -197,7 +182,7 @@ export const getInvoiceFromDb = async (
 };
 
 export const insertInvoiceInDb = async (
-  invoiceData: InvoiceModel,
+  invoiceData: InvoiceBody,
   userId: number,
   senderSignature: string
 ) => {
@@ -212,14 +197,13 @@ export const insertInvoiceInDb = async (
         totalAmount: String(invoiceData.totalAmount),
         status: invoiceData.status,
         dueDate: invoiceData.dueDate,
-        senderId: null,
-        receiverId: null,
-        senderSignature: senderSignature,
-        bankAccountId: null
+        senderSignature: senderSignature
       })
       .returning({ id: invoicesTable.id });
 
     const insertedInvoiceId = invoices.at(0)?.id;
+
+    if (!insertedInvoiceId) throw new Error('Failed to insert invoice');
 
     // Invoice sender insert
     const senders = await tx
@@ -227,7 +211,7 @@ export const insertInvoiceInDb = async (
       .values({
         invoiceId: insertedInvoiceId,
         name: invoiceData.sender.name,
-        email: invoiceData.sender.email,
+        email: invoiceData.sender.email || '',
         address: invoiceData.sender.address,
         type: invoiceData.sender.type,
         businessType: invoiceData.sender.businessType,
@@ -238,11 +222,10 @@ export const insertInvoiceInDb = async (
     // Invoice receiver insert
     const receivers = await tx
       .insert(invoiceReceiversTable)
-      // @ts-ignore: Says that property does not exist, but it does
       .values({
-        invoiceId: Number(insertedInvoiceId),
+        invoiceId: insertedInvoiceId,
         name: invoiceData.receiver.name,
-        email: invoiceData.receiver.email,
+        email: invoiceData.receiver.email || '',
         address: invoiceData.receiver.address,
         type: invoiceData.receiver.type,
         businessType: invoiceData.receiver.businessType,
@@ -254,12 +237,12 @@ export const insertInvoiceInDb = async (
     const bankAccounts = await tx
       .insert(invoiceBankingInformationTable)
       .values({
-        invoiceId: Number(insertedInvoiceId),
+        invoiceId: insertedInvoiceId,
         accountName: invoiceData.bankingInformation.name,
         accountNumber: invoiceData.bankingInformation.accountNumber,
         bankCode: invoiceData.bankingInformation.code
       })
-      .returning({ id: bankingInformationTable.id });
+      .returning({ id: invoiceBankingInformationTable.id });
 
     // Invoice services insert
     for (const service of invoiceData.services) {
@@ -268,7 +251,7 @@ export const insertInvoiceInDb = async (
         amount: String(service.amount),
         unit: service.unit,
         description: service.description,
-        invoiceId: Number(insertedInvoiceId)
+        invoiceId: insertedInvoiceId
       });
     }
 
@@ -296,15 +279,19 @@ export const insertInvoiceInDb = async (
 export const updateInvoiceInDb = async (
   userId: number,
   id: number,
-  invoiceData: InvoiceModel,
+  invoiceData: InvoiceBody,
   senderSignature: string
 ) => {
   const updatedInvoice = await db.transaction(async (tx) => {
-    let senderId = invoiceData.sender.id;
     const existingSender = await tx
       .select({ id: invoiceSendersTable.id })
       .from(invoiceSendersTable)
-      .where(eq(invoiceSendersTable.invoiceId, id));
+      .where(
+        and(
+          eq(invoiceSendersTable.invoiceId, id),
+          eq(invoiceSendersTable.id, userId)
+        )
+      );
 
     if (existingSender.length > 0) {
       await tx
@@ -318,9 +305,8 @@ export const updateInvoiceInDb = async (
           businessNumber: invoiceData.sender.businessNumber
         })
         .where(eq(invoiceSendersTable.invoiceId, id));
-      senderId = existingSender[0].id;
     } else {
-      const insertedSender = await tx
+      await tx
         .insert(invoiceSendersTable)
         .values({
           invoiceId: id,
@@ -332,7 +318,6 @@ export const updateInvoiceInDb = async (
           businessNumber: invoiceData.sender.businessNumber
         })
         .returning({ id: invoiceSendersTable.id });
-      senderId = insertedSender[0].id;
     }
 
     let receiverId = invoiceData.receiver.id;
@@ -346,7 +331,7 @@ export const updateInvoiceInDb = async (
         .update(invoiceReceiversTable)
         .set({
           name: invoiceData.receiver.name,
-          email: invoiceData.receiver.email,
+          email: invoiceData.receiver.email || '',
           address: invoiceData.receiver.address,
           type: invoiceData.receiver.type,
           businessType: invoiceData.receiver.businessType,
@@ -357,11 +342,10 @@ export const updateInvoiceInDb = async (
     } else {
       const insertedReceiver = await tx
         .insert(invoiceReceiversTable)
-        // @ts-ignore: Says that property does not exist, but it does
         .values({
           invoiceId: id,
           name: invoiceData.receiver.name,
-          email: invoiceData.receiver.email,
+          email: invoiceData.receiver.email || '',
           address: invoiceData.receiver.address,
           type: invoiceData.receiver.type,
           businessType: invoiceData.receiver.businessType,
@@ -405,7 +389,7 @@ export const updateInvoiceInDb = async (
       .set({
         userId,
         invoiceId: invoiceData.invoiceId,
-        senderId,
+        senderId: userId,
         receiverId,
         date: invoiceData.date,
         dueDate: invoiceData.dueDate,

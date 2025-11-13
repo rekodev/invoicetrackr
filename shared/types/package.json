@@ -1,0 +1,18 @@
+{
+  "name": "@invoicetrackr/types",
+  "version": "0.0.1",
+  "description": "Shared types and schemas for InvoiceTrackr",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "lint": "echo 'No linting configured for types package'"
+  },
+  "keywords": [],
+  "author": "rekodev",
+  "license": "ISC",
+  "peerDependencies": {
+    "zod": "^4.1.12"
+  }
+}

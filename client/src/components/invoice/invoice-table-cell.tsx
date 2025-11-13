@@ -22,7 +22,7 @@ import {
 import { Key, useEffect, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { InvoiceModel, InvoiceStatus } from '@/lib/types/models/invoice';
+import { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
 import { formatDate } from '@/lib/utils/format-date';
 import { getCurrencySymbol } from '@/lib/utils/currency';
@@ -43,11 +43,11 @@ type Props = {
   userId: number;
   currency: Currency;
   language: string;
-  invoice: InvoiceModel;
+  invoice: InvoiceBody;
   columnKey: Key;
-  onView: (invoice: InvoiceModel) => void;
-  onEdit: (invoice: InvoiceModel) => void;
-  onDelete: (invoice: InvoiceModel) => void;
+  onView: (_invoice: InvoiceBody) => void;
+  onEdit: (_invoice: InvoiceBody) => void;
+  onDelete: (_invoice: InvoiceBody) => void;
 };
 
 const InvoiceTableCell = ({
@@ -77,7 +77,7 @@ const InvoiceTableCell = ({
     startTransition(async () => {
       const response = await updateInvoiceStatusAction({
         userId,
-        invoiceId: invoice.id,
+        invoiceId: Number(invoice.id),
         newStatus: status
       });
 
@@ -114,7 +114,7 @@ const InvoiceTableCell = ({
   const cellValue =
     invoice[
       columnKey as keyof Omit<
-        InvoiceModel,
+        InvoiceBody,
         | 'actions'
         | 'sender'
         | 'receiver'
@@ -124,7 +124,7 @@ const InvoiceTableCell = ({
       >
     ];
 
-  switch (columnKey as keyof InvoiceModel | 'actions') {
+  switch (columnKey as keyof InvoiceBody | 'actions') {
     case 'bankingInformation':
       return;
     case 'senderSignature':
@@ -155,7 +155,7 @@ const InvoiceTableCell = ({
           <span className="text-success-700">
             {getCurrencySymbol(currency)}
           </span>
-          {(invoice.totalAmount || 0).toFixed(2)}
+          {(Number(invoice.totalAmount) || 0).toFixed(2)}
         </p>
       );
     case 'date':
@@ -182,7 +182,8 @@ const InvoiceTableCell = ({
             <DropdownMenu
               aria-label={tForm('a11y.static_actions_label')}
               selectionMode="single"
-              selectedKeys={[cellValue]}
+              items={statusOptions}
+              selectedKeys={[cellValue] as any}
               onSelectionChange={(key) =>
                 handleChangeStatus(
                   Array.from(key)[0] as
@@ -193,9 +194,9 @@ const InvoiceTableCell = ({
                 )
               }
             >
-              {statusOptions.map((status) => (
-                <DropdownItem key={status.uid}>{status.name}</DropdownItem>
-              ))}
+              {(item) => (
+                <DropdownItem key={item.uid}>{item.name}</DropdownItem>
+              )}
             </DropdownMenu>
           </Dropdown>
 

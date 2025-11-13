@@ -8,6 +8,16 @@ export default {
   validation: {
     general: 'Review fields and retry',
     reviewField: 'Review field',
+    password: {
+      required: 'Password is required',
+      currentRequired: 'Current password is required',
+      tooShort: 'Password must be at least 8 characters long',
+      tooLong: 'Password must not exceed 100 characters',
+      requireUppercase: 'Password must contain at least one uppercase letter',
+      requireLowercase: 'Password must contain at least one lowercase letter',
+      requireNumber: 'Password must contain at least one number',
+      mismatch: 'Passwords do not match'
+    },
     invoice: {
       invoiceId: 'Required to match format "ABC123"',
       date: 'Valid date is required',
@@ -59,7 +69,7 @@ export default {
       address: 'Address is required',
       email: 'Must be a valid email address'
     },
-    bankingInformation: {
+    bankAccount: {
       name: 'Bank name is required',
       code: 'Bank code is required',
       accountNumber: 'Bank account number is required'
@@ -69,13 +79,6 @@ export default {
       businessNumber: 'Business number is required',
       address: 'Address is required',
       email: 'Valid email is required',
-      password: 'Current password is required',
-      newPassword: 'New password is required',
-      confirmedNewPassword: 'Confirmed new password is required',
-      passwordMismatch: 'Confirmed password does not match new password',
-      loginPassword: 'Password must be at least 6 characters long',
-      registerPassword: 'Password must be at least 6 characters long',
-      confirmedPassword: 'Must match password',
       currency: 'Currency is required',
       language: 'Language is required'
     },

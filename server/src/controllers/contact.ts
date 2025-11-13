@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
-import { resend } from '../config/resend';
+
 import { BadRequestError } from '../utils/error';
+import { resend } from '../config/resend';
 
 export const postContactMessage = async (
   req: FastifyRequest<{

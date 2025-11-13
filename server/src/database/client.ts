@@ -1,7 +1,8 @@
-import { desc, eq, and } from 'drizzle-orm';
-import { ClientModel } from '../types/client';
-import { db } from './db';
+import { and, desc, eq } from 'drizzle-orm';
+
+import { ClientBody } from '@invoicetrackr/types';
 import { clientsTable } from './schema';
+import { db } from './db';
 
 export const findClientByEmail = async (userId: number, email: string) => {
   if (!email) return;
@@ -35,7 +36,7 @@ export const getClientFromDb = async (userId: number, clientId: number) => {
 
 export const insertClientInDb = async (
   userId: number,
-  { name, address, businessNumber, businessType, type, email }: ClientModel
+  { name, address, businessNumber, businessType, type, email }: ClientBody
 ) => {
   const clients = await db
     .insert(clientsTable)
@@ -45,7 +46,7 @@ export const insertClientInDb = async (
       businessNumber,
       businessType,
       type,
-      email,
+      email: email || '',
       userId
     })
     .returning();
@@ -56,7 +57,7 @@ export const insertClientInDb = async (
 export const updateClientInDb = async (
   userId: number,
   clientId: number,
-  { name, address, businessNumber, businessType, type, email }: ClientModel
+  { name, address, businessNumber, businessType, type, email }: ClientBody
 ) => {
   const clients = await db
     .update(clientsTable)

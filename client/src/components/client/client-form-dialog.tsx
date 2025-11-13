@@ -17,9 +17,10 @@ import { useTranslations } from 'next-intl';
 
 import { addClientAction, updateClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
-import { ClientModel } from '@/lib/types/models/client';
+import { ClientBody } from '@invoicetrackr/types';
 
 const INITIAL_CLIENT_DATA: ClientFormData = {
+  id: 0,
   name: '',
   type: 'receiver',
   businessType: 'business',
@@ -32,10 +33,10 @@ type Props = {
   userId: number;
   isOpen: boolean;
   onClose: () => void;
-  clientData?: ClientModel;
+  clientData?: ClientBody;
 };
 
-type ClientFormData = ClientModel;
+type ClientFormData = ClientBody;
 
 const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
   const t = useTranslations('clients.form_dialog');
@@ -129,7 +130,6 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
             />
             <Input
               {...register('email')}
-              type="email"
               label={t('fields.email')}
               variant="bordered"
               isInvalid={!!errors.email}

@@ -1,8 +1,8 @@
 'use client';
 
 import { Alert, Button, Link } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { CookieConsentStatus } from '@/lib/types';
 import { PRIVACY_POLICY_PAGE } from '@/lib/constants/pages';

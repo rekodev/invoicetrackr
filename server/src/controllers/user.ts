@@ -1,9 +1,15 @@
-import { MultipartFile } from '@fastify/multipart';
-import bcrypt from 'bcryptjs';
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
+import { MultipartFile } from '@fastify/multipart';
+import { UserBody } from '@invoicetrackr/types';
+import bcrypt from 'bcryptjs';
 import { useI18n } from 'fastify-i18n';
 
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError
+} from '../utils/error';
 import {
   changeUserPasswordInDb,
   deleteUserFromDb,
@@ -18,17 +24,10 @@ import {
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb
 } from '../database/user';
-import { UserModel } from '../types/user';
-import {
-  BadRequestError,
-  NotFoundError,
-  UnauthorizedError,
-  ValidationErrorCause
-} from '../utils/error';
-import { saveResetTokenToDb } from '../database/password-reset';
-import { resend } from '../config/resend';
-import { stripe } from '../config/stripe';
 import { getStripeCustomerIdFromDb } from '../database/payment';
+import { resend } from '../config/resend';
+import { saveResetTokenToDb } from '../database/password-reset';
+import { stripe } from '../config/stripe';
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { userId: number } }>,
@@ -79,7 +78,7 @@ export const loginUser = async (
 
 export const postUser = async (
   req: FastifyRequest<{
-    Body: Pick<UserModel, 'email' | 'password'> & { confirmedPassword: string };
+    Body: Pick<UserBody, 'email' | 'password'> & { confirmedPassword: string };
   }>,
   reply: FastifyReply
 ) => {
@@ -113,7 +112,7 @@ export const updateUser = async (
   req: FastifyRequest<{
     Params: { userId: number };
     Body: Pick<
-      UserModel,
+      UserBody,
       | 'email'
       | 'name'
       | 'businessType'
@@ -298,12 +297,7 @@ export const changeUserPassword = async (
   const i18n = await useI18n(req);
 
   if (newPassword !== confirmedNewPassword)
-    throw new BadRequestError(i18n.t('validation.general'), {
-      cause: new ValidationErrorCause({
-        key: 'confirmedNewPassword',
-        value: i18n.t('validation.user.passwordMismatch')
-      })
-    });
+    throw new BadRequestError(i18n.t('error.user.passwordsDoNotMatch'));
 
   const currentPasswordHash = await getUserPasswordHashFromDb(userId);
 
@@ -391,12 +385,7 @@ export const createNewUserPassword = async (
   const i18n = await useI18n(req);
 
   if (newPassword !== confirmedNewPassword)
-    throw new BadRequestError(i18n.t('validation.general'), {
-      cause: new ValidationErrorCause({
-        key: 'confirmedNewPassword',
-        value: i18n.t('validation.user.passwordMismatch')
-      })
-    });
+    throw new BadRequestError(i18n.t('error.user.passwordsDoNotMatch'));
 
   const tokenFromDb = await getUserResetPasswordTokenFromDb(token);
 

@@ -8,6 +8,16 @@ export default {
   validation: {
     general: 'Peržiūrėkite laukus ir bandykite dar kartą',
     reviewField: 'Peržiūrėkite lauką',
+    password: {
+      required: 'Slaptažodis yra privalomas',
+      currentRequired: 'Dabartinis slaptažodis yra privalomas',
+      tooShort: 'Slaptažodis turi būti bent 8 simbolių ilgio',
+      tooLong: 'Slaptažodis negali viršyti 100 simbolių',
+      requireUppercase: 'Slaptažodis turi turėti bent vieną didžiąją raidę',
+      requireLowercase: 'Slaptažodis turi turėti bent vieną mažąją raidę',
+      requireNumber: 'Slaptažodis turi turėti bent vieną skaičių',
+      mismatch: 'Slaptažodžiai nesutampa'
+    },
     invoice: {
       invoiceId: 'Turi atitikti formatą "ABC123"',
       date: 'Reikalinga tinkama data',
@@ -59,7 +69,7 @@ export default {
       address: 'Adresas yra privalomas',
       email: 'Turi būti tinkamas el. pašto adresas'
     },
-    bankingInformation: {
+    bankAccount: {
       name: 'Banko pavadinimas yra privalomas',
       code: 'Banko kodas yra privalomas',
       accountNumber: 'Banko sąskaitos numeris yra privalomas'
@@ -69,14 +79,6 @@ export default {
       businessNumber: 'Įmonės kodas yra privalomas',
       address: 'Adresas yra privalomas',
       email: 'Tinkamas el. pašto adresas yra privalomas',
-      password: 'Dabartinis slaptažodis yra privalomas',
-      newPassword: 'Naujas slaptažodis yra privalomas',
-      confirmedNewPassword: 'Naujas patvirtintas slaptažodis yra privalomas',
-      passwordMismatch:
-        'Patvirtintas slaptažodis nesutampa su nauju slaptažodžiu',
-      loginPassword: 'Slaptažodis turi būti bent 6 simbolių ilgio',
-      registerPassword: 'Slaptažodis turi būti bent 6 simbolių ilgio',
-      confirmedPassword: 'Turi sutapti su slaptažodžiu',
       currency: 'Valiuta yra privaloma',
       language: 'Kalba yra privaloma'
     },

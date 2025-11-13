@@ -9,15 +9,15 @@ import {
   ModalHeader,
   addToast
 } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 
+import { ClientBody } from '@invoicetrackr/types';
 import { deleteClientAction } from '@/lib/actions/client';
-import { ClientModel } from '@/lib/types/models/client';
 
 type Props = {
   userId: number;
-  clientData: ClientModel;
+  clientData: ClientBody;
   isOpen: boolean;
   onClose: () => void;
 };
@@ -63,9 +63,7 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
-        <ModalHeader>
-          {t('title')}
-        </ModalHeader>
+        <ModalHeader>{t('title')}</ModalHeader>
         <ModalBody>
           {t('description', { clientName: clientData.name })}
         </ModalBody>

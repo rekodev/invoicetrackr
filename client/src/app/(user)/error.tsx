@@ -5,18 +5,16 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import { Button } from '@heroui/react';
-import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 export default function Error({
-  error,
-  reset
+  error
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
 }) {
   const t = useTranslations('error_page');
-  
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -32,12 +30,14 @@ export default function Error({
           <h1 className="text-4xl font-semibold tracking-tight">
             {t('title')}
           </h1>
-          <p className="text-default-500">
-            {t('description')}
-          </p>
+          <p className="text-default-500">{t('description')}</p>
         </div>
 
-        <Button onPress={reset} variant="ghost" className="gap-2">
+        <Button
+          onPress={() => window.location.reload()}
+          variant="ghost"
+          className="gap-2"
+        >
           <ArrowPathIcon className="size-4" />
           {t('try_again')}
         </Button>
