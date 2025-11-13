@@ -1,6 +1,6 @@
 {
   "name": "@invoicetrackr/server",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "type": "module",
   "description": "The backend for rekodev's InvoiceTrackr app",
   "main": "dist/app.js",
@@ -14,7 +14,7 @@
     "lint:fix": "eslint src --fix"
   },
   "author": "rekodev",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.1.0",

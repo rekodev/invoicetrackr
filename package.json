@@ -15,7 +15,7 @@
   },
   "keywords": [],
   "author": "rekodev",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "prettier": {
     "plugins": [
       "prettier-plugin-tailwindcss"
