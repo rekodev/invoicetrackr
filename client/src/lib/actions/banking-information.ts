@@ -40,7 +40,7 @@ export async function addBankingInformationAction(
 
 export async function updateBankingInformationAction(
   userId: number,
-  bankingInformation: BankAccountBody & { id: number }
+  bankingInformation: BankAccountBody
 ): Promise<ActionResponseModel> {
   const response = await updateBankingInformation(userId, bankingInformation);
 

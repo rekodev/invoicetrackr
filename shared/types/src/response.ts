@@ -1,5 +1,5 @@
 import z from 'zod/v4';
-import { userGetSchema, resetPasswordTokenGetSchema } from './user';
+import { userBodySchema, resetPasswordTokenGetSchema } from './user';
 import { bankAccountBodySchema } from './bank-account';
 import { clientBodySchema } from './client';
 import { invoiceBodySchema } from './invoice';
@@ -11,12 +11,12 @@ export const messageResponseSchema = z.object({
 
 // User response schemas
 export const loginUserResponseSchema = z.object({
-  user: userGetSchema,
+  user: userBodySchema,
   message: z.string()
 });
 
 export const getUserResponseSchema = z.object({
-  user: userGetSchema
+  user: userBodySchema
 });
 
 export const registerUserResponseSchema = z.object({
@@ -25,7 +25,7 @@ export const registerUserResponseSchema = z.object({
 });
 
 export const updateUserResponseSchema = z.object({
-  user: userGetSchema,
+  user: userBodySchema,
   message: z.string()
 });
 

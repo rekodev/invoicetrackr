@@ -1,4 +1,5 @@
 import z from 'zod/v4';
+import { bankAccountBodySchema } from './bank-account';
 
 // Enums
 export const invoiceStatusSchema = z.enum(['paid', 'pending', 'canceled'], {
@@ -16,15 +17,6 @@ export const invoicePartyTypeSchema = z.enum(['sender', 'receiver'], {
   message: 'validation.invoice.partyType'
 });
 
-// Invoice Service Schemas
-export const invoiceServiceGetSchema = z.object({
-  id: z.number(),
-  description: z.string(),
-  unit: z.string(),
-  quantity: z.number(),
-  amount: z.number()
-});
-
 export const invoiceServiceBodySchema = z.object({
   id: z.number().optional(),
   description: z
@@ -40,17 +32,6 @@ export const invoiceServiceBodySchema = z.object({
     .number()
     .min(0.01, 'validation.invoice.services.amount')
     .max(1000000)
-});
-
-// Invoice Party (Sender/Receiver) Schemas
-export const invoicePartyGetSchema = z.object({
-  id: z.number().optional(),
-  type: invoicePartyTypeSchema,
-  name: z.string(),
-  businessType: invoicePartyBusinessTypeSchema,
-  businessNumber: z.string(),
-  address: z.string(),
-  email: z.email().optional()
 });
 
 export const invoiceSenderBodySchema = z.object(
@@ -89,36 +70,6 @@ export const invoiceReceiverBodySchema = z.object(
   { message: 'validation.invoice.receiver.required' }
 );
 
-// Bank Account for Invoice
-const invoiceBankAccountGetSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  code: z.string(),
-  accountNumber: z.string()
-});
-
-const invoiceBankAccountBodySchema = z.object({
-  id: z.number().optional(),
-  name: z.string().min(1, 'validation.bankAccount.name'),
-  code: z.string().min(1, 'validation.bankAccount.code'),
-  accountNumber: z.string().min(1, 'validation.bankAccount.accountNumber')
-});
-
-// Main Invoice Schemas
-export const invoiceGetSchema = z.object({
-  id: z.number(),
-  invoiceId: z.string(),
-  date: z.string(),
-  dueDate: z.string(),
-  sender: invoicePartyGetSchema,
-  senderSignature: z.any().optional(),
-  receiver: invoicePartyGetSchema,
-  totalAmount: z.string(),
-  status: invoiceStatusSchema,
-  services: z.array(invoiceServiceGetSchema),
-  bankingInformation: invoiceBankAccountGetSchema
-});
-
 export const invoiceBodySchema = z
   .object({
     id: z.number().optional(),
@@ -139,7 +90,7 @@ export const invoiceBodySchema = z
       .array(invoiceServiceBodySchema)
       .min(1, 'validation.invoice.services.required')
       .max(100),
-    bankingInformation: invoiceBankAccountBodySchema
+    bankingInformation: bankAccountBodySchema
   })
   .refine(
     (data) => new Date(data.dueDate).getTime() >= new Date(data.date).getTime(),
@@ -156,15 +107,12 @@ export type InvoicePartyBusinessType = z.infer<
 >;
 export type InvoicePartyType = z.infer<typeof invoicePartyTypeSchema>;
 
-export type InvoiceServiceGet = z.infer<typeof invoiceServiceGetSchema>;
 export type InvoiceServiceBody = z.infer<typeof invoiceServiceBodySchema>;
-export type InvoiceService = InvoiceServiceGet;
+export type InvoiceService = InvoiceServiceBody;
 
-export type InvoicePartyGet = z.infer<typeof invoicePartyGetSchema>;
 export type InvoiceSenderBody = z.infer<typeof invoiceSenderBodySchema>;
 export type InvoiceReceiverBody = z.infer<typeof invoiceReceiverBodySchema>;
-export type InvoiceParty = InvoicePartyGet;
+export type InvoicePartyBody = InvoiceSenderBody | InvoiceReceiverBody;
+export type InvoiceParty = InvoicePartyBody;
 
-export type InvoiceGet = z.infer<typeof invoiceGetSchema>;
 export type InvoiceBody = z.infer<typeof invoiceBodySchema>;
-export type Invoice = InvoiceGet;

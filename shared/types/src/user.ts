@@ -5,23 +5,6 @@ import {
 } from './invoice';
 import { passwordSchema } from './common';
 
-export const userGetSchema = z.object({
-  id: z.number(),
-  type: invoicePartyTypeSchema,
-  name: z.string(),
-  businessType: invoicePartyBusinessTypeSchema,
-  businessNumber: z.string(),
-  address: z.string(),
-  email: z.string().optional(),
-  signature: z.string().optional(),
-  selectedBankAccountId: z.number().optional(),
-  profilePictureUrl: z.string(),
-  currency: z.string(),
-  language: z.string(),
-  stripeCustomerId: z.string(),
-  stripeSubscriptionId: z.string()
-});
-
 export const userBodySchema = z.object({
   id: z.number().optional(),
   type: invoicePartyTypeSchema,
@@ -50,9 +33,8 @@ export const resetPasswordTokenGetSchema = z.object({
 });
 
 // Types
-export type UserGet = z.infer<typeof userGetSchema>;
 export type UserBody = z.infer<typeof userBodySchema>;
-export type User = UserGet;
+export type User = UserBody;
 export type UserWithPassword = UserBody;
 export type ResetPasswordTokenGet = z.infer<typeof resetPasswordTokenGetSchema>;
 export type ResetPasswordToken = ResetPasswordTokenGet;

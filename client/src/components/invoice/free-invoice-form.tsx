@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { HOME_PAGE } from '@/lib/constants/pages';
-import { Invoice } from '@invoicetrackr/types';
+import { InvoiceBody } from '@invoicetrackr/types';
 import { calculateServiceTotal } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/format-date';
 
@@ -19,7 +19,7 @@ import SignaturePad from '../signature-pad';
 const FreeInvoiceForm = () => {
   const t = useTranslations('components.invoice_form');
   const router = useRouter();
-  const methods = useForm<Invoice>({
+  const methods = useForm<InvoiceBody>({
     defaultValues: {
       services: [{ amount: 0, quantity: 0, description: '', unit: '' }]
     }

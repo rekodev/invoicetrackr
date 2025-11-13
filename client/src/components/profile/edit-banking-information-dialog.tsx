@@ -34,7 +34,7 @@ const EditBankingInformationDialog = ({
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    field: keyof Omit<BankAccount, 'id'>
+    field: keyof BankAccount
   ) => {
     setNewBankingInformation((prev: BankAccount) => ({
       ...prev,
