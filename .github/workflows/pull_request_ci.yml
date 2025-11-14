@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
+      RESEND_EMAIL_API_KEY: ${{ secrets.RESEND_EMAIL_API_KEY }}
       BACKEND_URL: ${{ secrets.BACKEND_URL }}
       SERVER_PORT: ${{ secrets.SERVER_PORT }}
       NEXT_PUBLIC_STRIPE_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLIC_KEY }}
