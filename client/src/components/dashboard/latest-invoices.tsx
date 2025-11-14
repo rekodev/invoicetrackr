@@ -4,7 +4,7 @@ import { Currency } from '@/lib/types/currency';
 import { getLatestInvoices } from '@/api/invoice';
 import { isResponseError } from '@/lib/utils/error';
 
-import ClientCard from '../ui/client-card';
+import ClientCard from '../client-card';
 import ViewAllInvoicesButton from './view-all-invoices-button';
 
 type Props = {

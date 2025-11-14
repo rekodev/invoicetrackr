@@ -14,7 +14,7 @@ import { useTranslations } from 'next-intl';
 
 import { ClientBody } from '@invoicetrackr/types';
 
-import ClientCard from '../ui/client-card';
+import ClientCard from '../client-card';
 import ClientFormDialog from '../client/client-form-dialog';
 
 type Props = {

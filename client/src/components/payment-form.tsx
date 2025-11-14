@@ -189,46 +189,48 @@ export default function PaymentForm({ user }: Props) {
   if (!user) return null;
 
   return (
-    <Elements
-      stripe={stripePromise}
-      options={{
-        mode: 'subscription',
-        amount: convertToSubcurrency(SUBSCRIPTION_AMOUNT),
-        currency: user.currency,
-        appearance: {
-          theme: 'flat',
-          rules: {
-            '.AccordionItem': {
-              border: 'none',
-              padding: '0.25rem',
-              boxShadow: 'none',
-              backgroundColor: 'rgba(0,0,0,0)'
+    <div data-testid="payment-form">
+      <Elements
+        stripe={stripePromise}
+        options={{
+          mode: 'subscription',
+          amount: convertToSubcurrency(SUBSCRIPTION_AMOUNT),
+          currency: user.currency,
+          appearance: {
+            theme: 'flat',
+            rules: {
+              '.AccordionItem': {
+                border: 'none',
+                padding: '0.25rem',
+                boxShadow: 'none',
+                backgroundColor: 'rgba(0,0,0,0)'
+              },
+              '.Block': {
+                border: 'none',
+                padding: '0.25rem',
+                boxShadow: 'none',
+                backgroundColor: 'rgba(0,0,0,0)'
+              },
+              '.Input': {
+                color: isDarkMode ? '#3f3f46' : '#71717a',
+                paddingTop: '0.5rem',
+                paddingBottom: '0.5rem',
+                maxHeight: '4rem'
+              }
             },
-            '.Block': {
-              border: 'none',
-              padding: '0.25rem',
-              boxShadow: 'none',
-              backgroundColor: 'rgba(0,0,0,0)'
-            },
-            '.Input': {
-              color: isDarkMode ? '#3f3f46' : '#71717a',
-              paddingTop: '0.5rem',
-              paddingBottom: '0.5rem',
-              maxHeight: '4rem'
+            variables: {
+              colorPrimary: isDarkMode ? '#ffffff' : '#18181b',
+              colorTextSecondary: '#a1a1aa',
+              colorText: isDarkMode ? '#e4e4e7' : '#52525b',
+              colorBackground: 'rgba(0, 0, 0, 0)',
+              fontFamily: 'Inter, sans-serif',
+              borderRadius: '8px'
             }
-          },
-          variables: {
-            colorPrimary: isDarkMode ? '#ffffff' : '#18181b',
-            colorTextSecondary: '#a1a1aa',
-            colorText: isDarkMode ? '#e4e4e7' : '#52525b',
-            colorBackground: 'rgba(0, 0, 0, 0)',
-            fontFamily: 'Inter, sans-serif',
-            borderRadius: '8px'
           }
-        }
-      }}
-    >
-      <PaymentFormInsideElements user={user} />
-    </Elements>
+        }}
+      >
+        <PaymentFormInsideElements user={user} />
+      </Elements>
+    </div>
   );
 }

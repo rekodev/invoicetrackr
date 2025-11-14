@@ -5,12 +5,12 @@ import type { Metadata } from 'next';
 
 import './globals.css';
 
-import Footer from '@/components/footer';
+import Footer from '@/components/layout/footer';
 import GoogleAnalytics from '@/components/providers/google-analytics';
-import Header from '@/components/header';
+import Header from '@/components/layout/header';
 
-import CookieConsent from './cookie-consent';
-import { Providers } from './providers';
+import CookieConsent from '../components/cookie-consent';
+import { Providers } from '../components/providers/providers';
 
 const inter = Inter({ subsets: ['latin'] });
 

@@ -1,10 +1,10 @@
-import { JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { JSX } from 'react';
 import { useTheme } from 'next-themes';
-
+import userEvent from '@testing-library/user-event';
 import { withIntl } from '@/test/with-intl';
+
 import ThemeSwitcher from '../theme-switcher';
 
 vi.mock('next-themes', () => ({

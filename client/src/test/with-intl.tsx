@@ -1,7 +1,7 @@
 import { JSX, ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 
-import localeMessages from '../../messages/lt.json';
+import localeMessages from '../../messages/en.json';
 
 type WithIntlArgs = [
   ReactNode,
@@ -12,9 +12,9 @@ type WithIntlType = (..._args: WithIntlArgs) => JSX.Element;
 
 export const withIntl: WithIntlType = (
   children,
-  options = { messages: {}, locale: 'lt' }
+  options = { messages: {}, locale: 'en' }
 ) => {
-  const { messages = {}, locale = 'lt' } = options;
+  const { messages = {}, locale = 'en' } = options;
 
   return (
     <NextIntlClientProvider

@@ -12,7 +12,7 @@ describe('<ViewAllInvoicesButton />', () => {
     renderHelper(<ViewAllInvoicesButton />);
 
     expect(screen.getByRole('button')).toBeDefined();
-    expect(screen.getByText('Žiūrėti visas')).toBeDefined();
+    expect(screen.getByText('View All')).toBeDefined();
   });
 
   it('has correct href attribute', () => {

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
-import { PrivacyPolicyContent } from './privacy-policy-content';
+import PrivacyPolicyPageContent from './privacy-policy-page-content';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('privacy_policy');
@@ -26,5 +26,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function PrivacyPolicyPage() {
-  return <PrivacyPolicyContent />;
+  return <PrivacyPolicyPageContent />;
 }

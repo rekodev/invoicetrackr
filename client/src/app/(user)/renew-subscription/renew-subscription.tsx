@@ -11,7 +11,7 @@ type Props = {
   user: User;
 };
 
-export default function RenewSubscription({ user }: Props) {
+export default function RenewSubscriptionPageContent({ user }: Props) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -27,7 +27,7 @@ export default function RenewSubscription({ user }: Props) {
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           Your subscription is no longer active
         </h1>
-        <p className="text-lg text-default-500">
+        <p className="text-default-500 text-lg">
           Please renew your subscription to continue accessing all features and
           services.
         </p>
