@@ -45,7 +45,7 @@ export const invoiceSenderBodySchema = z.object(
       .min(1, 'validation.invoice.sender.businessNumber'),
     address: z.string().min(1, 'validation.invoice.sender.address'),
     email: z
-      .email('validation.invoice.receiver.email')
+      .email('validation.invoice.sender.email')
       .optional()
       .or(z.literal(''))
   },
