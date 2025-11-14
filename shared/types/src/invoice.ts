@@ -45,15 +45,9 @@ export const invoiceSenderBodySchema = z.object(
       .min(1, 'validation.invoice.sender.businessNumber'),
     address: z.string().min(1, 'validation.invoice.sender.address'),
     email: z
-      .email('validation.invoice.sender.email')
+      .email('validation.invoice.receiver.email')
       .optional()
-      .or(z.literal('')),
-    signature: z.string().optional(),
-    selectedBankAccountId: z.number().optional(),
-    password: z.string().optional(),
-    profilePictureUrl: z.string().optional(),
-    currency: z.string().optional(),
-    language: z.string().optional()
+      .or(z.literal(''))
   },
   { message: 'validation.invoice.sender.required' }
 );

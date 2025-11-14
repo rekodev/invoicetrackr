@@ -19,12 +19,12 @@ import { stripe } from '../config/stripe';
 
 export const createCustomer = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: { email: string; name: string };
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const { email, name } = req.body;
   const i18n = await useI18n(req);
 
@@ -58,13 +58,13 @@ export const createCustomer = async (
 
 export const createSubscription = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: { customerId: string };
   }>,
   reply: FastifyReply
 ) => {
   const { customerId } = req.body;
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
 
   const currency = await getUserCurrencyFromDb(userId);
@@ -118,10 +118,10 @@ export const createSubscription = async (
 };
 
 export const getStripeCustomerId = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
 
   const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
@@ -133,10 +133,10 @@ export const getStripeCustomerId = async (
 };
 
 export const cancelStripeSubscription = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
 
   const stripeSubscriptionId =

@@ -30,12 +30,12 @@ import { saveResetTokenToDb } from '../database/password-reset';
 import { stripe } from '../config/stripe';
 
 export const getUser = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
-  const user = await getUserFromDb(userId);
+  const user = await getUserFromDb(Number(userId));
 
   if (!user) throw new BadRequestError(i18n.t('error.user.notFound'));
 
@@ -59,7 +59,7 @@ export const loginUser = async (
 
   let isSubscriptionActive = false;
 
-  if (!!user.stripeSubscriptionId) {
+  if (!!user?.stripeSubscriptionId) {
     try {
       const userSubscription = await stripe.subscriptions.retrieve(
         user.stripeSubscriptionId
@@ -110,7 +110,7 @@ export const postUser = async (
 
 export const updateUser = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: Pick<
       UserBody,
       | 'email'
@@ -142,7 +142,7 @@ export const updateUser = async (
       throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
   }
 
-  const foundUser = await getUserFromDb(userId);
+  const foundUser = await getUserFromDb(Number(userId));
 
   if (!foundUser) throw new NotFoundError(i18n.t('error.user.notFound'));
 
@@ -151,7 +151,7 @@ export const updateUser = async (
     : signature;
 
   const updatedUser = await updateUserInDb(
-    { id: userId, email, name, businessType, businessNumber, address },
+    { id: Number(userId), email, name, businessType, businessNumber, address },
     signatureUrl || ''
   );
 
@@ -165,16 +165,16 @@ export const updateUser = async (
 };
 
 export const deleteUser = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
   const { userId } = req.params;
   const i18n = await useI18n(req);
 
-  const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
+  const stripeCustomerId = await getStripeCustomerIdFromDb(Number(userId));
   await stripe.customers.del(stripeCustomerId);
 
-  const deletedUserId = await deleteUserFromDb(userId);
+  const deletedUserId = await deleteUserFromDb(Number(userId));
 
   if (!deletedUserId)
     throw new BadRequestError(i18n.t('error.user.unableToDelete'));
@@ -184,7 +184,7 @@ export const deleteUser = async (
 
 export const updateUserSelectedBankAccount = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: { selectedBankAccountId: number };
   }>,
   reply: FastifyReply
@@ -193,12 +193,15 @@ export const updateUserSelectedBankAccount = async (
   const { selectedBankAccountId } = req.body;
   const i18n = await useI18n(req);
 
-  const foundUser = await getUserFromDb(userId);
+  const foundUser = await getUserFromDb(Number(userId));
 
   if (!foundUser) throw new NotFoundError(i18n.t('error.user.notFound'));
 
   const updatedUserSelectedBankAccount =
-    await updateUserSelectedBankAccountInDb(userId, selectedBankAccountId);
+    await updateUserSelectedBankAccountInDb(
+      Number(userId),
+      selectedBankAccountId
+    );
 
   if (!updatedUserSelectedBankAccount)
     throw new BadRequestError(
@@ -211,10 +214,10 @@ export const updateUserSelectedBankAccount = async (
 };
 
 export const updateUserProfilePicture = async (
-  req: FastifyRequest<{ Params: { userId: number } }> & { file: File },
+  req: FastifyRequest<{ Params: { userId: string } }> & { file: File },
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const profilePicture = await req.file();
   const i18n = await useI18n(req);
 
@@ -258,12 +261,12 @@ export const updateUserProfilePicture = async (
 
 export const updateUserAccountSettings = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: { currency: string; language: string };
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const { currency, language } = req.body;
   const i18n = await useI18n(req);
 
@@ -283,7 +286,7 @@ export const updateUserAccountSettings = async (
 
 export const changeUserPassword = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: {
       password: string;
       newPassword: string;
@@ -292,7 +295,7 @@ export const changeUserPassword = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const { password, newPassword, confirmedNewPassword } = req.body;
   const i18n = await useI18n(req);
 
@@ -375,12 +378,12 @@ export const getUserResetPasswordToken = async (
 
 export const createNewUserPassword = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: { token: string; newPassword: string; confirmedNewPassword: string };
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const { newPassword, confirmedNewPassword, token } = req.body;
   const i18n = await useI18n(req);
 

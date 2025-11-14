@@ -128,10 +128,6 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
     response: {
       200: messageResponseSchema
     },
-    params: z.object({
-      id: z.string(),
-      userId: z.string()
-    }),
     body: z.object({
       recipientEmail: z.email('validation.invoice.recipientEmail'),
       subject: z.string().min(1, 'validation.invoice.subject'),

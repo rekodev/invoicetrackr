@@ -17,7 +17,7 @@ export async function errorHandler(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const i18n = useI18n(request);
+  const i18n = await useI18n(request);
 
   if (error.validation) {
     return reply.status(400).send({

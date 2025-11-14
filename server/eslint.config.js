@@ -8,6 +8,7 @@ const eslintConfig = defineConfig([
   ...baseConfig,
   {
     files: ['**/*.ts'],
+    ignores: ['vitest.config.ts'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -30,6 +31,15 @@ const eslintConfig = defineConfig([
       '@typescript-eslint/no-explicit-any': 'off',
       'no-unused-vars': 'off',
       'no-console': 'off'
+    }
+  },
+  {
+    files: ['vitest.config.ts'],
+    languageOptions: {
+      parser: tsParser,
+      globals: {
+        __dirname: 'readonly'
+      }
     }
   }
 ]);

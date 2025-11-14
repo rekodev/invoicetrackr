@@ -27,20 +27,21 @@ import { getUserFromDb } from '../database/user';
 import { resend } from '../config/resend';
 
 export const getInvoices = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const invoices = await getInvoicesFromDb(userId);
 
   reply.status(200).send({ invoices });
 };
 
 export const getInvoice = async (
-  req: FastifyRequest<{ Params: { userId: number; id: number } }>,
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
   const invoice = await getInvoiceFromDb(userId, id);
 
@@ -51,12 +52,12 @@ export const getInvoice = async (
 
 export const postInvoice = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: InvoiceBody & { file: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const invoiceData = req.body;
   const signatureFile = req.body.file;
   const i18n = await useI18n(req);
@@ -103,12 +104,13 @@ export const postInvoice = async (
 
 export const updateInvoice = async (
   req: FastifyRequest<{
-    Params: { userId: number; id: number };
+    Params: { userId: string; id: string };
     Body: InvoiceBody & { file: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const invoiceData = req.body;
   const signatureFile = req.body.file;
   const i18n = await useI18n(req);
@@ -152,12 +154,13 @@ export const updateInvoice = async (
 
 export async function updateInvoiceStatus(
   req: FastifyRequest<{
-    Params: { userId: number; id: number };
+    Params: { userId: string; id: string };
     Body: { status: 'paid' | 'pending' | 'canceled' };
   }>,
   reply: FastifyReply
 ) {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const { status } = req.body;
   const i18n = await useI18n(req);
 
@@ -174,10 +177,11 @@ export async function updateInvoiceStatus(
 }
 
 export const deleteInvoice = async (
-  req: FastifyRequest<{ Params: { userId: number; id: number } }>,
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
   const deletedInvoice = await deleteInvoiceFromDb(userId, id);
 
@@ -188,10 +192,10 @@ export const deleteInvoice = async (
 };
 
 export const getInvoicesTotalAmount = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
   const invoices = await getInvoicesTotalAmountFromDb(userId);
   const clients = await getClientsFromDb(userId);
@@ -203,10 +207,10 @@ export const getInvoicesTotalAmount = async (
 };
 
 export const getInvoicesRevenue = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
   const invoices = await getInvoicesRevenueFromDb(userId);
 
@@ -237,10 +241,10 @@ export const getInvoicesRevenue = async (
 };
 
 export const getLatestInvoices = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
   const invoices = await getLatestInvoicesFromDb(userId);
 
@@ -252,7 +256,7 @@ export const getLatestInvoices = async (
 
 export const sendInvoiceEmail = async (
   req: FastifyRequest<{
-    Params: { userId: number; id: number };
+    Params: { userId: string; id: string };
     Body: {
       recipientEmail: string;
       subject: string;
@@ -262,7 +266,8 @@ export const sendInvoiceEmail = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const { recipientEmail, subject, message, file } = req.body;
   const i18n = await useI18n(req);
 
