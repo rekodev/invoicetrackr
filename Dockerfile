@@ -24,7 +24,9 @@ COPY --from=deps /app/shared/types/node_modules ./shared/types/node_modules
 COPY --from=deps /app/client/node_modules ./client/node_modules
 COPY --from=deps /app/server/node_modules ./server/node_modules
 COPY . .
-RUN (cd shared/types && pnpm run build) && (cd client && pnpm run build) & (cd server && pnpm run build) && wait
+RUN cd shared/types && pnpm run build && cd ../.. && \
+    cd client && pnpm run build && cd .. && \
+    cd server && pnpm run build
 
 # Stage 3: Production server
 FROM base AS runner
