@@ -162,7 +162,12 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
       className="dark:border-default-100 w-full bg-transparent dark:border"
       encType="multipart/form-data"
     >
-      <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
+      <CardHeader
+        data-testid="personal-information-form-heading"
+        className="p-4 px-6"
+      >
+        {t('title')}
+      </CardHeader>
       <Divider />
       {renderCardBodyAndFooter()}
     </Card>

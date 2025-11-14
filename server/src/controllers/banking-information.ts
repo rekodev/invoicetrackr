@@ -20,10 +20,10 @@ import { BankAccountBody } from '@invoicetrackr/types';
 import { useI18n } from 'fastify-i18n';
 
 export const getBankAccounts = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
 
   const bankAccounts = await getBankAccountsFromDb(userId);
 
@@ -31,10 +31,11 @@ export const getBankAccounts = async (
 };
 
 export const getBankAccount = async (
-  req: FastifyRequest<{ Params: { userId: number; id: number } }>,
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
 
   const bankAccount = await getBankAccountFromDb(userId, id);
@@ -47,12 +48,12 @@ export const getBankAccount = async (
 
 export const postBankAccount = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: Omit<BankAccountBody, 'id'> & { hasSelectedBankAccount: boolean };
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const bankAccountData = req.body;
   const { hasSelectedBankAccount } = bankAccountData;
   const i18n = await useI18n(req);
@@ -92,12 +93,13 @@ export const postBankAccount = async (
 
 export const updateBankAccount = async (
   req: FastifyRequest<{
-    Params: { userId: number; id: number };
+    Params: { userId: string; id: string };
     Body: BankAccountBody;
   }>,
   reply: FastifyReply
 ) => {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const bankAccountData = req.body;
   const i18n = await useI18n(req);
 
@@ -113,10 +115,11 @@ export const updateBankAccount = async (
 };
 
 export const deleteBankAccount = async (
-  req: FastifyRequest<{ Params: { userId: number; id: number } }>,
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
   const user = await getUserFromDb(userId);
 

@@ -13,10 +13,10 @@ import {
 import { ClientBody } from '@invoicetrackr/types';
 
 export const getClients = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
 
   const clients = await getClientsFromDb(userId);
 
@@ -24,10 +24,11 @@ export const getClients = async (
 };
 
 export const getClient = async (
-  req: FastifyRequest<{ Params: { userId: number; id: number } }>,
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
 
   const client = await getClientFromDb(userId, id);
@@ -38,10 +39,10 @@ export const getClient = async (
 };
 
 export const postClient = async (
-  req: FastifyRequest<{ Params: { userId: number }; Body: ClientBody }>,
+  req: FastifyRequest<{ Params: { userId: string }; Body: ClientBody }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const clientData = req.body;
   const i18n = await useI18n(req);
 
@@ -50,7 +51,10 @@ export const postClient = async (
   if (foundClient)
     throw new BadRequestError(i18n.t('error.client.alreadyExists'));
 
-  const insertedClient = await insertClientInDb(userId, clientData);
+  const insertedClient = await insertClientInDb(userId, {
+    ...clientData,
+    email: clientData.email || ''
+  });
 
   if (!insertedClient)
     throw new BadRequestError(i18n.t('error.client.unableToCreate'));
@@ -63,12 +67,13 @@ export const postClient = async (
 
 export const updateClient = async (
   req: FastifyRequest<{
-    Params: { userId: number; id: number };
+    Params: { userId: string; id: string };
     Body: ClientBody;
   }>,
   reply: FastifyReply
 ) => {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const clientData = req.body;
   const i18n = await useI18n(req);
 
@@ -84,10 +89,11 @@ export const updateClient = async (
 };
 
 export const deleteClient = async (
-  req: FastifyRequest<{ Params: { userId: number; id: number } }>,
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId, id } = req.params;
+  const id = Number(req.params.id);
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
 
   const deletedClient = await deleteClientFromDb(userId, id);

@@ -4,7 +4,7 @@ import { auth } from '@/auth';
 import { getUser } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
-import RenewSubscription from './renew-subscription';
+import RenewSubscriptionPageContent from './renew-subscription';
 
 export default async function RenewSubscriptionPage() {
   const session = await auth();
@@ -15,5 +15,5 @@ export default async function RenewSubscriptionPage() {
 
   if (isResponseError(userResp)) unauthorized();
 
-  return <RenewSubscription user={userResp.data.user} />;
+  return <RenewSubscriptionPageContent user={userResp.data.user} />;
 }

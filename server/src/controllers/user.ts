@@ -30,10 +30,10 @@ import { saveResetTokenToDb } from '../database/password-reset';
 import { stripe } from '../config/stripe';
 
 export const getUser = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
   const user = await getUserFromDb(userId);
 
@@ -59,7 +59,7 @@ export const loginUser = async (
 
   let isSubscriptionActive = false;
 
-  if (!!user.stripeSubscriptionId) {
+  if (!!user?.stripeSubscriptionId) {
     try {
       const userSubscription = await stripe.subscriptions.retrieve(
         user.stripeSubscriptionId
@@ -110,7 +110,7 @@ export const postUser = async (
 
 export const updateUser = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: Pick<
       UserBody,
       | 'email'
@@ -123,7 +123,7 @@ export const updateUser = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const file = req.body.file;
   const { email, name, businessType, businessNumber, address, signature } =
     req.body;
@@ -165,10 +165,10 @@ export const updateUser = async (
 };
 
 export const deleteUser = async (
-  req: FastifyRequest<{ Params: { userId: number } }>,
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
 
   const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
@@ -184,12 +184,12 @@ export const deleteUser = async (
 
 export const updateUserSelectedBankAccount = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: { selectedBankAccountId: number };
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const { selectedBankAccountId } = req.body;
   const i18n = await useI18n(req);
 
@@ -211,10 +211,10 @@ export const updateUserSelectedBankAccount = async (
 };
 
 export const updateUserProfilePicture = async (
-  req: FastifyRequest<{ Params: { userId: number } }> & { file: File },
+  req: FastifyRequest<{ Params: { userId: string } }> & { file: File },
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const profilePicture = await req.file();
   const i18n = await useI18n(req);
 
@@ -258,12 +258,12 @@ export const updateUserProfilePicture = async (
 
 export const updateUserAccountSettings = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: { currency: string; language: string };
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const { currency, language } = req.body;
   const i18n = await useI18n(req);
 
@@ -283,7 +283,7 @@ export const updateUserAccountSettings = async (
 
 export const changeUserPassword = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: {
       password: string;
       newPassword: string;
@@ -292,7 +292,7 @@ export const changeUserPassword = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const { password, newPassword, confirmedNewPassword } = req.body;
   const i18n = await useI18n(req);
 
@@ -375,12 +375,12 @@ export const getUserResetPasswordToken = async (
 
 export const createNewUserPassword = async (
   req: FastifyRequest<{
-    Params: { userId: number };
+    Params: { userId: string };
     Body: { token: string; newPassword: string; confirmedNewPassword: string };
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const { newPassword, confirmedNewPassword, token } = req.body;
   const i18n = await useI18n(req);
 

@@ -1,7 +1,6 @@
 import { and, desc, eq } from 'drizzle-orm';
 
-import { ClientBody } from '@invoicetrackr/types';
-import { clientsTable } from './schema';
+import { SelectClient, clientsTable } from './schema';
 import { db } from './db';
 
 export const findClientByEmail = async (userId: number, email: string) => {
@@ -15,9 +14,19 @@ export const findClientByEmail = async (userId: number, email: string) => {
   return clients.at(0);
 };
 
-export const getClientsFromDb = async (userId: number) => {
+export const getClientsFromDb = async (
+  userId: number
+): Promise<Array<Omit<SelectClient, 'createdAt' | 'updatedAt' | 'userId'>>> => {
   const clients = await db
-    .select()
+    .select({
+      id: clientsTable.id,
+      name: clientsTable.name,
+      address: clientsTable.address,
+      businessNumber: clientsTable.businessNumber,
+      businessType: clientsTable.businessType,
+      type: clientsTable.type,
+      email: clientsTable.email
+    })
     .from(clientsTable)
     .where(eq(clientsTable.userId, userId))
     .orderBy(desc(clientsTable.id));
@@ -25,7 +34,10 @@ export const getClientsFromDb = async (userId: number) => {
   return clients;
 };
 
-export const getClientFromDb = async (userId: number, clientId: number) => {
+export const getClientFromDb = async (
+  userId: number,
+  clientId: number
+): Promise<SelectClient | undefined> => {
   const clients = await db
     .select()
     .from(clientsTable)
@@ -36,8 +48,15 @@ export const getClientFromDb = async (userId: number, clientId: number) => {
 
 export const insertClientInDb = async (
   userId: number,
-  { name, address, businessNumber, businessType, type, email }: ClientBody
-) => {
+  {
+    name,
+    address,
+    businessNumber,
+    businessType,
+    type,
+    email
+  }: Omit<SelectClient, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
+): Promise<SelectClient | undefined> => {
   const clients = await db
     .insert(clientsTable)
     .values({
@@ -46,7 +65,7 @@ export const insertClientInDb = async (
       businessNumber,
       businessType,
       type,
-      email: email || '',
+      email,
       userId
     })
     .returning();
@@ -57,8 +76,15 @@ export const insertClientInDb = async (
 export const updateClientInDb = async (
   userId: number,
   clientId: number,
-  { name, address, businessNumber, businessType, type, email }: ClientBody
-) => {
+  {
+    name,
+    address,
+    businessNumber,
+    businessType,
+    type,
+    email
+  }: Partial<SelectClient>
+): Promise<SelectClient | undefined> => {
   const clients = await db
     .update(clientsTable)
     .set({ name, address, businessNumber, businessType, type, email })
@@ -68,11 +94,14 @@ export const updateClientInDb = async (
   return clients.at(0);
 };
 
-export const deleteClientFromDb = async (userId: number, clientId: number) => {
+export const deleteClientFromDb = async (
+  userId: number,
+  clientId: number
+): Promise<{ id: number } | undefined> => {
   const clients = await db
     .delete(clientsTable)
     .where(and(eq(clientsTable.id, clientId), eq(clientsTable.userId, userId)))
-    .returning();
+    .returning({ id: clientsTable.id });
 
   return clients.at(0);
 };

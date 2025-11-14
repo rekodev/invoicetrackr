@@ -22,6 +22,7 @@ A modern, full-stack invoice management application built with Next.js, Fastify,
 - **Charts**: Chart.js
 - **PDF**: React PDF Renderer
 - **Payments**: Stripe
+- **Testing**: Vitest with React Testing Library
 
 ### Backend (`server/`)
 - **Framework**: Fastify 5
@@ -31,6 +32,7 @@ A modern, full-stack invoice management application built with Next.js, Fastify,
 - **File Upload**: Cloudinary
 - **Email**: Resend
 - **WebSockets**: ws
+- **Testing**: Vitest with in-memory SQLite
 
 ### Shared (`shared/types/`)
 - **Type Safety**: Zod schemas shared between client and server
@@ -41,7 +43,15 @@ A modern, full-stack invoice management application built with Next.js, Fastify,
 ```
 invoicetrackr/
 ├── client/              # Next.js frontend application
+│   ├── src/
+│   │   ├── components/__tests__/  # Component unit tests
+│   │   └── test/                  # Test utilities and setup
+│   └── vitest.config.ts
 ├── server/              # Fastify backend API
+│   ├── src/
+│   │   ├── controllers/__tests__/ # API endpoint tests
+│   │   └── test/                  # Test factories and setup
+│   └── vitest.config.ts
 ├── shared/
 │   └── types/          # Shared Zod schemas and TypeScript types
 ├── .github/
@@ -69,6 +79,18 @@ invoicetrackr/
 - Coordinated builds and deployments
 - Centralized linting and formatting rules
 - Efficient dependency management with pnpm workspaces
+
+### Testing Strategy
+- **Server Tests**: Vitest with in-memory SQLite database for API endpoint testing
+  - Test factories using Fishery for generating test data
+  - Complete isolation with per-test-suite seeding and rollback
+  - Mocked external services (Stripe, Resend, Cloudinary)
+- **Client Tests**: Vitest with React Testing Library for component testing
+  - Tests focus on client components with user interaction logic
+  - Mocked Next.js router, cookies, and server actions
+  - Internationalization wrapper for consistent i18n testing
+- **Type Safety**: Shared Zod schemas ensure consistency across test environments
+- **CI/CD**: Automated testing in GitHub Actions for all pull requests
 
 ## 📄 License
 

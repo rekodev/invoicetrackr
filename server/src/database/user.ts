@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm';
 
 import {
   InsertUser,
+  SelectUser,
   passwordResetTokensTable,
   stripeAccountsTable,
   usersTable
@@ -9,7 +10,15 @@ import {
 import { UserBody } from '@invoicetrackr/types';
 import { db } from './db';
 
-export const getUserFromDb = async (id: number) => {
+export const getUserFromDb = async (
+  id: number
+): Promise<
+  | (Omit<SelectUser, 'password'> & {
+      stripeCustomerId: string | null;
+      stripeSubscriptionId: string | null;
+    })
+  | undefined
+> => {
   const users = await db
     .select({
       id: usersTable.id,
@@ -39,7 +48,15 @@ export const getUserFromDb = async (id: number) => {
   return users.at(0);
 };
 
-export const getUserByEmailFromDb = async (email: string) => {
+export const getUserByEmailFromDb = async (
+  email: string
+): Promise<
+  | (SelectUser & {
+      stripeCustomerId: string | null;
+      stripeSubscriptionId: string | null;
+    })
+  | undefined
+> => {
   const users = await db
     .select({
       id: usersTable.id,
@@ -74,7 +91,9 @@ export const registerUser = async ({
   email,
   password,
   language
-}: Pick<InsertUser, 'email' | 'password' | 'language'>) => {
+}: Pick<InsertUser, 'email' | 'password' | 'language'>): Promise<
+  { email: string } | undefined
+> => {
   const users = await db
     .insert(usersTable)
     .values({
@@ -95,13 +114,23 @@ export const registerUser = async ({
   return users.at(0);
 };
 
+export type UserUpdateResult = Omit<
+  SelectUser,
+  | 'createdAt'
+  | 'updatedAt'
+  | 'stripeCustomerId'
+  | 'stripeSubscriptionId'
+  | 'selectedBankAccountId'
+  | 'password'
+>;
+
 export const updateUserInDb = async (
   user: Pick<
     UserBody,
     'id' | 'email' | 'name' | 'businessType' | 'businessNumber' | 'address'
   >,
   signature: string
-) => {
+): Promise<{ id: number } | undefined> => {
   const { name, address, businessNumber, businessType, email } = user;
 
   const users = await db
@@ -123,24 +152,12 @@ export const updateUserInDb = async (
 export const updateUserSelectedBankAccountInDb = async (
   userId: number,
   selectedBankAccountId: number
-) => {
+): Promise<{ id: number } | undefined> => {
   const users = await db
     .update(usersTable)
     .set({ selectedBankAccountId })
     .where(eq(usersTable.id, userId))
-    .returning({
-      id: usersTable.id,
-      name: usersTable.name,
-      type: usersTable.type,
-      businessType: usersTable.businessType,
-      businessNumber: usersTable.businessNumber,
-      address: usersTable.address,
-      email: usersTable.email,
-      signature: usersTable.signature,
-      profilePictureUrl: usersTable.profilePictureUrl,
-      language: usersTable.language,
-      currency: usersTable.currency
-    });
+    .returning({ id: usersTable.id });
 
   return users.at(0);
 };
@@ -148,7 +165,7 @@ export const updateUserSelectedBankAccountInDb = async (
 export const updateUserProfilePictureInDb = async (
   userId: number,
   url: string
-) => {
+): Promise<UserUpdateResult | undefined> => {
   const users = await db
     .update(usersTable)
     .set({ profilePictureUrl: url })
@@ -174,7 +191,7 @@ export const updateUserAccountSettingsInDb = async (
   userId: number,
   language: string,
   currency: string
-) => {
+): Promise<UserUpdateResult | undefined> => {
   const users = await db
     .update(usersTable)
     .set({ language, currency })
@@ -196,7 +213,9 @@ export const updateUserAccountSettingsInDb = async (
   return users.at(0);
 };
 
-export const deleteUserFromDb = async (id: number) => {
+export const deleteUserFromDb = async (
+  id: number
+): Promise<{ id: number } | undefined> => {
   const users = await db
     .delete(usersTable)
     .where(eq(usersTable.id, id))
@@ -214,7 +233,10 @@ export const getUserPasswordHashFromDb = async (id: number) => {
   return users.at(0)?.password;
 };
 
-export const changeUserPasswordInDb = async (id: number, password: string) => {
+export const changeUserPasswordInDb = async (
+  id: number,
+  password: string
+): Promise<{ id: number } | undefined> => {
   const users = await db
     .update(usersTable)
     .set({ password })

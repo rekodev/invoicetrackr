@@ -2,6 +2,8 @@ import { and, desc, eq, gte, inArray, sql } from 'drizzle-orm';
 import { InvoiceBody } from '@invoicetrackr/types';
 
 import {
+  SelectInvoice,
+  bankingInformationTable,
   invoiceBankingInformationTable,
   invoiceReceiversTable,
   invoiceSendersTable,
@@ -10,6 +12,13 @@ import {
 } from './schema';
 import { db } from './db';
 import { jsonAgg } from '../utils/json';
+
+export type InvoiceFromDb = SelectInvoice & {
+  bankingInformation: typeof bankingInformationTable.$inferSelect | null;
+  sender: typeof invoiceSendersTable.$inferSelect | null;
+  receiver: typeof invoiceReceiversTable.$inferSelect | null;
+  services: Array<typeof invoiceServicesTable.$inferSelect>;
+};
 
 export const findInvoiceById = async (userId: number, id: number) => {
   const invoices = await db
@@ -37,7 +46,9 @@ export const findInvoiceByInvoiceId = async (
   return invoices.at(0);
 };
 
-export const getInvoicesFromDb = async (userId: number) => {
+export const getInvoicesFromDb = async (
+  userId: number
+): Promise<Array<InvoiceFromDb>> => {
   const invoices = await db
     .select({
       id: invoicesTable.id,
@@ -59,7 +70,8 @@ export const getInvoicesFromDb = async (userId: number) => {
         type: invoiceSendersTable.type,
         businessType: invoiceSendersTable.businessType,
         businessNumber: invoiceSendersTable.businessNumber,
-        address: invoiceSendersTable.address
+        address: invoiceSendersTable.address,
+        email: invoiceSendersTable.email
       },
       receiver: {
         id: invoiceReceiversTable.id,
@@ -111,7 +123,7 @@ export const getInvoiceFromDb = async (
   userId: number,
   id: number,
   transaction?: Parameters<Parameters<typeof db.transaction>[0]>[0]
-) => {
+): Promise<InvoiceFromDb | undefined> => {
   const invoices = await (transaction ? transaction : db)
     .select({
       id: invoicesTable.id,
@@ -185,7 +197,7 @@ export const insertInvoiceInDb = async (
   invoiceData: InvoiceBody,
   userId: number,
   senderSignature: string
-) => {
+): Promise<InvoiceFromDb | null> => {
   const invoice = await db.transaction(async (tx) => {
     // Invoice insert
     const invoices = await tx
@@ -281,7 +293,7 @@ export const updateInvoiceInDb = async (
   id: number,
   invoiceData: InvoiceBody,
   senderSignature: string
-) => {
+): Promise<InvoiceFromDb | null | undefined> => {
   const updatedInvoice = await db.transaction(async (tx) => {
     const existingSender = await tx
       .select({ id: invoiceSendersTable.id })
@@ -311,7 +323,7 @@ export const updateInvoiceInDb = async (
         .values({
           invoiceId: id,
           name: invoiceData.sender.name,
-          email: invoiceData.sender.email,
+          email: invoiceData.sender.email || '',
           address: invoiceData.sender.address,
           type: invoiceData.sender.type,
           businessType: invoiceData.sender.businessType,
@@ -453,7 +465,7 @@ export async function updateInvoiceStatusInDb(
   userId: number,
   id: number,
   status: 'paid' | 'pending' | 'canceled'
-) {
+): Promise<{ id: number } | undefined> {
   const invoices = await db
     .update(invoicesTable)
     .set({ status })
@@ -466,13 +478,13 @@ export async function updateInvoiceStatusInDb(
 export const deleteInvoiceFromDb = async (
   userId: number,
   invoiceId: number
-) => {
+): Promise<{ id: number } | undefined> => {
   const invoices = await db
     .delete(invoicesTable)
     .where(
       and(eq(invoicesTable.id, invoiceId), eq(invoicesTable.userId, userId))
     )
-    .returning({ id: invoiceServicesTable.id });
+    .returning({ id: invoicesTable.id });
 
   return invoices.at(0);
 };

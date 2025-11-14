@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 
-import Breadcrumbs from '@/components/breadcrumbs';
+import Breadcrumbs from '@/components/layout/breadcrumbs';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
 import { auth } from '@/auth';
 

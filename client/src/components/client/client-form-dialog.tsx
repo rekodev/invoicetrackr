@@ -143,6 +143,7 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
                   {t('cancel')}
                 </Button>
                 <Button
+                  data-testid="client-form-dialog-submit-button"
                   isDisabled={isLoading || !isDirty}
                   isLoading={isLoading}
                   color="secondary"

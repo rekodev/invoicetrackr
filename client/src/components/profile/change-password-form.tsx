@@ -14,7 +14,7 @@ import { useTranslations } from 'next-intl';
 
 import { changeUserPasswordAction } from '@/lib/actions/user';
 
-import PasswordInput from '../password-input';
+import PasswordInput from './password-input';
 
 type ChangePasswordFormModel = {
   password: string;

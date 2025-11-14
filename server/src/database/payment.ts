@@ -56,5 +56,5 @@ export const deleteStripeAccountFromDb = async (userId: number) => {
     .where(eq(stripeAccountsTable.userId, userId))
     .returning({ id: stripeAccountsTable.id });
 
-  return stripeAccounts.at(0)?.id;
+  return stripeAccounts.at(0);
 };
