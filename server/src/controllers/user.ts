@@ -35,7 +35,7 @@ export const getUser = async (
 ) => {
   const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
-  const user = await getUserFromDb(Number(userId));
+  const user = await getUserFromDb(userId);
 
   if (!user) throw new BadRequestError(i18n.t('error.user.notFound'));
 
@@ -123,7 +123,7 @@ export const updateUser = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const file = req.body.file;
   const { email, name, businessType, businessNumber, address, signature } =
     req.body;
@@ -142,7 +142,7 @@ export const updateUser = async (
       throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
   }
 
-  const foundUser = await getUserFromDb(Number(userId));
+  const foundUser = await getUserFromDb(userId);
 
   if (!foundUser) throw new NotFoundError(i18n.t('error.user.notFound'));
 
@@ -151,7 +151,7 @@ export const updateUser = async (
     : signature;
 
   const updatedUser = await updateUserInDb(
-    { id: Number(userId), email, name, businessType, businessNumber, address },
+    { id: userId, email, name, businessType, businessNumber, address },
     signatureUrl || ''
   );
 
@@ -168,13 +168,13 @@ export const deleteUser = async (
   req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
 
-  const stripeCustomerId = await getStripeCustomerIdFromDb(Number(userId));
+  const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
   await stripe.customers.del(stripeCustomerId);
 
-  const deletedUserId = await deleteUserFromDb(Number(userId));
+  const deletedUserId = await deleteUserFromDb(userId);
 
   if (!deletedUserId)
     throw new BadRequestError(i18n.t('error.user.unableToDelete'));
@@ -189,19 +189,16 @@ export const updateUserSelectedBankAccount = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { userId } = req.params;
+  const userId = Number(req.params.userId);
   const { selectedBankAccountId } = req.body;
   const i18n = await useI18n(req);
 
-  const foundUser = await getUserFromDb(Number(userId));
+  const foundUser = await getUserFromDb(userId);
 
   if (!foundUser) throw new NotFoundError(i18n.t('error.user.notFound'));
 
   const updatedUserSelectedBankAccount =
-    await updateUserSelectedBankAccountInDb(
-      Number(userId),
-      selectedBankAccountId
-    );
+    await updateUserSelectedBankAccountInDb(userId, selectedBankAccountId);
 
   if (!updatedUserSelectedBankAccount)
     throw new BadRequestError(
