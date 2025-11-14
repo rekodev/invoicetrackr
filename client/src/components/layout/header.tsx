@@ -2,8 +2,8 @@ import { auth } from '@/auth';
 import { getUser } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
-import GuestHeader from './ui/guest-header';
-import UserHeader from './ui/user-header';
+import GuestHeader from './guest-header';
+import UserHeader from './user-header';
 
 export default async function Header() {
   const session = await auth();
