@@ -7,8 +7,8 @@ import baseConfig from '../eslint.config.js';
 const eslintConfig = defineConfig([
   ...baseConfig,
   {
+    ignores: ['vitest.config.ts', 'drizzle.config.ts'],
     files: ['**/*.ts'],
-    ignores: ['vitest.config.ts'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
