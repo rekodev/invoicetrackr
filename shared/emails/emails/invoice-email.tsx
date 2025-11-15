@@ -11,52 +11,66 @@ import {
 } from '@react-email/components';
 
 interface InvoiceEmailProps {
-  invoiceNumber?: string;
+  invoiceNumber: string;
   amount?: string;
   dueDate?: string;
-  senderName?: string;
-  message?: string;
+  senderName: string;
+  message: string;
+  translations: {
+    title: string;
+    subtitle: string;
+    detailsTitle: string;
+    invoiceNumber: string;
+    amount: string;
+    dueDate: string;
+    from: string;
+    attachmentTitle: string;
+    attachmentMessage: string;
+    footer: string;
+    copyright: string;
+  };
 }
 
 const InvoiceEmail = ({
-  invoiceNumber = 'INV-2024-001',
+  invoiceNumber,
   amount,
   dueDate,
-  senderName = 'Your Service Provider',
-  message = 'Please find your invoice attached.'
+  senderName,
+  message,
+  translations
 }: InvoiceEmailProps) => {
   return (
     <Html lang="en" dir="ltr">
       <Head />
-      <Preview>{`Invoice #${invoiceNumber} from ${senderName} - InvoiceTrackr`}</Preview>
+      <Preview>{`${translations.invoiceNumber} #${invoiceNumber} ${translations.from} ${senderName} - ${translations.title}`}</Preview>
       <Tailwind>
         <Body className="bg-gray-100 py-[40px] font-sans">
           <Container className="mx-auto max-w-[600px] overflow-hidden rounded-[8px] bg-white shadow-lg">
             {/* Header */}
             <Section className="bg-white px-[32px] py-[24px]">
               <Text className="m-0 text-center text-[24px] font-bold text-[#7828C8]">
-                InvoiceTrackr
+                {translations.title}
               </Text>
               <Text className="m-0 mt-[4px] text-center text-[14px] text-[#481878]">
-                Professional Invoice Management
+                {translations.subtitle}
               </Text>
             </Section>
 
             {/* Main Content */}
             <Section className="px-[32px] pb-[32px]">
-              <Text className="mx-0 mb-[24px] mt-[24px] border border-red-500 text-[16px] leading-[24px] text-[#481878]">
+              <Text className="mx-0 mb-[24px] mt-[24px] text-[16px] leading-[24px] text-[#481878]">
                 {message}
               </Text>
 
               {/* Invoice Details Card */}
               <Section className="mb-[24px] rounded-[8px] border border-[#E4D4F4] bg-[#F2EAFA] p-[24px]">
                 <Text className="mb-[16px] mt-0 text-[18px] font-bold text-[#301050]">
-                  Invoice Details
+                  {translations.detailsTitle}
                 </Text>
 
                 <Section className="mb-[12px]">
                   <Text className="m-0 mb-[4px] text-[14px] font-semibold text-[#481878]">
-                    Invoice Number:
+                    {translations.invoiceNumber}
                   </Text>
                   <Text className="m-0 text-[16px] font-bold text-[#6020A0]">
                     #{invoiceNumber}
@@ -66,7 +80,7 @@ const InvoiceEmail = ({
                 {amount && (
                   <Section className="mb-[12px]">
                     <Text className="m-0 mb-[4px] text-[14px] font-semibold text-[#481878]">
-                      Amount:
+                      {translations.amount}
                     </Text>
                     <Text className="m-0 text-[20px] font-bold text-[#7828C8]">
                       {amount}
@@ -77,7 +91,7 @@ const InvoiceEmail = ({
                 {dueDate && (
                   <Section className="mb-[12px]">
                     <Text className="m-0 mb-[4px] text-[14px] font-semibold text-[#481878]">
-                      Due Date:
+                      {translations.dueDate}
                     </Text>
                     <Text className="m-0 text-[16px] font-medium text-[#6020A0]">
                       {dueDate}
@@ -87,7 +101,7 @@ const InvoiceEmail = ({
 
                 <Section>
                   <Text className="m-0 mb-[4px] text-[14px] font-semibold text-[#481878]">
-                    From:
+                    {translations.from}
                   </Text>
                   <Text className="m-0 text-[16px] font-medium text-[#6020A0]">
                     {senderName}
@@ -98,11 +112,10 @@ const InvoiceEmail = ({
               {/* Attachment Notice */}
               <Section className="rounded-md border-l-[4px] border-l-[#7828C8] bg-[#E4D4F4] p-[16px]">
                 <Text className="m-0 mb-[4px] text-[14px] font-semibold text-[#301050]">
-                  📎 Invoice Attached
+                  📎 {translations.attachmentTitle}
                 </Text>
                 <Text className="m-0 text-[14px] text-[#481878]">
-                  The complete invoice document is attached to this email as a
-                  PDF file.
+                  {translations.attachmentMessage}
                 </Text>
               </Section>
             </Section>
@@ -110,11 +123,10 @@ const InvoiceEmail = ({
             {/* Footer */}
             <Section className="bg-[#F2EAFA] px-[32px] py-[24px]">
               <Text className="m-0 mb-[8px] text-center text-[12px] text-[#6020A0]">
-                This email was sent by InvoiceTrackr
+                {translations.footer}
               </Text>
               <Text className="m-0 text-center text-[12px] text-[#6020A0]">
-                © {new Date().getFullYear()} InvoiceTrackr. All rights
-                reserved.
+                © {new Date().getFullYear()} {translations.copyright}
               </Text>
             </Section>
           </Container>

@@ -3,6 +3,20 @@ export default {
     resetPassword: {
       subject: 'Reset Your Password',
       text: 'Click the link to reset your password: %{resetLink}'
+    },
+    invoice: {
+      title: 'InvoiceTrackr',
+      subtitle: 'Professional Invoice Management',
+      defaultMessage: 'Please find your invoice attached.',
+      detailsTitle: 'Invoice Details',
+      invoiceNumber: 'Invoice Number:',
+      amount: 'Amount:',
+      dueDate: 'Due Date:',
+      from: 'From:',
+      attachmentTitle: 'Invoice Attached',
+      attachmentMessage: 'The complete invoice document is attached to this email as a PDF file.',
+      footer: 'This email was sent by InvoiceTrackr',
+      copyright: 'InvoiceTrackr. All rights reserved.'
     }
   },
   validation: {
