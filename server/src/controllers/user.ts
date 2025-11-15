@@ -72,7 +72,8 @@ export const loginUser = async (
   }
 
   reply.status(200).send({
-    user: { ...user, isSubscriptionActive }
+    user: { ...user, isSubscriptionActive },
+    message: i18n.t('success.user.loggedIn')
   });
 };
 
