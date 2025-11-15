@@ -1,11 +1,11 @@
 // Common
-export * from './common.js';
+export * from './common';
 
 // Response
-export * from './response.js';
+export * from './response';
 
 // Entities
-export * from './bank-account.js';
-export * from './invoice.js';
-export * from './user.js';
-export * from './client.js';
+export * from './bank-account';
+export * from './invoice';
+export * from './user';
+export * from './client';

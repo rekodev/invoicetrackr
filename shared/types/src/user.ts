@@ -20,7 +20,8 @@ export const userBodySchema = z.object({
   currency: z.string().min(1, 'validation.user.currency'),
   language: z.string().min(1, 'validation.user.language'),
   stripeCustomerId: z.string(),
-  stripeSubscriptionId: z.string()
+  stripeSubscriptionId: z.string(),
+  isSubscriptionActive: z.boolean().optional()
 });
 
 // Reset Password Token Schema

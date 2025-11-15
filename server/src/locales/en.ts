@@ -89,6 +89,7 @@ export default {
   },
   success: {
     user: {
+      loggedIn: 'Logged in successfully',
       created: 'User created successfully',
       updated: 'User information updated successfully',
       deleted: 'Account deleted successfully',

@@ -76,6 +76,10 @@
     "description": "Susidūrėme su netikėta klaida. Pabandykite atnaujinti puslapį arba susisiekite su palaikymu, jei problema išlieka.",
     "try_again": "Bandyti dar kartą"
   },
+  "renew_subscription": {
+    "title": "Prenumerata neaktyvi",
+    "description": "Prenumeruokite dabar, kad naudotumėtės sklandžia sąskaitų išrašymo patirtimi."
+  },
   "home": {
     "hero": {
       "title": "Sukurkite Profesionalias Sąskaitas Per Kelias Minutes",
@@ -170,6 +174,10 @@
       "forgot_password": "Pamiršote slaptažodį?",
       "need_account": "Reikia sukurti paskyrą?",
       "sign_up_link": "Registruotis"
+    },
+    "error": {
+      "invalid_credentials": "Neteisingas el. paštas arba slaptažodis.",
+      "general": "Prisijungti nepavyko. Bandykite dar kartą."
     }
   },
   "sign_up": {
