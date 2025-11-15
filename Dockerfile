@@ -17,14 +17,16 @@ FROM base AS deps
 COPY . .
 RUN pnpm install --frozen-lockfile
 
-# Stage 2: Build the types, client and server
+# Stage 2: Build the types, emails, client and server
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/shared/types/node_modules ./shared/types/node_modules
+COPY --from=deps /app/shared/emails/node_modules ./shared/emails/node_modules
 COPY --from=deps /app/client/node_modules ./client/node_modules
 COPY --from=deps /app/server/node_modules ./server/node_modules
 COPY . .
 RUN cd shared/types && pnpm run build && cd ../.. && \
+    cd shared/emails && pnpm run build && cd ../.. && \
     cd client && pnpm run build && cd .. && \
     cd server && pnpm run build
 
@@ -33,12 +35,15 @@ FROM base AS runner
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/shared/types/node_modules ./shared/types/node_modules
 COPY --from=deps /app/shared/types/package.json ./shared/types/package.json
+COPY --from=deps /app/shared/emails/node_modules ./shared/emails/node_modules
+COPY --from=deps /app/shared/emails/package.json ./shared/emails/package.json
 COPY --from=deps /app/client/node_modules ./client/node_modules
 COPY --from=deps /app/client/package.json ./client/package.json
 COPY --from=deps /app/server/node_modules ./server/node_modules
 COPY --from=deps /app/server/package.json ./server/package.json
 ENV NODE_ENV=production
 COPY --from=builder /app/shared/types/dist ./shared/types/dist
+COPY --from=builder /app/shared/emails/dist ./shared/emails/dist
 COPY --from=builder /app/client/public ./client/public
 COPY --from=builder /app/client/.next ./client/.next
 COPY --from=builder /app/server/dist ./server/dist

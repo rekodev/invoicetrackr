@@ -3,6 +3,7 @@ import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { InvoiceBody } from '@invoicetrackr/types';
 import { MultipartFile } from '@fastify/multipart';
 import { useI18n } from 'fastify-i18n';
+import { renderInvoiceEmail } from '@invoicetrackr/emails';
 
 import {
   AlreadyExistsError,
@@ -283,12 +284,26 @@ export const sendInvoiceEmail = async (
     ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
     : undefined;
 
+  const htmlContent = await renderInvoiceEmail({
+    invoiceNumber: invoice.invoiceNumber,
+    amount: `${invoice.total} ${invoice.currency}`,
+    dueDate: invoice.dueDate
+      ? new Date(invoice.dueDate).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      : undefined,
+    senderName: user.name || user.email,
+    message: message || 'Please find your invoice attached.'
+  });
+
   const { error } = await resend.emails.send({
     to: recipientEmail,
     from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
     replyTo: user.email,
     subject: subject,
-    text: message || 'Please find your invoice attached.',
+    html: htmlContent,
     attachments: [
       {
         content: attachment,
