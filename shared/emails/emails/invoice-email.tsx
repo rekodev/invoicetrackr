@@ -10,7 +10,7 @@ import {
   Tailwind
 } from '@react-email/components';
 
-export interface InvoiceEmailProps {
+interface InvoiceEmailProps {
   invoiceNumber?: string;
   amount?: string;
   dueDate?: string;
@@ -18,39 +18,39 @@ export interface InvoiceEmailProps {
   message?: string;
 }
 
-export const InvoiceEmail = ({
-  invoiceNumber,
+const InvoiceEmail = ({
+  invoiceNumber = 'INV-2024-001',
   amount,
   dueDate,
-  senderName,
-  message
+  senderName = 'Your Service Provider',
+  message = 'Please find your invoice attached.'
 }: InvoiceEmailProps) => {
   return (
     <Html lang="en" dir="ltr">
+      <Head />
+      <Preview>{`Invoice #${invoiceNumber} from ${senderName} - InvoiceTrackr`}</Preview>
       <Tailwind>
-        <Head />
-        <Preview>
-          Invoice #{invoiceNumber || 'INV-2024-001'} from{' '}
-          {senderName || 'Your Service Provider'} - InvoiceTrackr
-        </Preview>
         <Body className="bg-gray-100 py-[40px] font-sans">
           <Container className="mx-auto max-w-[600px] overflow-hidden rounded-[8px] bg-white shadow-lg">
-            <Section className="bg-gradient-to-r from-[#7828C8] to-[#9353D3] px-[32px] py-[24px]">
-              <Text className="m-0 text-center text-[24px] font-bold text-white">
+            {/* Header */}
+            <Section className="bg-white px-[32px] py-[24px]">
+              <Text className="m-0 text-center text-[24px] font-bold text-[#7828C8]">
                 InvoiceTrackr
               </Text>
-              <Text className="m-0 mt-[4px] text-center text-[14px] text-purple-100">
+              <Text className="m-0 mt-[4px] text-center text-[14px] text-[#481878]">
                 Professional Invoice Management
               </Text>
             </Section>
 
-            <Section className="px-[32px] pb-[32px] pt-[24px]">
-              <Text className="mx-0 mb-[24px] mt-0 text-[16px] leading-[24px] text-[#481878]">
-                {message || 'Please find your invoice attached.'}
+            {/* Main Content */}
+            <Section className="px-[32px] pb-[32px]">
+              <Text className="mx-0 mb-[24px] mt-[24px] border border-red-500 text-[16px] leading-[24px] text-[#481878]">
+                {message}
               </Text>
 
+              {/* Invoice Details Card */}
               <Section className="mb-[24px] rounded-[8px] border border-[#E4D4F4] bg-[#F2EAFA] p-[24px]">
-                <Text className="m-0 mb-[16px] text-[18px] font-bold text-[#301050]">
+                <Text className="mb-[16px] mt-0 text-[18px] font-bold text-[#301050]">
                   Invoice Details
                 </Text>
 
@@ -59,7 +59,7 @@ export const InvoiceEmail = ({
                     Invoice Number:
                   </Text>
                   <Text className="m-0 text-[16px] font-bold text-[#6020A0]">
-                    #{invoiceNumber || 'INV-2024-001'}
+                    #{invoiceNumber}
                   </Text>
                 </Section>
 
@@ -90,12 +90,13 @@ export const InvoiceEmail = ({
                     From:
                   </Text>
                   <Text className="m-0 text-[16px] font-medium text-[#6020A0]">
-                    {senderName || 'Your Service Provider'}
+                    {senderName}
                   </Text>
                 </Section>
               </Section>
 
-              <Section className="rounded-[8px] border-l-[4px] border-l-[#7828C8] bg-[#E4D4F4] p-[16px]">
+              {/* Attachment Notice */}
+              <Section className="rounded-md border-l-[4px] border-l-[#7828C8] bg-[#E4D4F4] p-[16px]">
                 <Text className="m-0 mb-[4px] text-[14px] font-semibold text-[#301050]">
                   📎 Invoice Attached
                 </Text>
@@ -106,6 +107,7 @@ export const InvoiceEmail = ({
               </Section>
             </Section>
 
+            {/* Footer */}
             <Section className="bg-[#F2EAFA] px-[32px] py-[24px]">
               <Text className="m-0 mb-[8px] text-center text-[12px] text-[#6020A0]">
                 This email was sent by InvoiceTrackr
@@ -120,14 +122,6 @@ export const InvoiceEmail = ({
       </Tailwind>
     </Html>
   );
-};
-
-InvoiceEmail.PreviewProps = {
-  invoiceNumber: 'INV-2024-001',
-  amount: '1,250.00',
-  dueDate: 'December 15, 2024',
-  senderName: 'Acme Design Studio',
-  message: 'Thank you for your business! Please find your invoice attached.'
 };
 
 export default InvoiceEmail;

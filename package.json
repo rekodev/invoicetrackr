@@ -8,8 +8,9 @@
     "client": "pnpm --filter @invoicetrackr/client",
     "server": "pnpm --filter @invoicetrackr/server",
     "types": "pnpm --filter @invoicetrackr/types",
+    "emails": "pnpm --filter @invoicetrackr/types",
     "dev": "concurrently \"pnpm run types dev\" \"pnpm run server dev\" \"pnpm run client dev:turbo\"",
-    "build": "pnpm run types build && pnpm run server build && pnpm run client build",
+    "build": "pnpm run types build && pnpm run emails build && pnpm run server build && pnpm run client build",
     "lint": "pnpm run client lint && pnpm run server lint",
     "lint:fix": "pnpm run client lint:fix && pnpm run server lint:fix"
   },

@@ -2,8 +2,8 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { InvoiceBody } from '@invoicetrackr/types';
 import { MultipartFile } from '@fastify/multipart';
-import { useI18n } from 'fastify-i18n';
 import { renderInvoiceEmail } from '@invoicetrackr/emails';
+import { useI18n } from 'fastify-i18n';
 
 import {
   AlreadyExistsError,
@@ -285,8 +285,8 @@ export const sendInvoiceEmail = async (
     : undefined;
 
   const htmlContent = await renderInvoiceEmail({
-    invoiceNumber: invoice.invoiceNumber,
-    amount: `${invoice.total} ${invoice.currency}`,
+    invoiceNumber: invoice.invoiceId,
+    amount: `${invoice.totalAmount} ${user.currency}`,
     dueDate: invoice.dueDate
       ? new Date(invoice.dueDate).toLocaleDateString('en-US', {
           year: 'numeric',
