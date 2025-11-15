@@ -20,7 +20,6 @@ RUN pnpm install --frozen-lockfile
 # Stage 2: Build the types, client and server
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/shared/types/node_modules ./shared/types/node_modules
 COPY --from=deps /app/client/node_modules ./client/node_modules
 COPY --from=deps /app/server/node_modules ./server/node_modules
 COPY . .
@@ -31,7 +30,6 @@ RUN cd shared/types && pnpm run build && cd ../.. && \
 # Stage 3: Production server
 FROM base AS runner
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/shared/types/node_modules ./shared/types/node_modules
 COPY --from=deps /app/shared/types/package.json ./shared/types/package.json
 COPY --from=deps /app/client/node_modules ./client/node_modules
 COPY --from=deps /app/client/package.json ./client/package.json
