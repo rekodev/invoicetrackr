@@ -14,9 +14,9 @@ import {
   useElements,
   useStripe
 } from '@stripe/react-stripe-js';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
+import { Stripe, loadStripe } from '@stripe/stripe-js';
 import { User } from '@invoicetrackr/types';
-import { loadStripe } from '@stripe/stripe-js';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
 
@@ -37,8 +37,6 @@ import Loader from './ui/loader';
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
   throw new Error('NEXT_PUBLIC_STRIPLE_PUBLIC_KEY is not defined');
 }
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
 
 type Props = {
   user: User | undefined;
@@ -183,13 +181,30 @@ function PaymentFormInsideElements({ user }: { user: User }) {
 
 export default function PaymentForm({ user }: Props) {
   const { theme } = useTheme();
+  const [stripePromise, setStripePromise] = useState<Stripe | null>(null);
 
   const isDarkMode = theme === 'dark';
 
-  if (!user) return null;
+  useEffect(() => {
+    const loadStripeWithLocale = async () => {
+      return loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!, {
+        locale: (user?.language as 'lt' | 'en') || 'en'
+      });
+    };
+
+    loadStripeWithLocale().then((stripe) => {
+      setStripePromise(stripe);
+    });
+  }, [user?.language]);
+
+  if (!stripePromise || !user) return null;
 
   return (
-    <div data-testid="payment-form">
+    <div
+      key={JSON.stringify(stripePromise)}
+      data-testid="payment-form"
+      className="w-full"
+    >
       <Elements
         stripe={stripePromise}
         options={{
@@ -214,6 +229,7 @@ export default function PaymentForm({ user }: Props) {
               '.Input': {
                 color: isDarkMode ? '#3f3f46' : '#71717a',
                 paddingTop: '0.5rem',
+                marginTop: '0.5rem',
                 paddingBottom: '0.5rem',
                 maxHeight: '4rem'
               }

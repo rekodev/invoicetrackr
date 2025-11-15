@@ -6,12 +6,14 @@ import { useEffect } from 'react';
 import PaymentForm from '@/components/payment-form';
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
 import { User } from '@invoicetrackr/types';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   user: User;
 };
 
 export default function RenewSubscriptionPageContent({ user }: Props) {
+  const t = useTranslations('renew_subscription');
   const router = useRouter();
   const pathname = usePathname();
 
@@ -22,15 +24,12 @@ export default function RenewSubscriptionPageContent({ user }: Props) {
   }, [pathname, router]);
 
   return (
-    <section className="mx-auto w-full">
-      <div className="mb-8 flex flex-col items-center justify-center gap-4">
+    <section className="mx-auto flex h-full w-full flex-1 flex-col items-center justify-center">
+      <div className="mb-8 flex w-full flex-col items-center justify-center gap-4">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Your subscription is no longer active
+          {t('title')}
         </h1>
-        <p className="text-default-500 text-lg">
-          Please renew your subscription to continue accessing all features and
-          services.
-        </p>
+        <p className="text-default-500 text-lg">{t('description')}</p>
       </div>
       <PaymentForm user={user} />
     </section>

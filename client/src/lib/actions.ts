@@ -1,8 +1,8 @@
 'use server';
 
 import { AuthError, User } from 'next-auth';
-import { auth } from '@/auth';
 import { cookies } from 'next/headers';
+import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 
 import {
@@ -10,6 +10,7 @@ import {
   registerUser,
   resetUserPassword
 } from '@/api/user';
+import { auth } from '@/auth';
 
 import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
 import { signIn, signOut, unstable_update } from '../auth';
@@ -67,12 +68,14 @@ export async function authenticateAction(
       redirectTo: DASHBOARD_PAGE
     });
   } catch (error) {
+    const t = await getTranslations('login.error');
+
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return 'Invalid credentials.';
+          return t('invalid_credentials');
         default:
-          return 'Something went wrong.';
+          return t('general');
       }
     }
     throw error;

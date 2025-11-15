@@ -89,6 +89,7 @@ export default {
   },
   success: {
     user: {
+      loggedIn: 'Sėkmingai prisijungta',
       created: 'Vartotojas sukurtas sėkmingai',
       updated: 'Vartotojo informacija atnaujinta sėkmingai',
       deleted: 'Paskyra ištrinta sėkmingai',
