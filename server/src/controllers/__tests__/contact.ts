@@ -36,7 +36,7 @@ describe('Contact Controller', () => {
         from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
         to: 'support@ruwhia8088.resend.app',
         subject: 'New Contact Message',
-        text: expect.stringContaining('test@example.com')
+        html: expect.stringMatching(/New Contact Form Submission/)
       });
 
       await app.close();

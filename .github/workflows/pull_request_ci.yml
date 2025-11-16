@@ -42,6 +42,16 @@ jobs:
           cd shared/types
           pnpm build
 
+      - name: Run TypeScript Compiler (emails)
+        run: |
+          cd shared/emails
+          pnpm tsc
+
+      - name: Run Build (emails)
+        run: |
+          cd shared/emails
+          pnpm build
+
       # Steps for the Client Folder
       - name: Run TypeScript Compiler (client)
         run: |

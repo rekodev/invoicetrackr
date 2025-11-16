@@ -1,0 +1,28 @@
+{
+  "name": "@invoicetrackr/emails",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "email dev --dir emails"
+  },
+  "dependencies": {
+    "@react-email/components": "^0.0.30",
+    "@react-email/render": "^1.0.6",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@react-email/preview-server": "4.3.2",
+    "@types/react": "^19.0.2",
+    "react-email": "^4.0.3",
+    "typescript": "^5.7.3"
+  }
+}

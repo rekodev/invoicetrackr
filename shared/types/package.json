@@ -1,6 +1,7 @@
 {
   "name": "@invoicetrackr/types",
   "version": "1.0.0",
+  "private": true,
   "description": "Shared types and schemas for InvoiceTrackr",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

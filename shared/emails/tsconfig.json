@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "declaration": true,
+    "declarationMap": true,
+    "module": "commonjs",
+    "moduleResolution": "node"
+  },
+  "include": [
+    "emails/**/*.ts",
+    "emails/**/*.tsx",
+    "index.ts"
+  ]
+}

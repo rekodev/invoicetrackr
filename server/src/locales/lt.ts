@@ -2,7 +2,33 @@ export default {
   emails: {
     resetPassword: {
       subject: 'Atkurkite slaptažodį',
-      text: 'Spustelėkite nuorodą, kad atkurtumėte slaptažodį: %{resetLink}'
+      text: 'Spustelėkite nuorodą, kad atkurtumėte slaptažodį: %{resetLink}',
+      greeting: 'Sveiki!',
+      message:
+        'Gavome prašymą atkurti jūsų slaptažodį. Spustelėkite žemiau esantį mygtuką, kad sukurtumėte naują slaptažodį:',
+      buttonText: 'Atkurti slaptažodį',
+      orCopy: 'Arba nukopijuokite ir įklijuokite šią nuorodą į savo naršyklę:',
+      linkExpiry:
+        'Ši nuoroda baigs galioti po 1 valandos dėl saugumo priežasčių.',
+      noRequest:
+        'Jei jūs neprašėte atkurti slaptažodžio, galite drąsiai ignoruoti šį laišką.',
+      footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
+      copyright: '© {year} InvoiceTrackr. Visos teisės saugomos.'
+    },
+    invoice: {
+      title: 'InvoiceTrackr',
+      subtitle: 'Profesionalus sąskaitų faktūrų valdymas',
+      defaultMessage: 'Prašome rasti prisegtos sąskaitos faktūrą.',
+      detailsTitle: 'Sąskaitos faktūros informacija',
+      invoiceNumber: 'Sąskaitos numeris:',
+      amount: 'Suma:',
+      dueDate: 'Terminas:',
+      from: 'Nuo:',
+      attachmentTitle: 'Sąskaita prisegta',
+      attachmentMessage:
+        'Pilnas sąskaitos faktūros dokumentas pridėtas prie šio el. laiško kaip PDF failas.',
+      footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
+      copyright: 'InvoiceTrackr. Visos teisės saugomos.'
     }
   },
   validation: {

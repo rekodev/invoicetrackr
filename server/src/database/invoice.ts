@@ -2,7 +2,6 @@ import { and, desc, eq, gte, inArray, sql } from 'drizzle-orm';
 import { InvoiceBody } from '@invoicetrackr/types';
 
 import {
-  SelectInvoice,
   bankingInformationTable,
   invoiceBankingInformationTable,
   invoiceReceiversTable,
@@ -13,11 +12,19 @@ import {
 import { db } from './db';
 import { jsonAgg } from '../utils/json';
 
-export type InvoiceFromDb = SelectInvoice & {
-  bankingInformation: typeof bankingInformationTable.$inferSelect | null;
-  sender: typeof invoiceSendersTable.$inferSelect | null;
-  receiver: typeof invoiceReceiversTable.$inferSelect | null;
-  services: Array<typeof invoiceServicesTable.$inferSelect>;
+export type InvoiceFromDb = Omit<
+  InvoiceBody,
+  'sender' | 'receiver' | 'services' | 'bankingInformation'
+> & {
+  bankingInformation: Omit<
+    typeof bankingInformationTable.$inferSelect,
+    'userId'
+  > | null;
+  sender: Omit<typeof invoiceSendersTable.$inferSelect, 'invoiceId'> | null;
+  receiver: Omit<typeof invoiceReceiversTable.$inferSelect, 'invoiceId'> | null;
+  services: Array<
+    Omit<typeof invoiceServicesTable.$inferSelect, 'invoiceId'>
+  > | null;
 };
 
 export const findInvoiceById = async (userId: number, id: number) => {
@@ -282,7 +289,7 @@ export const insertInvoiceInDb = async (
       tx
     );
 
-    return !!insertedInvoice?.services.length ? insertedInvoice : null;
+    return !!insertedInvoice?.services?.length ? insertedInvoice : null;
   });
 
   return invoice;

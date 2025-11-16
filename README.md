@@ -34,9 +34,9 @@ A modern, full-stack invoice management application built with Next.js, Fastify,
 - **WebSockets**: ws
 - **Testing**: Vitest with in-memory SQLite
 
-### Shared (`shared/types/`)
-- **Type Safety**: Zod schemas shared between client and server
-- **Validation**: Centralized schema definitions
+### Shared (`shared/`)
+- **Types** (`shared/types/`): Zod schemas and TypeScript types shared between client and server (with validation error messages)
+- **Emails** (`shared/emails/`): Email templates built with React Email, providing type-safe, component-based email designs
 
 ## 📦 Project Structure
 
@@ -53,7 +53,8 @@ invoicetrackr/
 │   │   └── test/                  # Test factories and setup
 │   └── vitest.config.ts
 ├── shared/
-│   └── types/          # Shared Zod schemas and TypeScript types
+│   ├── types/          # Shared Zod schemas and TypeScript types
+│   └── emails/         # Email templates built with React Email
 ├── .github/
 │   └── workflows/      # CI/CD pipelines
 ├── Dockerfile          # Production Docker configuration
