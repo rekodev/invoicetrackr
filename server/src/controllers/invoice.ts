@@ -303,7 +303,9 @@ export const sendInvoiceEmail = async (
         attachmentTitle: i18n.t('emails.invoice.attachmentTitle'),
         attachmentMessage: i18n.t('emails.invoice.attachmentMessage'),
         footer: i18n.t('emails.invoice.footer'),
-        copyright: i18n.t('emails.invoice.copyright')
+        copyright: i18n.t('emails.invoice.copyright', {
+          year: new Date().getFullYear()
+        })
       }
     })
   );

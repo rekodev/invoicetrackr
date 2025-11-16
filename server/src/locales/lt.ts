@@ -4,13 +4,16 @@ export default {
       subject: 'Atkurkite slaptažodį',
       text: 'Spustelėkite nuorodą, kad atkurtumėte slaptažodį: %{resetLink}',
       greeting: 'Sveiki!',
-      message: 'Gavome prašymą atkurti jūsų slaptažodį. Spustelėkite žemiau esantį mygtuką, kad sukurtumėte naują slaptažodį:',
+      message:
+        'Gavome prašymą atkurti jūsų slaptažodį. Spustelėkite žemiau esantį mygtuką, kad sukurtumėte naują slaptažodį:',
       buttonText: 'Atkurti slaptažodį',
       orCopy: 'Arba nukopijuokite ir įklijuokite šią nuorodą į savo naršyklę:',
-      linkExpiry: 'Ši nuoroda baigs galioti po 1 valandos dėl saugumo priežasčių.',
-      noRequest: 'Jei jūs neprašėte atkurti slaptažodžio, galite drąsiai ignoruoti šį laišką.',
+      linkExpiry:
+        'Ši nuoroda baigs galioti po 1 valandos dėl saugumo priežasčių.',
+      noRequest:
+        'Jei jūs neprašėte atkurti slaptažodžio, galite drąsiai ignoruoti šį laišką.',
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
-      copyright: '© 2025 InvoiceTrackr. Visos teisės saugomos.'
+      copyright: '© {year} InvoiceTrackr. Visos teisės saugomos.'
     },
     invoice: {
       title: 'InvoiceTrackr',
@@ -22,7 +25,8 @@ export default {
       dueDate: 'Terminas:',
       from: 'Nuo:',
       attachmentTitle: 'Sąskaita prisegta',
-      attachmentMessage: 'Pilnas sąskaitos faktūros dokumentas pridėtas prie šio el. laiško kaip PDF failas.',
+      attachmentMessage:
+        'Pilnas sąskaitos faktūros dokumentas pridėtas prie šio el. laiško kaip PDF failas.',
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
       copyright: 'InvoiceTrackr. Visos teisės saugomos.'
     }

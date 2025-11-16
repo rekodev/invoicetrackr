@@ -353,7 +353,9 @@ export const resetUserPassword = async (
         linkExpiry: i18n.t('emails.resetPassword.linkExpiry'),
         noRequest: i18n.t('emails.resetPassword.noRequest'),
         footer: i18n.t('emails.resetPassword.footer'),
-        copyright: i18n.t('emails.resetPassword.copyright')
+        copyright: i18n.t('emails.resetPassword.copyright', {
+          year: new Date().getFullYear()
+        })
       }
     })
   );
