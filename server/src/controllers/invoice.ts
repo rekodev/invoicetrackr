@@ -1,8 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { InvoiceBody } from '@invoicetrackr/types';
+import { InvoiceEmail } from '@invoicetrackr/emails';
 import { MultipartFile } from '@fastify/multipart';
-import { renderInvoiceEmail } from '@invoicetrackr/emails';
+import { render } from '@react-email/render';
 import { useI18n } from 'fastify-i18n';
 
 import {
@@ -284,26 +285,28 @@ export const sendInvoiceEmail = async (
     ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
     : undefined;
 
-  const htmlContent = await renderInvoiceEmail({
-    invoiceNumber: invoice.invoiceId,
-    amount: `${invoice.totalAmount} ${user.currency}`,
-    dueDate: invoice.dueDate,
-    senderName: user.name || user.email,
-    message: message || i18n.t('emails.invoice.defaultMessage'),
-    translations: {
-      title: i18n.t('emails.invoice.title'),
-      subtitle: i18n.t('emails.invoice.subtitle'),
-      detailsTitle: i18n.t('emails.invoice.detailsTitle'),
-      invoiceNumber: i18n.t('emails.invoice.invoiceNumber'),
-      amount: i18n.t('emails.invoice.amount'),
-      dueDate: i18n.t('emails.invoice.dueDate'),
-      from: i18n.t('emails.invoice.from'),
-      attachmentTitle: i18n.t('emails.invoice.attachmentTitle'),
-      attachmentMessage: i18n.t('emails.invoice.attachmentMessage'),
-      footer: i18n.t('emails.invoice.footer'),
-      copyright: i18n.t('emails.invoice.copyright')
-    }
-  });
+  const htmlContent = await render(
+    InvoiceEmail({
+      invoiceNumber: invoice.invoiceId,
+      amount: `${invoice.totalAmount} ${user.currency}`,
+      dueDate: invoice.dueDate,
+      senderName: user.name || user.email,
+      message: message || i18n.t('emails.invoice.defaultMessage'),
+      translations: {
+        title: i18n.t('emails.invoice.title'),
+        subtitle: i18n.t('emails.invoice.subtitle'),
+        detailsTitle: i18n.t('emails.invoice.detailsTitle'),
+        invoiceNumber: i18n.t('emails.invoice.invoiceNumber'),
+        amount: i18n.t('emails.invoice.amount'),
+        dueDate: i18n.t('emails.invoice.dueDate'),
+        from: i18n.t('emails.invoice.from'),
+        attachmentTitle: i18n.t('emails.invoice.attachmentTitle'),
+        attachmentMessage: i18n.t('emails.invoice.attachmentMessage'),
+        footer: i18n.t('emails.invoice.footer'),
+        copyright: i18n.t('emails.invoice.copyright')
+      }
+    })
+  );
 
   const { error } = await resend.emails.send({
     to: recipientEmail,

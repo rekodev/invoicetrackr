@@ -2,7 +2,15 @@ export default {
   emails: {
     resetPassword: {
       subject: 'Reset Your Password',
-      text: 'Click the link to reset your password: %{resetLink}'
+      text: 'Click the link to reset your password: %{resetLink}',
+      greeting: 'Hello!',
+      message: 'We received a request to reset your password. Click the button below to create a new password:',
+      buttonText: 'Reset Password',
+      orCopy: 'Or copy and paste this link into your browser:',
+      linkExpiry: 'This link will expire in 1 hour for security reasons.',
+      noRequest: "If you didn't request a password reset, you can safely ignore this email.",
+      footer: 'This email was sent by InvoiceTrackr',
+      copyright: '© 2025 InvoiceTrackr. All rights reserved.'
     },
     invoice: {
       title: 'InvoiceTrackr',

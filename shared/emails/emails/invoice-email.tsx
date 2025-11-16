@@ -7,6 +7,7 @@ import {
   Container,
   Section,
   Text,
+  Link,
   Tailwind
 } from '@react-email/components';
 
@@ -44,9 +45,8 @@ const InvoiceEmail = ({
       <Head />
       <Preview>{`${translations.invoiceNumber} #${invoiceNumber} ${translations.from} ${senderName} - ${translations.title}`}</Preview>
       <Tailwind>
-        <Body className="bg-gray-100 py-[40px] font-sans">
-          <Container className="mx-auto max-w-[600px] overflow-hidden rounded-[8px] bg-white shadow-lg">
-            {/* Header */}
+        <Body className="bg-gray-100 font-sans">
+          <Container className="mx-auto max-w-[600px] overflow-hidden bg-white shadow-lg">
             <Section className="bg-white px-[32px] py-[24px]">
               <Text className="m-0 text-center text-[24px] font-bold text-[#7828C8]">
                 {translations.title}
@@ -56,13 +56,11 @@ const InvoiceEmail = ({
               </Text>
             </Section>
 
-            {/* Main Content */}
             <Section className="px-[32px] pb-[32px]">
               <Text className="mx-0 mb-[24px] mt-[24px] text-[16px] leading-[24px] text-[#481878]">
                 {message}
               </Text>
 
-              {/* Invoice Details Card */}
               <Section className="mb-[24px] rounded-[8px] border border-[#E4D4F4] bg-[#F2EAFA] p-[24px]">
                 <Text className="mb-[16px] mt-0 text-[18px] font-bold text-[#301050]">
                   {translations.detailsTitle}
@@ -109,7 +107,6 @@ const InvoiceEmail = ({
                 </Section>
               </Section>
 
-              {/* Attachment Notice */}
               <Section className="rounded-md border-l-[4px] border-l-[#7828C8] bg-[#E4D4F4] p-[16px]">
                 <Text className="m-0 mb-[4px] text-[14px] font-semibold text-[#301050]">
                   📎 {translations.attachmentTitle}
@@ -120,10 +117,16 @@ const InvoiceEmail = ({
               </Section>
             </Section>
 
-            {/* Footer */}
             <Section className="bg-[#F2EAFA] px-[32px] py-[24px]">
               <Text className="m-0 mb-[8px] text-center text-[12px] text-[#6020A0]">
-                {translations.footer}
+                {translations.footer.split('InvoiceTrackr')[0]}
+                <Link
+                  href="https://invoicetrackr.app"
+                  className="text-[#7828C8] no-underline hover:underline"
+                >
+                  InvoiceTrackr
+                </Link>
+                {translations.footer.split('InvoiceTrackr')[1] || ''}
               </Text>
               <Text className="m-0 text-center text-[12px] text-[#6020A0]">
                 © {new Date().getFullYear()} {translations.copyright}

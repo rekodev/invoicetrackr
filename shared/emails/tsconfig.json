@@ -8,8 +8,8 @@
     "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler"
+    "module": "commonjs",
+    "moduleResolution": "node"
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist"]
