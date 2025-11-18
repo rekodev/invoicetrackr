@@ -105,6 +105,7 @@ const InvoiceForm = ({
     setValue('receiver.businessNumber', receiver.businessNumber);
     setValue('receiver.address', receiver.address);
     setValue('receiver.email', receiver.email);
+    clearErrors('receiver');
     setIsReceiverModalOpen(false);
   };
 
@@ -112,6 +113,7 @@ const InvoiceForm = ({
     setValue('bankingInformation.name', bankAccount.name);
     setValue('bankingInformation.code', bankAccount.code);
     setValue('bankingInformation.accountNumber', bankAccount.accountNumber);
+    clearErrors('bankingInformation');
     setIsBankingInformationModalOpen(false);
   };
 

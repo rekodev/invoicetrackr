@@ -70,8 +70,16 @@ export default {
         required: 'At least one service is required',
         description: 'Description up to 200 characters is required',
         unit: 'Unit up to 20 characters is required',
-        quantity: 'Quantity between 0.0001 and 10,000 is required',
-        amount: 'Amount between 0.01 and 1,000,000 is required'
+        quantity: {
+          number: 'Quantity must be a number',
+          min: 'Quantity must be at least 0.0001',
+          max: 'Quantity must not exceed 10,000'
+        },
+        amount: {
+          number: 'Amount must be a number',
+          min: 'Amount must be at least 0.01',
+          max: 'Amount must not exceed 10,000,000'
+        }
       },
       bankingInformation: {
         required: 'Banking information is required',

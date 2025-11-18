@@ -71,8 +71,16 @@ export default {
         required: 'Būtina bent viena paslauga',
         description: 'Aprašymas iki 200 simbolių yra privalomas',
         unit: 'Vienetas iki 20 simbolių yra privalomas',
-        quantity: 'Kiekis tarp 0.0001 ir 10,000 yra privalomas',
-        amount: 'Suma tarp 0.01 ir 1,000,000 yra privaloma'
+        quantity: {
+          number: 'Kiekis turi būti skaičius',
+          min: 'Kiekis turi būti bent 0.0001',
+          max: 'Kiekis negali viršyti 10,000'
+        },
+        amount: {
+          number: 'Suma turi būti skaičius',
+          min: 'Suma turi būti bent 0.01',
+          max: 'Suma negali viršyti 10,000,000'
+        }
       },
       bankingInformation: {
         required: 'Banko informacija yra privaloma',
