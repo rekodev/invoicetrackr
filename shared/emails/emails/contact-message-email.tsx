@@ -11,7 +11,6 @@ import {
   Link,
   Tailwind
 } from '@react-email/components';
-import { render } from '@react-email/render';
 
 interface ContactMessageEmailProps {
   email: string;
@@ -95,8 +94,4 @@ ContactMessageEmail.PreviewProps = {
     'Hi! I have a question about the premium features. Can you help me understand the differences between the free and paid plans?\n\nThanks!'
 };
 
-export default function renderContactMessageEmail(
-  props: ContactMessageEmailProps
-) {
-  return render(<ContactMessageEmail {...props} />);
-}
+export default ContactMessageEmail;

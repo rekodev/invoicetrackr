@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { InvoiceBody } from '@invoicetrackr/types';
+import { InvoiceEmail } from '@invoicetrackr/emails';
 import { MultipartFile } from '@fastify/multipart';
-import { renderInvoiceEmail } from '@invoicetrackr/emails';
 import { useI18n } from 'fastify-i18n';
 
 import {
@@ -284,7 +284,7 @@ export const sendInvoiceEmail = async (
     ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
     : undefined;
 
-  const htmlContent = await renderInvoiceEmail({
+  const htmlContent = InvoiceEmail({
     invoiceNumber: invoice.invoiceId,
     amount: `${invoice.totalAmount} ${user.currency}`,
     dueDate: invoice.dueDate,
@@ -312,7 +312,7 @@ export const sendInvoiceEmail = async (
     from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
     replyTo: user.email,
     subject: subject,
-    html: htmlContent,
+    react: htmlContent,
     attachments: [
       {
         content: attachment,

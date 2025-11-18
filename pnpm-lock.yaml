@@ -253,9 +253,6 @@ importers:
       '@react-email/components':
         specifier: ^0.0.30
         version: 0.0.30(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@react-email/render':
-        specifier: ^1.0.6
-        version: 1.0.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react:
         specifier: ^19.0.0
         version: 19.2.0
@@ -10238,6 +10235,7 @@ snapshots:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
       react-promise-suspense: 0.3.4
+    optional: true
 
   '@react-email/row@0.0.12(react@19.2.0)':
     dependencies:

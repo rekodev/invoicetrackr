@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { renderContactMessageEmail } from '@invoicetrackr/emails';
+import { ContactMessageEmail } from '@invoicetrackr/emails';
 import { useI18n } from 'fastify-i18n';
 
 import { BadRequestError } from '../utils/error';
@@ -14,7 +14,7 @@ export const postContactMessage = async (
   const { email, message } = req.body;
   const i18n = await useI18n(req);
 
-  const emailHtml = await renderContactMessageEmail({
+  const emailHtml = ContactMessageEmail({
     email,
     message
   });
@@ -23,7 +23,7 @@ export const postContactMessage = async (
     from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
     to: 'support@ruwhia8088.resend.app',
     subject: 'New Contact Message',
-    html: emailHtml
+    react: emailHtml
   });
 
   if (error) {

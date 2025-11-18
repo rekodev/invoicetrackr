@@ -11,8 +11,6 @@ import {
   Tailwind
 } from '@react-email/components';
 
-import { render } from '@react-email/render';
-
 interface InvoiceEmailProps {
   invoiceNumber: string;
   amount?: string;
@@ -141,6 +139,4 @@ const InvoiceEmail = ({
   );
 };
 
-export default function renderInvoiceEmail(props: InvoiceEmailProps) {
-  return render(<InvoiceEmail {...props} />);
-}
+export default InvoiceEmail;

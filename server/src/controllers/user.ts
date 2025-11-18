@@ -1,9 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { MultipartFile } from '@fastify/multipart';
+import { ResetPasswordEmail } from '@invoicetrackr/emails';
 import { UserBody } from '@invoicetrackr/types';
 import bcrypt from 'bcryptjs';
-import { renderResetPasswordEmail } from '@invoicetrackr/emails';
 import { useI18n } from 'fastify-i18n';
 
 import {
@@ -340,7 +340,7 @@ export const resetUserPassword = async (
 
   const resetLink = `https://invoicetrackr.app/create-new-password/${resetToken}`;
 
-  const emailHtml = await renderResetPasswordEmail({
+  const emailHtml = ResetPasswordEmail({
     resetLink,
     translations: {
       subject: i18n.t('emails.resetPassword.subject'),
@@ -361,7 +361,7 @@ export const resetUserPassword = async (
     from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
     to: [email],
     subject: i18n.t('emails.resetPassword.subject'),
-    html: emailHtml
+    react: emailHtml
   });
 
   if (error) {

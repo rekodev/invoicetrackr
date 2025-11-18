@@ -12,7 +12,6 @@ import {
   Link,
   Tailwind
 } from '@react-email/components';
-import { render } from '@react-email/render';
 
 interface ResetPasswordEmailProps {
   resetLink: string;
@@ -127,8 +126,4 @@ ResetPasswordEmail.PreviewProps = {
   }
 };
 
-export default function renderResetPasswordEmail(
-  props: ResetPasswordEmailProps
-) {
-  return render(<ResetPasswordEmail {...props} />);
-}
+export default ResetPasswordEmail;
