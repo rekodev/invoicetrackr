@@ -24,14 +24,14 @@ export const invoiceServiceBodySchema = z.object({
     .min(1, 'validation.invoice.services.description')
     .max(200),
   unit: z.string().min(1, 'validation.invoice.services.unit').max(20),
-  quantity: z
-    .number()
-    .min(0.0001, 'validation.invoice.services.quantity')
-    .max(10000),
-  amount: z
-    .number()
-    .min(0.01, 'validation.invoice.services.amount')
-    .max(1000000)
+  quantity: z.coerce
+    .number('validation.invoice.services.quantity.number')
+    .min(0.0001, 'validation.invoice.services.quantity.min')
+    .max(10000, 'validation.invoice.services.quantity.max'),
+  amount: z.coerce
+    .number('validation.invoice.services.amount.number')
+    .min(0.01, 'validation.invoice.services.amount.min')
+    .max(10000000, 'validation.invoice.services.amount.max')
 });
 
 export const invoiceSenderBodySchema = z.object(

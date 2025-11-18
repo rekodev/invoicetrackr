@@ -45,7 +45,7 @@ const Footer = () => {
         (name) => pathname && name.includes(pathname)
       ) && (
         <div className="border-t-1 border-default-300 dark:border-default-100 w-full gap-4 py-10 md:flex-row md:gap-8 md:py-12">
-          <div className="m-auto flex w-full max-w-7xl flex-col items-start justify-between gap-8 px-6 text-center sm:flex-row sm:text-start">
+          <div className="m-auto flex w-full max-w-7xl flex-col items-center justify-between gap-8 px-6 text-center sm:flex-row sm:items-start sm:text-start">
             <div className="flex flex-col gap-6">
               <div className="mx-auto flex items-center gap-2 sm:mx-0">
                 <AppLogo />
@@ -70,7 +70,7 @@ const Footer = () => {
                   <Link
                     color="foreground"
                     href={PRIVACY_POLICY_PAGE}
-                    className="text-sm hover:underline"
+                    className="mx-auto text-sm hover:underline sm:mx-0"
                   >
                     {t('privacy_policy')}
                   </Link>
