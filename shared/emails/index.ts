@@ -1,3 +1,3 @@
-export { default as InvoiceEmail } from './emails/invoice-email';
-export { default as ResetPasswordEmail } from './emails/reset-password-email';
-export { default as ContactMessageEmail } from './emails/contact-message-email';
+export { default as renderInvoiceEmail } from './emails/invoice-email';
+export { default as renderResetPasswordEmail } from './emails/reset-password-email';
+export { default as renderContactMessageEmail } from './emails/contact-message-email';
