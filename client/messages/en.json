@@ -319,7 +319,8 @@
         "tooltip_delete": "Delete invoice",
         "tooltip_download": "Download",
         "mark_as_paid": "Mark as Paid",
-        "mark_as_pending": "Mark as Pending"
+        "mark_as_pending": "Mark as Pending",
+        "past_due": "{days}d past due"
       }
     },
     "pdf": {

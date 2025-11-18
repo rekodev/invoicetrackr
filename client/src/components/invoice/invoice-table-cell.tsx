@@ -4,6 +4,7 @@ import {
   ArrowDownTrayIcon,
   ChevronDownIcon,
   DocumentTextIcon,
+  ExclamationTriangleIcon,
   EyeIcon,
   PencilSquareIcon,
   TrashIcon
@@ -26,6 +27,7 @@ import { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
 import { formatDate } from '@/lib/utils/format-date';
 import { getCurrencySymbol } from '@/lib/utils/currency';
+import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import { statusOptions } from '@/lib/constants/table';
 import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
 
@@ -65,6 +67,8 @@ const InvoiceTableCell = ({
   const tForm = useTranslations('components.invoice_form');
   const [isPaid, setIsPaid] = useState(invoice.status === 'paid');
   const [isPending, startTransition] = useTransition();
+
+  const { isPastDue, daysPastDue } = getInvoiceDueStatus(invoice);
 
   const handleViewIconClick = () => onView(invoice);
   const handleEditInvoiceClick = () => onEdit(invoice);
@@ -162,56 +166,70 @@ const InvoiceTableCell = ({
       return formatDate(cellValue as string) || '';
     case 'status':
       return (
-        <div className="flex items-center gap-4">
-          <Dropdown>
-            <DropdownTrigger className="[&>button]:aria-expanded:rotate-180">
-              <Chip
-                as="button"
-                isDisabled={isPending}
-                className="cursor capitalize [&>svg]:aria-expanded:rotate-180"
-                color={statusColorMap[invoice.status as InvoiceStatus]}
-                size="sm"
-                variant="flat"
-                endContent={
-                  <ChevronDownIcon className="transition-transform" />
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Dropdown>
+              <DropdownTrigger className="[&>button]:aria-expanded:rotate-180">
+                <Chip
+                  as="button"
+                  isDisabled={isPending}
+                  className="cursor capitalize [&>svg]:aria-expanded:rotate-180"
+                  color={statusColorMap[invoice.status as InvoiceStatus]}
+                  size="sm"
+                  variant="flat"
+                  endContent={
+                    <ChevronDownIcon className="ml-0.5 h-3 w-3 transition-transform" />
+                  }
+                >
+                  {cellValue as string}
+                </Chip>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label={tForm('a11y.static_actions_label')}
+                selectionMode="single"
+                items={statusOptions}
+                selectedKeys={[cellValue] as any}
+                onSelectionChange={(key) =>
+                  handleChangeStatus(
+                    Array.from(key)[0] as
+                      | 'paid'
+                      | 'pending'
+                      | 'canceled'
+                      | undefined
+                  )
                 }
               >
-                {cellValue as string}
-              </Chip>
-            </DropdownTrigger>
-            <DropdownMenu
-              aria-label={tForm('a11y.static_actions_label')}
-              selectionMode="single"
-              items={statusOptions}
-              selectedKeys={[cellValue] as any}
-              onSelectionChange={(key) =>
-                handleChangeStatus(
-                  Array.from(key)[0] as
-                    | 'paid'
-                    | 'pending'
-                    | 'canceled'
-                    | undefined
-                )
+                {(item) => (
+                  <DropdownItem key={item.uid}>{item.name}</DropdownItem>
+                )}
+              </DropdownMenu>
+            </Dropdown>
+
+            <Tooltip
+              content={
+                isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid')
               }
             >
-              {(item) => (
-                <DropdownItem key={item.uid}>{item.name}</DropdownItem>
-              )}
-            </DropdownMenu>
-          </Dropdown>
+              <Checkbox
+                className="mr-0.5 max-w-5 p-0"
+                size="sm"
+                color="success"
+                isSelected={isPaid}
+                onChange={handleMarkAsPaidClick}
+                isDisabled={isPending}
+              />
+            </Tooltip>
+          </div>
 
-          <Tooltip
-            content={isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid')}
-          >
-            <Checkbox
-              className="mr-0.5 max-w-5 p-0"
-              size="sm"
-              color="success"
-              isSelected={isPaid}
-              onChange={handleMarkAsPaidClick}
-              isDisabled={isPending}
-            />
-          </Tooltip>
+          {isPastDue && (
+            <span
+              data-testid="invoice-past-due-indicator"
+              className="text-danger flex items-center gap-1 text-xs font-medium"
+            >
+              <ExclamationTriangleIcon className="color-danger h-5 w-5" />
+              {tCell('past_due', { days: daysPastDue })}
+            </span>
+          )}
         </div>
       );
     case 'actions':

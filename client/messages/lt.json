@@ -319,7 +319,8 @@
         "tooltip_delete": "Ištrinti sąskaitą faktūrą",
         "tooltip_download": "Atsisiųsti",
         "mark_as_paid": "Pažymėti kaip sumokėtą",
-        "mark_as_pending": "Pažymėti kaip laukiamą"
+        "mark_as_pending": "Pažymėti kaip laukiamą",
+        "past_due": "{days}d vėluoja"
       }
     },
     "pdf": {

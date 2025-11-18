@@ -9,6 +9,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  cn,
   useDisclosure
 } from '@heroui/react';
 import { useMemo, useState } from 'react';
@@ -16,6 +17,7 @@ import { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
+import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
 
 import DeleteInvoiceModal from './delete-invoice-modal';
@@ -209,24 +211,31 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
           emptyContent={!invoices.length && 'No invoices found'}
           items={sortedItems}
         >
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell>
-                  <InvoiceTableCell
-                    userId={userId}
-                    language={language}
-                    currency={currency}
-                    invoice={item}
-                    columnKey={columnKey}
-                    onView={handleViewInvoice}
-                    onEdit={handleEditInvoice}
-                    onDelete={handleDeleteInvoice}
-                  />
-                </TableCell>
-              )}
-            </TableRow>
-          )}
+          {(item) => {
+            const { isPastDue } = getInvoiceDueStatus(item);
+
+            return (
+              <TableRow
+                className={cn({ 'bg-danger/10': isPastDue })}
+                key={item.id}
+              >
+                {(columnKey) => (
+                  <TableCell>
+                    <InvoiceTableCell
+                      userId={userId}
+                      language={language}
+                      currency={currency}
+                      invoice={item}
+                      columnKey={columnKey}
+                      onView={handleViewInvoice}
+                      onEdit={handleEditInvoice}
+                      onDelete={handleDeleteInvoice}
+                    />
+                  </TableCell>
+                )}
+              </TableRow>
+            );
+          }}
         </TableBody>
       </Table>
 
