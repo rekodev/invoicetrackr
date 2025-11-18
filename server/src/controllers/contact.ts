@@ -22,6 +22,7 @@ export const postContactMessage = async (
     })
   );
 
+  console.log(process.env.RESEND_EMAIL_API_KEY);
   const { error } = await resend.emails.send({
     from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
     to: 'support@ruwhia8088.resend.app',
