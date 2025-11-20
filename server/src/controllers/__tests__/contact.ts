@@ -11,8 +11,9 @@ describe('Contact Controller', () => {
     it('should send contact message successfully', async () => {
       vi.mocked(resend.emails.send).mockResolvedValue({
         data: { id: 'test-email-id' },
+        headers: null,
         error: null
-      } as any);
+      });
 
       const { postContactMessage } = contactController;
 
@@ -36,7 +37,7 @@ describe('Contact Controller', () => {
         from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
         to: 'support@ruwhia8088.resend.app',
         subject: 'New Contact Message',
-        html: expect.stringMatching(/New Contact Form Submission/)
+        react: expect.anything()
       });
 
       await app.close();
@@ -45,8 +46,13 @@ describe('Contact Controller', () => {
     it('should return 400 when email sending fails', async () => {
       vi.mocked(resend.emails.send).mockResolvedValue({
         data: null,
-        error: { message: 'Failed to send email' }
-      } as any);
+        headers: null,
+        error: {
+          message: 'Failed to send email',
+          statusCode: 400,
+          name: 'missing_required_field'
+        }
+      });
 
       const { postContactMessage } = contactController;
 
