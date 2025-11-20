@@ -49,15 +49,18 @@ export async function updateUserAction({
 export async function updateUserAccountSettingsAction({
   userId,
   language,
-  currency
+  currency,
+  preferredInvoiceLanguage
 }: {
   userId: number;
   language: string;
   currency: string;
+  preferredInvoiceLanguage?: string;
 }) {
   const response = await updateUserAccountSettings(userId, {
     language,
-    currency
+    currency,
+    preferredInvoiceLanguage: preferredInvoiceLanguage || language
   });
 
   if (isResponseError(response)) {
@@ -71,6 +74,7 @@ export async function updateUserAccountSettingsAction({
   await updateSessionAction({
     newSession: {
       language,
+      preferredInvoiceLanguage,
       currency: currency as Currency
     }
   });

@@ -19,6 +19,7 @@ export const userFactory = Factory.define<
   profilePictureUrl: `profile${sequence}.png`,
   currency: 'USD',
   language: 'en',
+  preferredInvoiceLanguage: 'en',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   stripeCustomerId: `cus_${sequence}`,

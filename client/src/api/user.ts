@@ -80,13 +80,18 @@ export const updateUserProfilePicture = async (
 
 export const updateUserAccountSettings = async (
   userId: number,
-  { language, currency }: { language: string; currency: string }
+  {
+    language,
+    currency,
+    preferredInvoiceLanguage
+  }: { language: string; currency: string; preferredInvoiceLanguage: string }
 ) =>
   await api.put<UpdateUserAccountSettingsResponse>(
     `/api/users/${userId}/account-settings`,
     {
       language,
-      currency
+      currency,
+      preferredInvoiceLanguage
     }
   );
 

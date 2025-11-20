@@ -261,18 +261,23 @@ export const updateUserProfilePicture = async (
 export const updateUserAccountSettings = async (
   req: FastifyRequest<{
     Params: { userId: string };
-    Body: { currency: string; language: string };
+    Body: {
+      currency: string;
+      language: string;
+      preferredInvoiceLanguage: string;
+    };
   }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
-  const { currency, language } = req.body;
+  const { currency, language, preferredInvoiceLanguage } = req.body;
   const i18n = await useI18n(req);
 
   const updatedUser = await updateUserAccountSettingsInDb(
     userId,
     language,
-    currency
+    currency,
+    preferredInvoiceLanguage
   );
 
   if (!updatedUser)

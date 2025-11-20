@@ -11,6 +11,7 @@ declare module 'next-auth' {
     name: string;
     email: string;
     language: string;
+    preferredInvoiceLanguage: string;
     currency: Currency;
     type: string;
     businessType: string;

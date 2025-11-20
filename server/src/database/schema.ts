@@ -184,7 +184,8 @@ export const usersTable = pgTable(
       length: 255
     }).notNull(),
     currency: varchar({ length: 255 }).notNull(),
-    language: varchar({ length: 255 }).notNull()
+    language: varchar({ length: 255 }).notNull(),
+    preferredInvoiceLanguage: varchar('preferred_invoice_language', { length: 255 })
   },
   (table) => [
     foreignKey({
