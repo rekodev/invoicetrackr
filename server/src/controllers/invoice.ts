@@ -97,7 +97,7 @@ export const postInvoice = async (
   if (!insertedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToCreate'));
 
-  reply.status(200).send({
+  reply.status(201).send({
     invoice: insertedInvoice,
     message: i18n.t('success.invoice.created')
   });

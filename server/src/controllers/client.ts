@@ -59,7 +59,7 @@ export const postClient = async (
   if (!insertedClient)
     throw new BadRequestError(i18n.t('error.client.unableToCreate'));
 
-  reply.status(200).send({
+  reply.status(201).send({
     client: insertedClient,
     message: i18n.t('success.client.created')
   });
