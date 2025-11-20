@@ -140,7 +140,7 @@ describe('Client Controller', () => {
         payload: clientPayload
       });
 
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(201);
       const body = JSON.parse(response.body);
       expect(body.client).toBeDefined();
       expect(body.message).toBeDefined();

@@ -79,13 +79,13 @@ export const postBankAccount = async (
       await updateUserSelectedBankAccountInDb(userId, insertedBankAccount.id);
 
     if (!updatedUserSelectedBankAccount)
-      return reply.status(200).send({
+      return reply.status(201).send({
         bankAccount: updatedUserSelectedBankAccount,
         message: i18n.t('success.bankAccount.createdWithWarning')
       });
   }
 
-  return reply.status(200).send({
+  return reply.status(201).send({
     bankAccount: insertedBankAccount,
     message: i18n.t('success.bankAccount.created')
   });

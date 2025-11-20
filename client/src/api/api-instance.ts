@@ -23,7 +23,7 @@ class ApiInstance {
     this.httpClient = axios.create({
       baseURL:
         typeof window !== 'undefined'
-          ? undefined
+          ? process.env.NEXT_PUBLIC_BASE_URL
           : `http://localhost:${process.env.SERVER_PORT}`,
       withCredentials: true
     });
