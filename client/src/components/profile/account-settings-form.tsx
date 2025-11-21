@@ -52,7 +52,7 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
     defaultValues: {
       language: user?.language,
       currency: user?.currency,
-      preferredInvoiceLanguage: user?.preferredInvoiceLanguage || user?.language
+      preferredInvoiceLanguage: user?.preferredInvoiceLanguage || user.language
     }
   });
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =

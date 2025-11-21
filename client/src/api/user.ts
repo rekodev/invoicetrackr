@@ -84,7 +84,7 @@ export const updateUserAccountSettings = async (
     language,
     currency,
     preferredInvoiceLanguage
-  }: { language: string; currency: string; preferredInvoiceLanguage: string }
+  }: { language: string; currency: string; preferredInvoiceLanguage?: string }
 ) =>
   await api.put<UpdateUserAccountSettingsResponse>(
     `/api/users/${userId}/account-settings`,

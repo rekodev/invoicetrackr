@@ -60,7 +60,7 @@ export async function updateUserAccountSettingsAction({
   const response = await updateUserAccountSettings(userId, {
     language,
     currency,
-    preferredInvoiceLanguage: preferredInvoiceLanguage || language
+    preferredInvoiceLanguage
   });
 
   if (isResponseError(response)) {

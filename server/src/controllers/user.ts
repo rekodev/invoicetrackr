@@ -264,7 +264,7 @@ export const updateUserAccountSettings = async (
     Body: {
       currency: string;
       language: string;
-      preferredInvoiceLanguage: string;
+      preferredInvoiceLanguage?: string;
     };
   }>,
   reply: FastifyReply
