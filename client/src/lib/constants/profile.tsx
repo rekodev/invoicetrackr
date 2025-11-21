@@ -40,8 +40,14 @@ export const profileMenuTabs = [
 ];
 
 export const availableLanguages = [
-  { code: 'lt', nameTranslationKey: 'available_languages.lt' },
-  { code: 'en', nameTranslationKey: 'available_languages.en' }
+  {
+    code: 'lt',
+    nameTranslationKey: 'profile.account_settings.available_languages.lt'
+  },
+  {
+    code: 'en',
+    nameTranslationKey: 'profile.account_settings.available_languages.en'
+  }
 ] as const;
 
 export const availableCurrencies = [
