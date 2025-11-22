@@ -6,9 +6,7 @@
     "language_switcher": {
       "a11y": {
         "label": "Pakeisti kalbą"
-      },
-      "en": "Anglų",
-      "lt": "Lietuvių"
+      }
     },
     "user": {
       "dashboard": "Skydelis",
@@ -450,6 +448,7 @@
       "currency": "Valiuta",
       "language": "Kalba",
       "preferred_invoice_language": "Pageidaujama Sąskaitos Kalba",
+      "preferred_invoice_language_tooltip": "Tai numatytoji sąskaitų eksporto ir el. laiškų kalba. Galite keisti kiekvienai sąskaitai atskirai.",
       "available_languages": {
         "en": "Anglų",
         "lt": "Lietuvių"

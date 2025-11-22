@@ -10,11 +10,12 @@ import {
 } from '@heroui/react';
 import { useEffect, useState } from 'react';
 import { LanguageIcon } from '@heroicons/react/24/outline';
+import { User } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { getLocaleCookieAction, setLocaleCookieAction } from '@/lib/actions';
-import { User } from '@invoicetrackr/types';
+import { availableLanguages } from '@/lib/constants/profile';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 
 type Props = {
@@ -24,15 +25,10 @@ type Props = {
 export default function LanguageSwitcher({ user }: Props) {
   const router = useRouter();
   const t = useTranslations('header.language_switcher');
+  const baseT = useTranslations();
   const [currentLanguage, setCurrentLanguage] = useState(
     new Set([user?.language || 'en'])
   );
-
-  // TODO: Import available languages from profile instead
-  const dropdownOptions = [
-    { code: 'en', label: t('en') },
-    { code: 'lt', label: t('lt') }
-  ];
 
   useEffect(() => {
     const synchronizeLocale = async () => {
@@ -88,12 +84,12 @@ export default function LanguageSwitcher({ user }: Props) {
       <DropdownMenu
         selectedKeys={currentLanguage}
         selectionMode="single"
-        items={dropdownOptions}
+        items={availableLanguages}
         onSelectionChange={handleSelect}
       >
         {(item) => (
           <DropdownItem key={item.code} value={item.code}>
-            {item.label}
+            {baseT(item.nameTranslationKey)}
           </DropdownItem>
         )}
       </DropdownMenu>

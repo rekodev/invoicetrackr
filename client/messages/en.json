@@ -6,9 +6,7 @@
     "language_switcher": {
       "a11y": {
         "label": "Select language"
-      },
-      "en": "English",
-      "lt": "Lithuanian"
+      }
     },
     "user": {
       "dashboard": "Dashboard",
@@ -450,6 +448,7 @@
       "currency": "Currency",
       "language": "Language",
       "preferred_invoice_language": "Preferred Invoice Language",
+      "preferred_invoice_language_tooltip": "This is the default language for invoice exports and emails. You can change it per invoice.",
       "available_languages": {
         "en": "English",
         "lt": "Lithuanian"

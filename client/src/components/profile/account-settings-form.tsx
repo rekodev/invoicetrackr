@@ -9,9 +9,15 @@ import {
   Divider,
   Select,
   SelectItem,
+  Tooltip,
   addToast
 } from '@heroui/react';
-import { CurrencyDollarIcon, LanguageIcon } from '@heroicons/react/24/outline';
+import {
+  CurrencyDollarIcon,
+  DocumentArrowUpIcon,
+  InformationCircleIcon,
+  LanguageIcon
+} from '@heroicons/react/24/outline';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { User } from 'next-auth';
 import { useState } from 'react';
@@ -112,14 +118,29 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
           ))}
         </Select>
         <Select
+          className="flex-col items-start gap-2"
           {...register('preferredInvoiceLanguage')}
           label={
             <div className="flex items-center gap-1">
-              <LanguageIcon className="h-5 w-5" />{' '}
+              <DocumentArrowUpIcon className="h-5 w-5" />
               {t('preferred_invoice_language')}
+              <Tooltip
+                showArrow
+                content={t('preferred_invoice_language_tooltip')}
+                className="max-w-xs"
+              >
+                <Button
+                  isIconOnly
+                  variant="light"
+                  size="sm"
+                  className="h-min w-min min-w-0 p-0 pl-0"
+                >
+                  <InformationCircleIcon className="text-default-500 z-50 h-4 w-4 cursor-pointer" />
+                </Button>
+              </Tooltip>
             </div>
           }
-          labelPlacement="outside"
+          labelPlacement="outside-left"
           variant="faded"
           defaultSelectedKeys={
             user?.preferredInvoiceLanguage

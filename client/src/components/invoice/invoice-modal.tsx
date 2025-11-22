@@ -212,10 +212,7 @@ const InvoiceModal = ({
                       color="secondary"
                       variant="solid"
                       onPress={() => {
-                        if (
-                          cookieConsent !== CookieConsentStatus.Accepted &&
-                          userPreferredInvoiceLanguage
-                        )
+                        if (cookieConsent !== CookieConsentStatus.Accepted)
                           return;
 
                         window.dataLayer?.push({
