@@ -63,7 +63,9 @@ const ClientSectionTopContent = ({
     <Dropdown>
       <DropdownTrigger className="hidden sm:flex">
         <Button
-          endContent={<ChevronDownIcon className="text-small" />}
+          endContent={
+            <ChevronDownIcon className="text-small min-w-4 max-w-4" />
+          }
           variant="flat"
         >
           {t('type_filter')}

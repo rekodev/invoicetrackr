@@ -6,9 +6,7 @@
     "language_switcher": {
       "a11y": {
         "label": "Pakeisti kalbą"
-      },
-      "en": "Anglų",
-      "lt": "Lietuvių"
+      }
     },
     "user": {
       "dashboard": "Skydelis",
@@ -319,7 +317,8 @@
         "tooltip_delete": "Ištrinti sąskaitą faktūrą",
         "tooltip_download": "Atsisiųsti",
         "mark_as_paid": "Pažymėti kaip sumokėtą",
-        "mark_as_pending": "Pažymėti kaip laukiamą"
+        "mark_as_pending": "Pažymėti kaip laukiamą",
+        "past_due": "{days}d vėluoja"
       }
     },
     "pdf": {
@@ -348,7 +347,8 @@
       "bank_info_label": "{bank_name}, banko kodas {bank_code}; Sąskaitos numeris: {bank_account_number}",
       "buttons": {
         "download_pdf": "Atsisiųsti PDF"
-      }
+      },
+      "past_due_alert": "Saskaita faktūra vėluoja {days}d. Apmokėjimo terminas buvo {dueDate}."
     }
   },
   "clients": {
@@ -448,6 +448,7 @@
       "currency": "Valiuta",
       "language": "Kalba",
       "preferred_invoice_language": "Pageidaujama Sąskaitos Kalba",
+      "preferred_invoice_language_tooltip": "Tai numatytoji sąskaitų eksporto ir el. laiškų kalba. Galite keisti kiekvienai sąskaitai atskirai.",
       "available_languages": {
         "en": "Anglų",
         "lt": "Lietuvių"

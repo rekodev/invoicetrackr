@@ -1,7 +1,7 @@
 'use client';
 
-import { ArrowDownTrayIcon, LanguageIcon } from '@heroicons/react/24/outline';
 import {
+  Alert,
   Button,
   Modal,
   ModalBody,
@@ -13,6 +13,7 @@ import {
   Spinner,
   cn
 } from '@heroui/react';
+import { ArrowDownTrayIcon, LanguageIcon } from '@heroicons/react/24/outline';
 import { createTranslator, useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from 'react';
 import dynamic from 'next/dynamic';
@@ -37,6 +38,7 @@ const PDFDownloadLink = dynamic(
 import { CookieConsentStatus } from '@/lib/types';
 import { InvoiceBody } from '@invoicetrackr/types';
 import { availableLanguages } from '@/lib/constants/profile';
+import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 
 import PDFDocument from '../pdf/pdf-document';
@@ -67,7 +69,7 @@ const InvoiceModal = ({
     userPreferredInvoiceLanguage || language
   );
   const [pdfDocumentTranslator, setPdfDocumentTranslator] =
-    useState<typeof t>();
+    useState<ReturnType<typeof createTranslator>>();
   const [isIFrameLoading, setIsIFrameLoading] = useState(true);
 
   const [isPending, startTransition] = useTransition();
@@ -96,7 +98,7 @@ const InvoiceModal = ({
 
   const renderPdfDocument = () => (
     <PDFDocument
-      t={pdfDocumentTranslator}
+      t={pdfDocumentTranslator || t}
       language={invoiceLanguage}
       currency={currency}
       invoiceData={invoiceData}
@@ -119,6 +121,24 @@ const InvoiceModal = ({
     );
   };
 
+  const renderAlert = () => {
+    const { isPastDue, daysPastDue } = getInvoiceDueStatus(invoiceData);
+
+    if (!isPastDue) return null;
+
+    return (
+      <Alert
+        className="mt-2 py-1 pl-2"
+        variant="flat"
+        color="danger"
+        description={t('past_due_alert', {
+          days: daysPastDue,
+          dueDate: invoiceData.dueDate
+        })}
+      />
+    );
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -131,7 +151,9 @@ const InvoiceModal = ({
       <ModalContent>
         <ModalHeader className="flex flex-col items-start gap-2 pb-2">
           <div className="flex w-full items-center justify-between gap-4">
-            <span className="text-xl font-semibold">{invoiceId}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-semibold">{invoiceId}</span>
+            </div>
             <div
               className={cn(
                 'bg-default flex items-center gap-1 rounded-lg p-0.5',
@@ -190,10 +212,7 @@ const InvoiceModal = ({
                       color="secondary"
                       variant="solid"
                       onPress={() => {
-                        if (
-                          cookieConsent !== CookieConsentStatus.Accepted &&
-                          userPreferredInvoiceLanguage
-                        )
+                        if (cookieConsent !== CookieConsentStatus.Accepted)
                           return;
 
                         window.dataLayer?.push({
@@ -210,6 +229,7 @@ const InvoiceModal = ({
               </PDFDownloadLink>
             </div>
           </div>
+          {renderAlert()}
         </ModalHeader>
         <ModalBody>{renderModalBody()}</ModalBody>
         <ModalFooter />
