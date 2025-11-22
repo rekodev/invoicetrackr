@@ -349,7 +349,8 @@
       "bank_info_label": "{bank_name}, banko kodas {bank_code}; Sąskaitos numeris: {bank_account_number}",
       "buttons": {
         "download_pdf": "Atsisiųsti PDF"
-      }
+      },
+      "past_due_alert": "Saskaita faktūra vėluoja {days}d. Apmokėjimo terminas buvo {dueDate}."
     }
   },
   "clients": {

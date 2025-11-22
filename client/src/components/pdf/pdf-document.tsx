@@ -21,7 +21,7 @@ import { formatDate } from '@/lib/utils/format-date';
 registerPdfFont();
 
 type Props = {
-  t: any;
+  t: ReturnType<typeof import('next-intl').createTranslator>;
   invoiceData: InvoiceBody;
   senderSignatureImage: string;
   bankAccount: BankAccountBody | undefined;

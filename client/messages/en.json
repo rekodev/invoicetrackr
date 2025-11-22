@@ -349,7 +349,8 @@
       "bank_info_label": "{bank_name}, bank code {bank_code}; Account number: {bank_account_number}",
       "buttons": {
         "download_pdf": "Download PDF"
-      }
+      },
+      "past_due_alert": "Invoice is {days}d past due. Due date was {dueDate}."
     }
   },
   "clients": {

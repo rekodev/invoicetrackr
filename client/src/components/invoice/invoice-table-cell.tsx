@@ -21,6 +21,7 @@ import {
   addToast
 } from '@heroui/react';
 import { Key, useEffect, useState, useTransition } from 'react';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
 const PDFDownloadLink = dynamic(
@@ -48,7 +49,6 @@ import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
 
 import PDFDocument from '../pdf/pdf-document';
 import SendInvoiceEmailTableAction from './send-invoice-email-table-action';
-import dynamic from 'next/dynamic';
 
 const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
   {
@@ -164,7 +164,7 @@ const InvoiceTableCell = ({
     case 'receiver':
       return (
         <div className="flex flex-col">
-          <p className="text-bold text-small capitalize">
+          <p className="text-bold text-small text-nowrap capitalize">
             {invoice.receiver.name}
           </p>
         </div>
@@ -240,7 +240,7 @@ const InvoiceTableCell = ({
           {isPastDue && (
             <span
               data-testid="invoice-past-due-indicator"
-              className="text-danger flex items-center gap-1 text-xs font-medium"
+              className="text-danger flex items-center gap-1 text-nowrap text-xs font-medium"
             >
               <ExclamationTriangleIcon className="color-danger h-5 w-5" />
               {tCell('past_due', { days: daysPastDue })}
