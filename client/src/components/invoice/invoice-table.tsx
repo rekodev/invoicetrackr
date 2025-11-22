@@ -41,9 +41,16 @@ type Props = {
   invoices: Array<InvoiceBody>;
   currency: Currency;
   language: string;
+  userPreferredInvoiceLanguage?: string;
 };
 
-const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
+const InvoiceTable = ({
+  userId,
+  invoices,
+  currency,
+  language,
+  userPreferredInvoiceLanguage
+}: Props) => {
   const t = useTranslations('invoices.table');
 
   const columns = useMemo(
@@ -242,6 +249,7 @@ const InvoiceTable = ({ userId, invoices, currency, language }: Props) => {
       {currentInvoice && (
         <InvoiceModal
           language={language}
+          userPreferredInvoiceLanguage={userPreferredInvoiceLanguage}
           currency={currency}
           isOpen={isOpen}
           onOpenChange={onOpenChange}

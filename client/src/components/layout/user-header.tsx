@@ -124,7 +124,7 @@ export default function UserHeader({ user }: Props) {
             <Avatar
               isBordered={pathname?.includes('profile')}
               as="button"
-              className="transition-transform"
+              className="cursor-pointer transition-transform"
               color="secondary"
               name={user.name}
               size="sm"

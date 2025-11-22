@@ -448,6 +448,7 @@
       "title": "Paskyros Nustatymai",
       "currency": "Valiuta",
       "language": "Kalba",
+      "preferred_invoice_language": "Pageidaujama Sąskaitos Kalba",
       "available_languages": {
         "en": "Anglų",
         "lt": "Lietuvių"

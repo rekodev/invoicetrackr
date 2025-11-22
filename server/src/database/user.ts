@@ -35,6 +35,7 @@ export const getUserFromDb = async (
       profilePictureUrl: usersTable.profilePictureUrl,
       currency: usersTable.currency,
       language: usersTable.language,
+      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
       stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId
     })
@@ -73,6 +74,7 @@ export const getUserByEmailFromDb = async (
       profilePictureUrl: usersTable.profilePictureUrl,
       currency: usersTable.currency,
       language: usersTable.language,
+      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
       password: usersTable.password,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
       stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId
@@ -181,6 +183,7 @@ export const updateUserProfilePictureInDb = async (
       signature: usersTable.signature,
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
+      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
       currency: usersTable.currency
     });
 
@@ -190,11 +193,21 @@ export const updateUserProfilePictureInDb = async (
 export const updateUserAccountSettingsInDb = async (
   userId: number,
   language: string,
-  currency: string
+  currency: string,
+  preferredInvoiceLanguage?: string
 ): Promise<UserUpdateResult | undefined> => {
+  const updateData: Partial<typeof usersTable.$inferInsert> = {
+    language,
+    currency
+  };
+
+  if (preferredInvoiceLanguage) {
+    updateData.preferredInvoiceLanguage = preferredInvoiceLanguage;
+  }
+
   const users = await db
     .update(usersTable)
-    .set({ language, currency })
+    .set(updateData)
     .where(eq(usersTable.id, userId))
     .returning({
       id: usersTable.id,
@@ -207,6 +220,7 @@ export const updateUserAccountSettingsInDb = async (
       signature: usersTable.signature,
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
+      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
       currency: usersTable.currency
     });
 

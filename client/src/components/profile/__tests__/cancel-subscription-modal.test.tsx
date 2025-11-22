@@ -37,6 +37,7 @@ describe('<CancelSubscriptionModal />', () => {
         businessType: 'business',
         currency: 'eur',
         language: 'en',
+        preferredInvoiceLanguage: 'en',
         selectedBankAccountId: 1,
         stripeCustomerId: 'cus_12345',
         stripeSubscriptionId: 'sub_12345',

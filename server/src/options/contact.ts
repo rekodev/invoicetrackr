@@ -14,7 +14,7 @@ export const postContactMessageOptions: RouteShorthandOptionsWithHandler = {
         .max(5000, 'validation.contact.message')
     }),
     response: {
-      201: postContactResponseSchema
+      200: postContactResponseSchema
     }
   },
   handler: postContactMessage

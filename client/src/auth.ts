@@ -31,6 +31,8 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
             name: user.name,
             email: user.email,
             language: user.language,
+            preferredInvoiceLanguage:
+              user.preferredInvoiceLanguage || user.language,
             currency: user.currency as Currency,
             type: user.type,
             businessType: user.businessType,

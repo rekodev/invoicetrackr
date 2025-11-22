@@ -17,6 +17,10 @@ import { User } from 'next-auth';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
+import {
+  availableCurrencies,
+  availableLanguages
+} from '@/lib/constants/profile';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
@@ -27,6 +31,7 @@ import SubscriptionStatusCard from './subscription-status-card';
 type AccountSettingsFormModel = {
   language: string;
   currency: Currency;
+  preferredInvoiceLanguage: string;
 };
 
 type Props = {
@@ -35,6 +40,7 @@ type Props = {
 };
 
 const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
+  const baseT = useTranslations();
   const t = useTranslations('profile.account_settings');
   const {
     register,
@@ -43,28 +49,14 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
     setError,
     reset
   } = useForm<AccountSettingsFormModel>({
-    defaultValues: { language: user?.language, currency: user?.currency }
+    defaultValues: {
+      language: user?.language,
+      currency: user?.currency,
+      preferredInvoiceLanguage: user?.preferredInvoiceLanguage || user.language
+    }
   });
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
-
-  const availableLanguages = [
-    { code: 'lt', name: t('available_languages.lt') },
-    { code: 'en', name: t('available_languages.en') }
-  ] as const;
-
-  const availableCurrencies = [
-    {
-      code: 'eur',
-      name: t('available_currencies.eur'),
-      symbol: '€'
-    },
-    {
-      code: 'usd',
-      name: t('available_currencies.usd'),
-      symbol: '$'
-    }
-  ] as const;
 
   const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) => {
     if (!user?.id) return;
@@ -72,7 +64,8 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
     const response = await updateUserAccountSettingsAction({
       userId: Number(user.id),
       language: data.language,
-      currency: data.currency
+      currency: data.currency,
+      preferredInvoiceLanguage: data.preferredInvoiceLanguage
     });
 
     addToast({
@@ -110,8 +103,38 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
           errorMessage={errors.language?.message}
         >
           {availableLanguages.map((language) => (
-            <SelectItem key={language.code} textValue={language.name}>
-              {language.name}
+            <SelectItem
+              key={language.code}
+              textValue={baseT(language.nameTranslationKey)}
+            >
+              {baseT(language.nameTranslationKey)}
+            </SelectItem>
+          ))}
+        </Select>
+        <Select
+          {...register('preferredInvoiceLanguage')}
+          label={
+            <div className="flex items-center gap-1">
+              <LanguageIcon className="h-5 w-5" />{' '}
+              {t('preferred_invoice_language')}
+            </div>
+          }
+          labelPlacement="outside"
+          variant="faded"
+          defaultSelectedKeys={
+            user?.preferredInvoiceLanguage
+              ? [user.preferredInvoiceLanguage]
+              : [user?.language]
+          }
+          isInvalid={!!errors.preferredInvoiceLanguage}
+          errorMessage={errors.preferredInvoiceLanguage?.message}
+        >
+          {availableLanguages.map((language) => (
+            <SelectItem
+              key={language.code}
+              textValue={baseT(language.nameTranslationKey)}
+            >
+              {baseT(language.nameTranslationKey)}
             </SelectItem>
           ))}
         </Select>
@@ -129,8 +152,11 @@ const AccountSettingsForm = ({ user, isSubscriptionActive }: Props) => {
           errorMessage={errors.currency?.message}
         >
           {availableCurrencies.map((currency) => (
-            <SelectItem key={currency.code} textValue={currency.name}>
-              {`${currency.name} (${currency.symbol})`}
+            <SelectItem
+              key={currency.code}
+              textValue={baseT(currency.nameTranslationKey)}
+            >
+              {`${baseT(currency.nameTranslationKey)} (${currency.symbol})`}
             </SelectItem>
           ))}
         </Select>

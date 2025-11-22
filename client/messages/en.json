@@ -448,6 +448,7 @@
       "title": "Account Settings",
       "currency": "Currency",
       "language": "Language",
+      "preferred_invoice_language": "Preferred Invoice Language",
       "available_languages": {
         "en": "English",
         "lt": "Lithuanian"

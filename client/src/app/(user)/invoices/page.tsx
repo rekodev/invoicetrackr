@@ -11,6 +11,7 @@ const InvoicesPage = async () => {
   const userId = Number(session.user.id);
   const currency = session.user.currency;
   const language = session.user.language;
+  const preferredInvoiceLanguage = session.user.preferredInvoiceLanguage;
 
   const invoicesResp = await getInvoices(userId);
 
@@ -19,6 +20,7 @@ const InvoicesPage = async () => {
   return (
     <InvoiceTable
       language={language}
+      userPreferredInvoiceLanguage={preferredInvoiceLanguage}
       invoices={invoicesResp.data.invoices}
       currency={currency}
       userId={userId}

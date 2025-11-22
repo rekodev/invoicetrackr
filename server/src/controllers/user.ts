@@ -4,7 +4,6 @@ import { MultipartFile } from '@fastify/multipart';
 import { ResetPasswordEmail } from '@invoicetrackr/emails';
 import { UserBody } from '@invoicetrackr/types';
 import bcrypt from 'bcryptjs';
-import { render } from '@react-email/render';
 import { useI18n } from 'fastify-i18n';
 
 import {
@@ -262,18 +261,23 @@ export const updateUserProfilePicture = async (
 export const updateUserAccountSettings = async (
   req: FastifyRequest<{
     Params: { userId: string };
-    Body: { currency: string; language: string };
+    Body: {
+      currency: string;
+      language: string;
+      preferredInvoiceLanguage?: string;
+    };
   }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
-  const { currency, language } = req.body;
+  const { currency, language, preferredInvoiceLanguage } = req.body;
   const i18n = await useI18n(req);
 
   const updatedUser = await updateUserAccountSettingsInDb(
     userId,
     language,
-    currency
+    currency,
+    preferredInvoiceLanguage
   );
 
   if (!updatedUser)
@@ -341,30 +345,28 @@ export const resetUserPassword = async (
 
   const resetLink = `https://invoicetrackr.app/create-new-password/${resetToken}`;
 
-  const emailHtml = await render(
-    ResetPasswordEmail({
-      resetLink,
-      translations: {
-        subject: i18n.t('emails.resetPassword.subject'),
-        greeting: i18n.t('emails.resetPassword.greeting'),
-        message: i18n.t('emails.resetPassword.message'),
-        buttonText: i18n.t('emails.resetPassword.buttonText'),
-        orCopy: i18n.t('emails.resetPassword.orCopy'),
-        linkExpiry: i18n.t('emails.resetPassword.linkExpiry'),
-        noRequest: i18n.t('emails.resetPassword.noRequest'),
-        footer: i18n.t('emails.resetPassword.footer'),
-        copyright: i18n.t('emails.resetPassword.copyright', {
-          year: new Date().getFullYear()
-        })
-      }
-    })
-  );
+  const emailHtml = ResetPasswordEmail({
+    resetLink,
+    translations: {
+      subject: i18n.t('emails.resetPassword.subject'),
+      greeting: i18n.t('emails.resetPassword.greeting'),
+      message: i18n.t('emails.resetPassword.message'),
+      buttonText: i18n.t('emails.resetPassword.buttonText'),
+      orCopy: i18n.t('emails.resetPassword.orCopy'),
+      linkExpiry: i18n.t('emails.resetPassword.linkExpiry'),
+      noRequest: i18n.t('emails.resetPassword.noRequest'),
+      footer: i18n.t('emails.resetPassword.footer'),
+      copyright: i18n.t('emails.resetPassword.copyright', {
+        year: new Date().getFullYear()
+      })
+    }
+  });
 
   const { error } = await resend.emails.send({
     from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
     to: [email],
     subject: i18n.t('emails.resetPassword.subject'),
-    html: emailHtml
+    react: emailHtml
   });
 
   if (error) {
