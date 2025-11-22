@@ -5,10 +5,10 @@ import {
   ChevronDownIcon,
   DocumentTextIcon,
   EyeIcon,
+  PaperAirplaneIcon,
   PencilSquareIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
-import { BlobProvider, PDFDownloadLink } from '@react-pdf/renderer';
 import {
   Checkbox,
   Chip,
@@ -22,6 +22,21 @@ import {
 import { Key, useEffect, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
+const PDFDownloadLink = dynamic(
+  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
+  {
+    ssr: false,
+    loading: () => <ArrowDownTrayIcon className="text-default-400 h-5 w-5" />
+  }
+);
+const BlobProvider = dynamic(
+  () => import('@react-pdf/renderer').then((mod) => mod.BlobProvider),
+  {
+    ssr: false,
+    loading: () => <PaperAirplaneIcon className="text-primary h-4 w-4" />
+  }
+);
+
 import { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
 import { formatDate } from '@/lib/utils/format-date';
@@ -31,6 +46,7 @@ import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
 
 import PDFDocument from '../pdf/pdf-document';
 import SendInvoiceEmailTableAction from './send-invoice-email-table-action';
+import dynamic from 'next/dynamic';
 
 const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
   {

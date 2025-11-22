@@ -19,6 +19,9 @@ export const userBodySchema = z.object({
   profilePictureUrl: z.string(),
   currency: z.string().min(1, 'validation.user.currency'),
   language: z.string().min(1, 'validation.user.language'),
+  preferredInvoiceLanguage: z.nullish(
+    z.string().min(1, 'validation.user.preferredInvoiceLanguage')
+  ),
   stripeCustomerId: z.string(),
   stripeSubscriptionId: z.string(),
   isSubscriptionActive: z.boolean().optional()

@@ -114,7 +114,8 @@ export default {
       address: 'Adresas yra privalomas',
       email: 'Tinkamas el. pašto adresas yra privalomas',
       currency: 'Valiuta yra privaloma',
-      language: 'Kalba yra privaloma'
+      language: 'Kalba yra privaloma',
+      preferredInvoiceLanguage: 'Pageidaujama sąskaitos kalba yra privaloma'
     },
     contact: {
       email: 'Neteisingas el. pašto adresas',

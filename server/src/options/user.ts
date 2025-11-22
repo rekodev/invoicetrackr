@@ -127,7 +127,8 @@ export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler 
     schema: {
       body: z.object({
         currency: z.string().max(3).min(3),
-        language: z.string().max(2).min(2)
+        language: z.string().max(2).min(2),
+        preferredInvoiceLanguage: z.string().max(2).min(2).optional()
       }),
       response: {
         200: messageResponseSchema

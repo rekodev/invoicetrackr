@@ -2,6 +2,7 @@
 
 import { Card, CardBody, cn } from '@heroui/react';
 import { CheckIcon, UserIcon } from '@heroicons/react/24/outline';
+import { JSX } from 'react';
 
 import { Client } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
@@ -15,7 +16,8 @@ type Props = {
   amount?: number;
   hideIcon?: boolean;
   truncate?: boolean;
-  fullWidth?: boolean;
+  fullDetails?: boolean;
+  actions?: JSX.Element;
 };
 
 const ClientCard = ({
@@ -26,7 +28,8 @@ const ClientCard = ({
   onClick,
   amount,
   hideIcon,
-  fullWidth
+  fullDetails,
+  actions
 }: Props) => {
   const renderSelectedIcon = () => {
     if (!isSelected) return null;
@@ -39,13 +42,14 @@ const ClientCard = ({
   };
 
   return (
-    <div onClick={onClick}>
+    <div className="relative" onClick={onClick}>
+      {!!actions && actions}
       <Card
         onPress={onClick}
         isPressable={!!onClick}
         isHoverable={!!onClick}
         className={cn(
-          'border-default-200 relative w-full justify-center border',
+          'border-default-200 relative h-full w-full justify-center border',
           {
             'cursor-pointer': !!onClick,
             'border-secondary-600 bg-secondary/10': isSelected
@@ -55,8 +59,8 @@ const ClientCard = ({
         {renderSelectedIcon()}
         <CardBody className="flex min-h-[70px] flex-row items-center justify-between gap-4">
           <div
-            className={cn('max-w-2/3 flex items-center gap-3', {
-              'max-w-full': fullWidth
+            className={cn('flex max-w-full items-center gap-3', {
+              'max-w-2/3': truncate
             })}
           >
             {!hideIcon && (
@@ -74,6 +78,11 @@ const ClientCard = ({
                 {client.name}
               </div>
               <div className="text-default-500 flex flex-col gap-1 text-xs">
+                {fullDetails && (
+                  <p className="text-tiny font-bold uppercase">
+                    {client.businessType} No. {client.businessNumber}
+                  </p>
+                )}
                 {client.address && <span>{client.address}</span>}
                 <span className={cn('', { 'max-w-40 truncate': truncate })}>
                   {client.email}

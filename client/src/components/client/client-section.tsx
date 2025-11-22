@@ -19,11 +19,11 @@ import { useTranslations } from 'next-intl';
 import { ClientBody } from '@invoicetrackr/types';
 import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 
+import ClientCard from '../client-card';
 import ClientFormDialog from './client-form-dialog';
 import ClientSectionBottomContent from './client-section-bottom-content';
 import ClientSectionTopContent from './client-section-top-content';
 import DeleteClientModal from './delete-client-modal';
-import InvoicePartyCard from '../invoice/invoice-party-card';
 
 const PER_PAGE = 8;
 
@@ -106,8 +106,9 @@ const ClientSection = ({ userId, clients }: Props) => {
         <Button
           isIconOnly
           className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
-          color="default"
+          color="warning"
           variant="light"
+          size="sm"
           onPress={() => handleEditClient(clientData)}
           startContent={<PencilSquareIcon className="h-5 w-5" />}
         />
@@ -115,6 +116,7 @@ const ClientSection = ({ userId, clients }: Props) => {
           isIconOnly
           variant="light"
           color="danger"
+          size="sm"
           className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
           onPress={() => handleOpenDeleteClientModal(clientData)}
           startContent={<TrashIcon className="h-5 w-5" />}
@@ -130,11 +132,11 @@ const ClientSection = ({ userId, clients }: Props) => {
     if (!isItemInCurrentPageRange) return;
 
     return (
-      <InvoicePartyCard
-        partyType={client.type}
+      <ClientCard
         key={client.id}
-        partyData={client}
-        renderActions={() => renderClientCardActions(client)}
+        fullDetails
+        client={client}
+        actions={renderClientCardActions(client)}
       />
     );
   };

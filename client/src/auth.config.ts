@@ -87,6 +87,7 @@ export const authConfig = {
         }
 
         token.language = user.language;
+        token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
         token.currency = user.currency;
         token.isOnboarded = isOnboarded;
         token.isSubscriptionActive = user.isSubscriptionActive;
@@ -98,6 +99,7 @@ export const authConfig = {
           ...token,
           isOnboarded: session.user.isOnboarded,
           language: session.user.language,
+          preferredInvoiceLanguage: session.user.preferredInvoiceLanguage,
           currency: session.user.currency,
           isSubscriptionActive: session.user.isSubscriptionActive,
           selectedBankAccountId: session.user.selectedBankAccountId
@@ -109,6 +111,8 @@ export const authConfig = {
     session({ session, token }) {
       session.user.id = token.sub!;
       session.user.language = token.language as string;
+      session.user.preferredInvoiceLanguage =
+        token.preferredInvoiceLanguage as string;
       session.user.currency = token.currency as Currency;
       session.user.isOnboarded = Boolean(token.isOnboarded);
       session.user.isSubscriptionActive = Boolean(token.isSubscriptionActive);

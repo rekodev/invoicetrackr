@@ -27,7 +27,6 @@ export const postContactMessage = async (
   });
 
   if (error) {
-    console.error({ error });
     throw new BadRequestError(i18n.t('error.contact.unableToSendMessage'));
   }
 

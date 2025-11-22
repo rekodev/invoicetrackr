@@ -113,7 +113,8 @@ export default {
       address: 'Address is required',
       email: 'Valid email is required',
       currency: 'Currency is required',
-      language: 'Language is required'
+      language: 'Language is required',
+      preferredInvoiceLanguage: 'Preferred invoice language is required'
     },
     contact: {
       email: 'Invalid email',

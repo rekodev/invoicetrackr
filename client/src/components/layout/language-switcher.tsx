@@ -28,6 +28,7 @@ export default function LanguageSwitcher({ user }: Props) {
     new Set([user?.language || 'en'])
   );
 
+  // TODO: Import available languages from profile instead
   const dropdownOptions = [
     { code: 'en', label: t('en') },
     { code: 'lt', label: t('lt') }

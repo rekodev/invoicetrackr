@@ -38,3 +38,27 @@ export const profileMenuTabs = [
     href: ACCOUNT_SETTINGS_PAGE
   }
 ];
+
+export const availableLanguages = [
+  {
+    code: 'lt',
+    nameTranslationKey: 'profile.account_settings.available_languages.lt'
+  },
+  {
+    code: 'en',
+    nameTranslationKey: 'profile.account_settings.available_languages.en'
+  }
+] as const;
+
+export const availableCurrencies = [
+  {
+    code: 'eur',
+    nameTranslationKey: 'profile.account_settings.available_currencies.eur',
+    symbol: '€'
+  },
+  {
+    code: 'usd',
+    nameTranslationKey: 'profile.account_settings.available_currencies.usd',
+    symbol: '$'
+  }
+] as const;
