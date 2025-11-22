@@ -17,13 +17,6 @@ import { createTranslator, useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from 'react';
 import dynamic from 'next/dynamic';
 
-const PDFViewer = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),
-  {
-    ssr: false,
-    loading: () => <Spinner color="secondary" variant="wave" className="my-6" />
-  }
-);
 const PDFDownloadLink = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
   {
@@ -47,6 +40,7 @@ import { availableLanguages } from '@/lib/constants/profile';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 
 import PDFDocument from '../pdf/pdf-document';
+import PdfViewerWrapper from '../pdf/pdf-viewer-wrapper';
 
 type Props = {
   currency: string;
@@ -74,8 +68,9 @@ const InvoiceModal = ({
   );
   const [pdfDocumentTranslator, setPdfDocumentTranslator] =
     useState<typeof t>();
-  const [isPending, startTransition] = useTransition();
+  const [isIFrameLoading, setIsIFrameLoading] = useState(true);
 
+  const [isPending, startTransition] = useTransition();
   const { cookieConsent } = useCookieConsent();
 
   useEffect(() => {
@@ -99,7 +94,6 @@ const InvoiceModal = ({
     loadMessages();
   }, [invoiceLanguage]);
 
-  // TODO: Implement lazy loading of PDFDocument component
   const renderPdfDocument = () => (
     <PDFDocument
       t={pdfDocumentTranslator}
@@ -112,12 +106,16 @@ const InvoiceModal = ({
   );
 
   const renderModalBody = () => {
-    if (isPending || !pdfDocumentTranslator) {
+    if (!pdfDocumentTranslator || isPending) {
       return <Spinner variant="wave" color="secondary" className="my-6" />;
     }
 
     return (
-      <PDFViewer className="aspect-[210/297]">{renderPdfDocument()}</PDFViewer>
+      <PdfViewerWrapper
+        pdfDocument={renderPdfDocument()}
+        isIFrameLoading={isIFrameLoading}
+        setIsIFrameLoading={setIsIFrameLoading}
+      />
     );
   };
 
@@ -143,59 +141,72 @@ const InvoiceModal = ({
               )}
             >
               {userPreferredInvoiceLanguage && (
-                <Select
-                  aria-label="Invoice language"
-                  size="sm"
-                  className="w-22"
-                  variant="bordered"
-                  startContent={<LanguageIcon className="min-w-4 max-w-4" />}
-                  selectedKeys={[invoiceLanguage]}
-                  onSelectionChange={(keys) => {
-                    const selectedKey = Array.from(keys).join('');
-                    if (selectedKey) setInvoiceLanguage(selectedKey);
-                  }}
-                >
-                  {availableLanguages.map((lang) => (
-                    <SelectItem
-                      key={lang.code}
-                      textValue={lang.code.toUpperCase()}
-                    >
-                      {lang.code.toUpperCase()}
-                    </SelectItem>
-                  ))}
-                </Select>
-              )}
-              {userPreferredInvoiceLanguage && (
-                <div className="border-default-400 h-6 border-r" />
+                <>
+                  <Select
+                    aria-label="Invoice language"
+                    size="sm"
+                    className="w-22"
+                    variant="bordered"
+                    startContent={<LanguageIcon className="min-w-5 max-w-5" />}
+                    selectedKeys={[invoiceLanguage]}
+                    onSelectionChange={(keys) => {
+                      const selectedKey = Array.from(keys).join('');
+                      if (selectedKey) setInvoiceLanguage(selectedKey);
+                      setIsIFrameLoading(true);
+                    }}
+                  >
+                    {availableLanguages.map((lang) => (
+                      <SelectItem
+                        key={lang.code}
+                        textValue={lang.code.toUpperCase()}
+                      >
+                        {lang.code.toUpperCase()}
+                      </SelectItem>
+                    ))}
+                  </Select>
+
+                  <div className="border-default-400 h-6 border-r" />
+                </>
               )}
               <PDFDownloadLink
                 document={renderPdfDocument()}
                 fileName={`${invoiceId}.pdf`}
               >
-                <Button
-                  startContent={
-                    <ArrowDownTrayIcon className="h-4 w-4 dark:text-white" />
-                  }
-                  size="sm"
-                  isDisabled={isPending}
-                  color="secondary"
-                  variant="solid"
-                  onPress={() => {
-                    if (
-                      cookieConsent !== CookieConsentStatus.Accepted &&
-                      userPreferredInvoiceLanguage
-                    )
-                      return;
+                {({ loading }) => {
+                  const isLoading = isIFrameLoading || loading;
 
-                    window.dataLayer?.push({
-                      event: 'free_invoice_pdf_download',
-                      invoice_id: invoiceData.invoiceId,
-                      total_amount: invoiceData.totalAmount
-                    });
-                  }}
-                >
-                  {t('buttons.download_pdf')}
-                </Button>
+                  return (
+                    <Button
+                      startContent={
+                        <ArrowDownTrayIcon
+                          className={cn('h-5 w-5 dark:text-white', {
+                            hidden: isLoading
+                          })}
+                        />
+                      }
+                      size="sm"
+                      isLoading={isLoading}
+                      isDisabled={isLoading}
+                      color="secondary"
+                      variant="solid"
+                      onPress={() => {
+                        if (
+                          cookieConsent !== CookieConsentStatus.Accepted &&
+                          userPreferredInvoiceLanguage
+                        )
+                          return;
+
+                        window.dataLayer?.push({
+                          event: 'free_invoice_pdf_download',
+                          invoice_id: invoiceData.invoiceId,
+                          total_amount: invoiceData.totalAmount
+                        });
+                      }}
+                    >
+                      {t('buttons.download_pdf')}
+                    </Button>
+                  );
+                }}
               </PDFDownloadLink>
             </div>
           </div>
