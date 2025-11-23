@@ -42,7 +42,8 @@ describe('<CancelSubscriptionModal />', () => {
         stripeCustomerId: 'cus_12345',
         stripeSubscriptionId: 'sub_12345',
         isOnboarded: true,
-        type: 'sender'
+        type: 'sender',
+        vatNumber: 'VAT123456'
       },
       isOpen: true,
       onClose: vi.fn()
