@@ -257,6 +257,8 @@ export default function Home() {
               <Button
                 as={Link}
                 href={CREATE_INVOICE_PAGE}
+                variant="shadow"
+                color="default"
                 size="lg"
                 className="px-8"
               >

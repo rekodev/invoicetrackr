@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
 import { getInvoiceDueStatus } from '@/lib/utils/invoice';
+import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
 
 import DeleteInvoiceModal from './delete-invoice-modal';
@@ -25,6 +26,7 @@ import InvoiceModal from './invoice-modal';
 import InvoiceTableBottomContent from './invoice-table-bottom-content';
 import InvoiceTableCell from './invoice-table-cell';
 import InvoiceTableTopContent from './invoice-table-top-content';
+import SendInvoiceEmailModal from './send-invoice-email-modal';
 
 const ROWS_PER_PAGE = 10;
 const INITIAL_VISIBLE_COLUMNS = [
@@ -52,6 +54,7 @@ const InvoiceTable = ({
   userPreferredInvoiceLanguage
 }: Props) => {
   const t = useTranslations('invoices.table');
+  const pdfTranslator = useTranslations('invoices.pdf');
 
   const columns = useMemo(
     () => [
@@ -87,13 +90,28 @@ const InvoiceTable = ({
   });
   const [page, setPage] = useState(1);
 
+  const [invoiceLanguage, setInvoiceLanguage] = useState(
+    userPreferredInvoiceLanguage || language
+  );
+
   const {
     handleViewInvoice,
     handleEditInvoice,
     handleDeleteInvoice,
     isDeleteInvoiceModalOpen,
-    handleCloseDeleteInvoiceModal
+    handleCloseDeleteInvoiceModal,
+    isSendInvoiceEmailModalOpen,
+    handleCloseSendInvoiceEmailModal,
+    handleSendInvoiceEmail
   } = useInvoiceTableActionHandlers({ setCurrentInvoice, onOpen });
+
+  const { pdfDocument, isPdfDocumentLoading } = useDynamicPdf({
+    currency,
+    defaultTranslator: pdfTranslator,
+    invoiceLanguage,
+    invoiceData: currentInvoice,
+    senderSignatureImage: currentInvoice?.senderSignature as string
+  });
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -229,11 +247,12 @@ const InvoiceTable = ({
                 {(columnKey) => (
                   <TableCell>
                     <InvoiceTableCell
+                      pdfDocument={pdfDocument}
                       userId={userId}
-                      language={language}
                       currency={currency}
                       invoice={item}
                       columnKey={columnKey}
+                      onSendEmail={handleSendInvoiceEmail}
                       onView={handleViewInvoice}
                       onEdit={handleEditInvoice}
                       onDelete={handleDeleteInvoice}
@@ -248,13 +267,14 @@ const InvoiceTable = ({
 
       {currentInvoice && (
         <InvoiceModal
-          language={language}
+          invoiceLanguage={invoiceLanguage}
+          setInvoiceLanguage={setInvoiceLanguage}
           userPreferredInvoiceLanguage={userPreferredInvoiceLanguage}
-          currency={currency}
           isOpen={isOpen}
           onOpenChange={onOpenChange}
           invoiceData={currentInvoice}
-          senderSignatureImage={currentInvoice.senderSignature as string}
+          pdfDocument={pdfDocument}
+          isPdfDocumentLoading={isPdfDocumentLoading}
         />
       )}
       {currentInvoice && (
@@ -263,6 +283,16 @@ const InvoiceTable = ({
           invoiceData={currentInvoice}
           isOpen={isDeleteInvoiceModalOpen}
           onClose={handleCloseDeleteInvoiceModal}
+        />
+      )}
+      {currentInvoice && pdfDocument && (
+        <SendInvoiceEmailModal
+          pdfDocument={pdfDocument}
+          isOpen={isSendInvoiceEmailModalOpen}
+          onClose={handleCloseSendInvoiceEmailModal}
+          invoice={currentInvoice}
+          currency={currency}
+          userId={userId}
         />
       )}
     </section>

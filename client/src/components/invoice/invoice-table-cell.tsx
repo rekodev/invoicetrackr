@@ -1,16 +1,6 @@
 'use client';
 
 import {
-  ArrowDownTrayIcon,
-  ChevronDownIcon,
-  DocumentTextIcon,
-  ExclamationCircleIcon,
-  EyeIcon,
-  PaperAirplaneIcon,
-  PencilSquareIcon,
-  TrashIcon
-} from '@heroicons/react/24/outline';
-import {
   Checkbox,
   Chip,
   Dropdown,
@@ -20,24 +10,17 @@ import {
   Tooltip,
   addToast
 } from '@heroui/react';
-import { Key, useEffect, useState, useTransition } from 'react';
-import dynamic from 'next/dynamic';
+import {
+  ChevronDownIcon,
+  DocumentTextIcon,
+  ExclamationCircleIcon,
+  EyeIcon,
+  PaperAirplaneIcon,
+  PencilSquareIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline';
+import { JSX, Key, useEffect, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
-
-const PDFDownloadLink = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
-  {
-    ssr: false,
-    loading: () => <ArrowDownTrayIcon className="text-default-400 h-5 w-5" />
-  }
-);
-const BlobProvider = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.BlobProvider),
-  {
-    ssr: false,
-    loading: () => <PaperAirplaneIcon className="text-primary h-4 w-4" />
-  }
-);
 
 import { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
@@ -46,9 +29,6 @@ import { getCurrencySymbol } from '@/lib/utils/currency';
 import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import { statusOptions } from '@/lib/constants/table';
 import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
-
-import PDFDocument from '../pdf/pdf-document';
-import SendInvoiceEmailTableAction from './send-invoice-email-table-action';
 
 const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
   {
@@ -60,26 +40,25 @@ const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
 type Props = {
   userId: number;
   currency: Currency;
-  language: string;
   invoice: InvoiceBody;
   columnKey: Key;
+  onSendEmail: (_invoice: InvoiceBody) => void;
   onView: (_invoice: InvoiceBody) => void;
   onEdit: (_invoice: InvoiceBody) => void;
   onDelete: (_invoice: InvoiceBody) => void;
+  pdfDocument: JSX.Element | null;
 };
 
 const InvoiceTableCell = ({
   userId,
   currency,
-  language,
   invoice,
   columnKey,
+  onSendEmail,
   onView,
   onEdit,
   onDelete
 }: Props) => {
-  // TODO: Make PDF translations dynamic based on user preferred invoice language
-  const tPdf = useTranslations('invoices.pdf');
   const tCell = useTranslations('invoices.cell.actions');
   const tForm = useTranslations('components.invoice_form');
   const [isPaid, setIsPaid] = useState(invoice.status === 'paid');
@@ -120,17 +99,6 @@ const InvoiceTableCell = ({
     setIsPaid(!isPaid);
     handleChangeStatus(isPaid ? 'pending' : 'paid');
   };
-
-  const renderPdfDocument = () => (
-    <PDFDocument
-      t={tPdf}
-      language={language}
-      senderSignatureImage={invoice.senderSignature as string}
-      bankAccount={invoice.bankingInformation}
-      currency={currency}
-      invoiceData={invoice}
-    />
-  );
 
   const cellValue =
     invoice[
@@ -252,26 +220,11 @@ const InvoiceTableCell = ({
     case 'actions':
       return (
         <div className="relative flex items-center justify-end gap-2">
-          <BlobProvider document={renderPdfDocument()}>
-            {({ blob }) => {
-              return (
-                <SendInvoiceEmailTableAction
-                  blob={blob}
-                  userId={userId}
-                  invoice={invoice}
-                  currency={currency}
-                />
-              );
-            }}
-          </BlobProvider>
-          <Tooltip content={tCell('tooltip_download')}>
-            <PDFDownloadLink
-              fileName={invoice.invoiceId}
-              className="text-default-400 h-5 w-5"
-              document={renderPdfDocument()}
-            >
-              <ArrowDownTrayIcon />
-            </PDFDownloadLink>
+          <Tooltip content={tCell('tooltip_send_email')}>
+            <PaperAirplaneIcon
+              onClick={() => onSendEmail(invoice)}
+              className="text-primary h-4 w-4 cursor-pointer"
+            />
           </Tooltip>
           <Tooltip content={tCell('tooltip_view')}>
             <span

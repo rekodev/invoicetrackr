@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
+import { Currency } from '@/lib/types/currency';
 import { HOME_PAGE } from '@/lib/constants/pages';
 import { InvoiceBody } from '@invoicetrackr/types';
 import { calculateServiceTotal } from '@/lib/utils';
@@ -14,10 +15,17 @@ import { formatDate } from '@/lib/utils/format-date';
 
 import InvoiceModal from './invoice-modal';
 import InvoiceServicesTable from './invoice-services-table';
+import PDFDocument from '../pdf/pdf-document';
 import SignaturePad from '../signature-pad';
 
-const FreeInvoiceForm = () => {
+type Props = {
+  language: string;
+  currency: Currency;
+};
+
+const FreeInvoiceForm = ({ language, currency }: Props) => {
   const t = useTranslations('components.invoice_form');
+  const pdfTranslator = useTranslations('invoices.pdf');
   const router = useRouter();
   const methods = useForm<InvoiceBody>({
     defaultValues: {
@@ -71,7 +79,7 @@ const FreeInvoiceForm = () => {
     <div className="col-span-4 flex w-full flex-col gap-4">
       <h4>{t('headings.sender_receiver_data')}</h4>
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
-        <Card className="flex w-full flex-col gap-4 p-4">
+        <Card className="flex w-full flex-col gap-4 p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.from')}</p>
           </div>
@@ -132,7 +140,7 @@ const FreeInvoiceForm = () => {
             errorMessage={errors.sender?.email?.message}
           />
         </Card>
-        <Card className="flex w-full flex-col gap-4 p-4">
+        <Card className="flex w-full flex-col gap-4 p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.to')}</p>
           </div>
@@ -200,7 +208,7 @@ const FreeInvoiceForm = () => {
     <div className="col-span-4 flex flex-col gap-4">
       <h4>{t('services_heading')}</h4>
       <InvoiceServicesTable
-        currency="usd"
+        currency={currency}
         isInvalid={!!errors.services}
         errorMessage={errors.services?.message}
       />
@@ -281,6 +289,19 @@ const FreeInvoiceForm = () => {
     </div>
   );
 
+  const renderPdfDocument = () => (
+    <PDFDocument
+      currency={currency}
+      invoiceData={{
+        ...getValues(),
+        totalAmount: calculateServiceTotal(getValues('services')).toString()
+      }}
+      senderSignatureImage={senderSignatureImage}
+      t={pdfTranslator}
+      language={language}
+    />
+  );
+
   return (
     <>
       <FormProvider {...methods}>
@@ -341,14 +362,13 @@ const FreeInvoiceForm = () => {
       </FormProvider>
 
       <InvoiceModal
+        pdfDocument={renderPdfDocument()}
         invoiceData={{
           ...getValues(),
           totalAmount: calculateServiceTotal(getValues('services')).toString()
         }}
-        currency="usd"
-        language="en"
+        invoiceLanguage={language}
         isOpen={isInvoiceModalOpen}
-        senderSignatureImage={senderSignatureImage}
         onOpenChange={setIsInvoiceModalOpen}
       />
     </>

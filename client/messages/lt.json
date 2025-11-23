@@ -312,6 +312,7 @@
     },
     "cell": {
       "actions": {
+        "tooltip_send_email": "Siųsti sąskaitą el. paštu",
         "tooltip_view": "Išsami informacija",
         "tooltip_edit": "Redaguoti sąskaitą faktūrą",
         "tooltip_delete": "Ištrinti sąskaitą faktūrą",
@@ -622,7 +623,6 @@
       "send": "Siųsti"
     },
     "send_invoice_email": {
-      "tooltip": "Siųsti sąskaitą faktūrą",
       "modal_title": "Siųsti sąskaitą faktūrą {invoiceId}",
       "recipient_email": "Gavėjo el. paštas",
       "recipient_placeholder": "Įveskite gavėjo el. paštą",
