@@ -78,6 +78,7 @@ const InvoiceTableCell = ({
   onEdit,
   onDelete
 }: Props) => {
+  // TODO: Make PDF translations dynamic based on user preferred invoice language
   const tPdf = useTranslations('invoices.pdf');
   const tCell = useTranslations('invoices.cell.actions');
   const tForm = useTranslations('components.invoice_form');
