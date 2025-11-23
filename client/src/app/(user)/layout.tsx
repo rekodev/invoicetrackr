@@ -1,5 +1,5 @@
+import { ReactNode, Suspense } from 'react';
 import type { Metadata } from 'next';
-import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 
 import Breadcrumbs from '@/components/layout/breadcrumbs';
@@ -7,6 +7,7 @@ import { LOGIN_PAGE } from '@/lib/constants/pages';
 import { auth } from '@/auth';
 
 import '../globals.css';
+import Loading from '../loading';
 
 export const metadata: Metadata = {
   robots: {
@@ -31,7 +32,7 @@ export default async function UserLayout({
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col px-6">
       <Breadcrumbs />
-      {children}
+      <Suspense fallback={<Loading />}>{children}</Suspense>
     </main>
   );
 }

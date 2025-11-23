@@ -143,7 +143,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-6 py-12 lg:flex-row">
-            <div className="bg-card text-card-foreground border-default-300 dark:border-default-100 flex min-h-[472px] w-full max-w-md flex-col justify-between rounded-lg border shadow-sm">
+            <div className="bg-card text-card-foreground border-default-500/50 dark:border-default-500/50 flex min-h-[472px] w-full max-w-md flex-col justify-between rounded-lg border shadow-sm">
               <div>
                 <div className="flex flex-col space-y-1.5 p-6">
                   <h3 className="text-2xl font-bold">
@@ -183,12 +183,12 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex flex-col p-6 pt-0">
-                <Button as={Link} href={CREATE_INVOICE_PAGE}>
+                <Button as={Link} variant="shadow" href={CREATE_INVOICE_PAGE}>
                   {t('pricing.free.cta')}
                 </Button>
               </div>
             </div>
-            <div className="border-secondary-500 bg-secondary-50 flex w-full max-w-md flex-col rounded-lg border bg-opacity-50 shadow-sm dark:bg-opacity-100">
+            <div className="border-secondary-500/50 bg-secondary-50 border-1 flex w-full max-w-md flex-col rounded-lg bg-opacity-50 shadow-sm dark:bg-opacity-100">
               <div className="flex flex-col space-y-1.5 p-6">
                 <h3 className="text-2xl font-bold">
                   {t('pricing.premium.title')}

@@ -50,14 +50,10 @@ const DeleteInvoiceModal = ({
     <ModalFooter>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
-          <Button color="danger" onPress={onClose}>
+          <Button variant="bordered" onPress={onClose}>
             {t('cancel')}
           </Button>
-          <Button
-            isLoading={isPending}
-            color="secondary"
-            onPress={handleSubmit}
-          >
+          <Button isLoading={isPending} color="danger" onPress={handleSubmit}>
             {t('confirm')}
           </Button>
         </div>
