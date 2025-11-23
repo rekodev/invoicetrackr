@@ -10,6 +10,7 @@ import GoogleAnalytics from '@/components/providers/google-analytics';
 import Header from '@/components/layout/header';
 
 import CookieConsent from '../components/cookie-consent';
+import Loading from './loading';
 import { Providers } from '../components/providers/providers';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -60,7 +61,7 @@ export default async function RootLayout({
         <Providers messages={messages}>
           <Header />
           <main className="mx-auto flex w-full flex-grow flex-col py-6">
-            {children}
+            <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
           <Footer />
           <CookieConsent />

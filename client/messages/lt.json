@@ -195,7 +195,6 @@
     },
     "multi_step": {
       "branding": {
-        "app_name": "InvoiceTrackr",
         "tagline": "Tvarkykite sąskaitas faktūras ir stebėkite pajamas lengvai"
       },
       "steps": {

@@ -42,7 +42,10 @@ export const getUserOptions: RouteShorthandOptionsWithHandler = {
 export const loginUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: z.object({
-      email: z.email('validation.user.email').max(255).min(5),
+      email: z
+        .email('validation.user.email')
+        .max(255, 'validation.user.email')
+        .min(5, 'validation.user.email'),
       password: loginPasswordSchema
     }),
     response: {
@@ -56,7 +59,10 @@ export const postUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: z
       .object({
-        email: z.email('validation.user.email').max(255).min(5),
+        email: z
+          .email('validation.user.email')
+          .max(255, 'validation.user.email')
+          .min(5, 'validation.user.email'),
         password: passwordSchema,
         confirmedPassword: passwordSchema
       })

@@ -22,6 +22,11 @@ import { signUpAction } from '@/lib/actions';
 
 const initialState = {
   message: '',
+  errors: {
+    email: '',
+    password: '',
+    confirmPassword: ''
+  },
   ok: false
 };
 
@@ -70,6 +75,8 @@ export default function SignUpForm() {
             name="email"
             label={t('email')}
             placeholder={t('email_placeholder')}
+            isInvalid={!!state.errors?.email}
+            errorMessage={state.errors?.email}
           />
           <Input
             labelPlacement="outside"
@@ -79,6 +86,8 @@ export default function SignUpForm() {
             name="password"
             label={t('password')}
             placeholder={t('password_placeholder')}
+            isInvalid={!!state.errors?.password}
+            errorMessage={state.errors?.password}
           />
           <Input
             labelPlacement="outside"
@@ -88,6 +97,8 @@ export default function SignUpForm() {
             name="confirm-password"
             label={t('confirm_password')}
             placeholder={t('confirm_password_placeholder')}
+            isInvalid={!!state.errors?.confirmPassword}
+            errorMessage={state.errors?.confirmPassword}
           />
           <Button
             className="w-full justify-between"

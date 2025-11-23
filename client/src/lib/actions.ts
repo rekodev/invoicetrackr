@@ -16,6 +16,7 @@ import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
 import { signIn, signOut, unstable_update } from '../auth';
 import { ActionResponseModel } from './types/action';
 import { isResponseError } from './utils/error';
+import { mapValidationErrors } from './utils/validation';
 
 export async function resetPasswordAction(
   _prevState: ActionResponseModel | undefined,
@@ -96,20 +97,20 @@ export async function signUpAction(
     confirmedPassword: formData.get('confirm-password') as string
   };
 
-  try {
-    const response = await registerUser(rawFormData);
+  const response = await registerUser(rawFormData);
 
-    if (isResponseError(response)) {
-      return { ok: false, message: response.data.message };
-    }
-
-    return signIn('credentials', {
-      ...rawFormData,
-      redirectTo: ONBOARDING_PAGE
-    });
-  } catch (error) {
-    throw error;
+  if (isResponseError(response)) {
+    return {
+      ok: false,
+      errors: mapValidationErrors(response.data.errors),
+      message: response.data.message
+    };
   }
+
+  return signIn('credentials', {
+    ...rawFormData,
+    redirectTo: ONBOARDING_PAGE
+  });
 }
 
 export const updateSessionAction = async ({

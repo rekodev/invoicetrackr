@@ -1,10 +1,12 @@
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 import { unauthorized } from 'next/navigation';
 
 import UserNavCard from '@/components/profile/user-nav-card';
 import { auth } from '@/auth';
 import { getUser } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
+
+import Loading from '../../loading';
 
 export default async function ProfilePageLayout({
   children
@@ -22,7 +24,7 @@ export default async function ProfilePageLayout({
   return (
     <section className="flex flex-col gap-6 sm:flex-row">
       <UserNavCard user={response.data.user} />
-      {children}
+      <Suspense fallback={<Loading />}>{children}</Suspense>
     </section>
   );
 }

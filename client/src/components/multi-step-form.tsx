@@ -162,12 +162,19 @@ export default function MultiStepForm({
             {t('actions.back')}
           </Button>
           <div className="hidden md:block">
-            <div className="flex items-center gap-2">
-              <AppLogo height={60} width={60} />
+            <div className="flex items-start gap-2">
+              <AppLogo height={65} width={65} />
 
               <div className="flex flex-col">
-                <h3 className="text-2xl font-bold">{t('branding.app_name')}</h3>
-                <p className="text-default-500">{t('branding.tagline')}</p>
+                <p className="text-default-800 hidden font-bold sm:flex">
+                  INVOICE
+                  <span className="text-secondary-400 dark:text-secondary-600">
+                    TRACKR
+                  </span>
+                </p>
+                <p className="text-default-500 text-sm">
+                  {t('branding.tagline')}
+                </p>
               </div>
             </div>
           </div>
