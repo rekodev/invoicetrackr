@@ -6,9 +6,7 @@
     "language_switcher": {
       "a11y": {
         "label": "Select language"
-      },
-      "en": "English",
-      "lt": "Lithuanian"
+      }
     },
     "user": {
       "dashboard": "Dashboard",
@@ -319,7 +317,8 @@
         "tooltip_delete": "Delete invoice",
         "tooltip_download": "Download",
         "mark_as_paid": "Mark as Paid",
-        "mark_as_pending": "Mark as Pending"
+        "mark_as_pending": "Mark as Pending",
+        "past_due": "{days}d past due"
       }
     },
     "pdf": {
@@ -348,7 +347,8 @@
       "bank_info_label": "{bank_name}, bank code {bank_code}; Account number: {bank_account_number}",
       "buttons": {
         "download_pdf": "Download PDF"
-      }
+      },
+      "past_due_alert": "Invoice is {days}d past due. Due date was {dueDate}."
     }
   },
   "clients": {
@@ -448,6 +448,7 @@
       "currency": "Currency",
       "language": "Language",
       "preferred_invoice_language": "Preferred Invoice Language",
+      "preferred_invoice_language_tooltip": "This is the default language for invoice exports and emails. You can change it per invoice.",
       "available_languages": {
         "en": "English",
         "lt": "Lithuanian"
