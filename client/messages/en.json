@@ -312,6 +312,7 @@
     },
     "cell": {
       "actions": {
+        "tooltip_send_email": "Send Invoice Email",
         "tooltip_view": "Details",
         "tooltip_edit": "Edit invoice",
         "tooltip_delete": "Delete invoice",
@@ -622,7 +623,6 @@
       "send": "Send"
     },
     "send_invoice_email": {
-      "tooltip": "Send Invoice",
       "modal_title": "Send Invoice {invoiceId}",
       "recipient_email": "Recipient Email",
       "recipient_placeholder": "Enter recipient's email",

@@ -1,17 +1,13 @@
 'use client';
 
 import {
-  BankAccountBody,
-  InvoiceBody,
-  InvoiceServiceBody
-} from '@invoicetrackr/types';
-import {
   Document,
   Image as PDFImage,
   Page,
   Text,
   View
 } from '@react-pdf/renderer';
+import { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
 
 import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
 import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
@@ -24,7 +20,6 @@ type Props = {
   t: ReturnType<typeof import('next-intl').createTranslator>;
   invoiceData: InvoiceBody;
   senderSignatureImage: string;
-  bankAccount: BankAccountBody | undefined;
   currency: string;
   language: string;
 };
@@ -33,7 +28,6 @@ export default function PDFDocument({
   t,
   invoiceData,
   senderSignatureImage,
-  bankAccount,
   currency,
   language
 }: Props) {
@@ -251,15 +245,18 @@ export default function PDFDocument({
           days: date && dueDate ? getDaysUntilDueDate(date, dueDate) : '0'
         })}
       </Text>
-      {bankAccount?.code && bankAccount?.name && bankAccount?.accountNumber && (
-        <Text style={pdfStyles.footerItem}>
-          {t('bank_info_label', {
-            bank_name: bankAccount?.name || '-',
-            bank_code: bankAccount?.code || '-',
-            bank_account_number: bankAccount?.accountNumber || '-'
-          })}
-        </Text>
-      )}
+      {invoiceData.bankingInformation?.code &&
+        invoiceData.bankingInformation?.name &&
+        invoiceData.bankingInformation?.accountNumber && (
+          <Text style={pdfStyles.footerItem}>
+            {t('bank_info_label', {
+              bank_name: invoiceData.bankingInformation?.name || '-',
+              bank_code: invoiceData.bankingInformation?.code || '-',
+              bank_account_number:
+                invoiceData.bankingInformation?.accountNumber || '-'
+            })}
+          </Text>
+        )}
     </View>
   );
 

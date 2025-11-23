@@ -16,6 +16,8 @@ const useInvoiceTableActionHandlers = ({
   const router = useRouter();
   const [isDeleteInvoiceModalOpen, setIsDeleteInvoiceModalOpen] =
     useState(false);
+  const [isSendInvoiceEmailModalOpen, setIsSendInvoiceEmailModalOpen] =
+    useState(false);
 
   const handleViewInvoice = useCallback(
     (invoice: InvoiceBody) => {
@@ -37,6 +39,10 @@ const useInvoiceTableActionHandlers = ({
     setIsDeleteInvoiceModalOpen(false);
   };
 
+  const handleCloseSendInvoiceEmailModal = () => {
+    setIsSendInvoiceEmailModalOpen(false);
+  };
+
   const handleDeleteInvoice = useCallback(
     (invoice: InvoiceBody) => {
       setCurrentInvoice(invoice);
@@ -45,12 +51,23 @@ const useInvoiceTableActionHandlers = ({
     [setCurrentInvoice]
   );
 
+  const handleSendInvoiceEmail = useCallback(
+    (invoice: InvoiceBody) => {
+      setCurrentInvoice(invoice);
+      setIsSendInvoiceEmailModalOpen(true);
+    },
+    [setCurrentInvoice]
+  );
+
   return {
     handleViewInvoice,
     handleEditInvoice,
     handleDeleteInvoice,
+    handleSendInvoiceEmail,
     isDeleteInvoiceModalOpen,
-    handleCloseDeleteInvoiceModal
+    isSendInvoiceEmailModalOpen,
+    handleCloseDeleteInvoiceModal,
+    handleCloseSendInvoiceEmailModal
   };
 };
 

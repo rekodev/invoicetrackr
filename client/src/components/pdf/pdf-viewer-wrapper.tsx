@@ -47,6 +47,7 @@ export default function PdfViewerWrapper({
         })}
       />
       <PDFViewer
+        showToolbar={false}
         innerRef={iFrameRef}
         className={cn('aspect-[210/297]', {
           hidden: isIFrameLoading

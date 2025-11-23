@@ -1,22 +1,14 @@
-import ClientSection from '@/components/client/client-section';
-import { auth } from '@/auth';
-import { getClients } from '@/api/client';
-import { isResponseError } from '@/lib/utils/error';
+import { Suspense } from 'react';
+
+import { ClientSectionSkeleton } from '@/components/ui/skeletons/client';
+
+import ClientsPageContent from './clients-page-content';
 
 const ClientsPage = async () => {
-  const session = await auth();
-
-  if (!session?.user?.id) return null;
-
-  const response = await getClients(Number(session.user.id));
-
-  if (isResponseError(response)) throw new Error('Failed to fetch clients');
-
   return (
-    <ClientSection
-      userId={Number(session.user.id)}
-      clients={response.data.clients}
-    />
+    <Suspense fallback={<ClientSectionSkeleton />}>
+      <ClientsPageContent />
+    </Suspense>
   );
 };
 
