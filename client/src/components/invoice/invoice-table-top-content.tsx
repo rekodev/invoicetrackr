@@ -99,7 +99,7 @@ const InvoiceTableTopContent = ({
           <Dropdown>
             <DropdownTrigger className="hidden sm:flex">
               <Button
-                endContent={<ChevronDownIcon className="text-small" />}
+                endContent={<ChevronDownIcon className="text-small h-4 w-4" />}
                 variant="flat"
               >
                 {t('table.filters.status')}
@@ -123,7 +123,7 @@ const InvoiceTableTopContent = ({
           <Dropdown>
             <DropdownTrigger className="hidden sm:flex">
               <Button
-                endContent={<ChevronDownIcon className="text-small" />}
+                endContent={<ChevronDownIcon className="text-small h-4 w-4" />}
                 variant="flat"
               >
                 {t('table.filters.columns')}

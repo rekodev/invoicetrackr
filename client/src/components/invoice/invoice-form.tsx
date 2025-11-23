@@ -5,7 +5,15 @@ import {
   SparklesIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, Input, Select, SelectItem } from '@heroui/react';
+import {
+  Button,
+  Card,
+  Input,
+  Radio,
+  RadioGroup,
+  Select,
+  SelectItem
+} from '@heroui/react';
 import {
   Controller,
   ControllerRenderProps,
@@ -49,6 +57,7 @@ const INITIAL_RECEIVER_DATA: Client = {
   address: '',
   email: '',
   name: '',
+  vatNumber: '',
   type: 'receiver'
 };
 
@@ -76,7 +85,8 @@ const InvoiceForm = ({
     formState: { errors, isSubmitting },
     clearErrors,
     setValue,
-    control
+    control,
+    watch
   } = methods;
 
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
@@ -92,6 +102,10 @@ const InvoiceForm = ({
     setError
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const isReceiverBusiness = watch('receiver.businessType') === 'business';
+  const isSenderBusiness = watch('sender.businessType') === 'business';
+
   const handleOpenReceiverModal = () => {
     setIsReceiverModalOpen(true);
   };
@@ -101,8 +115,10 @@ const InvoiceForm = ({
   };
 
   const handleSelectReceiver = (receiver: ClientBody) => {
+    setValue('receiver.businessType', receiver.businessType);
     setValue('receiver.name', receiver.name);
     setValue('receiver.businessNumber', receiver.businessNumber);
+    setValue('receiver.vatNumber', receiver.vatNumber);
     setValue('receiver.address', receiver.address);
     setValue('receiver.email', receiver.email);
     clearErrors('receiver');
@@ -140,10 +156,29 @@ const InvoiceForm = ({
     <div className="col-span-4 flex w-full flex-col gap-4">
       <h4>{t('headings.sender_receiver_data')}</h4>
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
-        <Card className="flex w-full flex-col gap-4 p-4">
+        <Card className="flex w-full flex-col gap-4 p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.from')}</p>
           </div>
+          <Controller
+            name="sender.businessType"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                orientation="horizontal"
+                size="sm"
+                color="secondary"
+                {...field}
+              >
+                <Radio value="business">
+                  {t('labels.business_type_business')}
+                </Radio>
+                <Radio value="individual">
+                  {t('labels.business_type_individual')}
+                </Radio>
+              </RadioGroup>
+            )}
+          />
           <Input
             label={t('labels.sender_name')}
             size="sm"
@@ -155,15 +190,31 @@ const InvoiceForm = ({
             errorMessage={errors.sender?.name?.message}
           />
           <Input
-            label={t('labels.sender_business_number')}
+            label={t(
+              `labels.sender_business_number_${isSenderBusiness ? 'business' : 'individual'}`
+            )}
             size="sm"
-            aria-label={t('a11y.sender_business_number_label')}
+            aria-label={t(
+              `a11y.sender_business_number_label_${isSenderBusiness ? 'business' : 'individual'}`
+            )}
             maxLength={20}
             variant="bordered"
             {...register('sender.businessNumber')}
             isInvalid={!!errors.sender?.businessNumber}
             errorMessage={errors.sender?.businessNumber?.message}
           />
+          {isSenderBusiness && (
+            <Input
+              label={t('labels.sender_vat_number')}
+              size="sm"
+              aria-label={t('a11y.sender_vat_number_label')}
+              maxLength={20}
+              variant="bordered"
+              {...register('sender.vatNumber')}
+              isInvalid={!!errors.sender?.vatNumber}
+              errorMessage={errors.sender?.vatNumber?.message}
+            />
+          )}
           <Input
             label={t('labels.sender_address')}
             size="sm"
@@ -185,7 +236,7 @@ const InvoiceForm = ({
             errorMessage={errors.sender?.email?.message}
           />
         </Card>
-        <Card className="flex w-full flex-col gap-4 p-4">
+        <Card className="flex w-full flex-col gap-4 p-4 pb-6">
           <div className="flex items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.to')}</p>
             <Button
@@ -198,6 +249,25 @@ const InvoiceForm = ({
               {t('modals.select_client')}
             </Button>
           </div>
+          <Controller
+            name="receiver.businessType"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                {...field}
+                color="secondary"
+                size="sm"
+                orientation="horizontal"
+              >
+                <Radio value="business">
+                  {t('labels.business_type_business')}
+                </Radio>
+                <Radio value="individual">
+                  {t('labels.business_type_individual')}
+                </Radio>
+              </RadioGroup>
+            )}
+          />
           <Controller
             name="receiver.name"
             control={control}
@@ -221,9 +291,13 @@ const InvoiceForm = ({
             render={({ field }) => (
               <Input
                 {...field}
-                label={t('labels.receiver_business_number')}
+                label={t(
+                  `labels.receiver_business_number_${isReceiverBusiness ? 'business' : 'individual'}`
+                )}
                 size="sm"
-                aria-label={t('a11y.receiver_business_number_label')}
+                aria-label={t(
+                  `a11y.receiver_business_number_label_${isReceiverBusiness ? 'business' : 'individual'}`
+                )}
                 type="text"
                 variant="bordered"
                 isInvalid={!!errors.receiver?.businessNumber}
@@ -231,6 +305,25 @@ const InvoiceForm = ({
               />
             )}
           />
+          {isReceiverBusiness && (
+            <Controller
+              name="receiver.vatNumber"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  value={field.value || ''}
+                  label={t('labels.receiver_vat_number')}
+                  size="sm"
+                  aria-label={t('a11y.receiver_vat_number_label')}
+                  type="text"
+                  variant="bordered"
+                  isInvalid={!!errors.receiver?.vatNumber}
+                  errorMessage={errors.receiver?.vatNumber?.message}
+                />
+              )}
+            />
+          )}
           <Controller
             name="receiver.address"
             control={control}
@@ -451,7 +544,9 @@ const InvoiceForm = ({
                   type="date"
                   label={t('labels.date')}
                   defaultValue={
-                    invoiceData?.date ? formatDate(invoiceData.date) : ''
+                    invoiceData?.date
+                      ? formatDate(invoiceData.date)
+                      : formatDate(new Date().toISOString())
                   }
                   errorMessage={errors.date?.message}
                   isInvalid={!!errors.date}

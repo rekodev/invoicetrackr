@@ -37,6 +37,7 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
             type: user.type,
             businessType: user.businessType,
             businessNumber: user.businessNumber,
+            vatNumber: user.vatNumber,
             selectedBankAccountId: user.selectedBankAccountId || 0,
             address: user.address,
             stripeCustomerId: user.stripeCustomerId,

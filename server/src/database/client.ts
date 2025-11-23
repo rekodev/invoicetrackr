@@ -23,6 +23,7 @@ export const getClientsFromDb = async (
       name: clientsTable.name,
       address: clientsTable.address,
       businessNumber: clientsTable.businessNumber,
+      vatNumber: clientsTable.vatNumber,
       businessType: clientsTable.businessType,
       type: clientsTable.type,
       email: clientsTable.email
@@ -52,6 +53,7 @@ export const insertClientInDb = async (
     name,
     address,
     businessNumber,
+    vatNumber,
     businessType,
     type,
     email
@@ -63,6 +65,7 @@ export const insertClientInDb = async (
       name,
       address,
       businessNumber,
+      vatNumber,
       businessType,
       type,
       email,
@@ -80,6 +83,7 @@ export const updateClientInDb = async (
     name,
     address,
     businessNumber,
+    vatNumber,
     businessType,
     type,
     email
@@ -87,7 +91,15 @@ export const updateClientInDb = async (
 ): Promise<SelectClient | undefined> => {
   const clients = await db
     .update(clientsTable)
-    .set({ name, address, businessNumber, businessType, type, email })
+    .set({
+      name,
+      address,
+      businessNumber,
+      vatNumber,
+      businessType,
+      type,
+      email
+    })
     .where(and(eq(clientsTable.id, clientId), eq(clientsTable.userId, userId)))
     .returning();
 

@@ -25,6 +25,7 @@ const INITIAL_CLIENT_DATA: ClientFormData = {
   type: 'receiver',
   businessType: 'business',
   businessNumber: '',
+  vatNumber: '',
   address: '',
   email: ''
 };
@@ -119,6 +120,14 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
               variant="bordered"
               isInvalid={!!errors.businessNumber}
               errorMessage={errors.businessNumber?.message}
+            />
+            <Input
+              {...register('vatNumber')}
+              type="text"
+              label={t('fields.vat_number')}
+              variant="bordered"
+              isInvalid={!!errors.vatNumber}
+              errorMessage={errors.vatNumber?.message}
             />
             <Input
               {...register('address')}

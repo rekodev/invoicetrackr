@@ -80,7 +80,8 @@ export const invoiceSendersTable = pgTable(
     address: text().notNull(),
     type: varchar({ length: 50 }).notNull(),
     businessType: varchar('business_type', { length: 50 }).notNull(),
-    businessNumber: varchar('business_number', { length: 255 }).notNull()
+    businessNumber: varchar('business_number', { length: 255 }).notNull(),
+    vatNumber: varchar('vat_number', { length: 255 })
   },
   (table) => [
     foreignKey({
@@ -101,7 +102,8 @@ export const invoiceReceiversTable = pgTable(
     address: text().notNull(),
     type: varchar({ length: 50 }).notNull(),
     businessType: varchar('business_type', { length: 50 }).notNull(),
-    businessNumber: varchar('business_number', { length: 255 }).notNull()
+    businessNumber: varchar('business_number', { length: 255 }).notNull(),
+    vatNumber: varchar('vat_number', { length: 255 })
   },
   (table) => [
     foreignKey({
@@ -138,6 +140,7 @@ export const clientsTable = pgTable(
     type: varchar({ length: 50 }).notNull(),
     businessType: varchar('business_type', { length: 50 }).notNull(),
     businessNumber: varchar('business_number', { length: 255 }).notNull(),
+    vatNumber: varchar('vat_number', { length: 255 }),
     address: text().notNull(),
     email: varchar({ length: 255 }).notNull(),
     createdAt: timestamp('created_at', {
@@ -167,6 +170,7 @@ export const usersTable = pgTable(
     type: varchar({ length: 50 }).notNull(),
     businessType: varchar('business_type', { length: 50 }).notNull(),
     businessNumber: varchar('business_number', { length: 255 }).notNull(),
+    vatNumber: varchar('vat_number', { length: 255 }),
     address: text().notNull(),
     email: varchar({ length: 255 }).notNull(),
     createdAt: timestamp('created_at', {

@@ -119,6 +119,7 @@ export const updateUser = async (
       | 'name'
       | 'businessType'
       | 'businessNumber'
+      | 'vatNumber'
       | 'address'
       | 'signature'
     > & { file: MultipartFile };
@@ -127,7 +128,7 @@ export const updateUser = async (
 ) => {
   const userId = Number(req.params.userId);
   const file = req.body.file;
-  const { email, name, businessType, businessNumber, address, signature } =
+  const { email, name, businessType, businessNumber, vatNumber, address, signature } =
     req.body;
   const i18n = await useI18n(req);
 
@@ -153,7 +154,7 @@ export const updateUser = async (
     : signature;
 
   const updatedUser = await updateUserInDb(
-    { id: userId, email, name, businessType, businessNumber, address },
+    { id: userId, email, name, businessType, businessNumber, vatNumber, address },
     signatureUrl || ''
   );
 

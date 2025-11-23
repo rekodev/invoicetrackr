@@ -12,6 +12,7 @@ export const userFactory = Factory.define<
   email: `user${sequence}@example.com`,
   address: `${sequence} Test Street`,
   businessNumber: `BN${sequence}`,
+  vatNumber: null,
   businessType: 'individual',
   type: 'sender',
   signature: `signature${sequence}.png`,

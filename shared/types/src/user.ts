@@ -11,6 +11,7 @@ export const userBodySchema = z.object({
   name: z.string().min(1, 'validation.user.name'),
   businessType: invoicePartyBusinessTypeSchema,
   businessNumber: z.string().min(1, 'validation.user.businessNumber'),
+  vatNumber: z.string().nullish(),
   address: z.string().min(1, 'validation.user.address'),
   email: z.email('validation.user.email').optional().or(z.literal('')),
   signature: z.string().optional(),

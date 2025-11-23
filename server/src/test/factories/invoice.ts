@@ -51,6 +51,7 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
       name: `Receiver ${sequence}`,
       businessType: 'individual',
       businessNumber: `BN${sequence}`,
+      vatNumber: null,
       address: `${sequence} Receiver Street`,
       email: ''
     },
@@ -60,6 +61,7 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
       name: `Sender ${sequence}`,
       businessType: 'individual',
       businessNumber: `BN${sequence}`,
+      vatNumber: null,
       address: `${sequence} Sender Street`,
       email: 'test@gmail.com'
     },
@@ -82,6 +84,7 @@ export const invoiceReceiverFactory = Factory.define<InvoiceReceiverBody>(
     name: `Receiver ${sequence}`,
     businessType: 'individual',
     businessNumber: `BN${sequence}`,
+    vatNumber: null,
     address: `${sequence} Receiver Street`,
     email: ''
   })
@@ -94,6 +97,7 @@ export const invoiceSenderFactory = Factory.define<InvoiceSenderBody>(
     name: `Sender ${sequence}`,
     businessType: 'individual',
     businessNumber: `BN${sequence}`,
+    vatNumber: null,
     address: `${sequence} Sender Street`,
     email: 'test@gmail.com'
   })

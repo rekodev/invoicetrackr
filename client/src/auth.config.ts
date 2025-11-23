@@ -92,6 +92,7 @@ export const authConfig = {
         token.isOnboarded = isOnboarded;
         token.isSubscriptionActive = user.isSubscriptionActive;
         token.selectedBankAccountId = user.selectedBankAccountId;
+        token.vatNumber = user.vatNumber;
       }
 
       if (trigger === 'update') {

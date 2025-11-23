@@ -332,6 +332,7 @@
       "address_label": "Address:",
       "invoice_date_label": "Invoice date:",
       "payer_label": "Payer:",
+      "vat_number_label": "VAT Number:",
       "position_label": "Pos",
       "description_label": "Description",
       "unit_label": "Unit",
@@ -386,6 +387,7 @@
         "name": "Name",
         "business_type": "Business Type",
         "business_number": "Business Number",
+        "vat_number": "VAT Number",
         "address": "Address",
         "email": "Email"
       },
@@ -400,6 +402,11 @@
     "actions": {
       "tooltip_edit": "Edit client",
       "tooltip_delete": "Delete client"
+    },
+    "card": {
+      "business_number_business": "Company code:",
+      "business_number_individual": "Sole proprietorship certificate No.:",
+      "vat_number_label": "VAT Number:"
     }
   },
   "profile": {
@@ -434,6 +441,8 @@
         "business_type_placeholder": "Select business type",
         "business_number": "Company code / Sole proprietorship certificate No.",
         "business_number_placeholder": "Enter your company code or sole proprietorship certificate No.",
+        "vat_number": "VAT Number",
+        "vat_number_placeholder": "Enter VAT number",
         "address": "Address",
         "address_placeholder": "Enter your address",
         "signature": "Signature",
@@ -653,14 +662,18 @@
       "a11y": {
         "form_label": "Add New Invoice Form",
         "sender_name_label": "Sender's Name",
-        "sender_business_number_label": "Sender's Business Number",
+        "sender_business_number_label_business": "Sender's Company Code",
+        "sender_business_number_label_individual": "Sender's Sole Proprietorship Certificate Number",
+        "sender_vat_number_label": "Sender's VAT Number",
         "sender_address_label": "Sender's Address",
         "sender_email_label": "Sender's Email",
         "receiver_name_label": "Receiver's Name",
-        "receiver_business_number_label": "Receiver's Business Number",
+        "receiver_business_number_label_business": "Receiver's Company Code",
+        "receiver_business_number_label_individual": "Receiver's Sole Proprietorship Certificate Number",
         "receiver_address_label": "Receiver's Address",
         "receiver_email_label": "Receiver's Email",
         "bank_name_label": "Bank Name",
+        "receiver_vat_number_label": "Receiver's VAT Number",
         "bank_code_label": "Bank Code",
         "bank_account_number_label": "Bank Account Number",
         "invoice_id_label": "Invoice ID",
@@ -670,12 +683,18 @@
         "static_actions_label": "Static Actions"
       },
       "labels": {
+        "business_type_business": "Business",
+        "business_type_individual": "Individual",
         "sender_name": "Sender's Name",
-        "sender_business_number": "Sender's Business Number",
+        "sender_business_number_business": "Sender's Company Code",
+        "sender_business_number_individual": "Sender's Sole Proprietorship Certificate Number",
+        "sender_vat_number": "Sender's VAT Number",
         "sender_address": "Sender's Address",
         "sender_email": "Sender's Email",
         "receiver_name": "Receiver's Name",
-        "receiver_business_number": "Receiver's Business Number",
+        "receiver_business_number_business": "Receiver's Company Code",
+        "receiver_business_number_individual": "Receiver's Sole Proprietorship Certificate Number",
+        "receiver_vat_number": "Receiver's VAT Number",
         "receiver_address": "Receiver's Address",
         "receiver_email": "Receiver's Email",
         "bank_name": "Bank Name",

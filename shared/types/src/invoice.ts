@@ -43,6 +43,7 @@ export const invoiceSenderBodySchema = z.object(
     businessNumber: z
       .string()
       .min(1, 'validation.invoice.sender.businessNumber'),
+    vatNumber: z.string().nullish(),
     address: z.string().min(1, 'validation.invoice.sender.address'),
     email: z
       .email('validation.invoice.sender.email')
@@ -61,6 +62,7 @@ export const invoiceReceiverBodySchema = z.object(
     businessNumber: z
       .string()
       .min(1, 'validation.invoice.receiver.businessNumber'),
+    vatNumber: z.string().nullish(),
     address: z.string().min(1, 'validation.invoice.receiver.address'),
     email: z
       .email('validation.invoice.receiver.email')

@@ -75,6 +75,11 @@ export default function PDFDocument({
           <Text style={pdfStyles.detailItem}>
             {renderBusinessNumberLabel('sender')} {sender?.businessNumber}
           </Text>
+          {sender?.vatNumber && (
+            <Text style={pdfStyles.detailItem}>
+              {t('vat_number_label')} {sender?.vatNumber}
+            </Text>
+          )}
           <Text style={pdfStyles.detailItem}>
             {t('address_label')} {sender?.address}
           </Text>
@@ -96,6 +101,11 @@ export default function PDFDocument({
           <Text style={pdfStyles.detailItem}>
             {renderBusinessNumberLabel('receiver')} {receiver?.businessNumber}
           </Text>
+          {receiver?.vatNumber && (
+            <Text style={pdfStyles.detailItem}>
+              {t('vat_number_label')} {receiver?.vatNumber}
+            </Text>
+          )}
           <Text style={pdfStyles.detailItem}>
             {t('address_label')} {receiver?.address}
           </Text>

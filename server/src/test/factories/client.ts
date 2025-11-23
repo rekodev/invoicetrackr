@@ -7,6 +7,7 @@ export const clientFactory = Factory.define<SelectClient>(({ sequence }) => ({
   email: `client${sequence}@example.com`,
   address: `${sequence} Client Street`,
   businessNumber: `BN${sequence}`,
+  vatNumber: null,
   businessType: 'individual',
   type: 'receiver',
   userId: 1,

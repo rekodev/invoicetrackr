@@ -2,9 +2,10 @@
 
 import { Card, CardBody, cn } from '@heroui/react';
 import { CheckIcon, UserIcon } from '@heroicons/react/24/outline';
-import { JSX } from 'react';
-
 import { Client } from '@invoicetrackr/types';
+import { JSX } from 'react';
+import { useTranslations } from 'next-intl';
+
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
@@ -31,6 +32,8 @@ const ClientCard = ({
   fullDetails,
   actions
 }: Props) => {
+  const t = useTranslations('clients.card');
+
   const renderSelectedIcon = () => {
     if (!isSelected) return null;
 
@@ -57,15 +60,17 @@ const ClientCard = ({
         )}
       >
         {renderSelectedIcon()}
-        <CardBody className="flex min-h-[70px] flex-row items-center justify-between gap-4">
+        <CardBody className="flex min-h-[70px] flex-row items-start justify-between gap-4">
           <div
-            className={cn('flex max-w-full items-center gap-3', {
+            className={cn('flex max-w-full items-start gap-3', {
               'max-w-2/3': truncate
             })}
           >
             {!hideIcon && (
-              <div className="item-center rounded-medium border-default-200 flex border p-2">
-                <UserIcon className="h-5 w-5" />
+              <div className="flex min-h-20 items-center">
+                <div className="item-center rounded-medium border-default-200 flex border p-2">
+                  <UserIcon className="h-5 w-5" />
+                </div>
               </div>
             )}
             <div className="max-w-full">
@@ -79,9 +84,17 @@ const ClientCard = ({
               </div>
               <div className="text-default-500 flex flex-col gap-1 text-xs">
                 {fullDetails && (
-                  <p className="text-tiny font-bold uppercase">
-                    {client.businessType} No. {client.businessNumber}
-                  </p>
+                  <div className="flex gap-1">
+                    <p className="text-tiny font-bold uppercase">
+                      {t(`business_number_${client.businessType}`)}{' '}
+                      {client.businessNumber}
+                    </p>
+                    {client.vatNumber && (
+                      <p className="text-tiny font-bold uppercase">
+                        | {`${t('vat_number_label')} ${client.vatNumber}`}
+                      </p>
+                    )}
+                  </div>
                 )}
                 {client.address && <span>{client.address}</span>}
                 <span className={cn('', { 'max-w-40 truncate': truncate })}>

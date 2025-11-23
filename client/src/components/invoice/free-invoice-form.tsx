@@ -21,7 +21,26 @@ const FreeInvoiceForm = () => {
   const router = useRouter();
   const methods = useForm<InvoiceBody>({
     defaultValues: {
-      services: [{ amount: 0, quantity: 0, description: '', unit: '' }]
+      sender: {
+        name: '',
+        businessType: 'business' as const,
+        businessNumber: '',
+        vatNumber: '',
+        address: '',
+        email: '',
+        type: 'sender' as const
+      },
+      receiver: {
+        name: '',
+        businessType: 'business' as const,
+        businessNumber: '',
+        vatNumber: '',
+        address: '',
+        email: '',
+        type: 'receiver' as const
+      },
+      services: [{ amount: 0, quantity: 0, description: '', unit: '' }],
+      bankingInformation: { name: '', code: '', accountNumber: '' }
     }
   });
   const {
@@ -69,15 +88,26 @@ const FreeInvoiceForm = () => {
             errorMessage={errors.sender?.name?.message}
           />
           <Input
-            label={t('labels.sender_business_number')}
+            label={t(`labels.sender_business_number_business`)}
             size="sm"
-            aria-label={t('a11y.sender_business_number_label')}
+            aria-label={t('a11y.sender_business_number_label_business')}
             type="text"
             maxLength={20}
             variant="bordered"
             {...register('sender.businessNumber')}
             isInvalid={!!errors.sender?.businessNumber}
             errorMessage={errors.sender?.businessNumber?.message}
+          />
+          <Input
+            label={t('labels.sender_vat_number')}
+            size="sm"
+            aria-label={t('a11y.sender_vat_number_label')}
+            type="text"
+            maxLength={20}
+            variant="bordered"
+            {...register('sender.vatNumber')}
+            isInvalid={!!errors.sender?.vatNumber}
+            errorMessage={errors.sender?.vatNumber?.message}
           />
           <Input
             label={t('labels.sender_address')}
@@ -118,15 +148,26 @@ const FreeInvoiceForm = () => {
             errorMessage={errors.receiver?.name?.message}
           />
           <Input
-            label={t('labels.receiver_business_number')}
+            label={t('labels.receiver_business_number_business')}
             size="sm"
-            aria-label={t('a11y.receiver_business_number_label')}
+            aria-label={t('a11y.receiver_business_number_label_business')}
             type="text"
             maxLength={20}
             variant="bordered"
             {...register('receiver.businessNumber')}
             isInvalid={!!errors.receiver?.businessNumber}
             errorMessage={errors.receiver?.businessNumber?.message}
+          />
+          <Input
+            label={t('labels.receiver_vat_number')}
+            size="sm"
+            aria-label={t('a11y.receiver_vat_number_label')}
+            type="text"
+            maxLength={20}
+            variant="bordered"
+            {...register('receiver.vatNumber')}
+            isInvalid={!!errors.receiver?.vatNumber}
+            errorMessage={errors.receiver?.vatNumber?.message}
           />
           <Input
             label={t('labels.receiver_address')}

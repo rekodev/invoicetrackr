@@ -332,6 +332,7 @@
       "address_label": "Adresas:",
       "invoice_date_label": "Sąskaitos data:",
       "payer_label": "Mokėtojas:",
+      "vat_number_label": "PVM mokėtojo kodas:",
       "position_label": "Eil. Nr.",
       "description_label": "Aprašymas",
       "unit_label": "Vnt.",
@@ -386,6 +387,7 @@
         "name": "Pavadinimas",
         "business_type": "Verslo tipas",
         "business_number": "Verslo numeris",
+        "vat_number": "PVM mokėtojo kodas",
         "address": "Adresas",
         "email": "El. paštas"
       },
@@ -400,6 +402,11 @@
     "actions": {
       "tooltip_edit": "Redaguoti klientą",
       "tooltip_delete": "Ištrinti klientą"
+    },
+    "card": {
+      "business_number_business": "Įmonės kodas:",
+      "business_number_individual": "Individualios veiklos pažymėjimo Nr.:",
+      "vat_number_label": "PVM mokėtojo kodas:"
     }
   },
   "profile": {
@@ -434,6 +441,8 @@
         "business_type_placeholder": "Pasirinkite verslo tipą",
         "business_number": "Įmonės kodas / IV pažymos Nr.",
         "business_number_placeholder": "Įveskite savo įmonės kodą arba IV pažymos Nr.",
+        "vat_number": "PVM mokėtojo kodas",
+        "vat_number_placeholder": "Įveskite PVM mokėtojo kodą",
         "address": "Adresas",
         "address_placeholder": "Įveskite savo adresą",
         "signature": "Parašas",
@@ -653,11 +662,15 @@
       "a11y": {
         "form_label": "Pridėti naują sąskaitą faktūrą forma",
         "sender_name_label": "Siuntėjo vardas",
-        "sender_business_number_label": "Siuntėjo įmonės numeris",
+        "sender_business_number_label_business": "Siuntėjo įmonės kodas",
+        "sender_business_number_label_individual": "Siuntėjo IV pažymos Nr.",
+        "sender_vat_number_label": "Siuntėjo PVM mokėtojo kodas",
         "sender_address_label": "Siuntėjo adresas",
         "sender_email_label": "Siuntėjo el. paštas",
         "receiver_name_label": "Gavėjo vardas",
-        "receiver_business_number_label": "Gavėjo įmonės numeris",
+        "receiver_business_number_label_business": "Gavėjo įmonės kodas",
+        "receiver_business_number_label_individual": "Gavėjo IV pažymos Nr.",
+        "receiver_vat_number_label": "Gavėjo PVM mokėtojo kodas",
         "receiver_address_label": "Gavėjo adresas",
         "receiver_email_label": "Gavėjo el. paštas",
         "bank_name_label": "Banko pavadinimas",
@@ -670,12 +683,18 @@
         "static_actions_label": "Statiniai veiksmai"
       },
       "labels": {
+        "business_type_business": "Verslas",
+        "business_type_individual": "Individualus",
         "sender_name": "Siuntėjo vardas",
-        "sender_business_number": "Siuntėjo įmonės numeris",
+        "sender_business_number_business": "Siuntėjo įmonės kodas",
+        "sender_business_number_individual": "Siuntėjo IV pažymos Nr.",
+        "sender_vat_number": "Siuntėjo PVM mokėtojo kodas",
         "sender_address": "Siuntėjo adresas",
         "sender_email": "Siuntėjo el. paštas",
         "receiver_name": "Gavėjo vardas",
-        "receiver_business_number": "Gavėjo įmonės numeris",
+        "receiver_business_number_business": "Gavėjo įmonės kodas",
+        "receiver_business_number_individual": "Gavėjo IV pažymos Nr.",
+        "receiver_vat_number": "Gavėjo PVM mokėtojo kodas",
         "receiver_address": "Gavėjo adresas",
         "receiver_email": "Gavėjo el. paštas",
         "bank_name": "Banko pavadinimas",
