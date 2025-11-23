@@ -26,6 +26,7 @@ export const getUserFromDb = async (
       type: usersTable.type,
       businessType: usersTable.businessType,
       businessNumber: usersTable.businessNumber,
+      vatNumber: usersTable.vatNumber,
       selectedBankAccountId: usersTable.selectedBankAccountId,
       address: usersTable.address,
       email: usersTable.email,
@@ -65,6 +66,7 @@ export const getUserByEmailFromDb = async (
       type: usersTable.type,
       businessType: usersTable.businessType,
       businessNumber: usersTable.businessNumber,
+      vatNumber: usersTable.vatNumber,
       selectedBankAccountId: usersTable.selectedBankAccountId,
       address: usersTable.address,
       email: usersTable.email,
@@ -106,6 +108,7 @@ export const registerUser = async ({
       type: 'sender',
       businessType: 'individual',
       businessNumber: '',
+      vatNumber: null,
       name: '',
       address: '',
       signature: '',
@@ -129,11 +132,11 @@ export type UserUpdateResult = Omit<
 export const updateUserInDb = async (
   user: Pick<
     UserBody,
-    'id' | 'email' | 'name' | 'businessType' | 'businessNumber' | 'address'
+    'id' | 'email' | 'name' | 'businessType' | 'businessNumber' | 'vatNumber' | 'address'
   >,
   signature: string
 ): Promise<{ id: number } | undefined> => {
-  const { name, address, businessNumber, businessType, email } = user;
+  const { name, address, businessNumber, businessType, email, vatNumber } = user;
 
   const users = await db
     .update(usersTable)
@@ -141,6 +144,7 @@ export const updateUserInDb = async (
       name,
       businessType,
       businessNumber,
+      vatNumber,
       address,
       email,
       signature
@@ -178,6 +182,7 @@ export const updateUserProfilePictureInDb = async (
       type: usersTable.type,
       businessType: usersTable.businessType,
       businessNumber: usersTable.businessNumber,
+      vatNumber: usersTable.vatNumber,
       address: usersTable.address,
       email: usersTable.email,
       signature: usersTable.signature,
@@ -215,6 +220,7 @@ export const updateUserAccountSettingsInDb = async (
       type: usersTable.type,
       businessType: usersTable.businessType,
       businessNumber: usersTable.businessNumber,
+      vatNumber: usersTable.vatNumber,
       address: usersTable.address,
       email: usersTable.email,
       signature: usersTable.signature,

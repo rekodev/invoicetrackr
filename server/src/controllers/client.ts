@@ -53,7 +53,8 @@ export const postClient = async (
 
   const insertedClient = await insertClientInDb(userId, {
     ...clientData,
-    email: clientData.email || ''
+    email: clientData.email || '',
+    vatNumber: clientData.vatNumber || null
   });
 
   if (!insertedClient)

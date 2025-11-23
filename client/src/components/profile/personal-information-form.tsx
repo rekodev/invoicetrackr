@@ -35,7 +35,8 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
     handleSubmit,
     formState: { isDirty, isSubmitting, errors },
     reset,
-    setError
+    setError,
+    getValues
   } = useForm<User>({
     defaultValues
   });
@@ -122,6 +123,17 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
             isInvalid={Boolean(errors.businessNumber)}
             errorMessage={errors.businessNumber?.message}
           />
+          {getValues('businessType') === 'business' && (
+            <Input
+              {...register('vatNumber')}
+              label="VAT Number"
+              placeholder="Enter VAT number"
+              labelPlacement="outside"
+              variant="faded"
+              isInvalid={Boolean(errors.vatNumber)}
+              errorMessage={errors.vatNumber?.message}
+            />
+          )}
           <Input
             {...register('address')}
             label={t('address')}

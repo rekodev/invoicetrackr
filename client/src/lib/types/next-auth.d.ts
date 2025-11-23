@@ -16,6 +16,7 @@ declare module 'next-auth' {
     type: string;
     businessType: string;
     businessNumber: string;
+    vatNumber: string | null | undefined;
     selectedBankAccountId: number;
     address: string;
     email: string;

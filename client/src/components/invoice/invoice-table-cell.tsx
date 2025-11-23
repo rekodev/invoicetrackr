@@ -4,7 +4,7 @@ import {
   ArrowDownTrayIcon,
   ChevronDownIcon,
   DocumentTextIcon,
-  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
   EyeIcon,
   PaperAirplaneIcon,
   PencilSquareIcon,
@@ -243,7 +243,7 @@ const InvoiceTableCell = ({
               data-testid="invoice-past-due-indicator"
               className="text-danger flex items-center gap-1 text-nowrap text-xs font-medium"
             >
-              <ExclamationTriangleIcon className="color-danger h-5 w-5" />
+              <ExclamationCircleIcon className="color-danger h-5 w-5" />
               {tCell('past_due', { days: daysPastDue })}
             </span>
           )}
