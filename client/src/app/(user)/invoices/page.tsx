@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { InvoiceTableSkeleton } from '@/components/ui/skeletons/invoice';
+import { InvoiceTableSkeleton } from '@/components/ui/skeletons/invoice-skeleton';
 
 import InvoicesPageContent from './invoices-page-content';
 
