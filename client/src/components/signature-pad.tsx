@@ -73,10 +73,7 @@ const SignaturePad = ({
   useEffect(() => {
     if (!isOpen || !signatureImage) return;
 
-    signatureRef.current?.fromDataURL(signatureImage, {
-      width: 532,
-      height: 400
-    });
+    signatureRef.current?.fromDataURL(signatureImage);
   }, [isOpen, signatureImage]);
 
   const saveSignature = () => {
@@ -166,7 +163,7 @@ const SignaturePad = ({
                 style: {
                   backgroundColor: 'white',
                   touchAction: 'none',
-                  aspectRatio: '1 / 1'
+                  aspectRatio: '4 / 3'
                 }
               }}
               backgroundColor="white"

@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { ClientSectionSkeleton } from '@/components/ui/skeletons/client';
+import { ClientSectionSkeleton } from '@/components/ui/skeletons/client-skeleton';
 
 import ClientsPageContent from './clients-page-content';
 

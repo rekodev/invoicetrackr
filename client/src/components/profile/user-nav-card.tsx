@@ -24,7 +24,7 @@ type Props = {
   user: User;
 };
 
-const UserCard = ({ user }: Props) => {
+export default function UserNavCard({ user }: Props) {
   const t = useTranslations('profile.user_nav_card');
   const pathname = usePathname();
 
@@ -142,6 +142,4 @@ const UserCard = ({ user }: Props) => {
       </CardBody>
     </Card>
   );
-};
-
-export default UserCard;
+}
