@@ -6,13 +6,13 @@ const AccountSettingsPage = async () => {
 
   if (!session?.user?.id) return null;
 
-  const { isSubscriptionActive } = session.user;
+  const { subscriptionStatus } = session.user;
 
   return (
     <AccountSettingsForm
       key={`${session.user.language}-${session.user.currency}`}
       user={session.user}
-      isSubscriptionActive={!!isSubscriptionActive}
+      subscriptionStatus={subscriptionStatus}
     />
   );
 };

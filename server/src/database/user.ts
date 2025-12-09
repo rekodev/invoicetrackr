@@ -38,7 +38,8 @@ export const getUserFromDb = async (
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
-      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId
+      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
+      subscriptionStatus: usersTable.subscriptionStatus
     })
     .from(usersTable)
     .leftJoin(
@@ -79,7 +80,8 @@ export const getUserByEmailFromDb = async (
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
       password: usersTable.password,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
-      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId
+      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
+      subscriptionStatus: usersTable.subscriptionStatus
     })
     .from(usersTable)
     .leftJoin(
@@ -132,11 +134,18 @@ export type UserUpdateResult = Omit<
 export const updateUserInDb = async (
   user: Pick<
     UserBody,
-    'id' | 'email' | 'name' | 'businessType' | 'businessNumber' | 'vatNumber' | 'address'
+    | 'id'
+    | 'email'
+    | 'name'
+    | 'businessType'
+    | 'businessNumber'
+    | 'vatNumber'
+    | 'address'
   >,
   signature: string
 ): Promise<{ id: number } | undefined> => {
-  const { name, address, businessNumber, businessType, email, vatNumber } = user;
+  const { name, address, businessNumber, businessType, email, vatNumber } =
+    user;
 
   const users = await db
     .update(usersTable)
@@ -189,7 +198,8 @@ export const updateUserProfilePictureInDb = async (
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
-      currency: usersTable.currency
+      currency: usersTable.currency,
+      subscriptionStatus: usersTable.subscriptionStatus
     });
 
   return users.at(0);
@@ -227,7 +237,8 @@ export const updateUserAccountSettingsInDb = async (
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
-      currency: usersTable.currency
+      currency: usersTable.currency,
+      subscriptionStatus: usersTable.subscriptionStatus
     });
 
   return users.at(0);

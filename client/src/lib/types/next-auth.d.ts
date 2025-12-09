@@ -20,10 +20,19 @@ declare module 'next-auth' {
     selectedBankAccountId: number;
     address: string;
     email: string;
-    stripeCustomerId: string | null;
-    stripeSubscriptionId: string | null;
+    stripeCustomerId?: string | null;
+    stripeSubscriptionId?: string | null;
     isOnboarded?: boolean;
-    isSubscriptionActive?: boolean;
+    subscriptionStatus?:
+      | 'active'
+      | 'past_due'
+      | 'canceled'
+      | 'incomplete'
+      | 'incomplete_expired'
+      | 'trialing'
+      | 'unpaid'
+      | 'paused'
+      | null;
   }
 
   // eslint-disable-next-line no-unused-vars

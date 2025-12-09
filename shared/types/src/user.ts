@@ -8,14 +8,14 @@ import { passwordSchema } from './common';
 export const userBodySchema = z.object({
   id: z.number().optional(),
   type: invoicePartyTypeSchema,
-  name: z.string().min(1, 'validation.user.name'),
+  name: z.string(),
   businessType: invoicePartyBusinessTypeSchema,
-  businessNumber: z.string().min(1, 'validation.user.businessNumber'),
+  businessNumber: z.string(),
   vatNumber: z.string().nullish(),
-  address: z.string().min(1, 'validation.user.address'),
+  address: z.string(),
   email: z.email('validation.user.email').optional().or(z.literal('')),
   signature: z.string().optional(),
-  selectedBankAccountId: z.number().optional(),
+  selectedBankAccountId: z.number().nullish(),
   password: passwordSchema.optional(),
   profilePictureUrl: z.string(),
   currency: z.string().min(1, 'validation.user.currency'),
@@ -23,9 +23,20 @@ export const userBodySchema = z.object({
   preferredInvoiceLanguage: z.nullish(
     z.string().min(1, 'validation.user.preferredInvoiceLanguage')
   ),
-  stripeCustomerId: z.string(),
-  stripeSubscriptionId: z.string(),
-  isSubscriptionActive: z.boolean().optional()
+  stripeCustomerId: z.string().nullish(),
+  stripeSubscriptionId: z.string().nullish(),
+  subscriptionStatus: z
+    .enum([
+      'active',
+      'past_due',
+      'canceled',
+      'incomplete',
+      'incomplete_expired',
+      'trialing',
+      'unpaid',
+      'paused'
+    ])
+    .nullish()
 });
 
 // Reset Password Token Schema

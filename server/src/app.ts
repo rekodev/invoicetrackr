@@ -24,6 +24,7 @@ import { languageMiddleware } from './middleware/language';
 import paymentRoutes from './routes/payment';
 import { rateLimitPluginOptions } from './utils/rate-limit';
 import userRoutes from './routes/user';
+import webhookRoutes from './routes/webhook';
 
 dotenv.config();
 cloudinary.config(cloudinaryConfig);
@@ -57,7 +58,8 @@ const server = fastify({
       })
     }
   },
-  trustProxy: true
+  trustProxy: true,
+  bodyLimit: 10485760
 });
 
 // Register Plugins
@@ -71,6 +73,23 @@ server.register(fastifyMultipart);
 server.register(fastifyCookie);
 server.register(fastifyRateLimit, rateLimitPluginOptions);
 
+server.addContentTypeParser(
+  'application/json',
+  { parseAs: 'string' },
+  (req, body, done) => {
+    if ((req.routeOptions.config as { rawBody?: boolean })?.rawBody) {
+      done(null, body);
+    } else {
+      try {
+        const json = JSON.parse(body as string);
+        done(null, json);
+      } catch (err) {
+        done(err as Error, undefined);
+      }
+    }
+  }
+);
+
 // Register Middleware and Error Handler
 server.addHook('onRequest', languageMiddleware);
 server.setErrorHandler(errorHandler);
@@ -79,6 +98,7 @@ server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
 // Register Routes
+server.register(webhookRoutes);
 server.register(invoiceRoutes);
 server.register(clientRoutes);
 server.register(userRoutes);

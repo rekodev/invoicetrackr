@@ -58,8 +58,6 @@ function PaymentFormInsideElements({ user }: { user: User }) {
 
     setIsLoading(true);
 
-    let shouldUpdateSession = false;
-
     try {
       const { error: submitError } = await elements.submit();
 
@@ -121,27 +119,11 @@ function PaymentFormInsideElements({ user }: { user: User }) {
         return;
       }
 
-      shouldUpdateSession = true;
+      window.location.href = PAYMENT_SUCCESS_PAGE;
     } catch (e) {
       console.error(e);
       setErrorMessage('Failed to process payment. Please try again.');
       setIsLoading(false);
-    }
-
-    if (shouldUpdateSession) {
-      try {
-        await updateSessionAction({
-          newSession: {
-            isOnboarded: true,
-            isSubscriptionActive: true
-          },
-          redirectPath: PAYMENT_SUCCESS_PAGE
-        });
-      } catch (sessionError) {
-        console.error('Failed to update session', sessionError);
-      } finally {
-        setIsLoading(false);
-      }
     }
   };
 

@@ -79,14 +79,20 @@ export const postUserOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: userBodySchema.pick({
-      name: true,
-      businessType: true,
-      businessNumber: true,
-      address: true,
-      email: true,
-      signature: true
-    }),
+    body: userBodySchema
+      .pick({
+        name: true,
+        businessType: true,
+        businessNumber: true,
+        address: true,
+        email: true,
+        signature: true
+      })
+      .extend({
+        name: z.string().min(1, 'validation.user.name'),
+        businessNumber: z.string().min(1, 'validation.user.businessNumber'),
+        address: z.string().min(1, 'validation.user.address')
+      }),
     response: {
       200: updateUserResponseSchema
     }

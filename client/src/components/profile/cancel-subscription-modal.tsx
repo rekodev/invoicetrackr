@@ -48,7 +48,7 @@ const CancelSubscriptionModal = ({ user, isOpen, onClose }: Props) => {
         newSession: {
           ...user,
           id: String(user.id),
-          isSubscriptionActive: false
+          subscriptionStatus: 'canceled'
         },
         redirectPath: RENEW_SUBSCRIPTION_PAGE
       });
