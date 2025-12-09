@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from 'next-auth';
+import { StripeSubscriptionStatus } from '@invoicetrackr/types';
 
 import {
   CREATE_INVOICE_PAGE,
@@ -117,7 +118,8 @@ export const authConfig = {
         token.preferredInvoiceLanguage as string;
       session.user.currency = token.currency as Currency;
       session.user.isOnboarded = Boolean(token.isOnboarded);
-      session.user.subscriptionStatus = token.subscriptionStatus as string;
+      session.user.subscriptionStatus =
+        token.subscriptionStatus as StripeSubscriptionStatus | null;
       session.user.selectedBankAccountId =
         token.selectedBankAccountId as number;
 

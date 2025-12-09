@@ -1,4 +1,5 @@
 import { DefaultSession } from 'next-auth';
+import { StripeSubscriptionStatus } from '@invoicetrackr/types';
 
 import { Currency } from './currency';
 
@@ -23,16 +24,7 @@ declare module 'next-auth' {
     stripeCustomerId?: string | null;
     stripeSubscriptionId?: string | null;
     isOnboarded?: boolean;
-    subscriptionStatus?:
-      | 'active'
-      | 'past_due'
-      | 'canceled'
-      | 'incomplete'
-      | 'incomplete_expired'
-      | 'trialing'
-      | 'unpaid'
-      | 'paused'
-      | null;
+    subscriptionStatus?: StripeSubscriptionStatus | null;
   }
 
   // eslint-disable-next-line no-unused-vars

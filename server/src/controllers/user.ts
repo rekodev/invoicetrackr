@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { StripeSubscriptionStatus, UserBody } from '@invoicetrackr/types';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { MultipartFile } from '@fastify/multipart';
 import { ResetPasswordEmail } from '@invoicetrackr/emails';
-import { UserBody } from '@invoicetrackr/types';
 import bcrypt from 'bcryptjs';
 import { useI18n } from 'fastify-i18n';
 
@@ -58,7 +58,7 @@ export const loginUser = async (
   if (!isValidPassword)
     throw new UnauthorizedError(i18n.t('error.user.invalidCredentials'));
 
-  let subscriptionStatus: string | null | undefined = null;
+  let subscriptionStatus: StripeSubscriptionStatus | null | undefined = null;
 
   if (!!user?.stripeSubscriptionId) {
     try {

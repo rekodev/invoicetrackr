@@ -20,21 +20,16 @@ import CancelSubscriptionModal from './cancel-subscription-modal';
 
 type Props = {
   user: User;
-  subscriptionStatus?: string | null;
   currency: string;
 };
 
-export default function SubscriptionStatusCard({
-  user,
-  subscriptionStatus,
-  currency
-}: Props) {
+export default function SubscriptionStatusCard({ user, currency }: Props) {
   const t = useTranslations('profile.account_settings.subscription');
   const router = useRouter();
   const [isCancelSubscriptionModalOpen, setIsCancelSubscriptionModalOpen] =
     useState(false);
 
-  const isActive = hasActiveSubscription({ subscriptionStatus } as any);
+  const isActive = hasActiveSubscription(user);
 
   const handleClick = () => {
     if (isActive) {

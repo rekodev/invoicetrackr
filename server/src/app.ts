@@ -11,6 +11,7 @@ import fastify from 'fastify';
 import fastifyCookie from '@fastify/cookie';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyRateLimit from '@fastify/rate-limit';
+import fastifyRawBody from 'fastify-raw-body';
 
 import bankingInformationRoutes from './routes/banking-information';
 import clientRoutes from './routes/client';
@@ -72,6 +73,14 @@ server.register(cors);
 server.register(fastifyMultipart);
 server.register(fastifyCookie);
 server.register(fastifyRateLimit, rateLimitPluginOptions);
+server.register(fastifyRawBody, {
+  field: 'rawBody', // change the default request.rawBody property name
+  global: false, // add the rawBody to every request. **Default true**
+  encoding: 'utf8', // set it to false to set rawBody as a Buffer **Default utf8**
+  runFirst: true, // get the body before any preParsing hook change/uncompress it. **Default false**
+  routes: [], // array of routes, **`global`** will be ignored, wildcard routes not supported
+  jsonContentTypes: [] // array of content-types to handle as JSON. **Default ['application/json']**
+});
 
 server.addContentTypeParser(
   'application/json',

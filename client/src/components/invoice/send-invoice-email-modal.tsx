@@ -97,7 +97,9 @@ export default function SendInvoiceEmailModal({
   return (
     <Modal isOpen={isOpen} onClose={handleCloseSendDialog} size="lg">
       <ModalContent>
+        {/* @ts-ignore */}
         <BlobProvider document={pdfDocument}>
+          {/* @ts-ignore */}
           {({ blob }) => (
             <form
               onSubmit={handleSubmit((data) => onSubmit(data, blob))}

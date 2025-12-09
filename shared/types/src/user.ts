@@ -3,7 +3,10 @@ import {
   invoicePartyBusinessTypeSchema,
   invoicePartyTypeSchema
 } from './invoice';
-import { passwordSchema } from './common';
+import {
+  passwordSchema,
+  stripeSubscriptionStatusSchema
+} from './common';
 
 export const userBodySchema = z.object({
   id: z.number().optional(),
@@ -25,18 +28,7 @@ export const userBodySchema = z.object({
   ),
   stripeCustomerId: z.string().nullish(),
   stripeSubscriptionId: z.string().nullish(),
-  subscriptionStatus: z
-    .enum([
-      'active',
-      'past_due',
-      'canceled',
-      'incomplete',
-      'incomplete_expired',
-      'trialing',
-      'unpaid',
-      'paused'
-    ])
-    .nullish()
+  subscriptionStatus: stripeSubscriptionStatusSchema.nullish()
 });
 
 // Reset Password Token Schema

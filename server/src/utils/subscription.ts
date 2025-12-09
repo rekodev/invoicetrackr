@@ -1,5 +1,7 @@
+import { StripeSubscriptionStatus } from '@invoicetrackr/types';
+
 export const hasActiveSubscription = (
-  subscriptionStatus: string | null | undefined
+  subscriptionStatus: StripeSubscriptionStatus | null | undefined
 ): boolean => {
   if (!subscriptionStatus) return false;
 
@@ -7,17 +9,21 @@ export const hasActiveSubscription = (
 };
 
 export const isSubscriptionPastDue = (
-  subscriptionStatus: string | null | undefined
+  subscriptionStatus: StripeSubscriptionStatus | null | undefined
 ): boolean => {
   return subscriptionStatus === 'past_due';
 };
 
 export const isSubscriptionCanceled = (
-  subscriptionStatus: string | null | undefined
+  subscriptionStatus: StripeSubscriptionStatus | null | undefined
 ): boolean => {
   if (!subscriptionStatus) return true;
 
-  return ['canceled', 'incomplete_expired', 'unpaid'].includes(
-    subscriptionStatus
-  );
+  const canceledStatuses: Array<StripeSubscriptionStatus> = [
+    'canceled',
+    'incomplete_expired',
+    'unpaid'
+  ];
+
+  return canceledStatuses.includes(subscriptionStatus);
 };

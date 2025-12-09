@@ -42,10 +42,9 @@ type AccountSettingsFormModel = {
 
 type Props = {
   user: User;
-  subscriptionStatus?: string | null;
 };
 
-const AccountSettingsForm = ({ user, subscriptionStatus }: Props) => {
+const AccountSettingsForm = ({ user }: Props) => {
   const baseT = useTranslations();
   const t = useTranslations('profile.account_settings');
   const {
@@ -183,7 +182,6 @@ const AccountSettingsForm = ({ user, subscriptionStatus }: Props) => {
         </Select>
         <SubscriptionStatusCard
           user={user}
-          subscriptionStatus={subscriptionStatus}
           currency={getCurrencySymbol(user?.currency)}
         />
       </CardBody>

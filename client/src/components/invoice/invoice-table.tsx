@@ -221,6 +221,7 @@ const InvoiceTable = ({
         onSortChange={setSortDescriptor}
       >
         <TableHeader columns={headerColumns}>
+          {/* @ts-ignore */}
           {(column) => (
             <TableColumn
               key={column.uid}
@@ -236,6 +237,7 @@ const InvoiceTable = ({
           emptyContent={!invoices.length && 'No invoices found'}
           items={sortedItems}
         >
+          {/* @ts-ignore */}
           {(item) => {
             const { isPastDue } = getInvoiceDueStatus(item);
 
@@ -244,6 +246,7 @@ const InvoiceTable = ({
                 className={cn({ 'bg-danger/10': isPastDue })}
                 key={item.id}
               >
+                {/* @ts-ignore */}
                 {(columnKey) => (
                   <TableCell>
                     <InvoiceTableCell

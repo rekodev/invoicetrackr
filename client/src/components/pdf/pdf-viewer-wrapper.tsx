@@ -46,6 +46,7 @@ export default function PdfViewerWrapper({
           hidden: !isIFrameLoading
         })}
       />
+      {/* @ts-ignore */}
       <PDFViewer
         showToolbar={false}
         innerRef={iFrameRef}

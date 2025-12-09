@@ -1,3 +1,4 @@
+import { StripeSubscriptionStatus } from '@invoicetrackr/types';
 import { User } from 'next-auth';
 
 export const hasActiveSubscription = (user: User | undefined): boolean => {
@@ -16,7 +17,11 @@ export const isSubscriptionPastDue = (user: User | undefined): boolean => {
 export const isSubscriptionCanceled = (user: User | undefined): boolean => {
   if (!user?.subscriptionStatus) return true;
 
-  return ['canceled', 'incomplete_expired', 'unpaid'].includes(
-    user.subscriptionStatus
-  );
+  const canceledStatuses: Array<StripeSubscriptionStatus> = [
+    'canceled',
+    'incomplete_expired',
+    'unpaid'
+  ];
+
+  return canceledStatuses.includes(user.subscriptionStatus);
 };

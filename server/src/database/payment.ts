@@ -1,3 +1,4 @@
+import { StripeSubscriptionStatus } from '@invoicetrackr/types';
 import { eq } from 'drizzle-orm';
 
 import { stripeAccountsTable, usersTable } from './schema';
@@ -61,7 +62,7 @@ export const deleteStripeAccountFromDb = async (userId: number) => {
 
 export const updateUserSubscriptionStatusInDb = async (
   userId: number,
-  status: string
+  status: StripeSubscriptionStatus
 ) => {
   const [updatedUser] = await db
     .update(usersTable)

@@ -119,7 +119,10 @@ function PaymentFormInsideElements({ user }: { user: User }) {
         return;
       }
 
-      window.location.href = PAYMENT_SUCCESS_PAGE;
+      updateSessionAction({
+        newSession: { isOnboarded: true, subscriptionStatus: 'active' },
+        redirectPath: PAYMENT_SUCCESS_PAGE
+      });
     } catch (e) {
       console.error(e);
       setErrorMessage('Failed to process payment. Please try again.');

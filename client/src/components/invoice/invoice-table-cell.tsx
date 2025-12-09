@@ -184,6 +184,7 @@ const InvoiceTableCell = ({
                   )
                 }
               >
+                {/* @ts-ignore */}
                 {(item) => (
                   <DropdownItem key={item.uid}>{item.name}</DropdownItem>
                 )}

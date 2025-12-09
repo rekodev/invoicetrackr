@@ -21,7 +21,7 @@ export const handleStripeWebhook = async (
 
   try {
     event = stripe.webhooks.constructEvent(
-      req.body as string | Buffer,
+      req.rawBody as Buffer,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
@@ -65,40 +65,6 @@ export const handleStripeWebhook = async (
         await updateUserSubscriptionStatusInDb(userId, 'canceled');
 
         console.log(`Subscription canceled for user ${userId}`);
-        break;
-      }
-
-      case 'invoice.payment_succeeded': {
-        const invoice = event.data.object as Stripe.Invoice;
-        const customerId = invoice.customer as string;
-
-        const userId = await getUserIdByStripeCustomerIdFromDb(customerId);
-
-        if (!userId) {
-          console.error('User not found for customer:', customerId);
-          break;
-        }
-
-        await updateUserSubscriptionStatusInDb(userId, 'active');
-
-        console.log(`Payment succeeded for user ${userId}`);
-        break;
-      }
-
-      case 'invoice.payment_failed': {
-        const invoice = event.data.object as Stripe.Invoice;
-        const customerId = invoice.customer as string;
-
-        const userId = await getUserIdByStripeCustomerIdFromDb(customerId);
-
-        if (!userId) {
-          console.error('User not found for customer:', customerId);
-          break;
-        }
-
-        await updateUserSubscriptionStatusInDb(userId, 'past_due');
-
-        console.log(`Payment failed for user ${userId}`);
         break;
       }
 

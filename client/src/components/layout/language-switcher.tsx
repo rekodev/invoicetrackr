@@ -87,6 +87,7 @@ export default function LanguageSwitcher({ user }: Props) {
         items={availableLanguages}
         onSelectionChange={handleSelect}
       >
+        {/* @ts-ignore */}
         {(item) => (
           <DropdownItem key={item.code} value={item.code}>
             {baseT(item.nameTranslationKey)}

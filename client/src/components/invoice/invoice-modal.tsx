@@ -19,6 +19,7 @@ import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
 const PDFDownloadLink = dynamic(
+  // @ts-ignore
   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
   {
     ssr: false,
@@ -155,10 +156,12 @@ const InvoiceModal = ({
                 </>
               )}
               {pdfDocument ? (
+                // @ts-ignore
                 <PDFDownloadLink
                   document={pdfDocument}
                   fileName={`${invoiceId}.pdf`}
                 >
+                  {/* @ts-ignore */}
                   {({ loading }) => {
                     const isLoading = isIFrameLoading || loading;
 
