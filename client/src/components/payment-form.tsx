@@ -62,7 +62,9 @@ function PaymentFormInsideElements({ user }: { user: User }) {
       const { error: submitError } = await elements.submit();
 
       if (submitError) {
-        setErrorMessage(submitError.message || '');
+        console.error('Payment submission error:', submitError);
+        setErrorMessage(t('errors.submit_failed'));
+        setIsLoading(false);
         return;
       }
 
@@ -71,7 +73,9 @@ function PaymentFormInsideElements({ user }: { user: User }) {
       const getCustomerResp = await getStripeCustomerId(user.id);
 
       if (isResponseError(getCustomerResp)) {
-        setErrorMessage('Failed to get customer');
+        console.error('Get customer error:', getCustomerResp.data);
+        setErrorMessage(t('errors.customer_failed'));
+        setIsLoading(false);
         return;
       }
 
@@ -87,7 +91,9 @@ function PaymentFormInsideElements({ user }: { user: User }) {
         });
 
         if (isResponseError(createCustomerResp)) {
-          setErrorMessage('Failed to create customer');
+          console.error('Create customer error:', createCustomerResp.data);
+          setErrorMessage(t('errors.customer_failed'));
+          setIsLoading(false);
           return;
         }
 
@@ -100,7 +106,12 @@ function PaymentFormInsideElements({ user }: { user: User }) {
       );
 
       if (isResponseError(subscriptionCreationResp)) {
-        setErrorMessage('Failed to create subscription');
+        console.error(
+          'Create subscription error:',
+          subscriptionCreationResp.data
+        );
+        setErrorMessage(t('errors.subscription_failed'));
+        setIsLoading(false);
         return;
       }
 
@@ -114,7 +125,8 @@ function PaymentFormInsideElements({ user }: { user: User }) {
       });
 
       if (error) {
-        setErrorMessage(error.message || '');
+        console.error('Payment confirmation error:', error);
+        setErrorMessage(t('errors.payment_failed'));
         setIsLoading(false);
         return;
       }
@@ -124,8 +136,8 @@ function PaymentFormInsideElements({ user }: { user: User }) {
         redirectPath: PAYMENT_SUCCESS_PAGE
       });
     } catch (e) {
-      console.error(e);
-      setErrorMessage('Failed to process payment. Please try again.');
+      console.error('Payment process error:', e);
+      setErrorMessage(t('errors.general'));
       setIsLoading(false);
     }
   };

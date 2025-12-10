@@ -610,7 +610,14 @@
     "payment_form": {
       "title": "Payment",
       "processing": "Processing...",
-      "pay": "Pay {amount}"
+      "pay": "Pay {amount}",
+      "errors": {
+        "submit_failed": "Payment submission failed. Please check your payment details and try again.",
+        "customer_failed": "Unable to process customer information. Please try again.",
+        "subscription_failed": "Unable to create subscription. Please try again.",
+        "payment_failed": "Payment processing failed. Please try again or use a different payment method.",
+        "general": "An unexpected error occurred. Please try again."
+      }
     },
     "contact_form": {
       "title": "Contact Us",

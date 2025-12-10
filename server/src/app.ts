@@ -76,7 +76,7 @@ server.register(fastifyRateLimit, rateLimitPluginOptions);
 server.register(fastifyRawBody, {
   field: 'rawBody', // change the default request.rawBody property name
   global: false, // add the rawBody to every request. **Default true**
-  encoding: 'utf8', // set it to false to set rawBody as a Buffer **Default utf8**
+  encoding: false, // set it to false to set rawBody as a Buffer **Default utf8**
   runFirst: true, // get the body before any preParsing hook change/uncompress it. **Default false**
   routes: [], // array of routes, **`global`** will be ignored, wildcard routes not supported
   jsonContentTypes: [] // array of content-types to handle as JSON. **Default ['application/json']**
@@ -84,13 +84,14 @@ server.register(fastifyRawBody, {
 
 server.addContentTypeParser(
   'application/json',
-  { parseAs: 'string' },
+  { parseAs: 'buffer' },
   (req, body, done) => {
     if ((req.routeOptions.config as { rawBody?: boolean })?.rawBody) {
+      req.rawBody = body as Buffer;
       done(null, body);
     } else {
       try {
-        const json = JSON.parse(body as string);
+        const json = JSON.parse(body.toString());
         done(null, json);
       } catch (err) {
         done(err as Error, undefined);
