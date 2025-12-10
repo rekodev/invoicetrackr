@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import {
   changeUserPassword,
+  getUser,
   updateUser,
   updateUserAccountSettings,
   updateUserProfilePicture
@@ -131,4 +132,30 @@ export async function changeUserPasswordAction({
 
   revalidatePath(CHANGE_PASSWORD_PAGE);
   return { ok: true, message: response.data.message };
+}
+
+/**
+ * Syncs the user's subscription status from the database to the session
+ * Call this in layouts or pages where subscription status is critical
+ */
+export async function syncSubscriptionStatusAction(userId: string) {
+  try {
+    const response = await getUser(Number(userId));
+
+    if (isResponseError(response)) {
+      console.error('Failed to fetch user for sync:', response);
+      return null;
+    }
+
+    const dbSubscriptionStatus = response.data.user.subscriptionStatus;
+
+    await updateSessionAction({
+      newSession: { subscriptionStatus: dbSubscriptionStatus }
+    });
+
+    return dbSubscriptionStatus;
+  } catch (error) {
+    console.error('Error syncing subscription status:', error);
+    return null;
+  }
 }
