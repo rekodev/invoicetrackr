@@ -14,7 +14,6 @@ import {
   TERMS_OF_SERVICE_PAGE
 } from './lib/constants/pages';
 import { Currency } from './lib/types/currency';
-import { hasActiveSubscription } from './lib/utils/subscription';
 
 export const authConfig = {
   callbacks: {
@@ -36,7 +35,9 @@ export const authConfig = {
         publicPaths.includes(path) || path.startsWith('/create-new-password');
 
       const isOnboarded = !!auth?.user?.isOnboarded;
-      const isSubscriptionActive = hasActiveSubscription(auth?.user);
+      const isSubscriptionActive =
+        auth?.user.subscriptionStatus === 'active' ||
+        auth?.user.subscriptionStatus === 'trialing';
       const isOnboardingPage = path.startsWith(ONBOARDING_PAGE);
       const isRenewPage = path.startsWith(RENEW_SUBSCRIPTION_PAGE);
 

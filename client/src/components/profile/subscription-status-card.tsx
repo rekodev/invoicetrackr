@@ -14,7 +14,6 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
-import { hasActiveSubscription } from '@/lib/utils/subscription';
 
 import CancelSubscriptionModal from './cancel-subscription-modal';
 
@@ -29,7 +28,9 @@ export default function SubscriptionStatusCard({ user, currency }: Props) {
   const [isCancelSubscriptionModalOpen, setIsCancelSubscriptionModalOpen] =
     useState(false);
 
-  const isActive = hasActiveSubscription(user);
+  const isActive =
+    user.subscriptionStatus === 'active' ||
+    user.subscriptionStatus === 'trialing';
 
   const handleClick = () => {
     if (isActive) {
