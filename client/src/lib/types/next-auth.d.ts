@@ -1,4 +1,5 @@
 import { DefaultSession } from 'next-auth';
+import { StripeSubscriptionStatus } from '@invoicetrackr/types';
 
 import { Currency } from './currency';
 
@@ -20,10 +21,10 @@ declare module 'next-auth' {
     selectedBankAccountId: number;
     address: string;
     email: string;
-    stripeCustomerId: string | null;
-    stripeSubscriptionId: string | null;
+    stripeCustomerId?: string | null;
+    stripeSubscriptionId?: string | null;
     isOnboarded?: boolean;
-    isSubscriptionActive?: boolean;
+    subscriptionStatus?: StripeSubscriptionStatus | null;
   }
 
   // eslint-disable-next-line no-unused-vars

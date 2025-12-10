@@ -20,7 +20,7 @@ import { addBankingInformationAction } from '@/lib/actions/banking-information';
 
 type Props = {
   userId: number | undefined;
-  userSelectedBankAccountId?: number;
+  userSelectedBankAccountId?: number | null;
   defaultValues?: BankAccountBody;
   onSuccess?: () => void;
   isUserOnboarding?: boolean;

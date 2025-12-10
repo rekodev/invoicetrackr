@@ -14,24 +14,22 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
+import { hasActiveSubscription } from '@/lib/utils/subscription';
 
 import CancelSubscriptionModal from './cancel-subscription-modal';
 
 type Props = {
   user: User;
-  isActive: boolean;
   currency: string;
 };
 
-export default function SubscriptionStatusCard({
-  user,
-  isActive,
-  currency
-}: Props) {
+export default function SubscriptionStatusCard({ user, currency }: Props) {
   const t = useTranslations('profile.account_settings.subscription');
   const router = useRouter();
   const [isCancelSubscriptionModalOpen, setIsCancelSubscriptionModalOpen] =
     useState(false);
+
+  const isActive = hasActiveSubscription(user);
 
   const handleClick = () => {
     if (isActive) {

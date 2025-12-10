@@ -198,6 +198,7 @@ const InvoiceServicesTable = ({
         bottomContentPlacement="outside"
       >
         <TableHeader columns={INVOICE_SERVICE_COLUMNS}>
+          {/* @ts-ignore */}
           {(column) => (
             <TableColumn key={column.uid}>{column.name}</TableColumn>
           )}
@@ -205,6 +206,7 @@ const InvoiceServicesTable = ({
         <TableBody items={fields} className="bg-red-500">
           {fields.map((field, index) => (
             <TableRow key={index}>
+              {/* @ts-ignore */}
               {(columnKey) => (
                 <TableCell>
                   {renderCell(columnKey, fields.indexOf(field))}

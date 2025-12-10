@@ -15,3 +15,18 @@ export const loginPasswordSchema = z
 export const currentPasswordSchema = z
   .string()
   .min(1, 'validation.password.currentRequired');
+
+export const stripeSubscriptionStatusSchema = z.enum([
+  'active',
+  'past_due',
+  'canceled',
+  'incomplete',
+  'incomplete_expired',
+  'trialing',
+  'unpaid',
+  'paused'
+]);
+
+export type StripeSubscriptionStatus = z.infer<
+  typeof stripeSubscriptionStatusSchema
+>;

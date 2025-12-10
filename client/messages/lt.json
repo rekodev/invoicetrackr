@@ -610,7 +610,14 @@
     "payment_form": {
       "title": "Mokėjimas",
       "processing": "Apdorojama...",
-      "pay": "Mokėti {amount}"
+      "pay": "Mokėti {amount}",
+      "errors": {
+        "submit_failed": "Mokėjimo pateikti nepavyko. Bandykite dar kartą.",
+        "customer_failed": "Negalima sukurti kliento. Bandykite dar kartą.",
+        "subscription_failed": "Mokėjimo prenumeratos sukūrimas nepavyko. Bandykite dar kartą.",
+        "payment_failed": "Nepavyko apdoroti mokėjimo. Bandykite dar kartą.",
+        "general": "Įvyko klaida. Bandykite dar kartą."
+      }
     },
     "contact_form": {
       "title": "Susisiekite su mumis",

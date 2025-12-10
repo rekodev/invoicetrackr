@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from 'next-auth';
+import { StripeSubscriptionStatus } from '@invoicetrackr/types';
 
 import {
   CREATE_INVOICE_PAGE,
@@ -13,6 +14,7 @@ import {
   TERMS_OF_SERVICE_PAGE
 } from './lib/constants/pages';
 import { Currency } from './lib/types/currency';
+import { hasActiveSubscription } from './lib/utils/subscription';
 
 export const authConfig = {
   callbacks: {
@@ -34,7 +36,7 @@ export const authConfig = {
         publicPaths.includes(path) || path.startsWith('/create-new-password');
 
       const isOnboarded = !!auth?.user?.isOnboarded;
-      const isSubscriptionActive = !!auth?.user?.isSubscriptionActive;
+      const isSubscriptionActive = hasActiveSubscription(auth?.user);
       const isOnboardingPage = path.startsWith(ONBOARDING_PAGE);
       const isRenewPage = path.startsWith(RENEW_SUBSCRIPTION_PAGE);
 
@@ -90,7 +92,7 @@ export const authConfig = {
         token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
         token.currency = user.currency;
         token.isOnboarded = isOnboarded;
-        token.isSubscriptionActive = user.isSubscriptionActive;
+        token.subscriptionStatus = user.subscriptionStatus;
         token.selectedBankAccountId = user.selectedBankAccountId;
         token.vatNumber = user.vatNumber;
       }
@@ -102,7 +104,7 @@ export const authConfig = {
           language: session.user.language,
           preferredInvoiceLanguage: session.user.preferredInvoiceLanguage,
           currency: session.user.currency,
-          isSubscriptionActive: session.user.isSubscriptionActive,
+          subscriptionStatus: session.user.subscriptionStatus,
           selectedBankAccountId: session.user.selectedBankAccountId
         };
       }
@@ -116,7 +118,8 @@ export const authConfig = {
         token.preferredInvoiceLanguage as string;
       session.user.currency = token.currency as Currency;
       session.user.isOnboarded = Boolean(token.isOnboarded);
-      session.user.isSubscriptionActive = Boolean(token.isSubscriptionActive);
+      session.user.subscriptionStatus =
+        token.subscriptionStatus as StripeSubscriptionStatus | null;
       session.user.selectedBankAccountId =
         token.selectedBankAccountId as number;
 

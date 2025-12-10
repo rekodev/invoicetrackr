@@ -11,6 +11,7 @@ import fastify from 'fastify';
 import fastifyCookie from '@fastify/cookie';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyRateLimit from '@fastify/rate-limit';
+import fastifyRawBody from 'fastify-raw-body';
 
 import bankingInformationRoutes from './routes/banking-information';
 import clientRoutes from './routes/client';
@@ -24,6 +25,7 @@ import { languageMiddleware } from './middleware/language';
 import paymentRoutes from './routes/payment';
 import { rateLimitPluginOptions } from './utils/rate-limit';
 import userRoutes from './routes/user';
+import webhookRoutes from './routes/webhook';
 
 dotenv.config();
 cloudinary.config(cloudinaryConfig);
@@ -57,7 +59,8 @@ const server = fastify({
       })
     }
   },
-  trustProxy: true
+  trustProxy: true,
+  bodyLimit: 10485760
 });
 
 // Register Plugins
@@ -70,6 +73,32 @@ server.register(cors);
 server.register(fastifyMultipart);
 server.register(fastifyCookie);
 server.register(fastifyRateLimit, rateLimitPluginOptions);
+server.register(fastifyRawBody, {
+  field: 'rawBody', // change the default request.rawBody property name
+  global: false, // add the rawBody to every request. **Default true**
+  encoding: false, // set it to false to set rawBody as a Buffer **Default utf8**
+  runFirst: true, // get the body before any preParsing hook change/uncompress it. **Default false**
+  routes: [], // array of routes, **`global`** will be ignored, wildcard routes not supported
+  jsonContentTypes: [] // array of content-types to handle as JSON. **Default ['application/json']**
+});
+
+server.addContentTypeParser(
+  'application/json',
+  { parseAs: 'buffer' },
+  (req, body, done) => {
+    if ((req.routeOptions.config as { rawBody?: boolean })?.rawBody) {
+      req.rawBody = body as Buffer;
+      done(null, body);
+    } else {
+      try {
+        const json = JSON.parse(body.toString());
+        done(null, json);
+      } catch (err) {
+        done(err as Error, undefined);
+      }
+    }
+  }
+);
 
 // Register Middleware and Error Handler
 server.addHook('onRequest', languageMiddleware);
@@ -79,6 +108,7 @@ server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
 // Register Routes
+server.register(webhookRoutes);
 server.register(invoiceRoutes);
 server.register(clientRoutes);
 server.register(userRoutes);

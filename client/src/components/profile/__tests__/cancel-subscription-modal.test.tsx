@@ -33,7 +33,7 @@ describe('<CancelSubscriptionModal />', () => {
         address: 'Test Address',
         businessNumber: '123456789',
         email: 'test@example.com',
-        isSubscriptionActive: true,
+        subscriptionStatus: 'active',
         businessType: 'business',
         currency: 'eur',
         language: 'en',
@@ -72,7 +72,7 @@ describe('<CancelSubscriptionModal />', () => {
     expect(mockUpdateSessionAction).toHaveBeenCalledWith({
       newSession: expect.objectContaining({
         id: '1',
-        isSubscriptionActive: false
+        subscriptionStatus: 'canceled'
       }),
       redirectPath: expect.any(String)
     });

@@ -3,7 +3,7 @@ import { RateLimitPluginOptions } from '@fastify/rate-limit';
 
 export const rateLimitPluginOptions: FastifyRegisterOptions<RateLimitPluginOptions> =
   {
-    max: 30,
+    max: 60,
     timeWindow: '1 minute',
     keyGenerator: (request) => {
       const forwardedFor = request.headers['x-forwarded-for'];

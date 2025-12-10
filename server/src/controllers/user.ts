@@ -58,22 +58,8 @@ export const loginUser = async (
   if (!isValidPassword)
     throw new UnauthorizedError(i18n.t('error.user.invalidCredentials'));
 
-  let isSubscriptionActive = false;
-
-  if (!!user?.stripeSubscriptionId) {
-    try {
-      const userSubscription = await stripe.subscriptions.retrieve(
-        user.stripeSubscriptionId
-      );
-
-      if (userSubscription?.status === 'active') isSubscriptionActive = true;
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   reply.status(200).send({
-    user: { ...user, isSubscriptionActive },
+    user,
     message: i18n.t('success.user.loggedIn')
   });
 };
@@ -128,8 +114,15 @@ export const updateUser = async (
 ) => {
   const userId = Number(req.params.userId);
   const file = req.body.file;
-  const { email, name, businessType, businessNumber, vatNumber, address, signature } =
-    req.body;
+  const {
+    email,
+    name,
+    businessType,
+    businessNumber,
+    vatNumber,
+    address,
+    signature
+  } = req.body;
   const i18n = await useI18n(req);
 
   let uploadedSignature: UploadApiResponse | undefined;
@@ -154,7 +147,15 @@ export const updateUser = async (
     : signature;
 
   const updatedUser = await updateUserInDb(
-    { id: userId, email, name, businessType, businessNumber, vatNumber, address },
+    {
+      id: userId,
+      email,
+      name,
+      businessType,
+      businessNumber,
+      vatNumber,
+      address
+    },
     signatureUrl || ''
   );
 
