@@ -201,10 +201,10 @@ export const getInvoicesTotalAmount = async (
   const invoices = await getInvoicesTotalAmountFromDb(userId);
   const clients = await getClientsFromDb(userId);
 
-  if (!invoices.length)
+  if (!invoices)
     throw new BadRequestError(i18n.t('error.invoice.unableToRetrieveData'));
 
-  reply.status(200).send({ invoices, totalClients: clients.length });
+  reply.status(200).send({ invoices, totalClients: clients?.length });
 };
 
 export const getInvoicesRevenue = async (
@@ -215,7 +215,7 @@ export const getInvoicesRevenue = async (
   const i18n = await useI18n(req);
   const invoices = await getInvoicesRevenueFromDb(userId);
 
-  if (!invoices.length)
+  if (!invoices)
     throw new BadRequestError(i18n.t('error.invoice.unableToRetrieveData'));
 
   const revenueByMonth = {
@@ -249,7 +249,7 @@ export const getLatestInvoices = async (
   const i18n = await useI18n(req);
   const invoices = await getLatestInvoicesFromDb(userId);
 
-  if (!invoices.length)
+  if (!invoices)
     throw new BadRequestError(i18n.t('error.invoice.unableToRetrieveData'));
 
   reply.status(200).send({ invoices });
