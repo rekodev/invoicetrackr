@@ -5,13 +5,17 @@ import { CategoryScale } from 'chart.js';
 import Chart from 'chart.js/auto';
 import { useTranslations } from 'next-intl';
 
+import { Currency } from '@/lib/types/currency';
+import { getCurrencySymbol } from '@/lib/utils/currency';
+
 Chart.register(CategoryScale);
 
 type Props = {
+  currency: Currency | undefined;
   revenueByMonth: Record<number, number> | undefined;
 };
 
-const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
+const InvoiceDataBarChart = ({ revenueByMonth, currency }: Props) => {
   const t = useTranslations('dashboard.revenue_chart');
 
   const currentMonthIndex = new Date().getMonth();
@@ -61,7 +65,7 @@ const InvoiceDataBarChart = ({ revenueByMonth }: Props) => {
         callbacks: {
           label: (tooltipItem: any) => {
             const revenue = tooltipItem.raw;
-            return `${t('revenue')}: $${revenue}`;
+            return `${t('revenue')}: ${getCurrencySymbol(currency)}${revenue}`;
           }
         }
       }
