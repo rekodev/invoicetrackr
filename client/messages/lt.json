@@ -745,7 +745,13 @@
       "signature_heading": "Parašas",
       "banking_details": "Bankinė informacija",
       "invoice_details": "Sąskaitos faktūros informacija",
-      "select_client": "Pasirinkti klientą"
+      "select_client": "Pasirinkti klientą",
+      "due_date_preselection_chips": {
+        "seven_days": "7d",
+        "fifteen_days": "15d",
+        "thirty_days": "30d",
+        "custom": "Pasirinktinis"
+      }
     },
     "subscription_status_card": {
       "title": "Prenumeratos būsena"

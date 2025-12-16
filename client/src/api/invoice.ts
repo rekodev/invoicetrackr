@@ -13,6 +13,7 @@ import {
 import { InvoiceBody } from '@invoicetrackr/types';
 
 import api from './api-instance';
+import { buildFormData } from '@/lib/utils/multipart';
 
 export const getInvoice = async (userId: number, invoiceId: number) =>
   await api.get<GetInvoiceResponse>(`/api/${userId}/invoices/${invoiceId}`);
@@ -32,18 +33,22 @@ export const getLatestInvoices = async (userId: number) =>
   await api.get<GetLatestInvoicesResponse>(`/api/${userId}/invoices/latest`);
 
 export const addInvoice = async (userId: number, invoiceData: InvoiceBody) => {
-  const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
+  const hasFile = invoiceData.senderSignature instanceof File;
+
+  if (hasFile) {
+    const { senderSignature, ...dataWithoutFile } = invoiceData;
+    const formData = buildFormData(dataWithoutFile);
+    formData.append('file', senderSignature);
+
+    return await api.post<AddInvoiceResponse>(
+      `/api/${userId}/invoices`,
+      formData
+    );
+  }
 
   return await api.post<AddInvoiceResponse>(
     `/api/${userId}/invoices`,
-    invoiceData,
-    {
-      headers: {
-        'Content-Type': isSignatureFile
-          ? 'multipart/form-data'
-          : 'application/json'
-      }
-    }
+    invoiceData
   );
 };
 
@@ -51,18 +56,22 @@ export const updateInvoice = async (
   userId: number,
   invoiceData: InvoiceBody
 ) => {
-  const isSignatureFile = typeof invoiceData.senderSignature !== 'string';
+  const hasFile = invoiceData.senderSignature instanceof File;
+
+  if (hasFile) {
+    const { senderSignature, ...dataWithoutFile } = invoiceData;
+    const formData = buildFormData(dataWithoutFile);
+    formData.append('file', senderSignature);
+
+    return await api.put<UpdateInvoiceResponse>(
+      `/api/${userId}/invoices/${invoiceData.id}`,
+      formData
+    );
+  }
 
   return await api.put<UpdateInvoiceResponse>(
     `/api/${userId}/invoices/${invoiceData.id}`,
-    invoiceData,
-    {
-      headers: {
-        'Content-Type': isSignatureFile
-          ? 'multipart/form-data'
-          : 'application/json'
-      }
-    }
+    invoiceData
   );
 };
 

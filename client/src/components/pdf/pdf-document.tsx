@@ -13,7 +13,7 @@ import { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
 import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
 import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
 import { amountToWords } from '@/lib/utils/amount-to-words';
-import { formatDate } from '@/lib/utils/format-date';
+import { formatDate } from '@/lib/utils/date';
 
 registerPdfFont();
 

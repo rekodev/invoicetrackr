@@ -560,7 +560,7 @@ export const getLatestInvoicesFromDb = async (userId: number) => {
       invoiceReceiversTable,
       eq(invoicesTable.receiverId, invoiceReceiversTable.id)
     )
-    .orderBy(desc(invoicesTable.date))
+    .orderBy(desc(invoicesTable.id))
     .limit(5);
 
   return invoices;

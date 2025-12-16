@@ -49,7 +49,7 @@ export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {
 
 export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: invoiceBodySchema,
+    body: invoiceBodySchema.safeExtend({ file: z.any().nullish() }),
     response: {
       201: postInvoiceResponseSchema
     }
@@ -61,7 +61,7 @@ export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: invoiceBodySchema,
+    body: invoiceBodySchema.safeExtend({ file: z.any().nullish() }),
     response: {
       200: updateInvoiceResponseSchema
     }
@@ -79,7 +79,6 @@ export const updateInvoiceStatusOptions: RouteShorthandOptionsWithHandler = {
     }
   },
   preHandler: authMiddleware,
-  preValidation: preValidateFileAndFields,
   handler: updateInvoiceStatus
 };
 
@@ -132,7 +131,7 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
       recipientEmail: z.email('validation.invoice.recipientEmail'),
       subject: z.string().min(1, 'validation.invoice.subject'),
       message: z.string().max(1000, 'validation.invoice.message').optional(),
-      file: z.any().optional()
+      file: z.any().nullish()
     })
   },
   preHandler: authMiddleware,

@@ -18,7 +18,7 @@ export const invoicePartyTypeSchema = z.enum(['sender', 'receiver'], {
 });
 
 export const invoiceServiceBodySchema = z.object({
-  id: z.number().optional(),
+  id: z.coerce.number().optional(),
   description: z
     .string()
     .min(1, 'validation.invoice.services.description')
@@ -36,7 +36,7 @@ export const invoiceServiceBodySchema = z.object({
 
 export const invoiceSenderBodySchema = z.object(
   {
-    id: z.number().optional(),
+    id: z.coerce.number().optional(),
     type: invoicePartyTypeSchema,
     name: z.string().min(1, 'validation.invoice.sender.name'),
     businessType: invoicePartyBusinessTypeSchema,
@@ -55,7 +55,7 @@ export const invoiceSenderBodySchema = z.object(
 
 export const invoiceReceiverBodySchema = z.object(
   {
-    id: z.number().optional(),
+    id: z.coerce.number().optional(),
     type: invoicePartyTypeSchema,
     name: z.string().min(1, 'validation.invoice.receiver.name'),
     businessType: invoicePartyBusinessTypeSchema,
@@ -74,7 +74,7 @@ export const invoiceReceiverBodySchema = z.object(
 
 export const invoiceBodySchema = z
   .object({
-    id: z.number().optional(),
+    id: z.coerce.number().optional(),
     invoiceId: z
       .string()
       .regex(
