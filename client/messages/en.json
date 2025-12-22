@@ -745,7 +745,13 @@
       "signature_heading": "Signature",
       "banking_details": "Banking Details",
       "invoice_details": "Invoice Details",
-      "select_client": "Select Client"
+      "select_client": "Select Client",
+      "due_date_preselection_chips": {
+        "seven_days": "7d",
+        "fifteen_days": "15d",
+        "thirty_days": "30d",
+        "custom": "Custom"
+      }
     },
     "subscription_status_card": {
       "title": "Subscription Status"

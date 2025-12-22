@@ -24,7 +24,7 @@ import { useTranslations } from 'next-intl';
 
 import { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
-import { formatDate } from '@/lib/utils/format-date';
+import { formatDate } from '@/lib/utils/date';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import { statusOptions } from '@/lib/constants/table';

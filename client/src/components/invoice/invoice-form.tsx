@@ -20,7 +20,8 @@ import {
   FormProvider,
   useForm
 } from 'react-hook-form';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { Client } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -29,14 +30,14 @@ import {
   InvoiceBody,
   User
 } from '@invoicetrackr/types';
-import { Client } from '@invoicetrackr/types';
+import { formatDate, getDateDifferenceInDays } from '@/lib/utils/date';
 import { Currency } from '@/lib/types/currency';
-import { formatDate } from '@/lib/utils/format-date';
 import { statusOptions } from '@/lib/constants/table';
 import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
 
 import BankingInformationDialog from './banking-information-dialog';
 import CompleteProfile from '../ui/complete-profile';
+import InvoiceDueDatePreselectionChips from './invoice-due-date-preselection-chips';
 import InvoiceFormReceiverModal from './invoice-form-receiver-modal';
 import InvoiceServicesTable from './invoice-services-table';
 import SignaturePad from '../signature-pad';
@@ -75,7 +76,8 @@ const InvoiceForm = ({
       sender: user,
       receiver: INITIAL_RECEIVER_DATA,
       services: [{ amount: 0, quantity: 0, description: '', unit: '' }],
-      bankingInformation: { name: '', code: '', accountNumber: '' }
+      bankingInformation: { name: '', code: '', accountNumber: '' },
+      status: 'pending'
     }
   });
   const {
@@ -102,9 +104,12 @@ const InvoiceForm = ({
     setError
   });
 
+  const dueDateInputRef = useRef<HTMLInputElement | null>(null);
+
   // eslint-disable-next-line react-hooks/incompatible-library
   const isReceiverBusiness = watch('receiver.businessType') === 'business';
   const isSenderBusiness = watch('sender.businessType') === 'business';
+  const currentDate = watch('date');
 
   const handleOpenReceiverModal = () => {
     setIsReceiverModalOpen(true);
@@ -135,7 +140,7 @@ const InvoiceForm = ({
 
   const handleSignatureChange = (signature: string | File) => {
     setSenderSignature(signature);
-    setValue('senderSignature', signature);
+    setValue('senderSignature', signature, { shouldDirty: true });
     clearErrors('senderSignature');
   };
 
@@ -464,7 +469,12 @@ const InvoiceForm = ({
         <Button color="danger" variant="light" onPress={redirectToInvoicesPage}>
           {t('buttons.cancel')}
         </Button>
-        <Button type="submit" isLoading={isSubmitting} color="secondary">
+        <Button
+          isDisabled={!methods.formState.isDirty || isSubmitting}
+          type="submit"
+          isLoading={isSubmitting}
+          color="secondary"
+        >
           {t('buttons.save')}
         </Button>
       </div>
@@ -529,7 +539,9 @@ const InvoiceForm = ({
                   label={t('labels.status')}
                   placeholder={t('placeholders.select_status')}
                   defaultSelectedKeys={
-                    invoiceData?.status ? [`${invoiceData.status}`] : undefined
+                    invoiceData?.status
+                      ? [`${invoiceData.status}`]
+                      : ['pending']
                   }
                   isInvalid={!!errors.status}
                   errorMessage={errors.status?.message}
@@ -551,17 +563,59 @@ const InvoiceForm = ({
                   errorMessage={errors.date?.message}
                   isInvalid={!!errors.date}
                 />
-                <Input
-                  aria-label={t('a11y.due_date_label')}
-                  {...register('dueDate')}
-                  type="date"
-                  label={t('labels.due_date')}
-                  defaultValue={
-                    invoiceData?.dueDate ? formatDate(invoiceData.dueDate) : ''
-                  }
-                  isInvalid={!!errors.dueDate}
-                  errorMessage={errors.dueDate?.message}
-                />
+                <div className="relative mb-4 w-full sm:mb-0">
+                  <Controller
+                    name="dueDate"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <InvoiceDueDatePreselectionChips
+                          dateDiffFromDueDate={getDateDifferenceInDays(
+                            currentDate,
+                            field.value
+                          )}
+                          onDueDatePreselectionChange={(
+                            dueDatePreselection
+                          ) => {
+                            const currentDatePlusDays = new Date(currentDate);
+
+                            if (dueDatePreselection === 'custom') {
+                              field.onChange('');
+                              dueDateInputRef.current?.showPicker();
+
+                              return;
+                            }
+
+                            currentDatePlusDays.setDate(
+                              currentDatePlusDays.getDate() +
+                                Number(dueDatePreselection)
+                            );
+
+                            const formattedDate = formatDate(
+                              currentDatePlusDays.toISOString()
+                            );
+
+                            field.onChange(formattedDate);
+                          }}
+                        />
+                        <Input
+                          {...field}
+                          ref={dueDateInputRef}
+                          aria-label={t('a11y.due_date_label')}
+                          type="date"
+                          label={t('labels.due_date')}
+                          defaultValue={
+                            invoiceData?.dueDate
+                              ? formatDate(invoiceData.dueDate)
+                              : ''
+                          }
+                          isInvalid={!!errors.dueDate}
+                          errorMessage={errors.dueDate?.message}
+                        />
+                      </>
+                    )}
+                  />
+                </div>
               </div>
             </div>
             {renderSenderAndReceiverFields()}

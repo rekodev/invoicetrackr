@@ -11,7 +11,7 @@ import { Currency } from '@/lib/types/currency';
 import { HOME_PAGE } from '@/lib/constants/pages';
 import { InvoiceBody } from '@invoicetrackr/types';
 import { calculateServiceTotal } from '@/lib/utils';
-import { formatDate } from '@/lib/utils/format-date';
+import { formatDate } from '@/lib/utils/date';
 
 import InvoiceModal from './invoice-modal';
 import InvoiceServicesTable from './invoice-services-table';
