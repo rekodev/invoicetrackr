@@ -577,7 +577,6 @@ const InvoiceForm = ({
                           onDueDatePreselectionChange={(
                             dueDatePreselection
                           ) => {
-                            setValue('dueDate', dueDatePreselection);
                             const currentDatePlusDays = new Date(currentDate);
 
                             if (dueDatePreselection === 'custom') {
