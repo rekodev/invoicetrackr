@@ -20,8 +20,8 @@ import {
   FormProvider,
   useForm
 } from 'react-hook-form';
+import { useRef, useState } from 'react';
 import { Client } from '@invoicetrackr/types';
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -103,6 +103,8 @@ const InvoiceForm = ({
     user,
     setError
   });
+
+  const dueDateInputRef = useRef<HTMLInputElement | null>(null);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const isReceiverBusiness = watch('receiver.businessType') === 'business';
@@ -580,6 +582,8 @@ const InvoiceForm = ({
 
                             if (dueDatePreselection === 'custom') {
                               field.onChange('');
+                              dueDateInputRef.current?.showPicker();
+
                               return;
                             }
 
@@ -597,6 +601,7 @@ const InvoiceForm = ({
                         />
                         <Input
                           {...field}
+                          ref={dueDateInputRef}
                           aria-label={t('a11y.due_date_label')}
                           type="date"
                           label={t('labels.due_date')}
