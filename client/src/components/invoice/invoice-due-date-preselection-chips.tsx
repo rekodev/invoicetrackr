@@ -24,9 +24,7 @@ export default function InvoiceDueDatePreselectionChips({
   const t = useTranslations(
     'components.invoice_form.due_date_preselection_chips'
   );
-  const [currentlyActiveChip, setCurrentlyActiveChip] = useState<
-    string | null
-  >();
+  const [currentlyActiveChip, setCurrentlyActiveChip] = useState<string>();
 
   const handleDueDatePreselectionChange = useCallback(
     (dueDatePreselection: string) => {
@@ -47,7 +45,7 @@ export default function InvoiceDueDatePreselectionChips({
     } else {
       setCurrentlyActiveChip('custom');
     }
-  }, [dateDiffFromDueDate, handleDueDatePreselectionChange]);
+  }, [dateDiffFromDueDate]);
 
   return (
     <div className="absolute -bottom-8 right-0 flex w-full justify-end gap-1 md:-top-8">
