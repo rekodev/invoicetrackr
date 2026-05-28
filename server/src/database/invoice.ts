@@ -9,6 +9,7 @@ import {
   invoiceServicesTable,
   invoicesTable
 } from './schema';
+import { calculateInvoiceTotals } from '../utils/invoice';
 import { db } from './db';
 import { jsonAgg } from '../utils/json';
 
@@ -61,10 +62,16 @@ export const getInvoicesFromDb = async (
       id: invoicesTable.id,
       invoiceId: invoicesTable.invoiceId,
       date: invoicesTable.date,
+      subtotalAmount: invoicesTable.subtotalAmount,
+      vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
       status: invoicesTable.status,
+      lifecycleStatus: invoicesTable.lifecycleStatus,
       dueDate: invoicesTable.dueDate,
       senderSignature: invoicesTable.senderSignature,
+      issuedAt: invoicesTable.issuedAt,
+      paidAt: invoicesTable.paidAt,
+      voidedAt: invoicesTable.voidedAt,
       bankingInformation: {
         id: invoiceBankingInformationTable.id,
         code: invoiceBankingInformationTable.bankCode,
@@ -96,7 +103,8 @@ export const getInvoicesFromDb = async (
         description: invoiceServicesTable.description,
         amount: invoiceServicesTable.amount,
         quantity: invoiceServicesTable.quantity,
-        unit: invoiceServicesTable.unit
+        unit: invoiceServicesTable.unit,
+        vatRate: invoiceServicesTable.vatRate
       })
     })
     .from(invoicesTable)
@@ -138,10 +146,16 @@ export const getInvoiceFromDb = async (
       id: invoicesTable.id,
       invoiceId: invoicesTable.invoiceId,
       date: invoicesTable.date,
+      subtotalAmount: invoicesTable.subtotalAmount,
+      vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
       status: invoicesTable.status,
+      lifecycleStatus: invoicesTable.lifecycleStatus,
       dueDate: invoicesTable.dueDate,
       senderSignature: invoicesTable.senderSignature,
+      issuedAt: invoicesTable.issuedAt,
+      paidAt: invoicesTable.paidAt,
+      voidedAt: invoicesTable.voidedAt,
       bankingInformation: {
         id: invoiceBankingInformationTable.id,
         code: invoiceBankingInformationTable.bankCode,
@@ -173,7 +187,8 @@ export const getInvoiceFromDb = async (
         description: invoiceServicesTable.description,
         amount: invoiceServicesTable.amount,
         quantity: invoiceServicesTable.quantity,
-        unit: invoiceServicesTable.unit
+        unit: invoiceServicesTable.unit,
+        vatRate: invoiceServicesTable.vatRate
       })
     })
     .from(invoicesTable)
@@ -210,6 +225,8 @@ export const insertInvoiceInDb = async (
   senderSignature: string
 ): Promise<InvoiceFromDb | null> => {
   const invoice = await db.transaction(async (tx) => {
+    const totals = calculateInvoiceTotals(invoiceData.services);
+
     // Invoice insert
     const invoices = await tx
       .insert(invoicesTable)
@@ -217,8 +234,11 @@ export const insertInvoiceInDb = async (
         userId,
         date: invoiceData.date,
         invoiceId: invoiceData.invoiceId,
-        totalAmount: String(invoiceData.totalAmount),
+        subtotalAmount: totals.subtotalAmount,
+        vatAmount: totals.vatAmount,
+        totalAmount: totals.totalAmount,
         status: invoiceData.status,
+        lifecycleStatus: invoiceData.lifecycleStatus || 'draft',
         dueDate: invoiceData.dueDate,
         senderSignature: senderSignature
       })
@@ -274,6 +294,7 @@ export const insertInvoiceInDb = async (
       await tx.insert(invoiceServicesTable).values({
         quantity: service.quantity,
         amount: String(service.amount),
+        vatRate: String(service.vatRate || 0),
         unit: service.unit,
         description: service.description,
         invoiceId: insertedInvoiceId
@@ -308,12 +329,18 @@ export const updateInvoiceInDb = async (
   senderSignature: string
 ): Promise<InvoiceFromDb | null | undefined> => {
   const updatedInvoice = await db.transaction(async (tx) => {
+    const totals = calculateInvoiceTotals(invoiceData.services);
+
     // Get the current invoice to access senderId, receiverId, and bankAccountId
     const currentInvoice = await tx
       .select({
         senderId: invoicesTable.senderId,
         receiverId: invoicesTable.receiverId,
-        bankAccountId: invoicesTable.bankAccountId
+        bankAccountId: invoicesTable.bankAccountId,
+        lifecycleStatus: invoicesTable.lifecycleStatus,
+        issuedAt: invoicesTable.issuedAt,
+        paidAt: invoicesTable.paidAt,
+        voidedAt: invoicesTable.voidedAt
       })
       .from(invoicesTable)
       .where(and(eq(invoicesTable.userId, userId), eq(invoicesTable.id, id)));
@@ -430,7 +457,14 @@ export const updateInvoiceInDb = async (
         date: invoiceData.date,
         dueDate: invoiceData.dueDate,
         status: invoiceData.status,
-        totalAmount: String(invoiceData.totalAmount),
+        lifecycleStatus:
+          invoiceData.lifecycleStatus || currentInvoiceData.lifecycleStatus,
+        subtotalAmount: totals.subtotalAmount,
+        vatAmount: totals.vatAmount,
+        totalAmount: totals.totalAmount,
+        issuedAt: invoiceData.issuedAt ?? currentInvoiceData.issuedAt,
+        paidAt: invoiceData.paidAt ?? currentInvoiceData.paidAt,
+        voidedAt: invoiceData.voidedAt ?? currentInvoiceData.voidedAt,
         senderSignature
       })
       .where(and(eq(invoicesTable.userId, userId), eq(invoicesTable.id, id)))
@@ -466,6 +500,7 @@ export const updateInvoiceInDb = async (
           .set({
             description: service.description,
             amount: String(service.amount),
+            vatRate: String(service.vatRate || 0),
             quantity: service.quantity,
             unit: service.unit
           })
@@ -474,6 +509,7 @@ export const updateInvoiceInDb = async (
         await tx.insert(invoiceServicesTable).values({
           description: service.description,
           amount: String(service.amount),
+          vatRate: String(service.vatRate || 0),
           quantity: service.quantity,
           unit: service.unit,
           invoiceId: id
@@ -492,9 +528,16 @@ export async function updateInvoiceStatusInDb(
   id: number,
   status: 'paid' | 'pending' | 'canceled'
 ): Promise<{ id: number } | undefined> {
+  const timestampUpdates =
+    status === 'paid'
+      ? { paidAt: new Date().toISOString(), voidedAt: null }
+      : status === 'canceled'
+        ? { paidAt: null, voidedAt: new Date().toISOString() }
+        : { paidAt: null, voidedAt: null };
+
   const invoices = await db
     .update(invoicesTable)
-    .set({ status })
+    .set({ status, ...timestampUpdates })
     .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
     .returning({ id: invoicesTable.id });
 
@@ -518,6 +561,8 @@ export const deleteInvoiceFromDb = async (
 export const getInvoicesTotalAmountFromDb = async (userId: number) => {
   const invoices = await db
     .select({
+      subtotalAmount: invoicesTable.subtotalAmount,
+      vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
       status: invoicesTable.status
     })
@@ -530,6 +575,8 @@ export const getInvoicesTotalAmountFromDb = async (userId: number) => {
 export const getInvoicesRevenueFromDb = async (userId: number) => {
   const invoices = await db
     .select({
+      subtotalAmount: invoicesTable.subtotalAmount,
+      vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
       date: invoicesTable.date
     })
@@ -549,6 +596,8 @@ export const getLatestInvoicesFromDb = async (userId: number) => {
   const invoices = await db
     .select({
       id: invoicesTable.id,
+      subtotalAmount: invoicesTable.subtotalAmount,
+      vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
       invoiceId: invoicesTable.invoiceId,
       name: invoiceReceiversTable.name,

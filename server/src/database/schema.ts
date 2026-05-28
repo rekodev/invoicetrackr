@@ -21,7 +21,10 @@ export const invoiceServicesTable = pgTable(
     description: text().notNull(),
     unit: varchar({ length: 255 }).notNull(),
     quantity: integer().notNull(),
-    amount: numeric({ precision: 10, scale: 2 }).notNull()
+    amount: numeric({ precision: 10, scale: 2 }).notNull(),
+    vatRate: numeric('vat_rate', { precision: 5, scale: 2 })
+      .default('0')
+      .notNull()
   },
   (table) => [
     foreignKey({
@@ -39,13 +42,37 @@ export const invoicesTable = pgTable(
     userId: integer('user_id').notNull(),
     senderId: integer('sender_id'),
     receiverId: integer('receiver_id'),
+    subtotalAmount: numeric('subtotal_amount', {
+      precision: 10,
+      scale: 2
+    })
+      .default('0')
+      .notNull(),
+    vatAmount: numeric('vat_amount', { precision: 10, scale: 2 })
+      .default('0')
+      .notNull(),
     totalAmount: numeric('total_amount', { precision: 10, scale: 2 }).notNull(),
     status: varchar({ length: 50 }).notNull(),
+    lifecycleStatus: varchar('lifecycle_status', { length: 50 })
+      .default('draft')
+      .notNull(),
     dueDate: date('due_date').notNull(),
     invoiceId: varchar('invoice_id').notNull(),
     id: serial().primaryKey().notNull(),
     senderSignature: varchar('sender_signature', { length: 255 }).notNull(),
-    bankAccountId: integer('bank_account_id')
+    bankAccountId: integer('bank_account_id'),
+    issuedAt: timestamp('issued_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    paidAt: timestamp('paid_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    voidedAt: timestamp('voided_at', {
+      withTimezone: true,
+      mode: 'string'
+    })
   },
   (table) => [
     foreignKey({
@@ -66,6 +93,10 @@ export const invoicesTable = pgTable(
     check(
       'invoices_status_check',
       sql`(status)::text = ANY ((ARRAY['paid'::character varying, 'pending'::character varying, 'canceled'::character varying])::text[])`
+    ),
+    check(
+      'invoices_lifecycle_status_check',
+      sql`(lifecycle_status)::text = ANY ((ARRAY['draft'::character varying, 'issued'::character varying, 'voided'::character varying])::text[])`
     )
   ]
 );

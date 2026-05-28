@@ -1,0 +1,121 @@
+# InvoiceTrackr Agent Guide
+
+## Product Direction
+
+InvoiceTrackr is a Lithuania-first invoicing app for freelancers, MBs, and small businesses, with English as a polished secondary language. The public free invoice generator should demonstrate the full quality of invoice output, while the paid product should sell saved workflow: invoice history, clients, bank accounts, numbering sequences, email sending, exports, analytics, and billing continuity.
+
+Initial MVP priorities:
+
+1. Lithuania-first VAT/PVM model.
+2. Legally serious Lithuanian invoice PDF output.
+3. Server-side invoice numbering and configurable series.
+4. Invoice lifecycle with drafts, issued immutable snapshots, revisions, paid dates, and recovery/history.
+5. Pajamu zurnalas export.
+6. Free 7-day trial, monthly/yearly Stripe plans, and entitlement checks.
+7. PostHog product analytics, transactional email polish, SEO, and self-hosted operational readiness.
+
+Future work includes qualified e-signatures through a provider such as Dokobit, contracts, and reusable country profiles.
+
+## Repository Overview
+
+This is a `pnpm` monorepo.
+
+- `client`: Next.js app using the App Router, server components, server actions, HeroUI, Tailwind CSS, and `next-intl`.
+- `server`: Fastify API with Drizzle/Postgres, Zod validation, i18n, Stripe, Resend, Cloudinary, and rate limiting.
+- `shared/types`: Shared Zod schemas and inferred TypeScript types.
+- `shared/emails`: React Email templates.
+
+## Working Workflow
+
+- Start by reading existing code and matching local patterns.
+- Keep changes scoped to the issue being worked.
+- Prefer small, buildable changes over broad rewrites.
+- Add or update tests when changing invoice math, schemas, API contracts, auth, billing, or PDF behavior.
+- Do not run linting, typechecking, testing, or build commands before handoff unless explicitly requested.
+- Stop after implementation and report that the code is ready for local user review/testing before committing or opening a PR.
+- Do not make destructive git changes. Preserve unrelated user changes.
+
+## Git, Linear, And PR Workflow
+
+- Use conventional branch prefixes such as `feat/`, `fix/`, and `chore/`.
+- Include the Linear issue ID in branch names, commit messages, PR titles, and PR descriptions.
+- Use PR titles in the format `[REK-48] Add invoice domain foundation`.
+- PR descriptions should start with `### Overview`, followed by a short summary and bullet points of key changes.
+- Reference Linear issues in the PR description, for example `Refs REK-48, REK-61`.
+- Let the user review and test locally before creating commits or pull requests.
+- Linear PR auto-linking requires the Linear GitHub integration. Without it, issue IDs are plain text references.
+
+## Type Safety And Validation
+
+- Server validation uses Zod schemas from `@invoicetrackr/types`.
+- Client code imports inferred types only. Do not import Zod schemas into the client.
+- Shared body schemas usually have optional `id` fields so they can support create and response shapes.
+- Response schemas live in `shared/types/src/response.ts`.
+- Keep schema, database, API, action, and UI types aligned in the same change when contract shape changes.
+
+Example:
+
+```ts
+// Server: schemas and types are allowed.
+import { invoiceBodySchema, InvoiceBody } from '@invoicetrackr/types';
+
+// Client: types only.
+import { InvoiceBody } from '@invoicetrackr/types';
+```
+
+## Next.js Client Guidelines
+
+- Use server components by default.
+- Use client components only for interactivity.
+- Mutations should go through server actions or existing action hooks, not direct component API calls.
+- Follow existing HeroUI and layout conventions.
+- Keep client-side validation minimal; authoritative validation belongs on the server.
+- Locale behavior should respect explicit cookie choice and logged-in user settings. The intended MVP behavior is Lithuanian for Lithuanian visitors and English otherwise.
+
+## Fastify Server Guidelines
+
+New or changed endpoints should follow the existing structure:
+
+1. Controller in `server/src/controllers`.
+2. Schema/type changes in `shared/types/src`.
+3. Route options in `server/src/options`, including response schemas and auth pre-handlers.
+4. Route registration in `server/src/routes`.
+5. App registration in `server/src/app.ts` if adding a new route group.
+
+Use the existing auth middleware, error classes, i18n messages, and response status conventions:
+
+- `200` for GET, PUT, DELETE success.
+- `201` for POST creation success.
+
+## Environment Workflow
+
+- Local development should use a root `.env.local` copied from `.env.example`.
+- Do not edit production secrets to switch local databases.
+- Server runtime and Drizzle commands load env files from the workspace root, even when commands run from `server/`.
+- Outside production, root `.env.local` is loaded before root `.env`; real shell/process env vars still take precedence.
+- Production should use VPS process env vars. Root `.env` is only a compatibility fallback.
+- For local migrations, confirm `.env.local` contains the development `DATABASE_URL`, then run `pnpm run server migrate`.
+
+## Invoice Domain Rules
+
+- Draft invoices may be edited freely.
+- Issued invoices should become immutable snapshots.
+- Fixing an issued invoice should use a revision/correction flow rather than silently overwriting the issued document.
+- Track issue date, due date, paid date, and document state separately.
+- VAT/PVM should support no VAT, 21%, 0%, and custom per-line rates for MVP.
+- Prefer VAT-exclusive line input for logged-in Lithuanian workflows, with calculated subtotal, VAT total, and grand total.
+- Invoice numbering should be generated server-side by user and series, with uniqueness and concurrency safety.
+- Multiple series per user should be supported.
+- Qualified e-signature integration should come after immutable document snapshots exist.
+
+## Billing And Growth Rules
+
+- Trial length: 7 days.
+- Preferred MVP trial: no-card trial unless product strategy changes.
+- Plans: monthly and cheaper annual plan.
+- Logged-in MVP should be EUR-first. USD can remain for free/demo or future international workflows if it does not complicate core Lithuanian invoicing.
+- Analytics direction: PostHog for product funnels, consent-aware tracking, and key server-side events.
+
+## Linear
+
+Current Linear workspace is `rekodev`, project is `InvoiceTrackr`, and the existing team key is `REK`. Issue identifiers come from the Linear team key, not the project name. If project-specific issue IDs are desired, rename the team key in Linear settings or create/use an `InvoiceTrackr` team with key `INV`.

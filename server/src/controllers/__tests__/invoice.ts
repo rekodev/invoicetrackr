@@ -298,8 +298,8 @@ describe('Invoice Controller', () => {
   describe('GET /api/:userId/invoices/total-amount', () => {
     it('should return total amount and client data', async () => {
       const mockInvoiceTotals = [
-        { status: 1, totalAmount: 1000 },
-        { status: 2, totalAmount: 2000 }
+        { status: 1, subtotalAmount: 1000, vatAmount: 0, totalAmount: 1000 },
+        { status: 2, subtotalAmount: 2000, vatAmount: 0, totalAmount: 2000 }
       ];
       const mockClient = clientFactory.build();
 

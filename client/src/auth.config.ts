@@ -36,8 +36,8 @@ export const authConfig = {
 
       const isOnboarded = !!auth?.user?.isOnboarded;
       const isSubscriptionActive =
-        auth?.user.subscriptionStatus === 'active' ||
-        auth?.user.subscriptionStatus === 'trialing';
+        auth?.user?.subscriptionStatus === 'active' ||
+        auth?.user?.subscriptionStatus === 'trialing';
       const isOnboardingPage = path.startsWith(ONBOARDING_PAGE);
       const isRenewPage = path.startsWith(RENEW_SUBSCRIPTION_PAGE);
 

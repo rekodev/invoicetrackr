@@ -63,6 +63,31 @@ invoicetrackr/
 
 ## 🔧 Architecture Highlights
 
+## Environment Variables
+
+Local development should use a root `.env.local` file. Start from the
+committed template:
+
+```sh
+cp .env.example .env.local
+```
+
+Server and Drizzle commands load environment variables from the workspace root,
+so they behave the same whether they are run from the repo root or `server/`.
+Outside production, `.env.local` is loaded before `.env`; existing shell
+environment variables still take precedence.
+
+Production should provide secrets through the VPS process environment. The root
+`.env` file is still loaded as a compatibility fallback, but local development
+should not edit production values to switch databases.
+
+For local migrations, set the development `DATABASE_URL` in `.env.local`, then
+run:
+
+```sh
+pnpm run server migrate
+```
+
 ### Type Safety
 - Zod schemas defined in `shared/types/` are the single source of truth
 - Server uses Zod for runtime validation

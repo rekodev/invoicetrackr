@@ -6,6 +6,13 @@ export const invoiceStatusSchema = z.enum(['paid', 'pending', 'canceled'], {
   message: 'validation.invoice.status'
 });
 
+export const invoiceLifecycleStatusSchema = z.enum(
+  ['draft', 'issued', 'voided'],
+  {
+    message: 'validation.invoice.lifecycleStatus'
+  }
+);
+
 export const invoicePartyBusinessTypeSchema = z.enum(
   ['business', 'individual'],
   {
@@ -31,7 +38,8 @@ export const invoiceServiceBodySchema = z.object({
   amount: z.coerce
     .number('validation.invoice.services.amount.number')
     .min(0.01, 'validation.invoice.services.amount.min')
-    .max(10000000, 'validation.invoice.services.amount.max')
+    .max(10000000, 'validation.invoice.services.amount.max'),
+  vatRate: z.coerce.number().min(0).max(100).optional()
 });
 
 export const invoiceSenderBodySchema = z.object(
@@ -86,8 +94,14 @@ export const invoiceBodySchema = z
     sender: invoiceSenderBodySchema,
     senderSignature: z.any().optional(),
     receiver: invoiceReceiverBodySchema,
+    subtotalAmount: z.string().optional(),
+    vatAmount: z.string().optional(),
     totalAmount: z.string({ message: 'validation.invoice.totalAmount' }),
     status: invoiceStatusSchema,
+    lifecycleStatus: invoiceLifecycleStatusSchema.optional(),
+    issuedAt: z.string().nullish(),
+    paidAt: z.string().nullish(),
+    voidedAt: z.string().nullish(),
     services: z
       .array(invoiceServiceBodySchema)
       .min(1, 'validation.invoice.services.required')
@@ -104,6 +118,9 @@ export const invoiceBodySchema = z
 
 // Types
 export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
+export type InvoiceLifecycleStatus = z.infer<
+  typeof invoiceLifecycleStatusSchema
+>;
 export type InvoicePartyBusinessType = z.infer<
   typeof invoicePartyBusinessTypeSchema
 >;
