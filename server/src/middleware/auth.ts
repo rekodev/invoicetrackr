@@ -1,8 +1,8 @@
 import { FastifyRequest } from 'fastify';
 import { decode } from 'next-auth/jwt';
 
-import { loadEnv } from '../config/env';
 import { UnauthorizedError } from '../utils/error';
+import { loadEnv } from '../config/env';
 
 loadEnv();
 
