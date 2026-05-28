@@ -1,6 +1,23 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 
+import { dirname, join } from 'path';
+import { existsSync } from 'fs';
+import { fileURLToPath } from 'url';
+
 const withNextIntl = createNextIntlPlugin();
+const rootDirectory = dirname(dirname(fileURLToPath(import.meta.url)));
+
+if (process.env.NODE_ENV === 'production') {
+  const envPath = join(rootDirectory, '.env');
+
+  if (existsSync(envPath)) process.loadEnvFile(envPath);
+} else {
+  const localEnvPath = join(rootDirectory, '.env.local');
+  const envPath = join(rootDirectory, '.env');
+
+  if (existsSync(localEnvPath)) process.loadEnvFile(localEnvPath);
+  if (existsSync(envPath)) process.loadEnvFile(envPath);
+}
 
 const nextConfig = {
   experimental: {

@@ -6,7 +6,6 @@ import ajvErrors from 'ajv-errors';
 import { v2 as cloudinary } from 'cloudinary';
 import cors from '@fastify/cors';
 import { defineI18n } from 'fastify-i18n';
-import dotenv from 'dotenv';
 import fastify from 'fastify';
 import fastifyCookie from '@fastify/cookie';
 import fastifyMultipart from '@fastify/multipart';
@@ -22,12 +21,13 @@ import { getPgVersion } from './database/db';
 import i18n from './plugins/i18n';
 import invoiceRoutes from './routes/invoice';
 import { languageMiddleware } from './middleware/language';
+import { loadEnv } from './config/env';
 import paymentRoutes from './routes/payment';
 import { rateLimitPluginOptions } from './utils/rate-limit';
 import userRoutes from './routes/user';
 import webhookRoutes from './routes/webhook';
 
-dotenv.config();
+loadEnv();
 cloudinary.config(cloudinaryConfig);
 
 const port = parseInt(process.env.SERVER_PORT!);

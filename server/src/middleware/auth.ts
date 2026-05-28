@@ -1,8 +1,10 @@
-import 'dotenv/config';
 import { FastifyRequest } from 'fastify';
 import { decode } from 'next-auth/jwt';
 
+import { loadEnv } from '../config/env';
 import { UnauthorizedError } from '../utils/error';
+
+loadEnv();
 
 const AUTH_COOKIE = 'authjs.session-token';
 const SECURE_AUTH_COOKIE = `__Secure-${AUTH_COOKIE}`;

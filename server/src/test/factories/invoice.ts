@@ -14,13 +14,19 @@ export const invoiceFactory = Factory.define<InvoiceBody>(({ sequence }) => ({
   userId: 1,
   senderId: 1,
   receiverId: 1,
+  subtotalAmount: '1000.00',
+  vatAmount: '0.00',
   totalAmount: '1000.00',
   status: 'pending',
+  lifecycleStatus: 'draft',
   dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     .toISOString()
     .split('T')[0],
   invoiceId: `INV-${sequence}`,
   senderSignature: `signature${sequence}.png`,
+  issuedAt: null,
+  paidAt: null,
+  voidedAt: null,
   bankAccountId: 1,
   bankingInformation: bankingInformationFactory.build(),
   receiver: invoiceReceiverFactory.build(),
@@ -33,12 +39,18 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
     id: sequence,
     date: new Date().toISOString().split('T')[0],
     totalAmount: '1000.00',
+    subtotalAmount: '1000.00',
+    vatAmount: '0.00',
     status: 'pending',
+    lifecycleStatus: 'draft',
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       .toISOString()
       .split('T')[0],
     invoiceId: `INV-${sequence}`,
     senderSignature: `signature${sequence}.png`,
+    issuedAt: null,
+    paidAt: null,
+    voidedAt: null,
     bankingInformation: {
       id: sequence,
       code: `CODE${sequence}`,
@@ -71,7 +83,8 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
         description: `Service ${sequence}`,
         unit: 'hour',
         quantity: 10,
-        amount: '100.00'
+        amount: '100.00',
+        vatRate: '0.00'
       }
     ]
   })
@@ -109,6 +122,7 @@ export const invoiceServiceFactory = Factory.define<InvoiceServiceBody>(
     description: `Service ${sequence}`,
     unit: 'hour',
     quantity: 10,
-    amount: 100
+    amount: 100,
+    vatRate: 0
   })
 );

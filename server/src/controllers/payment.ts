@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
