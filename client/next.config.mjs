@@ -20,6 +20,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const nextConfig = {
+  transpilePackages: ['@invoicetrackr/types'],
   experimental: {
     authInterrupts: true
   },
