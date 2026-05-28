@@ -93,6 +93,10 @@ pnpm run server migrate
 - Server uses Zod for runtime validation
 - Client imports inferred TypeScript types (no runtime validation)
 - Automatic type safety across the entire stack
+- `pnpm dev` builds `@invoicetrackr/types` once before starting dev servers.
+  The shared types package then runs in watch mode, and client/server dev
+  servers are configured to pick up rebuilt package output from
+  `shared/types/dist`.
 
 ### API Structure
 - Controllers handle business logic (`server/src/controllers/`)
