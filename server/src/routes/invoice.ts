@@ -12,8 +12,10 @@ import {
   getInvoicesTotalAmountOptions,
   getLatestInvoicesOptions,
   getNextInvoiceNumberOptions,
+  getPublicInvoiceSigningOptions,
   postInvoiceOptions,
   sendInvoiceEmailOptions,
+  signPublicInvoiceOptions,
   updateInvoiceOptions,
   updateInvoiceStatusOptions
 } from '../options/invoice';
@@ -47,6 +49,10 @@ const invoiceRoutes = (
   fastify.get('/api/:userId/invoices/latest', getLatestInvoicesOptions);
 
   fastify.post('/api/:userId/invoices/:id/send-email', sendInvoiceEmailOptions);
+
+  fastify.get('/api/invoices/sign/:token', getPublicInvoiceSigningOptions);
+
+  fastify.post('/api/invoices/sign/:token', signPublicInvoiceOptions);
 
   done();
 };

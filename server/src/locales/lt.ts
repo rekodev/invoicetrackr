@@ -20,6 +20,8 @@ export default {
       subtitle: 'Profesionalus sąskaitų faktūrų valdymas',
       defaultMessage: 'Prašome rasti prisegtos sąskaitos faktūrą.',
       detailsTitle: 'Sąskaitos faktūros informacija',
+      sentBy:
+        'Šią sąskaitą faktūrą per InvoiceTrackr išsiuntė {senderName}.',
       invoiceNumber: 'Sąskaitos numeris:',
       amount: 'Suma:',
       dueDate: 'Terminas:',
@@ -27,6 +29,12 @@ export default {
       attachmentTitle: 'Sąskaita prisegta',
       attachmentMessage:
         'Pilnas sąskaitos faktūros dokumentas pridėtas prie šio el. laiško kaip PDF failas.',
+      signingTitle: 'Peržiūrėkite ir pasirašykite sąskaitą',
+      signingMessage:
+        'Atidarykite saugią sąskaitos nuorodą, peržiūrėkite dokumentą, pridėkite parašą ir atsisiųskite pasirašytą PDF.',
+      signingButton: 'Peržiūrėti ir pasirašyti',
+      signingFallback:
+        'Jei mygtukas neveikia, nukopijuokite ir įklijuokite šią saugią nuorodą į naršyklę:',
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
       copyright: 'InvoiceTrackr. Visos teisės saugomos.'
     }
@@ -142,7 +150,8 @@ export default {
       updated: 'Sąskaita faktūra atnaujinta sėkmingai',
       deleted: 'Sąskaita faktūra ištrinta sėkmingai',
       statusUpdated: 'Sąskaitos faktūros būsena atnaujinta sėkmingai',
-      emailSent: 'El. laiškas išsiųstas sėkmingai'
+      emailSent: 'El. laiškas išsiųstas sėkmingai',
+      signed: 'Sąskaita faktūra pasirašyta sėkmingai'
     },
     client: {
       created: 'Klientas pridėtas sėkmingai',
@@ -192,7 +201,12 @@ export default {
       unableToDelete: 'Nepavyko ištrinti sąskaitos faktūros',
       unableToUpdateStatus: 'Nepavyko atnaujinti sąskaitos faktūros būsenos',
       unableToRetrieveData: 'Nepavyko gauti sąskaitos faktūros duomenų',
-      unableToSendEmail: 'Nepavyko išsiųsti el. laiško'
+      unableToSendEmail: 'Nepavyko išsiųsti el. laiško',
+      unableToCreateSigningLink:
+        'Nepavyko sukurti sąskaitos pasirašymo nuorodos',
+      alreadySigned: 'Sąskaita faktūra jau pasirašyta',
+      issuedImmutable:
+        'Išrašytų sąskaitų negalima redaguoti ar ištrinti šiame sraute'
     },
     client: {
       notFound: 'Klientas nerastas',

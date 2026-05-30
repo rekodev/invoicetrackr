@@ -1,8 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { InvoiceEmail } from '@invoicetrackr/emails';
 import { MultipartFile } from '@fastify/multipart';
+import { v2 as cloudinary } from 'cloudinary';
+import { randomBytes } from 'crypto';
 import { useI18n } from 'fastify-i18n';
 
 import {
@@ -20,13 +21,40 @@ import {
   getInvoicesTotalAmountFromDb,
   getLatestInvoicesFromDb,
   getNextInvoiceNumberFromDb,
+  getPublicInvoiceSigningFromDb,
   insertInvoiceInDb,
+  markInvoiceSigningSentInDb,
+  prepareInvoiceSigningFromDb,
+  signInvoiceByRecipientTokenInDb,
   updateInvoiceInDb,
   updateInvoiceStatusInDb
 } from '../database/invoice';
 import { getClientsFromDb } from '../database/client';
 import { getUserFromDb } from '../database/user';
 import { resend } from '../config/resend';
+
+const uploadSignatureFile = async (
+  signatureFile: MultipartFile,
+  unableToUploadMessage: string
+) => {
+  const fileBuffer = await signatureFile.toBuffer();
+
+  const uploadedSignature = await cloudinary.uploader.upload(
+    `data:${signatureFile.mimetype};base64,${fileBuffer.toString('base64')}`
+  );
+
+  if (!uploadedSignature) throw new BadRequestError(unableToUploadMessage);
+
+  return uploadedSignature.url.replace('http://', 'https://');
+};
+
+const escapeEmailHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
 export const getInvoices = async (
   req: FastifyRequest<{ Params: { userId: string } }>,
@@ -77,20 +105,16 @@ export const postInvoice = async (
 ) => {
   const userId = Number(req.params.userId);
   const invoiceData = req.body;
-  const signatureFile = req.body.file;
+  const signatureFile = req.body?.file;
   const i18n = await useI18n(req);
 
-  let uploadedSignature: UploadApiResponse | undefined;
+  let uploadedSignatureUrl: string | undefined;
 
   if (signatureFile) {
-    const fileBuffer = await signatureFile.toBuffer();
-
-    uploadedSignature = await cloudinary.uploader.upload(
-      `data:${signatureFile.mimetype};base64,${fileBuffer.toString('base64')}`
+    uploadedSignatureUrl = await uploadSignatureFile(
+      signatureFile,
+      i18n.t('error.user.unableToUploadSignature')
     );
-
-    if (!uploadedSignature)
-      throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
   }
 
   const foundInvoice =
@@ -101,9 +125,7 @@ export const postInvoice = async (
   if (foundInvoice)
     throw new AlreadyExistsError(i18n.t('error.invoice.alreadyExists'));
 
-  const signatureUrl = uploadedSignature?.url
-    ? uploadedSignature.url.replace('http://', 'https://')
-    : invoiceData.senderSignature;
+  const signatureUrl = uploadedSignatureUrl || invoiceData.senderSignature;
 
   const insertedInvoice = await insertInvoiceInDb(
     invoiceData,
@@ -130,12 +152,14 @@ export const updateInvoice = async (
   const id = Number(req.params.id);
   const userId = Number(req.params.userId);
   const invoiceData = req.body;
-  const signatureFile = req.body.file;
+  const signatureFile = req.body?.file;
   const i18n = await useI18n(req);
 
-  const foundInvoice = await findInvoiceById(userId, Number(invoiceData.id));
+  const foundInvoice = await getInvoiceFromDb(userId, Number(invoiceData.id));
 
   if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if ((foundInvoice.lifecycleStatus || 'draft') !== 'draft')
+    throw new BadRequestError(i18n.t('error.invoice.issuedImmutable'));
 
   if (invoiceData.invoiceId) {
     const existingInvoiceWithNumber = await findInvoiceByInvoiceId(
@@ -150,22 +174,16 @@ export const updateInvoice = async (
       throw new AlreadyExistsError(i18n.t('error.invoice.alreadyExists'));
   }
 
-  let uploadedSignature: UploadApiResponse | undefined;
+  let uploadedSignatureUrl: string | undefined;
 
   if (signatureFile) {
-    const fileBuffer = await signatureFile.toBuffer();
-
-    uploadedSignature = await cloudinary.uploader.upload(
-      `data:${signatureFile.mimetype};base64,${fileBuffer.toString('base64')}`
+    uploadedSignatureUrl = await uploadSignatureFile(
+      signatureFile,
+      i18n.t('error.user.unableToUploadSignature')
     );
-
-    if (!uploadedSignature)
-      throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
   }
 
-  const signatureUrl = uploadedSignature?.url
-    ? uploadedSignature.url.replace('http://', 'https://')
-    : invoiceData.senderSignature;
+  const signatureUrl = uploadedSignatureUrl || invoiceData.senderSignature;
 
   const updatedInvoice = await updateInvoiceInDb(
     userId,
@@ -214,6 +232,12 @@ export const deleteInvoice = async (
   const id = Number(req.params.id);
   const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
+  const invoice = await getInvoiceFromDb(userId, id);
+
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if ((invoice.lifecycleStatus || 'draft') !== 'draft')
+    throw new BadRequestError(i18n.t('error.invoice.issuedImmutable'));
+
   const deletedInvoice = await deleteInvoiceFromDb(userId, id);
 
   if (!deletedInvoice)
@@ -310,6 +334,23 @@ export const sendInvoiceEmail = async (
   if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
   if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
+  const signingToken =
+    invoice.recipientSigningToken || randomBytes(32).toString('hex');
+  const preparedInvoice = await prepareInvoiceSigningFromDb({
+    userId,
+    id,
+    token: signingToken
+  });
+
+  if (!preparedInvoice?.recipientSigningToken)
+    throw new BadRequestError(
+      i18n.t('error.invoice.unableToCreateSigningLink')
+    );
+
+  const publicBaseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const signingLink = `${publicBaseUrl}/invoices/sign/${preparedInvoice.recipientSigningToken}`;
+
   const attachment = file
     ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
     : undefined;
@@ -324,35 +365,132 @@ export const sendInvoiceEmail = async (
       title: i18n.t('emails.invoice.title'),
       subtitle: i18n.t('emails.invoice.subtitle'),
       detailsTitle: i18n.t('emails.invoice.detailsTitle'),
+      sentBy: i18n.t('emails.invoice.sentBy'),
       invoiceNumber: i18n.t('emails.invoice.invoiceNumber'),
       amount: i18n.t('emails.invoice.amount'),
       dueDate: i18n.t('emails.invoice.dueDate'),
       from: i18n.t('emails.invoice.from'),
       attachmentTitle: i18n.t('emails.invoice.attachmentTitle'),
       attachmentMessage: i18n.t('emails.invoice.attachmentMessage'),
+      signingTitle: i18n.t('emails.invoice.signingTitle'),
+      signingMessage: i18n.t('emails.invoice.signingMessage'),
+      signingButton: i18n.t('emails.invoice.signingButton'),
+      signingFallback: i18n.t('emails.invoice.signingFallback'),
       footer: i18n.t('emails.invoice.footer'),
       copyright: i18n.t('emails.invoice.copyright', {
         year: new Date().getFullYear()
       })
-    }
+    },
+    signingLink
   });
 
   const { error } = await resend.emails.send({
     to: recipientEmail,
     from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
     replyTo: user.email,
-    subject: subject,
+    subject,
     react: htmlContent,
-    attachments: [
-      {
-        content: attachment,
-        filename: file?.filename
-      }
-    ]
+    attachments:
+      attachment && file?.filename
+        ? [
+            {
+              content: attachment,
+              filename: file.filename
+            }
+          ]
+        : undefined
   });
 
   if (error)
     throw new BadRequestError(i18n.t('error.invoice.unableToSendEmail'));
 
+  await markInvoiceSigningSentInDb({ userId, id });
+
   reply.status(200).send({ message: i18n.t('success.invoice.emailSent') });
+};
+
+export const getPublicInvoiceSigning = async (
+  req: FastifyRequest<{ Params: { token: string } }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const signing = await getPublicInvoiceSigningFromDb(req.params.token);
+
+  if (!signing) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+
+  reply.status(200).send({
+    signing: {
+      token: req.params.token,
+      invoice: signing.invoice,
+      currency: signing.currency,
+      language: signing.language,
+      preferredInvoiceLanguage: signing.preferredInvoiceLanguage
+    }
+  });
+};
+
+export const signPublicInvoice = async (
+  req: FastifyRequest<{
+    Params: { token: string };
+    Body: { file: MultipartFile };
+  }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const signatureFile = req.body?.file;
+
+  if (!signatureFile)
+    throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
+
+  const signing = await getPublicInvoiceSigningFromDb(req.params.token);
+
+  if (!signing) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (signing.invoice.recipientSignedAt)
+    throw new BadRequestError(i18n.t('error.invoice.alreadySigned'));
+
+  const signatureUrl = await uploadSignatureFile(
+    signatureFile,
+    i18n.t('error.user.unableToUploadSignature')
+  );
+  const invoice = await signInvoiceByRecipientTokenInDb({
+    token: req.params.token,
+    receiverSignature: signatureUrl
+  });
+
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+
+  if (invoice?.sender?.email) {
+    const invoiceId = invoice.invoiceId || String(invoice.id);
+    const receiverName = invoice?.receiver?.name || 'The recipient';
+    const downloadLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/invoices/sign/${req.params.token}`;
+
+    await resend.emails
+      .send({
+        to: invoice.sender.email,
+        from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
+        subject: `Invoice ${invoiceId} was signed`,
+        html: `
+          <p>${escapeEmailHtml(receiverName)} signed invoice ${escapeEmailHtml(invoiceId)}.</p>
+          <p>You can review the signed invoice here:</p>
+          <p><a href="${escapeEmailHtml(downloadLink)}">${escapeEmailHtml(downloadLink)}</a></p>
+        `,
+        text: [
+          `${receiverName} signed invoice ${invoiceId}.`,
+          '',
+          'You can review the signed invoice here:',
+          downloadLink
+        ].join('\n')
+      })
+      .catch((error) => {
+        req.log.error(
+          { error, invoiceId: invoice.id },
+          'Unable to send invoice signed notification'
+        );
+      });
+  }
+
+  reply.status(200).send({
+    invoice,
+    message: i18n.t('success.invoice.signed')
+  });
 };

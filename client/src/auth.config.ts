@@ -31,8 +31,11 @@ export const authConfig = {
         TERMS_OF_SERVICE_PAGE
       ];
       const path = nextUrl.pathname;
+      const isPublicInvoiceSigningPage = path.startsWith('/invoices/sign/');
       const pathIsPublic =
-        publicPaths.includes(path) || path.startsWith('/create-new-password');
+        publicPaths.includes(path) ||
+        path.startsWith('/create-new-password') ||
+        isPublicInvoiceSigningPage;
 
       const isOnboarded = !!auth?.user?.isOnboarded;
       const isSubscriptionActive =
@@ -67,7 +70,11 @@ export const authConfig = {
       }
 
       // Logged in but accessing public path → send to dashboard (except shared paths)
-      if (isLoggedIn && !sharedPaths.includes(path)) {
+      if (
+        isLoggedIn &&
+        !sharedPaths.includes(path) &&
+        !isPublicInvoiceSigningPage
+      ) {
         return Response.redirect(new URL(DASHBOARD_PAGE, nextUrl));
       }
 
