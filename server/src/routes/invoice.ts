@@ -11,6 +11,7 @@ import {
   getInvoicesRevenueOptions,
   getInvoicesTotalAmountOptions,
   getLatestInvoicesOptions,
+  getNextInvoiceNumberOptions,
   postInvoiceOptions,
   sendInvoiceEmailOptions,
   updateInvoiceOptions,
@@ -23,6 +24,8 @@ const invoiceRoutes = (
   done: DoneFuncWithErrOrRes
 ) => {
   fastify.get('/api/:userId/invoices', getInvoicesOptions);
+
+  fastify.get('/api/:userId/invoices/next-number', getNextInvoiceNumberOptions);
 
   fastify.get('/api/:userId/invoices/:id', getInvoiceOptions);
 

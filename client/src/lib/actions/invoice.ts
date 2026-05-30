@@ -3,16 +3,41 @@
 import {
   addInvoice,
   deleteInvoice,
+  getNextInvoiceNumber,
   updateInvoice,
   updateInvoiceStatus
 } from '@/api/invoice';
-import { InvoiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody } from '@invoicetrackr/types';
 import { revalidatePath } from 'next/cache';
 
 import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '../constants/pages';
-import { ActionResponseModel } from '../types/action';
+import type { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
+
+export const getNextInvoiceNumberAction = async ({
+  userId,
+  series
+}: {
+  userId: number;
+  series?: string;
+}) => {
+  const response = await getNextInvoiceNumber(userId, series);
+
+  if (isResponseError(response)) {
+    return {
+      ok: false,
+      message: response.data.message
+    };
+  }
+
+  return {
+    ok: true,
+    invoiceId: response.data.invoiceId,
+    series: response.data.series,
+    nextNumber: response.data.nextNumber
+  };
+};
 
 export const addInvoiceAction = async ({
   userId,

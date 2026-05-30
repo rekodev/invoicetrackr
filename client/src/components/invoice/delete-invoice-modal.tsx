@@ -66,7 +66,7 @@ const DeleteInvoiceModal = ({
       <ModalContent>
         <ModalHeader>{t('title')}</ModalHeader>
         <ModalBody>
-          {t('description', { invoiceId: invoiceData.invoiceId })}
+          {t('description', { invoiceId: invoiceData.invoiceId || '' })}
         </ModalBody>
         {renderModalFooter()}
       </ModalContent>

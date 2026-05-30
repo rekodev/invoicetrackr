@@ -97,6 +97,36 @@ export const invoicesTable = pgTable(
     check(
       'invoices_lifecycle_status_check',
       sql`(lifecycle_status)::text = ANY ((ARRAY['draft'::character varying, 'issued'::character varying, 'voided'::character varying])::text[])`
+    ),
+    unique('invoices_user_invoice_id_key').on(table.userId, table.invoiceId)
+  ]
+);
+
+export const invoiceNumberSequencesTable = pgTable(
+  'invoice_number_sequences',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id').notNull(),
+    series: varchar({ length: 8 }).notNull(),
+    nextNumber: integer('next_number').default(1).notNull(),
+    createdAt: timestamp('created_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp('updated_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).default(sql`CURRENT_TIMESTAMP`)
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [usersTable.id],
+      name: 'fk_invoice_number_sequences_user_id'
+    }).onDelete('cascade'),
+    unique('invoice_number_sequences_user_series_key').on(
+      table.userId,
+      table.series
     )
   ]
 );
@@ -280,6 +310,11 @@ export const stripeAccountsTable = pgTable('stripe_accounts', {
 
 export type InsertInvoice = typeof invoicesTable.$inferInsert;
 export type SelectInvoice = typeof invoicesTable.$inferSelect;
+
+export type InsertInvoiceNumberSequence =
+  typeof invoiceNumberSequencesTable.$inferInsert;
+export type SelectInvoiceNumberSequence =
+  typeof invoiceNumberSequencesTable.$inferSelect;
 
 export type InsertBankingInformation =
   typeof bankingInformationTable.$inferInsert;

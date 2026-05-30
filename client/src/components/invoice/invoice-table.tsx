@@ -136,7 +136,7 @@ const InvoiceTable = ({
 
     if (hasSearchFilter) {
       filteredInvoices = filteredInvoices.filter((invoice) =>
-        invoice.invoiceId
+        (invoice.invoiceId || '')
           .toString()
           .toLowerCase()
           .includes(filterValue.toLowerCase())

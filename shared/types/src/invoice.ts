@@ -24,6 +24,18 @@ export const invoicePartyTypeSchema = z.enum(['sender', 'receiver'], {
   message: 'validation.invoice.partyType'
 });
 
+export const invoiceNumberSeriesSchema = z
+  .string()
+  .trim()
+  .toUpperCase()
+  .regex(/^[A-Z]{2,8}$/, 'validation.invoice.invoiceSeries');
+
+export const invoiceNumberSchema = z
+  .string()
+  .trim()
+  .toUpperCase()
+  .regex(/^[A-Z]{2,8}[0-9]{1,9}$/, 'validation.invoice.invoiceId');
+
 export const invoiceServiceBodySchema = z.object({
   id: z.coerce.number().optional(),
   description: z
@@ -83,12 +95,8 @@ export const invoiceReceiverBodySchema = z.object(
 export const invoiceBodySchema = z
   .object({
     id: z.coerce.number().optional(),
-    invoiceId: z
-      .string()
-      .regex(
-        /^[A-Za-z]{3}(0[0-9]{2}|[1-9][0-9]{2}|[1-9]0{2})$/,
-        'validation.invoice.invoiceId'
-      ),
+    invoiceId: invoiceNumberSchema.optional().or(z.literal('')),
+    invoiceSeries: invoiceNumberSeriesSchema.optional(),
     date: z.iso.date('validation.invoice.date'),
     dueDate: z.iso.date('validation.invoice.dueDate'),
     sender: invoiceSenderBodySchema,
@@ -118,6 +126,7 @@ export const invoiceBodySchema = z
 
 // Types
 export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
+export type InvoiceNumberSeries = z.infer<typeof invoiceNumberSeriesSchema>;
 export type InvoiceLifecycleStatus = z.infer<
   typeof invoiceLifecycleStatusSchema
 >;

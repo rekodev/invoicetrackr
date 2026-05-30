@@ -137,7 +137,7 @@ describe('Invoice Controller', () => {
         method: 'POST',
         url: `/api/${testUserId}/invoices`,
         payload: {
-          invoiceId: 'INV-003',
+          invoiceId: 'INV003',
           clientId: 1,
           invoiceDate: '2024-01-01',
           dueDate: '2024-02-01',
@@ -180,7 +180,7 @@ describe('Invoice Controller', () => {
         method: 'POST',
         url: `/api/${testUserId}/invoices`,
         payload: {
-          invoiceId: 'INV-001',
+          invoiceId: 'INV001',
           clientId: 1,
           invoiceDate: '2024-01-01',
           dueDate: '2024-02-01',
@@ -217,7 +217,7 @@ describe('Invoice Controller', () => {
         url: `/api/${testUserId}/invoices/${mockInvoice.id}`,
         payload: {
           id: mockInvoice.id,
-          invoiceId: 'INV-001',
+          invoiceId: 'INV001',
           totalAmount: 1500
         }
       });

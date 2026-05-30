@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
-import { InvoiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody } from '@invoicetrackr/types';
 import { InvoiceEmail } from '@invoicetrackr/emails';
 import { MultipartFile } from '@fastify/multipart';
 import { useI18n } from 'fastify-i18n';
@@ -19,6 +19,7 @@ import {
   getInvoicesRevenueFromDb,
   getInvoicesTotalAmountFromDb,
   getLatestInvoicesFromDb,
+  getNextInvoiceNumberFromDb,
   insertInvoiceInDb,
   updateInvoiceInDb,
   updateInvoiceStatusInDb
@@ -51,6 +52,22 @@ export const getInvoice = async (
   reply.status(200).send({ invoice });
 };
 
+export const getNextInvoiceNumber = async (
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Querystring: { series?: string };
+  }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const nextInvoiceNumber = await getNextInvoiceNumberFromDb(
+    userId,
+    req.query.series
+  );
+
+  reply.status(200).send(nextInvoiceNumber);
+};
+
 export const postInvoice = async (
   req: FastifyRequest<{
     Params: { userId: string };
@@ -76,10 +93,10 @@ export const postInvoice = async (
       throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
   }
 
-  const foundInvoice = await findInvoiceByInvoiceId(
-    userId,
-    invoiceData.invoiceId
-  );
+  const foundInvoice =
+    invoiceData.invoiceId && !invoiceData.invoiceSeries
+      ? await findInvoiceByInvoiceId(userId, invoiceData.invoiceId)
+      : null;
 
   if (foundInvoice)
     throw new AlreadyExistsError(i18n.t('error.invoice.alreadyExists'));
@@ -119,6 +136,19 @@ export const updateInvoice = async (
   const foundInvoice = await findInvoiceById(userId, Number(invoiceData.id));
 
   if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+
+  if (invoiceData.invoiceId) {
+    const existingInvoiceWithNumber = await findInvoiceByInvoiceId(
+      userId,
+      invoiceData.invoiceId
+    );
+
+    if (
+      existingInvoiceWithNumber &&
+      existingInvoiceWithNumber.id !== Number(invoiceData.id)
+    )
+      throw new AlreadyExistsError(i18n.t('error.invoice.alreadyExists'));
+  }
 
   let uploadedSignature: UploadApiResponse | undefined;
 
@@ -285,7 +315,7 @@ export const sendInvoiceEmail = async (
     : undefined;
 
   const htmlContent = InvoiceEmail({
-    invoiceNumber: invoice.invoiceId,
+    invoiceNumber: invoice.invoiceId || '',
     amount: `${invoice.totalAmount} ${user.currency}`,
     dueDate: invoice.dueDate,
     senderName: user.name || user.email,

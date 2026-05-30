@@ -84,6 +84,12 @@ export const updateInvoiceResponseSchema = z.object({
   message: z.string()
 });
 
+export const getNextInvoiceNumberResponseSchema = z.object({
+  invoiceId: z.string(),
+  series: z.string(),
+  nextNumber: z.number()
+});
+
 export const getInvoicesTotalAmountResponseSchema = z.object({
   invoices: z.array(
     z.object({
@@ -179,6 +185,9 @@ export type GetInvoicesResponse = z.infer<typeof getInvoicesResponseSchema>;
 export type GetInvoiceResponse = z.infer<typeof getInvoiceResponseSchema>;
 export type PostInvoiceResponse = z.infer<typeof postInvoiceResponseSchema>;
 export type UpdateInvoiceResponse = z.infer<typeof updateInvoiceResponseSchema>;
+export type GetNextInvoiceNumberResponse = z.infer<
+  typeof getNextInvoiceNumberResponseSchema
+>;
 export type GetInvoicesTotalAmountResponse = z.infer<
   typeof getInvoicesTotalAmountResponseSchema
 >;
