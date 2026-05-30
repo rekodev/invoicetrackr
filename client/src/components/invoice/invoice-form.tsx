@@ -21,10 +21,10 @@ import {
   useForm
 } from 'react-hook-form';
 import { useRef, useState } from 'react';
-import { Client } from '@invoicetrackr/types';
+import type { Client } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 
-import {
+import type {
   BankAccountBody,
   ClientBody,
   InvoiceBody,
@@ -75,7 +75,9 @@ const InvoiceForm = ({
     defaultValues: invoiceData || {
       sender: user,
       receiver: INITIAL_RECEIVER_DATA,
-      services: [{ amount: 0, quantity: 0, description: '', unit: '' }],
+      services: [
+        { amount: 0, quantity: 0, description: '', unit: '', vatRate: 0 }
+      ],
       bankingInformation: { name: '', code: '', accountNumber: '' },
       status: 'pending'
     }

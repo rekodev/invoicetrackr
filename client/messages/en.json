@@ -264,8 +264,14 @@
         "receiver": "RECEIVER",
         "amount": "AMOUNT",
         "date": "DATE",
+        "lifecycle_status": "LIFECYCLE",
         "status": "STATUS",
         "actions": "ACTIONS"
+      },
+      "lifecycle_status": {
+        "draft": "Draft",
+        "issued": "Issued",
+        "voided": "Voided"
       },
       "status": {
         "paid": "Paid",
@@ -338,6 +344,10 @@
       "unit_label": "Unit",
       "quantity_label": "Qty",
       "amount_label": "Amount",
+      "vat_rate_label": "VAT",
+      "line_total_label": "Line total",
+      "subtotal_amount": "Subtotal",
+      "vat_amount": "VAT total",
       "total_amount": "Total",
       "cents": "{cents} c",
       "invoice_issued_by_label": "Issued by:",
@@ -650,8 +660,12 @@
       "column_unit": "UNIT",
       "column_quantity": "QUANTITY",
       "column_amount": "AMOUNT",
+      "column_vat_rate": "VAT",
+      "column_line_total": "TOTAL",
       "column_actions": "ACTION",
       "add_service": "Add Service",
+      "subtotal": "Subtotal",
+      "vat_total": "VAT Total",
       "grand_total": "Grand Total",
       "delete_service": "Delete service",
       "a11y": {
@@ -661,6 +675,7 @@
         "unit_label": "Unit",
         "quantity_label": "Quantity",
         "amount_label": "Amount",
+        "vat_rate_label": "VAT Rate",
         "actions_label": "Actions"
       }
     },

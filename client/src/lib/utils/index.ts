@@ -1,4 +1,4 @@
-import { InvoiceServiceBody } from '@invoicetrackr/types';
+import type { InvoiceServiceBody } from '@invoicetrackr/types';
 
 export const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -27,8 +27,33 @@ export const getDaysUntilDueDate = (date: string, dueDate: string) => {
 };
 
 export const calculateServiceTotal = (services: Array<InvoiceServiceBody>) =>
-  services.reduce(
-    (acc, currentValue) =>
-      acc + Number(currentValue.amount * Number(currentValue.quantity)),
-    0
+  Number(calculateInvoiceTotals(services).totalAmount);
+
+const toMoney = (amountInCents: number) => (amountInCents / 100).toFixed(2);
+
+export const calculateInvoiceTotals = (
+  services: Array<Pick<InvoiceServiceBody, 'amount' | 'quantity' | 'vatRate'>>
+) => {
+  const totals = services.reduce(
+    (acc, service) => {
+      const subtotalCents = Math.round(
+        Number(service.amount) * Number(service.quantity) * 100
+      );
+      const vatCents = Math.round(
+        subtotalCents * (Number(service.vatRate ?? 0) / 100)
+      );
+
+      return {
+        subtotalCents: acc.subtotalCents + subtotalCents,
+        vatCents: acc.vatCents + vatCents
+      };
+    },
+    { subtotalCents: 0, vatCents: 0 }
   );
+
+  return {
+    subtotalAmount: toMoney(totals.subtotalCents),
+    vatAmount: toMoney(totals.vatCents),
+    totalAmount: toMoney(totals.subtotalCents + totals.vatCents)
+  };
+};

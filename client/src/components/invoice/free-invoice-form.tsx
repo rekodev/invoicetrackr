@@ -9,8 +9,8 @@ import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
 import { HOME_PAGE } from '@/lib/constants/pages';
-import { InvoiceBody } from '@invoicetrackr/types';
-import { calculateServiceTotal } from '@/lib/utils';
+import type { InvoiceBody } from '@invoicetrackr/types';
+import { calculateInvoiceTotals } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/date';
 
 import InvoiceModal from './invoice-modal';
@@ -47,7 +47,9 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
         email: '',
         type: 'receiver' as const
       },
-      services: [{ amount: 0, quantity: 0, description: '', unit: '' }],
+      services: [
+        { amount: 0, quantity: 0, description: '', unit: '', vatRate: 0 }
+      ],
       bankingInformation: { name: '', code: '', accountNumber: '' }
     }
   });
@@ -289,13 +291,21 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     </div>
   );
 
+  const getInvoicePreviewData = () => {
+    const invoiceTotals = calculateInvoiceTotals(getValues('services'));
+
+    return {
+      ...getValues(),
+      subtotalAmount: invoiceTotals.subtotalAmount,
+      vatAmount: invoiceTotals.vatAmount,
+      totalAmount: invoiceTotals.totalAmount
+    };
+  };
+
   const renderPdfDocument = () => (
     <PDFDocument
       currency={currency}
-      invoiceData={{
-        ...getValues(),
-        totalAmount: calculateServiceTotal(getValues('services')).toString()
-      }}
+      invoiceData={getInvoicePreviewData()}
       senderSignatureImage={senderSignatureImage}
       t={pdfTranslator}
       language={language}
@@ -305,7 +315,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
   return (
     <>
       <FormProvider {...methods}>
-        <div className="mx-auto max-w-5xl p-6">
+        <div className="mx-auto max-w-7xl p-6">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-semibold">
               {t('free_invoice.title')}
@@ -363,10 +373,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
 
       <InvoiceModal
         pdfDocument={renderPdfDocument()}
-        invoiceData={{
-          ...getValues(),
-          totalAmount: calculateServiceTotal(getValues('services')).toString()
-        }}
+        invoiceData={getInvoicePreviewData()}
         invoiceLanguage={language}
         isOpen={isInvoiceModalOpen}
         onOpenChange={setIsInvoiceModalOpen}

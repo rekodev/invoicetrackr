@@ -114,8 +114,7 @@ export const pdfStyles = StyleSheet.create({
     flexDirection: 'row',
     alignSelf: 'flex-end',
     borderLeftWidth: 1,
-    borderColor: '#bfbfbf',
-    marginBottom: 16
+    borderColor: '#bfbfbf'
   },
   tableColHeader: {
     width: '25%',
@@ -135,13 +134,13 @@ export const pdfStyles = StyleSheet.create({
     borderTopWidth: 0
   },
   tableCol1: {
-    width: '10%'
+    width: '7%'
   },
   tableCol2: {
-    width: '50%'
+    width: '33%'
   },
   tableCol3: {
-    width: '15%'
+    width: '10%'
   },
   tableCol4: {
     width: '10%'
@@ -149,9 +148,15 @@ export const pdfStyles = StyleSheet.create({
   tableCol5: {
     width: '15%'
   },
+  tableCol6: {
+    width: '10%'
+  },
+  tableCol7: {
+    width: '15%'
+  },
   tableCellHeader: {
     margin: 5,
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: 500
   },
   tableCell: {

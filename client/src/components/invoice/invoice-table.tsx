@@ -13,7 +13,7 @@ import {
   useDisclosure
 } from '@heroui/react';
 import { useMemo, useState } from 'react';
-import { InvoiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
@@ -34,6 +34,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   'date',
   'receiver',
   'totalAmount',
+  'lifecycleStatus',
   'status',
   'actions'
 ];
@@ -62,6 +63,11 @@ const InvoiceTable = ({
       { name: t('columns.receiver'), uid: 'receiver', sortable: true },
       { name: t('columns.amount'), uid: 'totalAmount', sortable: true },
       { name: t('columns.date'), uid: 'date', sortable: true },
+      {
+        name: t('columns.lifecycle_status'),
+        uid: 'lifecycleStatus',
+        sortable: true
+      },
       { name: t('columns.status'), uid: 'status', sortable: true },
       { name: t('columns.actions'), uid: 'actions' }
     ],

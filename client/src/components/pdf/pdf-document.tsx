@@ -8,9 +8,13 @@ import {
   Text,
   View
 } from '@react-pdf/renderer';
-import { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
 
-import { getDaysUntilDueDate, splitInvoiceId } from '@/lib/utils';
+import {
+  calculateInvoiceTotals,
+  getDaysUntilDueDate,
+  splitInvoiceId
+} from '@/lib/utils';
 import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
 import { amountToWords } from '@/lib/utils/amount-to-words';
 import { formatDate } from '@/lib/utils/date';
@@ -34,12 +38,18 @@ export default function PDFDocument({
 }: Props) {
   const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
     invoiceData;
+  const invoiceTotals = calculateInvoiceTotals(services);
+  const subtotalAmount =
+    invoiceData.subtotalAmount || invoiceTotals.subtotalAmount;
+  const vatAmount = invoiceData.vatAmount || invoiceTotals.vatAmount;
+  const grandTotalAmount = totalAmount || invoiceTotals.totalAmount;
+  const shouldShowVatTotal = Number(vatAmount) > 0;
 
   const splitId = splitInvoiceId(invoiceId);
   const series = splitId[0];
   const number = splitId[1];
 
-  const cents = Math.floor(Number(totalAmount) * 100) % 100;
+  const cents = Math.floor(Number(grandTotalAmount) * 100) % 100;
 
   const renderBusinessNumberLabel = (party: 'sender' | 'receiver') =>
     invoiceData?.[party]?.businessType === 'business'
@@ -114,7 +124,8 @@ export default function PDFDocument({
     description: string,
     unit: string,
     quantity: number,
-    amount: number
+    amount: number,
+    vatRate?: number
   ) => (
     <View style={pdfStyles.tableRow} key={index}>
       <View style={[pdfStyles.tableCol, pdfStyles.tableCol1]}>
@@ -134,17 +145,39 @@ export default function PDFDocument({
           {(Number(amount) || 0).toFixed(2)} {currency.toUpperCase()}
         </Text>
       </View>
+      <View style={[pdfStyles.tableCol, pdfStyles.tableCol6]}>
+        <Text style={pdfStyles.tableCell}>{Number(vatRate ?? 0)}%</Text>
+      </View>
+      <View style={[pdfStyles.tableCol, pdfStyles.tableCol7]}>
+        <Text style={pdfStyles.tableCell}>
+          {(
+            Number(amount) *
+            Number(quantity) *
+            (1 + Number(vatRate ?? 0) / 100)
+          ).toFixed(2)}{' '}
+          {currency.toUpperCase()}
+        </Text>
+      </View>
     </View>
   );
 
-  const renderTotalAmountTableRow = () => (
+  const renderTotalAmountTableRow = (
+    label: string,
+    amount: string,
+    isGrandTotal = false
+  ) => (
     <View style={pdfStyles.totalTableRow}>
       <View style={[pdfStyles.tableCol, pdfStyles.tableCol4]}>
-        <Text style={pdfStyles.tableCellHeader}>{t('total_amount')}</Text>
+        <Text style={pdfStyles.tableCellHeader}>{label}</Text>
       </View>
       <View style={[pdfStyles.tableCol, pdfStyles.tableCol5]}>
-        <Text style={pdfStyles.tableCell}>
-          {Number(invoiceData.totalAmount).toFixed(2)} {currency.toUpperCase()}
+        <Text
+          style={[
+            pdfStyles.tableCell,
+            ...(isGrandTotal ? [pdfStyles.boldText] : [])
+          ]}
+        >
+          {(Number(amount) || 0).toFixed(2)} {currency.toUpperCase()}
         </Text>
       </View>
     </View>
@@ -171,6 +204,14 @@ export default function PDFDocument({
           <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol5]}>
             <Text style={pdfStyles.tableCellHeader}>{t('amount_label')}</Text>
           </View>
+          <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol6]}>
+            <Text style={pdfStyles.tableCellHeader}>{t('vat_rate_label')}</Text>
+          </View>
+          <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol7]}>
+            <Text style={pdfStyles.tableCellHeader}>
+              {t('line_total_label')}
+            </Text>
+          </View>
         </View>
 
         {services.map((service: InvoiceServiceBody, index: number) =>
@@ -179,12 +220,15 @@ export default function PDFDocument({
             service.description,
             service.unit,
             service.quantity,
-            service.amount
+            service.amount,
+            service.vatRate
           )
         )}
       </View>
 
-      {renderTotalAmountTableRow()}
+      {renderTotalAmountTableRow(t('subtotal_amount'), subtotalAmount)}
+      {shouldShowVatTotal && renderTotalAmountTableRow(t('vat_amount'), vatAmount)}
+      {renderTotalAmountTableRow(t('total_amount'), grandTotalAmount, true)}
     </>
   );
 
@@ -269,8 +313,8 @@ export default function PDFDocument({
         {renderTableSection()}
         <View style={pdfStyles.midSection}>
           <Text style={[pdfStyles.detailItem, pdfStyles.boldText]}>
-            {totalAmount
-              ? amountToWords(totalAmount, language.toLowerCase())
+            {grandTotalAmount
+              ? amountToWords(grandTotalAmount, language.toLowerCase())
               : '0'}{' '}
             {currency.toUpperCase()}{' '}
             {t('cents', {
