@@ -19,10 +19,15 @@ import {
   PencilSquareIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
-import { JSX, Key, useEffect, useState, useTransition } from 'react';
+import type { JSX, Key } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
+import type {
+  InvoiceBody,
+  InvoiceLifecycleStatus,
+  InvoiceStatus
+} from '@invoicetrackr/types';
 import { Currency } from '@/lib/types/currency';
 import { formatDate } from '@/lib/utils/date';
 import { getCurrencySymbol } from '@/lib/utils/currency';
@@ -36,6 +41,15 @@ const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
     pending: 'warning',
     canceled: 'danger'
   };
+
+const lifecycleStatusColorMap: Record<
+  InvoiceLifecycleStatus,
+  'default' | 'primary' | 'danger'
+> = {
+  draft: 'default',
+  issued: 'primary',
+  voided: 'danger'
+};
 
 type Props = {
   userId: number;
@@ -61,6 +75,7 @@ const InvoiceTableCell = ({
 }: Props) => {
   const tCell = useTranslations('invoices.cell.actions');
   const tForm = useTranslations('components.invoice_form');
+  const tTable = useTranslations('invoices.table');
   const [isPaid, setIsPaid] = useState(invoice.status === 'paid');
   const [isPending, startTransition] = useTransition();
 
@@ -149,6 +164,20 @@ const InvoiceTableCell = ({
       );
     case 'date':
       return formatDate(cellValue as string) || '';
+    case 'lifecycleStatus': {
+      const lifecycleStatus = invoice.lifecycleStatus || 'draft';
+
+      return (
+        <Chip
+          className="capitalize"
+          color={lifecycleStatusColorMap[lifecycleStatus]}
+          size="sm"
+          variant="flat"
+        >
+          {tTable(`lifecycle_status.${lifecycleStatus}`)}
+        </Chip>
+      );
+    }
     case 'status':
       return (
         <div className="flex items-center justify-between gap-4">

@@ -12,16 +12,16 @@ import {
   TableRow,
   Tooltip
 } from '@heroui/react';
-import { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
-import { Key, useEffect, useMemo } from 'react';
+import type { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useEffect, useMemo } from 'react';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import type { Key } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
+import { calculateInvoiceTotals } from '@/lib/utils';
 import { getCurrencySymbol } from '@/lib/utils/currency';
-
-const INITIAL_GRAND_TOTAL = 0;
 
 type Props = {
   invoiceServices?: Array<InvoiceServiceBody>;
@@ -40,7 +40,6 @@ const InvoiceServicesTable = ({
   const {
     register,
     control,
-    watch,
     clearErrors,
     formState: { errors }
   } = useFormContext<InvoiceBody>();
@@ -55,22 +54,33 @@ const InvoiceServicesTable = ({
     { name: t('column_unit'), uid: 'unit' },
     { name: t('column_quantity'), uid: 'quantity' },
     { name: t('column_amount'), uid: 'amount' },
+    { name: t('column_vat_rate'), uid: 'vatRate' },
+    { name: t('column_line_total'), uid: 'lineTotal' },
     { name: t('column_actions'), uid: 'actions' }
   ];
 
-  // watching the entire services array doesn't work, individual services have to be selected
-  const serviceAmounts = fields.map(
-    (_field, index) =>
-      watch(`services.${index}.amount`) * watch(`services.${index}.quantity`)
+  const services =
+    useWatch({
+      control,
+      name: 'services'
+    }) || [];
+
+  const invoiceTotals = useMemo(
+    () => calculateInvoiceTotals(services),
+    [services]
   );
 
-  const totalAmount = useMemo(
+  const lineTotals = useMemo(
     () =>
-      serviceAmounts.reduce(
-        (acc, amount) => acc + (Number(amount) || 0),
-        INITIAL_GRAND_TOTAL
-      ),
-    [serviceAmounts]
+      services.map((service) => {
+        const amount = Number(service?.amount) || 0;
+        const quantity = Number(service?.quantity) || 0;
+        const vatRate = Number(service?.vatRate ?? 0) || 0;
+        const subtotal = amount * quantity;
+
+        return subtotal + subtotal * (vatRate / 100);
+      }),
+    [services]
   );
 
   useEffect(() => {
@@ -80,10 +90,17 @@ const InvoiceServicesTable = ({
   }, [invoiceServices, replace]);
 
   const handleAddService = () => {
-    append({ id: 0, amount: 0, description: '', quantity: 0, unit: '' });
+    append({
+      id: 0,
+      amount: 0,
+      description: '',
+      quantity: 0,
+      unit: '',
+      vatRate: 0
+    });
 
     // Clear errors if there are no services
-    if (!serviceAmounts.length) clearErrors('services');
+    if (!services.length) clearErrors('services');
   };
 
   const handleRemoveService = (index: number) => {
@@ -96,11 +113,21 @@ const InvoiceServicesTable = ({
         <PlusIcon className="h-5 w-5" />
         {t('add_service')}
       </Button>
-      <div className="flex gap-6 self-end pr-3">
-        <p>{t('grand_total')}:</p>
-        <p>
+      <div className="grid min-w-64 grid-cols-[1fr_auto] gap-x-6 gap-y-1 self-end pr-3 text-sm">
+        <p className="text-default-500">{t('subtotal')}:</p>
+        <p className="text-right">
           {getCurrencySymbol(currency)}
-          {totalAmount.toFixed(2)}
+          {invoiceTotals.subtotalAmount}
+        </p>
+        <p className="text-default-500">{t('vat_total')}:</p>
+        <p className="text-right">
+          {getCurrencySymbol(currency)}
+          {invoiceTotals.vatAmount}
+        </p>
+        <p className="font-medium">{t('grand_total')}:</p>
+        <p className="text-right font-medium">
+          {getCurrencySymbol(currency)}
+          {invoiceTotals.totalAmount}
         </p>
       </div>
     </div>
@@ -113,7 +140,7 @@ const InvoiceServicesTable = ({
       case 'description':
         return (
           <Input
-            className="min-w-44"
+            className="min-w-40"
             aria-label={t('a11y.description_label')}
             type="text"
             maxLength={200}
@@ -129,7 +156,7 @@ const InvoiceServicesTable = ({
       case 'unit':
         return (
           <Input
-            className="min-w-44"
+            className="min-w-24"
             aria-label={t('a11y.unit_label')}
             type="text"
             maxLength={20}
@@ -143,6 +170,7 @@ const InvoiceServicesTable = ({
       case 'quantity':
         return (
           <Input
+            className="min-w-24"
             aria-label={t('a11y.quantity_label')}
             type="number"
             defaultValue={
@@ -157,6 +185,7 @@ const InvoiceServicesTable = ({
       case 'amount':
         return (
           <Input
+            className="min-w-36"
             aria-label={t('a11y.amount_label')}
             type="number"
             defaultValue={
@@ -167,6 +196,32 @@ const InvoiceServicesTable = ({
             isInvalid={!!errors.services?.[index]?.amount}
             errorMessage={errors.services?.[index]?.amount?.message}
           />
+        );
+      case 'vatRate':
+        return (
+          <Input
+            className="w-20 min-w-20"
+            aria-label={t('a11y.vat_rate_label')}
+            type="number"
+            min={0}
+            max={100}
+            step="0.01"
+            endContent={<span className="text-default-400 text-sm">%</span>}
+            defaultValue={
+              (fields[index] as InvoiceServiceBody).vatRate?.toString() || '0'
+            }
+            variant="bordered"
+            {...register(`services.${index}.vatRate`)}
+            isInvalid={!!errors.services?.[index]?.vatRate}
+            errorMessage={errors.services?.[index]?.vatRate?.message}
+          />
+        );
+      case 'lineTotal':
+        return (
+          <p className="min-w-24 text-right text-sm font-medium">
+            {getCurrencySymbol(currency)}
+            {(lineTotals[index] || 0).toFixed(2)}
+          </p>
         );
       case 'actions':
         return (

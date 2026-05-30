@@ -1,13 +1,13 @@
 'use client';
 
-import { SubmitHandler, UseFormSetError } from 'react-hook-form';
+import type { SubmitHandler, UseFormSetError } from 'react-hook-form';
 import { addToast } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 
-import { BankAccount, InvoiceBody, User } from '@invoicetrackr/types';
+import type { BankAccount, InvoiceBody, User } from '@invoicetrackr/types';
 import { addInvoiceAction, updateInvoiceAction } from '@/lib/actions/invoice';
 import { INVOICES_PAGE } from '@/lib/constants/pages';
-import { calculateServiceTotal } from '@/lib/utils';
+import { calculateInvoiceTotals } from '@/lib/utils';
 
 type Props = {
   invoiceData: InvoiceBody | undefined;
@@ -31,10 +31,14 @@ const useInvoiceFormSubmissionHandler = ({
   const onSubmit: SubmitHandler<InvoiceBody> = async (data) => {
     if (!user?.id) return;
 
+    const invoiceTotals = calculateInvoiceTotals(data.services);
+
     const fullData: typeof data = {
       ...data,
       senderSignature: data.senderSignature || '',
-      totalAmount: calculateServiceTotal(data.services).toString(),
+      subtotalAmount: invoiceTotals.subtotalAmount,
+      vatAmount: invoiceTotals.vatAmount,
+      totalAmount: invoiceTotals.totalAmount,
       bankingInformation: bankingInformation || data.bankingInformation
     };
 

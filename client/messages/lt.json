@@ -264,8 +264,14 @@
         "receiver": "GAVĖJAS",
         "amount": "SUMA",
         "date": "DATA",
+        "lifecycle_status": "GYVAVIMO CIKLAS",
         "status": "BŪSENA",
         "actions": "VEIKSMAI"
+      },
+      "lifecycle_status": {
+        "draft": "Juodraštis",
+        "issued": "Išrašyta",
+        "voided": "Anuliuota"
       },
       "status": {
         "paid": "Sumokėta",
@@ -338,6 +344,10 @@
       "unit_label": "Vnt.",
       "quantity_label": "Kiekis",
       "amount_label": "Suma",
+      "vat_rate_label": "PVM",
+      "line_total_label": "Eilutės suma",
+      "subtotal_amount": "Suma be PVM",
+      "vat_amount": "PVM suma",
       "total_amount": "Viso",
       "cents": "{cents} ct",
       "invoice_issued_by_label": "Sąskaitą išrašė:",
@@ -650,8 +660,12 @@
       "column_unit": "VIENETAS",
       "column_quantity": "KIEKIS",
       "column_amount": "SUMA",
+      "column_vat_rate": "PVM",
+      "column_line_total": "VISO",
       "column_actions": "VEIKSMAI",
       "add_service": "Pridėti paslaugą",
+      "subtotal": "Suma be PVM",
+      "vat_total": "PVM suma",
       "grand_total": "Bendra suma",
       "delete_service": "Ištrinti paslaugą",
       "a11y": {
@@ -661,6 +675,7 @@
         "unit_label": "Vienetas",
         "quantity_label": "Kiekis",
         "amount_label": "Suma",
+        "vat_rate_label": "PVM tarifas",
         "actions_label": "Veiksmai"
       }
     },
