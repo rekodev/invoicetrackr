@@ -4,7 +4,9 @@ import {
   getInvoicesRevenueResponseSchema,
   getInvoicesTotalAmountResponseSchema,
   getLatestInvoicesResponseSchema,
+  getNextInvoiceNumberResponseSchema,
   invoiceBodySchema,
+  invoiceNumberSeriesSchema,
   messageResponseSchema,
   postInvoiceResponseSchema,
   updateInvoiceResponseSchema
@@ -19,6 +21,7 @@ import {
   getInvoicesRevenue,
   getInvoicesTotalAmount,
   getLatestInvoices,
+  getNextInvoiceNumber,
   postInvoice,
   sendInvoiceEmail,
   updateInvoice,
@@ -45,6 +48,19 @@ export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {
   },
   preHandler: authMiddleware,
   handler: getInvoice
+};
+
+export const getNextInvoiceNumberOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    querystring: z.object({
+      series: invoiceNumberSeriesSchema.optional()
+    }),
+    response: {
+      200: getNextInvoiceNumberResponseSchema
+    }
+  },
+  preHandler: authMiddleware,
+  handler: getNextInvoiceNumber
 };
 
 export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {

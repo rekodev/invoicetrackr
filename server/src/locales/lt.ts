@@ -45,7 +45,8 @@ export default {
       mismatch: 'Slaptažodžiai nesutampa'
     },
     invoice: {
-      invoiceId: 'Turi atitikti formatą "ABC123"',
+      invoiceId: 'Turi atitikti formatą "ABC123" arba "SF001"',
+      invoiceSeries: 'Sąskaitos serija turi būti 2-8 raidės',
       date: 'Reikalinga tinkama data',
       dueDate: 'Reikalinga tinkama data',
       dueDateAfterDate: 'Terminas neturi būti ankstesnis už sąskaitos datą',

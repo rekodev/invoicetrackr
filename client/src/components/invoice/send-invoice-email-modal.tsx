@@ -70,7 +70,7 @@ export default function SendInvoiceEmailModal({
         id: Number(invoice.id),
         userId,
         blob,
-        invoiceId: invoice.invoiceId,
+        invoiceId: invoice.invoiceId || '',
         recipientEmail: data.recipientEmail,
         subject: data.subject,
         message: data.message
@@ -106,7 +106,7 @@ export default function SendInvoiceEmailModal({
               encType="multipart/form-data"
             >
               <ModalHeader>
-                {t('modal_title', { invoiceId: invoice.invoiceId })}
+                {t('modal_title', { invoiceId: invoice.invoiceId || '' })}
               </ModalHeader>
               <ModalBody className="w-full">
                 <Input

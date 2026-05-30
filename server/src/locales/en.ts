@@ -44,7 +44,8 @@ export default {
       mismatch: 'Passwords do not match'
     },
     invoice: {
-      invoiceId: 'Required to match format "ABC123"',
+      invoiceId: 'Required to match format "ABC123" or "SF001"',
+      invoiceSeries: 'Invoice series must be 2-8 letters',
       date: 'Valid date is required',
       dueDate: 'Valid date is required',
       dueDateAfterDate: 'Due date must be after invoice date',

@@ -14,13 +14,8 @@ import {
   Select,
   SelectItem
 } from '@heroui/react';
-import {
-  Controller,
-  ControllerRenderProps,
-  FormProvider,
-  useForm
-} from 'react-hook-form';
-import { useRef, useState } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { useRef, useState, useTransition } from 'react';
 import type { Client } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 
@@ -32,6 +27,7 @@ import type {
 } from '@invoicetrackr/types';
 import { formatDate, getDateDifferenceInDays } from '@/lib/utils/date';
 import { Currency } from '@/lib/types/currency';
+import { getNextInvoiceNumberAction } from '@/lib/actions/invoice';
 import { statusOptions } from '@/lib/constants/table';
 import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
 
@@ -48,7 +44,6 @@ type Props = {
   bankingInformationEntries: Array<BankAccountBody>;
   invoiceData?: InvoiceBody;
   currency: Currency;
-  latestInvoiceId?: string;
 };
 
 const INITIAL_RECEIVER_DATA: Client = {
@@ -67,8 +62,7 @@ const InvoiceForm = ({
   currency,
   invoiceData,
   clients,
-  bankingInformationEntries,
-  latestInvoiceId
+  bankingInformationEntries
 }: Props) => {
   const t = useTranslations('components.invoice_form');
   const methods = useForm<InvoiceBody>({
@@ -99,6 +93,8 @@ const InvoiceForm = ({
   const [senderSignature, setSenderSignature] = useState<
     string | File | undefined
   >(invoiceData?.senderSignature);
+  const [isNextInvoiceNumberPending, startNextInvoiceNumberTransition] =
+    useTransition();
 
   const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({
     invoiceData,
@@ -146,17 +142,18 @@ const InvoiceForm = ({
     clearErrors('senderSignature');
   };
 
-  const handleNextInvoiceIdSelect = (
-    field: ControllerRenderProps<InvoiceBody, 'invoiceId'>
-  ) => {
-    if (!latestInvoiceId) return;
+  const handleNextInvoiceIdSelect = () => {
+    startNextInvoiceNumberTransition(async () => {
+      const response = await getNextInvoiceNumberAction({
+        userId: user.id || 0
+      });
 
-    const latestInvoiceIdNumber = Number(latestInvoiceId.slice(3));
-    const newInvoiceId = latestInvoiceId
-      .slice(0, 3)
-      .concat((latestInvoiceIdNumber + 1).toString().padStart(3, '0'));
+      if (!response.ok) return;
 
-    field.onChange(newInvoiceId);
+      setValue('invoiceId', response.invoiceId, { shouldDirty: true });
+      setValue('invoiceSeries', response.series, { shouldDirty: true });
+      clearErrors('invoiceId');
+    });
   };
 
   const renderSenderAndReceiverFields = () => (
@@ -512,25 +509,32 @@ const InvoiceForm = ({
                   render={({ field }) => (
                     <Input
                       {...field}
+                      onChange={(event) => {
+                        setValue('invoiceSeries', undefined, {
+                          shouldDirty: true
+                        });
+                        field.onChange(event);
+                      }}
                       aria-label={t('a11y.invoice_id_label')}
                       label={t('labels.invoice_id')}
                       placeholder={t('placeholders.invoice_id')}
                       isInvalid={!!errors.invoiceId}
                       errorMessage={errors.invoiceId?.message}
                       endContent={
-                        latestInvoiceId && (
-                          <Button
-                            size="sm"
-                            variant="faded"
-                            className="px-7"
-                            startContent={
+                        <Button
+                          size="sm"
+                          variant="faded"
+                          className="px-7"
+                          isLoading={isNextInvoiceNumberPending}
+                          startContent={
+                            !isNextInvoiceNumberPending && (
                               <SparklesIcon className="min-h-4 min-w-4" />
-                            }
-                            onPress={() => handleNextInvoiceIdSelect(field)}
-                          >
-                            {t('buttons.use_next')}
-                          </Button>
-                        )
+                            )
+                          }
+                          onPress={handleNextInvoiceIdSelect}
+                        >
+                          {t('buttons.use_next')}
+                        </Button>
                       }
                     />
                   )}

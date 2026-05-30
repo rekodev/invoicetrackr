@@ -5,13 +5,17 @@ export const capitalize = (str: string) => {
 };
 
 export const validateInvoiceId = (invoiceId: string) => {
-  const regex = /^[A-Za-z]{3}[1-9][0-9]*$/;
+  const regex = /^[A-Za-z]{2,8}[1-9][0-9]*$/;
   return regex.test(invoiceId);
 };
 
 export const splitInvoiceId = (invoiceId: string) => {
-  const series = invoiceId?.slice(0, 3);
-  const number = invoiceId?.slice(3);
+  const match = invoiceId?.match(/^([A-Za-z]{2,8})([0-9]+)$/);
+
+  if (!match) return [invoiceId || '', ''];
+
+  const series = match[1];
+  const number = match[2];
 
   return [series, number];
 };

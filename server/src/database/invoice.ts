@@ -1,9 +1,10 @@
 import { and, desc, eq, gte, inArray, sql } from 'drizzle-orm';
-import { InvoiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody } from '@invoicetrackr/types';
 
 import {
   bankingInformationTable,
   invoiceBankingInformationTable,
+  invoiceNumberSequencesTable,
   invoiceReceiversTable,
   invoiceSendersTable,
   invoiceServicesTable,
@@ -12,6 +13,9 @@ import {
 import { calculateInvoiceTotals } from '../utils/invoice';
 import { db } from './db';
 import { jsonAgg } from '../utils/json';
+
+const DEFAULT_INVOICE_SERIES = 'SF';
+const INVOICE_NUMBER_PADDING = 3;
 
 export type InvoiceFromDb = Omit<
   InvoiceBody,
@@ -26,6 +30,138 @@ export type InvoiceFromDb = Omit<
   services: Array<
     Omit<typeof invoiceServicesTable.$inferSelect, 'invoiceId'>
   > | null;
+};
+
+const normalizeInvoiceSeries = (series?: string | null) =>
+  (series || DEFAULT_INVOICE_SERIES).trim().toUpperCase();
+
+const formatInvoiceNumber = (series: string, number: number) =>
+  `${series}${String(number).padStart(INVOICE_NUMBER_PADDING, '0')}`;
+
+const parseInvoiceNumber = (invoiceId: string) => {
+  const match = invoiceId.trim().toUpperCase().match(/^([A-Z]{2,8})(\d{1,9})$/);
+
+  if (!match) return null;
+
+  return {
+    series: match[1],
+    number: Number(match[2])
+  };
+};
+
+type InvoiceTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+const getInvoiceSeriesForNextNumber = async (
+  query: InvoiceTransaction | typeof db,
+  userId: number,
+  requestedSeries?: string
+) => {
+  if (requestedSeries) return normalizeInvoiceSeries(requestedSeries);
+
+  const latestInvoices = await query
+    .select({ invoiceId: invoicesTable.invoiceId })
+    .from(invoicesTable)
+    .where(eq(invoicesTable.userId, userId))
+    .orderBy(desc(invoicesTable.id))
+    .limit(1);
+  const latestInvoiceSeries = latestInvoices.at(0)?.invoiceId
+    ? parseInvoiceNumber(latestInvoices[0].invoiceId)?.series
+    : null;
+
+  return latestInvoiceSeries || DEFAULT_INVOICE_SERIES;
+};
+
+export const getNextInvoiceNumberFromDb = async (
+  userId: number,
+  requestedSeries?: string
+) => {
+  const series = await getInvoiceSeriesForNextNumber(
+    db,
+    userId,
+    requestedSeries
+  );
+  const sequences = await db
+    .select({
+      nextNumber: invoiceNumberSequencesTable.nextNumber
+    })
+    .from(invoiceNumberSequencesTable)
+    .where(
+      and(
+        eq(invoiceNumberSequencesTable.userId, userId),
+        eq(invoiceNumberSequencesTable.series, series)
+      )
+    );
+  const nextNumber = sequences.at(0)?.nextNumber || 1;
+
+  return {
+    invoiceId: formatInvoiceNumber(series, nextNumber),
+    series,
+    nextNumber
+  };
+};
+
+const reserveNextInvoiceNumber = async (
+  tx: InvoiceTransaction,
+  userId: number,
+  requestedSeries?: string
+) => {
+  const series = await getInvoiceSeriesForNextNumber(
+    tx,
+    userId,
+    requestedSeries
+  );
+  const sequence = await tx
+    .insert(invoiceNumberSequencesTable)
+    .values({
+      userId,
+      series,
+      nextNumber: 2
+    })
+    .onConflictDoUpdate({
+      target: [
+        invoiceNumberSequencesTable.userId,
+        invoiceNumberSequencesTable.series
+      ],
+      set: {
+        nextNumber: sql`${invoiceNumberSequencesTable.nextNumber} + 1`,
+        updatedAt: sql`CURRENT_TIMESTAMP`
+      }
+    })
+    .returning({ nextNumber: invoiceNumberSequencesTable.nextNumber });
+
+  const reservedNumber = Number(sequence.at(0)?.nextNumber || 2) - 1;
+
+  return formatInvoiceNumber(series, reservedNumber);
+};
+
+const advanceInvoiceNumberSequence = async (
+  tx: InvoiceTransaction,
+  userId: number,
+  invoiceId: string
+) => {
+  const parsedInvoiceNumber = parseInvoiceNumber(invoiceId);
+
+  if (!parsedInvoiceNumber) return;
+
+  const nextNumber = parsedInvoiceNumber.number + 1;
+
+  await tx
+    .insert(invoiceNumberSequencesTable)
+    .values({
+      userId,
+      series: parsedInvoiceNumber.series,
+      nextNumber
+    })
+    .onConflictDoUpdate({
+      target: [
+        invoiceNumberSequencesTable.userId,
+        invoiceNumberSequencesTable.series
+      ],
+      set: {
+        nextNumber: sql`GREATEST(${invoiceNumberSequencesTable.nextNumber}, ${nextNumber})`,
+        updatedAt: sql`CURRENT_TIMESTAMP`
+      }
+    });
 };
 
 export const findInvoiceById = async (userId: number, id: number) => {
@@ -139,7 +275,7 @@ export const getInvoicesFromDb = async (
 export const getInvoiceFromDb = async (
   userId: number,
   id: number,
-  transaction?: Parameters<Parameters<typeof db.transaction>[0]>[0]
+  transaction?: InvoiceTransaction
 ): Promise<InvoiceFromDb | undefined> => {
   const invoices = await (transaction ? transaction : db)
     .select({
@@ -226,6 +362,10 @@ export const insertInvoiceInDb = async (
 ): Promise<InvoiceFromDb | null> => {
   const invoice = await db.transaction(async (tx) => {
     const totals = calculateInvoiceTotals(invoiceData.services);
+    const invoiceId =
+      invoiceData.invoiceSeries || !invoiceData.invoiceId
+        ? await reserveNextInvoiceNumber(tx, userId, invoiceData.invoiceSeries)
+        : invoiceData.invoiceId;
 
     // Invoice insert
     const invoices = await tx
@@ -233,7 +373,7 @@ export const insertInvoiceInDb = async (
       .values({
         userId,
         date: invoiceData.date,
-        invoiceId: invoiceData.invoiceId,
+        invoiceId,
         subtotalAmount: totals.subtotalAmount,
         vatAmount: totals.vatAmount,
         totalAmount: totals.totalAmount,
@@ -247,6 +387,10 @@ export const insertInvoiceInDb = async (
     const insertedInvoiceId = invoices.at(0)?.id;
 
     if (!insertedInvoiceId) throw new Error('Failed to insert invoice');
+
+    if (!invoiceData.invoiceSeries && invoiceData.invoiceId) {
+      await advanceInvoiceNumberSequence(tx, userId, invoiceData.invoiceId);
+    }
 
     // Invoice sender insert
     const senders = await tx
@@ -471,6 +615,10 @@ export const updateInvoiceInDb = async (
       .returning({ id: invoicesTable.id });
 
     if (!invoices[0]) return null;
+
+    if (invoiceData.invoiceId) {
+      await advanceInvoiceNumberSequence(tx, userId, invoiceData.invoiceId);
+    }
 
     // Handle services update
     const existingServices = await tx

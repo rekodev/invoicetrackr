@@ -22,7 +22,7 @@ export const invoiceFactory = Factory.define<InvoiceBody>(({ sequence }) => ({
   dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     .toISOString()
     .split('T')[0],
-  invoiceId: `INV-${sequence}`,
+  invoiceId: `INV${String(sequence).padStart(3, '0')}`,
   senderSignature: `signature${sequence}.png`,
   issuedAt: null,
   paidAt: null,
@@ -46,7 +46,7 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       .toISOString()
       .split('T')[0],
-    invoiceId: `INV-${sequence}`,
+    invoiceId: `INV${String(sequence).padStart(3, '0')}`,
     senderSignature: `signature${sequence}.png`,
     issuedAt: null,
     paidAt: null,

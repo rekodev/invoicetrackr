@@ -1,4 +1,4 @@
-import {
+import type {
   AddInvoiceResponse,
   DeleteInvoiceResponse,
   GetInvoiceResponse,
@@ -6,11 +6,12 @@ import {
   GetInvoicesRevenueResponse,
   GetInvoicesTotalAmountResponse,
   GetLatestInvoicesResponse,
+  GetNextInvoiceNumberResponse,
   SendInvoiceEmailResponse,
   UpdateInvoiceResponse,
   UpdateInvoiceStatusResponse
 } from '@invoicetrackr/types';
-import { InvoiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody } from '@invoicetrackr/types';
 
 import api from './api-instance';
 import { buildFormData } from '@/lib/utils/multipart';
@@ -31,6 +32,14 @@ export const getInvoicesRevenue = async (userId: number) =>
 
 export const getLatestInvoices = async (userId: number) =>
   await api.get<GetLatestInvoicesResponse>(`/api/${userId}/invoices/latest`);
+
+export const getNextInvoiceNumber = async (userId: number, series?: string) => {
+  const query = series ? `?series=${encodeURIComponent(series)}` : '';
+
+  return await api.get<GetNextInvoiceNumberResponse>(
+    `/api/${userId}/invoices/next-number${query}`
+  );
+};
 
 export const addInvoice = async (userId: number, invoiceData: InvoiceBody) => {
   const hasFile = invoiceData.senderSignature instanceof File;

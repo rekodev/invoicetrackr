@@ -4,7 +4,6 @@ import InvoiceForm from '@/components/invoice/invoice-form';
 import { auth } from '@/auth';
 import { getBankingInformationEntries } from '@/api/banking-information';
 import { getClients } from '@/api/client';
-import { getLatestInvoices } from '@/api/invoice';
 import { getUser } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
@@ -18,17 +17,14 @@ const AddNewInvoicePage = async () => {
   const userResp = await getUser(numericUserId);
   if (isResponseError(userResp)) unauthorized();
 
-  const [clientsResp, bankingInformationEntriesResp, latestInvoices] =
-    await Promise.all([
-      getClients(numericUserId),
-      getBankingInformationEntries(numericUserId),
-      getLatestInvoices(numericUserId)
-    ]);
+  const [clientsResp, bankingInformationEntriesResp] = await Promise.all([
+    getClients(numericUserId),
+    getBankingInformationEntries(numericUserId)
+  ]);
 
   if (
     isResponseError(clientsResp) ||
-    isResponseError(bankingInformationEntriesResp) ||
-    isResponseError(latestInvoices)
+    isResponseError(bankingInformationEntriesResp)
   )
     throw new Error('Failed to load data');
 
@@ -41,7 +37,6 @@ const AddNewInvoicePage = async () => {
         }
         currency={session.user.currency}
         clients={clientsResp.data.clients}
-        latestInvoiceId={latestInvoices.data.invoices?.at(0)?.invoiceId}
       />
     </section>
   );
