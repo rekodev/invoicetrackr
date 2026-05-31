@@ -196,7 +196,7 @@ describe('Invoice Controller', () => {
 
   describe('PUT /api/:userId/invoices/:id', () => {
     it('should update an existing invoice', async () => {
-      vi.mocked(invoiceDb.findInvoiceById).mockResolvedValue({ id: 1 });
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(mockInvoiceForDb);
       const updatedInvoice = { ...mockInvoiceForDb, totalAmount: '1500' };
       vi.mocked(invoiceDb.updateInvoiceInDb).mockResolvedValue(updatedInvoice);
 
@@ -268,6 +268,7 @@ describe('Invoice Controller', () => {
 
   describe('DELETE /api/:userId/invoices/:id', () => {
     it('should delete an invoice', async () => {
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(mockInvoiceForDb);
       vi.mocked(invoiceDb.deleteInvoiceFromDb).mockResolvedValue({ id: 1 });
 
       const { deleteInvoice } = invoiceController;
