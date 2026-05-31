@@ -49,9 +49,9 @@ const InvoiceEmail = ({
 }: InvoiceEmailProps) => {
   return (
     <Html lang="en" dir="ltr">
-      <Head />
-      <Preview>{`${translations.invoiceNumber} #${invoiceNumber} ${translations.from} ${senderName} - ${translations.title}`}</Preview>
       <Tailwind>
+        <Head />
+        <Preview>{`${translations.invoiceNumber} #${invoiceNumber} ${translations.from} ${senderName} - ${translations.title}`}</Preview>
         <Body className="bg-gray-100 font-sans">
           <Container className="mx-auto max-w-[600px] overflow-hidden bg-white shadow-lg">
             <Section className="bg-white px-[32px] py-[24px]">
