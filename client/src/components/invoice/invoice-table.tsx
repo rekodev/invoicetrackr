@@ -116,7 +116,8 @@ const InvoiceTable = ({
     defaultTranslator: pdfTranslator,
     invoiceLanguage,
     invoiceData: currentInvoice,
-    senderSignatureImage: currentInvoice?.senderSignature as string
+    senderSignatureImage: currentInvoice?.senderSignature as string,
+    receiverSignatureImage: currentInvoice?.receiverSignature as string
   });
 
   const hasSearchFilter = Boolean(filterValue);

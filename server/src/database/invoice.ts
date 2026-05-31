@@ -1,5 +1,5 @@
-import { and, desc, eq, gte, inArray, sql } from 'drizzle-orm';
-import type { InvoiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody, PublicInvoiceSigning } from '@invoicetrackr/types';
+import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
 
 import {
   bankingInformationTable,
@@ -8,7 +8,8 @@ import {
   invoiceReceiversTable,
   invoiceSendersTable,
   invoiceServicesTable,
-  invoicesTable
+  invoicesTable,
+  usersTable
 } from './schema';
 import { calculateInvoiceTotals } from '../utils/invoice';
 import { db } from './db';
@@ -39,7 +40,10 @@ const formatInvoiceNumber = (series: string, number: number) =>
   `${series}${String(number).padStart(INVOICE_NUMBER_PADDING, '0')}`;
 
 const parseInvoiceNumber = (invoiceId: string) => {
-  const match = invoiceId.trim().toUpperCase().match(/^([A-Z]{2,8})(\d{1,9})$/);
+  const match = invoiceId
+    .trim()
+    .toUpperCase()
+    .match(/^([A-Z]{2,8})(\d{1,9})$/);
 
   if (!match) return null;
 
@@ -205,9 +209,13 @@ export const getInvoicesFromDb = async (
       lifecycleStatus: invoicesTable.lifecycleStatus,
       dueDate: invoicesTable.dueDate,
       senderSignature: invoicesTable.senderSignature,
+      receiverSignature: invoicesTable.receiverSignature,
       issuedAt: invoicesTable.issuedAt,
       paidAt: invoicesTable.paidAt,
       voidedAt: invoicesTable.voidedAt,
+      recipientSigningToken: invoicesTable.recipientSigningToken,
+      recipientSigningSentAt: invoicesTable.recipientSigningSentAt,
+      recipientSignedAt: invoicesTable.recipientSignedAt,
       bankingInformation: {
         id: invoiceBankingInformationTable.id,
         code: invoiceBankingInformationTable.bankCode,
@@ -289,9 +297,13 @@ export const getInvoiceFromDb = async (
       lifecycleStatus: invoicesTable.lifecycleStatus,
       dueDate: invoicesTable.dueDate,
       senderSignature: invoicesTable.senderSignature,
+      receiverSignature: invoicesTable.receiverSignature,
       issuedAt: invoicesTable.issuedAt,
       paidAt: invoicesTable.paidAt,
       voidedAt: invoicesTable.voidedAt,
+      recipientSigningToken: invoicesTable.recipientSigningToken,
+      recipientSigningSentAt: invoicesTable.recipientSigningSentAt,
+      recipientSignedAt: invoicesTable.recipientSignedAt,
       bankingInformation: {
         id: invoiceBankingInformationTable.id,
         code: invoiceBankingInformationTable.bankCode,
@@ -380,7 +392,8 @@ export const insertInvoiceInDb = async (
         status: invoiceData.status,
         lifecycleStatus: invoiceData.lifecycleStatus || 'draft',
         dueDate: invoiceData.dueDate,
-        senderSignature: senderSignature
+        senderSignature: senderSignature,
+        receiverSignature: invoiceData.receiverSignature || null
       })
       .returning({ id: invoicesTable.id });
 
@@ -484,7 +497,11 @@ export const updateInvoiceInDb = async (
         lifecycleStatus: invoicesTable.lifecycleStatus,
         issuedAt: invoicesTable.issuedAt,
         paidAt: invoicesTable.paidAt,
-        voidedAt: invoicesTable.voidedAt
+        voidedAt: invoicesTable.voidedAt,
+        receiverSignature: invoicesTable.receiverSignature,
+        recipientSigningToken: invoicesTable.recipientSigningToken,
+        recipientSigningSentAt: invoicesTable.recipientSigningSentAt,
+        recipientSignedAt: invoicesTable.recipientSignedAt
       })
       .from(invoicesTable)
       .where(and(eq(invoicesTable.userId, userId), eq(invoicesTable.id, id)));
@@ -609,7 +626,17 @@ export const updateInvoiceInDb = async (
         issuedAt: invoiceData.issuedAt ?? currentInvoiceData.issuedAt,
         paidAt: invoiceData.paidAt ?? currentInvoiceData.paidAt,
         voidedAt: invoiceData.voidedAt ?? currentInvoiceData.voidedAt,
-        senderSignature
+        senderSignature,
+        receiverSignature:
+          invoiceData.receiverSignature ?? currentInvoiceData.receiverSignature,
+        recipientSigningToken:
+          invoiceData.recipientSigningToken ??
+          currentInvoiceData.recipientSigningToken,
+        recipientSigningSentAt:
+          invoiceData.recipientSigningSentAt ??
+          currentInvoiceData.recipientSigningSentAt,
+        recipientSignedAt:
+          invoiceData.recipientSignedAt ?? currentInvoiceData.recipientSignedAt
       })
       .where(and(eq(invoicesTable.userId, userId), eq(invoicesTable.id, id)))
       .returning({ id: invoicesTable.id });
@@ -690,6 +717,124 @@ export async function updateInvoiceStatusInDb(
     .returning({ id: invoicesTable.id });
 
   return invoices.at(0);
+}
+
+export async function prepareInvoiceSigningFromDb({
+  userId,
+  id,
+  token
+}: {
+  userId: number;
+  id: number;
+  token: string;
+}): Promise<
+  | {
+      id: number;
+      recipientSigningToken: string | null;
+    }
+  | undefined
+> {
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      recipientSigningToken: sql<string>`COALESCE(${invoicesTable.recipientSigningToken}, ${token})`
+    })
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .returning({
+      id: invoicesTable.id,
+      recipientSigningToken: invoicesTable.recipientSigningToken
+    });
+
+  return invoices.at(0);
+}
+
+export async function markInvoiceSigningSentInDb({
+  userId,
+  id
+}: {
+  userId: number;
+  id: number;
+}): Promise<{ id: number } | undefined> {
+  const now = new Date().toISOString();
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      lifecycleStatus: 'issued',
+      issuedAt: sql<string>`COALESCE(${invoicesTable.issuedAt}, ${now})`,
+      recipientSigningSentAt: now
+    })
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .returning({ id: invoicesTable.id });
+
+  return invoices.at(0);
+}
+
+type PublicInvoiceSigningFromDb = Omit<
+  PublicInvoiceSigning,
+  'invoice' | 'token'
+> & {
+  invoice: InvoiceFromDb;
+};
+
+export async function getPublicInvoiceSigningFromDb(
+  token: string
+): Promise<PublicInvoiceSigningFromDb | undefined> {
+  const rows = await db
+    .select({
+      id: invoicesTable.id,
+      userId: invoicesTable.userId,
+      currency: usersTable.currency,
+      language: usersTable.language,
+      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage
+    })
+    .from(invoicesTable)
+    .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
+    .where(eq(invoicesTable.recipientSigningToken, token))
+    .limit(1);
+  const row = rows.at(0);
+
+  if (!row) return undefined;
+
+  const invoice = await getInvoiceFromDb(row.userId, row.id);
+
+  if (!invoice) return undefined;
+
+  return {
+    invoice,
+    currency: row.currency,
+    language: row.language,
+    preferredInvoiceLanguage: row.preferredInvoiceLanguage
+  };
+}
+
+export async function signInvoiceByRecipientTokenInDb({
+  token,
+  receiverSignature
+}: {
+  token: string;
+  receiverSignature: string;
+}): Promise<InvoiceFromDb | null | undefined> {
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      receiverSignature,
+      recipientSignedAt: new Date().toISOString()
+    })
+    .where(
+      and(
+        eq(invoicesTable.recipientSigningToken, token),
+        isNull(invoicesTable.recipientSignedAt)
+      )
+    )
+    .returning({
+      id: invoicesTable.id,
+      userId: invoicesTable.userId
+    });
+  const invoice = invoices.at(0);
+
+  if (!invoice) return null;
+
+  return getInvoiceFromDb(invoice.userId, invoice.id);
 }
 
 export const deleteInvoiceFromDb = async (

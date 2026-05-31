@@ -17,16 +17,22 @@ interface InvoiceEmailProps {
   dueDate?: string;
   senderName: string;
   message: string;
+  signingLink?: string;
   translations: {
     title: string;
     subtitle: string;
     detailsTitle: string;
+    sentBy: string;
     invoiceNumber: string;
     amount: string;
     dueDate: string;
     from: string;
     attachmentTitle: string;
     attachmentMessage: string;
+    signingTitle: string;
+    signingMessage: string;
+    signingButton: string;
+    signingFallback: string;
     footer: string;
     copyright: string;
   };
@@ -38,6 +44,7 @@ const InvoiceEmail = ({
   dueDate,
   senderName,
   message,
+  signingLink,
   translations
 }: InvoiceEmailProps) => {
   return (
@@ -60,6 +67,12 @@ const InvoiceEmail = ({
               <Text className="mx-0 mb-[24px] mt-[24px] text-[16px] leading-[24px] text-[#481878]">
                 {message}
               </Text>
+
+              <Section className="mb-[20px] rounded-[8px] border border-[#E4D4F4] bg-white p-[18px]">
+                <Text className="m-0 text-[14px] leading-[20px] text-[#481878]">
+                  {translations.sentBy.replace('{senderName}', senderName)}
+                </Text>
+              </Section>
 
               <Section className="mb-[24px] rounded-[8px] border border-[#E4D4F4] bg-[#F2EAFA] p-[24px]">
                 <Text className="mb-[16px] mt-0 text-[18px] font-bold text-[#301050]">
@@ -115,6 +128,32 @@ const InvoiceEmail = ({
                   {translations.attachmentMessage}
                 </Text>
               </Section>
+
+              {signingLink && (
+                <Section className="mt-[16px] rounded-[8px] border border-[#E4D4F4] bg-white p-[20px] text-center">
+                  <Text className="m-0 mb-[8px] text-[16px] font-bold text-[#301050]">
+                    {translations.signingTitle}
+                  </Text>
+                  <Text className="mx-0 mb-[18px] mt-0 text-[14px] leading-[20px] text-[#481878]">
+                    {translations.signingMessage}
+                  </Text>
+                  <Link
+                    href={signingLink}
+                    className="inline-block rounded-[8px] bg-[#7828C8] px-[18px] py-[12px] text-[14px] font-semibold text-white no-underline"
+                  >
+                    {translations.signingButton}
+                  </Link>
+                  <Text className="mx-0 mb-0 mt-[16px] text-left text-[12px] leading-[18px] text-[#6020A0]">
+                    {translations.signingFallback}
+                  </Text>
+                  <Link
+                    href={signingLink}
+                    className="break-all text-[12px] text-[#7828C8]"
+                  >
+                    {signingLink}
+                  </Link>
+                </Section>
+              )}
             </Section>
 
             <Section className="bg-[#F2EAFA] px-[32px] py-[24px]">

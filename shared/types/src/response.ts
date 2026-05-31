@@ -2,7 +2,7 @@ import z from 'zod/v4';
 import { userBodySchema, resetPasswordTokenGetSchema } from './user';
 import { bankAccountBodySchema } from './bank-account';
 import { clientBodySchema } from './client';
-import { invoiceBodySchema } from './invoice';
+import { invoiceBodySchema, publicInvoiceSigningSchema } from './invoice';
 
 // Common response schemas
 export const messageResponseSchema = z.object({
@@ -74,12 +74,21 @@ export const getInvoiceResponseSchema = z.object({
   invoice: invoiceBodySchema
 });
 
+export const getPublicInvoiceSigningResponseSchema = z.object({
+  signing: publicInvoiceSigningSchema
+});
+
 export const postInvoiceResponseSchema = z.object({
   invoice: invoiceBodySchema,
   message: z.string()
 });
 
 export const updateInvoiceResponseSchema = z.object({
+  invoice: invoiceBodySchema,
+  message: z.string()
+});
+
+export const signInvoiceResponseSchema = z.object({
   invoice: invoiceBodySchema,
   message: z.string()
 });
@@ -183,8 +192,12 @@ export type AddClientResponse = PostClientResponse;
 
 export type GetInvoicesResponse = z.infer<typeof getInvoicesResponseSchema>;
 export type GetInvoiceResponse = z.infer<typeof getInvoiceResponseSchema>;
+export type GetPublicInvoiceSigningResponse = z.infer<
+  typeof getPublicInvoiceSigningResponseSchema
+>;
 export type PostInvoiceResponse = z.infer<typeof postInvoiceResponseSchema>;
 export type UpdateInvoiceResponse = z.infer<typeof updateInvoiceResponseSchema>;
+export type SignInvoiceResponse = z.infer<typeof signInvoiceResponseSchema>;
 export type GetNextInvoiceNumberResponse = z.infer<
   typeof getNextInvoiceNumberResponseSchema
 >;

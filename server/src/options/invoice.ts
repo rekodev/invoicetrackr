@@ -5,10 +5,12 @@ import {
   getInvoicesTotalAmountResponseSchema,
   getLatestInvoicesResponseSchema,
   getNextInvoiceNumberResponseSchema,
+  getPublicInvoiceSigningResponseSchema,
   invoiceBodySchema,
   invoiceNumberSeriesSchema,
   messageResponseSchema,
   postInvoiceResponseSchema,
+  signInvoiceResponseSchema,
   updateInvoiceResponseSchema
 } from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
@@ -22,8 +24,10 @@ import {
   getInvoicesTotalAmount,
   getLatestInvoices,
   getNextInvoiceNumber,
+  getPublicInvoiceSigning,
   postInvoice,
   sendInvoiceEmail,
+  signPublicInvoice,
   updateInvoice,
   updateInvoiceStatus
 } from '../controllers/invoice';
@@ -153,4 +157,27 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
   preHandler: authMiddleware,
   preValidation: preValidateFileAndFields,
   handler: sendInvoiceEmail
+};
+
+export const getPublicInvoiceSigningOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      response: {
+        200: getPublicInvoiceSigningResponseSchema
+      }
+    },
+    handler: getPublicInvoiceSigning
+  };
+
+export const signPublicInvoiceOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    body: z.object({
+      file: z.any().nullish()
+    }),
+    response: {
+      200: signInvoiceResponseSchema
+    }
+  },
+  preValidation: preValidateFileAndFields,
+  handler: signPublicInvoice
 };

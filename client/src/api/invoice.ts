@@ -7,7 +7,9 @@ import type {
   GetInvoicesTotalAmountResponse,
   GetLatestInvoicesResponse,
   GetNextInvoiceNumberResponse,
+  GetPublicInvoiceSigningResponse,
   SendInvoiceEmailResponse,
+  SignInvoiceResponse,
   UpdateInvoiceResponse,
   UpdateInvoiceStatusResponse
 } from '@invoicetrackr/types';
@@ -18,6 +20,9 @@ import { buildFormData } from '@/lib/utils/multipart';
 
 export const getInvoice = async (userId: number, invoiceId: number) =>
   await api.get<GetInvoiceResponse>(`/api/${userId}/invoices/${invoiceId}`);
+
+export const getPublicInvoiceSigning = async (token: string) =>
+  await api.get<GetPublicInvoiceSigningResponse>(`/api/invoices/sign/${token}`);
 
 export const getInvoices = async (userId: number) =>
   await api.get<GetInvoicesResponse>(`/api/${userId}/invoices`);
@@ -102,6 +107,22 @@ export const deleteInvoice = async (userId: number, invoiceId: number) =>
   await api.delete<DeleteInvoiceResponse>(
     `/api/${userId}/invoices/${invoiceId}`
   );
+
+export const signPublicInvoice = async ({
+  token,
+  signature
+}: {
+  token: string;
+  signature: File;
+}) => {
+  const formData = new FormData();
+  formData.append('file', signature);
+
+  return await api.post<SignInvoiceResponse>(
+    `/api/invoices/sign/${token}`,
+    formData
+  );
+};
 
 export const sendInvoiceEmail = async ({
   id,

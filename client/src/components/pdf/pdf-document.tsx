@@ -25,6 +25,7 @@ type Props = {
   t: ReturnType<typeof import('next-intl').createTranslator>;
   invoiceData: InvoiceBody;
   senderSignatureImage: string;
+  receiverSignatureImage?: string;
   currency: string;
   language: string;
 };
@@ -33,6 +34,7 @@ export default function PDFDocument({
   t,
   invoiceData,
   senderSignatureImage,
+  receiverSignatureImage,
   currency,
   language
 }: Props) {
@@ -227,7 +229,8 @@ export default function PDFDocument({
       </View>
 
       {renderTotalAmountTableRow(t('subtotal_amount'), subtotalAmount)}
-      {shouldShowVatTotal && renderTotalAmountTableRow(t('vat_amount'), vatAmount)}
+      {shouldShowVatTotal &&
+        renderTotalAmountTableRow(t('vat_amount'), vatAmount)}
       {renderTotalAmountTableRow(t('total_amount'), grandTotalAmount, true)}
     </>
   );
@@ -268,8 +271,23 @@ export default function PDFDocument({
         <View style={pdfStyles.signatureBox}>
           <View style={pdfStyles.signatureAndName}>
             <Text></Text>
-            {/* TODO: Add ability for receiver to sign */}
-            <Text style={pdfStyles.nameWithSubtextEmpty}>0</Text>
+            {(receiverSignatureImage || invoiceData.receiverSignature) && (
+              <View style={pdfStyles.signatureImageContainer}>
+                <PDFImage
+                  style={pdfStyles.signatureImage}
+                  src={receiverSignatureImage || invoiceData.receiverSignature}
+                />
+              </View>
+            )}
+            <Text
+              style={
+                receiverSignatureImage || invoiceData.receiverSignature
+                  ? pdfStyles.nameWithSubtext
+                  : pdfStyles.nameWithSubtextEmpty
+              }
+            >
+              {receiver?.name || '0'}
+            </Text>
           </View>
           <View style={pdfStyles.signatureLine}></View>
           <View style={pdfStyles.signatureAndName}>

@@ -80,6 +80,7 @@ const InvoiceTableCell = ({
   const [isPending, startTransition] = useTransition();
 
   const { isPastDue, daysPastDue } = getInvoiceDueStatus(invoice);
+  const isDraft = (invoice.lifecycleStatus || 'draft') === 'draft';
 
   const handleViewIconClick = () => onView(invoice);
   const handleEditInvoiceClick = () => onEdit(invoice);
@@ -264,22 +265,26 @@ const InvoiceTableCell = ({
               <EyeIcon className="h-5 w-5" />
             </span>
           </Tooltip>
-          <Tooltip content={tCell('tooltip_edit')}>
-            <span
-              className="text-default-400 cursor-pointer text-lg active:opacity-50"
-              onClick={handleEditInvoiceClick}
-            >
-              <PencilSquareIcon className="h-5 w-5" />
-            </span>
-          </Tooltip>
-          <Tooltip color="danger" content={tCell('tooltip_delete')}>
-            <span
-              className="text-danger cursor-pointer text-lg active:opacity-50"
-              onClick={handleDeleteInvoiceClick}
-            >
-              <TrashIcon className="h-5 w-5" />
-            </span>
-          </Tooltip>
+          {isDraft && (
+            <>
+              <Tooltip content={tCell('tooltip_edit')}>
+                <span
+                  className="text-default-400 cursor-pointer text-lg active:opacity-50"
+                  onClick={handleEditInvoiceClick}
+                >
+                  <PencilSquareIcon className="h-5 w-5" />
+                </span>
+              </Tooltip>
+              <Tooltip color="danger" content={tCell('tooltip_delete')}>
+                <span
+                  className="text-danger cursor-pointer text-lg active:opacity-50"
+                  onClick={handleDeleteInvoiceClick}
+                >
+                  <TrashIcon className="h-5 w-5" />
+                </span>
+              </Tooltip>
+            </>
+          )}
         </div>
       );
     default:

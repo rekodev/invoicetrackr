@@ -17,6 +17,7 @@ import { JSX, useTransition } from 'react';
 import { BlobProvider } from '@react-pdf/renderer';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
@@ -49,6 +50,7 @@ export default function SendInvoiceEmailModal({
   currency
 }: Props) {
   const t = useTranslations('components.send_invoice_email');
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -92,6 +94,7 @@ export default function SendInvoiceEmailModal({
       }
 
       handleCloseSendDialog();
+      router.refresh();
     });
 
   return (
@@ -162,6 +165,9 @@ export default function SendInvoiceEmailModal({
                         {t('date')}:
                       </span>
                       {invoice.date}
+                    </p>
+                    <p className="text-default-500 mt-2 text-sm">
+                      {t('signing_link_note')}
                     </p>
                   </CardBody>
                 </Card>

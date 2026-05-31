@@ -13,6 +13,7 @@ type Props = {
   currency: Currency;
   invoiceData?: InvoiceBody;
   senderSignatureImage: string;
+  receiverSignatureImage?: string;
 };
 
 export default function useDynamicPdf({
@@ -20,7 +21,8 @@ export default function useDynamicPdf({
   currency,
   invoiceLanguage,
   invoiceData,
-  senderSignatureImage
+  senderSignatureImage,
+  receiverSignatureImage
 }: Props) {
   const [isPending, startTransition] = useTransition();
   const [pdfDocumentTranslator, setPdfDocumentTranslator] =
@@ -59,6 +61,7 @@ export default function useDynamicPdf({
         currency={currency}
         invoiceData={invoiceData}
         senderSignatureImage={senderSignatureImage}
+        receiverSignatureImage={receiverSignatureImage}
       />
     );
   };

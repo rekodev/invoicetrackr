@@ -60,7 +60,19 @@ export const invoicesTable = pgTable(
     invoiceId: varchar('invoice_id').notNull(),
     id: serial().primaryKey().notNull(),
     senderSignature: varchar('sender_signature', { length: 255 }).notNull(),
+    receiverSignature: varchar('receiver_signature', { length: 255 }),
     bankAccountId: integer('bank_account_id'),
+    recipientSigningToken: varchar('recipient_signing_token', {
+      length: 255
+    }),
+    recipientSigningSentAt: timestamp('recipient_signing_sent_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    recipientSignedAt: timestamp('recipient_signed_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
     issuedAt: timestamp('issued_at', {
       withTimezone: true,
       mode: 'string'
@@ -98,7 +110,10 @@ export const invoicesTable = pgTable(
       'invoices_lifecycle_status_check',
       sql`(lifecycle_status)::text = ANY ((ARRAY['draft'::character varying, 'issued'::character varying, 'voided'::character varying])::text[])`
     ),
-    unique('invoices_user_invoice_id_key').on(table.userId, table.invoiceId)
+    unique('invoices_user_invoice_id_key').on(table.userId, table.invoiceId),
+    unique('invoices_recipient_signing_token_key').on(
+      table.recipientSigningToken
+    )
   ]
 );
 

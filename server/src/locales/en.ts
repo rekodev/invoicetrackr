@@ -19,6 +19,7 @@ export default {
       subtitle: 'Professional Invoice Management',
       defaultMessage: 'Please find your invoice attached.',
       detailsTitle: 'Invoice Details',
+      sentBy: 'This invoice was sent from {senderName} via InvoiceTrackr.',
       invoiceNumber: 'Invoice Number:',
       amount: 'Amount:',
       dueDate: 'Due Date:',
@@ -26,6 +27,12 @@ export default {
       attachmentTitle: 'Invoice Attached',
       attachmentMessage:
         'The complete invoice document is attached to this email as a PDF file.',
+      signingTitle: 'Review and sign invoice',
+      signingMessage:
+        'Open the secure invoice link to review the document, add your signature, and download the signed PDF.',
+      signingButton: 'Review and sign',
+      signingFallback:
+        'If the button does not work, copy and paste this secure link into your browser:',
       footer: 'This email was sent by InvoiceTrackr',
       copyright: 'InvoiceTrackr. All rights reserved.'
     }
@@ -139,7 +146,8 @@ export default {
       updated: 'Invoice updated successfully',
       deleted: 'Invoice deleted successfully',
       statusUpdated: 'Invoice status updated successfully',
-      emailSent: 'Email sent successfully'
+      emailSent: 'Email sent successfully',
+      signed: 'Invoice signed successfully'
     },
     client: {
       created: 'Client added successfully',
@@ -189,7 +197,11 @@ export default {
       unableToDelete: 'Unable to delete invoice',
       unableToUpdateStatus: 'Unable to update invoice status',
       unableToRetrieveData: 'Unable to retrieve invoice data',
-      unableToSendEmail: 'Unable to send email'
+      unableToSendEmail: 'Unable to send email',
+      unableToCreateSigningLink: 'Unable to create invoice signing link',
+      alreadySigned: 'Invoice is already signed',
+      issuedImmutable:
+        'Issued invoices cannot be edited or deleted from this flow'
     },
     client: {
       notFound: 'Client not found',

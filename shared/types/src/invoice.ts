@@ -101,6 +101,7 @@ export const invoiceBodySchema = z
     dueDate: z.iso.date('validation.invoice.dueDate'),
     sender: invoiceSenderBodySchema,
     senderSignature: z.any().optional(),
+    receiverSignature: z.string().nullish(),
     receiver: invoiceReceiverBodySchema,
     subtotalAmount: z.string().optional(),
     vatAmount: z.string().optional(),
@@ -110,6 +111,9 @@ export const invoiceBodySchema = z
     issuedAt: z.string().nullish(),
     paidAt: z.string().nullish(),
     voidedAt: z.string().nullish(),
+    recipientSigningToken: z.string().nullish(),
+    recipientSigningSentAt: z.string().nullish(),
+    recipientSignedAt: z.string().nullish(),
     services: z
       .array(invoiceServiceBodySchema)
       .min(1, 'validation.invoice.services.required')
@@ -123,6 +127,18 @@ export const invoiceBodySchema = z
       path: ['dueDate']
     }
   );
+
+export const publicInvoiceSigningSchema = z.object({
+  token: z.string(),
+  invoice: invoiceBodySchema,
+  currency: z.string(),
+  language: z.string(),
+  preferredInvoiceLanguage: z.string().nullish()
+});
+
+export const signInvoiceBodySchema = z.object({
+  file: z.any()
+});
 
 // Types
 export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
@@ -144,3 +160,4 @@ export type InvoicePartyBody = InvoiceSenderBody | InvoiceReceiverBody;
 export type InvoiceParty = InvoicePartyBody;
 
 export type InvoiceBody = z.infer<typeof invoiceBodySchema>;
+export type PublicInvoiceSigning = z.infer<typeof publicInvoiceSigningSchema>;
