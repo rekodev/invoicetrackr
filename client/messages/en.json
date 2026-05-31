@@ -398,7 +398,8 @@
     "signature_required": "Add a signature before signing.",
     "sign_button": "Sign invoice",
     "already_signed": "Invoice signed",
-    "download_pdf": "Download PDF"
+    "download_pdf": "Download PDF",
+    "link_unavailable": "Invoice link unavailable"
   },
   "clients": {
     "page_title": "Clients",
@@ -690,6 +691,13 @@
       "amount": "Amount",
       "date": "Date",
       "signing_link_note": "This email will include a secure signing link for the recipient.",
+      "active_signing_recipient": "Active signing link sent to {email}.",
+      "signing_link_expires": "Link expires on {date}.",
+      "signing_link_revoked": "This link has been revoked.",
+      "replacement_link_note": "Sending will invalidate the previous link and create a fresh one.",
+      "revoke_signing_link": "Revoke link",
+      "regenerate_signing_link": "Generate fresh link",
+      "replace_link_and_send": "Replace link and send",
       "cancel": "Cancel",
       "send": "Send"
     },

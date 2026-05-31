@@ -26,6 +26,8 @@ import {
   getNextInvoiceNumber,
   getPublicInvoiceSigning,
   postInvoice,
+  regenerateInvoiceSigning,
+  revokeInvoiceSigning,
   sendInvoiceEmail,
   signPublicInvoice,
   updateInvoice,
@@ -158,6 +160,30 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
   preValidation: preValidateFileAndFields,
   handler: sendInvoiceEmail
 };
+
+export const revokeInvoiceSigningOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    response: {
+      200: messageResponseSchema
+    }
+  },
+  preHandler: authMiddleware,
+  handler: revokeInvoiceSigning
+};
+
+export const regenerateInvoiceSigningOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      body: z.object({
+        recipientEmail: z.email('validation.invoice.recipientEmail')
+      }),
+      response: {
+        200: messageResponseSchema
+      }
+    },
+    preHandler: authMiddleware,
+    handler: regenerateInvoiceSigning
+  };
 
 export const getPublicInvoiceSigningOptions: RouteShorthandOptionsWithHandler =
   {

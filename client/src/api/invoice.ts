@@ -124,6 +124,28 @@ export const signPublicInvoice = async ({
   );
 };
 
+export const revokeInvoiceSigningLink = async (
+  userId: number,
+  invoiceId: number
+) =>
+  await api.post<SendInvoiceEmailResponse>(
+    `/api/${userId}/invoices/${invoiceId}/signing-link/revoke`
+  );
+
+export const regenerateInvoiceSigningLink = async ({
+  userId,
+  invoiceId,
+  recipientEmail
+}: {
+  userId: number;
+  invoiceId: number;
+  recipientEmail: string;
+}) =>
+  await api.post<SendInvoiceEmailResponse>(
+    `/api/${userId}/invoices/${invoiceId}/signing-link/regenerate`,
+    { recipientEmail }
+  );
+
 export const sendInvoiceEmail = async ({
   id,
   userId,

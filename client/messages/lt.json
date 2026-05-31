@@ -398,7 +398,8 @@
     "signature_required": "Pridėkite parašą prieš pasirašydami.",
     "sign_button": "Pasirašyti sąskaitą",
     "already_signed": "Sąskaita pasirašyta",
-    "download_pdf": "Atsisiųsti PDF"
+    "download_pdf": "Atsisiųsti PDF",
+    "link_unavailable": "Sąskaitos nuoroda nepasiekiama"
   },
   "clients": {
     "page_title": "Klientai",
@@ -690,6 +691,13 @@
       "amount": "Suma",
       "date": "Data",
       "signing_link_note": "Šiame laiške bus saugi pasirašymo nuoroda gavėjui.",
+      "active_signing_recipient": "Aktyvi pasirašymo nuoroda išsiųsta adresu {email}.",
+      "signing_link_expires": "Nuoroda galioja iki {date}.",
+      "signing_link_revoked": "Ši nuoroda buvo atšaukta.",
+      "replacement_link_note": "Siunčiant ankstesnė nuoroda bus panaikinta ir sukurta nauja.",
+      "revoke_signing_link": "Atšaukti nuorodą",
+      "regenerate_signing_link": "Generuoti naują nuorodą",
+      "replace_link_and_send": "Pakeisti nuorodą ir siųsti",
       "cancel": "Atšaukti",
       "send": "Siųsti"
     },

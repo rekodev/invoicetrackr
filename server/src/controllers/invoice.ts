@@ -25,6 +25,8 @@ import {
   insertInvoiceInDb,
   markInvoiceSigningSentInDb,
   prepareInvoiceSigningFromDb,
+  regenerateInvoiceSigningFromDb,
+  revokeInvoiceSigningFromDb,
   signInvoiceByRecipientTokenInDb,
   updateInvoiceInDb,
   updateInvoiceStatusInDb
@@ -55,6 +57,35 @@ const escapeEmailHtml = (value: string) =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+
+const UNSIGNED_SIGNING_LINK_VALIDITY_DAYS = 30;
+const SIGNED_SIGNING_LINK_VALIDITY_DAYS = 90;
+const createSigningLinkExpiration = (isSigned = false) =>
+  new Date(
+    Date.now() +
+      (isSigned
+        ? SIGNED_SIGNING_LINK_VALIDITY_DAYS
+        : UNSIGNED_SIGNING_LINK_VALIDITY_DAYS) *
+        24 *
+        60 *
+        60 *
+        1000
+  ).toISOString();
+const isSigningLinkExpired = (expiresAt?: string | null) =>
+  Boolean(expiresAt && new Date(expiresAt).getTime() <= Date.now());
+
+const assertSigningLinkAvailable = (
+  invoice: Pick<
+    InvoiceBody,
+    'recipientSigningRevokedAt' | 'recipientSigningExpiresAt'
+  >,
+  i18n: Awaited<ReturnType<typeof useI18n>>
+) => {
+  if (invoice.recipientSigningRevokedAt)
+    throw new BadRequestError(i18n.t('error.invoice.signingLinkRevoked'));
+  if (isSigningLinkExpired(invoice.recipientSigningExpiresAt))
+    throw new BadRequestError(i18n.t('error.invoice.signingLinkExpired'));
+};
 
 export const getInvoices = async (
   req: FastifyRequest<{ Params: { userId: string } }>,
@@ -334,12 +365,41 @@ export const sendInvoiceEmail = async (
   if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
   if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
-  const signingToken =
+  let signingToken =
     invoice.recipientSigningToken || randomBytes(32).toString('hex');
+  const shouldRotateSigningLink = Boolean(
+    invoice.recipientSigningToken &&
+      (invoice.recipientSigningRevokedAt ||
+        isSigningLinkExpired(invoice.recipientSigningExpiresAt) ||
+        (invoice.recipientSigningEmail &&
+          invoice.recipientSigningEmail.toLowerCase() !==
+            recipientEmail.toLowerCase()))
+  );
+
+  if (shouldRotateSigningLink) {
+    signingToken = randomBytes(32).toString('hex');
+    const regenerated = await regenerateInvoiceSigningFromDb({
+      userId,
+      id,
+      token: signingToken,
+      recipientEmail,
+      expiresAt: createSigningLinkExpiration(Boolean(invoice.recipientSignedAt))
+    });
+
+    if (!regenerated)
+      throw new BadRequestError(
+        i18n.t('error.invoice.unableToRegenerateSigningLink')
+      );
+  } else if (invoice.recipientSigningToken) {
+    assertSigningLinkAvailable(invoice, i18n);
+  }
+
   const preparedInvoice = await prepareInvoiceSigningFromDb({
     userId,
     id,
-    token: signingToken
+    token: signingToken,
+    recipientEmail,
+    expiresAt: createSigningLinkExpiration(Boolean(invoice.recipientSignedAt))
   });
 
   if (!preparedInvoice?.recipientSigningToken)
@@ -376,12 +436,16 @@ export const sendInvoiceEmail = async (
       signingMessage: i18n.t('emails.invoice.signingMessage'),
       signingButton: i18n.t('emails.invoice.signingButton'),
       signingFallback: i18n.t('emails.invoice.signingFallback'),
+      viewTitle: i18n.t('emails.invoice.viewTitle'),
+      viewMessage: i18n.t('emails.invoice.viewMessage'),
+      viewButton: i18n.t('emails.invoice.viewButton'),
       footer: i18n.t('emails.invoice.footer'),
       copyright: i18n.t('emails.invoice.copyright', {
         year: new Date().getFullYear()
       })
     },
-    signingLink
+    signingLink,
+    isSigningAvailable: !invoice.recipientSignedAt
   });
 
   const { error } = await resend.emails.send({
@@ -409,6 +473,64 @@ export const sendInvoiceEmail = async (
   reply.status(200).send({ message: i18n.t('success.invoice.emailSent') });
 };
 
+export const revokeInvoiceSigning = async (
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const userId = Number(req.params.userId);
+  const id = Number(req.params.id);
+  const invoice = await getInvoiceFromDb(userId, id);
+
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (!invoice.recipientSigningToken)
+    throw new BadRequestError(
+      i18n.t('error.invoice.unableToCreateSigningLink')
+    );
+
+  const revoked = await revokeInvoiceSigningFromDb({
+    userId,
+    id
+  });
+
+  if (!revoked) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+
+  reply
+    .status(200)
+    .send({ message: i18n.t('success.invoice.signingLinkRevoked') });
+};
+
+export const regenerateInvoiceSigning = async (
+  req: FastifyRequest<{
+    Params: { userId: string; id: string };
+    Body: { recipientEmail: string };
+  }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const userId = Number(req.params.userId);
+  const id = Number(req.params.id);
+  const invoice = await getInvoiceFromDb(userId, id);
+
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  const regenerated = await regenerateInvoiceSigningFromDb({
+    userId,
+    id,
+    token: randomBytes(32).toString('hex'),
+    recipientEmail: req.body.recipientEmail,
+    expiresAt: createSigningLinkExpiration(Boolean(invoice.recipientSignedAt))
+  });
+
+  if (!regenerated)
+    throw new BadRequestError(
+      i18n.t('error.invoice.unableToRegenerateSigningLink')
+    );
+
+  reply.status(200).send({
+    message: i18n.t('success.invoice.signingLinkRegenerated')
+  });
+};
+
 export const getPublicInvoiceSigning = async (
   req: FastifyRequest<{ Params: { token: string } }>,
   reply: FastifyReply
@@ -417,6 +539,7 @@ export const getPublicInvoiceSigning = async (
   const signing = await getPublicInvoiceSigningFromDb(req.params.token);
 
   if (!signing) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  assertSigningLinkAvailable(signing.invoice, i18n);
 
   reply.status(200).send({
     signing: {
@@ -445,6 +568,7 @@ export const signPublicInvoice = async (
   const signing = await getPublicInvoiceSigningFromDb(req.params.token);
 
   if (!signing) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  assertSigningLinkAvailable(signing.invoice, i18n);
   if (signing.invoice.recipientSignedAt)
     throw new BadRequestError(i18n.t('error.invoice.alreadySigned'));
 
