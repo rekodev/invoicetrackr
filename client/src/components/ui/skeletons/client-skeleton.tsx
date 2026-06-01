@@ -20,8 +20,10 @@ export function ClientSectionSkeleton() {
 
         <Skeleton className="h-5 w-[100px] rounded-xl" />
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {Array.from({ length: 8 }).map((_, index) => renderClientCard(index))}
+      <div className="border-default-200 dark:border-default-100 flex flex-col gap-4 rounded-xl border p-4 shadow-sm">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {Array.from({ length: 8 }).map((_, index) => renderClientCard(index))}
+        </div>
       </div>
 
       <div className="relative mt-2 flex items-center justify-center">
