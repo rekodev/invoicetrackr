@@ -12,7 +12,9 @@ describe('<DashboardCard />', () => {
   beforeEach(() => {
     props = {
       title: 'Test Title',
-      text: 'Test Text Content'
+      text: 'Test Text Content',
+      icon: <>icon</>,
+      iconClassName: ''
     };
   });
 
