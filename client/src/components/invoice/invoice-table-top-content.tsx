@@ -24,7 +24,6 @@ import IncomeJournalExportModal from './income-journal-export-modal';
 
 type Props = {
   userId: number;
-  language: string;
   columns: Array<{ name: string; uid: string; sortable?: boolean }>;
   statusOptions: Array<{ name: string; uid: string }>;
   filterValue: string;
@@ -40,7 +39,6 @@ type Props = {
 
 const InvoiceTableTopContent = ({
   userId,
-  language,
   columns,
   statusOptions,
   filterValue,
@@ -190,7 +188,6 @@ const InvoiceTableTopContent = ({
       </div>
       <IncomeJournalExportModal
         userId={userId}
-        language={language}
         isOpen={isIncomeJournalModalOpen}
         onOpenChange={onIncomeJournalModalOpenChange}
       />

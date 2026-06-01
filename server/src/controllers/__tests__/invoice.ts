@@ -86,7 +86,8 @@ describe('Invoice Controller', () => {
 
       const response = await app.inject({
         method: 'GET',
-        url: `/api/${testUserId}/invoices/income-journal.csv?from=2026-05-01&to=2026-05-31&language=en`
+        url: `/api/${testUserId}/invoices/income-journal.csv?from=2026-05-01&to=2026-05-31`,
+        headers: { 'accept-language': 'en' }
       });
 
       expect(response.statusCode).toBe(200);
@@ -122,7 +123,8 @@ describe('Invoice Controller', () => {
 
       const response = await app.inject({
         method: 'GET',
-        url: `/api/${testUserId}/invoices/income-journal.csv?from=2026-05-01&to=2026-05-31&language=lt`
+        url: `/api/${testUserId}/invoices/income-journal.csv?from=2026-05-01&to=2026-05-31`,
+        headers: { 'accept-language': 'lt' }
       });
 
       expect(response.headers['content-disposition']).toBe(

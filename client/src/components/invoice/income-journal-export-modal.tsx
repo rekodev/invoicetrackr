@@ -10,15 +10,14 @@ import {
   ModalHeader,
   addToast
 } from '@heroui/react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 
 import { getIncomeJournalExport } from '@/api/invoice';
 import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
   userId: number;
-  language: string;
   isOpen: boolean;
   onOpenChange: (_isOpen: boolean) => void;
 };
@@ -27,11 +26,11 @@ const currentYear = new Date().getFullYear();
 
 export default function IncomeJournalExportModal({
   userId,
-  language,
   isOpen,
   onOpenChange
 }: Props) {
   const t = useTranslations('invoices.income_journal');
+  const locale = useLocale();
   const [from, setFrom] = useState(`${currentYear}-01-01`);
   const [to, setTo] = useState(`${currentYear}-12-31`);
   const [isExporting, setIsExporting] = useState(false);
@@ -41,8 +40,7 @@ export default function IncomeJournalExportModal({
     const response = await getIncomeJournalExport({
       userId,
       from,
-      to,
-      language
+      to
     });
     setIsExporting(false);
 
@@ -55,7 +53,7 @@ export default function IncomeJournalExportModal({
     const link = document.createElement('a');
     link.href = url;
     link.download =
-      language === 'lt'
+      locale === 'lt'
         ? `pajamu-zurnalas-${from}-${to}.csv`
         : `income-journal-${from}-${to}.csv`;
     link.click();

@@ -112,10 +112,10 @@ export const getIncomeJournal = async (
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
-  const { from, to, language } = req.query;
+  const { from, to } = req.query;
   const rows = await getIncomeJournalRowsFromDb({ userId, from, to });
   const currency = rows.at(0)?.currency?.toUpperCase() || 'EUR';
-  const isLithuanian = language === 'lt';
+  const isLithuanian = req.headers['accept-language']?.startsWith('lt');
   const headers = isLithuanian
     ? [
         'Apmokėjimo data',

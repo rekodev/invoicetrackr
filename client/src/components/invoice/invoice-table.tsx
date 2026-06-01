@@ -188,7 +188,6 @@ const InvoiceTable = ({
   const renderTopContent = () => (
     <InvoiceTableTopContent
       userId={userId}
-      language={language}
       columns={columns}
       statusOptions={statusOptions}
       filterValue={filterValue}
