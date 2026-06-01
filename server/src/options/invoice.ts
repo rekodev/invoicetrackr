@@ -19,9 +19,9 @@ import z from 'zod/v4';
 
 import {
   deleteInvoice,
+  getIncomeJournal,
   getInvoice,
   getInvoices,
-  getIncomeJournal,
   getInvoicesRevenue,
   getInvoicesTotalAmount,
   getLatestInvoices,

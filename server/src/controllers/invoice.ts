@@ -112,20 +112,34 @@ export const getIncomeJournal = async (
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
-  const { from, to } = req.query;
+  const { from, to, language } = req.query;
   const rows = await getIncomeJournalRowsFromDb({ userId, from, to });
   const currency = rows.at(0)?.currency?.toUpperCase() || 'EUR';
-  const headers = [
-    'Apmokėjimo data',
-    'Sąskaitos data',
-    'Dokumento numeris',
-    'Pirkėjas',
-    'Pirkėjo kodas',
-    'Paslaugos / prekės',
-    `Suma be PVM (${currency})`,
-    `PVM suma (${currency})`,
-    `Bendra suma (${currency})`
-  ];
+  const isLithuanian = language === 'lt';
+  const headers = isLithuanian
+    ? [
+        'Apmokėjimo data',
+        'Sąskaitos data',
+        'Dokumento numeris',
+        'Pirkėjas',
+        'Pirkėjo kodas',
+        'Paslaugos / prekės',
+        `Suma be PVM (${currency})`,
+        `PVM suma (${currency})`,
+        `Bendra suma (${currency})`
+      ]
+    : [
+        'Payment date',
+        'Invoice date',
+        'Document number',
+        'Client',
+        'Client code',
+        'Services / goods',
+        `Subtotal (${currency})`,
+        `VAT total (${currency})`,
+        `Grand total (${currency})`
+      ];
+  const filename = isLithuanian ? 'pajamu-zurnalas' : 'income-journal';
   const csvRows = rows.map((row) =>
     [
       formatCsvDate(row.paidAt),
@@ -146,10 +160,12 @@ export const getIncomeJournal = async (
     .header('Content-Type', 'text/csv; charset=utf-8')
     .header(
       'Content-Disposition',
-      `attachment; filename="pajamu-zurnalas-${from}-${to}.csv"`
+      `attachment; filename="${filename}-${from}-${to}.csv"`
     )
     .status(200)
-    .send(`\uFEFF${[headers.map(escapeCsvValue).join(','), ...csvRows].join('\n')}`);
+    .send(
+      `\uFEFF${[headers.map(escapeCsvValue).join(','), ...csvRows].join('\n')}`
+    );
 };
 
 export const getInvoice = async (

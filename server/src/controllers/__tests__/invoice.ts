@@ -86,21 +86,49 @@ describe('Invoice Controller', () => {
 
       const response = await app.inject({
         method: 'GET',
-        url: `/api/${testUserId}/invoices/income-journal.csv?from=2026-05-01&to=2026-05-31`
+        url: `/api/${testUserId}/invoices/income-journal.csv?from=2026-05-01&to=2026-05-31&language=en`
       });
 
       expect(response.statusCode).toBe(200);
       expect(response.headers['content-type']).toContain('text/csv');
       expect(response.headers['content-disposition']).toBe(
-        'attachment; filename="pajamu-zurnalas-2026-05-01-2026-05-31.csv"'
+        'attachment; filename="income-journal-2026-05-01-2026-05-31.csv"'
       );
-      expect(response.body).toContain('\uFEFF"Apmokėjimo data"');
+      expect(response.body).toContain('\uFEFF"Payment date"');
       expect(response.body).toContain('"Consulting, implementation"');
       expect(invoiceDb.getIncomeJournalRowsFromDb).toHaveBeenCalledWith({
         userId: testUserId,
         from: '2026-05-01',
         to: '2026-05-31'
       });
+
+      await app.close();
+    });
+
+    it('should export Lithuanian headers and filename for Lithuanian users', async () => {
+      vi.mocked(invoiceDb.getIncomeJournalRowsFromDb).mockResolvedValue([]);
+
+      const { getIncomeJournal } = invoiceController;
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.get(
+          '/api/:userId/invoices/income-journal.csv',
+          {
+            preHandler: mockAuthMiddleware
+          },
+          getIncomeJournal
+        );
+      });
+
+      const response = await app.inject({
+        method: 'GET',
+        url: `/api/${testUserId}/invoices/income-journal.csv?from=2026-05-01&to=2026-05-31&language=lt`
+      });
+
+      expect(response.headers['content-disposition']).toBe(
+        'attachment; filename="pajamu-zurnalas-2026-05-01-2026-05-31.csv"'
+      );
+      expect(response.body).toContain('\uFEFF"Apmokėjimo data"');
 
       await app.close();
     });

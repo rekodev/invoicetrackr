@@ -18,6 +18,7 @@ import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
   userId: number;
+  language: string;
   isOpen: boolean;
   onOpenChange: (_isOpen: boolean) => void;
 };
@@ -26,6 +27,7 @@ const currentYear = new Date().getFullYear();
 
 export default function IncomeJournalExportModal({
   userId,
+  language,
   isOpen,
   onOpenChange
 }: Props) {
@@ -36,7 +38,12 @@ export default function IncomeJournalExportModal({
 
   const handleExport = async () => {
     setIsExporting(true);
-    const response = await getIncomeJournalExport({ userId, from, to });
+    const response = await getIncomeJournalExport({
+      userId,
+      from,
+      to,
+      language
+    });
     setIsExporting(false);
 
     if (isResponseError(response)) {
@@ -47,7 +54,10 @@ export default function IncomeJournalExportModal({
     const url = URL.createObjectURL(response.data);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `pajamu-zurnalas-${from}-${to}.csv`;
+    link.download =
+      language === 'lt'
+        ? `pajamu-zurnalas-${from}-${to}.csv`
+        : `income-journal-${from}-${to}.csv`;
     link.click();
     URL.revokeObjectURL(url);
     onOpenChange(false);

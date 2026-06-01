@@ -148,7 +148,8 @@ export const signInvoiceBodySchema = z.object({
 export const incomeJournalQuerySchema = z
   .object({
     from: z.iso.date(),
-    to: z.iso.date()
+    to: z.iso.date(),
+    language: z.enum(['en', 'lt']).default('en')
   })
   .refine((data) => data.from <= data.to, {
     message: 'validation.invoice.incomeJournalDateRange',
