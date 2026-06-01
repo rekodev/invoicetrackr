@@ -358,7 +358,9 @@ describe('Invoice Controller', () => {
       });
 
       expect(response.statusCode).toBe(400);
-      expect(JSON.parse(response.body).message).toContain('expired');
+      expect(JSON.parse(response.body).message).toBe(
+        'error.invoice.signingLinkExpired'
+      );
 
       await app.close();
     });
@@ -386,7 +388,9 @@ describe('Invoice Controller', () => {
       });
 
       expect(response.statusCode).toBe(400);
-      expect(JSON.parse(response.body).message).toContain('revoked');
+      expect(JSON.parse(response.body).message).toBe(
+        'error.invoice.signingLinkRevoked'
+      );
 
       await app.close();
     });
