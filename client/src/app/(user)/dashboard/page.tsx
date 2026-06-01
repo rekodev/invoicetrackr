@@ -18,7 +18,7 @@ const DashboardPage = async () => {
   const userId = Number(session.user.id);
 
   return (
-    <main className="flex flex-col gap-12">
+    <main className="flex flex-col gap-6">
       <Suspense fallback={<DashboardCardsSkeleton />}>
         <DashboardCards userId={userId} currency={session.user.currency} />
       </Suspense>

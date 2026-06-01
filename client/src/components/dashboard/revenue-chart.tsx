@@ -18,13 +18,13 @@ const RevenueChart = async ({ userId }: Props) => {
   if (isResponseError(response)) throw new Error('Failed to fetch data');
 
   return (
-    <div className="flex w-full flex-col gap-6">
-      <h2 className="text-2xl">{t('title')}</h2>
+    <section className="border-default-200 flex w-full flex-col rounded-xl border p-5 shadow-sm sm:p-6">
+      <h2 className="text-base font-semibold">{t('title')}</h2>
       <InvoiceDataBarChart
         revenueByMonth={response.data.revenueByMonth}
         currency={session?.user.currency}
       />
-    </div>
+    </section>
   );
 };
 

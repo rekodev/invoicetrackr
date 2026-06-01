@@ -250,8 +250,15 @@
     },
     "latest_invoices": {
       "title": "Naujausios sąskaitos faktūros",
+      "subtitle": "Naujausia veikla",
       "view_all": "Žiūrėti visas",
-      "empty_state": "Nėra sąskaitų faktūrų rodymui."
+      "empty_state": "Nėra sąskaitų faktūrų rodymui.",
+      "statuses": {
+        "paid": "Sumokėta",
+        "pending": "Laukiama",
+        "overdue": "Pradelsta",
+        "canceled": "Atšaukta"
+      }
     }
   },
   "invoices": {
