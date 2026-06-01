@@ -141,6 +141,27 @@
       "when": 1780254023233,
       "tag": "0019_organic_surge",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1780337863758,
+      "tag": "0020_romantic_wrecker",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1780339335917,
+      "tag": "0021_big_vance_astro",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1780342032591,
+      "tag": "0022_youthful_tana_nile",
+      "breakpoints": true
     }
   ]
 }

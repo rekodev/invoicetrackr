@@ -51,7 +51,8 @@ export const invoiceServiceBodySchema = z.object({
     .number('validation.invoice.services.amount.number')
     .min(0.01, 'validation.invoice.services.amount.min')
     .max(10000000, 'validation.invoice.services.amount.max'),
-  vatRate: z.coerce.number().min(0).max(100).optional()
+  vatRate: z.coerce.number().min(0).max(100).optional(),
+  vatExemptionReason: z.string().trim().max(255).nullish()
 });
 
 export const invoiceSenderBodySchema = z.object(
@@ -144,6 +145,16 @@ export const signInvoiceBodySchema = z.object({
   file: z.any()
 });
 
+export const incomeJournalQuerySchema = z
+  .object({
+    from: z.iso.date(),
+    to: z.iso.date()
+  })
+  .refine((data) => data.from <= data.to, {
+    message: 'validation.invoice.incomeJournalDateRange',
+    path: ['to']
+  });
+
 // Types
 export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
 export type InvoiceNumberSeries = z.infer<typeof invoiceNumberSeriesSchema>;
@@ -165,3 +176,4 @@ export type InvoiceParty = InvoicePartyBody;
 
 export type InvoiceBody = z.infer<typeof invoiceBodySchema>;
 export type PublicInvoiceSigning = z.infer<typeof publicInvoiceSigningSchema>;
+export type IncomeJournalQuery = z.infer<typeof incomeJournalQuerySchema>;

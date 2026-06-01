@@ -1,0 +1,1 @@
+CREATE INDEX "invoices_paid_income_journal_idx" ON "invoices" USING btree ("user_id","paid_at") WHERE status = 'paid';

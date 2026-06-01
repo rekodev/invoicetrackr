@@ -6,6 +6,7 @@ import {
   getLatestInvoicesResponseSchema,
   getNextInvoiceNumberResponseSchema,
   getPublicInvoiceSigningResponseSchema,
+  incomeJournalQuerySchema,
   invoiceBodySchema,
   invoiceNumberSeriesSchema,
   messageResponseSchema,
@@ -20,6 +21,7 @@ import {
   deleteInvoice,
   getInvoice,
   getInvoices,
+  getIncomeJournal,
   getInvoicesRevenue,
   getInvoicesTotalAmount,
   getLatestInvoices,
@@ -44,6 +46,14 @@ export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   },
   preHandler: authMiddleware,
   handler: getInvoices
+};
+
+export const getIncomeJournalOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    querystring: incomeJournalQuerySchema
+  },
+  preHandler: authMiddleware,
+  handler: getIncomeJournal
 };
 
 export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {

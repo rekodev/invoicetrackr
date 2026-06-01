@@ -27,6 +27,20 @@ export const getPublicInvoiceSigning = async (token: string) =>
 export const getInvoices = async (userId: number) =>
   await api.get<GetInvoicesResponse>(`/api/${userId}/invoices`);
 
+export const getIncomeJournalExport = async ({
+  userId,
+  from,
+  to
+}: {
+  userId: number;
+  from: string;
+  to: string;
+}) =>
+  await api.get<Blob>(`/api/${userId}/invoices/income-journal.csv`, {
+    params: { from, to },
+    responseType: 'blob'
+  });
+
 export const getInvoicesTotalAmount = async (userId: number) =>
   await api.get<GetInvoicesTotalAmountResponse>(
     `/api/${userId}/invoices/total-amount`

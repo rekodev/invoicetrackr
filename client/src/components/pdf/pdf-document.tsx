@@ -61,7 +61,7 @@ export default function PDFDocument({
   const renderHeader = () => (
     <>
       <Text style={pdfStyles.title}>
-        {invoiceData?.sender?.businessType === 'business'
+        {invoiceData?.sender?.vatNumber
           ? t('businessTitle')
           : t('individualTitle')}{' '}
       </Text>
@@ -127,7 +127,8 @@ export default function PDFDocument({
     unit: string,
     quantity: number,
     amount: number,
-    vatRate?: number
+    vatRate?: number,
+    vatExemptionReason?: string
   ) => (
     <View style={pdfStyles.tableRow} key={index}>
       <View style={[pdfStyles.tableCol, pdfStyles.tableCol1]}>
@@ -135,6 +136,11 @@ export default function PDFDocument({
       </View>
       <View style={[pdfStyles.tableCol, pdfStyles.tableCol2]}>
         <Text style={pdfStyles.tableCell}>{description}</Text>
+        {vatExemptionReason && (
+          <Text style={pdfStyles.tableCell}>
+            {t('vat_exemption_reason_label')}: {vatExemptionReason}
+          </Text>
+        )}
       </View>
       <View style={[pdfStyles.tableCol, pdfStyles.tableCol3]}>
         <Text style={pdfStyles.tableCell}>{unit}</Text>
@@ -223,7 +229,8 @@ export default function PDFDocument({
             service.unit,
             service.quantity,
             service.amount,
-            service.vatRate
+            service.vatRate,
+            service.vatExemptionReason
           )
         )}
       </View>

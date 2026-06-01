@@ -6,6 +6,7 @@ import {
 
 import {
   deleteInvoiceOptions,
+  getIncomeJournalOptions,
   getInvoiceOptions,
   getInvoicesOptions,
   getInvoicesRevenueOptions,
@@ -28,6 +29,11 @@ const invoiceRoutes = (
   done: DoneFuncWithErrOrRes
 ) => {
   fastify.get('/api/:userId/invoices', getInvoicesOptions);
+
+  fastify.get(
+    '/api/:userId/invoices/income-journal.csv',
+    getIncomeJournalOptions
+  );
 
   fastify.get('/api/:userId/invoices/next-number', getNextInvoiceNumberOptions);
 

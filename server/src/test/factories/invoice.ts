@@ -84,7 +84,8 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
         unit: 'hour',
         quantity: 10,
         amount: '100.00',
-        vatRate: '0.00'
+        vatRate: '0.00',
+        vatExemptionReason: null
       }
     ]
   })
