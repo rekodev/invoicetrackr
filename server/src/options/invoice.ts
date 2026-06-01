@@ -6,6 +6,7 @@ import {
   getLatestInvoicesResponseSchema,
   getNextInvoiceNumberResponseSchema,
   getPublicInvoiceSigningResponseSchema,
+  incomeJournalQuerySchema,
   invoiceBodySchema,
   invoiceNumberSeriesSchema,
   messageResponseSchema,
@@ -18,6 +19,7 @@ import z from 'zod/v4';
 
 import {
   deleteInvoice,
+  getIncomeJournal,
   getInvoice,
   getInvoices,
   getInvoicesRevenue,
@@ -44,6 +46,14 @@ export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   },
   preHandler: authMiddleware,
   handler: getInvoices
+};
+
+export const getIncomeJournalOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    querystring: incomeJournalQuerySchema
+  },
+  preHandler: authMiddleware,
+  handler: getIncomeJournal
 };
 
 export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {

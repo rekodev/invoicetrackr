@@ -62,6 +62,7 @@ export default {
       date: 'Reikalinga tinkama data',
       dueDate: 'Reikalinga tinkama data',
       dueDateAfterDate: 'Terminas neturi būti ankstesnis už sąskaitos datą',
+      incomeJournalDateRange: 'Pabaigos data negali būti ankstesnė už pradžios datą',
       status: 'Tinkama būsena yra privaloma',
       businessType: 'Reikalingas "Verslas" arba "Fizinis asmuo"',
       partyType: 'Tinkamas šalies tipas yra privalomas',

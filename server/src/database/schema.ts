@@ -2,6 +2,7 @@ import {
   check,
   date,
   foreignKey,
+  index,
   integer,
   numeric,
   pgTable,
@@ -24,7 +25,8 @@ export const invoiceServicesTable = pgTable(
     amount: numeric({ precision: 10, scale: 2 }).notNull(),
     vatRate: numeric('vat_rate', { precision: 5, scale: 2 })
       .default('0')
-      .notNull()
+      .notNull(),
+    vatExemptionReason: text('vat_exemption_reason')
   },
   (table) => [
     foreignKey({
@@ -126,7 +128,10 @@ export const invoicesTable = pgTable(
     unique('invoices_user_invoice_id_key').on(table.userId, table.invoiceId),
     unique('invoices_recipient_signing_token_key').on(
       table.recipientSigningToken
-    )
+    ),
+    index('invoices_paid_income_journal_idx')
+      .on(table.userId, table.paidAt)
+      .where(sql`status = 'paid'`)
   ]
 );
 

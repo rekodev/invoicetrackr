@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import type { InvoiceBody } from '@invoicetrackr/types';
+import type { IncomeJournalQuery, InvoiceBody } from '@invoicetrackr/types';
 import { InvoiceEmail } from '@invoicetrackr/emails';
 import { MultipartFile } from '@fastify/multipart';
 import { v2 as cloudinary } from 'cloudinary';
@@ -15,6 +15,7 @@ import {
   deleteInvoiceFromDb,
   findInvoiceById,
   findInvoiceByInvoiceId,
+  getIncomeJournalRowsFromDb,
   getInvoiceFromDb,
   getInvoicesFromDb,
   getInvoicesRevenueFromDb,
@@ -58,6 +59,12 @@ const escapeEmailHtml = (value: string) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
+const escapeCsvValue = (value: string | null | undefined) =>
+  `"${String(value || '').replace(/"/g, '""')}"`;
+
+const formatCsvDate = (value: string | null | undefined) =>
+  value ? value.slice(0, 10) : '';
+
 const UNSIGNED_SIGNING_LINK_VALIDITY_DAYS = 30;
 const SIGNED_SIGNING_LINK_VALIDITY_DAYS = 90;
 const createSigningLinkExpiration = (isSigned = false) =>
@@ -95,6 +102,70 @@ export const getInvoices = async (
   const invoices = await getInvoicesFromDb(userId);
 
   reply.status(200).send({ invoices });
+};
+
+export const getIncomeJournal = async (
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Querystring: IncomeJournalQuery;
+  }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const { from, to } = req.query;
+  const rows = await getIncomeJournalRowsFromDb({ userId, from, to });
+  const currency = rows.at(0)?.currency?.toUpperCase() || 'EUR';
+  const isLithuanian = req.headers['accept-language']?.startsWith('lt');
+  const headers = isLithuanian
+    ? [
+        'Apmokėjimo data',
+        'Sąskaitos data',
+        'Dokumento numeris',
+        'Pirkėjas',
+        'Pirkėjo kodas',
+        'Paslaugos / prekės',
+        `Suma be PVM (${currency})`,
+        `PVM suma (${currency})`,
+        `Bendra suma (${currency})`
+      ]
+    : [
+        'Payment date',
+        'Invoice date',
+        'Document number',
+        'Client',
+        'Client code',
+        'Services / goods',
+        `Subtotal (${currency})`,
+        `VAT total (${currency})`,
+        `Grand total (${currency})`
+      ];
+  const filename = isLithuanian ? 'pajamu-zurnalas' : 'income-journal';
+  const csvRows = rows.map((row) =>
+    [
+      formatCsvDate(row.paidAt),
+      row.date,
+      row.invoiceId,
+      row.receiverName,
+      row.receiverBusinessNumber,
+      row.descriptions,
+      row.subtotalAmount,
+      row.vatAmount,
+      row.totalAmount
+    ]
+      .map(escapeCsvValue)
+      .join(',')
+  );
+
+  reply
+    .header('Content-Type', 'text/csv; charset=utf-8')
+    .header(
+      'Content-Disposition',
+      `attachment; filename="${filename}-${from}-${to}.csv"`
+    )
+    .status(200)
+    .send(
+      `\uFEFF${[headers.map(escapeCsvValue).join(','), ...csvRows].join('\n')}`
+    );
 };
 
 export const getInvoice = async (

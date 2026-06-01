@@ -318,6 +318,14 @@
       "total_singular": "Total 1 invoice",
       "total_plural": "Total {count} invoices"
     },
+    "income_journal": {
+      "title": "Export income journal",
+      "description": "The CSV includes invoices paid during the selected period. Unpaid invoices are excluded from the income journal.",
+      "from": "Paid from",
+      "to": "Paid to",
+      "export": "Export CSV",
+      "cancel": "Cancel"
+    },
     "bottom_content": {
       "previous": "Previous",
       "next": "Next"
@@ -352,6 +360,7 @@
       "quantity_label": "Qty",
       "amount_label": "Amount",
       "vat_rate_label": "VAT",
+      "vat_exemption_reason_label": "VAT note",
       "line_total_label": "Line total",
       "subtotal_amount": "Subtotal",
       "vat_amount": "VAT total",
@@ -715,6 +724,7 @@
       "column_quantity": "QUANTITY",
       "column_amount": "AMOUNT",
       "column_vat_rate": "VAT",
+      "column_vat_exemption_reason": "VAT NOTE",
       "column_line_total": "TOTAL",
       "column_actions": "ACTION",
       "add_service": "Add Service",
@@ -730,6 +740,7 @@
         "quantity_label": "Quantity",
         "amount_label": "Amount",
         "vat_rate_label": "VAT Rate",
+        "vat_exemption_reason_label": "VAT exemption or 0% rate note",
         "actions_label": "Actions"
       }
     },

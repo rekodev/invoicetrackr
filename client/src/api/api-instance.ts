@@ -55,7 +55,7 @@ class ApiInstance {
         url,
         data: method === 'get' ? undefined : data,
         ...config,
-        params: method === 'get' ? data : config.params
+        params: method === 'get' ? config.params || data : config.params
       });
 
       return response;

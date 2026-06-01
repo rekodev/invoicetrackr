@@ -4,11 +4,13 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input
+  Input,
+  useDisclosure
 } from '@heroui/react';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 import {
   ChevronDownIcon,
+  DocumentArrowDownIcon,
   MagnifyingGlassIcon,
   PlusIcon
 } from '@heroicons/react/24/outline';
@@ -18,7 +20,10 @@ import { useTranslations } from 'next-intl';
 import { ADD_NEW_INVOICE_PAGE } from '@/lib/constants/pages';
 import { capitalize } from '@/lib/utils';
 
+import IncomeJournalExportModal from './income-journal-export-modal';
+
 type Props = {
+  userId: number;
   columns: Array<{ name: string; uid: string; sortable?: boolean }>;
   statusOptions: Array<{ name: string; uid: string }>;
   filterValue: string;
@@ -33,6 +38,7 @@ type Props = {
 };
 
 const InvoiceTableTopContent = ({
+  userId,
   columns,
   statusOptions,
   filterValue,
@@ -47,6 +53,11 @@ const InvoiceTableTopContent = ({
 }: Props) => {
   const t = useTranslations('invoices');
   const router = useRouter();
+  const {
+    isOpen: isIncomeJournalModalOpen,
+    onOpen: openIncomeJournalModal,
+    onOpenChange: onIncomeJournalModalOpenChange
+  } = useDisclosure();
 
   const totalInvoicesText = invoicesLength
     ? invoicesLength === 1
@@ -145,6 +156,13 @@ const InvoiceTableTopContent = ({
             </DropdownMenu>
           </Dropdown>
           <Button
+            variant="flat"
+            endContent={<DocumentArrowDownIcon className="h-4 w-4" />}
+            onPress={openIncomeJournalModal}
+          >
+            {t('income_journal.export')}
+          </Button>
+          <Button
             color="secondary"
             endContent={<PlusIcon className="h-4 w-4" />}
             onPress={handleAddNewInvoice}
@@ -168,6 +186,11 @@ const InvoiceTableTopContent = ({
           </select>
         </label>
       </div>
+      <IncomeJournalExportModal
+        userId={userId}
+        isOpen={isIncomeJournalModalOpen}
+        onOpenChange={onIncomeJournalModalOpenChange}
+      />
     </div>
   );
 };

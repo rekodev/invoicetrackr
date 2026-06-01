@@ -120,7 +120,7 @@ const InvoiceModal = ({
             </div>
             <div
               className={cn(
-                'bg-default flex items-center gap-1 rounded-lg p-0.5',
+                'bg-default flex shrink-0 items-center gap-1 rounded-lg p-0.5',
                 {
                   'p-0': !userPreferredInvoiceLanguage
                 }
@@ -131,7 +131,7 @@ const InvoiceModal = ({
                   <Select
                     aria-label="Invoice language"
                     size="sm"
-                    className="w-22"
+                    className="min-w-28"
                     variant="bordered"
                     startContent={<LanguageIcon className="min-w-5 max-w-5" />}
                     selectedKeys={[invoiceLanguage]}

@@ -318,6 +318,14 @@
       "total_singular": "Viso 1 sąskaita faktūra",
       "total_plural": "Viso {count} sąskaitų faktūrų"
     },
+    "income_journal": {
+      "title": "Eksportuoti pajamų žurnalą",
+      "description": "CSV faile bus įtrauktos pasirinktu laikotarpiu apmokėtos sąskaitos faktūros. Neapmokėtos sąskaitos į pajamų žurnalą neįtraukiamos.",
+      "from": "Apmokėta nuo",
+      "to": "Apmokėta iki",
+      "export": "Eksportuoti CSV",
+      "cancel": "Atšaukti"
+    },
     "bottom_content": {
       "previous": "Ankstesnis",
       "next": "Kitas"
@@ -352,6 +360,7 @@
       "quantity_label": "Kiekis",
       "amount_label": "Suma",
       "vat_rate_label": "PVM",
+      "vat_exemption_reason_label": "PVM pastaba",
       "line_total_label": "Eilutės suma",
       "subtotal_amount": "Suma be PVM",
       "vat_amount": "PVM suma",
@@ -715,6 +724,7 @@
       "column_quantity": "KIEKIS",
       "column_amount": "SUMA",
       "column_vat_rate": "PVM",
+      "column_vat_exemption_reason": "PVM PASTABA",
       "column_line_total": "VISO",
       "column_actions": "VEIKSMAI",
       "add_service": "Pridėti paslaugą",
@@ -730,6 +740,7 @@
         "quantity_label": "Kiekis",
         "amount_label": "Suma",
         "vat_rate_label": "PVM tarifas",
+        "vat_exemption_reason_label": "PVM išimties arba 0% tarifo pastaba",
         "actions_label": "Veiksmai"
       }
     },

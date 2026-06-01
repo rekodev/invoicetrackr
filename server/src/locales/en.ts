@@ -60,6 +60,7 @@ export default {
       date: 'Valid date is required',
       dueDate: 'Valid date is required',
       dueDateAfterDate: 'Due date must be after invoice date',
+      incomeJournalDateRange: 'End date must not be before start date',
       status: 'Valid status is required',
       businessType: '"Business" or "Individual" required',
       partyType: 'Valid party type is required',

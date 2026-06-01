@@ -1,5 +1,16 @@
 import type { InvoiceBody, PublicInvoiceSigning } from '@invoicetrackr/types';
-import { and, desc, eq, gt, gte, inArray, isNull, or, sql } from 'drizzle-orm';
+import {
+  and,
+  desc,
+  eq,
+  gt,
+  gte,
+  inArray,
+  isNull,
+  lte,
+  or,
+  sql
+} from 'drizzle-orm';
 
 import {
   bankingInformationTable,
@@ -252,7 +263,8 @@ export const getInvoicesFromDb = async (
         amount: invoiceServicesTable.amount,
         quantity: invoiceServicesTable.quantity,
         unit: invoiceServicesTable.unit,
-        vatRate: invoiceServicesTable.vatRate
+        vatRate: invoiceServicesTable.vatRate,
+        vatExemptionReason: invoiceServicesTable.vatExemptionReason
       })
     })
     .from(invoicesTable)
@@ -344,7 +356,8 @@ export const getInvoiceFromDb = async (
         amount: invoiceServicesTable.amount,
         quantity: invoiceServicesTable.quantity,
         unit: invoiceServicesTable.unit,
-        vatRate: invoiceServicesTable.vatRate
+        vatRate: invoiceServicesTable.vatRate,
+        vatExemptionReason: invoiceServicesTable.vatExemptionReason
       })
     })
     .from(invoicesTable)
@@ -398,6 +411,14 @@ export const insertInvoiceInDb = async (
         vatAmount: totals.vatAmount,
         totalAmount: totals.totalAmount,
         status: invoiceData.status,
+        paidAt:
+          invoiceData.status === 'paid'
+            ? invoiceData.paidAt || new Date().toISOString()
+            : null,
+        voidedAt:
+          invoiceData.status === 'canceled'
+            ? invoiceData.voidedAt || new Date().toISOString()
+            : null,
         lifecycleStatus: invoiceData.lifecycleStatus || 'draft',
         dueDate: invoiceData.dueDate,
         senderSignature: senderSignature,
@@ -460,6 +481,7 @@ export const insertInvoiceInDb = async (
         quantity: service.quantity,
         amount: String(service.amount),
         vatRate: String(service.vatRate || 0),
+        vatExemptionReason: service.vatExemptionReason || null,
         unit: service.unit,
         description: service.description,
         invoiceId: insertedInvoiceId
@@ -521,6 +543,18 @@ export const updateInvoiceInDb = async (
     if (!currentInvoice[0]) return null;
 
     const currentInvoiceData = currentInvoice[0];
+    const paidAt =
+      invoiceData.status === 'paid'
+        ? invoiceData.paidAt ||
+          currentInvoiceData.paidAt ||
+          new Date().toISOString()
+        : null;
+    const voidedAt =
+      invoiceData.status === 'canceled'
+        ? invoiceData.voidedAt ||
+          currentInvoiceData.voidedAt ||
+          new Date().toISOString()
+        : null;
 
     // Update the existing sender record
     if (currentInvoiceData.senderId) {
@@ -636,8 +670,8 @@ export const updateInvoiceInDb = async (
         vatAmount: totals.vatAmount,
         totalAmount: totals.totalAmount,
         issuedAt: invoiceData.issuedAt ?? currentInvoiceData.issuedAt,
-        paidAt: invoiceData.paidAt ?? currentInvoiceData.paidAt,
-        voidedAt: invoiceData.voidedAt ?? currentInvoiceData.voidedAt,
+        paidAt,
+        voidedAt,
         senderSignature,
         receiverSignature:
           invoiceData.receiverSignature ?? currentInvoiceData.receiverSignature,
@@ -700,6 +734,7 @@ export const updateInvoiceInDb = async (
             description: service.description,
             amount: String(service.amount),
             vatRate: String(service.vatRate || 0),
+            vatExemptionReason: service.vatExemptionReason || null,
             quantity: service.quantity,
             unit: service.unit
           })
@@ -709,6 +744,7 @@ export const updateInvoiceInDb = async (
           description: service.description,
           amount: String(service.amount),
           vatRate: String(service.vatRate || 0),
+          vatExemptionReason: service.vatExemptionReason || null,
           quantity: service.quantity,
           unit: service.unit,
           invoiceId: id
@@ -729,7 +765,10 @@ export async function updateInvoiceStatusInDb(
 ): Promise<{ id: number } | undefined> {
   const timestampUpdates =
     status === 'paid'
-      ? { paidAt: new Date().toISOString(), voidedAt: null }
+      ? {
+          paidAt: sql<string>`COALESCE(${invoicesTable.paidAt}, CURRENT_TIMESTAMP)`,
+          voidedAt: null
+        }
       : status === 'canceled'
         ? { paidAt: null, voidedAt: new Date().toISOString() }
         : { paidAt: null, voidedAt: null };
@@ -994,4 +1033,54 @@ export const getLatestInvoicesFromDb = async (userId: number) => {
     .limit(5);
 
   return invoices;
+};
+
+export const getIncomeJournalRowsFromDb = async ({
+  userId,
+  from,
+  to
+}: {
+  userId: number;
+  from: string;
+  to: string;
+}) => {
+  const effectivePaidAt = sql<string>`COALESCE(${invoicesTable.paidAt}, ${invoicesTable.date}::timestamp with time zone)`;
+
+  return db
+    .select({
+      paidAt: effectivePaidAt,
+      date: invoicesTable.date,
+      invoiceId: invoicesTable.invoiceId,
+      receiverName: invoiceReceiversTable.name,
+      receiverBusinessNumber: invoiceReceiversTable.businessNumber,
+      descriptions: sql<string>`STRING_AGG(${invoiceServicesTable.description}, '; ' ORDER BY ${invoiceServicesTable.id})`,
+      subtotalAmount: invoicesTable.subtotalAmount,
+      vatAmount: invoicesTable.vatAmount,
+      totalAmount: invoicesTable.totalAmount,
+      currency: usersTable.currency
+    })
+    .from(invoicesTable)
+    .innerJoin(
+      invoiceReceiversTable,
+      eq(invoicesTable.receiverId, invoiceReceiversTable.id)
+    )
+    .innerJoin(
+      invoiceServicesTable,
+      eq(invoiceServicesTable.invoiceId, invoicesTable.id)
+    )
+    .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
+    .where(
+      and(
+        eq(invoicesTable.userId, userId),
+        eq(invoicesTable.status, 'paid'),
+        gte(effectivePaidAt, `${from}T00:00:00.000Z`),
+        lte(effectivePaidAt, `${to}T23:59:59.999Z`)
+      )
+    )
+    .groupBy(
+      invoicesTable.id,
+      invoiceReceiversTable.id,
+      usersTable.currency
+    )
+    .orderBy(effectivePaidAt, invoicesTable.id);
 };

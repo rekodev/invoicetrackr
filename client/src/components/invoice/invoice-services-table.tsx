@@ -55,6 +55,7 @@ const InvoiceServicesTable = ({
     { name: t('column_quantity'), uid: 'quantity' },
     { name: t('column_amount'), uid: 'amount' },
     { name: t('column_vat_rate'), uid: 'vatRate' },
+    { name: t('column_vat_exemption_reason'), uid: 'vatExemptionReason' },
     { name: t('column_line_total'), uid: 'lineTotal' },
     { name: t('column_actions'), uid: 'actions' }
   ];
@@ -214,6 +215,22 @@ const InvoiceServicesTable = ({
             {...register(`services.${index}.vatRate`)}
             isInvalid={!!errors.services?.[index]?.vatRate}
             errorMessage={errors.services?.[index]?.vatRate?.message}
+          />
+        );
+      case 'vatExemptionReason':
+        return (
+          <Input
+            className="min-w-48"
+            aria-label={t('a11y.vat_exemption_reason_label')}
+            type="text"
+            maxLength={255}
+            defaultValue={
+              (fields[index] as InvoiceServiceBody).vatExemptionReason || ''
+            }
+            variant="bordered"
+            {...register(`services.${index}.vatExemptionReason`)}
+            isInvalid={!!errors.services?.[index]?.vatExemptionReason}
+            errorMessage={errors.services?.[index]?.vatExemptionReason?.message}
           />
         );
       case 'lineTotal':
