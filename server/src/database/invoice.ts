@@ -1,5 +1,5 @@
 import type { InvoiceBody, PublicInvoiceSigning } from '@invoicetrackr/types';
-import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, gt, gte, inArray, isNull, or, sql } from 'drizzle-orm';
 
 import {
   bankingInformationTable,
@@ -215,6 +215,10 @@ export const getInvoicesFromDb = async (
       voidedAt: invoicesTable.voidedAt,
       recipientSigningToken: invoicesTable.recipientSigningToken,
       recipientSigningSentAt: invoicesTable.recipientSigningSentAt,
+      recipientSigningEmail: invoicesTable.recipientSigningEmail,
+      recipientSigningCreatedAt: invoicesTable.recipientSigningCreatedAt,
+      recipientSigningExpiresAt: invoicesTable.recipientSigningExpiresAt,
+      recipientSigningRevokedAt: invoicesTable.recipientSigningRevokedAt,
       recipientSignedAt: invoicesTable.recipientSignedAt,
       bankingInformation: {
         id: invoiceBankingInformationTable.id,
@@ -303,6 +307,10 @@ export const getInvoiceFromDb = async (
       voidedAt: invoicesTable.voidedAt,
       recipientSigningToken: invoicesTable.recipientSigningToken,
       recipientSigningSentAt: invoicesTable.recipientSigningSentAt,
+      recipientSigningEmail: invoicesTable.recipientSigningEmail,
+      recipientSigningCreatedAt: invoicesTable.recipientSigningCreatedAt,
+      recipientSigningExpiresAt: invoicesTable.recipientSigningExpiresAt,
+      recipientSigningRevokedAt: invoicesTable.recipientSigningRevokedAt,
       recipientSignedAt: invoicesTable.recipientSignedAt,
       bankingInformation: {
         id: invoiceBankingInformationTable.id,
@@ -501,6 +509,10 @@ export const updateInvoiceInDb = async (
         receiverSignature: invoicesTable.receiverSignature,
         recipientSigningToken: invoicesTable.recipientSigningToken,
         recipientSigningSentAt: invoicesTable.recipientSigningSentAt,
+        recipientSigningEmail: invoicesTable.recipientSigningEmail,
+        recipientSigningCreatedAt: invoicesTable.recipientSigningCreatedAt,
+        recipientSigningExpiresAt: invoicesTable.recipientSigningExpiresAt,
+        recipientSigningRevokedAt: invoicesTable.recipientSigningRevokedAt,
         recipientSignedAt: invoicesTable.recipientSignedAt
       })
       .from(invoicesTable)
@@ -635,6 +647,18 @@ export const updateInvoiceInDb = async (
         recipientSigningSentAt:
           invoiceData.recipientSigningSentAt ??
           currentInvoiceData.recipientSigningSentAt,
+        recipientSigningEmail:
+          invoiceData.recipientSigningEmail ??
+          currentInvoiceData.recipientSigningEmail,
+        recipientSigningCreatedAt:
+          invoiceData.recipientSigningCreatedAt ??
+          currentInvoiceData.recipientSigningCreatedAt,
+        recipientSigningExpiresAt:
+          invoiceData.recipientSigningExpiresAt ??
+          currentInvoiceData.recipientSigningExpiresAt,
+        recipientSigningRevokedAt:
+          invoiceData.recipientSigningRevokedAt ??
+          currentInvoiceData.recipientSigningRevokedAt,
         recipientSignedAt:
           invoiceData.recipientSignedAt ?? currentInvoiceData.recipientSignedAt
       })
@@ -722,11 +746,15 @@ export async function updateInvoiceStatusInDb(
 export async function prepareInvoiceSigningFromDb({
   userId,
   id,
-  token
+  token,
+  recipientEmail,
+  expiresAt
 }: {
   userId: number;
   id: number;
   token: string;
+  recipientEmail: string;
+  expiresAt: string;
 }): Promise<
   | {
       id: number;
@@ -737,13 +765,62 @@ export async function prepareInvoiceSigningFromDb({
   const invoices = await db
     .update(invoicesTable)
     .set({
-      recipientSigningToken: sql<string>`COALESCE(${invoicesTable.recipientSigningToken}, ${token})`
+      recipientSigningToken: sql<string>`COALESCE(${invoicesTable.recipientSigningToken}, ${token})`,
+      recipientSigningEmail: sql<string>`COALESCE(${invoicesTable.recipientSigningEmail}, ${recipientEmail})`,
+      recipientSigningCreatedAt: sql<string>`COALESCE(${invoicesTable.recipientSigningCreatedAt}, ${new Date().toISOString()})`,
+      recipientSigningExpiresAt: sql<string>`COALESCE(${invoicesTable.recipientSigningExpiresAt}, ${expiresAt})`
     })
     .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
     .returning({
       id: invoicesTable.id,
       recipientSigningToken: invoicesTable.recipientSigningToken
     });
+
+  return invoices.at(0);
+}
+
+export async function revokeInvoiceSigningFromDb({
+  userId,
+  id
+}: {
+  userId: number;
+  id: number;
+}): Promise<{ id: number } | undefined> {
+  const invoices = await db
+    .update(invoicesTable)
+    .set({ recipientSigningRevokedAt: new Date().toISOString() })
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .returning({ id: invoicesTable.id });
+
+  return invoices.at(0);
+}
+
+export async function regenerateInvoiceSigningFromDb({
+  userId,
+  id,
+  token,
+  recipientEmail,
+  expiresAt
+}: {
+  userId: number;
+  id: number;
+  token: string;
+  recipientEmail: string;
+  expiresAt: string;
+}): Promise<{ id: number } | undefined> {
+  const now = new Date().toISOString();
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      recipientSigningToken: token,
+      recipientSigningEmail: recipientEmail,
+      recipientSigningCreatedAt: now,
+      recipientSigningExpiresAt: expiresAt,
+      recipientSigningRevokedAt: null,
+      recipientSigningSentAt: null
+    })
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .returning({ id: invoicesTable.id });
 
   return invoices.at(0);
 }
@@ -818,12 +895,20 @@ export async function signInvoiceByRecipientTokenInDb({
     .update(invoicesTable)
     .set({
       receiverSignature,
-      recipientSignedAt: new Date().toISOString()
+      recipientSignedAt: new Date().toISOString(),
+      recipientSigningExpiresAt: new Date(
+        Date.now() + 90 * 24 * 60 * 60 * 1000
+      ).toISOString()
     })
     .where(
       and(
         eq(invoicesTable.recipientSigningToken, token),
-        isNull(invoicesTable.recipientSignedAt)
+        isNull(invoicesTable.recipientSignedAt),
+        isNull(invoicesTable.recipientSigningRevokedAt),
+        or(
+          isNull(invoicesTable.recipientSigningExpiresAt),
+          gt(invoicesTable.recipientSigningExpiresAt, new Date().toISOString())
+        )
       )
     )
     .returning({

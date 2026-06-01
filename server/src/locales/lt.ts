@@ -35,6 +35,10 @@ export default {
       signingButton: 'Peržiūrėti ir pasirašyti',
       signingFallback:
         'Jei mygtukas neveikia, nukopijuokite ir įklijuokite šią saugią nuorodą į naršyklę:',
+      viewTitle: 'Peržiūrėkite pasirašytą sąskaitą',
+      viewMessage:
+        'Atidarykite saugią sąskaitos nuorodą, peržiūrėkite ir atsisiųskite pasirašytą PDF.',
+      viewButton: 'Peržiūrėti pasirašytą sąskaitą',
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
       copyright: 'InvoiceTrackr. Visos teisės saugomos.'
     }
@@ -151,7 +155,9 @@ export default {
       deleted: 'Sąskaita faktūra ištrinta sėkmingai',
       statusUpdated: 'Sąskaitos faktūros būsena atnaujinta sėkmingai',
       emailSent: 'El. laiškas išsiųstas sėkmingai',
-      signed: 'Sąskaita faktūra pasirašyta sėkmingai'
+      signed: 'Sąskaita faktūra pasirašyta sėkmingai',
+      signingLinkRevoked: 'Pasirašymo nuoroda atšaukta',
+      signingLinkRegenerated: 'Sugeneruota nauja pasirašymo nuoroda'
     },
     client: {
       created: 'Klientas pridėtas sėkmingai',
@@ -204,6 +210,12 @@ export default {
       unableToSendEmail: 'Nepavyko išsiųsti el. laiško',
       unableToCreateSigningLink:
         'Nepavyko sukurti sąskaitos pasirašymo nuorodos',
+      unableToRegenerateSigningLink:
+        'Nepavyko atnaujinti sąskaitos pasirašymo nuorodos',
+      signingLinkExpired:
+        'Šios sąskaitos nuorodos galiojimas baigėsi. Paprašykite siuntėjo naujos nuorodos.',
+      signingLinkRevoked:
+        'Ši sąskaitos nuoroda buvo atšaukta. Paprašykite siuntėjo naujos nuorodos.',
       alreadySigned: 'Sąskaita faktūra jau pasirašyta',
       issuedImmutable:
         'Išrašytų sąskaitų negalima redaguoti ar ištrinti šiame sraute'

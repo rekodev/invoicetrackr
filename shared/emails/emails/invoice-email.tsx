@@ -18,6 +18,7 @@ interface InvoiceEmailProps {
   senderName: string;
   message: string;
   signingLink?: string;
+  isSigningAvailable?: boolean;
   translations: {
     title: string;
     subtitle: string;
@@ -33,6 +34,9 @@ interface InvoiceEmailProps {
     signingMessage: string;
     signingButton: string;
     signingFallback: string;
+    viewTitle: string;
+    viewMessage: string;
+    viewButton: string;
     footer: string;
     copyright: string;
   };
@@ -45,13 +49,14 @@ const InvoiceEmail = ({
   senderName,
   message,
   signingLink,
+  isSigningAvailable = true,
   translations
 }: InvoiceEmailProps) => {
   return (
     <Html lang="en" dir="ltr">
-      <Head />
-      <Preview>{`${translations.invoiceNumber} #${invoiceNumber} ${translations.from} ${senderName} - ${translations.title}`}</Preview>
       <Tailwind>
+        <Head />
+        <Preview>{`${translations.invoiceNumber} #${invoiceNumber} ${translations.from} ${senderName} - ${translations.title}`}</Preview>
         <Body className="bg-gray-100 font-sans">
           <Container className="mx-auto max-w-[600px] overflow-hidden bg-white shadow-lg">
             <Section className="bg-white px-[32px] py-[24px]">
@@ -132,16 +137,22 @@ const InvoiceEmail = ({
               {signingLink && (
                 <Section className="mt-[16px] rounded-[8px] border border-[#E4D4F4] bg-white p-[20px] text-center">
                   <Text className="m-0 mb-[8px] text-[16px] font-bold text-[#301050]">
-                    {translations.signingTitle}
+                    {isSigningAvailable
+                      ? translations.signingTitle
+                      : translations.viewTitle}
                   </Text>
                   <Text className="mx-0 mb-[18px] mt-0 text-[14px] leading-[20px] text-[#481878]">
-                    {translations.signingMessage}
+                    {isSigningAvailable
+                      ? translations.signingMessage
+                      : translations.viewMessage}
                   </Text>
                   <Link
                     href={signingLink}
                     className="inline-block rounded-[8px] bg-[#7828C8] px-[18px] py-[12px] text-[14px] font-semibold text-white no-underline"
                   >
-                    {translations.signingButton}
+                    {isSigningAvailable
+                      ? translations.signingButton
+                      : translations.viewButton}
                   </Link>
                   <Text className="mx-0 mb-0 mt-[16px] text-left text-[12px] leading-[18px] text-[#6020A0]">
                     {translations.signingFallback}

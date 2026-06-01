@@ -13,18 +13,25 @@ import {
   Textarea,
   addToast
 } from '@heroui/react';
+import {
+  InformationCircleIcon,
+  PaperAirplaneIcon
+} from '@heroicons/react/24/outline';
 import { JSX, useTransition } from 'react';
 import { BlobProvider } from '@react-pdf/renderer';
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
+import {
+  regenerateInvoiceSigningLink,
+  revokeInvoiceSigningLink,
+  sendInvoiceEmail
+} from '@/api/invoice';
 import { Currency } from '@/lib/types/currency';
 import { InvoiceBody } from '@invoicetrackr/types';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { isResponseError } from '@/lib/utils/error';
-import { sendInvoiceEmail } from '@/api/invoice';
 
 type Props = {
   isOpen: boolean;
@@ -56,10 +63,25 @@ export default function SendInvoiceEmailModal({
   const {
     register,
     handleSubmit,
+    getValues,
     reset,
     setError,
+    watch,
     formState: { errors }
   } = useForm<SendInvoiceForm>();
+  const defaultRecipientEmail =
+    invoice.recipientSigningEmail || invoice.receiver.email || '';
+  const recipientEmail = watch('recipientEmail', defaultRecipientEmail);
+  const shouldRotateSigningLink = Boolean(
+    invoice.recipientSigningToken &&
+      (invoice.recipientSigningRevokedAt ||
+        (invoice.recipientSigningExpiresAt &&
+          new Date(invoice.recipientSigningExpiresAt).getTime() <=
+            Date.now()) ||
+        (invoice.recipientSigningEmail &&
+          invoice.recipientSigningEmail.toLowerCase() !==
+            recipientEmail.toLowerCase()))
+  );
 
   const handleCloseSendDialog = () => {
     onClose();
@@ -97,6 +119,29 @@ export default function SendInvoiceEmailModal({
       router.refresh();
     });
 
+  const handleSigningLinkAction = (action: 'revoke' | 'regenerate') =>
+    startTransition(async () => {
+      const response =
+        action === 'revoke'
+          ? await revokeInvoiceSigningLink(userId, Number(invoice.id))
+          : await regenerateInvoiceSigningLink({
+              userId,
+              invoiceId: Number(invoice.id),
+              recipientEmail:
+                getValues('recipientEmail') || defaultRecipientEmail
+            });
+
+      addToast({
+        title: response.data.message,
+        color: isResponseError(response) ? 'danger' : 'success'
+      });
+
+      if (!isResponseError(response)) {
+        handleCloseSendDialog();
+        router.refresh();
+      }
+    });
+
   return (
     <Modal isOpen={isOpen} onClose={handleCloseSendDialog} size="lg">
       <ModalContent>
@@ -112,8 +157,37 @@ export default function SendInvoiceEmailModal({
                 {t('modal_title', { invoiceId: invoice.invoiceId || '' })}
               </ModalHeader>
               <ModalBody className="w-full">
+                <div className="border-secondary-200 bg-secondary-50 dark:bg-secondary-900/20 flex gap-3 rounded-lg border p-3">
+                  <InformationCircleIcon className="text-secondary-500 mt-0.5 h-5 w-5 shrink-0" />
+                  <div className="flex flex-col gap-1 text-sm">
+                    <p>{t('signing_link_note')}</p>
+                    {invoice.recipientSigningEmail && (
+                      <p className="text-default-500">
+                        {t('active_signing_recipient', {
+                          email: invoice.recipientSigningEmail
+                        })}
+                      </p>
+                    )}
+                    {invoice.recipientSigningRevokedAt ? (
+                      <p className="text-danger">{t('signing_link_revoked')}</p>
+                    ) : invoice.recipientSigningExpiresAt ? (
+                      <p className="text-default-500">
+                        {t('signing_link_expires', {
+                          date: new Date(
+                            invoice.recipientSigningExpiresAt
+                          ).toLocaleDateString()
+                        })}
+                      </p>
+                    ) : null}
+                    {shouldRotateSigningLink && (
+                      <p className="text-warning">
+                        {t('replacement_link_note')}
+                      </p>
+                    )}
+                  </div>
+                </div>
                 <Input
-                  defaultValue={invoice.receiver.email}
+                  defaultValue={defaultRecipientEmail}
                   {...register('recipientEmail')}
                   variant="faded"
                   label={t('recipient_email')}
@@ -166,29 +240,51 @@ export default function SendInvoiceEmailModal({
                       </span>
                       {invoice.date}
                     </p>
-                    <p className="text-default-500 mt-2 text-sm">
-                      {t('signing_link_note')}
-                    </p>
                   </CardBody>
                 </Card>
               </ModalBody>
-              <ModalFooter className="w-full">
-                <Button
-                  onPress={handleCloseSendDialog}
-                  variant="light"
-                  color="danger"
-                >
-                  {t('cancel')}
-                </Button>
-                <Button
-                  isDisabled={isPending}
-                  isLoading={isPending}
-                  endContent={<PaperAirplaneIcon className="h-4 w-4" />}
-                  color="secondary"
-                  type="submit"
-                >
-                  {t('send')}
-                </Button>
+              <ModalFooter className="flex w-full flex-wrap justify-between gap-2">
+                <div className="flex flex-wrap gap-2">
+                  {invoice.recipientSigningToken &&
+                    !invoice.recipientSigningRevokedAt && (
+                      <Button
+                        size="sm"
+                        variant="light"
+                        color="danger"
+                        isDisabled={isPending}
+                        onPress={() => handleSigningLinkAction('revoke')}
+                      >
+                        {t('revoke_signing_link')}
+                      </Button>
+                    )}
+                  {invoice.recipientSigningToken &&
+                    !invoice.recipientSignedAt && (
+                      <Button
+                        size="sm"
+                        variant="light"
+                        isDisabled={isPending}
+                        onPress={() => handleSigningLinkAction('regenerate')}
+                      >
+                        {t('regenerate_signing_link')}
+                      </Button>
+                    )}
+                </div>
+                <div className="ml-auto flex gap-2">
+                  <Button onPress={handleCloseSendDialog} variant="light">
+                    {t('cancel')}
+                  </Button>
+                  <Button
+                    isDisabled={isPending}
+                    isLoading={isPending}
+                    endContent={<PaperAirplaneIcon className="h-4 w-4" />}
+                    color="secondary"
+                    type="submit"
+                  >
+                    {shouldRotateSigningLink
+                      ? t('replace_link_and_send')
+                      : t('send')}
+                  </Button>
+                </div>
               </ModalFooter>
             </form>
           )}

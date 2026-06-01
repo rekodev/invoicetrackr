@@ -333,4 +333,66 @@ describe('Invoice Controller', () => {
       await app.close();
     });
   });
+
+  describe('GET /api/invoices/sign/:token', () => {
+    it('should reject an expired signing link', async () => {
+      vi.mocked(invoiceDb.getPublicInvoiceSigningFromDb).mockResolvedValue({
+        invoice: invoiceFromDbFactory.build({
+          recipientSigningExpiresAt: new Date(Date.now() - 1000).toISOString()
+        }),
+        currency: 'EUR',
+        language: 'en',
+        preferredInvoiceLanguage: null
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.get(
+          '/api/invoices/sign/:token',
+          invoiceController.getPublicInvoiceSigning
+        );
+      });
+
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/invoices/sign/expired-token'
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(JSON.parse(response.body).message).toBe(
+        'error.invoice.signingLinkExpired'
+      );
+
+      await app.close();
+    });
+
+    it('should reject a revoked signing link', async () => {
+      vi.mocked(invoiceDb.getPublicInvoiceSigningFromDb).mockResolvedValue({
+        invoice: invoiceFromDbFactory.build({
+          recipientSigningRevokedAt: new Date().toISOString()
+        }),
+        currency: 'EUR',
+        language: 'en',
+        preferredInvoiceLanguage: null
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.get(
+          '/api/invoices/sign/:token',
+          invoiceController.getPublicInvoiceSigning
+        );
+      });
+
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/invoices/sign/revoked-token'
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(JSON.parse(response.body).message).toBe(
+        'error.invoice.signingLinkRevoked'
+      );
+
+      await app.close();
+    });
+  });
 });

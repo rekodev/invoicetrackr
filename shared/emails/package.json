@@ -12,7 +12,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "email dev --dir emails"
+    "dev": "email dev --dir emails",
+    "dev:watch": "tsc --watch"
   },
   "dependencies": {
     "@react-email/components": "^1.0.1",

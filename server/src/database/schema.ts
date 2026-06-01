@@ -69,6 +69,19 @@ export const invoicesTable = pgTable(
       withTimezone: true,
       mode: 'string'
     }),
+    recipientSigningEmail: varchar('recipient_signing_email', { length: 255 }),
+    recipientSigningCreatedAt: timestamp('recipient_signing_created_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    recipientSigningExpiresAt: timestamp('recipient_signing_expires_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    recipientSigningRevokedAt: timestamp('recipient_signing_revoked_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
     recipientSignedAt: timestamp('recipient_signed_at', {
       withTimezone: true,
       mode: 'string'

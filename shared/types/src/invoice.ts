@@ -113,6 +113,10 @@ export const invoiceBodySchema = z
     voidedAt: z.string().nullish(),
     recipientSigningToken: z.string().nullish(),
     recipientSigningSentAt: z.string().nullish(),
+    recipientSigningEmail: z.string().nullish(),
+    recipientSigningCreatedAt: z.string().nullish(),
+    recipientSigningExpiresAt: z.string().nullish(),
+    recipientSigningRevokedAt: z.string().nullish(),
     recipientSignedAt: z.string().nullish(),
     services: z
       .array(invoiceServiceBodySchema)

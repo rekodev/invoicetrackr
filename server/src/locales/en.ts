@@ -33,6 +33,10 @@ export default {
       signingButton: 'Review and sign',
       signingFallback:
         'If the button does not work, copy and paste this secure link into your browser:',
+      viewTitle: 'View signed invoice',
+      viewMessage:
+        'Open the secure invoice link to review and download the signed PDF.',
+      viewButton: 'View signed invoice',
       footer: 'This email was sent by InvoiceTrackr',
       copyright: 'InvoiceTrackr. All rights reserved.'
     }
@@ -147,7 +151,9 @@ export default {
       deleted: 'Invoice deleted successfully',
       statusUpdated: 'Invoice status updated successfully',
       emailSent: 'Email sent successfully',
-      signed: 'Invoice signed successfully'
+      signed: 'Invoice signed successfully',
+      signingLinkRevoked: 'Signing link revoked',
+      signingLinkRegenerated: 'Fresh signing link generated'
     },
     client: {
       created: 'Client added successfully',
@@ -199,6 +205,12 @@ export default {
       unableToRetrieveData: 'Unable to retrieve invoice data',
       unableToSendEmail: 'Unable to send email',
       unableToCreateSigningLink: 'Unable to create invoice signing link',
+      unableToRegenerateSigningLink:
+        'Unable to regenerate invoice signing link',
+      signingLinkExpired:
+        'This invoice link has expired. Ask the sender for a fresh link.',
+      signingLinkRevoked:
+        'This invoice link has been revoked. Ask the sender for a fresh link.',
       alreadySigned: 'Invoice is already signed',
       issuedImmutable:
         'Issued invoices cannot be edited or deleted from this flow'
