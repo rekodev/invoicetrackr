@@ -47,41 +47,29 @@ const DashboardCards = async ({ userId, currency }: Props) => {
   return (
     <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       <DashboardCard
-        title={
-          <div className="flex items-center gap-1">
-            <BanknotesIcon className="h-5 w-5" />
-            <h4>{t('paid')}</h4>
-          </div>
-        }
+        icon={<BanknotesIcon className="h-4 w-4" />}
+        iconClassName="bg-success/15 text-success"
+        title={t('paid')}
         text={`${currencySymbol}${totalInvoiceRevenue?.paid.toFixed(2) || '0'}`}
       />
       <DashboardCard
-        title={
-          <div className="flex items-center gap-1">
-            <ClockIcon className="h-5 w-5" />
-            <h4>{t('pending')}</h4>
-          </div>
-        }
+        icon={<ClockIcon className="h-4 w-4" />}
+        iconClassName="bg-warning/15 text-warning"
+        title={t('pending')}
         text={`${currencySymbol}${
           totalInvoiceRevenue?.pending.toFixed(2) || '0'
         }`}
       />
       <DashboardCard
-        title={
-          <div className="flex items-center gap-1">
-            <DocumentCurrencyDollarIcon className="h-5 w-5" />
-            <h4>{t('total_invoices')}</h4>
-          </div>
-        }
+        icon={<DocumentCurrencyDollarIcon className="h-4 w-4" />}
+        iconClassName="bg-secondary/15 text-secondary"
+        title={t('total_invoices')}
         text={`${invoices?.length || '0'}`}
       />
       <DashboardCard
-        title={
-          <div className="flex items-center gap-1">
-            <UsersIcon className="h-5 w-5" />
-            <h4>{t('total_clients')}</h4>
-          </div>
-        }
+        icon={<UsersIcon className="h-4 w-4" />}
+        iconClassName="bg-primary/15 text-primary"
+        title={t('total_clients')}
         text={`${totalClients || '0'}`}
       />
     </section>

@@ -250,8 +250,15 @@
     },
     "latest_invoices": {
       "title": "Latest Invoices",
+      "subtitle": "Most recent activity",
       "view_all": "View All",
-      "empty_state": "No invoices to display."
+      "empty_state": "No invoices to display.",
+      "statuses": {
+        "paid": "Paid",
+        "pending": "Pending",
+        "overdue": "Overdue",
+        "canceled": "Canceled"
+      }
     }
   },
   "invoices": {

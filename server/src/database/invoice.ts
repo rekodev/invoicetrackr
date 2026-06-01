@@ -978,6 +978,9 @@ export const getLatestInvoicesFromDb = async (userId: number) => {
       vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
       invoiceId: invoicesTable.invoiceId,
+      date: invoicesTable.date,
+      dueDate: invoicesTable.dueDate,
+      status: invoicesTable.status,
       name: invoiceReceiversTable.name,
       email: invoiceReceiversTable.email
     })

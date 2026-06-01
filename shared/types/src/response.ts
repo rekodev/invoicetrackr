@@ -119,6 +119,9 @@ export const getLatestInvoicesResponseSchema = z.object({
       id: z.number(),
       invoiceId: z.string(),
       totalAmount: z.string(),
+      date: z.string(),
+      dueDate: z.string(),
+      status: z.string(),
       name: z.string(),
       email: z.string()
     })
