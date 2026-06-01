@@ -51,13 +51,10 @@ const ClientCard = ({
         onPress={onClick}
         isPressable={!!onClick}
         isHoverable={!!onClick}
-        className={cn(
-          'border-default-200 relative h-full w-full justify-center border',
-          {
-            'cursor-pointer': !!onClick,
-            'border-secondary-600 bg-secondary/10': isSelected
-          }
-        )}
+        className={cn('glass-card relative h-full w-full justify-center', {
+          'glass-card-interactive cursor-pointer': !!onClick,
+          'border-secondary-600 bg-secondary/10': isSelected
+        })}
       >
         {renderSelectedIcon()}
         <CardBody className="flex min-h-[70px] flex-row items-start justify-between gap-4">
@@ -67,8 +64,8 @@ const ClientCard = ({
             })}
           >
             {!hideIcon && (
-              <div className="flex min-h-20 items-center">
-                <div className="item-center rounded-medium border-default-200 flex border p-2">
+              <div className="flex">
+                <div className="item-center rounded-medium border-default-200 bg-default-100/50 dark:border-default-100 flex border p-2">
                   <UserIcon className="h-5 w-5" />
                 </div>
               </div>

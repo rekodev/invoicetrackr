@@ -165,7 +165,9 @@ const ClientSection = ({ userId, clients }: Props) => {
         typeFilters={typeFilters}
         setTypeFilters={setTypeFilters}
       />
-      {renderSectionContent()}
+      <div className="border-default-200 dark:border-default-100 flex flex-col gap-4 rounded-xl border p-4 shadow-sm">
+        {renderSectionContent()}
+      </div>
       <ClientSectionBottomContent
         page={page}
         setPage={setPage}

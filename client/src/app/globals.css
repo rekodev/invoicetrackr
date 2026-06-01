@@ -17,6 +17,14 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  .glass-card {
+    @apply border-default-200 border bg-white/50 shadow-md shadow-black/5 backdrop-blur-lg transition-colors dark:border-default-100 dark:bg-default-100/25;
+  }
+
+  .glass-card-interactive {
+    @apply hover:bg-white/65 dark:hover:bg-default-100/35;
+  }
 }
 
 @theme {
