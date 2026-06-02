@@ -37,8 +37,36 @@ export default {
       viewMessage:
         'Open the secure invoice link to review and download the signed PDF.',
       viewButton: 'View signed invoice',
+      signedNotification: {
+        recipient: 'The recipient',
+        subject: 'Invoice %{invoiceId} was signed',
+        message: '%{receiverName} signed invoice %{invoiceId}.',
+        review: 'You can review the signed invoice here:'
+      },
       footer: 'This email was sent by InvoiceTrackr',
       copyright: 'InvoiceTrackr. All rights reserved.'
+    },
+    billing: {
+      trialEnding: {
+        subject: 'Your InvoiceTrackr trial is ending soon',
+        text: 'Your 7-day trial is ending soon. Add a payment method in your account settings to keep using InvoiceTrackr.'
+      },
+      paymentFailed: {
+        subject: 'Your InvoiceTrackr payment failed',
+        text: 'We could not process your subscription payment. You have 3 days to update your payment method in your account settings.'
+      }
+    },
+    incomeJournal: {
+      filename: 'income-journal',
+      paymentDate: 'Payment date',
+      invoiceDate: 'Invoice date',
+      documentNumber: 'Document number',
+      client: 'Client',
+      clientCode: 'Client code',
+      services: 'Services / goods',
+      subtotal: 'Subtotal (%{currency})',
+      vatTotal: 'VAT total (%{currency})',
+      grandTotal: 'Grand total (%{currency})'
     }
   },
   validation: {

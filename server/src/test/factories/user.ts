@@ -24,7 +24,14 @@ export const userFactory = Factory.define<
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   stripeCustomerId: `cus_${sequence}`,
-  stripeSubscriptionId: `sub_${sequence}`
+  stripeSubscriptionId: `sub_${sequence}`,
+  subscriptionStatus: 'active',
+  onboardingCompletedAt: new Date().toISOString(),
+  trialStartedAt: null,
+  trialEndsAt: null,
+  subscriptionGraceEndsAt: null,
+  subscriptionCurrentPeriodEndsAt: null,
+  subscriptionCancelAt: null
 }));
 
 export const userWithPasswordFactory = Factory.define<

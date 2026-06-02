@@ -1,56 +1,45 @@
 import {
-  cancelStripeSubscriptionResponseSchema,
-  createCustomerResponseSchema,
-  createSubscriptionResponseSchema,
-  getStripeCustomerIdResponseSchema
+  billingStatusResponseSchema,
+  billingUrlResponseSchema
 } from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 
 import {
-  cancelStripeSubscription,
-  createCustomer,
-  createSubscription,
-  getStripeCustomerId
+  createBillingPortalSession,
+  createCheckoutSession,
+  getBillingStatus,
+  resumeSubscription,
+  startTrial
 } from '../controllers/payment';
 import { authMiddleware } from '../middleware/auth';
 
-export const createCustomerOptions: RouteShorthandOptionsWithHandler = {
-  schema: {
-    response: {
-      201: createCustomerResponseSchema
-    }
-  },
+export const getBillingStatusOptions: RouteShorthandOptionsWithHandler = {
+  schema: { response: { 200: billingStatusResponseSchema } },
   preHandler: authMiddleware,
-  handler: createCustomer
+  handler: getBillingStatus
 };
 
-export const createSubscriptionOptions: RouteShorthandOptionsWithHandler = {
-  schema: {
-    response: {
-      201: createSubscriptionResponseSchema
-    }
-  },
+export const startTrialOptions: RouteShorthandOptionsWithHandler = {
+  schema: { response: { 200: billingStatusResponseSchema } },
   preHandler: authMiddleware,
-  handler: createSubscription
+  handler: startTrial
 };
 
-export const getStripeCustomerIdOptions: RouteShorthandOptionsWithHandler = {
-  schema: {
-    response: {
-      200: getStripeCustomerIdResponseSchema
-    }
-  },
-  preHandler: authMiddleware,
-  handler: getStripeCustomerId
-};
-
-export const cancelStripeSubscriptionOptions: RouteShorthandOptionsWithHandler =
+export const createBillingPortalSessionOptions: RouteShorthandOptionsWithHandler =
   {
-    schema: {
-      response: {
-        200: cancelStripeSubscriptionResponseSchema
-      }
-    },
+    schema: { response: { 200: billingUrlResponseSchema } },
     preHandler: authMiddleware,
-    handler: cancelStripeSubscription
+    handler: createBillingPortalSession
   };
+
+export const createCheckoutSessionOptions: RouteShorthandOptionsWithHandler = {
+  schema: { response: { 200: billingUrlResponseSchema } },
+  preHandler: authMiddleware,
+  handler: createCheckoutSession
+};
+
+export const resumeSubscriptionOptions: RouteShorthandOptionsWithHandler = {
+  schema: { response: { 200: billingStatusResponseSchema } },
+  preHandler: authMiddleware,
+  handler: resumeSubscription
+};

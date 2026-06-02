@@ -1,38 +1,21 @@
 import {
-  CancelStripeSubscriptionResponse,
-  CreateCustomerResponse,
-  CreateSubscriptionResponse,
-  GetStripeCustomerIdResponse
+  BillingStatusResponse,
+  BillingUrlResponse
 } from '@invoicetrackr/types';
 
 import api from './api-instance';
 
-export const createCustomer = async ({
-  userId,
-  email,
-  name
-}: {
-  userId: number;
-  email: string;
-  name: string;
-}) =>
-  await api.post<CreateCustomerResponse>(`/api/${userId}/create-customer`, {
-    email,
-    name
-  });
+export const getBillingStatus = async (userId: number) =>
+  await api.get<BillingStatusResponse>(`/api/${userId}/billing`);
 
-export const createSubscription = async (userId: number, customerId: string) =>
-  await api.post<CreateSubscriptionResponse>(
-    `/api/${userId}/create-subscription`,
-    {
-      customerId
-    }
-  );
+export const startTrial = async (userId: number) =>
+  await api.post<BillingStatusResponse>(`/api/${userId}/billing/start-trial`);
 
-export const getStripeCustomerId = async (userId: number) =>
-  await api.get<GetStripeCustomerIdResponse>(`/api/${userId}/customer`);
+export const createBillingPortalSession = async (userId: number) =>
+  await api.post<BillingUrlResponse>(`/api/${userId}/billing/portal-session`);
 
-export const cancelStripeSubscription = async (userId: number) =>
-  await api.put<CancelStripeSubscriptionResponse>(
-    `/api/${userId}/cancel-subscription`
-  );
+export const createCheckoutSession = async (userId: number) =>
+  await api.post<BillingUrlResponse>(`/api/${userId}/billing/checkout-session`);
+
+export const resumeSubscription = async (userId: number) =>
+  await api.post<BillingStatusResponse>(`/api/${userId}/billing/resume`);

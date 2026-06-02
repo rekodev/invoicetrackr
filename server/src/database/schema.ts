@@ -286,7 +286,34 @@ export const usersTable = pgTable(
     preferredInvoiceLanguage: varchar('preferred_invoice_language', {
       length: 255
     }),
-    subscriptionStatus: varchar('subscription_status', { length: 50 })
+    subscriptionStatus: varchar('subscription_status', { length: 50 }),
+    onboardingCompletedAt: timestamp('onboarding_completed_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    trialStartedAt: timestamp('trial_started_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    trialEndsAt: timestamp('trial_ends_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    subscriptionGraceEndsAt: timestamp('subscription_grace_ends_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    subscriptionCurrentPeriodEndsAt: timestamp(
+      'subscription_current_period_ends_at',
+      {
+        withTimezone: true,
+        mode: 'string'
+      }
+    ),
+    subscriptionCancelAt: timestamp('subscription_cancel_at', {
+      withTimezone: true,
+      mode: 'string'
+    })
   },
   (table) => [
     foreignKey({
@@ -336,9 +363,20 @@ export const stripeAccountsTable = pgTable('stripe_accounts', {
   id: serial('id').primaryKey(),
   userId: integer('user_id')
     .notNull()
+    .unique()
     .references(() => usersTable.id, { onDelete: 'cascade' }),
   stripeCustomerId: text('stripe_customer_id').notNull().unique(),
-  stripeSubscriptionId: text('stripe_subscription_id').notNull().unique()
+  stripeSubscriptionId: text('stripe_subscription_id').unique()
+});
+
+export const stripeWebhookEventsTable = pgTable('stripe_webhook_events', {
+  id: serial('id').primaryKey(),
+  stripeEventId: text('stripe_event_id').notNull().unique(),
+  type: text('type').notNull(),
+  processedAt: timestamp('processed_at', {
+    withTimezone: true,
+    mode: 'string'
+  }).default(sql`CURRENT_TIMESTAMP`)
 });
 
 export type InsertInvoice = typeof invoicesTable.$inferInsert;

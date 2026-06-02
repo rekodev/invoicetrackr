@@ -176,7 +176,7 @@ export const deleteUser = async (
   const i18n = await useI18n(req);
 
   const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
-  await stripe.customers.del(stripeCustomerId);
+  if (stripeCustomerId) await stripe.customers.del(stripeCustomerId);
 
   const deletedUserId = await deleteUserFromDb(userId);
 

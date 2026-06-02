@@ -16,6 +16,9 @@ import {
   updateBankAccount
 } from '../controllers/banking-information';
 import { authMiddleware } from '../middleware/auth';
+import { requirePaidEntitlement } from '../middleware/entitlement';
+
+const paidAccess = [authMiddleware, requirePaidEntitlement];
 
 export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -23,7 +26,7 @@ export const getBankAccountsOptions: RouteShorthandOptionsWithHandler = {
       200: getBankAccountsResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: getBankAccounts
 };
 
@@ -33,7 +36,7 @@ export const getBankAccountOptions: RouteShorthandOptionsWithHandler = {
       200: getBankAccountResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: getBankAccount
 };
 
@@ -44,7 +47,7 @@ export const postBankAccountOptions: RouteShorthandOptionsWithHandler = {
       201: postBankAccountResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: postBankAccount
 };
 
@@ -55,7 +58,7 @@ export const updateBankAccountOptions: RouteShorthandOptionsWithHandler = {
       200: updateBankAccountResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: updateBankAccount
 };
 
@@ -65,6 +68,6 @@ export const deleteBankAccountOptions: RouteShorthandOptionsWithHandler = {
       200: messageResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: deleteBankAccount
 };

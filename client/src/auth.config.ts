@@ -38,9 +38,14 @@ export const authConfig = {
         isPublicInvoiceSigningPage;
 
       const isOnboarded = !!auth?.user?.isOnboarded;
+      const hasGraceAccess =
+        auth?.user?.subscriptionStatus === 'past_due' &&
+        !!auth.user.subscriptionGraceEndsAt &&
+        new Date(auth.user.subscriptionGraceEndsAt) > new Date();
       const isSubscriptionActive =
         auth?.user?.subscriptionStatus === 'active' ||
-        auth?.user?.subscriptionStatus === 'trialing';
+        auth?.user?.subscriptionStatus === 'trialing' ||
+        hasGraceAccess;
       const isOnboardingPage = path.startsWith(ONBOARDING_PAGE);
       const isRenewPage = path.startsWith(RENEW_SUBSCRIPTION_PAGE);
 
@@ -82,25 +87,20 @@ export const authConfig = {
     },
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        let isOnboarded = false;
-
-        if (
-          user.name &&
-          user.businessType &&
-          user.businessNumber &&
-          user.address &&
-          user.selectedBankAccountId &&
-          user.stripeCustomerId &&
-          user.stripeSubscriptionId
-        ) {
-          isOnboarded = true;
-        }
+        const isOnboarded = !!user.onboardingCompletedAt;
 
         token.language = user.language;
         token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
         token.currency = user.currency;
         token.isOnboarded = isOnboarded;
         token.subscriptionStatus = user.subscriptionStatus;
+        token.onboardingCompletedAt = user.onboardingCompletedAt;
+        token.trialStartedAt = user.trialStartedAt;
+        token.trialEndsAt = user.trialEndsAt;
+        token.subscriptionGraceEndsAt = user.subscriptionGraceEndsAt;
+        token.subscriptionCurrentPeriodEndsAt =
+          user.subscriptionCurrentPeriodEndsAt;
+        token.subscriptionCancelAt = user.subscriptionCancelAt;
         token.selectedBankAccountId = user.selectedBankAccountId;
         token.vatNumber = user.vatNumber;
       }
@@ -113,6 +113,13 @@ export const authConfig = {
           preferredInvoiceLanguage: session.user.preferredInvoiceLanguage,
           currency: session.user.currency,
           subscriptionStatus: session.user.subscriptionStatus,
+          onboardingCompletedAt: session.user.onboardingCompletedAt,
+          trialStartedAt: session.user.trialStartedAt,
+          trialEndsAt: session.user.trialEndsAt,
+          subscriptionGraceEndsAt: session.user.subscriptionGraceEndsAt,
+          subscriptionCurrentPeriodEndsAt:
+            session.user.subscriptionCurrentPeriodEndsAt,
+          subscriptionCancelAt: session.user.subscriptionCancelAt,
           selectedBankAccountId: session.user.selectedBankAccountId
         };
       }
@@ -128,6 +135,19 @@ export const authConfig = {
       session.user.isOnboarded = Boolean(token.isOnboarded);
       session.user.subscriptionStatus =
         token.subscriptionStatus as StripeSubscriptionStatus | null;
+      session.user.onboardingCompletedAt = token.onboardingCompletedAt as
+        | string
+        | null;
+      session.user.trialStartedAt = token.trialStartedAt as string | null;
+      session.user.trialEndsAt = token.trialEndsAt as string | null;
+      session.user.subscriptionGraceEndsAt = token.subscriptionGraceEndsAt as
+        | string
+        | null;
+      session.user.subscriptionCurrentPeriodEndsAt =
+        token.subscriptionCurrentPeriodEndsAt as string | null;
+      session.user.subscriptionCancelAt = token.subscriptionCancelAt as
+        | string
+        | null;
       session.user.selectedBankAccountId =
         token.selectedBankAccountId as number;
 

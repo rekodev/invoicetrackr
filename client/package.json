@@ -21,8 +21,6 @@
     "@invoicetrackr/types": "workspace:*",
     "@next/eslint-plugin-next": "^16.0.10",
     "@react-pdf/renderer": "^4.3.1",
-    "@stripe/react-stripe-js": "^3.6.0",
-    "@stripe/stripe-js": "^7.2.0",
     "axios": "^1.8.4",
     "chart.js": "^4.4.8",
     "framer-motion": "^12.23.14",

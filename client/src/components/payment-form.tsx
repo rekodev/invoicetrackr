@@ -1,249 +1,163 @@
 'use client';
 
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider
-} from '@heroui/react';
-import {
-  Elements,
-  PaymentElement,
-  useElements,
-  useStripe
-} from '@stripe/react-stripe-js';
-import { FormEvent, useEffect, useState } from 'react';
-import { Stripe, loadStripe } from '@stripe/stripe-js';
-import { User } from '@invoicetrackr/types';
-import { useTheme } from 'next-themes';
+import { BillingUrlResponse, User } from '@invoicetrackr/types';
+import { Button, Card, CardBody, CardFooter, CardHeader } from '@heroui/react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
 import {
-  createCustomer,
-  createSubscription,
-  getStripeCustomerId
+  createBillingPortalSession,
+  createCheckoutSession,
+  resumeSubscription,
+  startTrial
 } from '@/api/payment';
-import { Currency } from '@/lib/types/currency';
-import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
-import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
+import { ApiResponse } from '@/api/api-instance';
 import { isResponseError } from '@/lib/utils/error';
 import { updateSessionAction } from '@/lib/actions';
 
-import Loader from './ui/loader';
-
-if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
-  throw new Error('NEXT_PUBLIC_STRIPLE_PUBLIC_KEY is not defined');
-}
-
 type Props = {
-  user: User | undefined;
+  user?: User;
+  onTrialStarted?: () => void | Promise<void>;
 };
 
-function PaymentFormInsideElements({ user }: { user: User }) {
+export default function PaymentForm({ user, onTrialStarted }: Props) {
   const t = useTranslations('components.payment_form');
-  const stripe = useStripe();
-  const elements = useElements();
-  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>();
 
-  const isFormLoading = !stripe || !elements;
+  if (!user?.id) return null;
 
-  const handleSubmit = async (event: FormEvent<HTMLDivElement>) => {
-    event.preventDefault();
-
-    if (!stripe || !elements || !user.id) return;
-
+  const run = async (
+    action: () => Promise<ApiResponse<BillingUrlResponse>>
+  ) => {
     setIsLoading(true);
+    setError(undefined);
 
     try {
-      const { error: submitError } = await elements.submit();
+      const response = await action();
 
-      if (submitError) {
-        console.error('Payment submission error:', submitError);
-        setErrorMessage(t('errors.submit_failed'));
-        setIsLoading(false);
+      if (isResponseError(response)) {
+        setError(response.data.message);
         return;
       }
 
-      let stripeCustomerId;
-
-      const getCustomerResp = await getStripeCustomerId(user.id);
-
-      if (isResponseError(getCustomerResp)) {
-        console.error('Get customer error:', getCustomerResp.data);
-        setErrorMessage(t('errors.customer_failed'));
-        setIsLoading(false);
-        return;
-      }
-
-      const { customerId: existingCustomerId } = getCustomerResp.data;
-
-      if (existingCustomerId) {
-        stripeCustomerId = existingCustomerId;
-      } else {
-        const createCustomerResp = await createCustomer({
-          userId: user.id,
-          email: user.email || '',
-          name: user.name
-        });
-
-        if (isResponseError(createCustomerResp)) {
-          console.error('Create customer error:', createCustomerResp.data);
-          setErrorMessage(t('errors.customer_failed'));
-          setIsLoading(false);
-          return;
-        }
-
-        stripeCustomerId = createCustomerResp.data.customerId;
-      }
-
-      const subscriptionCreationResp = await createSubscription(
-        user.id,
-        stripeCustomerId
-      );
-
-      if (isResponseError(subscriptionCreationResp)) {
-        console.error(
-          'Create subscription error:',
-          subscriptionCreationResp.data
-        );
-        setErrorMessage(t('errors.subscription_failed'));
-        setIsLoading(false);
-        return;
-      }
-
-      const { error } = await stripe.confirmPayment({
-        elements,
-        clientSecret: subscriptionCreationResp.data.clientSecret,
-        confirmParams: {
-          return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success`
-        },
-        redirect: 'if_required'
-      });
-
-      if (error) {
-        console.error('Payment confirmation error:', error);
-        setErrorMessage(t('errors.payment_failed'));
-        setIsLoading(false);
-        return;
-      }
-
-      updateSessionAction({
-        newSession: { isOnboarded: true, subscriptionStatus: 'active' },
-        redirectPath: PAYMENT_SUCCESS_PAGE
-      });
-    } catch (e) {
-      console.error('Payment process error:', e);
-      setErrorMessage(t('errors.general'));
+      window.location.assign(response.data.url);
+    } catch {
+      setError(t('errors.submit_failed'));
+    } finally {
       setIsLoading(false);
     }
   };
 
+  const startFreeTrial = async () => {
+    setIsLoading(true);
+    setError(undefined);
+
+    try {
+      const response = await startTrial(user.id!);
+
+      if (isResponseError(response)) {
+        setError(response.data.message);
+        return;
+      }
+
+      await updateSessionAction({
+        newSession: {
+          isOnboarded: !!response.data.billing.onboardingCompletedAt,
+          ...response.data.billing
+        }
+      });
+      await onTrialStarted?.();
+    } catch {
+      setError(t('errors.submit_failed'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resumePausedSubscription = async () => {
+    setIsLoading(true);
+    setError(undefined);
+
+    try {
+      const response = await resumeSubscription(user.id!);
+
+      if (isResponseError(response)) {
+        setError(response.data.message);
+        return;
+      }
+
+      await updateSessionAction({
+        newSession: {
+          isOnboarded: !!response.data.billing.onboardingCompletedAt,
+          ...response.data.billing
+        }
+      });
+      window.location.reload();
+    } catch {
+      setError(t('errors.submit_failed'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const isPaused = user.subscriptionStatus === 'paused';
+  const canStartTrial = !user.trialStartedAt && !user.stripeSubscriptionId;
+
   return (
-    <Card as="form" className="mx-auto max-w-4xl" onSubmit={handleSubmit}>
-      <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
-      <Divider />
-      <CardBody className="px-5 py-4">
-        {isFormLoading ? (
-          <Loader />
-        ) : (
-          <>
-            <PaymentElement />
-            {errorMessage && (
-              <p className="text-sm text-rose-500">{errorMessage}</p>
-            )}
-          </>
-        )}
+    <Card className="border-default-200 w-full max-w-xl border bg-transparent">
+      <CardHeader className="text-xl font-semibold">{t('title')}</CardHeader>
+      <CardBody className="gap-3">
+        <p className="text-default-500 text-sm">
+          {canStartTrial ? t('trial_description') : t('recovery_description')}
+        </p>
+        {error && <p className="text-danger text-sm">{error}</p>}
       </CardBody>
-      <CardFooter className="px-6 py-4">
-        <Button
-          className="w-full"
-          type="submit"
-          color="secondary"
-          isDisabled={!stripe || isLoading}
-        >
-          {isLoading
-            ? t('processing')
-            : t('pay', {
-                amount: `${getCurrencySymbol(user.currency as Currency)}${SUBSCRIPTION_AMOUNT}`
-              })}
-        </Button>
+      <CardFooter className="flex flex-wrap gap-3">
+        {canStartTrial ? (
+          <Button
+            color="secondary"
+            isLoading={isLoading}
+            onPress={startFreeTrial}
+          >
+            {t('actions.start_trial')}
+          </Button>
+        ) : isPaused ? (
+          <>
+            <Button
+              color="secondary"
+              isLoading={isLoading}
+              onPress={resumePausedSubscription}
+            >
+              {t('actions.resume')}
+            </Button>
+            <Button
+              variant="bordered"
+              isLoading={isLoading}
+              onPress={() => run(() => createBillingPortalSession(user.id!))}
+            >
+              {t('actions.manage')}
+            </Button>
+          </>
+        ) : user.subscriptionStatus === 'canceled' ||
+          user.subscriptionStatus === 'incomplete_expired' ? (
+          <Button
+            color="secondary"
+            isLoading={isLoading}
+            onPress={() => run(() => createCheckoutSession(user.id!))}
+          >
+            {t('actions.subscribe')}
+          </Button>
+        ) : (
+          <Button
+            color="secondary"
+            isLoading={isLoading}
+            onPress={() => run(() => createBillingPortalSession(user.id!))}
+          >
+            {t('actions.manage')}
+          </Button>
+        )}
       </CardFooter>
     </Card>
-  );
-}
-
-export default function PaymentForm({ user }: Props) {
-  const { theme } = useTheme();
-  const [stripePromise, setStripePromise] = useState<Stripe | null>(null);
-
-  const isDarkMode = theme === 'dark';
-
-  useEffect(() => {
-    const loadStripeWithLocale = async () => {
-      return loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!, {
-        locale: (user?.language as 'lt' | 'en') || 'en'
-      });
-    };
-
-    loadStripeWithLocale().then((stripe) => {
-      setStripePromise(stripe);
-    });
-  }, [user?.language]);
-
-  if (!stripePromise || !user) return null;
-
-  return (
-    <div
-      key={JSON.stringify(stripePromise)}
-      data-testid="payment-form"
-      className="w-full"
-    >
-      <Elements
-        stripe={stripePromise}
-        options={{
-          mode: 'subscription',
-          amount: convertToSubcurrency(SUBSCRIPTION_AMOUNT),
-          currency: user.currency,
-          appearance: {
-            theme: 'flat',
-            rules: {
-              '.AccordionItem': {
-                border: 'none',
-                padding: '0.25rem',
-                boxShadow: 'none',
-                backgroundColor: 'rgba(0,0,0,0)'
-              },
-              '.Block': {
-                border: 'none',
-                padding: '0.25rem',
-                boxShadow: 'none',
-                backgroundColor: 'rgba(0,0,0,0)'
-              },
-              '.Input': {
-                color: isDarkMode ? '#3f3f46' : '#71717a',
-                paddingTop: '0.5rem',
-                marginTop: '0.5rem',
-                paddingBottom: '0.5rem',
-                maxHeight: '4rem'
-              }
-            },
-            variables: {
-              colorPrimary: isDarkMode ? '#ffffff' : '#18181b',
-              colorTextSecondary: '#a1a1aa',
-              colorText: isDarkMode ? '#e4e4e7' : '#52525b',
-              colorBackground: 'rgba(0, 0, 0, 0)',
-              fontFamily: 'Inter, sans-serif',
-              borderRadius: '8px'
-            }
-          }
-        }}
-      >
-        <PaymentFormInsideElements user={user} />
-      </Elements>
-    </div>
   );
 }

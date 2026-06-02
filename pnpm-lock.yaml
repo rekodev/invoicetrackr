@@ -67,12 +67,6 @@ importers:
       '@react-pdf/renderer':
         specifier: ^4.3.1
         version: 4.3.1(react@19.2.1)
-      '@stripe/react-stripe-js':
-        specifier: ^3.6.0
-        version: 3.6.0(@stripe/stripe-js@7.2.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-      '@stripe/stripe-js':
-        specifier: ^7.2.0
-        version: 7.2.0
       axios:
         specifier: ^1.8.4
         version: 1.8.4
@@ -2780,17 +2774,6 @@ packages:
 
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
-
-  '@stripe/react-stripe-js@3.6.0':
-    resolution: {integrity: sha512-zEnaUmTOsu7zhl3RWbZ0l1dRiad+QIbcAYzQfF+yYelURJowhAwesRHKWH+qGAIBEpkO6/VCLFHhVLH9DtPlnw==}
-    peerDependencies:
-      '@stripe/stripe-js': '>=1.44.1 <8.0.0'
-      react: '>=16.8.0 <20.0.0'
-      react-dom: '>=16.8.0 <20.0.0'
-
-  '@stripe/stripe-js@7.2.0':
-    resolution: {integrity: sha512-BXlt6BsFE599yOATuz78FiW9z4SyipCH3j1SDyKWe/3OUBdhcOr/BWnBi1xrtcC2kfqrTJjgvfH2PTfMPRmbTw==}
-    engines: {node: '>=12.16'}
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
@@ -9395,15 +9378,6 @@ snapshots:
   '@standard-schema/spec@1.0.0': {}
 
   '@standard-schema/utils@0.3.0': {}
-
-  '@stripe/react-stripe-js@3.6.0(@stripe/stripe-js@7.2.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
-    dependencies:
-      '@stripe/stripe-js': 7.2.0
-      prop-types: 15.8.1
-      react: 19.2.1
-      react-dom: 19.2.1(react@19.2.1)
-
-  '@stripe/stripe-js@7.2.0': {}
 
   '@swc/helpers@0.5.15':
     dependencies:

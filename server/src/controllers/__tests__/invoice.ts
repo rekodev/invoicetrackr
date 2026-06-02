@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as clientDb from '../../database/client';
 import * as invoiceController from '../invoice';
@@ -9,6 +9,9 @@ import {
   invoiceFromDbFactory
 } from '../../test/factories/invoice';
 import { clientFactory } from '../../test/factories/client';
+import en from '../../locales/en';
+import lt from '../../locales/lt';
+import { mockUseI18n } from '../../test/setup';
 
 vi.mock('../../database/invoice');
 vi.mock('../../database/client');
@@ -19,6 +22,34 @@ describe('Invoice Controller', () => {
   const mockInvoice = invoiceFactory.build({ id: 1 });
   const mockInvoiceForDb = invoiceFromDbFactory.build({ id: 1 });
   const mockInvoiceForDb2 = invoiceFromDbFactory.build({ id: 2 });
+
+  beforeEach(() => {
+    mockUseI18n.mockImplementation(async (request) => {
+      const locale = request?.headers['accept-language'] === 'lt' ? lt : en;
+
+      return {
+        t: (key: string, options?: Record<string, string>) => {
+          const value = key
+            .split('.')
+            .reduce<unknown>(
+              (result, segment) =>
+                typeof result === 'object' && result !== null
+                  ? (result as Record<string, unknown>)[segment]
+                  : undefined,
+              locale
+            );
+
+          if (typeof value !== 'string') return key;
+
+          return Object.entries(options || {}).reduce(
+            (translation, [name, replacement]) =>
+              translation.replace(`%{${name}}`, replacement),
+            value
+          );
+        }
+      } as never;
+    });
+  });
 
   describe('GET /api/:userId/invoices', () => {
     it('should return all invoices for a user', async () => {

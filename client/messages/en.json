@@ -206,13 +206,9 @@
           "name": "Personal Information",
           "description": "Tell us about yourself"
         },
-        "banking": {
-          "name": "Banking Details",
-          "description": "Add your banking information"
-        },
-        "payment": {
-          "name": "Make a Payment",
-          "description": "Finalize your registration"
+        "trial": {
+          "name": "Start Free Trial",
+          "description": "Unlock the full product for 7 days"
         }
       },
       "actions": {
@@ -553,7 +549,7 @@
           "year": "year"
         },
         "action": {
-          "cancel": "Cancel Subscription",
+          "manage": "Manage Subscription",
           "renew": "Renew Subscription"
         },
         "cancel_subscription_dialog": {
@@ -673,9 +669,15 @@
       "go_to_profile": "Go to Profile"
     },
     "payment_form": {
-      "title": "Payment",
-      "processing": "Processing...",
-      "pay": "Pay {amount}",
+      "title": "InvoiceTrackr Premium",
+      "trial_description": "Start your full 7-day trial. No payment card is required.",
+      "recovery_description": "Manage your payment method or restore access to your subscription.",
+      "actions": {
+        "start_trial": "Start Free Trial",
+        "manage": "Manage Billing",
+        "resume": "Resume Subscription",
+        "subscribe": "Subscribe"
+      },
       "errors": {
         "submit_failed": "Payment submission failed. Please check your payment details and try again.",
         "customer_failed": "Unable to process customer information. Please try again.",

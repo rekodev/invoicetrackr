@@ -37,6 +37,9 @@ import {
 } from '../controllers/invoice';
 import { authMiddleware } from '../middleware/auth';
 import { preValidateFileAndFields } from '../utils/multipart';
+import { requirePaidEntitlement } from '../middleware/entitlement';
+
+const paidAccess = [authMiddleware, requirePaidEntitlement];
 
 export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -44,7 +47,7 @@ export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
       200: getInvoicesResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: getInvoices
 };
 
@@ -52,7 +55,7 @@ export const getIncomeJournalOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     querystring: incomeJournalQuerySchema
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: getIncomeJournal
 };
 
@@ -62,7 +65,7 @@ export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {
       200: getInvoiceResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: getInvoice
 };
 
@@ -75,7 +78,7 @@ export const getNextInvoiceNumberOptions: RouteShorthandOptionsWithHandler = {
       200: getNextInvoiceNumberResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: getNextInvoiceNumber
 };
 
@@ -86,7 +89,7 @@ export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
       201: postInvoiceResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   preValidation: preValidateFileAndFields,
   handler: postInvoice
 };
@@ -98,7 +101,7 @@ export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
       200: updateInvoiceResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   preValidation: preValidateFileAndFields,
   handler: updateInvoice
 };
@@ -110,7 +113,7 @@ export const updateInvoiceStatusOptions: RouteShorthandOptionsWithHandler = {
       200: messageResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: updateInvoiceStatus
 };
 
@@ -120,7 +123,7 @@ export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {
       200: messageResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: deleteInvoice
 };
 
@@ -130,7 +133,7 @@ export const getInvoicesTotalAmountOptions: RouteShorthandOptionsWithHandler = {
       200: getInvoicesTotalAmountResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: getInvoicesTotalAmount
 };
 
@@ -140,7 +143,7 @@ export const getInvoicesRevenueOptions: RouteShorthandOptionsWithHandler = {
       200: getInvoicesRevenueResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: getInvoicesRevenue
 };
 
@@ -150,7 +153,7 @@ export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
       200: getLatestInvoicesResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: getLatestInvoices
 };
 
@@ -166,7 +169,7 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
       file: z.any().nullish()
     })
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   preValidation: preValidateFileAndFields,
   handler: sendInvoiceEmail
 };
@@ -177,7 +180,7 @@ export const revokeInvoiceSigningOptions: RouteShorthandOptionsWithHandler = {
       200: messageResponseSchema
     }
   },
-  preHandler: authMiddleware,
+  preHandler: paidAccess,
   handler: revokeInvoiceSigning
 };
 
@@ -191,7 +194,7 @@ export const regenerateInvoiceSigningOptions: RouteShorthandOptionsWithHandler =
         200: messageResponseSchema
       }
     },
-    preHandler: authMiddleware,
+    preHandler: paidAccess,
     handler: regenerateInvoiceSigning
   };
 

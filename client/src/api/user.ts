@@ -12,6 +12,7 @@ import {
 } from '@invoicetrackr/types';
 
 import api from './api-instance';
+import { buildFormData } from '@/lib/utils/multipart';
 
 export const registerUser = async ({
   email,
@@ -44,15 +45,15 @@ export const updateUser = async (
     'email' | 'name' | 'businessType' | 'businessNumber' | 'address' | 'type'
   > & { signature: string | File | undefined }
 ) => {
-  const isSignatureFile = typeof userData.signature !== 'string';
+  if (typeof File !== 'undefined' && userData.signature instanceof File) {
+    const { signature, ...dataWithoutFile } = userData;
+    const formData = buildFormData(dataWithoutFile);
+    formData.append('file', signature);
 
-  return await api.put<UpdateUserResponse>(`/api/users/${id}`, userData, {
-    headers: {
-      'Content-Type': isSignatureFile
-        ? 'multipart/form-data'
-        : 'application/json'
-    }
-  });
+    return await api.put<UpdateUserResponse>(`/api/users/${id}`, formData);
+  }
+
+  return await api.put<UpdateUserResponse>(`/api/users/${id}`, userData);
 };
 
 export const updateUserSelectedBankAccount = async (

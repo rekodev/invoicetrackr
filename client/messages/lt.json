@@ -206,13 +206,9 @@
           "name": "Asmeninė informacija",
           "description": "Papasakokite apie save"
         },
-        "banking": {
-          "name": "Bankiniai duomenys",
-          "description": "Pridėkite bankinę informaciją"
-        },
-        "payment": {
-          "name": "Atlikti mokėjimą",
-          "description": "Užbaikite registraciją"
+        "trial": {
+          "name": "Pradėti nemokamą bandymą",
+          "description": "Naudokitės visomis funkcijomis 7 dienas"
         }
       },
       "actions": {
@@ -553,7 +549,7 @@
           "year": "metus"
         },
         "action": {
-          "cancel": "Atšaukti Prenumeratą",
+          "manage": "Valdyti Prenumeratą",
           "renew": "Atnaujinti Prenumeratą"
         },
         "cancel_subscription_dialog": {
@@ -673,9 +669,15 @@
       "go_to_profile": "Eiti į profilį"
     },
     "payment_form": {
-      "title": "Mokėjimas",
-      "processing": "Apdorojama...",
-      "pay": "Mokėti {amount}",
+      "title": "InvoiceTrackr Premium",
+      "trial_description": "Pradėkite pilną 7 dienų bandomąjį laikotarpį. Mokėjimo kortelė nereikalinga.",
+      "recovery_description": "Tvarkykite mokėjimo būdą arba atkurkite prieigą prie prenumeratos.",
+      "actions": {
+        "start_trial": "Pradėti nemokamą bandymą",
+        "manage": "Tvarkyti mokėjimus",
+        "resume": "Atnaujinti prenumeratą",
+        "subscribe": "Prenumeruoti"
+      },
       "errors": {
         "submit_failed": "Mokėjimo pateikti nepavyko. Bandykite dar kartą.",
         "customer_failed": "Negalima sukurti kliento. Bandykite dar kartą.",

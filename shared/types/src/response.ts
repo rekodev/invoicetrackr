@@ -1,5 +1,6 @@
 import z from 'zod/v4';
 import { userBodySchema, resetPasswordTokenGetSchema } from './user';
+import { stripeSubscriptionStatusSchema } from './common';
 import { bankAccountBodySchema } from './bank-account';
 import { clientBodySchema } from './client';
 import { invoiceBodySchema, publicInvoiceSigningSchema } from './invoice';
@@ -131,23 +132,25 @@ export const getLatestInvoicesResponseSchema = z.object({
 // Contact response schema
 export const postContactResponseSchema = messageResponseSchema;
 
-// Payment response schemas
-export const createCustomerResponseSchema = z.object({
-  customerId: z.string(),
-  message: z.string()
+// Billing response schemas
+export const billingStatusSchema = z.object({
+  subscriptionStatus: stripeSubscriptionStatusSchema.nullish(),
+  onboardingCompletedAt: z.string().nullish(),
+  trialStartedAt: z.string().nullish(),
+  trialEndsAt: z.string().nullish(),
+  subscriptionGraceEndsAt: z.string().nullish(),
+  subscriptionCurrentPeriodEndsAt: z.string().nullish(),
+  subscriptionCancelAt: z.string().nullish(),
+  hasPaidAccess: z.boolean()
 });
 
-export const createSubscriptionResponseSchema = z.object({
-  type: z.string(),
-  clientSecret: z.string(),
-  message: z.string()
+export const billingStatusResponseSchema = z.object({
+  billing: billingStatusSchema
 });
 
-export const getStripeCustomerIdResponseSchema = z.object({
-  customerId: z.string()
+export const billingUrlResponseSchema = z.object({
+  url: z.string()
 });
-
-export const cancelStripeSubscriptionResponseSchema = messageResponseSchema;
 
 // Types
 export type MessageResponse = z.infer<typeof messageResponseSchema>;
@@ -222,15 +225,6 @@ export type AddInvoiceResponse = PostInvoiceResponse;
 
 export type PostContactResponse = z.infer<typeof postContactResponseSchema>;
 
-export type CreateCustomerResponse = z.infer<
-  typeof createCustomerResponseSchema
->;
-export type CreateSubscriptionResponse = z.infer<
-  typeof createSubscriptionResponseSchema
->;
-export type GetStripeCustomerIdResponse = z.infer<
-  typeof getStripeCustomerIdResponseSchema
->;
-export type CancelStripeSubscriptionResponse = z.infer<
-  typeof cancelStripeSubscriptionResponseSchema
->;
+export type BillingStatus = z.infer<typeof billingStatusSchema>;
+export type BillingStatusResponse = z.infer<typeof billingStatusResponseSchema>;
+export type BillingUrlResponse = z.infer<typeof billingUrlResponseSchema>;

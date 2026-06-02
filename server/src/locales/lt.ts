@@ -20,8 +20,7 @@ export default {
       subtitle: 'Profesionalus sąskaitų faktūrų valdymas',
       defaultMessage: 'Prašome rasti prisegtos sąskaitos faktūrą.',
       detailsTitle: 'Sąskaitos faktūros informacija',
-      sentBy:
-        'Šią sąskaitą faktūrą per InvoiceTrackr išsiuntė {senderName}.',
+      sentBy: 'Šią sąskaitą faktūrą per InvoiceTrackr išsiuntė {senderName}.',
       invoiceNumber: 'Sąskaitos numeris:',
       amount: 'Suma:',
       dueDate: 'Terminas:',
@@ -39,8 +38,36 @@ export default {
       viewMessage:
         'Atidarykite saugią sąskaitos nuorodą, peržiūrėkite ir atsisiųskite pasirašytą PDF.',
       viewButton: 'Peržiūrėti pasirašytą sąskaitą',
+      signedNotification: {
+        recipient: 'Gavėjas',
+        subject: 'Sąskaita %{invoiceId} buvo pasirašyta',
+        message: '%{receiverName} pasirašė sąskaitą %{invoiceId}.',
+        review: 'Pasirašytą sąskaitą galite peržiūrėti čia:'
+      },
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
       copyright: 'InvoiceTrackr. Visos teisės saugomos.'
+    },
+    billing: {
+      trialEnding: {
+        subject: 'Jūsų bandomasis laikotarpis netrukus baigsis',
+        text: 'Jūsų 7 dienų bandomasis laikotarpis netrukus baigsis. Pridėkite mokėjimo būdą paskyros nustatymuose, kad galėtumėte toliau naudotis InvoiceTrackr.'
+      },
+      paymentFailed: {
+        subject: 'Nepavyko apdoroti InvoiceTrackr mokėjimo',
+        text: 'Nepavyko apdoroti prenumeratos mokėjimo. Turite 3 dienas atnaujinti mokėjimo būdą paskyros nustatymuose.'
+      }
+    },
+    incomeJournal: {
+      filename: 'pajamu-zurnalas',
+      paymentDate: 'Apmokėjimo data',
+      invoiceDate: 'Sąskaitos data',
+      documentNumber: 'Dokumento numeris',
+      client: 'Pirkėjas',
+      clientCode: 'Pirkėjo kodas',
+      services: 'Paslaugos / prekės',
+      subtotal: 'Suma be PVM (%{currency})',
+      vatTotal: 'PVM suma (%{currency})',
+      grandTotal: 'Bendra suma (%{currency})'
     }
   },
   validation: {
@@ -62,7 +89,8 @@ export default {
       date: 'Reikalinga tinkama data',
       dueDate: 'Reikalinga tinkama data',
       dueDateAfterDate: 'Terminas neturi būti ankstesnis už sąskaitos datą',
-      incomeJournalDateRange: 'Pabaigos data negali būti ankstesnė už pradžios datą',
+      incomeJournalDateRange:
+        'Pabaigos data negali būti ankstesnė už pradžios datą',
       status: 'Tinkama būsena yra privaloma',
       businessType: 'Reikalingas "Verslas" arba "Fizinis asmuo"',
       partyType: 'Tinkamas šalies tipas yra privalomas',
