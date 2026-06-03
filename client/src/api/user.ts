@@ -42,7 +42,13 @@ export const updateUser = async (
   id: number,
   userData: Pick<
     User,
-    'email' | 'name' | 'businessType' | 'businessNumber' | 'address' | 'type'
+    | 'email'
+    | 'name'
+    | 'businessType'
+    | 'businessNumber'
+    | 'vatNumber'
+    | 'address'
+    | 'type'
   > & { signature: string | File | undefined }
 ) => {
   if (typeof File !== 'undefined' && userData.signature instanceof File) {
