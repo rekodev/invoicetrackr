@@ -1,4 +1,5 @@
 import {
+  boolean,
   check,
   date,
   foreignKey,
@@ -313,7 +314,10 @@ export const usersTable = pgTable(
     subscriptionCancelAt: timestamp('subscription_cancel_at', {
       withTimezone: true,
       mode: 'string'
-    })
+    }),
+    paymentSuccessPending: boolean('payment_success_pending')
+      .default(false)
+      .notNull()
   },
   (table) => [
     foreignKey({

@@ -2,6 +2,7 @@
 
 import { BillingUrlResponse, User } from '@invoicetrackr/types';
 import { Button, Card, CardBody, CardFooter, CardHeader } from '@heroui/react';
+import { CheckIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
@@ -20,17 +21,20 @@ type Props = {
   onTrialStarted?: () => void | Promise<void>;
 };
 
+type PaymentAction = 'trial' | 'checkout' | 'portal' | 'resume';
+
 export default function PaymentForm({ user, onTrialStarted }: Props) {
   const t = useTranslations('components.payment_form');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState<PaymentAction>();
   const [error, setError] = useState<string>();
 
   if (!user?.id) return null;
 
   const run = async (
+    actionKey: PaymentAction,
     action: () => Promise<ApiResponse<BillingUrlResponse>>
   ) => {
-    setIsLoading(true);
+    setLoadingAction(actionKey);
     setError(undefined);
 
     try {
@@ -38,19 +42,19 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
 
       if (isResponseError(response)) {
         setError(response.data.message);
+        setLoadingAction(undefined);
         return;
       }
 
       window.location.assign(response.data.url);
     } catch {
       setError(t('errors.submit_failed'));
-    } finally {
-      setIsLoading(false);
+      setLoadingAction(undefined);
     }
   };
 
   const startFreeTrial = async () => {
-    setIsLoading(true);
+    setLoadingAction('trial');
     setError(undefined);
 
     try {
@@ -58,6 +62,7 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
 
       if (isResponseError(response)) {
         setError(response.data.message);
+        setLoadingAction(undefined);
         return;
       }
 
@@ -67,16 +72,20 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
           ...response.data.billing
         }
       });
-      await onTrialStarted?.();
+      if (onTrialStarted) {
+        await onTrialStarted();
+        return;
+      }
+
+      window.location.reload();
     } catch {
       setError(t('errors.submit_failed'));
-    } finally {
-      setIsLoading(false);
+      setLoadingAction(undefined);
     }
   };
 
   const resumePausedSubscription = async () => {
-    setIsLoading(true);
+    setLoadingAction('resume');
     setError(undefined);
 
     try {
@@ -84,6 +93,7 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
 
       if (isResponseError(response)) {
         setError(response.data.message);
+        setLoadingAction(undefined);
         return;
       }
 
@@ -96,68 +106,170 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
       window.location.reload();
     } catch {
       setError(t('errors.submit_failed'));
-    } finally {
-      setIsLoading(false);
+      setLoadingAction(undefined);
     }
   };
 
   const isPaused = user.subscriptionStatus === 'paused';
   const canStartTrial = !user.trialStartedAt && !user.stripeSubscriptionId;
+  const isBusy = !!loadingAction;
+  const features = [
+    t('features.invoices'),
+    t('features.clients'),
+    t('features.branding'),
+    t('features.support')
+  ];
 
   return (
-    <Card className="border-default-200 w-full max-w-xl border bg-transparent">
-      <CardHeader className="text-xl font-semibold">{t('title')}</CardHeader>
-      <CardBody className="gap-3">
-        <p className="text-default-500 text-sm">
-          {canStartTrial ? t('trial_description') : t('recovery_description')}
-        </p>
-        {error && <p className="text-danger text-sm">{error}</p>}
-      </CardBody>
-      <CardFooter className="flex flex-wrap gap-3">
-        {canStartTrial ? (
-          <Button
-            color="secondary"
-            isLoading={isLoading}
-            onPress={startFreeTrial}
-          >
-            {t('actions.start_trial')}
-          </Button>
-        ) : isPaused ? (
-          <>
-            <Button
-              color="secondary"
-              isLoading={isLoading}
-              onPress={resumePausedSubscription}
-            >
-              {t('actions.resume')}
-            </Button>
-            <Button
-              variant="bordered"
-              isLoading={isLoading}
-              onPress={() => run(() => createBillingPortalSession(user.id!))}
-            >
-              {t('actions.manage')}
-            </Button>
-          </>
-        ) : user.subscriptionStatus === 'canceled' ||
-          user.subscriptionStatus === 'incomplete_expired' ? (
-          <Button
-            color="secondary"
-            isLoading={isLoading}
-            onPress={() => run(() => createCheckoutSession(user.id!))}
-          >
-            {t('actions.subscribe')}
-          </Button>
-        ) : (
-          <Button
-            color="secondary"
-            isLoading={isLoading}
-            onPress={() => run(() => createBillingPortalSession(user.id!))}
-          >
-            {t('actions.manage')}
-          </Button>
-        )}
-      </CardFooter>
+    <Card className="border-default-100 bg-default-50/70 dark:bg-default-50/5 relative h-full w-full overflow-hidden border shadow-sm">
+      <div
+        aria-hidden
+        className="bg-secondary/20 pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="bg-secondary/10 pointer-events-none absolute -bottom-28 -left-24 h-72 w-72 rounded-full blur-3xl"
+      />
+
+      <div className="relative grid h-full md:grid-cols-[1.05fr_0.95fr]">
+        <div className="flex h-full flex-col p-8 md:px-10 md:pb-10">
+          <CardHeader className="p-0">
+            <div className="flex flex-col items-start">
+              <div className="border-secondary/30 bg-secondary/10 text-secondary inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium uppercase tracking-wider">
+                <SparklesIcon className="h-3.5 w-3.5" />
+                {t('badge')}
+              </div>
+              <h2 className="text-foreground mt-4 text-4xl font-semibold leading-tight tracking-tight">
+                {t('headline')}{' '}
+                <span className="text-secondary">{t('headline_accent')}</span>
+              </h2>
+            </div>
+          </CardHeader>
+
+          <CardBody className="gap-5 p-0 pt-4">
+            <p className="text-default-500 max-w-md text-sm leading-6">
+              {canStartTrial
+                ? t('trial_description')
+                : t('recovery_description')}
+            </p>
+            <ul className="space-y-2.5">
+              {features.map((feature) => (
+                <li
+                  key={feature}
+                  className="text-foreground/90 flex items-center gap-2.5 text-sm"
+                >
+                  <span className="bg-secondary/15 text-secondary grid h-5 w-5 place-items-center rounded-full">
+                    <CheckIcon className="h-3 w-3" strokeWidth={3} />
+                  </span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </CardBody>
+        </div>
+
+        <div className="flex h-full flex-col p-8 md:px-10 md:pb-10 md:pt-20">
+          <div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-foreground text-4xl font-semibold leading-none tracking-tight">
+                {t('price.amount')}
+              </span>
+              <span className="text-default-500 text-sm">
+                {t('price.interval')}
+              </span>
+            </div>
+            <p className="text-default-400 mt-1 text-xs uppercase tracking-wider">
+              {t('price.note')}
+            </p>
+          </div>
+
+          {error && <p className="text-danger mt-5 text-sm">{error}</p>}
+
+          <CardFooter className="flex flex-col gap-3 p-0 pt-7">
+            {canStartTrial ? (
+              <>
+                <Button
+                  color="secondary"
+                  size="lg"
+                  className="w-full font-medium"
+                  isLoading={loadingAction === 'checkout'}
+                  isDisabled={isBusy && loadingAction !== 'checkout'}
+                  onPress={() =>
+                    run('checkout', () => createCheckoutSession(user.id!))
+                  }
+                >
+                  {t('actions.subscribe')}
+                </Button>
+                <Button
+                  variant="bordered"
+                  size="lg"
+                  className="w-full font-medium"
+                  isLoading={loadingAction === 'trial'}
+                  isDisabled={isBusy && loadingAction !== 'trial'}
+                  onPress={startFreeTrial}
+                >
+                  {t('actions.start_trial')}
+                </Button>
+              </>
+            ) : isPaused ? (
+              <>
+                <Button
+                  color="secondary"
+                  size="lg"
+                  className="w-full font-medium"
+                  isLoading={loadingAction === 'resume'}
+                  isDisabled={isBusy && loadingAction !== 'resume'}
+                  onPress={resumePausedSubscription}
+                >
+                  {t('actions.resume')}
+                </Button>
+                <Button
+                  variant="bordered"
+                  size="lg"
+                  className="w-full font-medium"
+                  isLoading={loadingAction === 'portal'}
+                  isDisabled={isBusy && loadingAction !== 'portal'}
+                  onPress={() =>
+                    run('portal', () => createBillingPortalSession(user.id!))
+                  }
+                >
+                  {t('actions.manage')}
+                </Button>
+              </>
+            ) : user.subscriptionStatus === 'canceled' ||
+              user.subscriptionStatus === 'incomplete_expired' ? (
+              <Button
+                color="secondary"
+                size="lg"
+                className="w-full font-medium"
+                isLoading={loadingAction === 'checkout'}
+                isDisabled={isBusy && loadingAction !== 'checkout'}
+                onPress={() =>
+                  run('checkout', () => createCheckoutSession(user.id!))
+                }
+              >
+                {t('actions.subscribe')}
+              </Button>
+            ) : (
+              <Button
+                color="secondary"
+                size="lg"
+                className="w-full font-medium"
+                isLoading={loadingAction === 'portal'}
+                isDisabled={isBusy && loadingAction !== 'portal'}
+                onPress={() =>
+                  run('portal', () => createBillingPortalSession(user.id!))
+                }
+              >
+                {t('actions.manage')}
+              </Button>
+            )}
+            <p className="text-default-400 pt-1 text-center text-xs">
+              {t('checkout_note')}
+            </p>
+          </CardFooter>
+        </div>
+      </div>
     </Card>
   );
 }

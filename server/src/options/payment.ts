@@ -1,10 +1,12 @@
 import {
   billingStatusResponseSchema,
-  billingUrlResponseSchema
+  billingUrlResponseSchema,
+  consumePaymentSuccessResponseSchema
 } from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 
 import {
+  consumePaymentSuccess,
   createBillingPortalSession,
   createCheckoutSession,
   getBillingStatus,
@@ -42,4 +44,10 @@ export const resumeSubscriptionOptions: RouteShorthandOptionsWithHandler = {
   schema: { response: { 200: billingStatusResponseSchema } },
   preHandler: authMiddleware,
   handler: resumeSubscription
+};
+
+export const consumePaymentSuccessOptions: RouteShorthandOptionsWithHandler = {
+  schema: { response: { 200: consumePaymentSuccessResponseSchema } },
+  preHandler: authMiddleware,
+  handler: consumePaymentSuccess
 };

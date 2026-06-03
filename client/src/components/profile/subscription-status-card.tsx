@@ -1,6 +1,11 @@
 'use client';
 
 import {
+  ArrowRightIcon,
+  CheckCircleIcon,
+  SparklesIcon
+} from '@heroicons/react/24/outline';
+import {
   Button,
   Card,
   CardBody,
@@ -20,9 +25,14 @@ import { isResponseError } from '@/lib/utils/error';
 type Props = {
   user: User;
   currency: string;
+  showAction?: boolean;
 };
 
-export default function SubscriptionStatusCard({ user, currency }: Props) {
+export default function SubscriptionStatusCard({
+  user,
+  currency,
+  showAction = true
+}: Props) {
   const t = useTranslations('profile.account_settings.subscription');
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -47,19 +57,53 @@ export default function SubscriptionStatusCard({ user, currency }: Props) {
   };
 
   return (
-    <Card className="border-default-200 bg-default-100 border-2 shadow-sm">
-      <CardHeader>{t('title')}</CardHeader>
-      <CardBody className="gap-6">
+    <Card className="glass-card relative overflow-hidden rounded-2xl">
+      <div
+        aria-hidden
+        className="bg-secondary/15 pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full blur-3xl"
+      />
+      <CardHeader className="relative flex-col items-start gap-3 pb-0">
+        <div className="border-secondary/30 bg-secondary/10 text-secondary inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.08em]">
+          <SparklesIcon className="h-3.5 w-3.5" />
+          {t('badge')}
+        </div>
         <div>
-          <div className="flex items-center gap-2">
-            <div
-              className={cn('bg-success-500 h-2 w-2 rounded-full', {
-                'bg-danger-500': !isActive
-              })}
-            />{' '}
-            <p>{isActive ? t('status.active') : t('status.inactive')}</p>
+          <p className="text-lg font-semibold">{t('title')}</p>
+          <p className="text-default-500 mt-1 text-sm">
+            {isActive ? t('description.active') : t('description.inactive')}
+          </p>
+        </div>
+      </CardHeader>
+      <CardBody className="relative gap-5">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <CheckCircleIcon
+                className={cn('text-success h-4 w-4', {
+                  'text-danger': !isActive
+                })}
+              />
+              <p className="text-sm font-medium">
+                {isActive ? t('status.active') : t('status.inactive')}
+              </p>
+            </div>
+            <p className="text-default-500 mt-1 text-xs">{t('access_note')}</p>
           </div>
-          <p className="text-default-500 text-sm">
+          <div className="text-right">
+            <p className="text-2xl font-semibold leading-none tracking-tight">
+              {currency}4.99
+            </p>
+            <p className="text-default-500 mt-1 text-xs">
+              /{t('interval.month')}
+            </p>
+          </div>
+        </div>
+
+        <div className="border-default-200 dark:bg-default-100/20 rounded-xl border bg-white/35 p-3">
+          <p className="text-default-500 text-[11px] uppercase tracking-[0.1em]">
+            {t('plan_label')}
+          </p>
+          <p className="mt-1 text-sm font-medium">
             {t('plan', {
               plan: 'Premium',
               currency,
@@ -69,18 +113,23 @@ export default function SubscriptionStatusCard({ user, currency }: Props) {
           </p>
         </div>
       </CardBody>
-      <CardFooter>
-        <Button
-          onPress={handleClick}
-          isLoading={isLoading}
-          className="w-full"
-          size="sm"
-          variant="bordered"
-          color={isActive ? 'secondary' : 'warning'}
-        >
-          {isActive ? t('action.manage') : t('action.renew')}
-        </Button>
-      </CardFooter>
+      {showAction && (
+        <CardFooter className="relative pt-0">
+          <Button
+            onPress={handleClick}
+            isLoading={isLoading}
+            className="w-full rounded-xl font-medium"
+            size="sm"
+            variant={isActive ? 'bordered' : 'solid'}
+            color={isActive ? 'secondary' : 'warning'}
+            endContent={
+              !isLoading && <ArrowRightIcon className="h-3.5 w-3.5" />
+            }
+          >
+            {isActive ? t('action.manage') : t('action.renew')}
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 }

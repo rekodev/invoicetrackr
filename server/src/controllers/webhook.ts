@@ -83,7 +83,13 @@ export const handleStripeWebhook = async (
           ? await getUserByStripeCustomerIdFromDb(customerId)
           : undefined;
 
-        if (user) await syncSubscriptionInDb(user.id, subscription);
+        if (user)
+          await syncSubscriptionInDb(user.id, subscription, {
+            paymentSuccessPending:
+              event.type === 'customer.subscription.created' ||
+              event.type === 'customer.subscription.resumed' ||
+              undefined
+          });
         break;
       }
 

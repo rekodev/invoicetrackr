@@ -15,11 +15,8 @@ import { User } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { DASHBOARD_PAGE } from '@/lib/constants/pages';
-import { isResponseError } from '@/lib/utils/error';
+import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
 import { isUserPersonalInformationSetUp } from '@/lib/utils/user';
-import { startTrial } from '@/api/payment';
-import { updateSessionAction } from '@/lib/actions';
 
 import AppLogo from './app-logo';
 import PaymentForm from './payment-form';
@@ -60,25 +57,13 @@ export default function MultiStepForm({ existingUserData }: Props) {
 
   const [currentStep, setCurrentStep] = useState(initialCurrentStep);
 
-  const completeOnboarding = async () => {
-    if (!existingUserData?.id) return;
-
-    const response = await startTrial(existingUserData.id);
-
-    if (isResponseError(response)) {
-      addToast({ title: response.data.message, color: 'danger' });
-      setCurrentStep(2);
+  const completePersonalInformation = async () => {
+    if (!existingUserData?.id) {
+      addToast({ title: t('errors.missing_user'), color: 'danger' });
       return;
     }
 
-    await updateSessionAction({
-      newSession: {
-        isOnboarded: !!response.data.billing.onboardingCompletedAt,
-        ...response.data.billing
-      }
-    });
-    router.push(DASHBOARD_PAGE);
-    router.refresh();
+    setCurrentStep(2);
   };
 
   const renderStep = () => {
@@ -89,7 +74,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
         return (
           <PersonalInformationForm
             defaultValues={existingUserData}
-            onSuccess={completeOnboarding}
+            onSuccess={completePersonalInformation}
           />
         );
       case 2:
@@ -97,7 +82,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
           <PaymentForm
             user={existingUserData}
             onTrialStarted={() => {
-              router.push(DASHBOARD_PAGE);
+              router.push(`${PAYMENT_SUCCESS_PAGE}?trial=true`);
               router.refresh();
             }}
           />

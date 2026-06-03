@@ -141,11 +141,17 @@ export const billingStatusSchema = z.object({
   subscriptionGraceEndsAt: z.string().nullish(),
   subscriptionCurrentPeriodEndsAt: z.string().nullish(),
   subscriptionCancelAt: z.string().nullish(),
+  paymentSuccessPending: z.boolean(),
   hasPaidAccess: z.boolean()
 });
 
 export const billingStatusResponseSchema = z.object({
   billing: billingStatusSchema
+});
+
+export const consumePaymentSuccessResponseSchema = z.object({
+  canShowPaymentSuccess: z.boolean(),
+  billing: billingStatusSchema.nullish()
 });
 
 export const billingUrlResponseSchema = z.object({
@@ -227,4 +233,7 @@ export type PostContactResponse = z.infer<typeof postContactResponseSchema>;
 
 export type BillingStatus = z.infer<typeof billingStatusSchema>;
 export type BillingStatusResponse = z.infer<typeof billingStatusResponseSchema>;
+export type ConsumePaymentSuccessResponse = z.infer<
+  typeof consumePaymentSuccessResponseSchema
+>;
 export type BillingUrlResponse = z.infer<typeof billingUrlResponseSchema>;

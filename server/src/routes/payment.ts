@@ -5,6 +5,7 @@ import {
 } from 'fastify';
 
 import {
+  consumePaymentSuccessOptions,
   createBillingPortalSessionOptions,
   createCheckoutSessionOptions,
   getBillingStatusOptions,
@@ -28,6 +29,10 @@ const paymentRoutes = (
     createCheckoutSessionOptions
   );
   fastify.post('/api/:userId/billing/resume', resumeSubscriptionOptions);
+  fastify.post(
+    '/api/:userId/billing/consume-payment-success',
+    consumePaymentSuccessOptions
+  );
 
   done();
 };

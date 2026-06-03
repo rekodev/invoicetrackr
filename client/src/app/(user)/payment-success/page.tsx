@@ -1,60 +1,36 @@
-'use client';
+import { redirect } from 'next/navigation';
 
-import { Button, Card, CardBody, CardFooter, CardHeader } from '@heroui/react';
-import { CheckCircleIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
+import { DASHBOARD_PAGE } from '@/lib/constants/pages';
+import { auth } from '@/auth';
+import { consumePaymentSuccess } from '@/api/payment';
+import { isResponseError } from '@/lib/utils/error';
 
-import { ADD_NEW_INVOICE_PAGE } from '@/lib/constants/pages';
+import PaymentSuccessContent from './payment-success-content';
 
-// TODO: Improve Page UI
-export default function PaymentSuccessPage() {
-  return (
-    <Card
-      as="section"
-      className="mx-auto w-full max-w-screen-md border-none bg-transparent shadow-none"
-    >
-      <CardHeader className="flex flex-col items-center gap-3 pb-0 pt-6">
-        <div className="bg-success/10 rounded-full p-3">
-          <CheckCircleIcon className="text-success h-12 w-12" />
-        </div>
+type SearchParams = Promise<{ checkout?: string; trial?: string }>;
 
-        <h1 className="mb-4 text-4xl font-bold leading-none tracking-tight text-gray-900 md:text-5xl lg:mb-6 xl:text-6xl dark:text-white">
-          Payment Successful!
-        </h1>
-      </CardHeader>
+export default async function PaymentSuccessPage({
+  searchParams
+}: {
+  searchParams: SearchParams;
+}) {
+  const session = await auth();
 
-      <CardBody className="flex flex-col items-center gap-4 py-6 text-center">
-        <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-semibold">Welcome to the app!</h2>
-        </div>
+  if (!session?.user?.id) redirect(DASHBOARD_PAGE);
 
-        <p className="text-default-500">
-          Thank you for your payment. Your account has been successfully
-          activated and you now have full access to all features.
-        </p>
+  const { checkout, trial } = await searchParams;
+  const isTrial = trial === 'true';
+  const isCheckout = checkout === 'true';
 
-        <div className="bg-default-100 mt-2 flex w-full max-w-max flex-col gap-6 rounded-lg p-6 backdrop:blur-3xl">
-          <div className="flex flex-col gap-1">
-            <p className="font-medium">What's next?</p>
-            <p className="text-default-500 text-sm">
-              Start by creating an invoice to begin tracking your finances.
-            </p>
-          </div>
-          <Button
-            as={Link}
-            size="lg"
-            href={ADD_NEW_INVOICE_PAGE}
-            color="secondary"
-            variant="solid"
-            className="w-full font-medium"
-            startContent={<DocumentTextIcon className="h-5 w-5" />}
-          >
-            Create An Invoice
-          </Button>
-        </div>
-      </CardBody>
+  if (!isTrial && !isCheckout) redirect(DASHBOARD_PAGE);
 
-      <CardFooter className="flex justify-center py-5"></CardFooter>
-    </Card>
+  const response = await consumePaymentSuccess(
+    Number(session.user.id),
+    isTrial
   );
+
+  if (isResponseError(response) || !response.data.canShowPaymentSuccess)
+    redirect(DASHBOARD_PAGE);
+
+  return <PaymentSuccessContent isTrial={isTrial} />;
 }

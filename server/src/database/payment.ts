@@ -16,6 +16,7 @@ type BillingUpdate = {
   subscriptionGraceEndsAt?: string | null;
   subscriptionCurrentPeriodEndsAt?: string | null;
   subscriptionCancelAt?: string | null;
+  paymentSuccessPending?: boolean;
 };
 
 export const hasPaidAccess = ({
@@ -40,7 +41,8 @@ export const getBillingStatusFromDb = async (
       subscriptionGraceEndsAt: usersTable.subscriptionGraceEndsAt,
       subscriptionCurrentPeriodEndsAt:
         usersTable.subscriptionCurrentPeriodEndsAt,
-      subscriptionCancelAt: usersTable.subscriptionCancelAt
+      subscriptionCancelAt: usersTable.subscriptionCancelAt,
+      paymentSuccessPending: usersTable.paymentSuccessPending
     })
     .from(usersTable)
     .where(eq(usersTable.id, userId));
@@ -63,6 +65,30 @@ export const updateBillingStatusInDb = async (
     .returning({ id: usersTable.id });
 
   return updatedUser?.id;
+};
+
+export const consumePaymentSuccessPendingInDb = async (userId: number) => {
+  const [billing] = await db
+    .update(usersTable)
+    .set({ paymentSuccessPending: false })
+    .where(eq(usersTable.id, userId))
+    .returning({
+      subscriptionStatus: usersTable.subscriptionStatus,
+      onboardingCompletedAt: usersTable.onboardingCompletedAt,
+      trialStartedAt: usersTable.trialStartedAt,
+      trialEndsAt: usersTable.trialEndsAt,
+      subscriptionGraceEndsAt: usersTable.subscriptionGraceEndsAt,
+      subscriptionCurrentPeriodEndsAt:
+        usersTable.subscriptionCurrentPeriodEndsAt,
+      subscriptionCancelAt: usersTable.subscriptionCancelAt,
+      paymentSuccessPending: usersTable.paymentSuccessPending
+    });
+
+  if (!billing) return undefined;
+
+  const typedBilling = billing as Omit<BillingStatus, 'hasPaidAccess'>;
+
+  return { ...typedBilling, hasPaidAccess: hasPaidAccess(typedBilling) };
 };
 
 export const upsertStripeAccountInDb = async (

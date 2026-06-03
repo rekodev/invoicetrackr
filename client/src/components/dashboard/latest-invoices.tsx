@@ -2,8 +2,9 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
+import { ADD_NEW_INVOICE_PAGE, INVOICES_PAGE } from '@/lib/constants/pages';
 import { Currency } from '@/lib/types/currency';
-import { INVOICES_PAGE } from '@/lib/constants/pages';
+import EmptyState from '@/components/empty-state';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { getLatestInvoices } from '@/api/invoice';
 import { isResponseError } from '@/lib/utils/error';
@@ -113,7 +114,13 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
           })}
         </ul>
       ) : (
-        <p className="text-default-400 py-8 text-sm">{t('empty_state')}</p>
+        <EmptyState
+          className="min-h-[260px]"
+          title={t('empty_state.title')}
+          description={t('empty_state.description')}
+          actionLabel={t('empty_state.action')}
+          actionHref={ADD_NEW_INVOICE_PAGE}
+        />
       )}
     </section>
   );

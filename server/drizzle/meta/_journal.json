@@ -169,6 +169,13 @@
       "when": 1780425856172,
       "tag": "0023_ambiguous_micromacro",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1780512240446,
+      "tag": "0025_lowly_namorita",
+      "breakpoints": true
     }
   ]
 }

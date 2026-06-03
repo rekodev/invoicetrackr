@@ -78,6 +78,58 @@
     "title": "Your Subscription is Inactive",
     "description": "Subscribe now to gain access to all premium features and continue enjoying seamless invoicing."
   },
+  "payment_success": {
+    "payment": {
+      "badge": "Subscription active",
+      "headline": "You're in.",
+      "headline_accent": "Start invoicing.",
+      "description": "Your InvoiceTrackr subscription is active with full access. Create a real invoice, add your clients, and keep your billing workflow moving.",
+      "summary": {
+        "title": "Premium plan",
+        "status": "Active",
+        "primary_label": "Access",
+        "primary_value": "Full access",
+        "secondary_label": "Plan",
+        "link": "Manage subscription"
+      }
+    },
+    "trial": {
+      "badge": "Trial active",
+      "headline": "You're in.",
+      "headline_accent": "Make it count.",
+      "description": "Your 7-day Pro trial is live with full access and no card on file. Build a real invoice, send it, and decide if InvoiceTrackr earns a spot in your workflow.",
+      "summary": {
+        "title": "Pro trial",
+        "status": "Day 1 / 7",
+        "primary_label": "Ends",
+        "primary_value": "In 7 days",
+        "secondary_label": "After trial",
+        "link": "Upgrade early and lock in the price"
+      }
+    },
+    "actions": {
+      "create_invoice": "Create your first invoice",
+      "dashboard": "Go to Dashboard"
+    },
+    "quick_start": {
+      "title": "Quick start",
+      "subtitle": "3 things worth trying"
+    },
+    "quick_actions": {
+      "invoice": {
+        "title": "Create your first invoice",
+        "description": "Generate a polished PDF in under a minute."
+      },
+      "client": {
+        "title": "Add a client",
+        "description": "Save details once, reuse them on every invoice."
+      },
+      "contract": {
+        "title": "Draft a contract",
+        "description": "Prepare reusable agreement details for your workflow."
+      }
+    }
+  },
   "home": {
     "hero": {
       "title": "Create Professional Invoices in Minutes",
@@ -215,6 +267,9 @@
         "back": "Back",
         "next": "Next",
         "skip": "Skip"
+      },
+      "errors": {
+        "missing_user": "We could not find your account details. Please refresh and try again."
       }
     }
   },
@@ -248,7 +303,11 @@
       "title": "Latest Invoices",
       "subtitle": "Most recent activity",
       "view_all": "View All",
-      "empty_state": "No invoices to display.",
+      "empty_state": {
+        "title": "Create your first invoice",
+        "description": "You have no invoices yet. Start by creating one and it will appear here.",
+        "action": "Add New"
+      },
       "statuses": {
         "paid": "Paid",
         "pending": "Pending",
@@ -300,7 +359,12 @@
           "columns_label": "Table Columns"
         }
       },
-      "empty_state": "No invoices found."
+      "empty_state": {
+        "title": "You have no invoices yet",
+        "description": "Click the \"Add New +\" button to create your first invoice.",
+        "no_results_title": "No invoices match your filters",
+        "no_results_description": "Try changing the search term or status filter."
+      }
     },
     "delete_modal": {
       "title": "Delete Invoice",
@@ -418,6 +482,12 @@
     "edit": "Edit",
     "remove": "Remove",
     "no_clients": "No clients found",
+    "empty_state": {
+      "title": "You have no clients yet",
+      "description": "Click the \"Add New +\" button to create your first client.",
+      "no_results_title": "No clients match your filters",
+      "no_results_description": "Try changing the search term or client type filter."
+    },
     "a11y": {
       "actions_label": "Actions"
     },
@@ -539,6 +609,13 @@
       "save_changes": "Save Changes",
       "subscription": {
         "title": "Subscription Status",
+        "badge": "Pro plan",
+        "plan_label": "Current plan",
+        "access_note": "Premium features and billing continuity",
+        "description": {
+          "active": "Your account has access to the paid workflow.",
+          "inactive": "Renew to restore premium invoicing features."
+        },
         "status": {
           "active": "Active",
           "inactive": "Inactive"
@@ -670,8 +747,23 @@
     },
     "payment_form": {
       "title": "InvoiceTrackr Premium",
-      "trial_description": "Start your full 7-day trial. No payment card is required.",
+      "badge": "Pro plan",
+      "headline": "Everything you need to",
+      "headline_accent": "get paid faster.",
+      "trial_description": "Start your full 7-day trial with no payment card, or subscribe now if you are ready.",
       "recovery_description": "Manage your payment method or restore access to your subscription.",
+      "features": {
+        "invoices": "Unlimited invoices and clients",
+        "clients": "Saved workflow for clients, history, and exports",
+        "branding": "Professional PDF output with your details",
+        "support": "Billing continuity and account recovery"
+      },
+      "price": {
+        "amount": "€4.99",
+        "interval": "/ month",
+        "note": "Billed monthly · cancel anytime"
+      },
+      "checkout_note": "Secure checkout · instant access",
       "actions": {
         "start_trial": "Start Free Trial",
         "manage": "Manage Billing",

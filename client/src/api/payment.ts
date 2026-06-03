@@ -1,6 +1,7 @@
 import {
   BillingStatusResponse,
-  BillingUrlResponse
+  BillingUrlResponse,
+  ConsumePaymentSuccessResponse
 } from '@invoicetrackr/types';
 
 import api from './api-instance';
@@ -19,3 +20,9 @@ export const createCheckoutSession = async (userId: number) =>
 
 export const resumeSubscription = async (userId: number) =>
   await api.post<BillingStatusResponse>(`/api/${userId}/billing/resume`);
+
+export const consumePaymentSuccess = async (userId: number, trial: boolean) =>
+  await api.post<ConsumePaymentSuccessResponse>(
+    `/api/${userId}/billing/consume-payment-success`,
+    { trial }
+  );

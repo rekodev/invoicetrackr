@@ -63,13 +63,16 @@ class ApiInstance {
       const generalErrorMessage = await getGeneralErrorMessageAction();
 
       const errorResp: AxiosResponse<ApiError> = {
-        ...error,
+        status: error?.response?.status || 500,
+        statusText: error?.response?.statusText || 'Error',
+        headers: error?.response?.headers || {},
+        config: error?.config || {},
         data: {
           errors: error?.response?.data?.errors || [],
           message: error?.response?.data?.message || generalErrorMessage,
           code: error?.response?.data?.code || 'unknown_error'
         }
-      };
+      } as AxiosResponse<ApiError>;
 
       return errorResp;
     }

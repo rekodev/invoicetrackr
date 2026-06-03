@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 
 import { BadRequestError, NotFoundError } from '../utils/error';
 import {
+  consumePaymentSuccessPendingInDb,
   getBillingStatusFromDb,
   getStripeAccountFromDb,
   updateBillingStatusInDb,
@@ -22,12 +23,11 @@ const getBaseUrl = () =>
 
 export const syncSubscriptionInDb = async (
   userId: number,
-  subscription: Stripe.Subscription
+  subscription: Stripe.Subscription,
+  { paymentSuccessPending }: { paymentSuccessPending?: boolean } = {}
 ) => {
   const currentPeriodEndsAt = subscription.items.data.at(0)?.current_period_end;
-
-  await updateStripeSubscriptionForUserInDb(userId, subscription.id);
-  await updateBillingStatusInDb(userId, {
+  const billingUpdate = {
     subscriptionStatus: subscription.status,
     trialStartedAt: timestampToIso(subscription.trial_start),
     trialEndsAt: timestampToIso(subscription.trial_end),
@@ -36,8 +36,12 @@ export const syncSubscriptionInDb = async (
     subscriptionCurrentPeriodEndsAt: timestampToIso(currentPeriodEndsAt),
     subscriptionCancelAt: subscription.cancel_at_period_end
       ? timestampToIso(subscription.cancel_at || currentPeriodEndsAt)
-      : null
-  });
+      : null,
+    ...(paymentSuccessPending === undefined ? {} : { paymentSuccessPending })
+  };
+
+  await updateStripeSubscriptionForUserInDb(userId, subscription.id);
+  await updateBillingStatusInDb(userId, billingUpdate);
 };
 
 const ensureStripeCustomer = async (userId: number) => {
@@ -103,9 +107,44 @@ export const startTrial = async (
   });
 
   await upsertStripeAccountInDb(userId, customerId, subscription.id);
-  await syncSubscriptionInDb(userId, subscription);
+  await syncSubscriptionInDb(userId, subscription, {
+    paymentSuccessPending: true
+  });
 
   return sendBillingStatus(userId, reply);
+};
+
+export const consumePaymentSuccess = async (
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Body: { trial?: boolean };
+  }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const expectedTrial = !!req.body?.trial;
+  const billing = await getBillingStatusFromDb(userId);
+
+  if (!billing) throw new NotFoundError('User not found');
+  if (!billing.hasPaidAccess || billing.paymentSuccessPending)
+    return reply.status(200).send({
+      canShowPaymentSuccess: false,
+      billing
+    });
+  if ((billing.subscriptionStatus === 'trialing') !== expectedTrial)
+    return reply.status(200).send({
+      canShowPaymentSuccess: false,
+      billing
+    });
+
+  const consumedBilling = await consumePaymentSuccessPendingInDb(userId);
+
+  if (!consumedBilling) throw new NotFoundError('User not found');
+
+  return reply.status(200).send({
+    canShowPaymentSuccess: true,
+    billing: consumedBilling
+  });
 };
 
 export const createBillingPortalSession = async (
@@ -138,9 +177,10 @@ export const createCheckoutSession = async (
     customer: customerId,
     mode: 'subscription',
     line_items: [{ price: process.env.STRIPE_EUR_PRICE!, quantity: 1 }],
-    success_url: `${getBaseUrl()}/payment-success`,
+    success_url: `${getBaseUrl()}/payment-success?checkout=true`,
     cancel_url: `${getBaseUrl()}/renew-subscription`
   });
+  await updateBillingStatusInDb(userId, { paymentSuccessPending: true });
 
   return reply.status(200).send({ url: session.url });
 };
@@ -160,7 +200,9 @@ export const resumeSubscription = async (
     { billing_cycle_anchor: 'now' }
   );
 
-  await syncSubscriptionInDb(userId, subscription);
+  await syncSubscriptionInDb(userId, subscription, {
+    paymentSuccessPending: true
+  });
 
   return sendBillingStatus(userId, reply);
 };
