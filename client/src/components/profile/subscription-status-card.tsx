@@ -56,7 +56,7 @@ export default function SubscriptionStatusCard({
   };
 
   return (
-    <Card className="glass-card relative overflow-hidden rounded-2xl">
+    <Card className="glass-card relative overflow-hidden rounded-2xl p-4">
       <div
         aria-hidden
         className="bg-secondary/15 pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full blur-3xl"
@@ -102,7 +102,7 @@ export default function SubscriptionStatusCard({
           </div>
         </div>
 
-        <div className="border-default-200 dark:bg-default-100/20 rounded-xl border bg-white/35 p-3">
+        <div className="border-default-200 dark:bg-default-100/20 rounded-xl border bg-white/35 p-4">
           <p className="text-default-500 text-[11px] uppercase tracking-[0.1em]">
             {t('plan_label')}
           </p>

@@ -28,11 +28,9 @@ import {
   availableLanguages
 } from '@/lib/constants/profile';
 import { Currency } from '@/lib/types/currency';
-import { getCurrencySymbol } from '@/lib/utils/currency';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 
 import DeleteAccountModal from './delete-account-modal';
-import SubscriptionStatusCard from './subscription-status-card';
 
 type AccountSettingsFormModel = {
   language: string;
@@ -180,10 +178,6 @@ const AccountSettingsForm = ({ user }: Props) => {
             </SelectItem>
           ))}
         </Select>
-        <SubscriptionStatusCard
-          user={user}
-          currency={getCurrencySymbol(user?.currency)}
-        />
       </CardBody>
       <CardFooter className="w-full flex-col justify-between p-6">
         <div className="flex w-full gap-2 self-end md:w-min">
