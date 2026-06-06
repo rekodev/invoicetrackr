@@ -15,7 +15,7 @@ import { User } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
+import { PAYMENT_SUCCESS_CONFIRM_PAGE } from '@/lib/constants/pages';
 import { isUserPersonalInformationSetUp } from '@/lib/utils/user';
 
 import AppLogo from './app-logo';
@@ -82,8 +82,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
           <PaymentForm
             user={existingUserData}
             onTrialStarted={() => {
-              router.push(`${PAYMENT_SUCCESS_PAGE}?trial=true`);
-              router.refresh();
+              router.push(`${PAYMENT_SUCCESS_CONFIRM_PAGE}?trial=true`);
             }}
           />
         );

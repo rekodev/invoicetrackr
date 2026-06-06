@@ -23,6 +23,7 @@ declare module 'next-auth' {
     email: string;
     stripeCustomerId?: string | null;
     stripeSubscriptionId?: string | null;
+    hasPaymentMethod?: boolean;
     isOnboarded?: boolean;
     subscriptionStatus?: StripeSubscriptionStatus | null;
     onboardingCompletedAt?: string | null;

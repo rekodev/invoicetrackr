@@ -21,8 +21,16 @@ export const createCheckoutSession = async (userId: number) =>
 export const resumeSubscription = async (userId: number) =>
   await api.post<BillingStatusResponse>(`/api/${userId}/billing/resume`);
 
-export const consumePaymentSuccess = async (userId: number, trial: boolean) =>
+export const consumePaymentSuccess = async ({
+  userId,
+  trial,
+  sessionId
+}: {
+  userId: number;
+  trial: boolean;
+  sessionId?: string;
+}) =>
   await api.post<ConsumePaymentSuccessResponse>(
     `/api/${userId}/billing/consume-payment-success`,
-    { trial }
+    { trial, sessionId }
   );

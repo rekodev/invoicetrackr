@@ -6,13 +6,14 @@ import {
   SparklesIcon
 } from '@heroicons/react/24/outline';
 import { Button, Card, CardBody, CardHeader, cn } from '@heroui/react';
+import { useLocale, useTranslations } from 'next-intl';
 import { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
 
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
 import { createBillingPortalSession } from '@/api/payment';
+import { formatLocalizedDate } from '@/lib/utils/date';
 import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
@@ -27,15 +28,20 @@ export default function SubscriptionStatusCard({
   showAction = true
 }: Props) {
   const t = useTranslations('profile.account_settings.subscription');
+  const locale = useLocale();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
+  const isTrialing = user.subscriptionStatus === 'trialing';
+  const hasPaymentMethod = !!user.hasPaymentMethod;
+  const trialEndsAt = formatLocalizedDate(user.trialEndsAt, locale);
   const isActive =
     user.subscriptionStatus === 'active' ||
-    user.subscriptionStatus === 'trialing' ||
+    isTrialing ||
     (user.subscriptionStatus === 'past_due' &&
       !!user.subscriptionGraceEndsAt &&
       new Date(user.subscriptionGraceEndsAt) > new Date());
+  const statusKey = isTrialing ? 'trial' : isActive ? 'active' : 'inactive';
 
   const handleClick = async () => {
     if (isActive) {
@@ -63,7 +69,9 @@ export default function SubscriptionStatusCard({
         <div>
           <p className="text-lg font-semibold">{t('title')}</p>
           <p className="text-default-500 mt-1 text-sm">
-            {isActive ? t('description.active') : t('description.inactive')}
+            {isTrialing && hasPaymentMethod
+              ? t('description.trial_ready')
+              : t(`description.${statusKey}`)}
           </p>
         </div>
       </CardHeader>
@@ -76,11 +84,13 @@ export default function SubscriptionStatusCard({
                   'text-danger': !isActive
                 })}
               />
-              <p className="text-sm font-medium">
-                {isActive ? t('status.active') : t('status.inactive')}
-              </p>
+              <p className="text-sm font-medium">{t(`status.${statusKey}`)}</p>
             </div>
-            <p className="text-default-500 mt-1 text-xs">{t('access_note')}</p>
+            <p className="text-default-500 mt-1 text-xs">
+              {isTrialing && trialEndsAt
+                ? t('trial_ends', { date: trialEndsAt })
+                : t('access_note')}
+            </p>
           </div>
           <div className="text-right">
             <p className="text-2xl font-semibold leading-none tracking-tight">
@@ -98,7 +108,7 @@ export default function SubscriptionStatusCard({
           </p>
           <p className="mt-1 text-sm font-medium">
             {t('plan', {
-              plan: 'Premium',
+              plan: isTrialing ? t('plans.trial') : t('plans.premium'),
               currency,
               amount: '4.99',
               interval: t('interval.month')
@@ -116,7 +126,13 @@ export default function SubscriptionStatusCard({
                 !isLoading && <ArrowRightIcon className="h-3.5 w-3.5" />
               }
             >
-              {isActive ? t('action.manage') : t('action.renew')}
+              {isTrialing
+                ? hasPaymentMethod
+                  ? t('action.manage')
+                  : t('action.add_payment_method')
+                : isActive
+                  ? t('action.manage')
+                  : t('action.renew')}
             </Button>
           )}
         </div>

@@ -6,13 +6,15 @@ import {
   CheckCircleIcon,
   DocumentCheckIcon,
   DocumentTextIcon,
+  LifebuoyIcon,
+  LockClosedIcon,
   SparklesIcon,
   Squares2X2Icon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
 import { Button, Card, CardBody, Chip } from '@heroui/react';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
 
 import {
   ACCOUNT_SETTINGS_PAGE,
@@ -22,9 +24,14 @@ import {
   DASHBOARD_PAGE,
   RENEW_SUBSCRIPTION_PAGE
 } from '@/lib/constants/pages';
+import { formatLocalizedDate } from '@/lib/utils/date';
 
 type Props = {
   isTrial: boolean;
+  billing?: {
+    subscriptionCurrentPeriodEndsAt?: string | null;
+    trialEndsAt?: string | null;
+  } | null;
 };
 
 const quickActions = [
@@ -48,31 +55,18 @@ const quickActions = [
   }
 ] as const;
 
-export default function PaymentSuccessContent({ isTrial }: Props) {
+export default function PaymentSuccessContent({ isTrial, billing }: Props) {
   const t = useTranslations('payment_success');
+  const locale = useLocale();
   const copyKey = isTrial ? 'trial' : 'payment';
+  const accessDate = isTrial
+    ? formatLocalizedDate(billing?.trialEndsAt, locale)
+    : formatLocalizedDate(billing?.subscriptionCurrentPeriodEndsAt, locale);
 
   return (
-    <section className="mx-auto w-full max-w-[1100px] py-12 md:py-16">
-      <Card className="glass-card relative overflow-hidden rounded-2xl">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-24 -top-32 h-80 w-80 rounded-full opacity-60 blur-3xl"
-          style={{
-            background:
-              'radial-gradient(closest-side, hsl(var(--heroui-secondary) / 0.35), transparent)'
-          }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-40 -left-20 h-80 w-80 rounded-full opacity-40 blur-3xl"
-          style={{
-            background:
-              'radial-gradient(closest-side, hsl(var(--heroui-success) / 0.22), transparent)'
-          }}
-        />
-
-        <CardBody className="relative p-8 md:p-12">
+    <section className="mx-auto w-full max-w-[1100px] py-10 md:py-14">
+      <Card className="border-default-200 bg-background rounded-xl border shadow-sm">
+        <CardBody className="p-6 md:p-8">
           <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-14">
             <div>
               <Chip
@@ -97,6 +91,25 @@ export default function PaymentSuccessContent({ isTrial }: Props) {
               <p className="text-default-500 mt-5 max-w-[460px] text-sm leading-relaxed">
                 {t(`${copyKey}.description`)}
               </p>
+
+              <div className="border-default-200 mt-6 grid max-w-[540px] gap-3 border-y py-4 sm:grid-cols-2">
+                <div>
+                  <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+                    {t('confirmation.status_label')}
+                  </p>
+                  <p className="text-foreground mt-1 text-sm font-medium">
+                    {t(`${copyKey}.summary.status`)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+                    {t(`${copyKey}.summary.primary_label`)}
+                  </p>
+                  <p className="text-foreground mt-1 text-sm font-medium">
+                    {accessDate || t(`${copyKey}.summary.primary_value`)}
+                  </p>
+                </div>
+              </div>
 
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <Button
@@ -127,7 +140,7 @@ export default function PaymentSuccessContent({ isTrial }: Props) {
             </div>
 
             <div className="relative">
-              <div className="glass-card rounded-2xl p-6">
+              <div className="border-default-200 bg-default-50/70 dark:bg-default-50/5 rounded-xl border p-5">
                 <div className="flex items-center justify-between gap-4">
                   <div className="text-default-500 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em]">
                     <SparklesIcon
@@ -163,7 +176,7 @@ export default function PaymentSuccessContent({ isTrial }: Props) {
                       {t(`${copyKey}.summary.primary_label`)}
                     </dt>
                     <dd className="text-foreground mt-1.5 text-[22px] font-semibold leading-none tracking-tight">
-                      {t(`${copyKey}.summary.primary_value`)}
+                      {accessDate || t(`${copyKey}.summary.primary_value`)}
                     </dd>
                   </div>
                   <div>
@@ -197,7 +210,42 @@ export default function PaymentSuccessContent({ isTrial }: Props) {
         </CardBody>
       </Card>
 
-      <div className="mt-10">
+      <div className="mt-8 grid gap-4 md:grid-cols-[1fr_0.8fr]">
+        <div className="border-default-200 rounded-xl border p-5">
+          <div className="flex items-start gap-3">
+            <LockClosedIcon
+              className="text-success mt-0.5 h-5 w-5"
+              strokeWidth={2.2}
+            />
+            <div>
+              <h2 className="text-foreground text-sm font-semibold">
+                {t('security.title')}
+              </h2>
+              <p className="text-default-500 mt-1 text-sm leading-relaxed">
+                {t('security.description')}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="border-default-200 rounded-xl border p-5">
+          <div className="flex items-start gap-3">
+            <LifebuoyIcon
+              className="text-secondary mt-0.5 h-5 w-5"
+              strokeWidth={2.2}
+            />
+            <div>
+              <h2 className="text-foreground text-sm font-semibold">
+                {t('support.title')}
+              </h2>
+              <p className="text-default-500 mt-1 text-sm leading-relaxed">
+                {t('support.description')}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8">
         <div className="mb-4 flex items-baseline justify-between gap-4">
           <h2 className="text-default-500 text-[13px] font-medium uppercase tracking-[0.14em]">
             {t('quick_start.title')}

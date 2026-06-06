@@ -8,6 +8,7 @@ import {
   HOME_PAGE,
   LOGIN_PAGE,
   ONBOARDING_PAGE,
+  PAYMENT_SUCCESS_PAGE,
   PRIVACY_POLICY_PAGE,
   RENEW_SUBSCRIPTION_PAGE,
   SIGN_UP_PAGE,
@@ -47,21 +48,38 @@ export const authConfig = {
         auth?.user?.subscriptionStatus === 'trialing' ||
         hasGraceAccess;
       const isOnboardingPage = path.startsWith(ONBOARDING_PAGE);
+      const isPaymentSuccessPage = path.startsWith(PAYMENT_SUCCESS_PAGE);
+      const isPaymentSuccessConfirmPage = path.startsWith(
+        `${PAYMENT_SUCCESS_PAGE}/confirm`
+      );
+      const isConfirmedPaymentSuccessPage =
+        path === PAYMENT_SUCCESS_PAGE &&
+        nextUrl.searchParams.get('confirmed') === 'true' &&
+        (nextUrl.searchParams.get('trial') === 'true' ||
+          nextUrl.searchParams.get('checkout') === 'true');
       const isRenewPage = path.startsWith(RENEW_SUBSCRIPTION_PAGE);
 
       if (!pathIsPublic) {
         if (!isLoggedIn) return Response.redirect(new URL(LOGIN_PAGE, nextUrl));
 
+        if (
+          isPaymentSuccessPage &&
+          !isPaymentSuccessConfirmPage &&
+          !isConfirmedPaymentSuccessPage
+        ) {
+          return Response.redirect(new URL(DASHBOARD_PAGE, nextUrl));
+        }
+
         // Not onboarded → allow onboarding page, redirect elsewhere
         if (!isOnboarded) {
-          return isOnboardingPage
+          return isOnboardingPage || isPaymentSuccessConfirmPage
             ? true
             : Response.redirect(new URL(ONBOARDING_PAGE, nextUrl));
         }
 
         // Onboarded but subscription inactive → redirect unless already on renew page
         if (!isSubscriptionActive) {
-          return isRenewPage || path.startsWith('/profile')
+          return isRenewPage || isPaymentSuccessPage
             ? true
             : Response.redirect(new URL(RENEW_SUBSCRIPTION_PAGE, nextUrl));
         }
@@ -92,6 +110,7 @@ export const authConfig = {
         token.language = user.language;
         token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
         token.currency = user.currency;
+        token.hasPaymentMethod = user.hasPaymentMethod;
         token.isOnboarded = isOnboarded;
         token.subscriptionStatus = user.subscriptionStatus;
         token.onboardingCompletedAt = user.onboardingCompletedAt;
@@ -112,6 +131,7 @@ export const authConfig = {
           language: session.user.language,
           preferredInvoiceLanguage: session.user.preferredInvoiceLanguage,
           currency: session.user.currency,
+          hasPaymentMethod: session.user.hasPaymentMethod,
           subscriptionStatus: session.user.subscriptionStatus,
           onboardingCompletedAt: session.user.onboardingCompletedAt,
           trialStartedAt: session.user.trialStartedAt,
@@ -132,6 +152,7 @@ export const authConfig = {
       session.user.preferredInvoiceLanguage =
         token.preferredInvoiceLanguage as string;
       session.user.currency = token.currency as Currency;
+      session.user.hasPaymentMethod = Boolean(token.hasPaymentMethod);
       session.user.isOnboarded = Boolean(token.isOnboarded);
       session.user.subscriptionStatus =
         token.subscriptionStatus as StripeSubscriptionStatus | null;

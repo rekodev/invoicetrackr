@@ -142,6 +142,7 @@ export const billingStatusSchema = z.object({
   subscriptionCurrentPeriodEndsAt: z.string().nullish(),
   subscriptionCancelAt: z.string().nullish(),
   paymentSuccessPending: z.boolean(),
+  hasPaymentMethod: z.boolean().optional(),
   hasPaidAccess: z.boolean()
 });
 

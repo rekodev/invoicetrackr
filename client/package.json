@@ -19,18 +19,18 @@
     "@heroui/react": "^2.8.4",
     "@hookform/resolvers": "^5.2.2",
     "@invoicetrackr/types": "workspace:*",
-    "@next/eslint-plugin-next": "^16.0.10",
+    "@next/eslint-plugin-next": "16.2.7",
     "@react-pdf/renderer": "^4.3.1",
     "axios": "^1.8.4",
     "chart.js": "^4.4.8",
     "framer-motion": "^12.23.14",
-    "next": "16.0.10",
+    "next": "16.2.7",
     "next-intl": "^4.4.0",
     "next-themes": "^0.4.6",
     "pdfjs-dist": "^5.4.296",
-    "react": "^19.2.1",
+    "react": "19.2.7",
     "react-chartjs-2": "^5.3.0",
-    "react-dom": "^19.2.1",
+    "react-dom": "19.2.7",
     "react-hook-form": "^7.66.0",
     "react-pdf": "^10.4.1",
     "react-signature-canvas": "^1.1.0-alpha.1"
@@ -42,17 +42,23 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/react": "19.2.1",
-    "@types/react-dom": "19.2.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
     "@types/react-signature-canvas": "^1.0.7",
     "@vitejs/plugin-react": "^5.1.1",
     "autoprefixer": "^10.4.21",
-    "eslint-config-next": "^16.0.10",
+    "eslint-config-next": "16.2.7",
     "eslint-plugin-react-hooks": "^5.2.0",
     "jsdom": "^27.2.0",
     "next-router-mock": "^1.0.4",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
     "vitest": "^4.0.8"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.17",
+      "@types/react-dom": "19.2.3"
+    }
   }
 }

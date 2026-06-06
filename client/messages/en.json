@@ -111,6 +111,17 @@
       "create_invoice": "Create your first invoice",
       "dashboard": "Go to Dashboard"
     },
+    "confirmation": {
+      "status_label": "Confirmation"
+    },
+    "security": {
+      "title": "Payment handled securely",
+      "description": "Stripe processed the checkout and your InvoiceTrackr access has been updated on your account."
+    },
+    "support": {
+      "title": "Need help?",
+      "description": "If anything looks off, check your account settings or contact support with the email on your account."
+    },
     "quick_start": {
       "title": "Quick start",
       "subtitle": "3 things worth trying"
@@ -614,11 +625,19 @@
         "access_note": "Premium features and billing continuity",
         "description": {
           "active": "Your account has access to the paid workflow.",
+          "trial": "Your trial is active. Add a payment method to keep access after it ends.",
+          "trial_ready": "Your trial is active and a payment method is ready for when it ends.",
           "inactive": "Renew to restore premium invoicing features."
         },
         "status": {
           "active": "Active",
+          "trial": "Trial active",
           "inactive": "Inactive"
+        },
+        "trial_ends": "Trial ends {date}",
+        "plans": {
+          "premium": "Premium",
+          "trial": "Pro trial"
         },
         "plan": "{plan} Plan - {currency}{amount}/{interval}",
         "interval": {
@@ -626,6 +645,7 @@
           "year": "year"
         },
         "action": {
+          "add_payment_method": "Add Payment Method",
           "manage": "Manage Subscription",
           "renew": "Renew Subscription"
         },

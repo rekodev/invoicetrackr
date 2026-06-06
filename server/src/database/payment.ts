@@ -49,9 +49,15 @@ export const getBillingStatusFromDb = async (
 
   if (!billing) return undefined;
 
-  const typedBilling = billing as Omit<BillingStatus, 'hasPaidAccess'>;
+  const typedBilling = billing as Omit<
+    BillingStatus,
+    'hasPaidAccess' | 'hasPaymentMethod'
+  >;
 
-  return { ...typedBilling, hasPaidAccess: hasPaidAccess(typedBilling) };
+  return {
+    ...typedBilling,
+    hasPaidAccess: hasPaidAccess(typedBilling)
+  };
 };
 
 export const updateBillingStatusInDb = async (
@@ -86,9 +92,15 @@ export const consumePaymentSuccessPendingInDb = async (userId: number) => {
 
   if (!billing) return undefined;
 
-  const typedBilling = billing as Omit<BillingStatus, 'hasPaidAccess'>;
+  const typedBilling = billing as Omit<
+    BillingStatus,
+    'hasPaidAccess' | 'hasPaymentMethod'
+  >;
 
-  return { ...typedBilling, hasPaidAccess: hasPaidAccess(typedBilling) };
+  return {
+    ...typedBilling,
+    hasPaidAccess: hasPaidAccess(typedBilling)
+  };
 };
 
 export const upsertStripeAccountInDb = async (

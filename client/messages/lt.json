@@ -111,6 +111,17 @@
       "create_invoice": "Sukurti pirmą sąskaitą faktūrą",
       "dashboard": "Eiti į skydelį"
     },
+    "confirmation": {
+      "status_label": "Patvirtinimas"
+    },
+    "security": {
+      "title": "Mokėjimas apdorotas saugiai",
+      "description": "Stripe apdorojo mokėjimą, o jūsų InvoiceTrackr prieiga atnaujinta paskyroje."
+    },
+    "support": {
+      "title": "Reikia pagalbos?",
+      "description": "Jei kažkas atrodo netiksliai, patikrinkite paskyros nustatymus arba susisiekite su pagalba naudodami paskyros el. paštą."
+    },
     "quick_start": {
       "title": "Greita pradžia",
       "subtitle": "3 verta išbandyti"
@@ -614,11 +625,19 @@
         "access_note": "Premium funkcijos ir mokėjimų tęstinumas",
         "description": {
           "active": "Jūsų paskyra turi prieigą prie mokamos darbo eigos.",
+          "trial": "Jūsų bandomasis laikotarpis aktyvus. Pridėkite mokėjimo būdą, kad išlaikytumėte prieigą jam pasibaigus.",
+          "trial_ready": "Jūsų bandomasis laikotarpis aktyvus, o mokėjimo būdas paruoštas jo pabaigai.",
           "inactive": "Atnaujinkite prenumeratą, kad atkurtumėte premium funkcijas."
         },
         "status": {
           "active": "Aktyvi",
+          "trial": "Bandymas aktyvus",
           "inactive": "Neaktyvi"
+        },
+        "trial_ends": "Bandymas baigiasi {date}",
+        "plans": {
+          "premium": "Premium",
+          "trial": "Pro bandymas"
         },
         "plan": "{plan} Planas - {currency}{amount}/{interval}",
         "interval": {
@@ -626,6 +645,7 @@
           "year": "metus"
         },
         "action": {
+          "add_payment_method": "Pridėti mokėjimo būdą",
           "manage": "Valdyti Prenumeratą",
           "renew": "Atnaujinti Prenumeratą"
         },

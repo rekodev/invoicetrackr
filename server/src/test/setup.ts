@@ -20,7 +20,13 @@ export const mockStripeCustomerCreate = vi.fn().mockResolvedValue({
   id: 'mock-customer-id'
 });
 export const mockStripeCustomerDelete = vi.fn().mockResolvedValue({});
-export const mockStripeCustomerRetrieve = vi.fn();
+export const mockStripeCustomerRetrieve = vi.fn().mockResolvedValue({
+  id: 'mock-customer-id',
+  deleted: false,
+  invoice_settings: {
+    default_payment_method: null
+  }
+});
 export const mockStripeSubscriptionCreate = vi.fn().mockResolvedValue({
   id: 'mock-subscription-id'
 });
@@ -29,6 +35,10 @@ export const mockStripeSubscriptionCancel = vi.fn();
 export const mockStripeSubscriptionResume = vi.fn();
 export const mockStripePortalSessionCreate = vi.fn();
 export const mockStripeCheckoutSessionCreate = vi.fn();
+export const mockStripeCheckoutSessionRetrieve = vi.fn();
+export const mockStripePaymentMethodsList = vi.fn().mockResolvedValue({
+  data: []
+});
 
 // Mock fastify-i18n
 vi.mock('fastify-i18n', () => ({
@@ -78,8 +88,12 @@ vi.mock('../config/stripe', () => ({
     },
     checkout: {
       sessions: {
-        create: mockStripeCheckoutSessionCreate
+        create: mockStripeCheckoutSessionCreate,
+        retrieve: mockStripeCheckoutSessionRetrieve
       }
+    },
+    paymentMethods: {
+      list: mockStripePaymentMethodsList
     }
   }
 }));

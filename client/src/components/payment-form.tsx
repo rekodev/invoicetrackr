@@ -23,6 +23,12 @@ type Props = {
 
 type PaymentAction = 'trial' | 'checkout' | 'portal' | 'resume';
 
+const reusableCheckoutStatuses = new Set([
+  'canceled',
+  'incomplete_expired',
+  'unpaid'
+]);
+
 export default function PaymentForm({ user, onTrialStarted }: Props) {
   const t = useTranslations('components.payment_form');
   const [loadingAction, setLoadingAction] = useState<PaymentAction>();
@@ -110,8 +116,12 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
     }
   };
 
-  const isPaused = user.subscriptionStatus === 'paused';
-  const canStartTrial = !user.trialStartedAt && !user.stripeSubscriptionId;
+  const subscriptionStatus = user.subscriptionStatus;
+  const isPaused = subscriptionStatus === 'paused';
+  const canStartTrial = !user.trialStartedAt && !subscriptionStatus;
+  const canStartCheckout =
+    canStartTrial ||
+    (subscriptionStatus && reusableCheckoutStatuses.has(subscriptionStatus));
   const isBusy = !!loadingAction;
   const features = [
     t('features.invoices'),
@@ -236,8 +246,7 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
                   {t('actions.manage')}
                 </Button>
               </>
-            ) : user.subscriptionStatus === 'canceled' ||
-              user.subscriptionStatus === 'incomplete_expired' ? (
+            ) : canStartCheckout ? (
               <Button
                 color="secondary"
                 size="lg"
