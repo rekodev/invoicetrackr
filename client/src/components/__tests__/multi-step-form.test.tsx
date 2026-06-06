@@ -9,6 +9,15 @@ import MultiStepForm from '../multi-step-form';
 
 const mockSignUpAction = vi.fn();
 const mockPersonalInfoAction = vi.fn();
+const mockRouterPush = vi.fn();
+const mockRouterRefresh = vi.fn();
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockRouterPush,
+    refresh: mockRouterRefresh
+  })
+}));
 
 vi.mock('@/lib/actions', () => ({
   signUpAction: (...args: Array<unknown>) => mockSignUpAction(...args),
