@@ -25,7 +25,7 @@ import SignaturePad from '../signature-pad';
 
 type Props = {
   defaultValues?: Partial<User> | undefined;
-  onSuccess?: () => void;
+  onSuccess?: () => void | Promise<void>;
 };
 
 const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
@@ -70,7 +70,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
     }
 
     reset(data);
-    onSuccess?.();
+    await onSuccess?.();
   };
 
   const renderCardBodyAndFooter = () => {

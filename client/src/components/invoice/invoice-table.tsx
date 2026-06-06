@@ -17,6 +17,7 @@ import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
+import EmptyState from '@/components/empty-state';
 import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
@@ -212,6 +213,25 @@ const InvoiceTable = ({
     />
   );
 
+  const renderEmptyContent = () => {
+    if (!invoices.length)
+      return (
+        <EmptyState
+          className="min-h-[360px]"
+          title={t('empty_state.title')}
+          description={t('empty_state.description')}
+        />
+      );
+
+    return (
+      <EmptyState
+        className="min-h-[360px]"
+        title={t('empty_state.no_results_title')}
+        description={t('empty_state.no_results_description')}
+      />
+    );
+  };
+
   return (
     <section>
       <Table
@@ -242,7 +262,7 @@ const InvoiceTable = ({
         </TableHeader>
         <TableBody
           loadingContent={<Spinner color="secondary" />}
-          emptyContent={!invoices.length && 'No invoices found'}
+          emptyContent={renderEmptyContent()}
           items={sortedItems}
         >
           {/* @ts-ignore */}

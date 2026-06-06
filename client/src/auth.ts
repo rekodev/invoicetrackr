@@ -42,7 +42,14 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
             address: user.address,
             stripeCustomerId: user.stripeCustomerId,
             stripeSubscriptionId: user.stripeSubscriptionId,
-            subscriptionStatus: user.subscriptionStatus
+            subscriptionStatus: user.subscriptionStatus,
+            onboardingCompletedAt: user.onboardingCompletedAt,
+            trialStartedAt: user.trialStartedAt,
+            trialEndsAt: user.trialEndsAt,
+            subscriptionGraceEndsAt: user.subscriptionGraceEndsAt,
+            subscriptionCurrentPeriodEndsAt:
+              user.subscriptionCurrentPeriodEndsAt,
+            subscriptionCancelAt: user.subscriptionCancelAt
           };
         }
 

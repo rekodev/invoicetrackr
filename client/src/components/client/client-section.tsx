@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { ClientBody } from '@invoicetrackr/types';
+import EmptyState from '@/components/empty-state';
 import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 
 import ClientCard from '../client-card';
@@ -143,7 +144,22 @@ const ClientSection = ({ userId, clients }: Props) => {
 
   const renderSectionContent = () => {
     if (!clients?.length)
-      return <div className="min-h-[480px]">{t('no_clients')}</div>;
+      return (
+        <EmptyState
+          className="min-h-[480px]"
+          title={t('empty_state.title')}
+          description={t('empty_state.description')}
+        />
+      );
+
+    if (!filteredItems?.length)
+      return (
+        <EmptyState
+          className="min-h-[480px]"
+          title={t('empty_state.no_results_title')}
+          description={t('empty_state.no_results_description')}
+        />
+      );
 
     return (
       <div className="min-h-[480px]">

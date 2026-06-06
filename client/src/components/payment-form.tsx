@@ -1,249 +1,284 @@
 'use client';
 
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider
-} from '@heroui/react';
-import {
-  Elements,
-  PaymentElement,
-  useElements,
-  useStripe
-} from '@stripe/react-stripe-js';
-import { FormEvent, useEffect, useState } from 'react';
-import { Stripe, loadStripe } from '@stripe/stripe-js';
-import { User } from '@invoicetrackr/types';
-import { useTheme } from 'next-themes';
+import { BillingUrlResponse, User } from '@invoicetrackr/types';
+import { Button, Card, CardBody, CardFooter, CardHeader } from '@heroui/react';
+import { CheckIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { convertToSubcurrency, getCurrencySymbol } from '@/lib/utils/currency';
 import {
-  createCustomer,
-  createSubscription,
-  getStripeCustomerId
+  createBillingPortalSession,
+  createCheckoutSession,
+  resumeSubscription,
+  startTrial
 } from '@/api/payment';
-import { Currency } from '@/lib/types/currency';
-import { PAYMENT_SUCCESS_PAGE } from '@/lib/constants/pages';
-import { SUBSCRIPTION_AMOUNT } from '@/lib/constants/subscription';
+import { ApiResponse } from '@/api/api-instance';
 import { isResponseError } from '@/lib/utils/error';
 import { updateSessionAction } from '@/lib/actions';
 
-import Loader from './ui/loader';
-
-if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
-  throw new Error('NEXT_PUBLIC_STRIPLE_PUBLIC_KEY is not defined');
-}
-
 type Props = {
-  user: User | undefined;
+  user?: User;
+  onTrialStarted?: () => void | Promise<void>;
 };
 
-function PaymentFormInsideElements({ user }: { user: User }) {
+type PaymentAction = 'trial' | 'checkout' | 'portal' | 'resume';
+
+const reusableCheckoutStatuses = new Set([
+  'canceled',
+  'incomplete_expired',
+  'unpaid'
+]);
+
+export default function PaymentForm({ user, onTrialStarted }: Props) {
   const t = useTranslations('components.payment_form');
-  const stripe = useStripe();
-  const elements = useElements();
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState<PaymentAction>();
+  const [error, setError] = useState<string>();
 
-  const isFormLoading = !stripe || !elements;
+  if (!user?.id) return null;
 
-  const handleSubmit = async (event: FormEvent<HTMLDivElement>) => {
-    event.preventDefault();
-
-    if (!stripe || !elements || !user.id) return;
-
-    setIsLoading(true);
+  const run = async (
+    actionKey: PaymentAction,
+    action: () => Promise<ApiResponse<BillingUrlResponse>>
+  ) => {
+    setLoadingAction(actionKey);
+    setError(undefined);
 
     try {
-      const { error: submitError } = await elements.submit();
+      const response = await action();
 
-      if (submitError) {
-        console.error('Payment submission error:', submitError);
-        setErrorMessage(t('errors.submit_failed'));
-        setIsLoading(false);
+      if (isResponseError(response)) {
+        setError(response.data.message);
+        setLoadingAction(undefined);
         return;
       }
 
-      let stripeCustomerId;
-
-      const getCustomerResp = await getStripeCustomerId(user.id);
-
-      if (isResponseError(getCustomerResp)) {
-        console.error('Get customer error:', getCustomerResp.data);
-        setErrorMessage(t('errors.customer_failed'));
-        setIsLoading(false);
-        return;
-      }
-
-      const { customerId: existingCustomerId } = getCustomerResp.data;
-
-      if (existingCustomerId) {
-        stripeCustomerId = existingCustomerId;
-      } else {
-        const createCustomerResp = await createCustomer({
-          userId: user.id,
-          email: user.email || '',
-          name: user.name
-        });
-
-        if (isResponseError(createCustomerResp)) {
-          console.error('Create customer error:', createCustomerResp.data);
-          setErrorMessage(t('errors.customer_failed'));
-          setIsLoading(false);
-          return;
-        }
-
-        stripeCustomerId = createCustomerResp.data.customerId;
-      }
-
-      const subscriptionCreationResp = await createSubscription(
-        user.id,
-        stripeCustomerId
-      );
-
-      if (isResponseError(subscriptionCreationResp)) {
-        console.error(
-          'Create subscription error:',
-          subscriptionCreationResp.data
-        );
-        setErrorMessage(t('errors.subscription_failed'));
-        setIsLoading(false);
-        return;
-      }
-
-      const { error } = await stripe.confirmPayment({
-        elements,
-        clientSecret: subscriptionCreationResp.data.clientSecret,
-        confirmParams: {
-          return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success`
-        },
-        redirect: 'if_required'
-      });
-
-      if (error) {
-        console.error('Payment confirmation error:', error);
-        setErrorMessage(t('errors.payment_failed'));
-        setIsLoading(false);
-        return;
-      }
-
-      updateSessionAction({
-        newSession: { isOnboarded: true, subscriptionStatus: 'active' },
-        redirectPath: PAYMENT_SUCCESS_PAGE
-      });
-    } catch (e) {
-      console.error('Payment process error:', e);
-      setErrorMessage(t('errors.general'));
-      setIsLoading(false);
+      window.location.assign(response.data.url);
+    } catch {
+      setError(t('errors.submit_failed'));
+      setLoadingAction(undefined);
     }
   };
 
-  return (
-    <Card as="form" className="mx-auto max-w-4xl" onSubmit={handleSubmit}>
-      <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
-      <Divider />
-      <CardBody className="px-5 py-4">
-        {isFormLoading ? (
-          <Loader />
-        ) : (
-          <>
-            <PaymentElement />
-            {errorMessage && (
-              <p className="text-sm text-rose-500">{errorMessage}</p>
-            )}
-          </>
-        )}
-      </CardBody>
-      <CardFooter className="px-6 py-4">
-        <Button
-          className="w-full"
-          type="submit"
-          color="secondary"
-          isDisabled={!stripe || isLoading}
-        >
-          {isLoading
-            ? t('processing')
-            : t('pay', {
-                amount: `${getCurrencySymbol(user.currency as Currency)}${SUBSCRIPTION_AMOUNT}`
-              })}
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-}
+  const startFreeTrial = async () => {
+    setLoadingAction('trial');
+    setError(undefined);
 
-export default function PaymentForm({ user }: Props) {
-  const { theme } = useTheme();
-  const [stripePromise, setStripePromise] = useState<Stripe | null>(null);
+    try {
+      const response = await startTrial(user.id!);
 
-  const isDarkMode = theme === 'dark';
+      if (isResponseError(response)) {
+        setError(response.data.message);
+        setLoadingAction(undefined);
+        return;
+      }
 
-  useEffect(() => {
-    const loadStripeWithLocale = async () => {
-      return loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!, {
-        locale: (user?.language as 'lt' | 'en') || 'en'
+      await updateSessionAction({
+        newSession: {
+          isOnboarded: !!response.data.billing.onboardingCompletedAt,
+          ...response.data.billing
+        }
       });
-    };
+      if (onTrialStarted) {
+        await onTrialStarted();
+        return;
+      }
 
-    loadStripeWithLocale().then((stripe) => {
-      setStripePromise(stripe);
-    });
-  }, [user?.language]);
+      window.location.reload();
+    } catch {
+      setError(t('errors.submit_failed'));
+      setLoadingAction(undefined);
+    }
+  };
 
-  if (!stripePromise || !user) return null;
+  const resumePausedSubscription = async () => {
+    setLoadingAction('resume');
+    setError(undefined);
+
+    try {
+      const response = await resumeSubscription(user.id!);
+
+      if (isResponseError(response)) {
+        setError(response.data.message);
+        setLoadingAction(undefined);
+        return;
+      }
+
+      await updateSessionAction({
+        newSession: {
+          isOnboarded: !!response.data.billing.onboardingCompletedAt,
+          ...response.data.billing
+        }
+      });
+      window.location.reload();
+    } catch {
+      setError(t('errors.submit_failed'));
+      setLoadingAction(undefined);
+    }
+  };
+
+  const subscriptionStatus = user.subscriptionStatus;
+  const isPaused = subscriptionStatus === 'paused';
+  const canStartTrial = !user.trialStartedAt && !subscriptionStatus;
+  const canStartCheckout =
+    canStartTrial ||
+    (subscriptionStatus && reusableCheckoutStatuses.has(subscriptionStatus));
+  const isBusy = !!loadingAction;
+  const features = [
+    t('features.invoices'),
+    t('features.clients'),
+    t('features.branding'),
+    t('features.support')
+  ];
 
   return (
-    <div
-      key={JSON.stringify(stripePromise)}
-      data-testid="payment-form"
-      className="w-full"
-    >
-      <Elements
-        stripe={stripePromise}
-        options={{
-          mode: 'subscription',
-          amount: convertToSubcurrency(SUBSCRIPTION_AMOUNT),
-          currency: user.currency,
-          appearance: {
-            theme: 'flat',
-            rules: {
-              '.AccordionItem': {
-                border: 'none',
-                padding: '0.25rem',
-                boxShadow: 'none',
-                backgroundColor: 'rgba(0,0,0,0)'
-              },
-              '.Block': {
-                border: 'none',
-                padding: '0.25rem',
-                boxShadow: 'none',
-                backgroundColor: 'rgba(0,0,0,0)'
-              },
-              '.Input': {
-                color: isDarkMode ? '#3f3f46' : '#71717a',
-                paddingTop: '0.5rem',
-                marginTop: '0.5rem',
-                paddingBottom: '0.5rem',
-                maxHeight: '4rem'
-              }
-            },
-            variables: {
-              colorPrimary: isDarkMode ? '#ffffff' : '#18181b',
-              colorTextSecondary: '#a1a1aa',
-              colorText: isDarkMode ? '#e4e4e7' : '#52525b',
-              colorBackground: 'rgba(0, 0, 0, 0)',
-              fontFamily: 'Inter, sans-serif',
-              borderRadius: '8px'
-            }
-          }
-        }}
-      >
-        <PaymentFormInsideElements user={user} />
-      </Elements>
-    </div>
+    <Card className="border-default-100 bg-default-50/70 dark:bg-default-50/5 relative h-full w-full overflow-hidden border shadow-sm">
+      <div
+        aria-hidden
+        className="bg-secondary/20 pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="bg-secondary/10 pointer-events-none absolute -bottom-28 -left-24 h-72 w-72 rounded-full blur-3xl"
+      />
+
+      <div className="relative grid h-full md:grid-cols-[1.05fr_0.95fr]">
+        <div className="flex h-full flex-col p-8 md:px-10 md:pb-10">
+          <CardHeader className="p-0">
+            <div className="flex flex-col items-start">
+              <div className="border-secondary/30 bg-secondary/10 text-secondary inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium uppercase tracking-wider">
+                <SparklesIcon className="h-3.5 w-3.5" />
+                {t('badge')}
+              </div>
+              <h2 className="text-foreground mt-4 text-4xl font-semibold leading-tight tracking-tight">
+                {t('headline')}{' '}
+                <span className="text-secondary">{t('headline_accent')}</span>
+              </h2>
+            </div>
+          </CardHeader>
+
+          <CardBody className="gap-5 p-0 pt-4">
+            <p className="text-default-500 max-w-md text-sm leading-6">
+              {canStartTrial
+                ? t('trial_description')
+                : t('recovery_description')}
+            </p>
+            <ul className="space-y-2.5">
+              {features.map((feature) => (
+                <li
+                  key={feature}
+                  className="text-foreground/90 flex items-center gap-2.5 text-sm"
+                >
+                  <span className="bg-secondary/15 text-secondary grid h-5 w-5 place-items-center rounded-full">
+                    <CheckIcon className="h-3 w-3" strokeWidth={3} />
+                  </span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </CardBody>
+        </div>
+
+        <div className="flex h-full flex-col p-8 md:px-10 md:pb-10 md:pt-20">
+          <div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-foreground text-4xl font-semibold leading-none tracking-tight">
+                {t('price.amount')}
+              </span>
+              <span className="text-default-500 text-sm">
+                {t('price.interval')}
+              </span>
+            </div>
+            <p className="text-default-400 mt-1 text-xs uppercase tracking-wider">
+              {t('price.note')}
+            </p>
+          </div>
+
+          {error && <p className="text-danger mt-5 text-sm">{error}</p>}
+
+          <CardFooter className="flex flex-col gap-3 p-0 pt-7">
+            {canStartTrial ? (
+              <>
+                <Button
+                  color="secondary"
+                  size="lg"
+                  className="w-full font-medium"
+                  isLoading={loadingAction === 'checkout'}
+                  isDisabled={isBusy && loadingAction !== 'checkout'}
+                  onPress={() =>
+                    run('checkout', () => createCheckoutSession(user.id!))
+                  }
+                >
+                  {t('actions.subscribe')}
+                </Button>
+                <Button
+                  variant="bordered"
+                  size="lg"
+                  className="w-full font-medium"
+                  isLoading={loadingAction === 'trial'}
+                  isDisabled={isBusy && loadingAction !== 'trial'}
+                  onPress={startFreeTrial}
+                >
+                  {t('actions.start_trial')}
+                </Button>
+              </>
+            ) : isPaused ? (
+              <>
+                <Button
+                  color="secondary"
+                  size="lg"
+                  className="w-full font-medium"
+                  isLoading={loadingAction === 'resume'}
+                  isDisabled={isBusy && loadingAction !== 'resume'}
+                  onPress={resumePausedSubscription}
+                >
+                  {t('actions.resume')}
+                </Button>
+                <Button
+                  variant="bordered"
+                  size="lg"
+                  className="w-full font-medium"
+                  isLoading={loadingAction === 'portal'}
+                  isDisabled={isBusy && loadingAction !== 'portal'}
+                  onPress={() =>
+                    run('portal', () => createBillingPortalSession(user.id!))
+                  }
+                >
+                  {t('actions.manage')}
+                </Button>
+              </>
+            ) : canStartCheckout ? (
+              <Button
+                color="secondary"
+                size="lg"
+                className="w-full font-medium"
+                isLoading={loadingAction === 'checkout'}
+                isDisabled={isBusy && loadingAction !== 'checkout'}
+                onPress={() =>
+                  run('checkout', () => createCheckoutSession(user.id!))
+                }
+              >
+                {t('actions.subscribe')}
+              </Button>
+            ) : (
+              <Button
+                color="secondary"
+                size="lg"
+                className="w-full font-medium"
+                isLoading={loadingAction === 'portal'}
+                isDisabled={isBusy && loadingAction !== 'portal'}
+                onPress={() =>
+                  run('portal', () => createBillingPortalSession(user.id!))
+                }
+              >
+                {t('actions.manage')}
+              </Button>
+            )}
+            <p className="text-default-400 pt-1 text-center text-xs">
+              {t('checkout_note')}
+            </p>
+          </CardFooter>
+        </div>
+      </div>
+    </Card>
   );
 }

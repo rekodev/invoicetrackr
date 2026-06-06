@@ -39,7 +39,14 @@ export const getUserFromDb = async (
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
       stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
-      subscriptionStatus: usersTable.subscriptionStatus
+      subscriptionStatus: usersTable.subscriptionStatus,
+      onboardingCompletedAt: usersTable.onboardingCompletedAt,
+      trialStartedAt: usersTable.trialStartedAt,
+      trialEndsAt: usersTable.trialEndsAt,
+      subscriptionGraceEndsAt: usersTable.subscriptionGraceEndsAt,
+      subscriptionCurrentPeriodEndsAt:
+        usersTable.subscriptionCurrentPeriodEndsAt,
+      subscriptionCancelAt: usersTable.subscriptionCancelAt
     })
     .from(usersTable)
     .leftJoin(
@@ -81,7 +88,14 @@ export const getUserByEmailFromDb = async (
       password: usersTable.password,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
       stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
-      subscriptionStatus: usersTable.subscriptionStatus
+      subscriptionStatus: usersTable.subscriptionStatus,
+      onboardingCompletedAt: usersTable.onboardingCompletedAt,
+      trialStartedAt: usersTable.trialStartedAt,
+      trialEndsAt: usersTable.trialEndsAt,
+      subscriptionGraceEndsAt: usersTable.subscriptionGraceEndsAt,
+      subscriptionCurrentPeriodEndsAt:
+        usersTable.subscriptionCurrentPeriodEndsAt,
+      subscriptionCancelAt: usersTable.subscriptionCancelAt
     })
     .from(usersTable)
     .leftJoin(
@@ -105,7 +119,7 @@ export const registerUser = async ({
     .values({
       email,
       password,
-      currency: 'usd',
+      currency: 'eur',
       language,
       type: 'sender',
       businessType: 'individual',
@@ -129,6 +143,12 @@ export type UserUpdateResult = Omit<
   | 'stripeSubscriptionId'
   | 'selectedBankAccountId'
   | 'password'
+  | 'onboardingCompletedAt'
+  | 'trialStartedAt'
+  | 'trialEndsAt'
+  | 'subscriptionGraceEndsAt'
+  | 'subscriptionCurrentPeriodEndsAt'
+  | 'subscriptionCancelAt'
 >;
 
 export const updateUserInDb = async (
@@ -156,7 +176,8 @@ export const updateUserInDb = async (
       vatNumber,
       address,
       email,
-      signature
+      signature,
+      onboardingCompletedAt: new Date().toISOString()
     })
     .where(eq(usersTable.id, Number(user.id)))
     .returning({ id: usersTable.id });

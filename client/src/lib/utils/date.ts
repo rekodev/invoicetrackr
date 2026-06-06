@@ -1,6 +1,19 @@
 // from ISOString to yyyy-MM-dd
 export const formatDate = (date: string) => date.split('T')[0];
 
+export const formatLocalizedDate = (
+  date: string | null | undefined,
+  locale: string
+) => {
+  if (!date) return undefined;
+
+  return new Intl.DateTimeFormat(locale, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  }).format(new Date(date));
+};
+
 export const getDateDifferenceInDays = (date1: string, date2: string) => {
   const d1 = new Date(date1);
   const d2 = new Date(date2);

@@ -84,6 +84,7 @@ export const updateUserOptions: RouteShorthandOptionsWithHandler = {
         name: true,
         businessType: true,
         businessNumber: true,
+        vatNumber: true,
         address: true,
         email: true,
         signature: true
@@ -91,7 +92,8 @@ export const updateUserOptions: RouteShorthandOptionsWithHandler = {
       .extend({
         name: z.string().min(1, 'validation.user.name'),
         businessNumber: z.string().min(1, 'validation.user.businessNumber'),
-        address: z.string().min(1, 'validation.user.address')
+        address: z.string().min(1, 'validation.user.address'),
+        file: z.any().nullish()
       }),
     response: {
       200: updateUserResponseSchema

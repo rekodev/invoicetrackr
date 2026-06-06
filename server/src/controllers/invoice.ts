@@ -32,9 +32,22 @@ import {
   updateInvoiceInDb,
   updateInvoiceStatusInDb
 } from '../database/invoice';
+import en from '../locales/en';
 import { getClientsFromDb } from '../database/client';
 import { getUserFromDb } from '../database/user';
+import lt from '../locales/lt';
 import { resend } from '../config/resend';
+
+const locales = { en, lt };
+
+const interpolateTranslation = (
+  translation: string,
+  replacements: Record<string, string>
+) =>
+  Object.entries(replacements).reduce(
+    (value, [key, replacement]) => value.replace(`%{${key}}`, replacement),
+    translation
+  );
 
 const uploadSignatureFile = async (
   signatureFile: MultipartFile,
@@ -113,33 +126,21 @@ export const getIncomeJournal = async (
 ) => {
   const userId = Number(req.params.userId);
   const { from, to } = req.query;
+  const i18n = await useI18n(req);
   const rows = await getIncomeJournalRowsFromDb({ userId, from, to });
   const currency = rows.at(0)?.currency?.toUpperCase() || 'EUR';
-  const isLithuanian = req.headers['accept-language']?.startsWith('lt');
-  const headers = isLithuanian
-    ? [
-        'Apmokėjimo data',
-        'Sąskaitos data',
-        'Dokumento numeris',
-        'Pirkėjas',
-        'Pirkėjo kodas',
-        'Paslaugos / prekės',
-        `Suma be PVM (${currency})`,
-        `PVM suma (${currency})`,
-        `Bendra suma (${currency})`
-      ]
-    : [
-        'Payment date',
-        'Invoice date',
-        'Document number',
-        'Client',
-        'Client code',
-        'Services / goods',
-        `Subtotal (${currency})`,
-        `VAT total (${currency})`,
-        `Grand total (${currency})`
-      ];
-  const filename = isLithuanian ? 'pajamu-zurnalas' : 'income-journal';
+  const headers = [
+    i18n.t('emails.incomeJournal.paymentDate'),
+    i18n.t('emails.incomeJournal.invoiceDate'),
+    i18n.t('emails.incomeJournal.documentNumber'),
+    i18n.t('emails.incomeJournal.client'),
+    i18n.t('emails.incomeJournal.clientCode'),
+    i18n.t('emails.incomeJournal.services'),
+    i18n.t('emails.incomeJournal.subtotal', { currency }),
+    i18n.t('emails.incomeJournal.vatTotal', { currency }),
+    i18n.t('emails.incomeJournal.grandTotal', { currency })
+  ];
+  const filename = i18n.t('emails.incomeJournal.filename');
   const csvRows = rows.map((row) =>
     [
       formatCsvDate(row.paidAt),
@@ -656,25 +657,31 @@ export const signPublicInvoice = async (
 
   if (invoice?.sender?.email) {
     const invoiceId = invoice.invoiceId || String(invoice.id);
-    const receiverName = invoice?.receiver?.name || 'The recipient';
+    const locale =
+      locales[signing.language as keyof typeof locales] || locales.en;
+    const translations = locale.emails.invoice.signedNotification;
+    const receiverName = invoice?.receiver?.name || translations.recipient;
     const downloadLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/invoices/sign/${req.params.token}`;
+    const notificationMessage = interpolateTranslation(translations.message, {
+      receiverName,
+      invoiceId
+    });
+    const subject = interpolateTranslation(translations.subject, {
+      invoiceId
+    });
+    const reviewMessage = translations.review;
 
     await resend.emails
       .send({
         to: invoice.sender.email,
         from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
-        subject: `Invoice ${invoiceId} was signed`,
+        subject,
         html: `
-          <p>${escapeEmailHtml(receiverName)} signed invoice ${escapeEmailHtml(invoiceId)}.</p>
-          <p>You can review the signed invoice here:</p>
+          <p>${escapeEmailHtml(notificationMessage)}</p>
+          <p>${escapeEmailHtml(reviewMessage)}</p>
           <p><a href="${escapeEmailHtml(downloadLink)}">${escapeEmailHtml(downloadLink)}</a></p>
         `,
-        text: [
-          `${receiverName} signed invoice ${invoiceId}.`,
-          '',
-          'You can review the signed invoice here:',
-          downloadLink
-        ].join('\n')
+        text: [notificationMessage, '', reviewMessage, downloadLink].join('\n')
       })
       .catch((error) => {
         req.log.error(

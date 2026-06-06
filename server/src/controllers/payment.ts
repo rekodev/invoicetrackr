@@ -1,152 +1,303 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { useI18n } from 'fastify-i18n';
+import Stripe from 'stripe';
 
+import { BadRequestError, NotFoundError } from '../utils/error';
 import {
-  AlreadyExistsError,
-  BadRequestError,
-  NotFoundError
-} from '../utils/error';
-import {
-  createStripeCustomerInDb,
-  deleteStripeAccountFromDb,
-  getStripeCustomerIdFromDb,
-  getStripeCustomerSubscriptionIdFromDb,
-  updateStripeSubscriptionForUserInDb
+  consumePaymentSuccessPendingInDb,
+  getBillingStatusFromDb,
+  getStripeAccountFromDb,
+  updateBillingStatusInDb,
+  updateStripeSubscriptionForUserInDb,
+  upsertStripeAccountInDb
 } from '../database/payment';
-import { getUserCurrencyFromDb } from '../database/user';
+import { getUserFromDb } from '../database/user';
 import { stripe } from '../config/stripe';
 
-export const createCustomer = async (
-  req: FastifyRequest<{
-    Params: { userId: string };
-    Body: { email: string; name: string };
-  }>,
-  reply: FastifyReply
+const TRIAL_DAYS = 7;
+
+const timestampToIso = (timestamp?: number | null) =>
+  timestamp ? new Date(timestamp * 1000).toISOString() : null;
+
+const getBaseUrl = () =>
+  process.env.APP_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL!;
+
+const hasStripePaymentMethod = async (
+  account: Awaited<ReturnType<typeof getStripeAccountFromDb>>,
+  subscription?: Stripe.Subscription
 ) => {
-  const userId = Number(req.params.userId);
-  const { email, name } = req.body;
-  const i18n = await useI18n(req);
+  if (!account?.stripeCustomerId) return false;
+  if (subscription?.default_payment_method) return true;
 
-  const existingCustomerId = await getStripeCustomerIdFromDb(userId);
+  const customer = await stripe.customers.retrieve(account.stripeCustomerId);
 
-  // Delete any existing records before creating a new one
-  if (existingCustomerId) {
-    try {
-      await stripe.customers.del(existingCustomerId);
-    } catch {
-      console.log('Customer does not exist in stripe');
-    }
+  if ('deleted' in customer && customer.deleted) return false;
 
-    await deleteStripeAccountFromDb(userId);
-  }
+  if (customer.invoice_settings?.default_payment_method) return true;
+
+  const paymentMethods = await stripe.paymentMethods.list({
+    customer: account.stripeCustomerId,
+    type: 'card',
+    limit: 1
+  });
+
+  return paymentMethods.data.length > 0;
+};
+
+export const syncSubscriptionInDb = async (
+  userId: number,
+  subscription: Stripe.Subscription,
+  { paymentSuccessPending }: { paymentSuccessPending?: boolean } = {}
+) => {
+  const currentPeriodEndsAt = subscription.items.data.at(0)?.current_period_end;
+  const billingUpdate = {
+    subscriptionStatus: subscription.status,
+    trialStartedAt: timestampToIso(subscription.trial_start),
+    trialEndsAt: timestampToIso(subscription.trial_end),
+    subscriptionGraceEndsAt:
+      subscription.status === 'past_due' ? undefined : null,
+    subscriptionCurrentPeriodEndsAt: timestampToIso(currentPeriodEndsAt),
+    subscriptionCancelAt: subscription.cancel_at_period_end
+      ? timestampToIso(subscription.cancel_at || currentPeriodEndsAt)
+      : null,
+    ...(paymentSuccessPending === undefined ? {} : { paymentSuccessPending })
+  };
+
+  await updateStripeSubscriptionForUserInDb(userId, subscription.id);
+  await updateBillingStatusInDb(userId, billingUpdate);
+};
+
+const ensureStripeCustomer = async (userId: number) => {
+  const account = await getStripeAccountFromDb(userId);
+
+  if (account?.stripeCustomerId) return account.stripeCustomerId;
+
+  const user = await getUserFromDb(userId);
+
+  if (!user) throw new NotFoundError('User not found');
 
   const customer = await stripe.customers.create({
-    email,
-    name,
-    metadata: {
-      userId
-    }
+    email: user.email,
+    name: user.name,
+    metadata: { userId: String(userId) }
   });
-  const customerIdFromDb = await createStripeCustomerInDb(userId, customer.id);
 
-  if (!customer || !customerIdFromDb)
-    throw new BadRequestError(i18n.t('error.payment.unableToCreateCustomer'));
+  await upsertStripeAccountInDb(userId, customer.id);
 
-  reply.status(200).send({ customerId: customer.id });
+  return customer.id;
 };
 
-export const createSubscription = async (
+const sendBillingStatus = async (userId: number, reply: FastifyReply) => {
+  const billing = await getBillingStatusFromDb(userId);
+  const account = await getStripeAccountFromDb(userId);
+
+  if (!billing) throw new NotFoundError('User not found');
+
+  let subscription: Stripe.Subscription | undefined;
+
+  if (account?.stripeSubscriptionId) {
+    try {
+      subscription = await stripe.subscriptions.retrieve(
+        account.stripeSubscriptionId
+      );
+      await syncSubscriptionInDb(userId, subscription);
+    } catch (error) {
+      reply.log.warn({ error, userId }, 'Unable to sync Stripe subscription');
+    }
+  }
+
+  const syncedBilling = await getBillingStatusFromDb(userId);
+
+  if (!syncedBilling) throw new NotFoundError('User not found');
+
+  let hasPaymentMethod = false;
+
+  try {
+    hasPaymentMethod = await hasStripePaymentMethod(account, subscription);
+  } catch (error) {
+    reply.log.warn({ error, userId }, 'Unable to sync Stripe payment method');
+  }
+
+  return reply.status(200).send({
+    billing: {
+      ...syncedBilling,
+      hasPaymentMethod
+    }
+  });
+};
+
+export const getBillingStatus = async (
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) => sendBillingStatus(Number(req.params.userId), reply);
+
+export const startTrial = async (
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const billing = await getBillingStatusFromDb(userId);
+  const account = await getStripeAccountFromDb(userId);
+
+  if (!billing) throw new NotFoundError('User not found');
+  if (!billing.onboardingCompletedAt)
+    throw new BadRequestError('Complete your business profile first');
+  if (
+    billing.trialStartedAt ||
+    billing.hasPaidAccess ||
+    account?.stripeSubscriptionId
+  )
+    return sendBillingStatus(userId, reply);
+
+  const customerId = await ensureStripeCustomer(userId);
+  const subscription = await stripe.subscriptions.create({
+    customer: customerId,
+    items: [{ price: process.env.STRIPE_EUR_PRICE! }],
+    trial_period_days: TRIAL_DAYS,
+    trial_settings: {
+      end_behavior: { missing_payment_method: 'pause' }
+    },
+    metadata: { userId: String(userId) }
+  });
+
+  await upsertStripeAccountInDb(userId, customerId, subscription.id);
+  await syncSubscriptionInDb(userId, subscription, {
+    paymentSuccessPending: true
+  });
+
+  return sendBillingStatus(userId, reply);
+};
+
+export const consumePaymentSuccess = async (
   req: FastifyRequest<{
     Params: { userId: string };
-    Body: { customerId: string };
+    Body: { trial?: boolean; sessionId?: string };
   }>,
   reply: FastifyReply
 ) => {
-  const { customerId } = req.body;
   const userId = Number(req.params.userId);
-  const i18n = await useI18n(req);
+  const expectedTrial = !!req.body?.trial;
+  const checkoutSessionId = req.body?.sessionId;
+  const account = await getStripeAccountFromDb(userId);
+  let billing = await getBillingStatusFromDb(userId);
 
-  const currency = await getUserCurrencyFromDb(userId);
+  if (!billing) throw new NotFoundError('User not found');
+  if (!billing.paymentSuccessPending)
+    return reply.status(200).send({
+      canShowPaymentSuccess: false,
+      billing
+    });
 
-  let priceId = '';
+  if (!expectedTrial) {
+    if (!checkoutSessionId || !account?.stripeCustomerId)
+      return reply.status(200).send({
+        canShowPaymentSuccess: false,
+        billing
+      });
 
-  if (currency === 'eur') {
-    priceId = process.env.STRIPE_EUR_PRICE!;
-  } else {
-    priceId = process.env.STRIPE_USD_PRICE!;
-  }
+    const checkoutSession =
+      await stripe.checkout.sessions.retrieve(checkoutSessionId);
+    const checkoutCustomerId =
+      typeof checkoutSession.customer === 'string'
+        ? checkoutSession.customer
+        : checkoutSession.customer?.id;
 
-  const existingSubId = await getStripeCustomerSubscriptionIdFromDb(userId);
+    if (
+      checkoutSession.status !== 'complete' ||
+      checkoutCustomerId !== account.stripeCustomerId
+    )
+      return reply.status(200).send({
+        canShowPaymentSuccess: false,
+        billing
+      });
 
-  if (existingSubId) {
-    const existingSubscription =
-      await stripe.subscriptions.retrieve(existingSubId);
-
-    if (existingSubscription.status === 'active')
-      throw new AlreadyExistsError(
-        i18n.t('error.payment.subscriptionAlreadyActive')
+    if (typeof checkoutSession.subscription === 'string') {
+      const subscription = await stripe.subscriptions.retrieve(
+        checkoutSession.subscription
       );
+      await syncSubscriptionInDb(userId, subscription, {
+        paymentSuccessPending: true
+      });
+      billing = await getBillingStatusFromDb(userId);
+    }
   }
 
-  const subscription = await stripe.subscriptions.create({
+  if (!billing?.hasPaidAccess || !billing.paymentSuccessPending)
+    return reply.status(200).send({
+      canShowPaymentSuccess: false,
+      billing
+    });
+  if ((billing.subscriptionStatus === 'trialing') !== expectedTrial)
+    return reply.status(200).send({
+      canShowPaymentSuccess: false,
+      billing
+    });
+
+  const consumedBilling = await consumePaymentSuccessPendingInDb(userId);
+
+  if (!consumedBilling) throw new NotFoundError('User not found');
+
+  return reply.status(200).send({
+    canShowPaymentSuccess: true,
+    billing: consumedBilling
+  });
+};
+
+export const createBillingPortalSession = async (
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const customerId = await ensureStripeCustomer(userId);
+  const session = await stripe.billingPortal.sessions.create({
     customer: customerId,
-    currency,
-    items: [{ price: priceId }],
-    payment_behavior: 'default_incomplete',
-    payment_settings: { save_default_payment_method: 'on_subscription' },
-    expand: ['latest_invoice.confirmation_secret']
+    return_url: `${getBaseUrl()}/renew-subscription`
   });
 
-  const updatedSubscriptionId = await updateStripeSubscriptionForUserInDb(
-    userId,
-    subscription.id
+  return reply.status(200).send({ url: session.url });
+};
+
+export const createCheckoutSession = async (
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const billing = await getBillingStatusFromDb(userId);
+
+  if (!billing) throw new NotFoundError('User not found');
+  if (billing.hasPaidAccess)
+    throw new BadRequestError('Subscription is already active');
+
+  const customerId = await ensureStripeCustomer(userId);
+  const session = await stripe.checkout.sessions.create({
+    customer: customerId,
+    mode: 'subscription',
+    line_items: [{ price: process.env.STRIPE_EUR_PRICE!, quantity: 1 }],
+    success_url: `${getBaseUrl()}/payment-success/confirm?checkout=true&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${getBaseUrl()}/renew-subscription`
+  });
+  await updateBillingStatusInDb(userId, { paymentSuccessPending: true });
+
+  return reply.status(200).send({ url: session.url });
+};
+
+export const resumeSubscription = async (
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const account = await getStripeAccountFromDb(userId);
+
+  if (!account?.stripeSubscriptionId)
+    throw new NotFoundError('Subscription not found');
+
+  const subscription = await stripe.subscriptions.resume(
+    account.stripeSubscriptionId,
+    { billing_cycle_anchor: 'now' }
   );
 
-  if (!subscription || !updatedSubscriptionId)
-    throw new BadRequestError(
-      i18n.t('error.payment.unableToCreateSubscription')
-    );
-
-  reply.status(200).send({
-    type: 'payment',
-    clientSecret:
-      typeof subscription.latest_invoice !== 'string'
-        ? subscription.latest_invoice?.confirmation_secret?.client_secret
-        : ''
+  await syncSubscriptionInDb(userId, subscription, {
+    paymentSuccessPending: true
   });
-};
 
-export const getStripeCustomerId = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
-  reply: FastifyReply
-) => {
-  const userId = Number(req.params.userId);
-  const i18n = await useI18n(req);
-
-  const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
-
-  if (!stripeCustomerId)
-    throw new NotFoundError(i18n.t('error.payment.customerNotFound'));
-
-  reply.status(200).send({ customerId: stripeCustomerId });
-};
-
-export const cancelStripeSubscription = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
-  reply: FastifyReply
-) => {
-  const userId = Number(req.params.userId);
-  const i18n = await useI18n(req);
-
-  const stripeSubscriptionId =
-    await getStripeCustomerSubscriptionIdFromDb(userId);
-
-  if (!stripeSubscriptionId)
-    throw new NotFoundError(i18n.t('error.payment.subscriptionNotFound'));
-
-  await stripe.subscriptions.cancel(stripeSubscriptionId);
-
-  reply
-    .status(200)
-    .send({ message: i18n.t('success.payment.subscriptionCanceled') });
+  return sendBillingStatus(userId, reply);
 };

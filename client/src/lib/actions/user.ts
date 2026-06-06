@@ -147,13 +147,22 @@ export async function syncSubscriptionStatusAction(userId: string) {
       return null;
     }
 
-    const dbSubscriptionStatus = response.data.user.subscriptionStatus;
+    const user = response.data.user;
 
     await updateSessionAction({
-      newSession: { subscriptionStatus: dbSubscriptionStatus }
+      newSession: {
+        isOnboarded: !!user.onboardingCompletedAt,
+        subscriptionStatus: user.subscriptionStatus,
+        onboardingCompletedAt: user.onboardingCompletedAt,
+        trialStartedAt: user.trialStartedAt,
+        trialEndsAt: user.trialEndsAt,
+        subscriptionGraceEndsAt: user.subscriptionGraceEndsAt,
+        subscriptionCurrentPeriodEndsAt: user.subscriptionCurrentPeriodEndsAt,
+        subscriptionCancelAt: user.subscriptionCancelAt
+      }
     });
 
-    return dbSubscriptionStatus;
+    return user.subscriptionStatus;
   } catch (error) {
     console.error('Error syncing subscription status:', error);
     return null;

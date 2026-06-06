@@ -78,6 +78,69 @@
     "title": "Prenumerata neaktyvi",
     "description": "Prenumeruokite dabar, kad naudotumėtės sklandžia sąskaitų išrašymo patirtimi."
   },
+  "payment_success": {
+    "payment": {
+      "badge": "Prenumerata aktyvi",
+      "headline": "Jūs jau viduje.",
+      "headline_accent": "Pradėkite sąskaitas.",
+      "description": "Jūsų InvoiceTrackr prenumerata aktyvi ir suteikia pilną prieigą. Sukurkite tikrą sąskaitą faktūrą, pridėkite klientus ir tvarkykite atsiskaitymus be trinties.",
+      "summary": {
+        "title": "Premium planas",
+        "status": "Aktyvu",
+        "primary_label": "Prieiga",
+        "primary_value": "Pilna prieiga",
+        "secondary_label": "Planas",
+        "link": "Tvarkyti prenumeratą"
+      }
+    },
+    "trial": {
+      "badge": "Bandymas aktyvus",
+      "headline": "Jūs jau viduje.",
+      "headline_accent": "Išnaudokite laiką.",
+      "description": "Jūsų 7 dienų Pro bandymas aktyvus su pilna prieiga ir be mokėjimo kortelės. Sukurkite tikrą sąskaitą, išsiųskite ją ir nuspręskite, ar InvoiceTrackr tinka jūsų darbo eigai.",
+      "summary": {
+        "title": "Pro bandymas",
+        "status": "1 diena / 7",
+        "primary_label": "Baigiasi",
+        "primary_value": "Po 7 dienų",
+        "secondary_label": "Po bandymo",
+        "link": "Atnaujinti anksčiau ir užfiksuoti kainą"
+      }
+    },
+    "actions": {
+      "create_invoice": "Sukurti pirmą sąskaitą faktūrą",
+      "dashboard": "Eiti į skydelį"
+    },
+    "confirmation": {
+      "status_label": "Patvirtinimas"
+    },
+    "security": {
+      "title": "Mokėjimas apdorotas saugiai",
+      "description": "Stripe apdorojo mokėjimą, o jūsų InvoiceTrackr prieiga atnaujinta paskyroje."
+    },
+    "support": {
+      "title": "Reikia pagalbos?",
+      "description": "Jei kažkas atrodo netiksliai, patikrinkite paskyros nustatymus arba susisiekite su pagalba naudodami paskyros el. paštą."
+    },
+    "quick_start": {
+      "title": "Greita pradžia",
+      "subtitle": "3 verta išbandyti"
+    },
+    "quick_actions": {
+      "invoice": {
+        "title": "Sukurti pirmą sąskaitą faktūrą",
+        "description": "Sugeneruokite tvarkingą PDF greičiau nei per minutę."
+      },
+      "client": {
+        "title": "Pridėti klientą",
+        "description": "Išsaugokite duomenis vieną kartą ir naudokite kiekvienoje sąskaitoje."
+      },
+      "contract": {
+        "title": "Paruošti sutartį",
+        "description": "Pasiruoškite daugkartinius sutarties duomenis savo darbo eigai."
+      }
+    }
+  },
   "home": {
     "hero": {
       "title": "Sukurkite Profesionalias Sąskaitas Per Kelias Minutes",
@@ -206,19 +269,18 @@
           "name": "Asmeninė informacija",
           "description": "Papasakokite apie save"
         },
-        "banking": {
-          "name": "Bankiniai duomenys",
-          "description": "Pridėkite bankinę informaciją"
-        },
-        "payment": {
-          "name": "Atlikti mokėjimą",
-          "description": "Užbaikite registraciją"
+        "trial": {
+          "name": "Pradėti nemokamą bandymą",
+          "description": "Naudokitės visomis funkcijomis 7 dienas"
         }
       },
       "actions": {
         "back": "Atgal",
         "next": "Toliau",
         "skip": "Praleisti"
+      },
+      "errors": {
+        "missing_user": "Nepavyko rasti paskyros duomenų. Atnaujinkite puslapį ir bandykite dar kartą."
       }
     }
   },
@@ -252,7 +314,11 @@
       "title": "Naujausios sąskaitos faktūros",
       "subtitle": "Naujausia veikla",
       "view_all": "Žiūrėti visas",
-      "empty_state": "Nėra sąskaitų faktūrų rodymui.",
+      "empty_state": {
+        "title": "Sukurkite pirmą sąskaitą faktūrą",
+        "description": "Dar neturite sąskaitų faktūrų. Sukurkite pirmą ir ji bus rodoma čia.",
+        "action": "Pridėti naują"
+      },
       "statuses": {
         "paid": "Sumokėta",
         "pending": "Laukiama",
@@ -304,7 +370,12 @@
           "columns_label": "Lentelės stulpeliai"
         }
       },
-      "empty_state": "Sąskaitų faktūrų nerasta."
+      "empty_state": {
+        "title": "Dar neturite sąskaitų faktūrų",
+        "description": "Spustelėkite mygtuką \"Pridėti naują +\", kad sukurtumėte pirmą sąskaitą faktūrą.",
+        "no_results_title": "Nėra sąskaitų faktūrų pagal pasirinktus filtrus",
+        "no_results_description": "Pabandykite pakeisti paiešką arba būsenos filtrą."
+      }
     },
     "delete_modal": {
       "title": "Ištrinti sąskaitą",
@@ -422,6 +493,12 @@
     "edit": "Redaguoti",
     "remove": "Pašalinti",
     "no_clients": "Klientų nerasta",
+    "empty_state": {
+      "title": "Dar neturite klientų",
+      "description": "Spustelėkite mygtuką \"Pridėti naują +\", kad sukurtumėte pirmą klientą.",
+      "no_results_title": "Nėra klientų pagal pasirinktus filtrus",
+      "no_results_description": "Pabandykite pakeisti paiešką arba kliento tipo filtrą."
+    },
     "a11y": {
       "actions_label": "Veiksmai"
     },
@@ -543,9 +620,24 @@
       "save_changes": "Išsaugoti pakeitimus",
       "subscription": {
         "title": "Prenumeratos Būsena",
+        "badge": "Pro planas",
+        "plan_label": "Dabartinis planas",
+        "access_note": "Premium funkcijos ir mokėjimų tęstinumas",
+        "description": {
+          "active": "Jūsų paskyra turi prieigą prie mokamos darbo eigos.",
+          "trial": "Jūsų bandomasis laikotarpis aktyvus. Pridėkite mokėjimo būdą, kad išlaikytumėte prieigą jam pasibaigus.",
+          "trial_ready": "Jūsų bandomasis laikotarpis aktyvus, o mokėjimo būdas paruoštas jo pabaigai.",
+          "inactive": "Atnaujinkite prenumeratą, kad atkurtumėte premium funkcijas."
+        },
         "status": {
           "active": "Aktyvi",
+          "trial": "Bandymas aktyvus",
           "inactive": "Neaktyvi"
+        },
+        "trial_ends": "Bandymas baigiasi {date}",
+        "plans": {
+          "premium": "Premium",
+          "trial": "Pro bandymas"
         },
         "plan": "{plan} Planas - {currency}{amount}/{interval}",
         "interval": {
@@ -553,7 +645,8 @@
           "year": "metus"
         },
         "action": {
-          "cancel": "Atšaukti Prenumeratą",
+          "add_payment_method": "Pridėti mokėjimo būdą",
+          "manage": "Valdyti Prenumeratą",
           "renew": "Atnaujinti Prenumeratą"
         },
         "cancel_subscription_dialog": {
@@ -673,9 +766,30 @@
       "go_to_profile": "Eiti į profilį"
     },
     "payment_form": {
-      "title": "Mokėjimas",
-      "processing": "Apdorojama...",
-      "pay": "Mokėti {amount}",
+      "title": "InvoiceTrackr Premium",
+      "badge": "Pro planas",
+      "headline": "Viskas, ko reikia, kad",
+      "headline_accent": "gautumėte apmokėjimą greičiau.",
+      "trial_description": "Pradėkite pilną 7 dienų bandomąjį laikotarpį be mokėjimo kortelės arba prenumeruokite dabar.",
+      "recovery_description": "Tvarkykite mokėjimo būdą arba atkurkite prieigą prie prenumeratos.",
+      "features": {
+        "invoices": "Neribotos sąskaitos faktūros ir klientai",
+        "clients": "Išsaugota darbo eiga klientams, istorijai ir eksportams",
+        "branding": "Profesionalūs PDF dokumentai su jūsų duomenimis",
+        "support": "Mokėjimų tęstinumas ir paskyros atkūrimas"
+      },
+      "price": {
+        "amount": "€4.99",
+        "interval": "/ mėn.",
+        "note": "Mokama kas mėnesį · atšaukti galima bet kada"
+      },
+      "checkout_note": "Saugus mokėjimas · prieiga iš karto",
+      "actions": {
+        "start_trial": "Pradėti nemokamą bandymą",
+        "manage": "Tvarkyti mokėjimus",
+        "resume": "Atnaujinti prenumeratą",
+        "subscribe": "Prenumeruoti"
+      },
       "errors": {
         "submit_failed": "Mokėjimo pateikti nepavyko. Bandykite dar kartą.",
         "customer_failed": "Negalima sukurti kliento. Bandykite dar kartą.",

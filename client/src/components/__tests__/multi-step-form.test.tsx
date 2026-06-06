@@ -1,7 +1,7 @@
-import { BankAccount, User } from '@invoicetrackr/types';
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { User } from '@invoicetrackr/types';
 import userEvent from '@testing-library/user-event';
 import { withIntl } from '@/test/with-intl';
 
@@ -9,21 +9,37 @@ import MultiStepForm from '../multi-step-form';
 
 const mockSignUpAction = vi.fn();
 const mockPersonalInfoAction = vi.fn();
-const mockBankAccountAction = vi.fn();
+const mockRouterPush = vi.fn();
+const mockRouterReplace = vi.fn();
+const mockRouterRefresh = vi.fn();
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockRouterPush,
+    replace: mockRouterReplace,
+    refresh: mockRouterRefresh
+  })
+}));
 
 vi.mock('@/lib/actions', () => ({
   signUpAction: (...args: Array<unknown>) => mockSignUpAction(...args),
   updateUserAction: (...args: Array<unknown>) =>
     mockPersonalInfoAction(...args),
-  createBankingInformationAction: (...args: Array<unknown>) =>
-    mockBankAccountAction(...args),
-  updateBankingInformationAction: (...args: Array<unknown>) =>
-    mockBankAccountAction(...args)
+  updateSessionAction: vi.fn()
 }));
 
 vi.mock('../payment-form', () => ({
-  default: ({ user }: { user?: User }) => (
-    <div data-testid="payment-form">Payment Form for {user?.email}</div>
+  default: ({
+    user,
+    onTrialStarted
+  }: {
+    user?: User;
+    onTrialStarted?: () => void | Promise<void>;
+  }) => (
+    <div data-testid="payment-form">
+      Payment Form for {user?.email}
+      <button onClick={() => onTrialStarted?.()}>Start mocked trial</button>
+    </div>
   )
 }));
 
@@ -47,24 +63,18 @@ describe('<MultiStepForm />', () => {
     profilePictureUrl: ''
   };
 
-  const userBankingInformation: BankAccount = {
-    name: 'Test Bank',
-    accountNumber: 'LT123456789012345678',
-    code: 'TESTLT2X'
-  };
-
   beforeEach(() => {
     props = {
-      existingUserData: existingUser,
-      existingBankingInformation: userBankingInformation
+      existingUserData: existingUser
     };
     mockSignUpAction.mockClear();
     mockPersonalInfoAction.mockClear();
-    mockBankAccountAction.mockClear();
+    mockRouterPush.mockClear();
+    mockRouterReplace.mockClear();
+    mockRouterRefresh.mockClear();
   });
 
   it('renders first step (sign up) by default', () => {
-    props.existingBankingInformation = undefined;
     props.existingUserData = undefined;
     renderHelper(<MultiStepForm {...props} />);
 
@@ -87,14 +97,8 @@ describe('<MultiStepForm />', () => {
     ).toBeDefined();
   });
 
-  it('renders banking step when user has personal info but no banking info', () => {
+  it('renders trial step when user has completed personal info', () => {
     renderHelper(<MultiStepForm {...props} existingUserData={existingUser} />);
-
-    expect(screen.getByText(/Banking Information/i)).toBeDefined();
-  });
-
-  it('renders payment step when user has all information except subscription', () => {
-    renderHelper(<MultiStepForm {...props} />);
 
     expect(screen.findByTestId('payment-form')).toBeDefined();
   });
@@ -108,5 +112,17 @@ describe('<MultiStepForm />', () => {
     expect(
       screen.getByTestId('personal-information-form-heading')
     ).toBeDefined();
+  });
+
+  it('navigates to trial success without refreshing onboarding', async () => {
+    renderHelper(<MultiStepForm {...props} />);
+
+    await userEvent.click(screen.getByText('Start mocked trial'));
+
+    expect(mockRouterPush).toHaveBeenCalledWith(
+      '/payment-success/confirm?trial=true'
+    );
+    expect(mockRouterReplace).not.toHaveBeenCalled();
+    expect(mockRouterRefresh).not.toHaveBeenCalled();
   });
 });

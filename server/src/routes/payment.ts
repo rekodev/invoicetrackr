@@ -5,10 +5,12 @@ import {
 } from 'fastify';
 
 import {
-  cancelStripeSubscriptionOptions,
-  createCustomerOptions,
-  createSubscriptionOptions,
-  getStripeCustomerIdOptions
+  consumePaymentSuccessOptions,
+  createBillingPortalSessionOptions,
+  createCheckoutSessionOptions,
+  getBillingStatusOptions,
+  resumeSubscriptionOptions,
+  startTrialOptions
 } from '../options/payment';
 
 const paymentRoutes = (
@@ -16,12 +18,20 @@ const paymentRoutes = (
   _options: FastifyPluginOptions,
   done: DoneFuncWithErrOrRes
 ) => {
-  fastify.post('/api/:userId/create-customer', createCustomerOptions);
-  fastify.post('/api/:userId/create-subscription', createSubscriptionOptions);
-  fastify.get('/api/:userId/customer', getStripeCustomerIdOptions);
-  fastify.put(
-    '/api/:userId/cancel-subscription',
-    cancelStripeSubscriptionOptions
+  fastify.get('/api/:userId/billing', getBillingStatusOptions);
+  fastify.post('/api/:userId/billing/start-trial', startTrialOptions);
+  fastify.post(
+    '/api/:userId/billing/portal-session',
+    createBillingPortalSessionOptions
+  );
+  fastify.post(
+    '/api/:userId/billing/checkout-session',
+    createCheckoutSessionOptions
+  );
+  fastify.post('/api/:userId/billing/resume', resumeSubscriptionOptions);
+  fastify.post(
+    '/api/:userId/billing/consume-payment-success',
+    consumePaymentSuccessOptions
   );
 
   done();

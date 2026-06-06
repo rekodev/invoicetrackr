@@ -1,8 +1,12 @@
 import { beforeEach, vi } from 'vitest';
+import type { FastifyRequest } from 'fastify';
 
 // Reusable mocks for external services
 export const mockT = vi.fn((key: string) => key);
-export const mockUseI18n = vi.fn(async () => ({ t: mockT }));
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const mockUseI18n = vi.fn(async (_request?: FastifyRequest) => ({
+  t: mockT
+}));
 
 export const mockCloudinaryUpload = vi.fn();
 export const mockCloudinaryDestroy = vi.fn();
@@ -16,19 +20,30 @@ export const mockStripeCustomerCreate = vi.fn().mockResolvedValue({
   id: 'mock-customer-id'
 });
 export const mockStripeCustomerDelete = vi.fn().mockResolvedValue({});
-export const mockStripeCustomerRetrieve = vi.fn();
+export const mockStripeCustomerRetrieve = vi.fn().mockResolvedValue({
+  id: 'mock-customer-id',
+  deleted: false,
+  invoice_settings: {
+    default_payment_method: null
+  }
+});
 export const mockStripeSubscriptionCreate = vi.fn().mockResolvedValue({
   id: 'mock-subscription-id'
 });
 export const mockStripeSubscriptionRetrieve = vi.fn();
 export const mockStripeSubscriptionCancel = vi.fn();
+export const mockStripeSubscriptionResume = vi.fn();
+export const mockStripePortalSessionCreate = vi.fn();
+export const mockStripeCheckoutSessionCreate = vi.fn();
+export const mockStripeCheckoutSessionRetrieve = vi.fn();
+export const mockStripePaymentMethodsList = vi.fn().mockResolvedValue({
+  data: []
+});
 
 // Mock fastify-i18n
 vi.mock('fastify-i18n', () => ({
   default: vi.fn(),
-  useI18n: vi.fn(async () => {
-    return { t: (key: string) => key };
-  }),
+  useI18n: mockUseI18n,
   fastifyI18n: vi.fn()
 }));
 
@@ -63,7 +78,22 @@ vi.mock('../config/stripe', () => ({
     subscriptions: {
       create: mockStripeSubscriptionCreate,
       retrieve: mockStripeSubscriptionRetrieve,
-      cancel: mockStripeSubscriptionCancel
+      cancel: mockStripeSubscriptionCancel,
+      resume: mockStripeSubscriptionResume
+    },
+    billingPortal: {
+      sessions: {
+        create: mockStripePortalSessionCreate
+      }
+    },
+    checkout: {
+      sessions: {
+        create: mockStripeCheckoutSessionCreate,
+        retrieve: mockStripeCheckoutSessionRetrieve
+      }
+    },
+    paymentMethods: {
+      list: mockStripePaymentMethodsList
     }
   }
 }));

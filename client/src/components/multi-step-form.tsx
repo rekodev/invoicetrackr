@@ -7,33 +7,29 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  addToast,
   cn
 } from '@heroui/react';
 import { useMemo, useState } from 'react';
+import { User } from '@invoicetrackr/types';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { BankAccountBody, User } from '@invoicetrackr/types';
-import {
-  isUserBankingDetailsSetUp,
-  isUserPersonalInformationSetUp
-} from '@/lib/utils/user';
+import { PAYMENT_SUCCESS_CONFIRM_PAGE } from '@/lib/constants/pages';
+import { isUserPersonalInformationSetUp } from '@/lib/utils/user';
 
 import AppLogo from './app-logo';
-import BankAccountForm from './profile/bank-account-form';
 import PaymentForm from './payment-form';
 import PersonalInformationForm from './profile/personal-information-form';
 import SignUpForm from './auth/sign-up-form';
 
 type Props = {
   existingUserData?: User;
-  existingBankingInformation?: BankAccountBody;
 };
 
-export default function MultiStepForm({
-  existingUserData,
-  existingBankingInformation
-}: Props) {
+export default function MultiStepForm({ existingUserData }: Props) {
   const t = useTranslations('sign_up.multi_step');
+  const router = useRouter();
 
   const steps = [
     {
@@ -47,28 +43,28 @@ export default function MultiStepForm({
       description: t('steps.personal.description')
     },
     {
-      id: 'banking',
-      name: t('steps.banking.name'),
-      description: t('steps.banking.description')
-    },
-    {
-      id: 'payment',
-      name: t('steps.payment.name'),
-      description: t('steps.payment.description')
+      id: 'trial',
+      name: t('steps.trial.name'),
+      description: t('steps.trial.description')
     }
   ];
   const initialCurrentStep = useMemo(() => {
     if (!existingUserData) return 0;
-    if (isUserPersonalInformationSetUp(existingUserData)) {
-      return isUserBankingDetailsSetUp(existingUserData) ? 3 : 2;
-    }
+    if (isUserPersonalInformationSetUp(existingUserData)) return 2;
 
     return 1;
   }, [existingUserData]);
 
   const [currentStep, setCurrentStep] = useState(initialCurrentStep);
 
-  const advanceStep = () => setCurrentStep((prev) => prev + 1);
+  const completePersonalInformation = async () => {
+    if (!existingUserData?.id) {
+      addToast({ title: t('errors.missing_user'), color: 'danger' });
+      return;
+    }
+
+    setCurrentStep(2);
+  };
 
   const renderStep = () => {
     switch (currentStep) {
@@ -78,21 +74,18 @@ export default function MultiStepForm({
         return (
           <PersonalInformationForm
             defaultValues={existingUserData}
-            onSuccess={advanceStep}
+            onSuccess={completePersonalInformation}
           />
         );
       case 2:
         return (
-          <BankAccountForm
-            isUserOnboarding
-            userId={existingUserData?.id}
-            userSelectedBankAccountId={existingUserData?.selectedBankAccountId}
-            defaultValues={existingBankingInformation}
-            onSuccess={advanceStep}
+          <PaymentForm
+            user={existingUserData}
+            onTrialStarted={() => {
+              router.push(`${PAYMENT_SUCCESS_CONFIRM_PAGE}?trial=true`);
+            }}
           />
         );
-      case 3:
-        return <PaymentForm user={existingUserData} />;
       default:
         null;
     }
