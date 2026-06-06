@@ -5,14 +5,7 @@ import {
   CheckCircleIcon,
   SparklesIcon
 } from '@heroicons/react/24/outline';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  cn
-} from '@heroui/react';
+import { Button, Card, CardBody, CardHeader, cn } from '@heroui/react';
 import { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -111,25 +104,23 @@ export default function SubscriptionStatusCard({
               interval: t('interval.month')
             })}
           </p>
+          {showAction && (
+            <Button
+              onPress={handleClick}
+              isLoading={isLoading}
+              className="mt-3 w-full rounded-xl font-medium"
+              size="sm"
+              variant={isActive ? 'bordered' : 'solid'}
+              color={isActive ? 'secondary' : 'warning'}
+              endContent={
+                !isLoading && <ArrowRightIcon className="h-3.5 w-3.5" />
+              }
+            >
+              {isActive ? t('action.manage') : t('action.renew')}
+            </Button>
+          )}
         </div>
       </CardBody>
-      {showAction && (
-        <CardFooter className="relative pt-0">
-          <Button
-            onPress={handleClick}
-            isLoading={isLoading}
-            className="w-full rounded-xl font-medium"
-            size="sm"
-            variant={isActive ? 'bordered' : 'solid'}
-            color={isActive ? 'secondary' : 'warning'}
-            endContent={
-              !isLoading && <ArrowRightIcon className="h-3.5 w-3.5" />
-            }
-          >
-            {isActive ? t('action.manage') : t('action.renew')}
-          </Button>
-        </CardFooter>
-      )}
     </Card>
   );
 }
