@@ -471,7 +471,7 @@ describe('Invoice Controller', () => {
 
       expect(response.statusCode).toBe(400);
       expect(JSON.parse(response.body).message).toBe(
-        'error.invoice.signingLinkExpired'
+        'This invoice link has expired. Ask the sender for a fresh link.'
       );
 
       await app.close();
@@ -501,7 +501,7 @@ describe('Invoice Controller', () => {
 
       expect(response.statusCode).toBe(400);
       expect(JSON.parse(response.body).message).toBe(
-        'error.invoice.signingLinkRevoked'
+        'This invoice link has been revoked. Ask the sender for a fresh link.'
       );
 
       await app.close();
