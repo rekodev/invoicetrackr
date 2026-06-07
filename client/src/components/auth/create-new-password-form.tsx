@@ -14,8 +14,10 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { useActionState } from 'react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { ActionResponseModel } from '@/lib/types/action';
@@ -27,19 +29,58 @@ type Props = {
   token: string;
 };
 
+const initialFormValues = {
+  newPassword: '',
+  confirmedNewPassword: ''
+};
+
+type CreateNewPasswordFormModel = typeof initialFormValues;
+
 export default function CreateNewPasswordForm({ userId, token }: Props) {
   const t = useTranslations('create_new_password.form');
-  const [response, formAction, isPending] = useActionState(
-    (prevState: ActionResponseModel | undefined, formData: FormData) => {
-      const newFormData = new FormData();
-      formData.forEach((value, key) => newFormData.append(key, value));
-      newFormData.append('userId', String(userId));
-      newFormData.append('token', token);
+  const {
+    register,
+    handleSubmit,
+    clearErrors,
+    setError,
+    formState: { errors, isSubmitting }
+  } = useForm<CreateNewPasswordFormModel>({
+    defaultValues: initialFormValues
+  });
+  const [response, setResponse] = useState<ActionResponseModel>();
 
-      return createNewPasswordAction(prevState, newFormData);
-    },
-    undefined
-  );
+  const clearFieldState = (field: keyof CreateNewPasswordFormModel) => {
+    clearErrors(field);
+    setResponse(undefined);
+  };
+
+  const onSubmit: SubmitHandler<CreateNewPasswordFormModel> = async (data) => {
+    setResponse(undefined);
+
+    const formData = new FormData();
+    formData.append('newPassword', data.newPassword);
+    formData.append('confirmedNewPassword', data.confirmedNewPassword);
+    formData.append('userId', String(userId));
+    formData.append('token', token);
+
+    const actionResponse = await createNewPasswordAction(undefined, formData);
+    setResponse(actionResponse);
+
+    if (!actionResponse.ok && actionResponse.validationErrors) {
+      Object.entries(actionResponse.validationErrors).forEach(
+        ([key, value]) => {
+          setError(key as keyof CreateNewPasswordFormModel, { message: value });
+        }
+      );
+    }
+  };
+
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    clearErrors();
+    setResponse(undefined);
+
+    return handleSubmit(onSubmit)(event);
+  };
 
   return (
     <Card
@@ -50,33 +91,37 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
         <h1 className="text-3xl font-medium">{t('title')}</h1>
       </CardHeader>
       <CardBody className="p-8 pb-0">
-        <form action={formAction} className="flex flex-col gap-4">
+        <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <Input
+            {...register('newPassword', {
+              onChange: () => clearFieldState('newPassword')
+            })}
             labelPlacement="outside"
             variant="faded"
             id="newPassword"
             type="password"
-            name="newPassword"
             label={t('new_password')}
             placeholder={t('new_password_placeholder')}
-            isInvalid={!!response?.validationErrors?.newPassword}
-            errorMessage={response?.validationErrors?.newPassword}
+            isInvalid={!!errors.newPassword}
+            errorMessage={errors.newPassword?.message}
           />
           <Input
+            {...register('confirmedNewPassword', {
+              onChange: () => clearFieldState('confirmedNewPassword')
+            })}
             labelPlacement="outside"
             variant="faded"
             id="confirmedNewPassword"
             type="password"
-            name="confirmedNewPassword"
             label={t('confirmed_new_password')}
             placeholder={t('confirmed_new_password_placeholder')}
-            isInvalid={!!response?.validationErrors?.confirmedNewPassword}
-            errorMessage={response?.validationErrors?.confirmedNewPassword}
+            isInvalid={!!errors.confirmedNewPassword}
+            errorMessage={errors.confirmedNewPassword?.message}
           />
           <Button
             className="w-full justify-between"
-            aria-disabled={isPending}
-            isLoading={isPending}
+            aria-disabled={isSubmitting}
+            isLoading={isSubmitting}
             type="submit"
             endContent={<ArrowRightIcon className="h-5 w-5" />}
             color="secondary"

@@ -15,20 +15,44 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
-import { useActionState } from 'react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
 import { ActionResponseModel } from '@/lib/types/action';
 import { resetPasswordAction } from '@/lib/actions';
 
+type ForgotPasswordFormModel = {
+  email: string;
+};
+
 export default function ForgotPasswordForm() {
   const t = useTranslations('forgot_password');
-  const [response, formAction, isPending] = useActionState(
-    (prevState: ActionResponseModel | undefined, formData: FormData) =>
-      resetPasswordAction(prevState, formData.get('email') as string),
-    undefined
-  );
+  const {
+    register,
+    handleSubmit,
+    clearErrors,
+    formState: { errors, isSubmitting }
+  } = useForm<ForgotPasswordFormModel>({
+    defaultValues: {
+      email: ''
+    }
+  });
+  const [response, setResponse] = useState<ActionResponseModel>();
+
+  const onSubmit: SubmitHandler<ForgotPasswordFormModel> = async (data) => {
+    setResponse(undefined);
+    setResponse(await resetPasswordAction(undefined, data.email));
+  };
+
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    clearErrors();
+    setResponse(undefined);
+
+    return handleSubmit(onSubmit)(event);
+  };
 
   return (
     <Card
@@ -39,19 +63,26 @@ export default function ForgotPasswordForm() {
         <h1 className="text-3xl font-medium">{t('card_header')}</h1>
       </CardHeader>
       <CardBody className="p-8 pb-0">
-        <form action={formAction} className="flex flex-col gap-4">
+        <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <Input
+            {...register('email', {
+              onChange: () => {
+                clearErrors('email');
+                setResponse(undefined);
+              }
+            })}
             labelPlacement="outside"
             variant="faded"
             id="email"
-            name="email"
             label={t('email')}
             placeholder={t('email_placeholder')}
+            isInvalid={!!errors.email}
+            errorMessage={errors.email?.message}
           />
           <Button
             className="w-full justify-between"
-            aria-disabled={isPending}
-            isLoading={isPending}
+            aria-disabled={isSubmitting}
+            isLoading={isSubmitting}
             type="submit"
             endContent={<ArrowRightIcon className="h-5 w-5" />}
             color="secondary"
