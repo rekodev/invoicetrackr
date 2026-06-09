@@ -60,6 +60,7 @@ const InvoiceServicesTable = ({
     { name: t('column_actions'), uid: 'actions' }
   ];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const services =
     useWatch({
       control,

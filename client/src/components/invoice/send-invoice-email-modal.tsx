@@ -71,6 +71,7 @@ export default function SendInvoiceEmailModal({
   } = useForm<SendInvoiceForm>();
   const defaultRecipientEmail =
     invoice.recipientSigningEmail || invoice.receiver.email || '';
+  // eslint-disable-next-line react-hooks/incompatible-library
   const recipientEmail = watch('recipientEmail', defaultRecipientEmail);
   const shouldRotateSigningLink = Boolean(
     invoice.recipientSigningToken &&

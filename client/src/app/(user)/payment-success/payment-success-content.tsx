@@ -17,8 +17,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 import {
-  ACCOUNT_SETTINGS_PAGE,
   ADD_NEW_INVOICE_PAGE,
+  BILLING_PAGE,
   CLIENTS_PAGE,
   CONTRACTS_PAGE,
   DASHBOARD_PAGE,
@@ -184,17 +184,14 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
                       {t(`${copyKey}.summary.secondary_label`)}
                     </dt>
                     <dd className="text-foreground mt-1.5 text-[22px] font-semibold tabular-nums leading-none tracking-tight">
-                      €4.99
-                      <span className="text-default-500 text-[13px]">/mo</span>
+                      {t(`${copyKey}.summary.secondary_value`)}
                     </dd>
                   </div>
                 </dl>
 
                 <div className="border-default-200 mt-6 border-t pt-4">
                   <Link
-                    href={
-                      isTrial ? RENEW_SUBSCRIPTION_PAGE : ACCOUNT_SETTINGS_PAGE
-                    }
+                    href={isTrial ? RENEW_SUBSCRIPTION_PAGE : BILLING_PAGE}
                     className="text-foreground/90 hover:text-secondary group inline-flex items-center gap-1.5 text-[13px] transition"
                   >
                     {t(`${copyKey}.summary.link`)}

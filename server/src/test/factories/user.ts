@@ -31,7 +31,8 @@ export const userFactory = Factory.define<
   trialEndsAt: null,
   subscriptionGraceEndsAt: null,
   subscriptionCurrentPeriodEndsAt: null,
-  subscriptionCancelAt: null
+  subscriptionCancelAt: null,
+  paymentSuccessPending: false
 }));
 
 export const userWithPasswordFactory = Factory.define<

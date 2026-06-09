@@ -1,4 +1,5 @@
 import {
+  billingIntervalRequestSchema,
   billingStatusResponseSchema,
   billingUrlResponseSchema,
   consumePaymentSuccessResponseSchema
@@ -22,7 +23,10 @@ export const getBillingStatusOptions: RouteShorthandOptionsWithHandler = {
 };
 
 export const startTrialOptions: RouteShorthandOptionsWithHandler = {
-  schema: { response: { 200: billingStatusResponseSchema } },
+  schema: {
+    body: billingIntervalRequestSchema.optional(),
+    response: { 200: billingStatusResponseSchema }
+  },
   preHandler: authMiddleware,
   handler: startTrial
 };
@@ -35,7 +39,10 @@ export const createBillingPortalSessionOptions: RouteShorthandOptionsWithHandler
   };
 
 export const createCheckoutSessionOptions: RouteShorthandOptionsWithHandler = {
-  schema: { response: { 200: billingUrlResponseSchema } },
+  schema: {
+    body: billingIntervalRequestSchema.optional(),
+    response: { 200: billingUrlResponseSchema }
+  },
   preHandler: authMiddleware,
   handler: createCheckoutSession
 };

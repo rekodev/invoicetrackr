@@ -30,3 +30,7 @@ export const stripeSubscriptionStatusSchema = z.enum([
 export type StripeSubscriptionStatus = z.infer<
   typeof stripeSubscriptionStatusSchema
 >;
+
+export const billingIntervalSchema = z.enum(['monthly', 'annual']);
+
+export type BillingInterval = z.infer<typeof billingIntervalSchema>;

@@ -3,5 +3,7 @@
 import { Skeleton } from '@heroui/react';
 
 export default function UserNavCardSkeleton() {
-  return <Skeleton className="h-[320px] w-full rounded-xl sm:w-[224px]" />;
+  return (
+    <Skeleton className="h-96 w-full rounded-xl sm:min-w-56 sm:max-w-56" />
+  );
 }

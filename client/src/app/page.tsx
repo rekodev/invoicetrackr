@@ -142,7 +142,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-6 py-12 lg:flex-row">
+          <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-6 py-12 lg:flex-row lg:items-stretch">
             <div className="bg-card text-card-foreground border-default-500/50 dark:border-default-500/50 flex min-h-[472px] w-full max-w-md flex-col justify-between rounded-lg border shadow-sm">
               <div>
                 <div className="flex flex-col space-y-1.5 p-6">
@@ -196,10 +196,22 @@ export default function Home() {
                 <p>{t('pricing.premium.subtitle')}</p>
               </div>
               <div className="p-6 pt-0">
-                <div className="text-4xl font-bold">
-                  {getCurrencySymbol(getUserCurrency())}4.99
+                <div className="flex flex-wrap items-end gap-2">
+                  <div className="text-4xl font-bold">
+                    {getCurrencySymbol(getUserCurrency())}49
+                  </div>
+                  <div className="text-muted-foreground pb-1 text-sm">
+                    {t('pricing.premium.annual_price_label')}
+                  </div>
                 </div>
-                <div>{t('pricing.premium.price_label')}</div>
+                <div className="border-secondary/30 bg-secondary/10 text-secondary mt-2 inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-wider">
+                  {t('pricing.premium.annual_badge')}
+                </div>
+                <div className="text-muted-foreground mt-3 text-sm">
+                  {t('pricing.premium.monthly_option', {
+                    price: `${getCurrencySymbol(getUserCurrency())}4.99`
+                  })}
+                </div>
               </div>
               <div className="p-6 pt-0">
                 <ul className="space-y-2">

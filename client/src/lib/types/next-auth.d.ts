@@ -1,5 +1,8 @@
+import type {
+  BillingInterval,
+  StripeSubscriptionStatus
+} from '@invoicetrackr/types';
 import { DefaultSession } from 'next-auth';
-import { StripeSubscriptionStatus } from '@invoicetrackr/types';
 
 import { Currency } from './currency';
 
@@ -24,8 +27,23 @@ declare module 'next-auth' {
     stripeCustomerId?: string | null;
     stripeSubscriptionId?: string | null;
     hasPaymentMethod?: boolean;
+    billingDetails?: {
+      name?: string | null;
+      email?: string | null;
+      cardBrand?: string | null;
+      cardLast4?: string | null;
+      cardExpMonth?: number | null;
+      cardExpYear?: number | null;
+    };
     isOnboarded?: boolean;
     subscriptionStatus?: StripeSubscriptionStatus | null;
+    billingInterval?: BillingInterval | null;
+    billingRate?: {
+      amount?: number | null;
+      currency?: string | null;
+      interval?: string | null;
+      intervalCount?: number | null;
+    };
     onboardingCompletedAt?: string | null;
     trialStartedAt?: string | null;
     trialEndsAt?: string | null;
