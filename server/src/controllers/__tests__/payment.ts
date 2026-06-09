@@ -117,13 +117,13 @@ describe('Payment Controller', () => {
     process.env.STRIPE_EUR_MONTHLY_PRICE = 'price_monthly';
     process.env.STRIPE_EUR_ANNUAL_PRICE = 'price_annual';
 
-    vi.mocked(paymentDb.getBillingStatusFromDb).mockResolvedValue(
-      eligibleBilling
-    );
+    vi.mocked(paymentDb.getBillingStatusFromDb).mockResolvedValue({
+      ...eligibleBilling
+    });
     vi.mocked(paymentDb.getStripeAccountFromDb).mockResolvedValue({
       id: 1,
       stripeCustomerId: '2',
-      stripeSubscriptionId: '3',
+      stripeSubscriptionId: null,
       userId: 4
     });
     vi.mocked(paymentDb.upsertStripeAccountInDb).mockResolvedValue(1);

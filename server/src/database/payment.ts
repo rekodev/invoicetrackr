@@ -9,7 +9,7 @@ import {
 import { db } from './db';
 
 type BillingUpdate = {
-  subscriptionStatus?: StripeSubscriptionStatus;
+  subscriptionStatus?: StripeSubscriptionStatus | null;
   onboardingCompletedAt?: string | null;
   trialStartedAt?: string | null;
   trialEndsAt?: string | null;

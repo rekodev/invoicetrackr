@@ -19,6 +19,7 @@ import { getUserFromDb } from '../database/user';
 import { stripe } from '../config/stripe';
 
 const TRIAL_DAYS = 7;
+type BillingStatusUpdate = Parameters<typeof updateBillingStatusInDb>[1];
 const LIVE_SUBSCRIPTION_STATUSES = ['active', 'trialing', 'past_due', 'paused'];
 
 const timestampToIso = (timestamp?: number | null) =>
@@ -410,14 +411,16 @@ const sendBillingStatus = async (userId: number, reply: FastifyReply) => {
   if (subscription) {
     await syncSubscriptionInDb(userId, subscription);
   } else if (hasLiveSubscriptionStatus(billing.subscriptionStatus)) {
-    await updateBillingStatusInDb(userId, {
-      subscriptionStatus: undefined,
+    const inactiveBillingUpdate: BillingStatusUpdate = {
+      subscriptionStatus: null,
       trialEndsAt: null,
       subscriptionGraceEndsAt: null,
       subscriptionCurrentPeriodEndsAt: null,
       subscriptionCancelAt: null,
       paymentSuccessPending: false
-    });
+    };
+
+    await updateBillingStatusInDb(userId, inactiveBillingUpdate);
     await updateStripeSubscriptionForUserInDb(userId, null);
   }
 
