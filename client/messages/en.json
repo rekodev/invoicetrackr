@@ -91,6 +91,7 @@
                 "primary_label": "Access",
                 "primary_value": "Full access",
                 "secondary_label": "Plan",
+                "secondary_value": "Pro plan",
                 "link": "Manage subscription"
             }
         },
@@ -105,6 +106,7 @@
                 "primary_label": "Ends",
                 "primary_value": "In 7 days",
                 "secondary_label": "After trial",
+                "secondary_value": "Pro plan",
                 "link": "Upgrade early and lock in the price"
             }
         },
@@ -190,6 +192,9 @@
                 "title": "Premium",
                 "subtitle": "Everything you need for efficient invoicing",
                 "price_label": "per month",
+                "annual_price_label": "per year",
+                "annual_badge": "Save 18%",
+                "monthly_option": "{price}/month option also available",
                 "features": {
                     "everything": "Everything in Free",
                     "save": "Save and edit invoices",
@@ -626,6 +631,15 @@
                 "title": "Subscription Status",
                 "badge": "Pro plan",
                 "plan_label": "Current plan",
+                "current_rate_label": "Current rate",
+                "status_label": "Access status",
+                "billing_label": "Billing",
+                "billing_title": "Stripe-managed billing",
+                "billing_description": "Manage payment methods and subscription changes securely in Stripe. The active rate is shown from Stripe data.",
+                "billing_name_label": "Billing name",
+                "billing_email_label": "Billing email",
+                "billing_not_available": "Not available",
+                "payment_method_label": "Payment method",
                 "access_note": "Premium features and billing continuity",
                 "description": {
                     "active": "Your account has access to the paid workflow.",
@@ -647,6 +661,33 @@
                 "interval": {
                     "month": "month",
                     "year": "year"
+                },
+                "rates": {
+                    "monthly": {
+                        "title": "Monthly billing",
+                        "note": "Renews monthly through Stripe."
+                    },
+                    "annual": {
+                        "title": "Annual billing",
+                        "note": "Renews yearly through Stripe."
+                    },
+                    "custom": {
+                        "title": "Stripe billing"
+                    },
+                    "stripe_note": "Current active rate from Stripe.",
+                    "invoice_note": "Latest billed amount from Stripe.",
+                    "unavailable": {
+                        "title": "Exact rate unavailable",
+                        "amount": "—",
+                        "note": "Stripe did not return a subscription price for this account.",
+                        "renews": "Stripe did not return a subscription price. Current billing period ends {date}."
+                    }
+                },
+                "payment_method": {
+                    "card": "{brand} ending in {last4}",
+                    "saved": "Payment method saved in Stripe",
+                    "missing": "No payment method on file",
+                    "expires": "Expires {month}/{year}"
                 },
                 "action": {
                     "add_payment_method": "Add Payment Method",
@@ -782,10 +823,28 @@
                 "branding": "Professional PDF output with your details",
                 "support": "Billing continuity and account recovery"
             },
-            "price": {
-                "amount": "€4.99",
-                "interval": "/ month",
-                "note": "Billed monthly · cancel anytime"
+            "intervals": {
+                "annual": {
+                    "title": "Annual",
+                    "description": "€49/year",
+                    "badge": "Save 18%"
+                },
+                "monthly": {
+                    "title": "Monthly",
+                    "description": "€4.99/month"
+                }
+            },
+            "prices": {
+                "annual": {
+                    "amount": "€49",
+                    "interval": "/ year",
+                    "note": "Equivalent to €4.08/month · cancel anytime"
+                },
+                "monthly": {
+                    "amount": "€4.99",
+                    "interval": "/ month",
+                    "note": "Billed monthly · cancel anytime"
+                }
             },
             "checkout_note": "Secure checkout · instant access",
             "actions": {
@@ -1172,11 +1231,11 @@
                 },
                 "premium": {
                     "heading": "4.2 Premium Plan",
-                    "content": "Our premium plan ($4.99/month) includes all free features plus the ability to save and edit invoices, store client information, create and manage contracts, choose currency and language preferences, and email invoices directly to clients."
+                    "content": "Our premium plan (€4.99/month or €49/year) includes all free features plus the ability to save and edit invoices, store client information, create and manage contracts, choose currency and language preferences, and email invoices directly to clients."
                 },
                 "payment": {
                     "heading": "4.3 Payment Terms",
-                    "content": "Premium subscriptions are billed monthly in advance. Payment processing is handled securely by Stripe, a third-party payment processor. By subscribing to a premium plan, you authorize us to charge your payment method on a recurring basis."
+                    "content": "Premium subscriptions are billed monthly or annually in advance based on the plan you select. Payment processing is handled securely by Stripe, a third-party payment processor. By subscribing to a premium plan, you authorize us to charge your payment method on a recurring basis."
                 },
                 "cancellation": {
                     "heading": "4.4 Cancellation and Refunds",

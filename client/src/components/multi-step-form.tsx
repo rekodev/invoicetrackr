@@ -54,8 +54,12 @@ export default function MultiStepForm({ existingUserData }: Props) {
 
     return 1;
   }, [existingUserData]);
+  const minimumAllowedStep = existingUserData ? 1 : 0;
 
   const [currentStep, setCurrentStep] = useState(initialCurrentStep);
+  const goToStep = (step: number) => {
+    setCurrentStep(Math.max(minimumAllowedStep, step));
+  };
 
   const completePersonalInformation = async () => {
     if (!existingUserData?.id) {
@@ -63,7 +67,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
       return;
     }
 
-    setCurrentStep(2);
+    goToStep(2);
   };
 
   const renderStep = () => {
@@ -98,8 +102,8 @@ export default function MultiStepForm({ existingUserData }: Props) {
           key={step.id}
           className="relative flex cursor-pointer flex-col items-center"
           onClick={() => {
-            if (!existingUserData || index === 0) return;
-            setCurrentStep(index);
+            if (!existingUserData || index < minimumAllowedStep) return;
+            goToStep(index);
           }}
         >
           <div
@@ -148,8 +152,8 @@ export default function MultiStepForm({ existingUserData }: Props) {
           <Button
             variant="bordered"
             className="hidden md:flex"
-            isDisabled={currentStep <= 0}
-            onPress={() => setCurrentStep((prev) => (prev <= 0 ? 0 : prev - 1))}
+            isDisabled={currentStep <= minimumAllowedStep}
+            onPress={() => goToStep(currentStep - 1)}
           >
             <ArrowLeftIcon className="h-5 w-5" />
             {t('actions.back')}
@@ -182,10 +186,9 @@ export default function MultiStepForm({ existingUserData }: Props) {
                   'opacity-65': currentStep < index
                 })}
                 onClick={() => {
-                  if (!existingUserData) return;
-                  if (index === 0) return;
+                  if (!existingUserData || index < minimumAllowedStep) return;
 
-                  setCurrentStep(index);
+                  goToStep(index);
                 }}
               >
                 <div className="mr-4">

@@ -91,6 +91,7 @@
                 "primary_label": "Prieiga",
                 "primary_value": "Pilna prieiga",
                 "secondary_label": "Planas",
+                "secondary_value": "Pro planas",
                 "link": "Tvarkyti prenumeratą"
             }
         },
@@ -105,6 +106,7 @@
                 "primary_label": "Baigiasi",
                 "primary_value": "Po 7 dienų",
                 "secondary_label": "Po bandymo",
+                "secondary_value": "Pro planas",
                 "link": "Atnaujinti anksčiau ir užfiksuoti kainą"
             }
         },
@@ -190,6 +192,9 @@
                 "title": "Premium",
                 "subtitle": "Viskas ko reikia efektyviam sąskaitų išrašymui",
                 "price_label": "per mėnesį",
+                "annual_price_label": "per metus",
+                "annual_badge": "Sutaupykite 18%",
+                "monthly_option": "Taip pat galima {price}/mėn. opcija",
                 "features": {
                     "everything": "Viskas iš Nemokamos",
                     "save": "Išsaugokite ir redaguokite sąskaitas",
@@ -626,6 +631,15 @@
                 "title": "Prenumeratos Būsena",
                 "badge": "Pro planas",
                 "plan_label": "Dabartinis planas",
+                "current_rate_label": "Dabartinė kaina",
+                "status_label": "Prieigos būsena",
+                "billing_label": "Mokėjimai",
+                "billing_title": "Stripe valdomi mokėjimai",
+                "billing_description": "Mokėjimo būdus ir prenumeratos pakeitimus saugiai tvarkykite per Stripe. Aktyvi kaina rodoma pagal Stripe duomenis.",
+                "billing_name_label": "Mokėtojo vardas",
+                "billing_email_label": "Mokėtojo el. paštas",
+                "billing_not_available": "Nėra duomenų",
+                "payment_method_label": "Mokėjimo būdas",
                 "access_note": "Premium funkcijos ir mokėjimų tęstinumas",
                 "description": {
                     "active": "Jūsų paskyra turi prieigą prie mokamos darbo eigos.",
@@ -647,6 +661,33 @@
                 "interval": {
                     "month": "mėnėsį",
                     "year": "metus"
+                },
+                "rates": {
+                    "monthly": {
+                        "title": "Mėnesinis mokėjimas",
+                        "note": "Atnaujinama kas mėnesį per Stripe."
+                    },
+                    "annual": {
+                        "title": "Metinis mokėjimas",
+                        "note": "Atnaujinama kas metus per Stripe."
+                    },
+                    "custom": {
+                        "title": "Stripe mokėjimas"
+                    },
+                    "stripe_note": "Dabartinė aktyvi kaina iš Stripe.",
+                    "invoice_note": "Paskutinė Stripe nuskaityta suma.",
+                    "unavailable": {
+                        "title": "Tiksli kaina nepasiekiama",
+                        "amount": "—",
+                        "note": "Stripe negrąžino šios paskyros prenumeratos kainos.",
+                        "renews": "Stripe negrąžino prenumeratos kainos. Dabartinis mokėjimo laikotarpis baigiasi {date}."
+                    }
+                },
+                "payment_method": {
+                    "card": "{brand}, pabaiga {last4}",
+                    "saved": "Mokėjimo būdas išsaugotas Stripe",
+                    "missing": "Mokėjimo būdas nepridėtas",
+                    "expires": "Galioja iki {month}/{year}"
                 },
                 "action": {
                     "add_payment_method": "Pridėti mokėjimo būdą",
@@ -782,10 +823,28 @@
                 "branding": "Profesionalūs PDF dokumentai su jūsų duomenimis",
                 "support": "Mokėjimų tęstinumas ir paskyros atkūrimas"
             },
-            "price": {
-                "amount": "€4.99",
-                "interval": "/ mėn.",
-                "note": "Mokama kas mėnesį · atšaukti galima bet kada"
+            "intervals": {
+                "annual": {
+                    "title": "Metinis",
+                    "description": "€49/metus",
+                    "badge": "Sutaupykite 18%"
+                },
+                "monthly": {
+                    "title": "Mėnesinis",
+                    "description": "€4.99/mėn."
+                }
+            },
+            "prices": {
+                "annual": {
+                    "amount": "€49",
+                    "interval": "/ metus",
+                    "note": "Atitinka €4.08/mėn. · atšaukti galima bet kada"
+                },
+                "monthly": {
+                    "amount": "€4.99",
+                    "interval": "/ mėn.",
+                    "note": "Mokama kas mėnesį · atšaukti galima bet kada"
+                }
             },
             "checkout_note": "Saugus mokėjimas · prieiga iš karto",
             "actions": {
@@ -1172,11 +1231,11 @@
                 },
                 "premium": {
                     "heading": "4.2 Premium planas",
-                    "content": "Mūsų premium planas ($4.99/mėn.) apima visas nemokamas funkcijas ir galimybę išsaugoti bei redaguoti sąskaitas faktūras, saugoti klientų informaciją, kurti ir valdyti sutartis, pasirinkti valiutą ir kalbos nuostatas bei siųsti sąskaitas faktūras tiesiogiai klientams el. paštu."
+                    "content": "Mūsų premium planas (€4.99/mėn. arba €49/metus) apima visas nemokamas funkcijas ir galimybę išsaugoti bei redaguoti sąskaitas faktūras, saugoti klientų informaciją, kurti ir valdyti sutartis, pasirinkti valiutą ir kalbos nuostatas bei siųsti sąskaitas faktūras tiesiogiai klientams el. paštu."
                 },
                 "payment": {
                     "heading": "4.3 Mokėjimo sąlygos",
-                    "content": "Premium prenumeratos apmokestinamos kas mėnesį iš anksto. Mokėjimų apdorojimą saugiai atlieka Stripe, trečiosios šalies mokėjimų procesorius. Prenumeruodami premium planą, įgaliojate mus reguliariai nuskaityti mokesčius iš jūsų mokėjimo būdo."
+                    "content": "Premium prenumeratos apmokestinamos kas mėnesį arba kas metus iš anksto pagal pasirinktą planą. Mokėjimų apdorojimą saugiai atlieka Stripe, trečiosios šalies mokėjimų procesorius. Prenumeruodami premium planą, įgaliojate mus reguliariai nuskaityti mokesčius iš jūsų mokėjimo būdo."
                 },
                 "cancellation": {
                     "heading": "4.4 Atšaukimas ir grąžinimai",

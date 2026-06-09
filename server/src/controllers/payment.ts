@@ -1,7 +1,12 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import type { BillingInterval } from '@invoicetrackr/types';
 import Stripe from 'stripe';
 
-import { BadRequestError, NotFoundError } from '../utils/error';
+import {
+  BadRequestError,
+  InternalServerError,
+  NotFoundError
+} from '../utils/error';
 import {
   consumePaymentSuccessPendingInDb,
   getBillingStatusFromDb,
@@ -14,33 +19,287 @@ import { getUserFromDb } from '../database/user';
 import { stripe } from '../config/stripe';
 
 const TRIAL_DAYS = 7;
+const LIVE_SUBSCRIPTION_STATUSES = ['active', 'trialing', 'past_due', 'paused'];
 
 const timestampToIso = (timestamp?: number | null) =>
   timestamp ? new Date(timestamp * 1000).toISOString() : null;
 
+const hasLiveSubscriptionStatus = (status?: string | null) =>
+  !!status && LIVE_SUBSCRIPTION_STATUSES.includes(status);
+
 const getBaseUrl = () =>
   process.env.APP_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL!;
 
-const hasStripePaymentMethod = async (
-  account: Awaited<ReturnType<typeof getStripeAccountFromDb>>,
+const getStripePriceId = (interval: BillingInterval = 'monthly') => {
+  const priceId =
+    interval === 'annual'
+      ? process.env.STRIPE_EUR_ANNUAL_PRICE
+      : process.env.STRIPE_EUR_MONTHLY_PRICE || process.env.STRIPE_EUR_PRICE;
+
+  if (!priceId)
+    throw new InternalServerError(`Stripe ${interval} price is not configured`);
+
+  return priceId;
+};
+
+const getSubscriptionBillingInterval = (
+  subscription?: Stripe.Subscription
+): BillingInterval | null => {
+  const item = subscription?.items.data.at(0);
+  const priceId = item?.price?.id;
+
+  if (priceId) {
+    if (priceId === process.env.STRIPE_EUR_ANNUAL_PRICE) return 'annual';
+    if (
+      priceId === process.env.STRIPE_EUR_MONTHLY_PRICE ||
+      priceId === process.env.STRIPE_EUR_PRICE
+    )
+      return 'monthly';
+  }
+
+  if (item?.plan?.interval === 'year') return 'annual';
+  if (item?.plan?.interval === 'month') return 'monthly';
+
+  return null;
+};
+
+const getBillingRateFromStripePrice = (price?: Stripe.Price | null) => {
+  if (!price) return undefined;
+
+  return {
+    amount: price.unit_amount,
+    currency: price.currency,
+    interval: price.recurring?.interval,
+    intervalCount: price.recurring?.interval_count
+  };
+};
+
+const getBillingRateFromStripePlan = (plan?: Stripe.Plan | null) => {
+  if (!plan) return undefined;
+
+  return {
+    amount: plan.amount,
+    currency: plan.currency,
+    interval: plan.interval,
+    intervalCount: plan.interval_count
+  };
+};
+
+const getBillingRateFromStripePriceSource = async (
+  price?: Stripe.Price | string | null
+) => {
+  if (!price) return undefined;
+
+  if (typeof price === 'string')
+    return getBillingRateFromStripePrice(await stripe.prices.retrieve(price));
+
+  const billingRate = getBillingRateFromStripePrice(price);
+
+  if (
+    billingRate?.amount != null &&
+    billingRate.currency &&
+    billingRate.interval
+  )
+    return billingRate;
+
+  return price.id
+    ? getBillingRateFromStripePrice(await stripe.prices.retrieve(price.id))
+    : billingRate;
+};
+
+const getSubscriptionBillingRate = (subscription?: Stripe.Subscription) => {
+  const item = subscription?.items.data.at(0);
+  const price = item?.price;
+  const priceRate =
+    typeof price === 'string'
+      ? undefined
+      : getBillingRateFromStripePrice(price);
+
+  return hasCompleteBillingRate(priceRate)
+    ? priceRate
+    : getBillingRateFromStripePlan(item?.plan);
+};
+
+const getSubscriptionPriceId = (subscription?: Stripe.Subscription) => {
+  const price = subscription?.items.data.at(0)?.price;
+
+  return typeof price === 'string' ? price : price?.id;
+};
+
+const getSubscriptionBillingRateFromStripe = async (
   subscription?: Stripe.Subscription
 ) => {
-  if (!account?.stripeCustomerId) return false;
-  if (subscription?.default_payment_method) return true;
+  const currentRate = getSubscriptionBillingRate(subscription);
+
+  if (
+    currentRate?.amount != null &&
+    currentRate.currency &&
+    currentRate.interval
+  )
+    return currentRate;
+
+  const priceId = getSubscriptionPriceId(subscription);
+
+  if (!priceId) return currentRate;
+
+  return getBillingRateFromStripePriceSource(priceId);
+};
+
+const getInvoiceLinePriceSource = (
+  line: Stripe.InvoiceLineItem
+): Stripe.Price | string | null | undefined => {
+  const lineWithLegacyPrice = line as Stripe.InvoiceLineItem & {
+    price?: Stripe.Price | string | null;
+  };
+  const lineWithPricingDetails = line as Stripe.InvoiceLineItem & {
+    pricing?: {
+      price_details?: {
+        price?: Stripe.Price | string | null;
+      } | null;
+    } | null;
+  };
+
+  return (
+    lineWithLegacyPrice.price ||
+    lineWithPricingDetails.pricing?.price_details?.price
+  );
+};
+
+const getBillingIntervalFromPeriod = (
+  period?: Stripe.InvoiceLineItem.Period | null
+): Stripe.Price.Recurring.Interval | undefined => {
+  if (!period) return undefined;
+
+  const days = (period.end - period.start) / 86_400;
+
+  if (days > 330) return 'year';
+  if (days > 25 && days < 35) return 'month';
+
+  return undefined;
+};
+
+const getBillingRateFromInvoiceLine = (line: Stripe.InvoiceLineItem) => ({
+  amount: line.amount,
+  currency: line.currency,
+  interval: getBillingIntervalFromPeriod(line.period),
+  intervalCount: 1
+});
+
+const getBillingRateFromLatestInvoice = async (customerId?: string | null) => {
+  if (!customerId) return undefined;
+
+  const invoices = await stripe.invoices.list({
+    customer: customerId,
+    limit: 10
+  });
+
+  for (const invoice of invoices.data) {
+    for (const line of invoice.lines?.data || []) {
+      const priceRate = await getBillingRateFromStripePriceSource(
+        getInvoiceLinePriceSource(line)
+      );
+      const billingRate = hasCompleteBillingRate(priceRate)
+        ? priceRate
+        : getBillingRateFromInvoiceLine(line);
+
+      if (billingRate?.amount != null && billingRate.currency)
+        return billingRate;
+    }
+  }
+
+  return undefined;
+};
+
+const getSubscriptionFromCheckoutSessions = async (
+  customerId?: string | null
+) => {
+  if (!customerId) return undefined;
+
+  const sessions = await stripe.checkout.sessions.list({
+    customer: customerId,
+    status: 'complete',
+    limit: 10,
+    expand: ['data.subscription', 'data.subscription.items.data.price']
+  });
+
+  for (const session of sessions.data) {
+    const { subscription } = session;
+
+    if (!subscription) continue;
+
+    if (typeof subscription === 'string')
+      return stripe.subscriptions.retrieve(subscription, {
+        expand: ['default_payment_method', 'items.data.price']
+      });
+
+    if (
+      ['active', 'trialing', 'past_due', 'paused'].includes(subscription.status)
+    )
+      return subscription;
+  }
+
+  return undefined;
+};
+
+const getSubscriptionByUserMetadata = async (userId: number) => {
+  const subscriptions = await stripe.subscriptions.search({
+    query: `metadata['userId']:'${userId}'`,
+    limit: 10,
+    expand: ['data.default_payment_method', 'data.items.data.price']
+  });
+
+  return subscriptions.data.find(({ status }) =>
+    ['active', 'trialing', 'past_due', 'paused'].includes(status)
+  );
+};
+
+const hasCompleteBillingRate = (
+  billingRate: Awaited<ReturnType<typeof getBillingRateFromStripePriceSource>>
+) =>
+  billingRate?.amount != null &&
+  !!billingRate.currency &&
+  !!billingRate.interval;
+
+const getStripeBillingDetails = async (
+  account: Awaited<ReturnType<typeof getStripeAccountFromDb>>,
+  subscription?: Stripe.Subscription,
+  user?: Awaited<ReturnType<typeof getUserFromDb>>
+) => {
+  if (!account?.stripeCustomerId)
+    return { hasPaymentMethod: false, billingDetails: undefined };
 
   const customer = await stripe.customers.retrieve(account.stripeCustomerId);
 
-  if ('deleted' in customer && customer.deleted) return false;
+  if ('deleted' in customer && customer.deleted)
+    return { hasPaymentMethod: false, billingDetails: undefined };
 
-  if (customer.invoice_settings?.default_payment_method) return true;
+  const defaultPaymentMethod =
+    subscription?.default_payment_method ||
+    customer.invoice_settings?.default_payment_method;
+  const paymentMethod =
+    typeof defaultPaymentMethod === 'string'
+      ? await stripe.paymentMethods.retrieve(defaultPaymentMethod)
+      : defaultPaymentMethod ||
+        (
+          await stripe.paymentMethods.list({
+            customer: account.stripeCustomerId,
+            type: 'card',
+            limit: 1
+          })
+        ).data.at(0);
+  const card = paymentMethod?.card;
 
-  const paymentMethods = await stripe.paymentMethods.list({
-    customer: account.stripeCustomerId,
-    type: 'card',
-    limit: 1
-  });
-
-  return paymentMethods.data.length > 0;
+  return {
+    hasPaymentMethod: !!paymentMethod,
+    billingDetails: {
+      name: customer.name || user?.name,
+      email: customer.email || user?.email,
+      cardBrand: card?.brand,
+      cardLast4: card?.last4,
+      cardExpMonth: card?.exp_month,
+      cardExpYear: card?.exp_year
+    }
+  };
 };
 
 export const syncSubscriptionInDb = async (
@@ -97,12 +356,69 @@ const sendBillingStatus = async (userId: number, reply: FastifyReply) => {
   if (account?.stripeSubscriptionId) {
     try {
       subscription = await stripe.subscriptions.retrieve(
-        account.stripeSubscriptionId
+        account.stripeSubscriptionId,
+        { expand: ['default_payment_method', 'items.data.price'] }
       );
-      await syncSubscriptionInDb(userId, subscription);
     } catch (error) {
       reply.log.warn({ error, userId }, 'Unable to sync Stripe subscription');
     }
+  }
+
+  if (!subscription && account?.stripeCustomerId) {
+    try {
+      const subscriptions = await stripe.subscriptions.list({
+        customer: account.stripeCustomerId,
+        status: 'all',
+        limit: 10,
+        expand: ['data.default_payment_method', 'data.items.data.price']
+      });
+      subscription = subscriptions.data.find(({ status }) =>
+        ['active', 'trialing', 'past_due', 'paused'].includes(status)
+      );
+    } catch (error) {
+      reply.log.warn(
+        { error, userId },
+        'Unable to find Stripe subscription by customer'
+      );
+    }
+  }
+
+  if (!subscription && account?.stripeCustomerId) {
+    try {
+      subscription = await getSubscriptionFromCheckoutSessions(
+        account.stripeCustomerId
+      );
+    } catch (error) {
+      reply.log.warn(
+        { error, userId },
+        'Unable to find Stripe subscription by checkout session'
+      );
+    }
+  }
+
+  if (!subscription) {
+    try {
+      subscription = await getSubscriptionByUserMetadata(userId);
+    } catch (error) {
+      reply.log.warn(
+        { error, userId },
+        'Unable to find Stripe subscription by user metadata'
+      );
+    }
+  }
+
+  if (subscription) {
+    await syncSubscriptionInDb(userId, subscription);
+  } else if (hasLiveSubscriptionStatus(billing.subscriptionStatus)) {
+    await updateBillingStatusInDb(userId, {
+      subscriptionStatus: undefined,
+      trialEndsAt: null,
+      subscriptionGraceEndsAt: null,
+      subscriptionCurrentPeriodEndsAt: null,
+      subscriptionCancelAt: null,
+      paymentSuccessPending: false
+    });
+    await updateStripeSubscriptionForUserInDb(userId, null);
   }
 
   const syncedBilling = await getBillingStatusFromDb(userId);
@@ -110,17 +426,63 @@ const sendBillingStatus = async (userId: number, reply: FastifyReply) => {
   if (!syncedBilling) throw new NotFoundError('User not found');
 
   let hasPaymentMethod = false;
+  const user = await getUserFromDb(userId);
+  let billingRate:
+    | Awaited<ReturnType<typeof getBillingRateFromStripePriceSource>>
+    | undefined;
+  let billingDetails:
+    | {
+        name?: string | null;
+        email?: string | null;
+        cardBrand?: string | null;
+        cardLast4?: string | null;
+        cardExpMonth?: number | null;
+        cardExpYear?: number | null;
+      }
+    | undefined;
 
   try {
-    hasPaymentMethod = await hasStripePaymentMethod(account, subscription);
+    billingRate = await getSubscriptionBillingRateFromStripe(subscription);
   } catch (error) {
-    reply.log.warn({ error, userId }, 'Unable to sync Stripe payment method');
+    reply.log.warn({ error, userId }, 'Unable to retrieve Stripe price');
+  }
+
+  if (
+    subscription &&
+    !hasCompleteBillingRate(billingRate) &&
+    account?.stripeCustomerId
+  ) {
+    try {
+      billingRate = await getBillingRateFromLatestInvoice(
+        account.stripeCustomerId
+      );
+    } catch (error) {
+      reply.log.warn(
+        { error, userId },
+        'Unable to retrieve Stripe invoice price'
+      );
+    }
+  }
+
+  try {
+    const stripeBillingDetails = await getStripeBillingDetails(
+      account,
+      subscription,
+      user
+    );
+    hasPaymentMethod = stripeBillingDetails.hasPaymentMethod;
+    billingDetails = stripeBillingDetails.billingDetails;
+  } catch (error) {
+    reply.log.warn({ error, userId }, 'Unable to sync Stripe billing details');
   }
 
   return reply.status(200).send({
     billing: {
       ...syncedBilling,
-      hasPaymentMethod
+      billingInterval: getSubscriptionBillingInterval(subscription),
+      billingRate,
+      hasPaymentMethod,
+      billingDetails
     }
   });
 };
@@ -131,10 +493,14 @@ export const getBillingStatus = async (
 ) => sendBillingStatus(Number(req.params.userId), reply);
 
 export const startTrial = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Body: { interval?: BillingInterval };
+  }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
+  const interval = req.body?.interval || 'monthly';
   const billing = await getBillingStatusFromDb(userId);
   const account = await getStripeAccountFromDb(userId);
 
@@ -151,7 +517,7 @@ export const startTrial = async (
   const customerId = await ensureStripeCustomer(userId);
   const subscription = await stripe.subscriptions.create({
     customer: customerId,
-    items: [{ price: process.env.STRIPE_EUR_PRICE! }],
+    items: [{ price: getStripePriceId(interval) }],
     trial_period_days: TRIAL_DAYS,
     trial_settings: {
       end_behavior: { missing_payment_method: 'pause' }
@@ -210,10 +576,14 @@ export const consumePaymentSuccess = async (
         billing
       });
 
-    if (typeof checkoutSession.subscription === 'string') {
-      const subscription = await stripe.subscriptions.retrieve(
-        checkoutSession.subscription
-      );
+    if (checkoutSession.subscription) {
+      const subscription =
+        typeof checkoutSession.subscription === 'string'
+          ? await stripe.subscriptions.retrieve(checkoutSession.subscription, {
+              expand: ['default_payment_method', 'items.data.price']
+            })
+          : checkoutSession.subscription;
+
       await syncSubscriptionInDb(userId, subscription, {
         paymentSuccessPending: true
       });
@@ -250,17 +620,21 @@ export const createBillingPortalSession = async (
   const customerId = await ensureStripeCustomer(userId);
   const session = await stripe.billingPortal.sessions.create({
     customer: customerId,
-    return_url: `${getBaseUrl()}/renew-subscription`
+    return_url: `${getBaseUrl()}/profile/billing`
   });
 
   return reply.status(200).send({ url: session.url });
 };
 
 export const createCheckoutSession = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Body: { interval?: BillingInterval };
+  }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
+  const interval = req.body?.interval || 'monthly';
   const billing = await getBillingStatusFromDb(userId);
 
   if (!billing) throw new NotFoundError('User not found');
@@ -271,7 +645,11 @@ export const createCheckoutSession = async (
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
     mode: 'subscription',
-    line_items: [{ price: process.env.STRIPE_EUR_PRICE!, quantity: 1 }],
+    line_items: [{ price: getStripePriceId(interval), quantity: 1 }],
+    metadata: { userId: String(userId) },
+    subscription_data: {
+      metadata: { userId: String(userId) }
+    },
     success_url: `${getBaseUrl()}/payment-success/confirm?checkout=true&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${getBaseUrl()}/renew-subscription`
   });

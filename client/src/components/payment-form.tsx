@@ -1,8 +1,20 @@
 'use client';
 
-import { BillingUrlResponse, User } from '@invoicetrackr/types';
-import { Button, Card, CardBody, CardFooter, CardHeader } from '@heroui/react';
+import {
+  BillingInterval,
+  BillingUrlResponse,
+  User
+} from '@invoicetrackr/types';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  cn
+} from '@heroui/react';
 import { CheckIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
@@ -31,8 +43,11 @@ const reusableCheckoutStatuses = new Set([
 
 export default function PaymentForm({ user, onTrialStarted }: Props) {
   const t = useTranslations('components.payment_form');
+  const router = useRouter();
   const [loadingAction, setLoadingAction] = useState<PaymentAction>();
   const [error, setError] = useState<string>();
+  const [selectedInterval, setSelectedInterval] =
+    useState<BillingInterval>('annual');
 
   if (!user?.id) return null;
 
@@ -43,77 +58,63 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
     setLoadingAction(actionKey);
     setError(undefined);
 
-    try {
-      const response = await action();
+    const response = await action();
 
-      if (isResponseError(response)) {
-        setError(response.data.message);
-        setLoadingAction(undefined);
-        return;
-      }
-
-      window.location.assign(response.data.url);
-    } catch {
-      setError(t('errors.submit_failed'));
+    if (isResponseError(response)) {
+      setError(response.data.message);
       setLoadingAction(undefined);
+      return;
     }
+
+    window.location.assign(response.data.url);
   };
 
   const startFreeTrial = async () => {
     setLoadingAction('trial');
     setError(undefined);
 
-    try {
-      const response = await startTrial(user.id!);
+    const response = await startTrial(user.id!, selectedInterval);
 
-      if (isResponseError(response)) {
-        setError(response.data.message);
-        setLoadingAction(undefined);
-        return;
-      }
-
-      await updateSessionAction({
-        newSession: {
-          isOnboarded: !!response.data.billing.onboardingCompletedAt,
-          ...response.data.billing
-        }
-      });
-      if (onTrialStarted) {
-        await onTrialStarted();
-        return;
-      }
-
-      window.location.reload();
-    } catch {
-      setError(t('errors.submit_failed'));
+    if (isResponseError(response)) {
+      setError(response.data.message);
       setLoadingAction(undefined);
+      return;
     }
+
+    if (onTrialStarted) {
+      await onTrialStarted();
+      return;
+    }
+
+    await updateSessionAction({
+      newSession: {
+        isOnboarded: !!response.data.billing.onboardingCompletedAt,
+        ...response.data.billing
+      }
+    });
+
+    router.refresh();
   };
 
   const resumePausedSubscription = async () => {
     setLoadingAction('resume');
     setError(undefined);
 
-    try {
-      const response = await resumeSubscription(user.id!);
+    const response = await resumeSubscription(user.id!);
 
-      if (isResponseError(response)) {
-        setError(response.data.message);
-        setLoadingAction(undefined);
-        return;
-      }
-
-      await updateSessionAction({
-        newSession: {
-          isOnboarded: !!response.data.billing.onboardingCompletedAt,
-          ...response.data.billing
-        }
-      });
-      window.location.reload();
-    } catch {
-      setError(t('errors.submit_failed'));
+    if (isResponseError(response)) {
+      setError(response.data.message);
       setLoadingAction(undefined);
+      return;
     }
+
+    await updateSessionAction({
+      newSession: {
+        isOnboarded: !!response.data.billing.onboardingCompletedAt,
+        ...response.data.billing
+      }
+    });
+    router.refresh();
   };
 
   const subscriptionStatus = user.subscriptionStatus;
@@ -123,6 +124,24 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
     canStartTrial ||
     (subscriptionStatus && reusableCheckoutStatuses.has(subscriptionStatus));
   const isBusy = !!loadingAction;
+  const selectedPrice = t.raw(`prices.${selectedInterval}`) as {
+    amount: string;
+    interval: string;
+    note: string;
+  };
+  const billingIntervals = [
+    {
+      key: 'annual',
+      title: t('intervals.annual.title'),
+      description: t('intervals.annual.description'),
+      badge: t('intervals.annual.badge')
+    },
+    {
+      key: 'monthly',
+      title: t('intervals.monthly.title'),
+      description: t('intervals.monthly.description')
+    }
+  ] as const;
   const features = [
     t('features.invoices'),
     t('features.clients'),
@@ -179,17 +198,64 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
         </div>
 
         <div className="flex h-full flex-col p-8 md:px-10 md:pb-10 md:pt-20">
+          {canStartCheckout && (
+            <div className="border-default-200 bg-background/70 mb-5 grid grid-cols-2 gap-2 rounded-xl border p-1">
+              {billingIntervals.map((interval) => {
+                const isSelected = selectedInterval === interval.key;
+
+                return (
+                  <button
+                    key={interval.key}
+                    type="button"
+                    aria-pressed={isSelected}
+                    className={cn(
+                      'relative min-h-20 rounded-lg px-3 py-2 text-left transition',
+                      'focus-visible:outline-secondary focus-visible:outline focus-visible:outline-offset-2',
+                      isSelected
+                        ? 'bg-secondary text-secondary-foreground shadow-sm'
+                        : 'text-foreground hover:bg-default-100'
+                    )}
+                    onClick={() => setSelectedInterval(interval.key)}
+                  >
+                    <span className="block text-sm font-semibold">
+                      {interval.title}
+                    </span>
+                    <span
+                      className={cn('mt-1 block text-xs leading-4', {
+                        'text-secondary-foreground/80': isSelected,
+                        'text-default-500': !isSelected
+                      })}
+                    >
+                      {interval.description}
+                    </span>
+                    {'badge' in interval && (
+                      <span
+                        className={cn(
+                          'mt-2 inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
+                          isSelected
+                            ? 'text-secondary-foreground bg-white/20'
+                            : 'bg-secondary/10 text-secondary'
+                        )}
+                      >
+                        {interval.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
           <div>
             <div className="flex items-baseline gap-1.5">
               <span className="text-foreground text-4xl font-semibold leading-none tracking-tight">
-                {t('price.amount')}
+                {selectedPrice.amount}
               </span>
               <span className="text-default-500 text-sm">
-                {t('price.interval')}
+                {selectedPrice.interval}
               </span>
             </div>
             <p className="text-default-400 mt-1 text-xs uppercase tracking-wider">
-              {t('price.note')}
+              {selectedPrice.note}
             </p>
           </div>
 
@@ -205,7 +271,9 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
                   isLoading={loadingAction === 'checkout'}
                   isDisabled={isBusy && loadingAction !== 'checkout'}
                   onPress={() =>
-                    run('checkout', () => createCheckoutSession(user.id!))
+                    run('checkout', () =>
+                      createCheckoutSession(user.id!, selectedInterval)
+                    )
                   }
                 >
                   {t('actions.subscribe')}
@@ -254,7 +322,9 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
                 isLoading={loadingAction === 'checkout'}
                 isDisabled={isBusy && loadingAction !== 'checkout'}
                 onPress={() =>
-                  run('checkout', () => createCheckoutSession(user.id!))
+                  run('checkout', () =>
+                    createCheckoutSession(user.id!, selectedInterval)
+                  )
                 }
               >
                 {t('actions.subscribe')}

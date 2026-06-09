@@ -47,6 +47,8 @@ export const authConfig = {
         auth?.user?.subscriptionStatus === 'active' ||
         auth?.user?.subscriptionStatus === 'trialing' ||
         hasGraceAccess;
+      const hasStartedBilling =
+        !!auth?.user?.trialStartedAt || !!auth?.user?.subscriptionStatus;
       const isOnboardingPage = path.startsWith(ONBOARDING_PAGE);
       const isPaymentSuccessPage = path.startsWith(PAYMENT_SUCCESS_PAGE);
       const isPaymentSuccessConfirmPage = path.startsWith(
@@ -79,6 +81,12 @@ export const authConfig = {
 
         // Onboarded but subscription inactive → redirect unless already on renew page
         if (!isSubscriptionActive) {
+          if (!hasStartedBilling) {
+            return isOnboardingPage || isPaymentSuccessPage
+              ? true
+              : Response.redirect(new URL(ONBOARDING_PAGE, nextUrl));
+          }
+
           return isRenewPage || isPaymentSuccessPage
             ? true
             : Response.redirect(new URL(RENEW_SUBSCRIPTION_PAGE, nextUrl));

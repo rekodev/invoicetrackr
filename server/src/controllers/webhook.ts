@@ -72,6 +72,26 @@ export const handleStripeWebhook = async (
 
   try {
     switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const customerId = getCustomerId(session.customer);
+        const user = customerId
+          ? await getUserByStripeCustomerIdFromDb(customerId)
+          : undefined;
+
+        if (user && session.mode === 'subscription' && session.subscription) {
+          const subscription =
+            typeof session.subscription === 'string'
+              ? await stripe.subscriptions.retrieve(session.subscription)
+              : session.subscription;
+
+          await syncSubscriptionInDb(user.id, subscription, {
+            paymentSuccessPending: true
+          });
+        }
+        break;
+      }
+
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
       case 'customer.subscription.paused':

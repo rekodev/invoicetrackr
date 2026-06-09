@@ -1,6 +1,9 @@
 import z from 'zod/v4';
 import { userBodySchema, resetPasswordTokenGetSchema } from './user';
-import { stripeSubscriptionStatusSchema } from './common';
+import {
+  billingIntervalSchema,
+  stripeSubscriptionStatusSchema
+} from './common';
 import { bankAccountBodySchema } from './bank-account';
 import { clientBodySchema } from './client';
 import { invoiceBodySchema, publicInvoiceSigningSchema } from './invoice';
@@ -141,8 +144,27 @@ export const billingStatusSchema = z.object({
   subscriptionGraceEndsAt: z.string().nullish(),
   subscriptionCurrentPeriodEndsAt: z.string().nullish(),
   subscriptionCancelAt: z.string().nullish(),
+  billingInterval: billingIntervalSchema.nullish().optional(),
+  billingRate: z
+    .object({
+      amount: z.number().nullish(),
+      currency: z.string().nullish(),
+      interval: z.string().nullish(),
+      intervalCount: z.number().nullish()
+    })
+    .optional(),
   paymentSuccessPending: z.boolean(),
   hasPaymentMethod: z.boolean().optional(),
+  billingDetails: z
+    .object({
+      name: z.string().nullish(),
+      email: z.string().nullish(),
+      cardBrand: z.string().nullish(),
+      cardLast4: z.string().nullish(),
+      cardExpMonth: z.number().nullish(),
+      cardExpYear: z.number().nullish()
+    })
+    .optional(),
   hasPaidAccess: z.boolean()
 });
 
@@ -157,6 +179,10 @@ export const consumePaymentSuccessResponseSchema = z.object({
 
 export const billingUrlResponseSchema = z.object({
   url: z.string()
+});
+
+export const billingIntervalRequestSchema = z.object({
+  interval: billingIntervalSchema.optional()
 });
 
 // Types
@@ -238,3 +264,6 @@ export type ConsumePaymentSuccessResponse = z.infer<
   typeof consumePaymentSuccessResponseSchema
 >;
 export type BillingUrlResponse = z.infer<typeof billingUrlResponseSchema>;
+export type BillingIntervalRequest = z.infer<
+  typeof billingIntervalRequestSchema
+>;
