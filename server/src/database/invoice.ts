@@ -230,7 +230,17 @@ export const getInvoicesFromDb = async (
       recipientSigningCreatedAt: invoicesTable.recipientSigningCreatedAt,
       recipientSigningExpiresAt: invoicesTable.recipientSigningExpiresAt,
       recipientSigningRevokedAt: invoicesTable.recipientSigningRevokedAt,
+      recipientSigningRequestedAt: invoicesTable.recipientSigningRequestedAt,
       recipientSignedAt: invoicesTable.recipientSignedAt,
+      publicInvoiceToken: invoicesTable.publicInvoiceToken,
+      publicInvoiceSentAt: invoicesTable.publicInvoiceSentAt,
+      publicInvoiceExpiresAt: invoicesTable.publicInvoiceExpiresAt,
+      publicInvoiceRevokedAt: invoicesTable.publicInvoiceRevokedAt,
+      paymentProvider: invoicesTable.paymentProvider,
+      paymentCheckoutSessionId: invoicesTable.paymentCheckoutSessionId,
+      paymentIntentId: invoicesTable.paymentIntentId,
+      paymentCompletedAt: invoicesTable.paymentCompletedAt,
+      paymentFailedAt: invoicesTable.paymentFailedAt,
       bankingInformation: {
         id: invoiceBankingInformationTable.id,
         code: invoiceBankingInformationTable.bankCode,
@@ -323,7 +333,17 @@ export const getInvoiceFromDb = async (
       recipientSigningCreatedAt: invoicesTable.recipientSigningCreatedAt,
       recipientSigningExpiresAt: invoicesTable.recipientSigningExpiresAt,
       recipientSigningRevokedAt: invoicesTable.recipientSigningRevokedAt,
+      recipientSigningRequestedAt: invoicesTable.recipientSigningRequestedAt,
       recipientSignedAt: invoicesTable.recipientSignedAt,
+      publicInvoiceToken: invoicesTable.publicInvoiceToken,
+      publicInvoiceSentAt: invoicesTable.publicInvoiceSentAt,
+      publicInvoiceExpiresAt: invoicesTable.publicInvoiceExpiresAt,
+      publicInvoiceRevokedAt: invoicesTable.publicInvoiceRevokedAt,
+      paymentProvider: invoicesTable.paymentProvider,
+      paymentCheckoutSessionId: invoicesTable.paymentCheckoutSessionId,
+      paymentIntentId: invoicesTable.paymentIntentId,
+      paymentCompletedAt: invoicesTable.paymentCompletedAt,
+      paymentFailedAt: invoicesTable.paymentFailedAt,
       bankingInformation: {
         id: invoiceBankingInformationTable.id,
         code: invoiceBankingInformationTable.bankCode,
@@ -535,6 +555,16 @@ export const updateInvoiceInDb = async (
         recipientSigningCreatedAt: invoicesTable.recipientSigningCreatedAt,
         recipientSigningExpiresAt: invoicesTable.recipientSigningExpiresAt,
         recipientSigningRevokedAt: invoicesTable.recipientSigningRevokedAt,
+        recipientSigningRequestedAt: invoicesTable.recipientSigningRequestedAt,
+        publicInvoiceToken: invoicesTable.publicInvoiceToken,
+        publicInvoiceSentAt: invoicesTable.publicInvoiceSentAt,
+        publicInvoiceExpiresAt: invoicesTable.publicInvoiceExpiresAt,
+        publicInvoiceRevokedAt: invoicesTable.publicInvoiceRevokedAt,
+        paymentProvider: invoicesTable.paymentProvider,
+        paymentCheckoutSessionId: invoicesTable.paymentCheckoutSessionId,
+        paymentIntentId: invoicesTable.paymentIntentId,
+        paymentCompletedAt: invoicesTable.paymentCompletedAt,
+        paymentFailedAt: invoicesTable.paymentFailedAt,
         recipientSignedAt: invoicesTable.recipientSignedAt
       })
       .from(invoicesTable)
@@ -693,8 +723,35 @@ export const updateInvoiceInDb = async (
         recipientSigningRevokedAt:
           invoiceData.recipientSigningRevokedAt ??
           currentInvoiceData.recipientSigningRevokedAt,
+        recipientSigningRequestedAt:
+          invoiceData.recipientSigningRequestedAt ??
+          currentInvoiceData.recipientSigningRequestedAt,
         recipientSignedAt:
-          invoiceData.recipientSignedAt ?? currentInvoiceData.recipientSignedAt
+          invoiceData.recipientSignedAt ?? currentInvoiceData.recipientSignedAt,
+        publicInvoiceToken:
+          invoiceData.publicInvoiceToken ??
+          currentInvoiceData.publicInvoiceToken,
+        publicInvoiceSentAt:
+          invoiceData.publicInvoiceSentAt ??
+          currentInvoiceData.publicInvoiceSentAt,
+        publicInvoiceExpiresAt:
+          invoiceData.publicInvoiceExpiresAt ??
+          currentInvoiceData.publicInvoiceExpiresAt,
+        publicInvoiceRevokedAt:
+          invoiceData.publicInvoiceRevokedAt ??
+          currentInvoiceData.publicInvoiceRevokedAt,
+        paymentProvider:
+          invoiceData.paymentProvider ?? currentInvoiceData.paymentProvider,
+        paymentCheckoutSessionId:
+          invoiceData.paymentCheckoutSessionId ??
+          currentInvoiceData.paymentCheckoutSessionId,
+        paymentIntentId:
+          invoiceData.paymentIntentId ?? currentInvoiceData.paymentIntentId,
+        paymentCompletedAt:
+          invoiceData.paymentCompletedAt ??
+          currentInvoiceData.paymentCompletedAt,
+        paymentFailedAt:
+          invoiceData.paymentFailedAt ?? currentInvoiceData.paymentFailedAt
       })
       .where(and(eq(invoicesTable.userId, userId), eq(invoicesTable.id, id)))
       .returning({ id: invoicesTable.id });
@@ -807,12 +864,45 @@ export async function prepareInvoiceSigningFromDb({
       recipientSigningToken: sql<string>`COALESCE(${invoicesTable.recipientSigningToken}, ${token})`,
       recipientSigningEmail: sql<string>`COALESCE(${invoicesTable.recipientSigningEmail}, ${recipientEmail})`,
       recipientSigningCreatedAt: sql<string>`COALESCE(${invoicesTable.recipientSigningCreatedAt}, ${new Date().toISOString()})`,
-      recipientSigningExpiresAt: sql<string>`COALESCE(${invoicesTable.recipientSigningExpiresAt}, ${expiresAt})`
+      recipientSigningExpiresAt: sql<string>`COALESCE(${invoicesTable.recipientSigningExpiresAt}, ${expiresAt})`,
+      recipientSigningRequestedAt: sql<string>`COALESCE(${invoicesTable.recipientSigningRequestedAt}, ${new Date().toISOString()})`
     })
     .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
     .returning({
       id: invoicesTable.id,
       recipientSigningToken: invoicesTable.recipientSigningToken
+    });
+
+  return invoices.at(0);
+}
+
+export async function preparePublicInvoiceFromDb({
+  userId,
+  id,
+  token,
+  expiresAt
+}: {
+  userId: number;
+  id: number;
+  token: string;
+  expiresAt: string;
+}): Promise<
+  | {
+      id: number;
+      publicInvoiceToken: string | null;
+    }
+  | undefined
+> {
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      publicInvoiceToken: sql<string>`COALESCE(${invoicesTable.publicInvoiceToken}, ${token})`,
+      publicInvoiceExpiresAt: sql<string>`COALESCE(${invoicesTable.publicInvoiceExpiresAt}, ${expiresAt})`
+    })
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .returning({
+      id: invoicesTable.id,
+      publicInvoiceToken: invoicesTable.publicInvoiceToken
     });
 
   return invoices.at(0);
@@ -856,7 +946,32 @@ export async function regenerateInvoiceSigningFromDb({
       recipientSigningCreatedAt: now,
       recipientSigningExpiresAt: expiresAt,
       recipientSigningRevokedAt: null,
-      recipientSigningSentAt: null
+      recipientSigningSentAt: null,
+      recipientSigningRequestedAt: now
+    })
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .returning({ id: invoicesTable.id });
+
+  return invoices.at(0);
+}
+
+export async function markPublicInvoiceSentInDb({
+  userId,
+  id,
+  requestSignature
+}: {
+  userId: number;
+  id: number;
+  requestSignature: boolean;
+}): Promise<{ id: number } | undefined> {
+  const now = new Date().toISOString();
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      lifecycleStatus: 'issued',
+      issuedAt: sql<string>`COALESCE(${invoicesTable.issuedAt}, ${now})`,
+      publicInvoiceSentAt: now,
+      ...(requestSignature ? { recipientSigningSentAt: now } : {})
     })
     .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
     .returning({ id: invoicesTable.id });
@@ -871,18 +986,7 @@ export async function markInvoiceSigningSentInDb({
   userId: number;
   id: number;
 }): Promise<{ id: number } | undefined> {
-  const now = new Date().toISOString();
-  const invoices = await db
-    .update(invoicesTable)
-    .set({
-      lifecycleStatus: 'issued',
-      issuedAt: sql<string>`COALESCE(${invoicesTable.issuedAt}, ${now})`,
-      recipientSigningSentAt: now
-    })
-    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
-    .returning({ id: invoicesTable.id });
-
-  return invoices.at(0);
+  return markPublicInvoiceSentInDb({ userId, id, requestSignature: true });
 }
 
 type PublicInvoiceSigningFromDb = Omit<
@@ -890,6 +994,7 @@ type PublicInvoiceSigningFromDb = Omit<
   'invoice' | 'token'
 > & {
   invoice: InvoiceFromDb;
+  userId: number;
 };
 
 export async function getPublicInvoiceSigningFromDb(
@@ -917,10 +1022,144 @@ export async function getPublicInvoiceSigningFromDb(
 
   return {
     invoice,
+    userId: row.userId,
     currency: row.currency,
     language: row.language,
     preferredInvoiceLanguage: row.preferredInvoiceLanguage
   };
+}
+
+export async function getPublicInvoiceFromDb(
+  token: string
+): Promise<PublicInvoiceSigningFromDb | undefined> {
+  const rows = await db
+    .select({
+      id: invoicesTable.id,
+      userId: invoicesTable.userId,
+      currency: usersTable.currency,
+      language: usersTable.language,
+      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage
+    })
+    .from(invoicesTable)
+    .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
+    .where(
+      or(
+        eq(invoicesTable.publicInvoiceToken, token),
+        eq(invoicesTable.recipientSigningToken, token)
+      )
+    )
+    .limit(1);
+  const row = rows.at(0);
+
+  if (!row) return undefined;
+
+  const invoice = await getInvoiceFromDb(row.userId, row.id);
+
+  if (!invoice) return undefined;
+
+  return {
+    invoice,
+    userId: row.userId,
+    currency: row.currency,
+    language: row.language,
+    preferredInvoiceLanguage: row.preferredInvoiceLanguage
+  };
+}
+
+export async function recordInvoiceCheckoutSessionInDb({
+  token,
+  checkoutSessionId,
+  paymentIntentId
+}: {
+  token: string;
+  checkoutSessionId: string;
+  paymentIntentId?: string | null;
+}): Promise<{ id: number } | undefined> {
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      paymentProvider: 'stripe_connect',
+      paymentCheckoutSessionId: checkoutSessionId,
+      paymentIntentId: paymentIntentId || null,
+      paymentFailedAt: null
+    })
+    .where(eq(invoicesTable.publicInvoiceToken, token))
+    .returning({ id: invoicesTable.id });
+
+  return invoices.at(0);
+}
+
+export async function markInvoicePaidByCheckoutSessionInDb({
+  checkoutSessionId,
+  paymentIntentId,
+  invoiceId,
+  userId,
+  publicInvoiceToken
+}: {
+  checkoutSessionId: string;
+  paymentIntentId?: string | null;
+  invoiceId?: number;
+  userId?: number;
+  publicInvoiceToken?: string | null;
+}): Promise<{ id: number; userId: number } | undefined> {
+  const now = new Date().toISOString();
+  const fallbackCondition =
+    invoiceId && userId
+      ? and(eq(invoicesTable.id, invoiceId), eq(invoicesTable.userId, userId))
+      : publicInvoiceToken
+        ? eq(invoicesTable.publicInvoiceToken, publicInvoiceToken)
+        : undefined;
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      status: 'paid',
+      paidAt: sql<string>`COALESCE(${invoicesTable.paidAt}, ${now})`,
+      paymentProvider: 'stripe_connect',
+      paymentCheckoutSessionId: checkoutSessionId,
+      ...(paymentIntentId ? { paymentIntentId } : {}),
+      paymentCompletedAt: sql<string>`COALESCE(${invoicesTable.paymentCompletedAt}, ${now})`,
+      paymentFailedAt: null
+    })
+    .where(
+      fallbackCondition
+        ? or(
+            eq(invoicesTable.paymentCheckoutSessionId, checkoutSessionId),
+            fallbackCondition
+          )
+        : eq(invoicesTable.paymentCheckoutSessionId, checkoutSessionId)
+    )
+    .returning({
+      id: invoicesTable.id,
+      userId: invoicesTable.userId
+    });
+
+  return invoices.at(0);
+}
+
+export async function markInvoicePaymentFailedByIntentInDb({
+  paymentIntentId,
+  publicInvoiceToken
+}: {
+  paymentIntentId?: string;
+  publicInvoiceToken?: string | null;
+}): Promise<{ id: number } | undefined> {
+  if (!paymentIntentId && !publicInvoiceToken) return undefined;
+
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      paymentProvider: 'stripe_connect',
+      ...(paymentIntentId ? { paymentIntentId } : {}),
+      paymentFailedAt: new Date().toISOString()
+    })
+    .where(
+      paymentIntentId
+        ? eq(invoicesTable.paymentIntentId, paymentIntentId)
+        : eq(invoicesTable.publicInvoiceToken, publicInvoiceToken!)
+    )
+    .returning({ id: invoicesTable.id });
+
+  return invoices.at(0);
 }
 
 export async function signInvoiceByRecipientTokenInDb({
@@ -1077,10 +1316,6 @@ export const getIncomeJournalRowsFromDb = async ({
         lte(effectivePaidAt, `${to}T23:59:59.999Z`)
       )
     )
-    .groupBy(
-      invoicesTable.id,
-      invoiceReceiversTable.id,
-      usersTable.currency
-    )
+    .groupBy(invoicesTable.id, invoiceReceiversTable.id, usersTable.currency)
     .orderBy(effectivePaidAt, invoicesTable.id);
 };

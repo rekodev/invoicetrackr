@@ -11,9 +11,12 @@ import {
   consumePaymentSuccessPendingInDb,
   getBillingStatusFromDb,
   getStripeAccountFromDb,
+  getStripeMerchantAccountFromDb,
+  toMerchantPaymentStatus,
   updateBillingStatusInDb,
   updateStripeSubscriptionForUserInDb,
-  upsertStripeAccountInDb
+  upsertStripeAccountInDb,
+  upsertStripeMerchantAccountInDb
 } from '../database/payment';
 import { getUserFromDb } from '../database/user';
 import { stripe } from '../config/stripe';
@@ -30,6 +33,30 @@ const hasLiveSubscriptionStatus = (status?: string | null) =>
 
 const getBaseUrl = () =>
   process.env.APP_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL!;
+
+const refreshStripeMerchantAccountInDb = async (userId: number) => {
+  const merchantAccount = await getStripeMerchantAccountFromDb(userId);
+
+  if (!merchantAccount?.stripeConnectedAccountId) return merchantAccount;
+
+  const stripeAccount = await stripe.accounts.retrieve(
+    merchantAccount.stripeConnectedAccountId
+  );
+  const onboardingCompletedAt =
+    stripeAccount.charges_enabled && stripeAccount.details_submitted
+      ? merchantAccount.onboardingCompletedAt || new Date().toISOString()
+      : null;
+
+  await upsertStripeMerchantAccountInDb(userId, {
+    stripeConnectedAccountId: stripeAccount.id,
+    chargesEnabled: stripeAccount.charges_enabled,
+    payoutsEnabled: stripeAccount.payouts_enabled,
+    detailsSubmitted: stripeAccount.details_submitted,
+    onboardingCompletedAt
+  });
+
+  return getStripeMerchantAccountFromDb(userId);
+};
 
 const getStripePriceId = (interval: BillingInterval = 'monthly') => {
   const priceId =
@@ -494,6 +521,78 @@ export const getBillingStatus = async (
   req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => sendBillingStatus(Number(req.params.userId), reply);
+
+export const getMerchantPaymentStatus = async (
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const account = await refreshStripeMerchantAccountInDb(userId);
+
+  reply.status(200).send({
+    merchantPayment: toMerchantPaymentStatus(account)
+  });
+};
+
+export const createMerchantPaymentOnboardingSession = async (
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const user = await getUserFromDb(userId);
+
+  if (!user) throw new NotFoundError('User not found');
+
+  let merchantAccount = await refreshStripeMerchantAccountInDb(userId);
+
+  if (!merchantAccount?.stripeConnectedAccountId) {
+    const account = await stripe.accounts.create({
+      email: user.email,
+      country: 'LT',
+      capabilities: {
+        card_payments: { requested: true },
+        transfers: { requested: true }
+      },
+      business_profile: {
+        name: user.name,
+        product_description: 'Invoice payment collection'
+      },
+      controller: {
+        losses: { payments: 'application' },
+        fees: { payer: 'account' },
+        stripe_dashboard: { type: 'express' },
+        requirement_collection: 'stripe'
+      },
+      metadata: { userId: String(userId), purpose: 'invoice_payments' }
+    } as Stripe.AccountCreateParams);
+
+    await upsertStripeMerchantAccountInDb(userId, {
+      stripeConnectedAccountId: account.id,
+      chargesEnabled: account.charges_enabled,
+      payoutsEnabled: account.payouts_enabled,
+      detailsSubmitted: account.details_submitted,
+      onboardingCompletedAt:
+        account.charges_enabled && account.details_submitted
+          ? new Date().toISOString()
+          : null
+    });
+
+    merchantAccount = await getStripeMerchantAccountFromDb(userId);
+  }
+
+  if (!merchantAccount?.stripeConnectedAccountId)
+    throw new InternalServerError('Unable to create merchant account');
+
+  const baseUrl = getBaseUrl();
+  const accountLink = await stripe.accountLinks.create({
+    account: merchantAccount.stripeConnectedAccountId,
+    refresh_url: `${baseUrl}/profile/billing?connect=refresh`,
+    return_url: `${baseUrl}/profile/billing?connect=return`,
+    type: 'account_onboarding'
+  });
+
+  reply.status(200).send({ url: accountLink.url });
+};
 
 export const startTrial = async (
   req: FastifyRequest<{

@@ -6,7 +6,11 @@ import {
 } from './common';
 import { bankAccountBodySchema } from './bank-account';
 import { clientBodySchema } from './client';
-import { invoiceBodySchema, publicInvoiceSigningSchema } from './invoice';
+import {
+  invoiceBodySchema,
+  publicInvoiceSchema,
+  publicInvoiceSigningSchema
+} from './invoice';
 
 // Common response schemas
 export const messageResponseSchema = z.object({
@@ -80,6 +84,14 @@ export const getInvoiceResponseSchema = z.object({
 
 export const getPublicInvoiceSigningResponseSchema = z.object({
   signing: publicInvoiceSigningSchema
+});
+
+export const getPublicInvoiceResponseSchema = z.object({
+  publicInvoice: publicInvoiceSchema
+});
+
+export const createPublicInvoicePaymentResponseSchema = z.object({
+  url: z.string()
 });
 
 export const postInvoiceResponseSchema = z.object({
@@ -181,6 +193,20 @@ export const billingUrlResponseSchema = z.object({
   url: z.string()
 });
 
+export const merchantPaymentStatusSchema = z.object({
+  provider: z.literal('stripe_connect'),
+  connectedAccountId: z.string().nullish(),
+  chargesEnabled: z.boolean(),
+  payoutsEnabled: z.boolean(),
+  detailsSubmitted: z.boolean(),
+  onboardingCompletedAt: z.string().nullish(),
+  ready: z.boolean()
+});
+
+export const merchantPaymentStatusResponseSchema = z.object({
+  merchantPayment: merchantPaymentStatusSchema
+});
+
 export const billingIntervalRequestSchema = z.object({
   interval: billingIntervalSchema.optional()
 });
@@ -234,6 +260,12 @@ export type GetInvoiceResponse = z.infer<typeof getInvoiceResponseSchema>;
 export type GetPublicInvoiceSigningResponse = z.infer<
   typeof getPublicInvoiceSigningResponseSchema
 >;
+export type GetPublicInvoiceResponse = z.infer<
+  typeof getPublicInvoiceResponseSchema
+>;
+export type CreatePublicInvoicePaymentResponse = z.infer<
+  typeof createPublicInvoicePaymentResponseSchema
+>;
 export type PostInvoiceResponse = z.infer<typeof postInvoiceResponseSchema>;
 export type UpdateInvoiceResponse = z.infer<typeof updateInvoiceResponseSchema>;
 export type SignInvoiceResponse = z.infer<typeof signInvoiceResponseSchema>;
@@ -264,6 +296,10 @@ export type ConsumePaymentSuccessResponse = z.infer<
   typeof consumePaymentSuccessResponseSchema
 >;
 export type BillingUrlResponse = z.infer<typeof billingUrlResponseSchema>;
+export type MerchantPaymentStatus = z.infer<typeof merchantPaymentStatusSchema>;
+export type MerchantPaymentStatusResponse = z.infer<
+  typeof merchantPaymentStatusResponseSchema
+>;
 export type BillingIntervalRequest = z.infer<
   typeof billingIntervalRequestSchema
 >;

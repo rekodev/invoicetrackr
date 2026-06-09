@@ -11,13 +11,13 @@ import {
   Tailwind
 } from '@react-email/components';
 
-interface InvoiceEmailProps {
+type Props = {
   invoiceNumber: string;
   amount?: string;
   dueDate?: string;
   senderName: string;
   message: string;
-  signingLink?: string;
+  publicInvoiceLink?: string;
   isSigningAvailable?: boolean;
   translations: {
     title: string;
@@ -34,13 +34,16 @@ interface InvoiceEmailProps {
     signingMessage: string;
     signingButton: string;
     signingFallback: string;
+    publicInvoiceTitle: string;
+    publicInvoiceMessage: string;
+    publicInvoiceButton: string;
     viewTitle: string;
     viewMessage: string;
     viewButton: string;
     footer: string;
     copyright: string;
   };
-}
+};
 
 const InvoiceEmail = ({
   invoiceNumber,
@@ -48,10 +51,10 @@ const InvoiceEmail = ({
   dueDate,
   senderName,
   message,
-  signingLink,
+  publicInvoiceLink,
   isSigningAvailable = true,
   translations
-}: InvoiceEmailProps) => {
+}: Props) => {
   return (
     <Html lang="en" dir="ltr">
       <Tailwind>
@@ -134,34 +137,34 @@ const InvoiceEmail = ({
                 </Text>
               </Section>
 
-              {signingLink && (
+              {publicInvoiceLink && (
                 <Section className="mt-[16px] rounded-[8px] border border-[#E4D4F4] bg-white p-[20px] text-center">
                   <Text className="m-0 mb-[8px] text-[16px] font-bold text-[#301050]">
                     {isSigningAvailable
                       ? translations.signingTitle
-                      : translations.viewTitle}
+                      : translations.publicInvoiceTitle}
                   </Text>
                   <Text className="mx-0 mb-[18px] mt-0 text-[14px] leading-[20px] text-[#481878]">
                     {isSigningAvailable
                       ? translations.signingMessage
-                      : translations.viewMessage}
+                      : translations.publicInvoiceMessage}
                   </Text>
                   <Link
-                    href={signingLink}
+                    href={publicInvoiceLink}
                     className="inline-block rounded-[8px] bg-[#7828C8] px-[18px] py-[12px] text-[14px] font-semibold text-white no-underline"
                   >
                     {isSigningAvailable
                       ? translations.signingButton
-                      : translations.viewButton}
+                      : translations.publicInvoiceButton}
                   </Link>
                   <Text className="mx-0 mb-0 mt-[16px] text-left text-[12px] leading-[18px] text-[#6020A0]">
                     {translations.signingFallback}
                   </Text>
                   <Link
-                    href={signingLink}
+                    href={publicInvoiceLink}
                     className="break-all text-[12px] text-[#7828C8]"
                   >
-                    {signingLink}
+                    {publicInvoiceLink}
                   </Link>
                 </Section>
               )}

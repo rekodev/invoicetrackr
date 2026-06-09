@@ -481,6 +481,11 @@
         "vat_total": "PVM suma",
         "total": "Iš viso",
         "payment_details": "Mokėjimo informacija",
+        "payment_action_title": "Apmokėti sąskaitą",
+        "payment_action_online": "Siuntėjas priima kortelių mokėjimus per Stripe.",
+        "payment_action_bank": "Internetinis mokėjimas neįjungtas. Naudokite sąskaitos santraukoje nurodytus banko rekvizitus.",
+        "payment_action_paid": "Ši sąskaita jau pažymėta kaip apmokėta.",
+        "pay_invoice": "Apmokėti sąskaitą",
         "bank": "Bankas",
         "bank_code": "Banko kodas",
         "account_number": "Sąskaitos numeris",
@@ -702,6 +707,27 @@
                 }
             }
         },
+        "merchant_payments": {
+            "eyebrow": "Gavėjo sąskaitų apmokėjimai",
+            "title": "Priimti sąskaitų apmokėjimus",
+            "description": "Prijunkite Stripe prekybininko paskyrą, kad gavėjai galėtų apmokėti tinkamas sąskaitas internetu. Jei tai neparuošta, vieši sąskaitų puslapiai rodys banko pavedimo rekvizitus.",
+            "description_ready": "Stripe Connect paruoštas. Tinkamos neapmokėtos viešos sąskaitos gali rodyti internetinio apmokėjimo veiksmą, o lėšos keliaus į jūsų prekybininko paskyrą.",
+            "action_start": "Nustatyti Stripe Connect",
+            "action_update": "Atnaujinti Stripe Connect",
+            "checks": {
+                "ready": "Paruošta",
+                "pending": "Laukiama",
+                "charges": {
+                    "title": "Kortelių mokėjimai"
+                },
+                "details": {
+                    "title": "Verslo duomenys"
+                },
+                "payouts": {
+                    "title": "Išmokėjimai"
+                }
+            }
+        },
         "change_password": {
             "a11y": {
                 "form_label": "Slaptažodžio keitimo forma"
@@ -883,7 +909,11 @@
             "client": "Klientas",
             "amount": "Suma",
             "date": "Data",
+            "public_link_note": "Šiame laiške gali būti saugus sąskaitos puslapis su PDF, banko rekvizitais ir internetiniu mokėjimu, jei jis įjungtas.",
             "signing_link_note": "Šiame laiške bus saugi pasirašymo nuoroda gavėjui.",
+            "include_public_link": "Įtraukti viešą sąskaitos puslapį",
+            "request_signature": "Prašyti gavėjo parašo",
+            "signature_requires_public_link": "Gavėjo pasirašymui reikia viešo sąskaitos puslapio.",
             "active_signing_recipient": "Aktyvi pasirašymo nuoroda išsiųsta adresu {email}.",
             "signing_link_expires": "Nuoroda galioja iki {date}.",
             "signing_link_revoked": "Ši nuoroda buvo atšaukta.",

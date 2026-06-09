@@ -2,7 +2,8 @@ import {
   billingIntervalRequestSchema,
   billingStatusResponseSchema,
   billingUrlResponseSchema,
-  consumePaymentSuccessResponseSchema
+  consumePaymentSuccessResponseSchema,
+  merchantPaymentStatusResponseSchema
 } from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 
@@ -10,7 +11,9 @@ import {
   consumePaymentSuccess,
   createBillingPortalSession,
   createCheckoutSession,
+  createMerchantPaymentOnboardingSession,
   getBillingStatus,
+  getMerchantPaymentStatus,
   resumeSubscription,
   startTrial
 } from '../controllers/payment';
@@ -58,3 +61,17 @@ export const consumePaymentSuccessOptions: RouteShorthandOptionsWithHandler = {
   preHandler: authMiddleware,
   handler: consumePaymentSuccess
 };
+
+export const getMerchantPaymentStatusOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: { response: { 200: merchantPaymentStatusResponseSchema } },
+    preHandler: authMiddleware,
+    handler: getMerchantPaymentStatus
+  };
+
+export const createMerchantPaymentOnboardingSessionOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: { response: { 200: billingUrlResponseSchema } },
+    preHandler: authMiddleware,
+    handler: createMerchantPaymentOnboardingSession
+  };

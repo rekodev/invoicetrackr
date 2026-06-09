@@ -33,6 +33,10 @@ export default {
       signingButton: 'Review and sign',
       signingFallback:
         'If the button does not work, copy and paste this secure link into your browser:',
+      publicInvoiceTitle: 'View invoice',
+      publicInvoiceMessage:
+        'Open the secure invoice page to review the PDF, see payment details, and pay online if the sender accepts card payments.',
+      publicInvoiceButton: 'View invoice',
       viewTitle: 'View signed invoice',
       viewMessage:
         'Open the secure invoice link to review and download the signed PDF.',
@@ -233,6 +237,7 @@ export default {
       unableToUpdateStatus: 'Unable to update invoice status',
       unableToRetrieveData: 'Unable to retrieve invoice data',
       unableToSendEmail: 'Unable to send email',
+      unableToCreatePublicLink: 'Unable to create public invoice link',
       unableToCreateSigningLink: 'Unable to create invoice signing link',
       unableToRegenerateSigningLink:
         'Unable to regenerate invoice signing link',
@@ -240,6 +245,15 @@ export default {
         'This invoice link has expired. Ask the sender for a fresh link.',
       signingLinkRevoked:
         'This invoice link has been revoked. Ask the sender for a fresh link.',
+      publicLinkExpired:
+        'This invoice link has expired. Ask the sender for a fresh link.',
+      publicLinkRevoked:
+        'This invoice link has been revoked. Ask the sender for a fresh link.',
+      publicLinkRequired:
+        'Online payment requires the public invoice link. Ask the sender for a fresh invoice link.',
+      notPayable: 'This invoice is not payable online.',
+      onlinePaymentUnavailable:
+        'The sender is not accepting online payments for this invoice.',
       alreadySigned: 'Invoice is already signed',
       issuedImmutable:
         'Issued invoices cannot be edited or deleted from this flow'

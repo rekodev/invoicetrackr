@@ -34,6 +34,10 @@ export default {
       signingButton: 'Peržiūrėti ir pasirašyti',
       signingFallback:
         'Jei mygtukas neveikia, nukopijuokite ir įklijuokite šią saugią nuorodą į naršyklę:',
+      publicInvoiceTitle: 'Peržiūrėti sąskaitą',
+      publicInvoiceMessage:
+        'Atidarykite saugų sąskaitos puslapį, peržiūrėkite PDF, mokėjimo informaciją ir apmokėkite internetu, jei siuntėjas priima kortelių mokėjimus.',
+      publicInvoiceButton: 'Peržiūrėti sąskaitą',
       viewTitle: 'Peržiūrėkite pasirašytą sąskaitą',
       viewMessage:
         'Atidarykite saugią sąskaitos nuorodą, peržiūrėkite ir atsisiųskite pasirašytą PDF.',
@@ -237,6 +241,8 @@ export default {
       unableToUpdateStatus: 'Nepavyko atnaujinti sąskaitos faktūros būsenos',
       unableToRetrieveData: 'Nepavyko gauti sąskaitos faktūros duomenų',
       unableToSendEmail: 'Nepavyko išsiųsti el. laiško',
+      unableToCreatePublicLink:
+        'Nepavyko sukurti viešos sąskaitos nuorodos',
       unableToCreateSigningLink:
         'Nepavyko sukurti sąskaitos pasirašymo nuorodos',
       unableToRegenerateSigningLink:
@@ -245,6 +251,15 @@ export default {
         'Šios sąskaitos nuorodos galiojimas baigėsi. Paprašykite siuntėjo naujos nuorodos.',
       signingLinkRevoked:
         'Ši sąskaitos nuoroda buvo atšaukta. Paprašykite siuntėjo naujos nuorodos.',
+      publicLinkExpired:
+        'Šios sąskaitos nuorodos galiojimas baigėsi. Paprašykite siuntėjo naujos nuorodos.',
+      publicLinkRevoked:
+        'Ši sąskaitos nuoroda buvo atšaukta. Paprašykite siuntėjo naujos nuorodos.',
+      publicLinkRequired:
+        'Apmokėjimui internetu reikia viešos sąskaitos nuorodos. Paprašykite siuntėjo naujos sąskaitos nuorodos.',
+      notPayable: 'Šios sąskaitos negalima apmokėti internetu.',
+      onlinePaymentUnavailable:
+        'Siuntėjas nepriima internetinių mokėjimų už šią sąskaitą.',
       alreadySigned: 'Sąskaita faktūra jau pasirašyta',
       issuedImmutable:
         'Išrašytų sąskaitų negalima redaguoti ar ištrinti šiame sraute'

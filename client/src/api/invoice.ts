@@ -1,5 +1,6 @@
 import type {
   AddInvoiceResponse,
+  CreatePublicInvoicePaymentResponse,
   DeleteInvoiceResponse,
   GetInvoiceResponse,
   GetInvoicesResponse,
@@ -7,6 +8,7 @@ import type {
   GetInvoicesTotalAmountResponse,
   GetLatestInvoicesResponse,
   GetNextInvoiceNumberResponse,
+  GetPublicInvoiceResponse,
   GetPublicInvoiceSigningResponse,
   SendInvoiceEmailResponse,
   SignInvoiceResponse,
@@ -23,6 +25,14 @@ export const getInvoice = async (userId: number, invoiceId: number) =>
 
 export const getPublicInvoiceSigning = async (token: string) =>
   await api.get<GetPublicInvoiceSigningResponse>(`/api/invoices/sign/${token}`);
+
+export const getPublicInvoice = async (token: string) =>
+  await api.get<GetPublicInvoiceResponse>(`/api/invoices/public/${token}`);
+
+export const createPublicInvoicePayment = async (token: string) =>
+  await api.post<CreatePublicInvoicePaymentResponse>(
+    `/api/invoices/public/${token}/pay`
+  );
 
 export const getInvoices = async (userId: number) =>
   await api.get<GetInvoicesResponse>(`/api/${userId}/invoices`);
@@ -167,6 +177,8 @@ export const sendInvoiceEmail = async ({
   recipientEmail,
   subject,
   message,
+  includePublicLink,
+  requestSignature,
   blob
 }: {
   id: number;
@@ -175,6 +187,8 @@ export const sendInvoiceEmail = async ({
   recipientEmail: string;
   subject: string;
   message?: string;
+  includePublicLink?: boolean;
+  requestSignature?: boolean;
   blob: Blob | null;
 }) => {
   const formData = new FormData();
@@ -183,6 +197,8 @@ export const sendInvoiceEmail = async ({
   if (message) {
     formData.append('message', message);
   }
+  formData.append('includePublicLink', String(includePublicLink ?? true));
+  formData.append('requestSignature', String(!!requestSignature));
   if (blob) {
     formData.append(
       'pdfAttachment',

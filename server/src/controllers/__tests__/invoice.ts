@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as clientDb from '../../database/client';
 import * as invoiceController from '../invoice';
 import * as invoiceDb from '../../database/invoice';
+import * as paymentDb from '../../database/payment';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import {
   invoiceFactory,
@@ -14,6 +15,7 @@ import lt from '../../locales/lt';
 import { mockUseI18n } from '../../test/setup';
 
 vi.mock('../../database/invoice');
+vi.mock('../../database/payment');
 vi.mock('../../database/client');
 vi.mock('cloudinary');
 
@@ -452,6 +454,7 @@ describe('Invoice Controller', () => {
         invoice: invoiceFromDbFactory.build({
           recipientSigningExpiresAt: new Date(Date.now() - 1000).toISOString()
         }),
+        userId: testUserId,
         currency: 'EUR',
         language: 'en',
         preferredInvoiceLanguage: null
@@ -482,6 +485,7 @@ describe('Invoice Controller', () => {
         invoice: invoiceFromDbFactory.build({
           recipientSigningRevokedAt: new Date().toISOString()
         }),
+        userId: testUserId,
         currency: 'EUR',
         language: 'en',
         preferredInvoiceLanguage: null
@@ -503,6 +507,54 @@ describe('Invoice Controller', () => {
       expect(JSON.parse(response.body).message).toBe(
         'This invoice link has been revoked. Ask the sender for a fresh link.'
       );
+
+      await app.close();
+    });
+  });
+
+  describe('GET /api/invoices/public/:token', () => {
+    it('returns public invoice with bank-transfer fallback when Connect is not ready', async () => {
+      vi.mocked(invoiceDb.getPublicInvoiceFromDb).mockResolvedValue({
+        invoice: invoiceFromDbFactory.build({
+          publicInvoiceToken: 'public-token',
+          publicInvoiceExpiresAt: new Date(Date.now() + 1000).toISOString(),
+          recipientSigningRequestedAt: null,
+          recipientSigningToken: null
+        }),
+        userId: testUserId,
+        currency: 'EUR',
+        language: 'en',
+        preferredInvoiceLanguage: null
+      });
+      vi.mocked(paymentDb.getStripeMerchantAccountFromDb).mockResolvedValue(
+        undefined
+      );
+      vi.mocked(paymentDb.toMerchantPaymentStatus).mockReturnValue({
+        provider: 'stripe_connect',
+        connectedAccountId: null,
+        chargesEnabled: false,
+        payoutsEnabled: false,
+        detailsSubmitted: false,
+        onboardingCompletedAt: null,
+        ready: false
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.get(
+          '/api/invoices/public/:token',
+          invoiceController.getPublicInvoice
+        );
+      });
+
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/invoices/public/public-token'
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.publicInvoice.payment.available).toBe(false);
+      expect(body.publicInvoice.signing.requested).toBe(false);
 
       await app.close();
     });

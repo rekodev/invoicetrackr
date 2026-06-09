@@ -481,6 +481,11 @@
         "vat_total": "VAT total",
         "total": "Total",
         "payment_details": "Payment details",
+        "payment_action_title": "Pay this invoice",
+        "payment_action_online": "The sender accepts online card payments through Stripe.",
+        "payment_action_bank": "Online payment is not enabled. Use the bank details shown in the invoice summary.",
+        "payment_action_paid": "This invoice is already marked as paid.",
+        "pay_invoice": "Pay invoice",
         "bank": "Bank",
         "bank_code": "Bank code",
         "account_number": "Account number",
@@ -702,6 +707,27 @@
                 }
             }
         },
+        "merchant_payments": {
+            "eyebrow": "Invoice recipient payments",
+            "title": "Accept invoice payments",
+            "description": "Connect a Stripe merchant account so recipients can pay eligible invoices online. If this is not ready, public invoice pages will show bank-transfer details instead.",
+            "description_ready": "Stripe Connect is ready. Eligible unpaid public invoices can show an online payment action that routes funds to your merchant account.",
+            "action_start": "Set up Stripe Connect",
+            "action_update": "Update Stripe Connect",
+            "checks": {
+                "ready": "Ready",
+                "pending": "Pending",
+                "charges": {
+                    "title": "Card payments"
+                },
+                "details": {
+                    "title": "Business details"
+                },
+                "payouts": {
+                    "title": "Payouts"
+                }
+            }
+        },
         "change_password": {
             "a11y": {
                 "form_label": "Change password form"
@@ -883,7 +909,11 @@
             "client": "Client",
             "amount": "Amount",
             "date": "Date",
+            "public_link_note": "This email can include a secure invoice page with the PDF, bank details, and online payment if enabled.",
             "signing_link_note": "This email will include a secure signing link for the recipient.",
+            "include_public_link": "Include public invoice page",
+            "request_signature": "Request recipient signature",
+            "signature_requires_public_link": "Recipient signing requires the public invoice page.",
             "active_signing_recipient": "Active signing link sent to {email}.",
             "signing_link_expires": "Link expires on {date}.",
             "signing_link_revoked": "This link has been revoked.",

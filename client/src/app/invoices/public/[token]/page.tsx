@@ -6,7 +6,7 @@ import { isResponseError } from '@/lib/utils/error';
 
 type Params = Promise<{ token: string }>;
 
-export default async function InvoiceSigningPage({
+export default async function PublicInvoicePage({
   params
 }: {
   params: Params;
