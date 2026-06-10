@@ -347,7 +347,7 @@ describe('Invoice Controller', () => {
 
   describe('PUT /api/:userId/invoices/:id/status', () => {
     it('should update invoice status', async () => {
-      vi.mocked(invoiceDb.findInvoiceById).mockResolvedValue({ id: 1 });
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(mockInvoiceForDb);
       vi.mocked(invoiceDb.updateInvoiceStatusInDb).mockResolvedValue({
         id: 1
       });
@@ -375,6 +375,42 @@ describe('Invoice Controller', () => {
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.message).toBeDefined();
+
+      await app.close();
+    });
+
+    it('should reject status updates for invoices paid through Stripe', async () => {
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
+        invoiceFromDbFactory.build({
+          id: mockInvoice.id,
+          status: 'paid',
+          paymentProvider: 'stripe_connect',
+          paymentCompletedAt: new Date().toISOString()
+        })
+      );
+
+      const { updateInvoiceStatus } = invoiceController;
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.put(
+          '/api/:userId/invoices/:id/status',
+          {
+            preHandler: mockAuthMiddleware
+          },
+          updateInvoiceStatus
+        );
+      });
+
+      const response = await app.inject({
+        method: 'PUT',
+        url: `/api/${testUserId}/invoices/${mockInvoice.id}/status`,
+        payload: {
+          status: 'pending'
+        }
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(invoiceDb.updateInvoiceStatusInDb).not.toHaveBeenCalled();
 
       await app.close();
     });

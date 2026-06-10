@@ -1,5 +1,6 @@
 import {
   createPublicInvoicePaymentResponseSchema,
+  confirmPublicInvoicePaymentResponseSchema,
   getInvoiceResponseSchema,
   getInvoicesResponseSchema,
   getInvoicesRevenueResponseSchema,
@@ -22,6 +23,7 @@ import z from 'zod/v4';
 
 import {
   createPublicInvoicePayment,
+  confirmPublicInvoicePayment,
   deleteInvoice,
   getIncomeJournal,
   getInvoice,
@@ -225,6 +227,19 @@ export const createPublicInvoicePaymentOptions: RouteShorthandOptionsWithHandler
       }
     },
     handler: createPublicInvoicePayment
+  };
+
+export const confirmPublicInvoicePaymentOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      body: z.object({
+        sessionId: z.string().min(1)
+      }),
+      response: {
+        200: confirmPublicInvoicePaymentResponseSchema
+      }
+    },
+    handler: confirmPublicInvoicePayment
   };
 
 export const signPublicInvoiceOptions: RouteShorthandOptionsWithHandler = {

@@ -528,9 +528,26 @@ export const getMerchantPaymentStatus = async (
 ) => {
   const userId = Number(req.params.userId);
   const account = await refreshStripeMerchantAccountInDb(userId);
+  const status = toMerchantPaymentStatus(account);
+
+  if (!account?.stripeConnectedAccountId)
+    return reply.status(200).send({ merchantPayment: status });
+
+  const stripeAccount = await stripe.accounts.retrieve(
+    account.stripeConnectedAccountId
+  );
 
   reply.status(200).send({
-    merchantPayment: toMerchantPaymentStatus(account)
+    merchantPayment: {
+      ...status,
+      requirements: {
+        disabledReason: stripeAccount.requirements?.disabled_reason || null,
+        currentlyDue: stripeAccount.requirements?.currently_due || [],
+        pastDue: stripeAccount.requirements?.past_due || [],
+        pendingVerification:
+          stripeAccount.requirements?.pending_verification || []
+      }
+    }
   });
 };
 
@@ -558,9 +575,9 @@ export const createMerchantPaymentOnboardingSession = async (
         product_description: 'Invoice payment collection'
       },
       controller: {
-        losses: { payments: 'application' },
+        losses: { payments: 'stripe' },
         fees: { payer: 'account' },
-        stripe_dashboard: { type: 'express' },
+        stripe_dashboard: { type: 'full' },
         requirement_collection: 'stripe'
       },
       metadata: { userId: String(userId), purpose: 'invoice_payments' }
@@ -584,10 +601,22 @@ export const createMerchantPaymentOnboardingSession = async (
     throw new InternalServerError('Unable to create merchant account');
 
   const baseUrl = getBaseUrl();
+  const stripeAccount = await stripe.accounts.retrieve(
+    merchantAccount.stripeConnectedAccountId
+  );
+
+  if (
+    stripeAccount.controller?.losses?.payments === 'application' ||
+    stripeAccount.controller?.fees?.payer === 'application'
+  )
+    throw new BadRequestError(
+      'This connected account is platform-liable. Remove it and create a seller-responsible Stripe account before accepting invoice payments.'
+    );
+
   const accountLink = await stripe.accountLinks.create({
     account: merchantAccount.stripeConnectedAccountId,
-    refresh_url: `${baseUrl}/profile/billing?connect=refresh`,
-    return_url: `${baseUrl}/profile/billing?connect=return`,
+    refresh_url: `${baseUrl}/profile/invoice-payments?connect=refresh`,
+    return_url: `${baseUrl}/profile/invoice-payments?connect=return`,
     type: 'account_onboarding'
   });
 

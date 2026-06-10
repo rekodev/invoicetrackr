@@ -1,9 +1,8 @@
 'use client';
 
-import { Button, addToast, useDisclosure } from '@heroui/react';
+import { addToast, useDisclosure } from '@heroui/react';
 import type { InvoiceBody, PublicInvoice } from '@invoicetrackr/types';
 import { useMemo, useState, useTransition } from 'react';
-import { CreditCardIcon } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
 
 import { createPublicInvoicePayment, signPublicInvoice } from '@/api/invoice';
@@ -40,6 +39,11 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
   );
   const isSigned = Boolean(
     invoice.receiverSignature || invoice.recipientSignedAt
+  );
+  const isPaid = Boolean(
+    invoice.status === 'paid' ||
+      invoice.paymentCompletedAt ||
+      publicInvoice.payment.completedAt
   );
   const currency = publicInvoice.currency as Currency;
   const { pdfDocument, isPdfDocumentLoading } = useDynamicPdf({
@@ -100,7 +104,7 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8">
-      <InvoiceSigningHeader invoice={invoice} isSigned={isSigned} />
+      <InvoiceSigningHeader invoice={invoice} />
 
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <InvoiceSigningSummary
@@ -109,47 +113,20 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
           onOpenPdf={openPdfModal}
         />
         <aside className="flex flex-col gap-4">
-          <section className="border-default-200 rounded-lg border bg-white p-4 shadow-sm dark:bg-black">
-            <div className="flex items-start gap-3">
-              <span className="bg-secondary/10 text-secondary grid h-9 w-9 shrink-0 place-items-center rounded-lg">
-                <CreditCardIcon className="h-5 w-5" />
-              </span>
-              <div>
-                <h2 className="text-base font-semibold">
-                  {t('payment_action_title')}
-                </h2>
-                <p className="text-default-500 mt-1 text-sm">
-                  {publicInvoice.payment.available
-                    ? t('payment_action_online')
-                    : invoice.status === 'paid'
-                      ? t('payment_action_paid')
-                      : t('payment_action_bank')}
-                </p>
-              </div>
-            </div>
-            {publicInvoice.payment.available && (
-              <Button
-                className="mt-4 w-full"
-                color="secondary"
-                isLoading={isPaymentPending}
-                onPress={handlePay}
-              >
-                {t('pay_invoice')}
-              </Button>
-            )}
-          </section>
-
-          {publicInvoice.signing.requested && (
-            <InvoiceSigningPanel
-              invoice={invoice}
-              isPending={isSigningPending}
-              isSigned={isSigned}
-              onSign={handleSign}
-              onSignatureChange={setSignature}
-              pdfDocument={pdfDocument}
-              signature={signature}
-            />
-          )}
+          <InvoiceSigningPanel
+            invoice={invoice}
+            isPaid={isPaid}
+            isPaymentAvailable={publicInvoice.payment.available}
+            isPaymentPending={isPaymentPending}
+            isPending={isSigningPending}
+            isSigningRequested={publicInvoice.signing.requested}
+            isSigned={isSigned}
+            onPay={handlePay}
+            onSign={handleSign}
+            onSignatureChange={setSignature}
+            pdfDocument={pdfDocument}
+            signature={signature}
+          />
         </aside>
       </section>
 

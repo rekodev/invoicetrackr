@@ -51,7 +51,8 @@
         "renew_subscription": "Renew Subscription",
         "sign_up": "Sign Up",
         "terms_of_service": "Terms of Service",
-        "billing": "Billing"
+        "billing": "Billing",
+        "invoice_payments": "Invoice Payments"
     },
     "general_error": "Uh oh! Something went wrong...",
     "cookie_consent": {
@@ -410,12 +411,15 @@
         "cell": {
             "actions": {
                 "tooltip_send_email": "Send Invoice Email",
+                "tooltip_copy_public_link": "Copy public invoice link",
                 "tooltip_view": "Details",
                 "tooltip_edit": "Edit invoice",
                 "tooltip_delete": "Delete invoice",
                 "tooltip_download": "Download",
                 "mark_as_paid": "Mark as Paid",
                 "mark_as_pending": "Mark as Pending",
+                "status_locked": "Status is locked because this invoice was paid online.",
+                "public_link_copied": "Public invoice link copied.",
                 "past_due": "{days}d past due"
             }
         },
@@ -461,8 +465,8 @@
         "subtitle": "Review invoice {invoiceId}, sign if everything looks correct, and download the signed PDF for your records.",
         "signed_status": "Signed",
         "loading_pdf": "Loading PDF...",
-        "panel_title": "Sign this invoice",
-        "panel_description": "Choose a signing method and add your signature.",
+        "panel_title": "Complete this invoice",
+        "panel_description": "Review the parties, pay online if available, and sign when requested.",
         "receiver": "Recipient",
         "sender": "Sender",
         "summary_title": "Invoice summary",
@@ -482,9 +486,10 @@
         "total": "Total",
         "payment_details": "Payment details",
         "payment_action_title": "Pay this invoice",
+        "payment_action_paid_title": "Payment received",
+        "payment_action_paid_subtitle": "No further payment is needed for this invoice.",
         "payment_action_online": "The sender accepts online card payments through Stripe.",
         "payment_action_bank": "Online payment is not enabled. Use the bank details shown in the invoice summary.",
-        "payment_action_paid": "This invoice is already marked as paid.",
         "pay_invoice": "Pay invoice",
         "bank": "Bank",
         "bank_code": "Bank code",
@@ -494,6 +499,8 @@
         "electronic_signature": "Electronic signature",
         "coming_soon": "Coming soon",
         "signature_required": "Add a signature before signing.",
+        "signature_received_title": "Signature received",
+        "signature_received_subtitle": "This invoice has already been signed.",
         "sign_button": "Sign invoice",
         "already_signed": "Invoice signed",
         "download_pdf": "Download PDF",
@@ -581,6 +588,9 @@
             },
             "billing": {
                 "title": "Billing"
+            },
+            "invoice_payments": {
+                "title": "Invoice Payments"
             }
         },
         "personal_information": {
@@ -713,18 +723,38 @@
             "description": "Connect a Stripe merchant account so recipients can pay eligible invoices online. If this is not ready, public invoice pages will show bank-transfer details instead.",
             "description_ready": "Stripe Connect is ready. Eligible unpaid public invoices can show an online payment action that routes funds to your merchant account.",
             "action_start": "Set up Stripe Connect",
+            "action_continue": "Continue Stripe setup",
             "action_update": "Update Stripe Connect",
+            "status": {
+                "live": "Live",
+                "reviewing": "Reviewing",
+                "action_needed": "Action needed",
+                "not_connected": "Not connected"
+            },
+            "capabilities_title": "Account capabilities",
+            "capabilities_ready_count": "{ready} of {total} ready",
+            "requirements_title": "Stripe needs more information",
+            "requirements_description": "Continue setup in Stripe to finish identity and payout verification before online invoice payments can be enabled.",
+            "verification_title": "Stripe is reviewing your account",
+            "verification_description": "Stripe has the details it needs for now and is checking whether payments and payouts can be enabled.",
+            "no_requirements": "No missing requirements reported yet. Stripe may still be reviewing the account.",
             "checks": {
                 "ready": "Ready",
                 "pending": "Pending",
                 "charges": {
-                    "title": "Card payments"
+                    "title": "Card payments",
+                    "ready_meta": "Online checkout enabled",
+                    "pending_meta": "Waiting for Stripe approval"
                 },
                 "details": {
-                    "title": "Business details"
+                    "title": "Business details",
+                    "ready_meta": "Merchant profile submitted",
+                    "pending_meta": "Complete details in Stripe"
                 },
                 "payouts": {
-                    "title": "Payouts"
+                    "title": "Payouts",
+                    "ready_meta": "Transfers to your account enabled",
+                    "pending_meta": "Waiting for payout verification"
                 }
             }
         },

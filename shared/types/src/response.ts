@@ -94,6 +94,8 @@ export const createPublicInvoicePaymentResponseSchema = z.object({
   url: z.string()
 });
 
+export const confirmPublicInvoicePaymentResponseSchema = messageResponseSchema;
+
 export const postInvoiceResponseSchema = z.object({
   invoice: invoiceBodySchema,
   message: z.string()
@@ -200,6 +202,14 @@ export const merchantPaymentStatusSchema = z.object({
   payoutsEnabled: z.boolean(),
   detailsSubmitted: z.boolean(),
   onboardingCompletedAt: z.string().nullish(),
+  requirements: z
+    .object({
+      disabledReason: z.string().nullish(),
+      currentlyDue: z.array(z.string()),
+      pastDue: z.array(z.string()),
+      pendingVerification: z.array(z.string())
+    })
+    .optional(),
   ready: z.boolean()
 });
 
@@ -265,6 +275,9 @@ export type GetPublicInvoiceResponse = z.infer<
 >;
 export type CreatePublicInvoicePaymentResponse = z.infer<
   typeof createPublicInvoicePaymentResponseSchema
+>;
+export type ConfirmPublicInvoicePaymentResponse = z.infer<
+  typeof confirmPublicInvoicePaymentResponseSchema
 >;
 export type PostInvoiceResponse = z.infer<typeof postInvoiceResponseSchema>;
 export type UpdateInvoiceResponse = z.infer<typeof updateInvoiceResponseSchema>;

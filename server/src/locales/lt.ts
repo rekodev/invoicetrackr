@@ -261,6 +261,8 @@ export default {
       onlinePaymentUnavailable:
         'Siuntėjas nepriima internetinių mokėjimų už šią sąskaitą.',
       alreadySigned: 'Sąskaita faktūra jau pasirašyta',
+      paidIssuedImmutable:
+        'Ši sąskaita apmokėta per Stripe, todėl jos būsenos rankiniu būdu keisti negalima.',
       issuedImmutable:
         'Išrašytų sąskaitų negalima redaguoti ar ištrinti šiame sraute'
     },

@@ -164,7 +164,7 @@ export default function SendInvoiceEmailModal({
     });
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseSendDialog} size="lg">
+    <Modal isOpen={isOpen} onClose={handleCloseSendDialog} size="3xl">
       <ModalContent>
         {/* @ts-ignore */}
         <BlobProvider document={pdfDocument}>
@@ -209,14 +209,18 @@ export default function SendInvoiceEmailModal({
                     )}
                   </div>
                 </div>
-                <div className="border-default-100 grid gap-3 rounded-lg border p-3">
+                <div className="border-default-100 grid gap-2 rounded-lg border p-3">
                   <Checkbox
+                    classNames={{ label: 'text-sm' }}
+                    color="secondary"
                     isSelected={includePublicLink}
                     onValueChange={setIncludePublicLink}
                   >
                     {t('include_public_link')}
                   </Checkbox>
                   <Checkbox
+                    classNames={{ label: 'text-sm' }}
+                    color="secondary"
                     isDisabled={!includePublicLink}
                     isSelected={includePublicLink && requestSignature}
                     onValueChange={setRequestSignature}
@@ -224,7 +228,7 @@ export default function SendInvoiceEmailModal({
                     {t('request_signature')}
                   </Checkbox>
                   {!includePublicLink && requestSignature && (
-                    <p className="text-warning text-sm">
+                    <p className="text-warning text-xs">
                       {t('signature_requires_public_link')}
                     </p>
                   )}

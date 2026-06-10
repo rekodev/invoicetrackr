@@ -255,6 +255,8 @@ export default {
       onlinePaymentUnavailable:
         'The sender is not accepting online payments for this invoice.',
       alreadySigned: 'Invoice is already signed',
+      paidIssuedImmutable:
+        'This invoice was paid through Stripe, so its status cannot be changed manually.',
       issuedImmutable:
         'Issued invoices cannot be edited or deleted from this flow'
     },

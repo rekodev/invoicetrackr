@@ -15,6 +15,7 @@ import {
   DocumentTextIcon,
   ExclamationCircleIcon,
   EyeIcon,
+  LinkIcon,
   PaperAirplaneIcon,
   PencilSquareIcon,
   TrashIcon
@@ -81,13 +82,28 @@ const InvoiceTableCell = ({
 
   const { isPastDue, daysPastDue } = getInvoiceDueStatus(invoice);
   const isDraft = (invoice.lifecycleStatus || 'draft') === 'draft';
+  const isStripePaid = Boolean(
+    invoice.paymentProvider === 'stripe_connect' && invoice.paymentCompletedAt
+  );
 
   const handleViewIconClick = () => onView(invoice);
   const handleEditInvoiceClick = () => onEdit(invoice);
   const handleDeleteInvoiceClick = () => onDelete(invoice);
+  const handleCopyPublicLink = async () => {
+    if (!invoice.publicInvoiceToken) return;
+
+    const publicLink = `${window.location.origin}/invoices/public/${invoice.publicInvoiceToken}`;
+    await navigator.clipboard.writeText(publicLink);
+
+    addToast({
+      title: tCell('public_link_copied'),
+      color: 'success'
+    });
+  };
   const handleChangeStatus = (
     status: 'paid' | 'pending' | 'canceled' | undefined
   ) => {
+    if (isStripePaid) return;
     if (!status || status === invoice.status) return;
 
     startTransition(async () => {
@@ -112,6 +128,8 @@ const InvoiceTableCell = ({
   }, [invoice.status]);
 
   const handleMarkAsPaidClick = () => {
+    if (isStripePaid) return;
+
     setIsPaid(!isPaid);
     handleChangeStatus(isPaid ? 'pending' : 'paid');
   };
@@ -183,47 +201,64 @@ const InvoiceTableCell = ({
       return (
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <Dropdown>
-              <DropdownTrigger className="[&>button]:aria-expanded:rotate-180">
+            {isStripePaid ? (
+              <Tooltip content={tCell('status_locked')}>
                 <Chip
-                  as="button"
-                  isDisabled={isPending}
-                  className="cursor capitalize [&>svg]:aria-expanded:rotate-180"
+                  className="capitalize"
                   color={statusColorMap[invoice.status as InvoiceStatus]}
                   size="sm"
                   variant="flat"
-                  endContent={
-                    <ChevronDownIcon className="ml-0.5 h-3 w-3 transition-transform" />
-                  }
                 >
                   {cellValue as string}
                 </Chip>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label={tForm('a11y.static_actions_label')}
-                selectionMode="single"
-                items={statusOptions}
-                selectedKeys={[cellValue] as any}
-                onSelectionChange={(key) =>
-                  handleChangeStatus(
-                    Array.from(key)[0] as
-                      | 'paid'
-                      | 'pending'
-                      | 'canceled'
-                      | undefined
-                  )
-                }
-              >
-                {/* @ts-ignore */}
-                {(item) => (
-                  <DropdownItem key={item.uid}>{item.name}</DropdownItem>
-                )}
-              </DropdownMenu>
-            </Dropdown>
+              </Tooltip>
+            ) : (
+              <Dropdown>
+                <DropdownTrigger className="[&>button]:aria-expanded:rotate-180">
+                  <Chip
+                    as="button"
+                    isDisabled={isPending}
+                    className="cursor capitalize [&>svg]:aria-expanded:rotate-180"
+                    color={statusColorMap[invoice.status as InvoiceStatus]}
+                    size="sm"
+                    variant="flat"
+                    endContent={
+                      <ChevronDownIcon className="ml-0.5 h-3 w-3 transition-transform" />
+                    }
+                  >
+                    {cellValue as string}
+                  </Chip>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label={tForm('a11y.static_actions_label')}
+                  selectionMode="single"
+                  items={statusOptions}
+                  selectedKeys={[cellValue] as any}
+                  onSelectionChange={(key) =>
+                    handleChangeStatus(
+                      Array.from(key)[0] as
+                        | 'paid'
+                        | 'pending'
+                        | 'canceled'
+                        | undefined
+                    )
+                  }
+                >
+                  {/* @ts-ignore */}
+                  {(item) => (
+                    <DropdownItem key={item.uid}>{item.name}</DropdownItem>
+                  )}
+                </DropdownMenu>
+              </Dropdown>
+            )}
 
             <Tooltip
               content={
-                isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid')
+                isStripePaid
+                  ? tCell('status_locked')
+                  : isPaid
+                    ? tCell('mark_as_pending')
+                    : tCell('mark_as_paid')
               }
             >
               <Checkbox
@@ -232,7 +267,7 @@ const InvoiceTableCell = ({
                 color="success"
                 isSelected={isPaid}
                 onChange={handleMarkAsPaidClick}
-                isDisabled={isPending}
+                isDisabled={isPending || isStripePaid}
               />
             </Tooltip>
           </div>
@@ -257,6 +292,16 @@ const InvoiceTableCell = ({
               className="text-primary h-4 w-4 cursor-pointer"
             />
           </Tooltip>
+          {invoice.publicInvoiceToken && (
+            <Tooltip content={tCell('tooltip_copy_public_link')}>
+              <span
+                onClick={handleCopyPublicLink}
+                className="text-default-400 cursor-pointer text-lg active:opacity-50"
+              >
+                <LinkIcon className="h-5 w-5" />
+              </span>
+            </Tooltip>
+          )}
           <Tooltip content={tCell('tooltip_view')}>
             <span
               onClick={handleViewIconClick}

@@ -1,5 +1,6 @@
 import type {
   AddInvoiceResponse,
+  ConfirmPublicInvoicePaymentResponse,
   CreatePublicInvoicePaymentResponse,
   DeleteInvoiceResponse,
   GetInvoiceResponse,
@@ -32,6 +33,18 @@ export const getPublicInvoice = async (token: string) =>
 export const createPublicInvoicePayment = async (token: string) =>
   await api.post<CreatePublicInvoicePaymentResponse>(
     `/api/invoices/public/${token}/pay`
+  );
+
+export const confirmPublicInvoicePayment = async ({
+  token,
+  sessionId
+}: {
+  token: string;
+  sessionId: string;
+}) =>
+  await api.post<ConfirmPublicInvoicePaymentResponse>(
+    `/api/invoices/public/${token}/pay/confirm`,
+    { sessionId }
   );
 
 export const getInvoices = async (userId: number) =>
