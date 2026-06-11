@@ -1,16 +1,20 @@
 import {
+  confirmPublicInvoicePaymentResponseSchema,
+  createPublicInvoicePaymentResponseSchema,
   getInvoiceResponseSchema,
   getInvoicesResponseSchema,
   getInvoicesRevenueResponseSchema,
   getInvoicesTotalAmountResponseSchema,
   getLatestInvoicesResponseSchema,
   getNextInvoiceNumberResponseSchema,
+  getPublicInvoiceResponseSchema,
   getPublicInvoiceSigningResponseSchema,
   incomeJournalQuerySchema,
   invoiceBodySchema,
   invoiceNumberSeriesSchema,
   messageResponseSchema,
   postInvoiceResponseSchema,
+  sendInvoiceEmailBodySchema,
   signInvoiceResponseSchema,
   updateInvoiceResponseSchema
 } from '@invoicetrackr/types';
@@ -18,6 +22,8 @@ import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
 import {
+  confirmPublicInvoicePayment,
+  createPublicInvoicePayment,
   deleteInvoice,
   getIncomeJournal,
   getInvoice,
@@ -26,6 +32,7 @@ import {
   getInvoicesTotalAmount,
   getLatestInvoices,
   getNextInvoiceNumber,
+  getPublicInvoice,
   getPublicInvoiceSigning,
   postInvoice,
   regenerateInvoiceSigning,
@@ -162,12 +169,7 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
     response: {
       200: messageResponseSchema
     },
-    body: z.object({
-      recipientEmail: z.email('validation.invoice.recipientEmail'),
-      subject: z.string().min(1, 'validation.invoice.subject'),
-      message: z.string().max(1000, 'validation.invoice.message').optional(),
-      file: z.any().nullish()
-    })
+    body: sendInvoiceEmailBodySchema
   },
   preHandler: paidAccess,
   preValidation: preValidateFileAndFields,
@@ -206,6 +208,38 @@ export const getPublicInvoiceSigningOptions: RouteShorthandOptionsWithHandler =
       }
     },
     handler: getPublicInvoiceSigning
+  };
+
+export const getPublicInvoiceOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    response: {
+      200: getPublicInvoiceResponseSchema
+    }
+  },
+  handler: getPublicInvoice
+};
+
+export const createPublicInvoicePaymentOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      response: {
+        200: createPublicInvoicePaymentResponseSchema
+      }
+    },
+    handler: createPublicInvoicePayment
+  };
+
+export const confirmPublicInvoicePaymentOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      body: z.object({
+        sessionId: z.string().min(1)
+      }),
+      response: {
+        200: confirmPublicInvoicePaymentResponseSchema
+      }
+    },
+    handler: confirmPublicInvoicePayment
   };
 
 export const signPublicInvoiceOptions: RouteShorthandOptionsWithHandler = {

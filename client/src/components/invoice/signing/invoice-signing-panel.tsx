@@ -8,7 +8,12 @@ import {
   Chip,
   Divider
 } from '@heroui/react';
-import { PencilSquareIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import {
+  CheckCircleIcon,
+  CreditCardIcon,
+  PencilSquareIcon,
+  ShieldCheckIcon
+} from '@heroicons/react/24/outline';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import type { JSX } from 'react';
 import dynamic from 'next/dynamic';
@@ -35,8 +40,13 @@ const PDFDownloadLink = dynamic(
 
 type Props = {
   invoice: InvoiceBody;
+  isPaid: boolean;
+  isPaymentAvailable: boolean;
+  isPaymentPending: boolean;
   isPending: boolean;
+  isSigningRequested: boolean;
   isSigned: boolean;
+  onPay: () => void;
   onSign: () => void;
   onSignatureChange: (_signature: File | string) => void;
   pdfDocument: JSX.Element | null;
@@ -45,8 +55,13 @@ type Props = {
 
 export default function InvoiceSigningPanel({
   invoice,
+  isPaid,
+  isPaymentAvailable,
+  isPaymentPending,
   isPending,
+  isSigningRequested,
   isSigned,
+  onPay,
   onSign,
   onSignatureChange,
   pdfDocument,
@@ -74,49 +89,124 @@ export default function InvoiceSigningPanel({
 
         <Divider />
 
-        <div className="text-sm">
-          <p className="text-default-500 mb-2">{t('method_title')}</p>
-          <div className="grid grid-cols-1 gap-2">
-            <Button
-              variant="flat"
-              color="secondary"
-              className="h-auto justify-start px-3 py-3"
-              startContent={<PencilSquareIcon className="h-5 w-5" />}
-            >
-              {t('draw_signature')}
-            </Button>
-            <Button
-              variant="bordered"
-              isDisabled
-              className="h-auto justify-between px-3 py-3"
-              startContent={<ShieldCheckIcon className="h-5 w-5" />}
-              endContent={
-                <Chip size="sm" variant="flat">
-                  {t('coming_soon')}
-                </Chip>
+        <section className="flex flex-col gap-3">
+          <div className="flex items-start gap-3">
+            <span
+              className={
+                isPaid
+                  ? 'bg-success/10 text-success grid h-9 w-9 shrink-0 place-items-center rounded-lg'
+                  : 'bg-secondary/10 text-secondary grid h-9 w-9 shrink-0 place-items-center rounded-lg'
               }
             >
-              {t('electronic_signature')}
-            </Button>
+              {isPaid ? (
+                <CheckCircleIcon className="h-5 w-5" />
+              ) : (
+                <CreditCardIcon className="h-5 w-5" />
+              )}
+            </span>
+            <div className="min-w-0">
+              <h3 className="text-sm font-semibold">
+                {isPaid
+                  ? t('payment_action_paid_title')
+                  : t('payment_action_title')}
+              </h3>
+              <p className="text-default-500 mt-1 text-sm leading-5">
+                {isPaymentAvailable
+                  ? t('payment_action_online')
+                  : isPaid
+                    ? t('payment_action_paid_subtitle')
+                    : t('payment_action_bank')}
+              </p>
+            </div>
           </div>
-        </div>
+          {isPaymentAvailable && (
+            <Button
+              className="w-full"
+              color="secondary"
+              isLoading={isPaymentPending}
+              onPress={onPay}
+            >
+              {t('pay_invoice')}
+            </Button>
+          )}
+        </section>
 
-        <SignaturePad
-          signature={signature}
-          onSignatureChange={onSignatureChange}
-          isChipVisible={false}
-        />
+        {isSigningRequested && (
+          <>
+            <Divider />
+
+            {isSigned ? (
+              <section className="flex flex-col gap-3">
+                <div className="flex items-start gap-3">
+                  <span className="bg-success/10 text-success grid h-9 w-9 shrink-0 place-items-center rounded-lg">
+                    <CheckCircleIcon className="h-5 w-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-semibold">
+                      {t('signature_received_title')}
+                    </h3>
+                    <p className="text-default-500 mt-1 text-sm leading-5">
+                      {t('signature_received_subtitle')}
+                    </p>
+                  </div>
+                </div>
+
+                <SignaturePad
+                  signature={signature}
+                  onSignatureChange={onSignatureChange}
+                  isChipVisible={false}
+                  isReadOnly
+                />
+              </section>
+            ) : (
+              <section className="flex flex-col gap-4">
+                <div className="text-sm">
+                  <p className="text-default-500 mb-2">{t('method_title')}</p>
+                  <div className="grid grid-cols-1 gap-2">
+                    <Button
+                      variant="flat"
+                      color="secondary"
+                      className="h-auto justify-start px-3 py-3"
+                      startContent={<PencilSquareIcon className="h-5 w-5" />}
+                    >
+                      {t('draw_signature')}
+                    </Button>
+                    <Button
+                      variant="bordered"
+                      isDisabled
+                      className="h-auto justify-between px-3 py-3"
+                      startContent={<ShieldCheckIcon className="h-5 w-5" />}
+                      endContent={
+                        <Chip size="sm" variant="flat">
+                          {t('coming_soon')}
+                        </Chip>
+                      }
+                    >
+                      {t('electronic_signature')}
+                    </Button>
+                  </div>
+                </div>
+
+                <SignaturePad
+                  signature={signature}
+                  onSignatureChange={onSignatureChange}
+                  isChipVisible={false}
+                />
+
+                <Button
+                  color="secondary"
+                  isDisabled={isPending}
+                  isLoading={isPending}
+                  onPress={onSign}
+                >
+                  {t('sign_button')}
+                </Button>
+              </section>
+            )}
+          </>
+        )}
 
         <div className="border-default-200 mt-auto flex flex-col gap-2 border-t pt-5">
-          <Button
-            color="secondary"
-            isDisabled={isPending || isSigned}
-            isLoading={isPending}
-            onPress={onSign}
-          >
-            {isSigned ? t('already_signed') : t('sign_button')}
-          </Button>
-
           {pdfDocument && (
             <PDFDownloadLink
               document={pdfDocument}

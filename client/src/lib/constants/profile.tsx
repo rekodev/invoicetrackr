@@ -1,4 +1,6 @@
 import {
+  BanknotesIcon,
+  BuildingLibraryIcon,
   Cog6ToothIcon,
   CreditCardIcon,
   LockClosedIcon,
@@ -10,6 +12,7 @@ import {
   BANKING_INFORMATION_PAGE,
   BILLING_PAGE,
   CHANGE_PASSWORD_PAGE,
+  INVOICE_PAYMENTS_PAGE,
   PERSONAL_INFORMATION_PAGE
 } from './pages';
 
@@ -23,7 +26,7 @@ export const profileMenuTabs = [
   {
     key: 'banking-information',
     name: 'banking_information.title',
-    icon: <CreditCardIcon className="h-4 w-4" />,
+    icon: <BuildingLibraryIcon className="h-4 w-4" />,
     href: BANKING_INFORMATION_PAGE
   },
   {
@@ -43,6 +46,12 @@ export const profileMenuTabs = [
     name: 'billing.title',
     icon: <CreditCardIcon className="h-4 w-4" />,
     href: BILLING_PAGE
+  },
+  {
+    key: 'invoice-payments',
+    name: 'invoice_payments.title',
+    icon: <BanknotesIcon className="h-4 w-4" />,
+    href: INVOICE_PAYMENTS_PAGE
   }
 ];
 

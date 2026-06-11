@@ -1,16 +1,11 @@
-'use client';
-
-import { CheckCircleIcon } from '@heroicons/react/24/outline';
-import { Chip } from '@heroui/react';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 
 type Props = {
   invoice: InvoiceBody;
-  isSigned: boolean;
 };
 
-export default function InvoiceSigningHeader({ invoice, isSigned }: Props) {
+export default function InvoiceSigningHeader({ invoice }: Props) {
   const t = useTranslations('invoice_signing');
 
   return (
@@ -23,15 +18,6 @@ export default function InvoiceSigningHeader({ invoice, isSigned }: Props) {
             <span className="text-secondary">{invoice.sender.name}</span>
           </h1>
         </div>
-        {isSigned && (
-          <Chip
-            color="success"
-            variant="flat"
-            startContent={<CheckCircleIcon className="ml-0.5 h-4 w-4" />}
-          >
-            {t('signed_status')}
-          </Chip>
-        )}
       </div>
       <p className="text-default-600 max-w-3xl text-sm">
         {t('subtitle', { invoiceId: invoice.invoiceId || '' })}

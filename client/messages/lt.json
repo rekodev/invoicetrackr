@@ -51,7 +51,8 @@
         "renew_subscription": "Atnaujinti prenumeratą",
         "sign_up": "Registruotis",
         "terms_of_service": "Paslaugų teikimo sąlygos",
-        "billing": "Atsiskaitymai"
+        "billing": "Atsiskaitymai",
+        "invoice_payments": "Sąskaitų apkmokėjimai"
     },
     "general_error": "Ajajai! Kažkas negerai...",
     "cookie_consent": {
@@ -410,12 +411,15 @@
         "cell": {
             "actions": {
                 "tooltip_send_email": "Siųsti sąskaitą el. paštu",
+                "tooltip_copy_public_link": "Kopijuoti viešą sąskaitos nuorodą",
                 "tooltip_view": "Išsami informacija",
                 "tooltip_edit": "Redaguoti sąskaitą faktūrą",
                 "tooltip_delete": "Ištrinti sąskaitą faktūrą",
                 "tooltip_download": "Atsisiųsti",
                 "mark_as_paid": "Pažymėti kaip sumokėtą",
                 "mark_as_pending": "Pažymėti kaip laukiamą",
+                "status_locked": "Būsena užrakinta, nes sąskaita apmokėta internetu.",
+                "public_link_copied": "Vieša sąskaitos nuoroda nukopijuota.",
                 "past_due": "{days}d vėluoja"
             }
         },
@@ -461,8 +465,8 @@
         "subtitle": "Peržiūrėkite sąskaitą {invoiceId}, pasirašykite, jei viskas teisinga, ir atsisiųskite pasirašytą PDF savo įrašams.",
         "signed_status": "Pasirašyta",
         "loading_pdf": "Įkeliamas PDF...",
-        "panel_title": "Pasirašyti šią sąskaitą",
-        "panel_description": "Pasirinkite pasirašymo būdą ir pridėkite savo parašą.",
+        "panel_title": "Užbaigti šią sąskaitą",
+        "panel_description": "Peržiūrėkite šalis, apmokėkite internetu, jei galima, ir pasirašykite, jei prašoma.",
         "receiver": "Gavėjas",
         "sender": "Siuntėjas",
         "summary_title": "Sąskaitos santrauka",
@@ -481,6 +485,12 @@
         "vat_total": "PVM suma",
         "total": "Iš viso",
         "payment_details": "Mokėjimo informacija",
+        "payment_action_title": "Apmokėti sąskaitą",
+        "payment_action_paid_title": "Mokėjimas gautas",
+        "payment_action_paid_subtitle": "Papildomai apmokėti šios sąskaitos nereikia.",
+        "payment_action_online": "Siuntėjas priima kortelių mokėjimus per Stripe.",
+        "payment_action_bank": "Internetinis mokėjimas neįjungtas. Naudokite sąskaitos santraukoje nurodytus banko rekvizitus.",
+        "pay_invoice": "Apmokėti sąskaitą",
         "bank": "Bankas",
         "bank_code": "Banko kodas",
         "account_number": "Sąskaitos numeris",
@@ -489,6 +499,8 @@
         "electronic_signature": "Elektroninis parašas",
         "coming_soon": "Netrukus",
         "signature_required": "Pridėkite parašą prieš pasirašydami.",
+        "signature_received_title": "Parašas gautas",
+        "signature_received_subtitle": "Ši sąskaita jau pasirašyta.",
         "sign_button": "Pasirašyti sąskaitą",
         "already_signed": "Sąskaita pasirašyta",
         "download_pdf": "Atsisiųsti PDF",
@@ -576,6 +588,9 @@
             },
             "billing": {
                 "title": "Atsiskaitymai"
+            },
+            "invoice_payments": {
+                "title": "Sąskaitų apmokėjimai"
             }
         },
         "personal_information": {
@@ -699,6 +714,47 @@
                     "description": "Ar tikrai norite atšaukti savo prenumeratą? Jūs išlaikysite prieigą iki dabartinio prenumeratos laikotarpio pabaigos.",
                     "confirm_button": "Taip, atšaukti prenumeratą",
                     "cancel_button": "Atšaukti"
+                }
+            }
+        },
+        "merchant_payments": {
+            "eyebrow": "Gavėjo sąskaitų apmokėjimai",
+            "title": "Priimti sąskaitų apmokėjimus",
+            "description": "Prijunkite Stripe prekybininko paskyrą, kad gavėjai galėtų apmokėti tinkamas sąskaitas internetu. Jei tai neparuošta, vieši sąskaitų puslapiai rodys banko pavedimo rekvizitus.",
+            "description_ready": "Stripe Connect paruoštas. Tinkamos neapmokėtos viešos sąskaitos gali rodyti internetinio apmokėjimo veiksmą, o lėšos keliaus į jūsų prekybininko paskyrą.",
+            "action_start": "Nustatyti Stripe Connect",
+            "action_continue": "Tęsti Stripe nustatymą",
+            "action_update": "Atnaujinti Stripe Connect",
+            "status": {
+                "live": "Veikia",
+                "reviewing": "Tikrinama",
+                "action_needed": "Reikia veiksmo",
+                "not_connected": "Neprijungta"
+            },
+            "capabilities_title": "Paskyros galimybės",
+            "capabilities_ready_count": "{ready} iš {total} paruošta",
+            "requirements_title": "Stripe reikia daugiau informacijos",
+            "requirements_description": "Tęskite nustatymą Stripe, kad užbaigtumėte tapatybės ir išmokėjimų patvirtinimą prieš įjungiant sąskaitų apmokėjimą internetu.",
+            "verification_title": "Stripe tikrina jūsų paskyrą",
+            "verification_description": "Stripe šiuo metu turi reikalingus duomenis ir tikrina, ar galima įjungti mokėjimus bei išmokėjimus.",
+            "no_requirements": "Trūkstamų reikalavimų Stripe dar negrąžino. Paskyra vis dar gali būti tikrinama.",
+            "checks": {
+                "ready": "Paruošta",
+                "pending": "Laukiama",
+                "charges": {
+                    "title": "Kortelių mokėjimai",
+                    "ready_meta": "Internetinis apmokėjimas įjungtas",
+                    "pending_meta": "Laukiama Stripe patvirtinimo"
+                },
+                "details": {
+                    "title": "Verslo duomenys",
+                    "ready_meta": "Prekybininko profilis pateiktas",
+                    "pending_meta": "Užbaikite duomenis Stripe"
+                },
+                "payouts": {
+                    "title": "Išmokėjimai",
+                    "ready_meta": "Pervedimai į jūsų paskyrą įjungti",
+                    "pending_meta": "Laukiama išmokėjimų patvirtinimo"
                 }
             }
         },
@@ -883,7 +939,11 @@
             "client": "Klientas",
             "amount": "Suma",
             "date": "Data",
+            "public_link_note": "Šiame laiške gali būti saugus sąskaitos puslapis su PDF, banko rekvizitais ir internetiniu mokėjimu, jei jis įjungtas.",
             "signing_link_note": "Šiame laiške bus saugi pasirašymo nuoroda gavėjui.",
+            "include_public_link": "Įtraukti viešą sąskaitos puslapį",
+            "request_signature": "Prašyti gavėjo parašo",
+            "signature_requires_public_link": "Gavėjo pasirašymui reikia viešo sąskaitos puslapio.",
             "active_signing_recipient": "Aktyvi pasirašymo nuoroda išsiųsta adresu {email}.",
             "signing_link_expires": "Nuoroda galioja iki {date}.",
             "signing_link_revoked": "Ši nuoroda buvo atšaukta.",

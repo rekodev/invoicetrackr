@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardBody,
+  Checkbox,
   Input,
   Modal,
   ModalBody,
@@ -17,7 +18,7 @@ import {
   InformationCircleIcon,
   PaperAirplaneIcon
 } from '@heroicons/react/24/outline';
-import { JSX, useTransition } from 'react';
+import { JSX, useEffect, useState, useTransition } from 'react';
 import { BlobProvider } from '@react-pdf/renderer';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
@@ -46,6 +47,8 @@ type SendInvoiceForm = {
   recipientEmail: string;
   subject: string;
   message?: string;
+  includePublicLink: boolean;
+  requestSignature: boolean;
 };
 
 export default function SendInvoiceEmailModal({
@@ -59,6 +62,10 @@ export default function SendInvoiceEmailModal({
   const t = useTranslations('components.send_invoice_email');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [includePublicLink, setIncludePublicLink] = useState(true);
+  const [requestSignature, setRequestSignature] = useState(
+    Boolean(invoice.recipientSigningRequestedAt && !invoice.recipientSignedAt)
+  );
 
   const {
     register,
@@ -71,10 +78,14 @@ export default function SendInvoiceEmailModal({
   } = useForm<SendInvoiceForm>();
   const defaultRecipientEmail =
     invoice.recipientSigningEmail || invoice.receiver.email || '';
+  const defaultRequestSignature = Boolean(
+    invoice.recipientSigningRequestedAt && !invoice.recipientSignedAt
+  );
   // eslint-disable-next-line react-hooks/incompatible-library
   const recipientEmail = watch('recipientEmail', defaultRecipientEmail);
   const shouldRotateSigningLink = Boolean(
-    invoice.recipientSigningToken &&
+    requestSignature &&
+      invoice.recipientSigningToken &&
       (invoice.recipientSigningRevokedAt ||
         (invoice.recipientSigningExpiresAt &&
           new Date(invoice.recipientSigningExpiresAt).getTime() <=
@@ -87,7 +98,14 @@ export default function SendInvoiceEmailModal({
   const handleCloseSendDialog = () => {
     onClose();
     reset();
+    setIncludePublicLink(true);
+    setRequestSignature(defaultRequestSignature);
   };
+
+  useEffect(() => {
+    setIncludePublicLink(true);
+    setRequestSignature(defaultRequestSignature);
+  }, [defaultRequestSignature, invoice.id]);
 
   const onSubmit = (data: SendInvoiceForm, blob: Blob | null) =>
     startTransition(async () => {
@@ -98,7 +116,9 @@ export default function SendInvoiceEmailModal({
         invoiceId: invoice.invoiceId || '',
         recipientEmail: data.recipientEmail,
         subject: data.subject,
-        message: data.message
+        message: data.message,
+        includePublicLink,
+        requestSignature: includePublicLink && requestSignature
       });
 
       addToast({
@@ -144,7 +164,7 @@ export default function SendInvoiceEmailModal({
     });
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseSendDialog} size="lg">
+    <Modal isOpen={isOpen} onClose={handleCloseSendDialog} size="3xl">
       <ModalContent>
         {/* @ts-ignore */}
         <BlobProvider document={pdfDocument}>
@@ -161,17 +181,19 @@ export default function SendInvoiceEmailModal({
                 <div className="border-secondary-200 bg-secondary-50 dark:bg-secondary-900/20 flex gap-3 rounded-lg border p-3">
                   <InformationCircleIcon className="text-secondary-500 mt-0.5 h-5 w-5 shrink-0" />
                   <div className="flex flex-col gap-1 text-sm">
-                    <p>{t('signing_link_note')}</p>
-                    {invoice.recipientSigningEmail && (
+                    <p>{t('public_link_note')}</p>
+                    {requestSignature && <p>{t('signing_link_note')}</p>}
+                    {requestSignature && invoice.recipientSigningEmail && (
                       <p className="text-default-500">
                         {t('active_signing_recipient', {
                           email: invoice.recipientSigningEmail
                         })}
                       </p>
                     )}
-                    {invoice.recipientSigningRevokedAt ? (
+                    {requestSignature && invoice.recipientSigningRevokedAt ? (
                       <p className="text-danger">{t('signing_link_revoked')}</p>
-                    ) : invoice.recipientSigningExpiresAt ? (
+                    ) : requestSignature &&
+                      invoice.recipientSigningExpiresAt ? (
                       <p className="text-default-500">
                         {t('signing_link_expires', {
                           date: new Date(
@@ -180,12 +202,36 @@ export default function SendInvoiceEmailModal({
                         })}
                       </p>
                     ) : null}
-                    {shouldRotateSigningLink && (
+                    {requestSignature && shouldRotateSigningLink && (
                       <p className="text-warning">
                         {t('replacement_link_note')}
                       </p>
                     )}
                   </div>
+                </div>
+                <div className="border-default-100 grid gap-2 rounded-lg border p-3">
+                  <Checkbox
+                    classNames={{ label: 'text-sm' }}
+                    color="secondary"
+                    isSelected={includePublicLink}
+                    onValueChange={setIncludePublicLink}
+                  >
+                    {t('include_public_link')}
+                  </Checkbox>
+                  <Checkbox
+                    classNames={{ label: 'text-sm' }}
+                    color="secondary"
+                    isDisabled={!includePublicLink}
+                    isSelected={includePublicLink && requestSignature}
+                    onValueChange={setRequestSignature}
+                  >
+                    {t('request_signature')}
+                  </Checkbox>
+                  {!includePublicLink && requestSignature && (
+                    <p className="text-warning text-xs">
+                      {t('signature_requires_public_link')}
+                    </p>
+                  )}
                 </div>
                 <Input
                   defaultValue={defaultRecipientEmail}
@@ -246,7 +292,8 @@ export default function SendInvoiceEmailModal({
               </ModalBody>
               <ModalFooter className="flex w-full flex-wrap justify-between gap-2">
                 <div className="flex flex-wrap gap-2">
-                  {invoice.recipientSigningToken &&
+                  {requestSignature &&
+                    invoice.recipientSigningToken &&
                     !invoice.recipientSigningRevokedAt && (
                       <Button
                         size="sm"
@@ -258,7 +305,8 @@ export default function SendInvoiceEmailModal({
                         {t('revoke_signing_link')}
                       </Button>
                     )}
-                  {invoice.recipientSigningToken &&
+                  {requestSignature &&
+                    invoice.recipientSigningToken &&
                     !invoice.recipientSignedAt && (
                       <Button
                         size="sm"

@@ -3,11 +3,17 @@ import Stripe from 'stripe';
 
 import { BadRequestError, InternalServerError } from '../utils/error';
 import {
+  getUserByStripeConnectedAccountIdFromDb,
   getUserByStripeCustomerIdFromDb,
   hasProcessedStripeWebhookEvent,
   markStripeWebhookEventProcessed,
-  updateBillingStatusInDb
+  updateBillingStatusInDb,
+  upsertStripeMerchantAccountInDb
 } from '../database/payment';
+import {
+  markInvoicePaidByCheckoutSessionInDb,
+  markInvoicePaymentFailedByIntentInDb
+} from '../database/invoice';
 import en from '../locales/en';
 import lt from '../locales/lt';
 import { resend } from '../config/resend';
@@ -74,6 +80,25 @@ export const handleStripeWebhook = async (
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
+
+        if (session.metadata?.type === 'invoice_payment') {
+          await markInvoicePaidByCheckoutSessionInDb({
+            checkoutSessionId: session.id,
+            paymentIntentId:
+              typeof session.payment_intent === 'string'
+                ? session.payment_intent
+                : session.payment_intent?.id,
+            invoiceId: session.metadata.invoiceId
+              ? Number(session.metadata.invoiceId)
+              : undefined,
+            userId: session.metadata.userId
+              ? Number(session.metadata.userId)
+              : undefined,
+            publicInvoiceToken: session.metadata.publicInvoiceToken
+          });
+          break;
+        }
+
         const customerId = getCustomerId(session.customer);
         const user = customerId
           ? await getUserByStripeCustomerIdFromDb(customerId)
@@ -87,6 +112,37 @@ export const handleStripeWebhook = async (
 
           await syncSubscriptionInDb(user.id, subscription, {
             paymentSuccessPending: true
+          });
+        }
+        break;
+      }
+
+      case 'payment_intent.payment_failed': {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+
+        if (paymentIntent.metadata?.type === 'invoice_payment') {
+          await markInvoicePaymentFailedByIntentInDb({
+            paymentIntentId: paymentIntent.id,
+            publicInvoiceToken: paymentIntent.metadata.publicInvoiceToken
+          });
+        }
+        break;
+      }
+
+      case 'account.updated': {
+        const account = event.data.object as Stripe.Account;
+        const user = await getUserByStripeConnectedAccountIdFromDb(account.id);
+
+        if (user) {
+          await upsertStripeMerchantAccountInDb(user.id, {
+            stripeConnectedAccountId: account.id,
+            chargesEnabled: account.charges_enabled,
+            payoutsEnabled: account.payouts_enabled,
+            detailsSubmitted: account.details_submitted,
+            onboardingCompletedAt:
+              account.charges_enabled && account.details_submitted
+                ? new Date().toISOString()
+                : null
           });
         }
         break;

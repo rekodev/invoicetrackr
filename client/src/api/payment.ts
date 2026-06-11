@@ -1,7 +1,8 @@
 import {
   BillingStatusResponse,
   BillingUrlResponse,
-  ConsumePaymentSuccessResponse
+  ConsumePaymentSuccessResponse,
+  MerchantPaymentStatusResponse
 } from '@invoicetrackr/types';
 import type { BillingInterval } from '@invoicetrackr/types';
 
@@ -42,4 +43,14 @@ export const consumePaymentSuccess = async ({
   await api.post<ConsumePaymentSuccessResponse>(
     `/api/${userId}/billing/consume-payment-success`,
     { trial, sessionId }
+  );
+
+export const getMerchantPaymentStatus = async (userId: number) =>
+  await api.get<MerchantPaymentStatusResponse>(
+    `/api/${userId}/merchant-payments/stripe-connect`
+  );
+
+export const createMerchantPaymentOnboardingSession = async (userId: number) =>
+  await api.post<BillingUrlResponse>(
+    `/api/${userId}/merchant-payments/stripe-connect/onboarding-session`
   );

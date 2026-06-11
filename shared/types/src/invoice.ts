@@ -118,7 +118,17 @@ export const invoiceBodySchema = z
     recipientSigningCreatedAt: z.string().nullish(),
     recipientSigningExpiresAt: z.string().nullish(),
     recipientSigningRevokedAt: z.string().nullish(),
+    recipientSigningRequestedAt: z.string().nullish(),
     recipientSignedAt: z.string().nullish(),
+    publicInvoiceToken: z.string().nullish(),
+    publicInvoiceSentAt: z.string().nullish(),
+    publicInvoiceExpiresAt: z.string().nullish(),
+    publicInvoiceRevokedAt: z.string().nullish(),
+    paymentProvider: z.string().nullish(),
+    paymentCheckoutSessionId: z.string().nullish(),
+    paymentIntentId: z.string().nullish(),
+    paymentCompletedAt: z.string().nullish(),
+    paymentFailedAt: z.string().nullish(),
     services: z
       .array(invoiceServiceBodySchema)
       .min(1, 'validation.invoice.services.required')
@@ -141,8 +151,45 @@ export const publicInvoiceSigningSchema = z.object({
   preferredInvoiceLanguage: z.string().nullish()
 });
 
+export const publicInvoicePaymentSchema = z.object({
+  provider: z.literal('stripe_connect').nullish(),
+  available: z.boolean(),
+  checkoutSessionId: z.string().nullish(),
+  paymentIntentId: z.string().nullish(),
+  completedAt: z.string().nullish(),
+  failedAt: z.string().nullish()
+});
+
+export const publicInvoiceSchema = z.object({
+  token: z.string(),
+  invoice: invoiceBodySchema,
+  currency: z.string(),
+  language: z.string(),
+  preferredInvoiceLanguage: z.string().nullish(),
+  payment: publicInvoicePaymentSchema,
+  signing: z.object({
+    requested: z.boolean(),
+    signed: z.boolean(),
+    available: z.boolean()
+  })
+});
+
 export const signInvoiceBodySchema = z.object({
   file: z.any()
+});
+
+const multipartBooleanSchema = z.preprocess(
+  (value) => (value === 'true' ? true : value === 'false' ? false : value),
+  z.boolean()
+);
+
+export const sendInvoiceEmailBodySchema = z.object({
+  recipientEmail: z.email('validation.invoice.recipientEmail'),
+  subject: z.string().min(1, 'validation.invoice.subject'),
+  message: z.string().max(1000, 'validation.invoice.message').optional(),
+  includePublicLink: multipartBooleanSchema.optional(),
+  requestSignature: multipartBooleanSchema.optional(),
+  file: z.any().nullish()
 });
 
 export const incomeJournalQuerySchema = z
@@ -176,4 +223,6 @@ export type InvoiceParty = InvoicePartyBody;
 
 export type InvoiceBody = z.infer<typeof invoiceBodySchema>;
 export type PublicInvoiceSigning = z.infer<typeof publicInvoiceSigningSchema>;
+export type PublicInvoice = z.infer<typeof publicInvoiceSchema>;
+export type PublicInvoicePayment = z.infer<typeof publicInvoicePaymentSchema>;
 export type IncomeJournalQuery = z.infer<typeof incomeJournalQuerySchema>;

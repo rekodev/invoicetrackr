@@ -1,14 +1,14 @@
 'use client';
 
-import type { InvoiceBody, PublicInvoiceSigning } from '@invoicetrackr/types';
+import type { InvoiceBody, PublicInvoice } from '@invoicetrackr/types';
 import { addToast, useDisclosure } from '@heroui/react';
 import { useMemo, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
+import { createPublicInvoicePayment, signPublicInvoice } from '@/api/invoice';
 import type { Currency } from '@/lib/types/currency';
 import InvoiceModal from '@/components/invoice/invoice-modal';
 import { isResponseError } from '@/lib/utils/error';
-import { signPublicInvoice } from '@/api/invoice';
 import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
 
 import InvoiceSigningHeader from '@/components/invoice/signing/invoice-signing-header';
@@ -16,30 +16,36 @@ import InvoiceSigningPanel from '@/components/invoice/signing/invoice-signing-pa
 import InvoiceSigningSummary from '@/components/invoice/signing/invoice-signing-summary';
 
 type Props = {
-  signing: PublicInvoiceSigning;
+  publicInvoice: PublicInvoice;
 };
 
-export default function InvoiceSigningPageContent({ signing }: Props) {
+export default function PublicInvoicePageContent({ publicInvoice }: Props) {
   const t = useTranslations('invoice_signing');
   const pdfTranslator = useTranslations('invoices.pdf');
-  const [invoice, setInvoice] = useState<InvoiceBody>(signing.invoice);
+  const [invoice, setInvoice] = useState<InvoiceBody>(publicInvoice.invoice);
   const [signature, setSignature] = useState<File | string | undefined>(
-    signing.invoice.receiverSignature || undefined
+    publicInvoice.invoice.receiverSignature || undefined
   );
-  const [isPending, startTransition] = useTransition();
+  const [isSigningPending, startSigningTransition] = useTransition();
+  const [isPaymentPending, startPaymentTransition] = useTransition();
   const {
     isOpen: isPdfModalOpen,
     onOpen: openPdfModal,
     onOpenChange: setIsPdfModalOpen
   } = useDisclosure();
   const invoiceLanguage = useMemo(
-    () => signing.preferredInvoiceLanguage || signing.language,
-    [signing.language, signing.preferredInvoiceLanguage]
+    () => publicInvoice.preferredInvoiceLanguage || publicInvoice.language,
+    [publicInvoice.language, publicInvoice.preferredInvoiceLanguage]
   );
   const isSigned = Boolean(
     invoice.receiverSignature || invoice.recipientSignedAt
   );
-  const currency = signing.currency as Currency;
+  const isPaid = Boolean(
+    invoice.status === 'paid' ||
+      invoice.paymentCompletedAt ||
+      publicInvoice.payment.completedAt
+  );
+  const currency = publicInvoice.currency as Currency;
   const { pdfDocument, isPdfDocumentLoading } = useDynamicPdf({
     currency,
     defaultTranslator: pdfTranslator,
@@ -52,6 +58,22 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
         : invoice.receiverSignature || ''
   });
 
+  const handlePay = () => {
+    startPaymentTransition(async () => {
+      const response = await createPublicInvoicePayment(publicInvoice.token);
+
+      if (isResponseError(response)) {
+        addToast({
+          title: response.data.message,
+          color: 'danger'
+        });
+        return;
+      }
+
+      window.location.assign(response.data.url);
+    });
+  };
+
   const handleSign = () => {
     if (!signature || typeof signature === 'string') {
       addToast({
@@ -62,9 +84,9 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
       return;
     }
 
-    startTransition(async () => {
+    startSigningTransition(async () => {
       const response = await signPublicInvoice({
-        token: signing.token,
+        token: publicInvoice.token,
         signature
       });
 
@@ -90,22 +112,22 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
           invoice={invoice}
           onOpenPdf={openPdfModal}
         />
-        <InvoiceSigningPanel
-          invoice={invoice}
-          isPaid={Boolean(
-            invoice.status === 'paid' || invoice.paymentCompletedAt
-          )}
-          isPaymentAvailable={false}
-          isPaymentPending={false}
-          isPending={isPending}
-          isSigningRequested
-          isSigned={isSigned}
-          onPay={() => undefined}
-          onSign={handleSign}
-          onSignatureChange={setSignature}
-          pdfDocument={pdfDocument}
-          signature={signature}
-        />
+        <aside className="flex flex-col gap-4">
+          <InvoiceSigningPanel
+            invoice={invoice}
+            isPaid={isPaid}
+            isPaymentAvailable={publicInvoice.payment.available}
+            isPaymentPending={isPaymentPending}
+            isPending={isSigningPending}
+            isSigningRequested={publicInvoice.signing.requested}
+            isSigned={isSigned}
+            onPay={handlePay}
+            onSign={handleSign}
+            onSignatureChange={setSignature}
+            pdfDocument={pdfDocument}
+            signature={signature}
+          />
+        </aside>
       </section>
 
       <InvoiceModal

@@ -1,19 +1,25 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import type { IncomeJournalQuery, InvoiceBody } from '@invoicetrackr/types';
+import type {
+  IncomeJournalQuery,
+  InvoiceBody,
+  PublicInvoice
+} from '@invoicetrackr/types';
 import { InvoiceEmail } from '@invoicetrackr/emails';
 import { MultipartFile } from '@fastify/multipart';
 import { v2 as cloudinary } from 'cloudinary';
+import { invoiceBodySchema } from '@invoicetrackr/types';
 import { randomBytes } from 'crypto';
 import { useI18n } from 'fastify-i18n';
 
 import {
   AlreadyExistsError,
   BadRequestError,
+  InternalServerError,
   NotFoundError
 } from '../utils/error';
 import {
+  type InvoiceFromDb,
   deleteInvoiceFromDb,
-  findInvoiceById,
   findInvoiceByInvoiceId,
   getIncomeJournalRowsFromDb,
   getInvoiceFromDb,
@@ -22,21 +28,30 @@ import {
   getInvoicesTotalAmountFromDb,
   getLatestInvoicesFromDb,
   getNextInvoiceNumberFromDb,
+  getPublicInvoiceFromDb,
   getPublicInvoiceSigningFromDb,
   insertInvoiceInDb,
-  markInvoiceSigningSentInDb,
+  markInvoicePaidByCheckoutSessionInDb,
+  markPublicInvoiceSentInDb,
   prepareInvoiceSigningFromDb,
+  preparePublicInvoiceFromDb,
+  recordInvoiceCheckoutSessionInDb,
   regenerateInvoiceSigningFromDb,
   revokeInvoiceSigningFromDb,
   signInvoiceByRecipientTokenInDb,
   updateInvoiceInDb,
   updateInvoiceStatusInDb
 } from '../database/invoice';
+import {
+  getStripeMerchantAccountFromDb,
+  toMerchantPaymentStatus
+} from '../database/payment';
 import en from '../locales/en';
 import { getClientsFromDb } from '../database/client';
 import { getUserFromDb } from '../database/user';
 import lt from '../locales/lt';
 import { resend } from '../config/resend';
+import { stripe } from '../config/stripe';
 
 const locales = { en, lt };
 
@@ -80,6 +95,7 @@ const formatCsvDate = (value: string | null | undefined) =>
 
 const UNSIGNED_SIGNING_LINK_VALIDITY_DAYS = 30;
 const SIGNED_SIGNING_LINK_VALIDITY_DAYS = 90;
+const PUBLIC_INVOICE_LINK_VALIDITY_DAYS = 90;
 const createSigningLinkExpiration = (isSigned = false) =>
   new Date(
     Date.now() +
@@ -91,7 +107,13 @@ const createSigningLinkExpiration = (isSigned = false) =>
         60 *
         1000
   ).toISOString();
+const createPublicInvoiceExpiration = () =>
+  new Date(
+    Date.now() + PUBLIC_INVOICE_LINK_VALIDITY_DAYS * 24 * 60 * 60 * 1000
+  ).toISOString();
 const isSigningLinkExpired = (expiresAt?: string | null) =>
+  Boolean(expiresAt && new Date(expiresAt).getTime() <= Date.now());
+const isPublicInvoiceLinkExpired = (expiresAt?: string | null) =>
   Boolean(expiresAt && new Date(expiresAt).getTime() <= Date.now());
 
 const assertSigningLinkAvailable = (
@@ -105,6 +127,115 @@ const assertSigningLinkAvailable = (
     throw new BadRequestError(i18n.t('error.invoice.signingLinkRevoked'));
   if (isSigningLinkExpired(invoice.recipientSigningExpiresAt))
     throw new BadRequestError(i18n.t('error.invoice.signingLinkExpired'));
+};
+
+const assertPublicInvoiceLinkAvailable = (
+  invoice: Pick<
+    InvoiceBody,
+    'publicInvoiceRevokedAt' | 'publicInvoiceExpiresAt'
+  >,
+  i18n: Awaited<ReturnType<typeof useI18n>>
+) => {
+  if (invoice.publicInvoiceRevokedAt)
+    throw new BadRequestError(i18n.t('error.invoice.publicLinkRevoked'));
+  if (isPublicInvoiceLinkExpired(invoice.publicInvoiceExpiresAt))
+    throw new BadRequestError(i18n.t('error.invoice.publicLinkExpired'));
+};
+
+const getPaymentIntentId = (
+  paymentIntent:
+    | string
+    | {
+        id?: string;
+      }
+    | null
+    | undefined
+) => (typeof paymentIntent === 'string' ? paymentIntent : paymentIntent?.id);
+
+const isInvoicePayable = (invoice: InvoiceBody) =>
+  invoice.status === 'pending' &&
+  (invoice.lifecycleStatus || 'draft') !== 'voided' &&
+  !invoice.publicInvoiceRevokedAt &&
+  !isPublicInvoiceLinkExpired(invoice.publicInvoiceExpiresAt);
+
+const toInvoiceBody = (invoice: InvoiceFromDb): InvoiceBody => {
+  if (
+    !invoice.sender ||
+    !invoice.receiver ||
+    !invoice.bankingInformation ||
+    !invoice.services?.length
+  )
+    throw new Error('Invoice is missing required public response data');
+
+  return invoiceBodySchema.parse({
+    ...invoice,
+    sender: invoice.sender,
+    receiver: invoice.receiver,
+    bankingInformation: invoice.bankingInformation,
+    services: invoice.services.map((service) => ({
+      ...service,
+      amount: Number(service.amount),
+      quantity: Number(service.quantity),
+      vatRate:
+        service.vatRate === null || service.vatRate === undefined
+          ? undefined
+          : Number(service.vatRate)
+    }))
+  });
+};
+
+const buildPublicInvoicePayload = async ({
+  token,
+  publicInvoice
+}: {
+  token: string;
+  publicInvoice: Awaited<ReturnType<typeof getPublicInvoiceFromDb>>;
+}): Promise<PublicInvoice> => {
+  if (!publicInvoice) throw new Error('Public invoice not found');
+
+  const invoice = toInvoiceBody(publicInvoice.invoice);
+  const merchantAccount = await getStripeMerchantAccountFromDb(
+    publicInvoice.userId
+  );
+  const merchantPayment = toMerchantPaymentStatus(merchantAccount);
+  const isSigningToken = token === invoice.recipientSigningToken;
+  const signingRequested = Boolean(
+    (invoice.recipientSigningRequestedAt &&
+      !invoice.recipientSigningRevokedAt) ||
+      isSigningToken
+  );
+  const signingSigned = Boolean(
+    invoice.receiverSignature || invoice.recipientSignedAt
+  );
+  const signingAvailable =
+    signingRequested &&
+    !signingSigned &&
+    !invoice.recipientSigningRevokedAt &&
+    !isSigningLinkExpired(invoice.recipientSigningExpiresAt);
+
+  return {
+    token,
+    invoice,
+    currency: publicInvoice.currency,
+    language: publicInvoice.language,
+    preferredInvoiceLanguage: publicInvoice.preferredInvoiceLanguage,
+    payment: {
+      provider: merchantPayment.ready ? 'stripe_connect' : null,
+      available:
+        merchantPayment.ready &&
+        token === invoice.publicInvoiceToken &&
+        isInvoicePayable(invoice),
+      checkoutSessionId: invoice.paymentCheckoutSessionId,
+      paymentIntentId: invoice.paymentIntentId,
+      completedAt: invoice.paymentCompletedAt,
+      failedAt: invoice.paymentFailedAt
+    },
+    signing: {
+      requested: signingRequested,
+      signed: signingSigned,
+      available: signingAvailable
+    }
+  };
 };
 
 export const getInvoices = async (
@@ -316,9 +447,15 @@ export async function updateInvoiceStatus(
   const { status } = req.body;
   const i18n = await useI18n(req);
 
-  const foundInvoice = await findInvoiceById(userId, id);
+  const foundInvoice = await getInvoiceFromDb(userId, id);
 
   if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (
+    foundInvoice.status === 'paid' &&
+    foundInvoice.paymentProvider === 'stripe_connect' &&
+    foundInvoice.paymentCompletedAt
+  )
+    throw new BadRequestError(i18n.t('error.invoice.paidIssuedImmutable'));
 
   const updatedInvoice = await updateInvoiceStatusInDb(userId, id, status);
 
@@ -419,6 +556,8 @@ export const sendInvoiceEmail = async (
       recipientEmail: string;
       subject: string;
       message?: string;
+      includePublicLink?: boolean;
+      requestSignature?: boolean;
       file?: MultipartFile;
     };
   }>,
@@ -426,7 +565,14 @@ export const sendInvoiceEmail = async (
 ) => {
   const id = Number(req.params.id);
   const userId = Number(req.params.userId);
-  const { recipientEmail, subject, message, file } = req.body;
+  const {
+    recipientEmail,
+    subject,
+    message,
+    includePublicLink = true,
+    file
+  } = req.body;
+  const requestSignature = includePublicLink && !!req.body.requestSignature;
   const i18n = await useI18n(req);
 
   const [invoice, user] = await Promise.all([
@@ -437,20 +583,58 @@ export const sendInvoiceEmail = async (
   if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
   if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
+  let publicInvoiceToken =
+    invoice.publicInvoiceToken || randomBytes(32).toString('hex');
   let signingToken =
     invoice.recipientSigningToken || randomBytes(32).toString('hex');
-  const shouldRotateSigningLink = Boolean(
-    invoice.recipientSigningToken &&
-      (invoice.recipientSigningRevokedAt ||
-        isSigningLinkExpired(invoice.recipientSigningExpiresAt) ||
-        (invoice.recipientSigningEmail &&
-          invoice.recipientSigningEmail.toLowerCase() !==
-            recipientEmail.toLowerCase()))
-  );
 
-  if (shouldRotateSigningLink) {
-    signingToken = randomBytes(32).toString('hex');
-    const regenerated = await regenerateInvoiceSigningFromDb({
+  if (includePublicLink) {
+    const preparedPublicInvoice = await preparePublicInvoiceFromDb({
+      userId,
+      id,
+      token: publicInvoiceToken,
+      expiresAt: createPublicInvoiceExpiration()
+    });
+
+    if (!preparedPublicInvoice?.publicInvoiceToken)
+      throw new BadRequestError(
+        i18n.t('error.invoice.unableToCreatePublicLink')
+      );
+
+    publicInvoiceToken = preparedPublicInvoice.publicInvoiceToken;
+  }
+
+  if (requestSignature) {
+    const shouldRotateSigningLink = Boolean(
+      invoice.recipientSigningToken &&
+        (invoice.recipientSigningRevokedAt ||
+          isSigningLinkExpired(invoice.recipientSigningExpiresAt) ||
+          (invoice.recipientSigningEmail &&
+            invoice.recipientSigningEmail.toLowerCase() !==
+              recipientEmail.toLowerCase()))
+    );
+
+    if (shouldRotateSigningLink) {
+      signingToken = randomBytes(32).toString('hex');
+      const regenerated = await regenerateInvoiceSigningFromDb({
+        userId,
+        id,
+        token: signingToken,
+        recipientEmail,
+        expiresAt: createSigningLinkExpiration(
+          Boolean(invoice.recipientSignedAt)
+        )
+      });
+
+      if (!regenerated)
+        throw new BadRequestError(
+          i18n.t('error.invoice.unableToRegenerateSigningLink')
+        );
+    } else if (invoice.recipientSigningToken) {
+      assertSigningLinkAvailable(invoice, i18n);
+    }
+
+    const preparedInvoice = await prepareInvoiceSigningFromDb({
       userId,
       id,
       token: signingToken,
@@ -458,30 +642,17 @@ export const sendInvoiceEmail = async (
       expiresAt: createSigningLinkExpiration(Boolean(invoice.recipientSignedAt))
     });
 
-    if (!regenerated)
+    if (!preparedInvoice?.recipientSigningToken)
       throw new BadRequestError(
-        i18n.t('error.invoice.unableToRegenerateSigningLink')
+        i18n.t('error.invoice.unableToCreateSigningLink')
       );
-  } else if (invoice.recipientSigningToken) {
-    assertSigningLinkAvailable(invoice, i18n);
   }
-
-  const preparedInvoice = await prepareInvoiceSigningFromDb({
-    userId,
-    id,
-    token: signingToken,
-    recipientEmail,
-    expiresAt: createSigningLinkExpiration(Boolean(invoice.recipientSignedAt))
-  });
-
-  if (!preparedInvoice?.recipientSigningToken)
-    throw new BadRequestError(
-      i18n.t('error.invoice.unableToCreateSigningLink')
-    );
 
   const publicBaseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const signingLink = `${publicBaseUrl}/invoices/sign/${preparedInvoice.recipientSigningToken}`;
+  const publicInvoiceLink = includePublicLink
+    ? `${publicBaseUrl}/invoices/public/${publicInvoiceToken}`
+    : undefined;
 
   const attachment = file
     ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
@@ -508,6 +679,9 @@ export const sendInvoiceEmail = async (
       signingMessage: i18n.t('emails.invoice.signingMessage'),
       signingButton: i18n.t('emails.invoice.signingButton'),
       signingFallback: i18n.t('emails.invoice.signingFallback'),
+      publicInvoiceTitle: i18n.t('emails.invoice.publicInvoiceTitle'),
+      publicInvoiceMessage: i18n.t('emails.invoice.publicInvoiceMessage'),
+      publicInvoiceButton: i18n.t('emails.invoice.publicInvoiceButton'),
       viewTitle: i18n.t('emails.invoice.viewTitle'),
       viewMessage: i18n.t('emails.invoice.viewMessage'),
       viewButton: i18n.t('emails.invoice.viewButton'),
@@ -516,8 +690,8 @@ export const sendInvoiceEmail = async (
         year: new Date().getFullYear()
       })
     },
-    signingLink,
-    isSigningAvailable: !invoice.recipientSignedAt
+    publicInvoiceLink,
+    isSigningAvailable: requestSignature && !invoice.recipientSignedAt
   });
 
   const { error } = await resend.emails.send({
@@ -540,7 +714,15 @@ export const sendInvoiceEmail = async (
   if (error)
     throw new BadRequestError(i18n.t('error.invoice.unableToSendEmail'));
 
-  await markInvoiceSigningSentInDb({ userId, id });
+  await markPublicInvoiceSentInDb({ userId, id, requestSignature });
+
+  if (
+    !requestSignature &&
+    invoice.recipientSigningToken &&
+    !invoice.recipientSignedAt
+  ) {
+    await revokeInvoiceSigningFromDb({ userId, id });
+  }
 
   reply.status(200).send({ message: i18n.t('success.invoice.emailSent') });
 };
@@ -616,12 +798,168 @@ export const getPublicInvoiceSigning = async (
   reply.status(200).send({
     signing: {
       token: req.params.token,
-      invoice: signing.invoice,
+      invoice: toInvoiceBody(signing.invoice),
       currency: signing.currency,
       language: signing.language,
       preferredInvoiceLanguage: signing.preferredInvoiceLanguage
     }
   });
+};
+
+export const getPublicInvoice = async (
+  req: FastifyRequest<{ Params: { token: string } }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const publicInvoice = await getPublicInvoiceFromDb(req.params.token);
+
+  if (!publicInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+
+  if (req.params.token === publicInvoice.invoice.publicInvoiceToken) {
+    assertPublicInvoiceLinkAvailable(publicInvoice.invoice, i18n);
+  } else {
+    assertSigningLinkAvailable(publicInvoice.invoice, i18n);
+  }
+
+  reply.status(200).send({
+    publicInvoice: await buildPublicInvoicePayload({
+      token: req.params.token,
+      publicInvoice
+    })
+  });
+};
+
+export const createPublicInvoicePayment = async (
+  req: FastifyRequest<{ Params: { token: string } }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const publicInvoice = await getPublicInvoiceFromDb(req.params.token);
+
+  if (!publicInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (req.params.token !== publicInvoice.invoice.publicInvoiceToken)
+    throw new BadRequestError(i18n.t('error.invoice.publicLinkRequired'));
+
+  assertPublicInvoiceLinkAvailable(publicInvoice.invoice, i18n);
+  const invoice = toInvoiceBody(publicInvoice.invoice);
+
+  if (!isInvoicePayable(invoice))
+    throw new BadRequestError(i18n.t('error.invoice.notPayable'));
+
+  const merchantAccount = await getStripeMerchantAccountFromDb(
+    publicInvoice.userId
+  );
+  const merchantPayment = toMerchantPaymentStatus(merchantAccount);
+
+  if (!merchantPayment.ready || !merchantPayment.connectedAccountId)
+    throw new BadRequestError(i18n.t('error.invoice.onlinePaymentUnavailable'));
+
+  const amount = Math.round(Number(invoice.totalAmount) * 100);
+
+  if (!Number.isFinite(amount) || amount <= 0)
+    throw new BadRequestError(i18n.t('error.invoice.notPayable'));
+
+  const publicBaseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const invoiceNumber = invoice.invoiceId || String(invoice.id);
+  const session = await stripe.checkout.sessions.create(
+    {
+      mode: 'payment',
+      line_items: [
+        {
+          price_data: {
+            currency: publicInvoice.currency.toLowerCase(),
+            product_data: {
+              name: `Invoice ${invoiceNumber}`,
+              description: invoice.sender.name
+            },
+            unit_amount: amount
+          },
+          quantity: 1
+        }
+      ],
+      payment_intent_data: {
+        metadata: {
+          type: 'invoice_payment',
+          invoiceId: String(invoice.id || ''),
+          userId: String(publicInvoice.userId),
+          publicInvoiceToken: req.params.token
+        }
+      },
+      metadata: {
+        type: 'invoice_payment',
+        invoiceId: String(invoice.id || ''),
+        userId: String(publicInvoice.userId),
+        publicInvoiceToken: req.params.token
+      },
+      success_url: `${publicBaseUrl}/invoices/public/${req.params.token}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${publicBaseUrl}/invoices/public/${req.params.token}?payment=cancelled`
+    },
+    { stripeAccount: merchantPayment.connectedAccountId }
+  );
+
+  await recordInvoiceCheckoutSessionInDb({
+    token: req.params.token,
+    checkoutSessionId: session.id,
+    paymentIntentId: getPaymentIntentId(session.payment_intent)
+  });
+
+  if (!session.url)
+    throw new InternalServerError('Stripe Checkout URL was not returned');
+
+  reply.status(200).send({ url: session.url });
+};
+
+export const confirmPublicInvoicePayment = async (
+  req: FastifyRequest<{
+    Params: { token: string };
+    Body: { sessionId: string };
+  }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const publicInvoice = await getPublicInvoiceFromDb(req.params.token);
+
+  if (!publicInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (req.params.token !== publicInvoice.invoice.publicInvoiceToken)
+    throw new BadRequestError(i18n.t('error.invoice.publicLinkRequired'));
+
+  const merchantAccount = await getStripeMerchantAccountFromDb(
+    publicInvoice.userId
+  );
+  const merchantPayment = toMerchantPaymentStatus(merchantAccount);
+
+  if (!merchantPayment.connectedAccountId)
+    throw new BadRequestError(i18n.t('error.invoice.onlinePaymentUnavailable'));
+
+  const session = await stripe.checkout.sessions.retrieve(
+    req.body.sessionId,
+    {},
+    { stripeAccount: merchantPayment.connectedAccountId }
+  );
+
+  if (
+    session.metadata?.type !== 'invoice_payment' ||
+    session.metadata.publicInvoiceToken !== req.params.token
+  )
+    throw new BadRequestError(i18n.t('error.invoice.notPayable'));
+
+  if (session.payment_status !== 'paid')
+    throw new BadRequestError(i18n.t('error.invoice.notPayable'));
+
+  await markInvoicePaidByCheckoutSessionInDb({
+    checkoutSessionId: session.id,
+    paymentIntentId: getPaymentIntentId(session.payment_intent),
+    invoiceId: session.metadata.invoiceId
+      ? Number(session.metadata.invoiceId)
+      : undefined,
+    userId: session.metadata.userId
+      ? Number(session.metadata.userId)
+      : undefined,
+    publicInvoiceToken: session.metadata.publicInvoiceToken
+  });
+
+  reply.status(200).send({ message: i18n.t('success.invoice.update') });
 };
 
 export const signPublicInvoice = async (
@@ -637,10 +975,21 @@ export const signPublicInvoice = async (
   if (!signatureFile)
     throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
 
-  const signing = await getPublicInvoiceSigningFromDb(req.params.token);
+  const signing = await getPublicInvoiceFromDb(req.params.token);
 
   if (!signing) throw new NotFoundError(i18n.t('error.invoice.notFound'));
   assertSigningLinkAvailable(signing.invoice, i18n);
+  if (!signing.invoice.recipientSigningToken)
+    throw new BadRequestError(
+      i18n.t('error.invoice.unableToCreateSigningLink')
+    );
+  if (
+    req.params.token !== signing.invoice.recipientSigningToken &&
+    !signing.invoice.recipientSigningRequestedAt
+  )
+    throw new BadRequestError(
+      i18n.t('error.invoice.unableToCreateSigningLink')
+    );
   if (signing.invoice.recipientSignedAt)
     throw new BadRequestError(i18n.t('error.invoice.alreadySigned'));
 
@@ -649,7 +998,7 @@ export const signPublicInvoice = async (
     i18n.t('error.user.unableToUploadSignature')
   );
   const invoice = await signInvoiceByRecipientTokenInDb({
-    token: req.params.token,
+    token: signing.invoice.recipientSigningToken,
     receiverSignature: signatureUrl
   });
 
@@ -661,7 +1010,7 @@ export const signPublicInvoice = async (
       locales[signing.language as keyof typeof locales] || locales.en;
     const translations = locale.emails.invoice.signedNotification;
     const receiverName = invoice?.receiver?.name || translations.recipient;
-    const downloadLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/invoices/sign/${req.params.token}`;
+    const downloadLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/invoices/public/${req.params.token}`;
     const notificationMessage = interpolateTranslation(translations.message, {
       receiverName,
       invoiceId

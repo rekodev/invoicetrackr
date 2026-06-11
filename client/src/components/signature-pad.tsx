@@ -26,6 +26,7 @@ type Props = {
   isInvalid?: boolean;
   errorMessage?: string;
   isChipVisible?: boolean;
+  isReadOnly?: boolean;
 };
 
 const SignaturePad = ({
@@ -34,7 +35,8 @@ const SignaturePad = ({
   onSignatureChange,
   isInvalid,
   errorMessage,
-  isChipVisible = false
+  isChipVisible = false,
+  isReadOnly = false
 }: Props) => {
   const t = useTranslations('components.signature_pad');
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
@@ -106,14 +108,14 @@ const SignaturePad = ({
         <Card
           radius="lg"
           className={cn(
-            'shadow-small dark:border-default-100 aspect-4/3 relative flex items-center justify-center overflow-hidden dark:border',
+            'shadow-small dark:border-default-100 aspect-4/3 relative flex max-w-64 items-center justify-center overflow-hidden dark:border',
             {
               'bg-[#F3126040]': isInvalid,
-              'hover:border-none': !!signatureImgUrl
+              'hover:border-none': !!signatureImgUrl && !isReadOnly
             }
           )}
-          onPress={onOpen}
-          isPressable
+          onPress={isReadOnly ? undefined : onOpen}
+          isPressable={!isReadOnly}
         >
           <CardBody className="group flex h-full w-full flex-col items-center justify-center gap-2 overflow-visible p-0">
             {signatureImgUrl ? (
@@ -123,10 +125,12 @@ const SignaturePad = ({
                   alt={t('signature_alt')}
                   className="z-0 rounded-none"
                 />
-                <div className="absolute hidden h-full w-full flex-col items-center justify-center gap-2 bg-black/50 text-white group-hover:flex dark:bg-black/75">
-                  <PencilSquareIcon className="h-10 w-10" />
-                  <p className="font-medium">{t('edit_signature')}</p>
-                </div>
+                {!isReadOnly && (
+                  <div className="absolute hidden h-full w-full flex-col items-center justify-center gap-2 bg-black/50 text-white group-hover:flex dark:bg-black/75">
+                    <PencilSquareIcon className="h-10 w-10" />
+                    <p className="font-medium">{t('edit_signature')}</p>
+                  </div>
+                )}
               </>
             ) : (
               <>

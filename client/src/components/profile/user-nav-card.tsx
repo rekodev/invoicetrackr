@@ -112,7 +112,7 @@ export default function UserNavCard({ user }: Props) {
   return (
     <Card
       as="aside"
-      className="dark:border-default-100 flex max-h-96 min-h-96 min-w-56 flex-col justify-between bg-transparent pt-3 sm:max-w-56 dark:border"
+      className="dark:border-default-100 flex max-h-min min-w-56 flex-col justify-between bg-transparent py-3 sm:max-w-56 dark:border"
     >
       <CardHeader className="flex-col">{renderUserDetails()}</CardHeader>
       <CardBody className="flex justify-center p-0 px-2">

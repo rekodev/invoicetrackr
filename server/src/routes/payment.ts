@@ -8,7 +8,9 @@ import {
   consumePaymentSuccessOptions,
   createBillingPortalSessionOptions,
   createCheckoutSessionOptions,
+  createMerchantPaymentOnboardingSessionOptions,
   getBillingStatusOptions,
+  getMerchantPaymentStatusOptions,
   resumeSubscriptionOptions,
   startTrialOptions
 } from '../options/payment';
@@ -32,6 +34,14 @@ const paymentRoutes = (
   fastify.post(
     '/api/:userId/billing/consume-payment-success',
     consumePaymentSuccessOptions
+  );
+  fastify.get(
+    '/api/:userId/merchant-payments/stripe-connect',
+    getMerchantPaymentStatusOptions
+  );
+  fastify.post(
+    '/api/:userId/merchant-payments/stripe-connect/onboarding-session',
+    createMerchantPaymentOnboardingSessionOptions
   );
 
   done();

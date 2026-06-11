@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 
 import {
   stripeAccountsTable,
+  stripeMerchantAccountsTable,
   stripeWebhookEventsTable,
   usersTable
 } from './schema';
@@ -161,6 +162,97 @@ export const getUserByStripeCustomerIdFromDb = async (
     .from(stripeAccountsTable)
     .innerJoin(usersTable, eq(usersTable.id, stripeAccountsTable.userId))
     .where(eq(stripeAccountsTable.stripeCustomerId, stripeCustomerId));
+
+  return user;
+};
+
+type MerchantAccountUpdate = {
+  stripeConnectedAccountId: string;
+  chargesEnabled?: boolean;
+  payoutsEnabled?: boolean;
+  detailsSubmitted?: boolean;
+  onboardingCompletedAt?: string | null;
+};
+
+export const upsertStripeMerchantAccountInDb = async (
+  userId: number,
+  update: MerchantAccountUpdate
+) => {
+  const [account] = await db
+    .insert(stripeMerchantAccountsTable)
+    .values({
+      userId,
+      stripeConnectedAccountId: update.stripeConnectedAccountId,
+      chargesEnabled: !!update.chargesEnabled,
+      payoutsEnabled: !!update.payoutsEnabled,
+      detailsSubmitted: !!update.detailsSubmitted,
+      onboardingCompletedAt: update.onboardingCompletedAt,
+      updatedAt: new Date().toISOString()
+    })
+    .onConflictDoUpdate({
+      target: stripeMerchantAccountsTable.userId,
+      set: {
+        stripeConnectedAccountId: update.stripeConnectedAccountId,
+        chargesEnabled: !!update.chargesEnabled,
+        payoutsEnabled: !!update.payoutsEnabled,
+        detailsSubmitted: !!update.detailsSubmitted,
+        onboardingCompletedAt: update.onboardingCompletedAt,
+        updatedAt: new Date().toISOString()
+      }
+    })
+    .returning({ id: stripeMerchantAccountsTable.id });
+
+  return account?.id;
+};
+
+export const getStripeMerchantAccountFromDb = async (
+  userId: number
+): Promise<ReturnType<typeof getStripeMerchantAccountFromDb> | undefined> => {
+  const [account] = await db
+    .select()
+    .from(stripeMerchantAccountsTable)
+    .where(eq(stripeMerchantAccountsTable.userId, userId));
+
+  return account;
+};
+
+export const toMerchantPaymentStatus = (
+  account: Awaited<ReturnType<typeof getStripeMerchantAccountFromDb>>
+) => {
+  const ready = !!account?.chargesEnabled && !!account.detailsSubmitted;
+
+  return {
+    provider: 'stripe_connect' as const,
+    connectedAccountId: account?.stripeConnectedAccountId || null,
+    chargesEnabled: !!account?.chargesEnabled,
+    payoutsEnabled: !!account?.payoutsEnabled,
+    detailsSubmitted: !!account?.detailsSubmitted,
+    onboardingCompletedAt: account?.onboardingCompletedAt || null,
+    ready
+  };
+};
+
+export const getUserByStripeConnectedAccountIdFromDb = async (
+  stripeConnectedAccountId: string
+) => {
+  const [user] = await db
+    .select({
+      id: usersTable.id,
+      email: usersTable.email,
+      name: usersTable.name,
+      language: usersTable.language
+    })
+    .from(stripeMerchantAccountsTable)
+    .innerJoin(
+      usersTable,
+      eq(usersTable.id, stripeMerchantAccountsTable.userId)
+    )
+    .where(
+      eq(
+        stripeMerchantAccountsTable.stripeConnectedAccountId,
+        stripeConnectedAccountId
+      )
+    );
 
   return user;
 };

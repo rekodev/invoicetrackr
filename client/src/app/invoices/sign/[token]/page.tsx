@@ -1,9 +1,8 @@
 import { getTranslations } from 'next-intl/server';
 
-import { getPublicInvoiceSigning } from '@/api/invoice';
+import PublicInvoicePageContent from '@/components/invoice/public-invoice-page-content';
+import { getPublicInvoice } from '@/api/invoice';
 import { isResponseError } from '@/lib/utils/error';
-
-import InvoiceSigningPageContent from './invoice-signing-page-content';
 
 type Params = Promise<{ token: string }>;
 
@@ -14,7 +13,7 @@ export default async function InvoiceSigningPage({
 }) {
   const { token } = await params;
   const t = await getTranslations('invoice_signing');
-  const response = await getPublicInvoiceSigning(token);
+  const response = await getPublicInvoice(token);
 
   if (isResponseError(response))
     return (
@@ -28,5 +27,7 @@ export default async function InvoiceSigningPage({
       </main>
     );
 
-  return <InvoiceSigningPageContent signing={response.data.signing} />;
+  return (
+    <PublicInvoicePageContent publicInvoice={response.data.publicInvoice} />
+  );
 }
