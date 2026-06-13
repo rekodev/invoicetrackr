@@ -3,22 +3,24 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   Checkbox,
+  FieldError,
   Input,
-  Modal,
+  Label,
   ModalBody,
-  ModalContent,
   ModalFooter,
   ModalHeader,
-  Textarea,
-  addToast
+  TextArea,
+  TextField,
+  toast
 } from '@heroui/react';
 import {
   InformationCircleIcon,
   PaperAirplaneIcon
 } from '@heroicons/react/24/outline';
 import { JSX, useEffect, useState, useTransition } from 'react';
+import { AppModal } from '@/components/ui/app-modal';
 import { BlobProvider } from '@react-pdf/renderer';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
@@ -121,9 +123,8 @@ export default function SendInvoiceEmailModal({
         requestSignature: includePublicLink && requestSignature
       });
 
-      addToast({
-        title: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+      toast(response.data.message, {
+        variant: isResponseError(response) ? 'danger' : 'success'
       });
 
       if (isResponseError(response)) {
@@ -152,9 +153,8 @@ export default function SendInvoiceEmailModal({
                 getValues('recipientEmail') || defaultRecipientEmail
             });
 
-      addToast({
-        title: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+      toast(response.data.message, {
+        variant: isResponseError(response) ? 'danger' : 'success'
       });
 
       if (!isResponseError(response)) {
@@ -164,8 +164,8 @@ export default function SendInvoiceEmailModal({
     });
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseSendDialog} size="3xl">
-      <ModalContent>
+    <AppModal isOpen={isOpen} onClose={handleCloseSendDialog} size="3xl">
+      <>
         {/* @ts-ignore */}
         <BlobProvider document={pdfDocument}>
           {/* @ts-ignore */}
@@ -211,19 +211,17 @@ export default function SendInvoiceEmailModal({
                 </div>
                 <div className="border-default-100 grid gap-2 rounded-lg border p-3">
                   <Checkbox
-                    classNames={{ label: 'text-sm' }}
-                    color="secondary"
+                    className="text-sm"
                     isSelected={includePublicLink}
-                    onValueChange={setIncludePublicLink}
+                    onChange={setIncludePublicLink}
                   >
                     {t('include_public_link')}
                   </Checkbox>
                   <Checkbox
-                    classNames={{ label: 'text-sm' }}
-                    color="secondary"
+                    className="text-sm"
                     isDisabled={!includePublicLink}
                     isSelected={includePublicLink && requestSignature}
-                    onValueChange={setRequestSignature}
+                    onChange={setRequestSignature}
                   >
                     {t('request_signature')}
                   </Checkbox>
@@ -233,34 +231,37 @@ export default function SendInvoiceEmailModal({
                     </p>
                   )}
                 </div>
-                <Input
-                  defaultValue={defaultRecipientEmail}
-                  {...register('recipientEmail')}
-                  variant="faded"
-                  label={t('recipient_email')}
-                  placeholder={t('recipient_placeholder')}
+                <TextField
+                  variant="secondary"
                   isInvalid={!!errors.recipientEmail}
-                  errorMessage={errors.recipientEmail?.message}
-                />
-                <Input
-                  defaultValue={`Invoice ${invoice.invoiceId} ${invoice.totalAmount ? `- Amount: ${getCurrencySymbol(currency)}${invoice.totalAmount}` : ''}`}
-                  {...register('subject')}
-                  variant="faded"
-                  label={t('subject_label')}
-                  placeholder={t('subject_placeholder')}
-                  isInvalid={!!errors.subject}
-                  errorMessage={errors.subject?.message}
-                />
-                <Textarea
-                  {...register('message')}
-                  variant="faded"
-                  label={t('message_label')}
-                  placeholder={t('message_placeholder')}
-                  isInvalid={!!errors.message}
-                  errorMessage={errors.message?.message}
-                />
+                >
+                  <Label>{t('recipient_email')}</Label>
+                  <Input
+                    defaultValue={defaultRecipientEmail}
+                    {...register('recipientEmail')}
+                    placeholder={t('recipient_placeholder')}
+                  />
+                  <FieldError>{errors.recipientEmail?.message}</FieldError>
+                </TextField>
+                <TextField variant="secondary" isInvalid={!!errors.subject}>
+                  <Label>{t('subject_label')}</Label>
+                  <Input
+                    defaultValue={`Invoice ${invoice.invoiceId} ${invoice.totalAmount ? `- Amount: ${getCurrencySymbol(currency)}${invoice.totalAmount}` : ''}`}
+                    {...register('subject')}
+                    placeholder={t('subject_placeholder')}
+                  />
+                  <FieldError>{errors.subject?.message}</FieldError>
+                </TextField>
+                <TextField variant="secondary" isInvalid={!!errors.message}>
+                  <Label>{t('message_label')}</Label>
+                  <TextArea
+                    {...register('message')}
+                    placeholder={t('message_placeholder')}
+                  />
+                  <FieldError>{errors.message?.message}</FieldError>
+                </TextField>
                 <Card className="none border-default-100 border-2 shadow">
-                  <CardBody className="flex flex-col gap-2">
+                  <CardContent className="flex flex-col gap-2">
                     <p>{t('invoice_details')}</p>
                     <p className="mt-2 flex items-center justify-between text-sm">
                       <span className="text-default-500 text">
@@ -287,7 +288,7 @@ export default function SendInvoiceEmailModal({
                       </span>
                       {invoice.date}
                     </p>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </ModalBody>
               <ModalFooter className="flex w-full flex-wrap justify-between gap-2">
@@ -297,8 +298,7 @@ export default function SendInvoiceEmailModal({
                     !invoice.recipientSigningRevokedAt && (
                       <Button
                         size="sm"
-                        variant="light"
-                        color="danger"
+                        variant="danger-soft"
                         isDisabled={isPending}
                         onPress={() => handleSigningLinkAction('revoke')}
                       >
@@ -310,7 +310,7 @@ export default function SendInvoiceEmailModal({
                     !invoice.recipientSignedAt && (
                       <Button
                         size="sm"
-                        variant="light"
+                        variant="tertiary"
                         isDisabled={isPending}
                         onPress={() => handleSigningLinkAction('regenerate')}
                       >
@@ -319,16 +319,11 @@ export default function SendInvoiceEmailModal({
                     )}
                 </div>
                 <div className="ml-auto flex gap-2">
-                  <Button onPress={handleCloseSendDialog} variant="light">
+                  <Button onPress={handleCloseSendDialog} variant="tertiary">
                     {t('cancel')}
                   </Button>
-                  <Button
-                    isDisabled={isPending}
-                    isLoading={isPending}
-                    endContent={<PaperAirplaneIcon className="h-4 w-4" />}
-                    color="secondary"
-                    type="submit"
-                  >
+                  <Button isPending={isPending} type="submit">
+                    <PaperAirplaneIcon className="h-4 w-4" />
                     {shouldRotateSigningLink
                       ? t('replace_link_and_send')
                       : t('send')}
@@ -338,7 +333,7 @@ export default function SendInvoiceEmailModal({
             </form>
           )}
         </BlobProvider>
-      </ModalContent>
-    </Modal>
+      </>
+    </AppModal>
   );
 }

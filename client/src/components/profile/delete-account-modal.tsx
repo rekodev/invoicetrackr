@@ -2,13 +2,12 @@
 
 import {
   Button,
-  Modal,
   ModalBody,
-  ModalContent,
   ModalFooter,
   ModalHeader,
-  addToast
+  toast
 } from '@heroui/react';
+import { AppModal } from '@/components/ui/app-modal';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
@@ -31,9 +30,8 @@ const DeleteAccountModal = ({ userId, isOpen, onClose }: Props) => {
     startTransition(async () => {
       const response = await deleteUserAccount(userId);
 
-      addToast({
-        title: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+      toast(response.data.message, {
+        variant: isResponseError(response) ? 'danger' : 'success'
       });
 
       if (isResponseError(response)) return;
@@ -46,10 +44,10 @@ const DeleteAccountModal = ({ userId, isOpen, onClose }: Props) => {
     <ModalFooter>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
-          <Button variant="bordered" onPress={onClose}>
+          <Button variant="outline" onPress={onClose}>
             {t('cancel_button')}
           </Button>
-          <Button isLoading={isPending} color="danger" onPress={handleSubmit}>
+          <Button variant="danger" isPending={isPending} onPress={handleSubmit}>
             {t('confirm_button')}
           </Button>
         </div>
@@ -58,16 +56,16 @@ const DeleteAccountModal = ({ userId, isOpen, onClose }: Props) => {
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalContent>
+    <AppModal isOpen={isOpen} onClose={onClose}>
+      <>
         <ModalHeader className="flex items-end gap-2">
           <ExclamationTriangleIcon className="text-danger-400 h-6 w-6" />
           {t('title')}
         </ModalHeader>
         <ModalBody>{t('description')}</ModalBody>
         {renderModalFooter()}
-      </ModalContent>
-    </Modal>
+      </>
+    </AppModal>
   );
 };
 

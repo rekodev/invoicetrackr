@@ -4,11 +4,14 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
   CardHeader,
+  FieldError,
   Input,
+  Label,
   Link,
+  TextField,
   cn
 } from '@heroui/react';
 import {
@@ -55,39 +58,33 @@ export default function ForgotPasswordForm() {
   };
 
   return (
-    <Card
-      className="mx-auto w-full max-w-lg dark:border dark:border-neutral-800"
-      isBlurred
-    >
+    <Card className="mx-auto w-full max-w-lg dark:border dark:border-neutral-800">
       <CardHeader className="p-8 pb-0">
         <h1 className="text-3xl font-medium">{t('card_header')}</h1>
       </CardHeader>
-      <CardBody className="p-8 pb-0">
+      <CardContent className="p-8 pb-0">
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
-          <Input
-            {...register('email', {
-              onChange: () => {
-                clearErrors('email');
-                setResponse(undefined);
-              }
-            })}
-            labelPlacement="outside"
-            variant="faded"
-            id="email"
-            label={t('email')}
-            placeholder={t('email_placeholder')}
-            isInvalid={!!errors.email}
-            errorMessage={errors.email?.message}
-          />
+          <TextField variant="secondary" isInvalid={!!errors.email}>
+            <Label>{t('email')}</Label>
+            <Input
+              {...register('email', {
+                onChange: () => {
+                  clearErrors('email');
+                  setResponse(undefined);
+                }
+              })}
+              id="email"
+              placeholder={t('email_placeholder')}
+            />
+            <FieldError>{errors.email?.message}</FieldError>
+          </TextField>
           <Button
             className="w-full justify-between"
             aria-disabled={isSubmitting}
-            isLoading={isSubmitting}
             type="submit"
-            endContent={<ArrowRightIcon className="h-5 w-5" />}
-            color="secondary"
           >
             {t('reset_link')}
+            <ArrowRightIcon className="h-5 w-5" />
           </Button>
           <div aria-live="polite" aria-atomic="true">
             {response?.message && (
@@ -95,6 +92,7 @@ export default function ForgotPasswordForm() {
                 {response.ok ? (
                   <CheckCircleIcon className="text-success-400 h-5 w-5" />
                 ) : (
+                  // TODO: Replace red with danger
                   <ExclamationCircleIcon className="h-5 w-5 text-rose-500" />
                 )}
                 <p
@@ -109,16 +107,14 @@ export default function ForgotPasswordForm() {
             )}
           </div>
         </form>
-      </CardBody>
+      </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
-        <Link color="secondary" href={FORGOT_PASSWORD_PAGE}>
+        <Link href={FORGOT_PASSWORD_PAGE}>
           <ArrowLeftIcon className="mr-1 h-4 w-4" /> {t('login')}
         </Link>
         <div className="flex gap-1">
           <p className="text-md">{t('create_account')}</p>
-          <Link color="secondary" href={SIGN_UP_PAGE}>
-            {t('sign_up')}
-          </Link>
+          <Link href={SIGN_UP_PAGE}>{t('sign_up')}</Link>
         </div>
       </CardFooter>
     </Card>

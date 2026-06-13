@@ -1,13 +1,13 @@
 'use client';
 
 import type { SubmitHandler, UseFormSetError } from 'react-hook-form';
-import { addToast } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 
 import type { BankAccount, InvoiceBody, User } from '@invoicetrackr/types';
 import { addInvoiceAction, updateInvoiceAction } from '@/lib/actions/invoice';
 import { INVOICES_PAGE } from '@/lib/constants/pages';
 import { calculateInvoiceTotals } from '@/lib/utils';
+import { toast } from '@heroui/react';
 
 type Props = {
   invoiceData: InvoiceBody | undefined;
@@ -52,10 +52,7 @@ const useInvoiceFormSubmissionHandler = ({
           invoiceData: fullData
         });
 
-    addToast({
-      title: response.message || '',
-      color: response.ok ? 'success' : 'danger'
-    });
+    toast(response.message, { variant: response.ok ? 'success' : 'danger' });
 
     if (!response.ok) {
       if (response.validationErrors) {

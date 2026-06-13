@@ -2,17 +2,20 @@
 
 import {
   Button,
+  FieldError,
   Input,
-  Modal,
+  Label,
+  ListBox,
+  ListBoxItem,
   ModalBody,
-  ModalContent,
   ModalFooter,
   ModalHeader,
   Select,
-  SelectItem,
-  addToast
+  TextField,
+  toast
 } from '@heroui/react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { AppModal } from '@/components/ui/app-modal';
 import { useTranslations } from 'next-intl';
 
 import { addClientAction, updateClientAction } from '@/lib/actions/client';
@@ -45,6 +48,7 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { isDirty, isLoading, errors },
     setError
@@ -63,9 +67,8 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
           clientData: { ...data, type: 'receiver' }
         });
 
-    addToast({
-      title: response.message || '',
-      color: response.ok ? 'success' : 'danger'
+    toast(response.message || '', {
+      variant: response.ok ? 'success' : 'danger'
     });
 
     if (!response.ok) {
@@ -86,76 +89,81 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalContent>
+    <AppModal isOpen={isOpen} onClose={onClose}>
+      <>
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalHeader>
             {!!clientData ? t('title_edit') : t('title_add')}
           </ModalHeader>
           <ModalBody>
-            <Input
-              {...register('name')}
-              type="text"
-              label={t('fields.name')}
-              variant="bordered"
-              isInvalid={!!errors.name}
-              errorMessage={errors.name?.message}
+            <TextField variant="secondary" isInvalid={!!errors.name}>
+              <Label>{t('fields.name')}</Label>
+              <Input {...register('name')} type="text" />
+              <FieldError>{errors.name?.message}</FieldError>
+            </TextField>
+            <Controller
+              control={control}
+              name="businessType"
+              render={({ field }) => (
+                <Select
+                  variant="secondary"
+                  selectedKey={field.value}
+                  onSelectionChange={field.onChange}
+                  isInvalid={!!errors.businessType}
+                >
+                  <Label>{t('fields.business_type')}</Label>
+                  <Select.Trigger>
+                    <Select.Value />
+                    <Select.Indicator />
+                  </Select.Trigger>
+                  <Select.Popover>
+                    <ListBox>
+                      {CLIENT_BUSINESS_TYPES.map((type) => (
+                        <ListBoxItem
+                          key={type}
+                          id={type}
+                          textValue={tTypes(type)}
+                        >
+                          {tTypes(type)}
+                          <ListBoxItem.Indicator />
+                        </ListBoxItem>
+                      ))}
+                    </ListBox>
+                  </Select.Popover>
+                  <FieldError>{errors.businessType?.message}</FieldError>
+                </Select>
+              )}
             />
-            <Select
-              {...register('businessType')}
-              label={t('fields.business_type')}
-              variant="bordered"
-              defaultSelectedKeys={clientData ? [clientData.businessType] : []}
-              isInvalid={!!errors.businessType}
-              errorMessage={errors.businessType?.message}
-            >
-              {CLIENT_BUSINESS_TYPES.map((type) => (
-                <SelectItem key={type}>{tTypes(type)}</SelectItem>
-              ))}
-            </Select>
-            <Input
-              {...register('businessNumber')}
-              type="text"
-              label={t('fields.business_number')}
-              variant="bordered"
-              isInvalid={!!errors.businessNumber}
-              errorMessage={errors.businessNumber?.message}
-            />
-            <Input
-              {...register('vatNumber')}
-              type="text"
-              label={t('fields.vat_number')}
-              variant="bordered"
-              isInvalid={!!errors.vatNumber}
-              errorMessage={errors.vatNumber?.message}
-            />
-            <Input
-              {...register('address')}
-              type="text"
-              label={t('fields.address')}
-              variant="bordered"
-              isInvalid={!!errors.address}
-              errorMessage={errors.address?.message}
-            />
-            <Input
-              {...register('email')}
-              label={t('fields.email')}
-              variant="bordered"
-              isInvalid={!!errors.email}
-              errorMessage={errors.email?.message}
-            />
+            <TextField variant="secondary" isInvalid={!!errors.businessNumber}>
+              <Label>{t('fields.business_number')}</Label>
+              <Input {...register('businessNumber')} type="text" />
+              <FieldError>{errors.businessNumber?.message}</FieldError>
+            </TextField>
+            <TextField variant="secondary" isInvalid={!!errors.vatNumber}>
+              <Label>{t('fields.vat_number')}</Label>
+              <Input {...register('vatNumber')} type="text" />
+              <FieldError>{errors.vatNumber?.message}</FieldError>
+            </TextField>
+            <TextField variant="secondary" isInvalid={!!errors.address}>
+              <Label>{t('fields.address')}</Label>
+              <Input {...register('address')} type="text" />
+              <FieldError>{errors.address?.message}</FieldError>
+            </TextField>
+            <TextField variant="secondary" isInvalid={!!errors.email}>
+              <Label>{t('fields.email')}</Label>
+              <Input {...register('email')} type="email" />
+              <FieldError>{errors.email?.message}</FieldError>
+            </TextField>
           </ModalBody>
           <ModalFooter>
             <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
               <div className="flex w-full justify-end gap-1">
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button variant="danger-soft" onPress={onClose}>
                   {t('cancel')}
                 </Button>
                 <Button
                   data-testid="client-form-dialog-submit-button"
                   isDisabled={isLoading || !isDirty}
-                  isLoading={isLoading}
-                  color="secondary"
                   type="submit"
                 >
                   {!!clientData ? t('submit_edit') : t('submit_add')}
@@ -164,8 +172,8 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
             </div>
           </ModalFooter>
         </form>
-      </ModalContent>
-    </Modal>
+      </>
+    </AppModal>
   );
 };
 

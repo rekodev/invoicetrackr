@@ -5,12 +5,11 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
+  DropdownPopover,
   DropdownTrigger,
   Link,
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem
+  Separator,
+  buttonVariants
 } from '@heroui/react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import { usePathname } from 'next/navigation';
@@ -40,107 +39,104 @@ export default function GuestHeader() {
     return (
       <Dropdown>
         <DropdownTrigger className="md:hidden">
-          <Button isIconOnly color="secondary" variant="faded">
+          <Button isIconOnly variant="secondary">
             <Bars3Icon className="h-5 w-5" />
           </Button>
         </DropdownTrigger>
-        <DropdownMenu>
-          <DropdownItem
-            key="create-invoice"
-            className="text-secondary"
-            color="secondary"
-            as={Link}
-            href={CREATE_INVOICE_PAGE}
-            showDivider
-          >
-            {t('create_invoice')}
-          </DropdownItem>
-          <DropdownItem
-            as={Link}
-            href={LOGIN_PAGE}
-            className="text-default-800 flex items-center justify-center"
-            key="login"
-          >
-            {t('login')}
-          </DropdownItem>
-          <DropdownItem
-            key="sign-up"
-            as={Link}
-            href={SIGN_UP_PAGE}
-            className="text-default-800"
-          >
-            {t('sign_up')}
-          </DropdownItem>
-        </DropdownMenu>
+        <DropdownPopover>
+          <DropdownMenu>
+            <DropdownItem
+              key="create-invoice"
+              className="text-secondary"
+              href={CREATE_INVOICE_PAGE}
+            >
+              {t('create_invoice')}
+            </DropdownItem>
+            <Separator />
+            <DropdownItem
+              href={LOGIN_PAGE}
+              className="text-default-800 flex items-center justify-center"
+              key="login"
+            >
+              {t('login')}
+            </DropdownItem>
+            <DropdownItem
+              key="sign-up"
+              href={SIGN_UP_PAGE}
+              className="text-default-800"
+            >
+              {t('sign_up')}
+            </DropdownItem>
+          </DropdownMenu>
+        </DropdownPopover>
       </Dropdown>
     );
   };
 
   return (
-    <Navbar isBordered maxWidth="xl">
-      <NavbarBrand className="flex gap-2" as={Link} href={HOME_PAGE}>
-        <AppLogo />
-        <p className="text-default-800 hidden font-bold sm:flex">
-          INVOICE
-          <span className="text-secondary-400 dark:text-secondary-600">
-            TRACKR
-          </span>
-        </p>
-      </NavbarBrand>
+    <header className="border-default-200 bg-background/80 sticky top-0 z-40 w-full border-b backdrop-blur">
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-6">
+        <Link className="flex gap-2" href={HOME_PAGE}>
+          <AppLogo />
+          <p className="text-default-800 hidden font-bold sm:flex">
+            INVOICE
+            <span className="text-secondary-400 dark:text-secondary-600">
+              TRACKR
+            </span>
+          </p>
+        </Link>
 
-      <NavbarContent justify="start" className="hidden gap-4 sm:flex">
-        {navbarItems.map((item, index) => {
-          const isActive = pathname?.includes(item.href);
+        <div className="hidden gap-4 sm:flex">
+          {navbarItems.map((item, index) => {
+            const isActive = pathname?.includes(item.href);
 
-          return (
-            <NavbarItem key={index} isActive={isActive}>
-              <Link
-                href={
-                  pathname !== HOME_PAGE ? HOME_PAGE + item.href : item.href
-                }
-                aria-current="page"
-                color={isActive ? 'secondary' : 'foreground'}
-              >
-                {t(item.name.toLowerCase())}
-              </Link>
-            </NavbarItem>
-          );
-        })}
-      </NavbarContent>
+            return (
+              <div key={index} aria-current={isActive ? 'page' : undefined}>
+                <Link
+                  href={
+                    pathname !== HOME_PAGE ? HOME_PAGE + item.href : item.href
+                  }
+                  className={buttonVariants({
+                    variant: isActive ? 'secondary' : 'primary'
+                  })}
+                >
+                  {t(item.name.toLowerCase())}
+                </Link>
+              </div>
+            );
+          })}
+        </div>
 
-      <NavbarContent as="div" justify="end">
-        {renderMobileNavbarContent()}
-        <NavbarItem className="border-default-300 dark:border-default-100 hidden border-r pr-4 md:flex">
-          <Button
-            as={Link}
-            color="secondary"
-            variant="faded"
-            href={CREATE_INVOICE_PAGE}
-          >
-            {t('create_invoice')}
-          </Button>
-        </NavbarItem>
-        <NavbarItem className="hidden md:flex">
-          <Link className="text-secondary" href={LOGIN_PAGE}>
-            {t('login')}
-          </Link>
-        </NavbarItem>
-        <NavbarItem className="hidden md:flex">
-          <Button
-            as={Link}
-            href={SIGN_UP_PAGE}
-            color="secondary"
-            variant="flat"
-          >
-            {t('sign_up')}
-          </Button>
-        </NavbarItem>
-        <div className="border-default-100 border-l-1 h-10" />
-        <LanguageSwitcher />
-        <NavbarItem className="-ml-2">
-          <ThemeSwitcher />
-        </NavbarItem>
-      </NavbarContent>
-    </Navbar>
+        <div className="flex items-center justify-end gap-3">
+          {renderMobileNavbarContent()}
+          <div className="border-default-300 dark:border-default-100 hidden border-r pr-4 md:flex">
+            <Link
+              className={buttonVariants({ variant: 'secondary' })}
+              href={CREATE_INVOICE_PAGE}
+            >
+              {t('create_invoice')}
+            </Link>
+          </div>
+          <div className="hidden md:flex">
+            <Link className="text-secondary" href={LOGIN_PAGE}>
+              {t('login')}
+            </Link>
+          </div>
+          <div className="hidden md:flex">
+            <Link
+              href={SIGN_UP_PAGE}
+              className={buttonVariants({ variant: 'tertiary' })}
+            >
+              {t('sign_up')}
+            </Link>
+          </div>
+          <div className="border-default-100 border-l-1 h-10" />
+          <LanguageSwitcher />
+          <div className="-ml-2">
+            <ThemeSwitcher />
+          </div>
+        </div>
+      </nav>
+    </header>
   );
 }

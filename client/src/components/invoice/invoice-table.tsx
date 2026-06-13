@@ -1,16 +1,16 @@
 'use client';
 
 import {
-  SortDescriptor,
-  Spinner,
   Table,
   TableBody,
   TableCell,
   TableColumn,
+  TableContent,
   TableHeader,
   TableRow,
+  TableScrollContainer,
   cn,
-  useDisclosure
+  useOverlayState
 } from '@heroui/react';
 import { useMemo, useState } from 'react';
 import type { InvoiceBody } from '@invoicetrackr/types';
@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
 import EmptyState from '@/components/empty-state';
+import type { SortDescriptor } from '@/lib/types/table';
 import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
@@ -81,7 +82,7 @@ const InvoiceTable = ({
     { name: t('status.pending'), uid: 'pending' }
   ];
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, open: onOpen, setOpen: onOpenChange } = useOverlayState();
   const [currentInvoice, setCurrentInvoice] = useState<InvoiceBody>();
 
   const [filterValue, setFilterValue] = useState('');
@@ -233,68 +234,69 @@ const InvoiceTable = ({
   };
 
   return (
-    <section>
-      <Table
-        aria-label={t('a11y.table_label')}
-        isHeaderSticky
-        bottomContent={renderBottomContent()}
-        bottomContentPlacement="outside"
-        classNames={{
-          wrapper:
-            'min-h-[480px] bg-transparent dark:border dark:border-default-100'
-        }}
-        sortDescriptor={sortDescriptor}
-        topContent={renderTopContent()}
-        topContentPlacement="outside"
-        onSortChange={setSortDescriptor}
-      >
-        <TableHeader columns={headerColumns}>
-          {/* @ts-ignore */}
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === 'actions' ? 'center' : 'start'}
-              allowsSorting={column.sortable}
-            >
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          loadingContent={<Spinner color="secondary" />}
-          emptyContent={renderEmptyContent()}
-          items={sortedItems}
-        >
-          {/* @ts-ignore */}
-          {(item) => {
-            const { isPastDue } = getInvoiceDueStatus(item);
+    <section className="max-w-full overflow-x-hidden">
+      {renderTopContent()}
+      <Table variant="secondary">
+        <TableScrollContainer className="dark:border-default-100 min-h-[480px] w-full max-w-full overflow-x-auto bg-transparent dark:border">
+          <TableContent
+            className="min-w-full"
+            aria-label={t('a11y.table_label')}
+            sortDescriptor={sortDescriptor as any}
+            onSortChange={setSortDescriptor}
+          >
+            <TableHeader>
+              {headerColumns.map((column) => (
+                <TableColumn
+                  key={column.uid}
+                  id={column.uid}
+                  allowsSorting={column.sortable}
+                  className={cn({
+                    'text-center': column.uid === 'actions'
+                  })}
+                >
+                  {column.name}
+                </TableColumn>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {sortedItems.length ? (
+                sortedItems.map((item) => {
+                  const { isPastDue } = getInvoiceDueStatus(item);
 
-            return (
-              <TableRow
-                className={cn({ 'bg-danger/10': isPastDue })}
-                key={item.id}
-              >
-                {/* @ts-ignore */}
-                {(columnKey) => (
-                  <TableCell>
-                    <InvoiceTableCell
-                      pdfDocument={pdfDocument}
-                      userId={userId}
-                      currency={currency}
-                      invoice={item}
-                      columnKey={columnKey}
-                      onSendEmail={handleSendInvoiceEmail}
-                      onView={handleViewInvoice}
-                      onEdit={handleEditInvoice}
-                      onDelete={handleDeleteInvoice}
-                    />
-                  </TableCell>
-                )}
-              </TableRow>
-            );
-          }}
-        </TableBody>
+                  return (
+                    <TableRow
+                      className={cn({ 'bg-danger/10': isPastDue })}
+                      key={item.id}
+                      id={String(item.id)}
+                    >
+                      {headerColumns.map((column) => (
+                        <TableCell key={column.uid}>
+                          <InvoiceTableCell
+                            pdfDocument={pdfDocument}
+                            userId={userId}
+                            currency={currency}
+                            invoice={item}
+                            columnKey={column.uid}
+                            onSendEmail={handleSendInvoiceEmail}
+                            onView={handleViewInvoice}
+                            onEdit={handleEditInvoice}
+                            onDelete={handleDeleteInvoice}
+                          />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow id="empty">
+                  <TableCell>{renderEmptyContent()}</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </TableContent>
+        </TableScrollContainer>
       </Table>
+      {renderBottomContent()}
 
       {currentInvoice && (
         <InvoiceModal

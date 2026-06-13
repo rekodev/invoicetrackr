@@ -1,12 +1,11 @@
 import {
   Button,
-  Modal,
   ModalBody,
-  ModalContent,
   ModalFooter,
   ModalHeader,
-  addToast
+  toast
 } from '@heroui/react';
+import { AppModal } from '@/components/ui/app-modal';
 import { BankAccount } from '@invoicetrackr/types';
 import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
@@ -38,9 +37,8 @@ const DeleteBankAccountDialog = ({
         bankAccount.id
       );
 
-      addToast({
-        title: response.message,
-        color: response.ok ? 'success' : 'danger'
+      toast(response.message, {
+        variant: response.ok ? 'success' : 'danger'
       });
 
       if (!response.ok) return;
@@ -52,10 +50,10 @@ const DeleteBankAccountDialog = ({
     <ModalFooter>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
-          <Button variant="bordered" onPress={onClose}>
+          <Button variant="outline" onPress={onClose}>
             {t('cancel_button')}
           </Button>
-          <Button isLoading={isPending} color="danger" onPress={handleSubmit}>
+          <Button variant="danger" isPending={isPending} onPress={handleSubmit}>
             {t('confirm_button')}
           </Button>
         </div>
@@ -64,15 +62,15 @@ const DeleteBankAccountDialog = ({
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalContent>
+    <AppModal isOpen={isOpen} onClose={onClose}>
+      <>
         <ModalHeader>
           {t('title', { bank_number: bankAccount?.accountNumber })}
         </ModalHeader>
         <ModalBody>{t('description')}</ModalBody>
         {renderModalFooter()}
-      </ModalContent>
-    </Modal>
+      </>
+    </AppModal>
   );
 };
 

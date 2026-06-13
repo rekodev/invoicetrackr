@@ -3,18 +3,18 @@
 import {
   Alert,
   Button,
-  Modal,
+  ListBox,
+  ListBoxItem,
   ModalBody,
-  ModalContent,
   ModalFooter,
   ModalHeader,
   Select,
-  SelectItem,
   Spinner,
   cn
 } from '@heroui/react';
 import { ArrowDownTrayIcon, LanguageIcon } from '@heroicons/react/24/outline';
 import { JSX, useState } from 'react';
+import { AppModal } from '@/components/ui/app-modal';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
@@ -28,7 +28,7 @@ const PDFDownloadLink = dynamic(
       const t = useTranslations('invoices.pdf');
 
       return (
-        <Button isLoading size="sm" color="secondary" variant="solid">
+        <Button isPending size="sm" variant="primary">
           {t('buttons.download_pdf')}
         </Button>
       );
@@ -73,7 +73,7 @@ const InvoiceModal = ({
 
   const renderModalBody = () => {
     if (isPdfDocumentLoading || !pdfDocument) {
-      return <Spinner variant="wave" color="secondary" className="my-6" />;
+      return <Spinner className="my-6" />;
     }
 
     return (
@@ -91,28 +91,28 @@ const InvoiceModal = ({
     if (!isPastDue) return null;
 
     return (
-      <Alert
-        className="mt-2 py-1 pl-2"
-        variant="flat"
-        color="danger"
-        description={t('past_due_alert', {
-          days: daysPastDue,
-          dueDate: invoiceData.dueDate
-        })}
-      />
+      <Alert className="mt-2 py-1 pl-2" status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Description>
+            {t('past_due_alert', {
+              days: daysPastDue,
+              dueDate: invoiceData.dueDate
+            })}
+          </Alert.Description>
+        </Alert.Content>
+      </Alert>
     );
   };
 
   return (
-    <Modal
+    <AppModal
       isOpen={isOpen}
-      hideCloseButton
-      onOpenChange={onOpenChange}
+      onClose={() => onOpenChange(false)}
       size="4xl"
-      className="flex-1"
-      scrollBehavior="outside"
+      scroll="outside"
     >
-      <ModalContent>
+      <>
         <ModalHeader className="flex flex-col items-start gap-2 pb-2">
           <div className="flex w-full items-center justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -130,26 +130,35 @@ const InvoiceModal = ({
                 <>
                   <Select
                     aria-label="Invoice language"
-                    size="sm"
                     className="min-w-28"
-                    variant="bordered"
-                    startContent={<LanguageIcon className="min-w-5 max-w-5" />}
-                    selectedKeys={[invoiceLanguage]}
-                    onSelectionChange={(keys) => {
-                      const selectedKey = Array.from(keys).join('');
+                    variant="secondary"
+                    selectedKey={invoiceLanguage}
+                    onSelectionChange={(key) => {
+                      const selectedKey = key ? String(key) : '';
                       if (selectedKey && setInvoiceLanguage)
                         setInvoiceLanguage(selectedKey);
                       setIsIFrameLoading(true);
                     }}
                   >
-                    {availableLanguages.map((lang) => (
-                      <SelectItem
-                        key={lang.code}
-                        textValue={lang.code.toUpperCase()}
-                      >
-                        {lang.code.toUpperCase()}
-                      </SelectItem>
-                    ))}
+                    <Select.Trigger>
+                      <LanguageIcon className="min-w-5 max-w-5" />
+                      <Select.Value />
+                      <Select.Indicator />
+                    </Select.Trigger>
+                    <Select.Popover>
+                      <ListBox>
+                        {availableLanguages.map((lang) => (
+                          <ListBoxItem
+                            key={lang.code}
+                            id={lang.code}
+                            textValue={lang.code.toUpperCase()}
+                          >
+                            {lang.code.toUpperCase()}
+                            <ListBoxItem.Indicator />
+                          </ListBoxItem>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
                   </Select>
 
                   <div className="border-default-400 h-6 border-r" />
@@ -167,18 +176,9 @@ const InvoiceModal = ({
 
                     return (
                       <Button
-                        startContent={
-                          <ArrowDownTrayIcon
-                            className={cn('h-5 w-5 dark:text-white', {
-                              hidden: isLoading
-                            })}
-                          />
-                        }
                         size="sm"
-                        isLoading={isLoading}
                         isDisabled={isLoading}
-                        color="secondary"
-                        variant="solid"
+                        variant="primary"
                         onPress={() => {
                           if (cookieConsent !== CookieConsentStatus.Accepted)
                             return;
@@ -190,13 +190,16 @@ const InvoiceModal = ({
                           });
                         }}
                       >
+                        {!isLoading && (
+                          <ArrowDownTrayIcon className="h-5 w-5 dark:text-white" />
+                        )}
                         {t('buttons.download_pdf')}
                       </Button>
                     );
                   }}
                 </PDFDownloadLink>
               ) : (
-                <Button isLoading size="sm" color="secondary" variant="solid">
+                <Button isPending size="sm" variant="primary">
                   {t('buttons.download_pdf')}
                 </Button>
               )}
@@ -206,8 +209,8 @@ const InvoiceModal = ({
         </ModalHeader>
         <ModalBody>{renderModalBody()}</ModalBody>
         <ModalFooter />
-      </ModalContent>
-    </Modal>
+      </>
+    </AppModal>
   );
 };
 

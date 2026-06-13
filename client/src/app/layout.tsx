@@ -57,7 +57,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
-        <div className="bg-radial-[at_0%_100%] fixed inset-0 -z-10 min-h-screen from-purple-900 from-[-35%] via-transparent to-transparent" />
+        <div className="bg-radial-[at_0%_100%] from-primary fixed inset-0 -z-10 min-h-screen from-[-35%] via-transparent to-transparent" />
         <Providers messages={messages}>
           <Header />
           <main className="mx-auto flex w-full flex-grow flex-col py-6">

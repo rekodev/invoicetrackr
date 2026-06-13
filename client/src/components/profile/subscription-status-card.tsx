@@ -6,7 +6,7 @@ import {
   CreditCardIcon,
   SparklesIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, CardBody, CardHeader, cn } from '@heroui/react';
+import { Button, Card, CardContent, CardHeader, cn } from '@heroui/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
@@ -156,13 +156,12 @@ export default function SubscriptionStatusCard({
         {showAction && (
           <Button
             onPress={handleClick}
-            isLoading={isLoading}
+            isPending={isLoading}
             className="w-full rounded-xl font-medium md:w-auto"
             size="md"
-            variant={isActive ? 'bordered' : 'solid'}
-            color={isActive ? 'secondary' : 'warning'}
-            endContent={!isLoading && <ArrowRightIcon className="h-4 w-4" />}
+            variant={isActive ? 'outline' : 'secondary'}
           >
+            {!isLoading && <ArrowRightIcon className="h-4 w-4" />}
             {isTrialing
               ? hasPaymentMethod
                 ? t('action.manage')
@@ -174,7 +173,7 @@ export default function SubscriptionStatusCard({
         )}
       </CardHeader>
 
-      <CardBody className="grid gap-4 p-6 lg:grid-cols-[1fr_1fr]">
+      <CardContent className="grid gap-4 p-6 lg:grid-cols-[1fr_1fr]">
         <div className="p-1">
           <div className="flex items-start gap-3">
             <span
@@ -271,7 +270,7 @@ export default function SubscriptionStatusCard({
             </div>
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

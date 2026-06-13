@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardBody, cn } from '@heroui/react';
+import { Card, CardContent, cn } from '@heroui/react';
 import { CheckIcon, UserIcon } from '@heroicons/react/24/outline';
 import { Client } from '@invoicetrackr/types';
 import { JSX } from 'react';
@@ -48,16 +48,13 @@ const ClientCard = ({
     <div className="relative" onClick={onClick}>
       {!!actions && actions}
       <Card
-        onPress={onClick}
-        isPressable={!!onClick}
-        isHoverable={!!onClick}
         className={cn('glass-card relative h-full w-full justify-center', {
           'glass-card-interactive cursor-pointer': !!onClick,
           'border-secondary-600 bg-secondary/10': isSelected
         })}
       >
         {renderSelectedIcon()}
-        <CardBody className="flex min-h-[70px] flex-row items-start justify-between gap-4">
+        <CardContent className="flex min-h-[70px] flex-row items-start justify-between gap-4">
           <div
             className={cn('flex max-w-full items-start gap-3', {
               'max-w-2/3': truncate
@@ -108,7 +105,7 @@ const ClientCard = ({
               {Number(amount).toFixed(2)}
             </div>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, cn } from '@heroui/react';
+import { buttonVariants, cn } from '@heroui/react';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -36,15 +36,12 @@ export default function EmptyState({
       </div>
 
       {actionHref && actionLabel ? (
-        <Button
-          as={Link}
+        <Link
           href={actionHref}
-          color="secondary"
-          variant="flat"
-          size="sm"
+          className={buttonVariants({ variant: 'secondary', size: 'sm' })}
         >
           {actionLabel}
-        </Button>
+        </Link>
       ) : (
         action
       )}

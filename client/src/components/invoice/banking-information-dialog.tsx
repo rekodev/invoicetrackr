@@ -7,13 +7,12 @@ import {
 import {
   Button,
   Card,
-  CardBody,
-  Modal,
+  CardContent,
   ModalBody,
-  ModalContent,
   ModalFooter,
   ModalHeader
 } from '@heroui/react';
+import { AppModal } from '@/components/ui/app-modal';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -46,8 +45,8 @@ const BankingInformationDialog = ({
         key={bankingInformation.id}
         onClick={() => onBankAccountSelect(bankingInformation)}
       >
-        <Card isHoverable className={'cursor-pointer justify-center'}>
-          <CardBody className="flex min-h-[70px] min-w-72 flex-row items-center justify-between gap-4">
+        <Card className="hover:bg-default-100/40 cursor-pointer justify-center">
+          <CardContent className="flex min-h-[70px] min-w-72 flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="item-center rounded-medium border-default-200 flex border p-2">
                 <BuildingLibraryIcon className="h-5 w-5" />
@@ -62,28 +61,25 @@ const BankingInformationDialog = ({
                 </div>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
     ));
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalContent>
+    <AppModal isOpen={isOpen} onClose={onClose}>
+      <>
         <ModalHeader>{t('modals.select_bank_account')}</ModalHeader>
         <ModalBody>{renderBody()}</ModalBody>
         <ModalFooter>
-          <Button
-            color="secondary"
-            onPress={() => router.push(BANKING_INFORMATION_PAGE)}
-            startContent={<PlusCircleIcon className="h-5 w-5" />}
-          >
+          <Button onPress={() => router.push(BANKING_INFORMATION_PAGE)}>
+            <PlusCircleIcon className="h-5 w-5" />
             {t('buttons.add_new')}
           </Button>
         </ModalFooter>
-      </ModalContent>
-    </Modal>
+      </>
+    </AppModal>
   );
 };
 

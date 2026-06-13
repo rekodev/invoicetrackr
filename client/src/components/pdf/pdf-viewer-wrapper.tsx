@@ -62,9 +62,7 @@ export default function PdfViewerWrapper({
       <BlobProvider document={pdfDocument}>
         {({ url, loading }) => {
           if (loading || !url || !containerWidth || !pdfComponents) {
-            return (
-              <Spinner variant="wave" color="secondary" className="my-6" />
-            );
+            return <Spinner className="my-6" />;
           }
 
           const { Document, Page } = pdfComponents;
@@ -72,9 +70,7 @@ export default function PdfViewerWrapper({
           return (
             <Document
               file={url}
-              loading={
-                <Spinner variant="wave" color="secondary" className="my-6" />
-              }
+              loading={<Spinner className="my-6" />}
               onLoadSuccess={() => setIsIFrameLoading(false)}
               onLoadError={() => setIsIFrameLoading(false)}
             >

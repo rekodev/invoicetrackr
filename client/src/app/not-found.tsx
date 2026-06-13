@@ -4,15 +4,15 @@ import {
   DocumentMagnifyingGlassIcon,
   HomeIcon
 } from '@heroicons/react/24/outline';
-import { Button } from '@heroui/react';
 import Link from 'next/link';
+import { buttonVariants } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
 import { HOME_PAGE } from '@/lib/constants/pages';
 
 export default function NotFound() {
   const t = useTranslations('not_found');
-  
+
   return (
     <div className="flex flex-1 items-center justify-center p-4">
       <div className="mx-auto flex max-w-md flex-col items-center gap-6 text-center">
@@ -24,15 +24,16 @@ export default function NotFound() {
           <h1 className="text-4xl font-semibold tracking-tight">
             {t('title')}
           </h1>
-          <p className="text-default-500">
-            {t('description')}
-          </p>
+          <p className="text-default-500">{t('description')}</p>
         </div>
 
-        <Button as={Link} href={HOME_PAGE} variant="ghost" className="gap-2">
+        <Link
+          href={HOME_PAGE}
+          className={buttonVariants({ variant: 'ghost', className: 'gap-2' })}
+        >
           <HomeIcon className="size-4" />
           {t('go_home')}
-        </Button>
+        </Link>
       </div>
     </div>
   );

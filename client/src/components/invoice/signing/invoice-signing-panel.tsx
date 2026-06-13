@@ -3,10 +3,10 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardHeader,
   Chip,
-  Divider
+  Separator
 } from '@heroui/react';
 import {
   CheckCircleIcon,
@@ -29,11 +29,7 @@ const PDFDownloadLink = dynamic(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const t = useTranslations('invoices.pdf');
 
-      return (
-        <Button color="secondary" isLoading>
-          {t('buttons.download_pdf')}
-        </Button>
-      );
+      return <Button isPending>{t('buttons.download_pdf')}</Button>;
     }
   }
 );
@@ -75,8 +71,8 @@ export default function InvoiceSigningPanel({
         <h2 className="text-lg font-semibold">{t('panel_title')}</h2>
         <p className="text-default-500 text-sm">{t('panel_description')}</p>
       </CardHeader>
-      <Divider />
-      <CardBody className="flex flex-1 flex-col gap-5 px-5 py-6 sm:px-6">
+      <Separator />
+      <CardContent className="flex flex-1 flex-col gap-5 px-5 py-6 sm:px-6">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
           {[invoice.sender, invoice.receiver].map((party) => (
             <div key={party.type} className="text-sm">
@@ -87,7 +83,7 @@ export default function InvoiceSigningPanel({
           ))}
         </div>
 
-        <Divider />
+        <Separator />
 
         <section className="flex flex-col gap-3">
           <div className="flex items-start gap-3">
@@ -122,8 +118,7 @@ export default function InvoiceSigningPanel({
           {isPaymentAvailable && (
             <Button
               className="w-full"
-              color="secondary"
-              isLoading={isPaymentPending}
+              isPending={isPaymentPending}
               onPress={onPay}
             >
               {t('pay_invoice')}
@@ -133,7 +128,7 @@ export default function InvoiceSigningPanel({
 
         {isSigningRequested && (
           <>
-            <Divider />
+            <Separator />
 
             {isSigned ? (
               <section className="flex flex-col gap-3">
@@ -164,25 +159,22 @@ export default function InvoiceSigningPanel({
                   <p className="text-default-500 mb-2">{t('method_title')}</p>
                   <div className="grid grid-cols-1 gap-2">
                     <Button
-                      variant="flat"
-                      color="secondary"
+                      variant="secondary"
                       className="h-auto justify-start px-3 py-3"
-                      startContent={<PencilSquareIcon className="h-5 w-5" />}
                     >
+                      <PencilSquareIcon className="h-5 w-5" />
                       {t('draw_signature')}
                     </Button>
                     <Button
-                      variant="bordered"
+                      variant="outline"
                       isDisabled
                       className="h-auto justify-between px-3 py-3"
-                      startContent={<ShieldCheckIcon className="h-5 w-5" />}
-                      endContent={
-                        <Chip size="sm" variant="flat">
-                          {t('coming_soon')}
-                        </Chip>
-                      }
                     >
+                      <ShieldCheckIcon className="h-5 w-5" />
                       {t('electronic_signature')}
+                      <Chip size="sm" variant="soft">
+                        {t('coming_soon')}
+                      </Chip>
                     </Button>
                   </div>
                 </div>
@@ -194,9 +186,8 @@ export default function InvoiceSigningPanel({
                 />
 
                 <Button
-                  color="secondary"
                   isDisabled={isPending}
-                  isLoading={isPending}
+                  isPending={isPending}
                   onPress={onSign}
                 >
                   {t('sign_button')}
@@ -212,13 +203,13 @@ export default function InvoiceSigningPanel({
               document={pdfDocument}
               fileName={`${invoice.invoiceId || 'invoice'}.pdf`}
             >
-              <Button variant="bordered" className="w-full">
+              <Button variant="outline" className="w-full">
                 {t('download_pdf')}
               </Button>
             </PDFDownloadLink>
           )}
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

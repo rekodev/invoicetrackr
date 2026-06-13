@@ -4,11 +4,11 @@ import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
   CardHeader,
-  addToast,
-  cn
+  cn,
+  toast
 } from '@heroui/react';
 import { useMemo, useState } from 'react';
 import { User } from '@invoicetrackr/types';
@@ -63,7 +63,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
 
   const completePersonalInformation = async () => {
     if (!existingUserData?.id) {
-      addToast({ title: t('errors.missing_user'), color: 'danger' });
+      toast(t('errors.missing_user'), { variant: 'danger' });
       return;
     }
 
@@ -150,7 +150,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
       <Card className="border-default-100 from-default-100 via-secondary-50 h-full w-full gap-8 border bg-gradient-to-b md:max-w-sm dark:to-black">
         <CardHeader className="-mt-4 flex-col items-start gap-8 px-8 text-start md:mt-0 md:pt-8">
           <Button
-            variant="bordered"
+            variant="outline"
             className="hidden md:flex"
             isDisabled={currentStep <= minimumAllowedStep}
             onPress={() => goToStep(currentStep - 1)}
@@ -176,7 +176,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
             </div>
           </div>
         </CardHeader>
-        <CardBody className="flex max-h-min md:items-center md:justify-center">
+        <CardContent className="flex max-h-min md:items-center md:justify-center">
           {renderMobileStepper()}
           <div className="hidden max-w-max md:block">
             {steps.map((step, index) => (
@@ -223,7 +223,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
               </div>
             ))}
           </div>
-        </CardBody>
+        </CardContent>
         <CardFooter className="hidden md:flex"></CardFooter>
       </Card>
 

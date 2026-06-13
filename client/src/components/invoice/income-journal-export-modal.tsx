@@ -3,14 +3,15 @@
 import {
   Button,
   Input,
-  Modal,
+  Label,
   ModalBody,
-  ModalContent,
   ModalFooter,
   ModalHeader,
-  addToast
+  TextField,
+  toast
 } from '@heroui/react';
 import { useLocale, useTranslations } from 'next-intl';
+import { AppModal } from '@/components/ui/app-modal';
 import { useState } from 'react';
 
 import { getIncomeJournalExport } from '@/api/invoice';
@@ -45,7 +46,7 @@ export default function IncomeJournalExportModal({
     setIsExporting(false);
 
     if (isResponseError(response)) {
-      addToast({ title: response.data.message, color: 'danger' });
+      toast(response.data.message, { variant: 'danger' });
       return;
     }
 
@@ -62,42 +63,41 @@ export default function IncomeJournalExportModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader>{t('title')}</ModalHeader>
-            <ModalBody>
-              <p className="text-default-500 text-sm">{t('description')}</p>
-              <Input
-                type="date"
-                label={t('from')}
-                value={from}
-                onValueChange={setFrom}
-              />
-              <Input
-                type="date"
-                label={t('to')}
-                value={to}
-                onValueChange={setTo}
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="light" onPress={onClose}>
-                {t('cancel')}
-              </Button>
-              <Button
-                color="secondary"
-                isDisabled={!from || !to || from > to}
-                isLoading={isExporting}
-                onPress={handleExport}
-              >
-                {t('export')}
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+    <AppModal isOpen={isOpen} onClose={() => onOpenChange(false)}>
+      <>
+        <ModalHeader>{t('title')}</ModalHeader>
+        <ModalBody>
+          <p className="text-default-500 text-sm">{t('description')}</p>
+          <TextField>
+            <Label>{t('from')}</Label>
+            <Input
+              type="date"
+              value={from}
+              onChange={(event) => setFrom(event.target.value)}
+            />
+          </TextField>
+          <TextField>
+            <Label>{t('to')}</Label>
+            <Input
+              type="date"
+              value={to}
+              onChange={(event) => setTo(event.target.value)}
+            />
+          </TextField>
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="tertiary" onPress={() => onOpenChange(false)}>
+            {t('cancel')}
+          </Button>
+          <Button
+            isDisabled={!from || !to || from > to}
+            onPress={handleExport}
+            isPending={isExporting}
+          >
+            {t('export')}
+          </Button>
+        </ModalFooter>
+      </>
+    </AppModal>
   );
 }

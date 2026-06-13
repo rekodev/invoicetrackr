@@ -6,12 +6,9 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
+  DropdownPopover,
   DropdownTrigger,
   Link,
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
   cn
 } from '@heroui/react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -57,110 +54,121 @@ export default function UserHeader({ user }: Props) {
   const renderMobileNavbarContent = () => (
     <Dropdown>
       <DropdownTrigger className="md:hidden">
-        <Button isIconOnly variant="faded" color="secondary">
+        <Button isIconOnly variant="secondary">
           <Bars3Icon className="h-5 w-5" />
         </Button>
       </DropdownTrigger>
-      <DropdownMenu>
-        {navbarItems.map((item, index) => {
-          const isActive = pathname?.includes(item.href);
+      <DropdownPopover>
+        <DropdownMenu>
+          {navbarItems.map((item, index) => {
+            const isActive = pathname?.includes(item.href);
 
-          return (
-            <DropdownItem
-              as={Link}
-              key={`mobile-${index}`}
-              href={item.href}
-              className={cn('text-default-800 w-full', {
-                'text-secondary': isActive
-              })}
-            >
-              {item.name}
-            </DropdownItem>
-          );
-        })}
-      </DropdownMenu>
+            return (
+              <DropdownItem
+                key={`mobile-${index}`}
+                href={item.href}
+                className={cn('text-default-800 w-full', {
+                  'text-primary': isActive
+                })}
+              >
+                {item.name}
+              </DropdownItem>
+            );
+          })}
+        </DropdownMenu>
+      </DropdownPopover>
     </Dropdown>
   );
 
   return (
-    <Navbar isBordered maxWidth="xl">
-      <NavbarBrand className="flex gap-2 text-white" as={Link} href={HOME_PAGE}>
-        <AppLogo />
-        <p className="text-default-800 hidden font-bold sm:flex">
-          INVOICE
-          <span className="text-secondary-400 dark:text-secondary-600">
-            TRACKR
-          </span>
-        </p>
-      </NavbarBrand>
+    <header className="border-default-200 bg-background/80 sticky top-0 z-40 w-full border-b backdrop-blur">
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-6">
+        <Link className="flex gap-2 text-white" href={HOME_PAGE}>
+          <AppLogo />
+          <p className="text-default-800 hidden font-bold sm:flex">
+            INVOICE
+            <span className="text-secondary-400 dark:text-secondary-600">
+              TRACKR
+            </span>
+          </p>
+        </Link>
 
-      <NavbarContent className="hidden gap-4 md:flex" justify="center">
-        {navbarItems.map((item, index) => {
-          const isActive = pathname?.includes(item.href);
+        <div className="hidden gap-4 md:flex">
+          {navbarItems.map((item, index) => {
+            const isActive = pathname?.includes(item.href);
 
-          return (
-            <NavbarItem key={index} isActive={isActive}>
-              <Link
-                href={item.href}
-                aria-current="page"
-                className={cn('text-foreground', {
-                  'text-secondary': isActive
-                })}
-              >
-                {t(item.name.toLowerCase())}
-              </Link>
-            </NavbarItem>
-          );
-        })}
-      </NavbarContent>
-
-      <NavbarContent as="div" justify="end">
-        {renderMobileNavbarContent()}
-        <div className="h-full py-3 md:hidden">
-          <div className="border-default-300 dark:border-default-100 h-full border-r" />
+            return (
+              <div key={index} aria-current={isActive ? 'page' : undefined}>
+                <Link
+                  href={item.href}
+                  className={cn('text-foreground', {
+                    'text-primary': isActive
+                  })}
+                >
+                  {t(item.name.toLowerCase())}
+                </Link>
+              </div>
+            );
+          })}
         </div>
-        <Dropdown placement="bottom-end">
-          <DropdownTrigger>
-            <Avatar
-              isBordered={pathname?.includes('profile')}
-              as="button"
-              className="cursor-pointer transition-transform"
-              color="secondary"
-              name={user.name}
-              size="sm"
-              src={user.profilePictureUrl}
-            />
-          </DropdownTrigger>
-          <form action={logOutAction}>
-            <DropdownMenu
-              aria-label={t('a11y.profile_actions_label')}
-              variant="flat"
-            >
-              <DropdownItem key="signed-in-as" className="h-14 gap-2">
-                <p className="font-semibold">{t('signed_in_as')}</p>
-                <p className="font-semibold">{user.email}</p>
-              </DropdownItem>
-              <DropdownItem key="profile" onPress={navigateToProfilePage}>
-                {t('my_profile')}
-              </DropdownItem>
-              <DropdownItem
-                key="logout"
-                color="danger"
-                as="button"
-                itemType="submit"
-                className="text-left"
+
+        <div className="flex items-center justify-end gap-3">
+          {renderMobileNavbarContent()}
+          <div className="h-full py-3 md:hidden">
+            <div className="border-default-300 dark:border-default-100 h-full border-r" />
+          </div>
+          <Dropdown>
+            <DropdownTrigger>
+              <Avatar
+                className={cn(
+                  'cursor-pointer transition-transform',
+                  pathname?.includes('profile') &&
+                    'ring-primary ring-2 ring-offset-2'
+                )}
               >
-                {t('log_out')}
-              </DropdownItem>
-            </DropdownMenu>
-          </form>
-        </Dropdown>
-        <div className="border-default-100 border-l-1 h-10" />
-        <LanguageSwitcher user={user} />
-        <NavbarItem className="-ml-2">
-          <ThemeSwitcher />
-        </NavbarItem>
-      </NavbarContent>
-    </Navbar>
+                <Avatar.Image
+                  alt={user.name ?? 'User avatar'}
+                  src={user.profilePictureUrl}
+                />
+
+                <Avatar.Fallback>
+                  {user.name
+                    ?.split(' ')
+                    .map((part) => part[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase() ?? 'U'}
+                </Avatar.Fallback>
+              </Avatar>
+            </DropdownTrigger>
+            <DropdownPopover>
+              <form action={logOutAction}>
+                <DropdownMenu aria-label={t('a11y.profile_actions_label')}>
+                  <DropdownItem key="signed-in-as" className="h-14 gap-2">
+                    <p className="font-semibold">{t('signed_in_as')}</p>
+                    <p className="font-semibold">{user.email}</p>
+                  </DropdownItem>
+                  <DropdownItem key="profile" onPress={navigateToProfilePage}>
+                    {t('my_profile')}
+                  </DropdownItem>
+                  <DropdownItem
+                    key="logout"
+                    variant="danger"
+                    className="text-left"
+                  >
+                    {t('log_out')}
+                  </DropdownItem>
+                </DropdownMenu>
+              </form>
+            </DropdownPopover>
+          </Dropdown>
+          <div className="border-default-100 border-l-1 h-10" />
+          <LanguageSwitcher user={user} />
+          <div className="-ml-2">
+            <ThemeSwitcher />
+          </div>
+        </div>
+      </nav>
+    </header>
   );
 }

@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader
-} from '@heroui/react';
+import { Button, ModalBody, ModalFooter, ModalHeader } from '@heroui/react';
+import { AppModal } from '@/components/ui/app-modal';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -51,21 +45,18 @@ const InvoiceFormPartyModal = ({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalContent>
+      <AppModal isOpen={isOpen} onClose={onClose}>
+        <>
           <ModalHeader>{t('modals.select_client')}</ModalHeader>
           <ModalBody>{renderBody()}</ModalBody>
           <ModalFooter>
-            <Button
-              color="secondary"
-              onPress={() => setIsAddNewClientModalOpen(true)}
-              startContent={<PlusCircleIcon className="h-5 w-5" />}
-            >
+            <Button onPress={() => setIsAddNewClientModalOpen(true)}>
+              <PlusCircleIcon className="h-5 w-5" />
               {t('buttons.add_new')}
             </Button>
           </ModalFooter>
-        </ModalContent>
-      </Modal>
+        </>
+      </AppModal>
       <ClientFormDialog
         userId={userId}
         isOpen={isAddNewClientModalOpen}

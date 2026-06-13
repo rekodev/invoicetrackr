@@ -5,6 +5,7 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
+  DropdownPopover,
   DropdownTrigger
 } from '@heroui/react';
 import {
@@ -71,32 +72,37 @@ const ClientSection = ({ userId, clients }: Props) => {
   const renderMobileClientCardActions = (clientData: ClientBody) => (
     <Dropdown>
       <DropdownTrigger className="absolute right-2 top-2">
-        <Button variant="light" size="sm" isIconOnly className="sm:hidden">
+        <Button variant="tertiary" size="sm" isIconOnly className="sm:hidden">
           <EllipsisVerticalIcon className="h-5 w-5" />
         </Button>
       </DropdownTrigger>
-      <DropdownMenu>
-        <DropdownItem
-          color="warning"
-          key="edit-client"
-          onPress={() => handleEditClient(clientData)}
-        >
-          <div className="flex items-center gap-1">
-            <PencilIcon className="h-4 w-4" />
-            {t('edit')}
-          </div>
-        </DropdownItem>
-        <DropdownItem
-          color="danger"
-          key="remove-client"
-          onPress={() => handleOpenDeleteClientModal(clientData)}
-        >
-          <div className="flex items-center gap-1">
-            <TrashIcon className="h-4 w-4" />
-            {t('remove')}
-          </div>
-        </DropdownItem>
-      </DropdownMenu>
+      <DropdownPopover>
+        <DropdownMenu>
+          <DropdownItem
+            key="edit-client"
+            id="edit-client"
+            textValue={t('edit')}
+            onAction={() => handleEditClient(clientData)}
+          >
+            <div className="flex items-center gap-1">
+              <PencilIcon className="h-4 w-4" />
+              {t('edit')}
+            </div>
+          </DropdownItem>
+          <DropdownItem
+            key="remove-client"
+            id="remove-client"
+            textValue={t('remove')}
+            variant="danger"
+            onAction={() => handleOpenDeleteClientModal(clientData)}
+          >
+            <div className="flex items-center gap-1">
+              <TrashIcon className="h-4 w-4" />
+              {t('remove')}
+            </div>
+          </DropdownItem>
+        </DropdownMenu>
+      </DropdownPopover>
     </Dropdown>
   );
 
@@ -107,21 +113,21 @@ const ClientSection = ({ userId, clients }: Props) => {
         <Button
           isIconOnly
           className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
-          color="warning"
-          variant="light"
+          variant="tertiary"
           size="sm"
           onPress={() => handleEditClient(clientData)}
-          startContent={<PencilSquareIcon className="h-5 w-5" />}
-        />
+        >
+          <PencilSquareIcon className="h-5 w-5" />
+        </Button>
         <Button
           isIconOnly
-          variant="light"
-          color="danger"
+          variant="danger-soft"
           size="sm"
           className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
           onPress={() => handleOpenDeleteClientModal(clientData)}
-          startContent={<TrashIcon className="h-5 w-5" />}
-        />
+        >
+          <TrashIcon className="h-5 w-5" />
+        </Button>
       </div>
     </>
   );

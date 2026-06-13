@@ -1,8 +1,9 @@
 'use client';
 
 import type { InvoiceBody, PublicInvoice } from '@invoicetrackr/types';
-import { addToast, useDisclosure } from '@heroui/react';
 import { useMemo, useState, useTransition } from 'react';
+import { toast } from '@heroui/react';
+import { useOverlayState } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
 import { createPublicInvoicePayment, signPublicInvoice } from '@/api/invoice';
@@ -30,9 +31,9 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
   const [isPaymentPending, startPaymentTransition] = useTransition();
   const {
     isOpen: isPdfModalOpen,
-    onOpen: openPdfModal,
-    onOpenChange: setIsPdfModalOpen
-  } = useDisclosure();
+    open: openPdfModal,
+    setOpen: setIsPdfModalOpen
+  } = useOverlayState();
   const invoiceLanguage = useMemo(
     () => publicInvoice.preferredInvoiceLanguage || publicInvoice.language,
     [publicInvoice.language, publicInvoice.preferredInvoiceLanguage]
@@ -63,10 +64,7 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
       const response = await createPublicInvoicePayment(publicInvoice.token);
 
       if (isResponseError(response)) {
-        addToast({
-          title: response.data.message,
-          color: 'danger'
-        });
+        toast(response.data.message, { variant: 'danger' });
         return;
       }
 
@@ -76,10 +74,7 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
 
   const handleSign = () => {
     if (!signature || typeof signature === 'string') {
-      addToast({
-        title: t('signature_required'),
-        color: 'danger'
-      });
+      toast(t('signature_required'), { variant: 'danger' });
 
       return;
     }
@@ -90,9 +85,8 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
         signature
       });
 
-      addToast({
-        title: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+      toast(response.data.message, {
+        variant: isResponseError(response) ? 'danger' : 'success'
       });
 
       if (isResponseError(response)) return;

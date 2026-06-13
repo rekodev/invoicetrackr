@@ -3,11 +3,13 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
   CardHeader,
+  FieldError,
   Input,
-  Link
+  Label,
+  TextField
 } from '@heroui/react';
 import {
   CheckCircleIcon,
@@ -16,6 +18,7 @@ import {
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import type { FormEvent } from 'react';
+import Link from 'next/link';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
@@ -111,72 +114,64 @@ export default function SignUpForm() {
     <Card
       data-testid="sign-up-form"
       className="dark:border-default-100 w-full dark:border"
-      isBlurred
     >
       <CardHeader className="p-8 pb-0">
         <h1 className="text-3xl font-medium">{t('title')}</h1>
       </CardHeader>
-      <CardBody className="p-8 pb-0">
+      <CardContent className="p-8 pb-0">
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
-          <Input
-            {...register('email', {
-              onChange: () => clearFieldState('email')
-            })}
-            labelPlacement="outside"
-            variant="faded"
-            id="email"
-            label={t('email')}
-            placeholder={t('email_placeholder')}
-            isInvalid={!!errors.email}
-            errorMessage={errors.email?.message}
-          />
-          <Input
-            {...register('password', {
-              onChange: () => clearFieldState('password')
-            })}
-            labelPlacement="outside"
-            variant="faded"
-            id="password"
-            type="password"
-            label={t('password')}
-            placeholder={t('password_placeholder')}
-            isInvalid={!!errors.password}
-            errorMessage={errors.password?.message}
-          />
-          <Input
-            {...register('confirmPassword', {
-              onChange: () => clearFieldState('confirmPassword')
-            })}
-            labelPlacement="outside"
-            variant="faded"
-            id="confirm-password"
-            type="password"
-            label={t('confirm_password')}
-            placeholder={t('confirm_password_placeholder')}
-            isInvalid={!!errors.confirmPassword}
-            errorMessage={errors.confirmPassword?.message}
-          />
+          <TextField variant="secondary" isInvalid={!!errors.email}>
+            <Label>{t('email')}</Label>
+            <Input
+              {...register('email', {
+                onChange: () => clearFieldState('email')
+              })}
+              id="email"
+              placeholder={t('email_placeholder')}
+            />
+            <FieldError>{errors.email?.message}</FieldError>
+          </TextField>
+          <TextField variant="secondary" isInvalid={!!errors.password}>
+            <Label>{t('password')}</Label>
+            <Input
+              {...register('password', {
+                onChange: () => clearFieldState('password')
+              })}
+              id="password"
+              type="password"
+              placeholder={t('password_placeholder')}
+            />
+            <FieldError>{errors.password?.message}</FieldError>
+          </TextField>
+          <TextField variant="secondary" isInvalid={!!errors.confirmPassword}>
+            <Label>{t('confirm_password')}</Label>
+            <Input
+              {...register('confirmPassword', {
+                onChange: () => clearFieldState('confirmPassword')
+              })}
+              id="confirm-password"
+              type="password"
+              placeholder={t('confirm_password_placeholder')}
+            />
+            <FieldError>{errors.confirmPassword?.message}</FieldError>
+          </TextField>
           <Button
             className="w-full justify-between"
             aria-disabled={isSubmitting}
             type="submit"
-            isLoading={isSubmitting}
-            endContent={<ArrowRightIcon className="h-5 w-5" />}
-            color="secondary"
           >
             {t('submit')}
+            <ArrowRightIcon className="h-5 w-5" />
           </Button>
           <div aria-live="polite" aria-atomic="true">
             {renderSubmissionMessage()}
           </div>
         </form>
-      </CardBody>
+      </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
         <div className="flex flex-col items-center gap-1 sm:flex-row">
           <p className="text-md">{t('already_have_account')}</p>{' '}
-          <Link color="secondary" href={LOGIN_PAGE}>
-            {t('login_link')}
-          </Link>
+          <Link href={LOGIN_PAGE}>{t('login_link')}</Link>
         </div>
       </CardFooter>
     </Card>

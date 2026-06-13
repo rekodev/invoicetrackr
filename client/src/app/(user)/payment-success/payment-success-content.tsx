@@ -12,7 +12,7 @@ import {
   Squares2X2Icon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, CardBody, Chip } from '@heroui/react';
+import { Card, CardContent, Chip, buttonVariants } from '@heroui/react';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 
@@ -66,18 +66,16 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
   return (
     <section className="mx-auto w-full max-w-[1100px] py-10 md:py-14">
       <Card className="border-default-200 bg-background rounded-xl border shadow-sm">
-        <CardBody className="p-6 md:p-8">
+        <CardContent className="p-6 md:p-8">
           <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-14">
             <div>
               <Chip
                 size="sm"
-                variant="flat"
+                variant="soft"
                 color="success"
                 className="border-success/35 bg-success/15 h-7 border px-2.5 text-[11px] font-medium uppercase tracking-[0.12em]"
-                startContent={
-                  <CheckCircleIcon className="h-3.5 w-3.5" strokeWidth={2.4} />
-                }
               >
+                <CheckCircleIcon className="h-3.5 w-3.5" strokeWidth={2.4} />
                 {t(`${copyKey}.badge`)}
               </Chip>
 
@@ -112,30 +110,27 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
               </div>
 
               <div className="mt-7 flex flex-wrap items-center gap-3">
-                <Button
-                  as={Link}
+                <Link
                   href={ADD_NEW_INVOICE_PAGE}
-                  color="secondary"
-                  size="lg"
-                  className="rounded-xl font-medium"
-                  endContent={
-                    <ArrowRightIcon className="h-4 w-4" strokeWidth={2.4} />
-                  }
+                  className={buttonVariants({
+                    size: 'lg',
+                    className: 'rounded-xl font-medium'
+                  })}
                 >
                   {t('actions.create_invoice')}
-                </Button>
-                <Button
-                  as={Link}
+                  <ArrowRightIcon className="h-4 w-4" strokeWidth={2.4} />
+                </Link>
+                <Link
                   href={DASHBOARD_PAGE}
-                  variant="bordered"
-                  size="lg"
-                  className="rounded-xl font-medium"
-                  startContent={
-                    <Squares2X2Icon className="h-4 w-4" strokeWidth={2.2} />
-                  }
+                  className={buttonVariants({
+                    variant: 'outline',
+                    size: 'lg',
+                    className: 'rounded-xl font-medium'
+                  })}
                 >
+                  <Squares2X2Icon className="h-4 w-4" strokeWidth={2.2} />
                   {t('actions.dashboard')}
-                </Button>
+                </Link>
               </div>
             </div>
 
@@ -204,7 +199,7 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
               </div>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       <div className="mt-8 grid gap-4 md:grid-cols-[1fr_0.8fr]">

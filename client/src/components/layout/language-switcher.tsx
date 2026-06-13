@@ -5,12 +5,13 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
+  DropdownPopover,
   DropdownTrigger,
-  SharedSelection
+  Selection
 } from '@heroui/react';
+import { Language, User } from '@invoicetrackr/types';
 import { useEffect, useState } from 'react';
 import { LanguageIcon } from '@heroicons/react/24/outline';
-import { User } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -26,8 +27,8 @@ export default function LanguageSwitcher({ user }: Props) {
   const router = useRouter();
   const t = useTranslations('header.language_switcher');
   const baseT = useTranslations();
-  const [currentLanguage, setCurrentLanguage] = useState(
-    new Set([user?.language || 'en'])
+  const [currentLanguage, setCurrentLanguage] = useState<Set<Language>>(
+    new Set([(user?.language as Language) || 'en'])
   );
 
   useEffect(() => {
@@ -36,23 +37,25 @@ export default function LanguageSwitcher({ user }: Props) {
 
       if (user?.language) {
         if (cookie === user.language) {
-          setCurrentLanguage(new Set([cookie]));
+          setCurrentLanguage(new Set([cookie as Language]));
           return;
         }
 
         await setLocaleCookieAction(user.language);
-        setCurrentLanguage(new Set([user.language]));
+        setCurrentLanguage(new Set([user.language as Language]));
         router.refresh();
       } else {
-        setCurrentLanguage(new Set([cookie]));
+        setCurrentLanguage(new Set([cookie as Language]));
       }
     };
 
     synchronizeLocale();
   }, [router, user?.language]);
 
-  const handleSelect = async (keys: SharedSelection) => {
-    const selectedLanguage = keys.currentKey;
+  const handleSelect = async (keys: Selection) => {
+    if (keys === 'all') return;
+
+    const selectedLanguage = Array.from(keys)[0] as Language | undefined;
 
     if (!selectedLanguage) return;
 
@@ -76,24 +79,29 @@ export default function LanguageSwitcher({ user }: Props) {
           aria-label={t('a11y.label')}
           isIconOnly
           className="max-w-min"
-          variant="flat"
+          variant="primary"
         >
           <LanguageIcon className="h-5 w-5" />
         </Button>
       </DropdownTrigger>
-      <DropdownMenu
-        selectedKeys={currentLanguage}
-        selectionMode="single"
-        items={availableLanguages}
-        onSelectionChange={handleSelect}
-      >
-        {/* @ts-ignore */}
-        {(item) => (
-          <DropdownItem key={item.code} value={item.code}>
-            {baseT(item.nameTranslationKey)}
-          </DropdownItem>
-        )}
-      </DropdownMenu>
+      <DropdownPopover>
+        <DropdownMenu
+          selectedKeys={currentLanguage}
+          selectionMode="single"
+          items={availableLanguages}
+          onSelectionChange={handleSelect}
+        >
+          {(item) => (
+            <DropdownItem
+              key={item.code}
+              id={item.code}
+              textValue={baseT(item.nameTranslationKey)}
+            >
+              {baseT(item.nameTranslationKey)}
+            </DropdownItem>
+          )}
+        </DropdownMenu>
+      </DropdownPopover>
     </Dropdown>
   );
 }

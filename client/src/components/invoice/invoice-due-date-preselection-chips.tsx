@@ -53,7 +53,7 @@ export default function InvoiceDueDatePreselectionChips({
         <Chip
           key={value}
           size="sm"
-          color={currentlyActiveChip === value ? 'secondary' : 'default'}
+          color={currentlyActiveChip === value ? 'accent' : 'default'}
           onClick={() => handleDueDatePreselectionChange(value)}
           className="cursor-pointer"
         >

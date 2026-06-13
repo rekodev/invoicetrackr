@@ -2,19 +2,17 @@
 
 import {
   Avatar,
+  Button,
   Card,
-  CardBody,
+  CardContent,
   CardHeader,
-  Chip,
-  Tab,
   Tabs,
-  addToast
+  toast
 } from '@heroui/react';
 import { CameraIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { usePathname, useRouter } from 'next/navigation';
 import { useRef, useState, useTransition } from 'react';
-import Link from 'next/link';
 import { User } from '@invoicetrackr/types';
-import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { profileMenuTabs } from '@/lib/constants/profile';
@@ -27,12 +25,16 @@ type Props = {
 export default function UserNavCard({ user }: Props) {
   const t = useTranslations('profile.user_nav_card');
   const pathname = usePathname();
+  const router = useRouter();
 
   const [uploadedImage, setUploadedImage] = useState<File>();
   const [isPending, startTransition] = useTransition();
 
   const imageFileInputRef = useRef<HTMLInputElement>(null);
   const currentPath = pathname?.split('/')[2];
+  const userInitial = (user?.name || user?.email || 'U')
+    .charAt(0)
+    .toUpperCase();
 
   const initiateImageUpload = () => {
     imageFileInputRef.current?.click();
@@ -50,9 +52,8 @@ export default function UserNavCard({ user }: Props) {
         formData
       });
 
-      addToast({
-        title: response.message,
-        color: response.ok ? 'success' : 'danger'
+      toast(response.message, {
+        variant: response.ok ? 'success' : 'danger'
       });
 
       if (!response.ok) return;
@@ -65,33 +66,34 @@ export default function UserNavCard({ user }: Props) {
       <>
         <div className="relative">
           <Avatar
-            showFallback
             onClick={initiateImageUpload}
-            fallback={
-              <CameraIcon className="text-default-500 h-6 w-6 animate-pulse" />
-            }
             className="absolute left-0 top-0 z-10 h-14 w-14 cursor-pointer opacity-0 hover:opacity-100"
-          />
-          <Avatar
-            src={
-              uploadedImage
-                ? URL.createObjectURL(uploadedImage)
-                : user?.profilePictureUrl
-            }
-            size="lg"
-            className="mb-2"
-          />
-          {uploadedImage && !isPending && (
-            <Chip
-              variant="faded"
-              onClose={handleImageUpload}
-              endContent={
-                <CheckCircleIcon className="text-success-500 h-5 w-5" />
+          >
+            <Avatar.Fallback>
+              <CameraIcon className="h-5 w-5" />
+            </Avatar.Fallback>
+          </Avatar>
+          <Avatar size="lg" className="mb-2">
+            <Avatar.Image
+              src={
+                uploadedImage
+                  ? URL.createObjectURL(uploadedImage)
+                  : user?.profilePictureUrl
               }
+              alt={user?.name || user?.email || 'User'}
+            />
+            <Avatar.Fallback>{userInitial}</Avatar.Fallback>
+          </Avatar>
+          {uploadedImage && !isPending && (
+            <Button
+              size="sm"
+              variant="secondary"
+              onPress={handleImageUpload}
               className="absolute -right-10 bottom-1 z-10"
             >
+              <CheckCircleIcon className="text-success-500 h-5 w-5" />
               Save
-            </Chip>
+            </Button>
           )}
           <input
             ref={imageFileInputRef}
@@ -110,36 +112,44 @@ export default function UserNavCard({ user }: Props) {
   };
 
   return (
-    <Card
-      as="aside"
-      className="dark:border-default-100 flex max-h-min min-w-56 flex-col justify-between bg-transparent py-3 sm:max-w-56 dark:border"
-    >
-      <CardHeader className="flex-col">{renderUserDetails()}</CardHeader>
-      <CardBody className="flex justify-center p-0 px-2">
-        <Tabs
-          aria-label={t('a11y.actions_label')}
-          isVertical
-          selectedKey={currentPath}
-          fullWidth
-          variant="light"
-          color="secondary"
-        >
-          {profileMenuTabs.map((tab) => (
-            <Tab
-              key={tab.key}
-              className="justify-start"
-              title={
-                <div className="flex items-center space-x-2">
-                  {tab.icon}
-                  <span>{t(tab.name)}</span>
-                </div>
-              }
-              as={Link}
-              href={tab.href}
-            />
-          ))}
-        </Tabs>
-      </CardBody>
-    </Card>
+    <aside>
+      <Card className="dark:border-default-100 flex max-h-min min-w-56 flex-col justify-between bg-transparent py-3 sm:max-w-56 dark:border">
+        <CardHeader className="flex-col">{renderUserDetails()}</CardHeader>
+        <CardContent className="flex justify-center p-0 px-2">
+          <Tabs
+            aria-label={t('a11y.actions_label')}
+            orientation="vertical"
+            selectedKey={currentPath}
+            variant="secondary"
+            onSelectionChange={(key) => {
+              const tab = profileMenuTabs.find((item) => item.key === key);
+
+              if (tab) router.push(tab.href);
+            }}
+          >
+            <Tabs.ListContainer className="w-full">
+              <Tabs.List
+                className="w-full"
+                aria-label={t('a11y.actions_label')}
+              >
+                {profileMenuTabs.map((tab) => (
+                  <Tabs.Tab
+                    id={tab.key}
+                    key={tab.key}
+                    className="justify-start"
+                  >
+                    <div className="flex items-center space-x-2">
+                      {tab.icon}
+                      <span>{t(tab.name)}</span>
+                    </div>
+                    <Tabs.Indicator />
+                  </Tabs.Tab>
+                ))}
+              </Tabs.List>
+            </Tabs.ListContainer>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </aside>
   );
 }

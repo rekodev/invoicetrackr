@@ -6,9 +6,10 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
+  DropdownPopover,
   DropdownTrigger,
   Tooltip,
-  addToast
+  toast
 } from '@heroui/react';
 import {
   ChevronDownIcon,
@@ -45,10 +46,10 @@ const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
 
 const lifecycleStatusColorMap: Record<
   InvoiceLifecycleStatus,
-  'default' | 'primary' | 'danger'
+  'default' | 'accent' | 'danger'
 > = {
   draft: 'default',
-  issued: 'primary',
+  issued: 'accent',
   voided: 'danger'
 };
 
@@ -95,10 +96,7 @@ const InvoiceTableCell = ({
     const publicLink = `${window.location.origin}/invoices/public/${invoice.publicInvoiceToken}`;
     await navigator.clipboard.writeText(publicLink);
 
-    addToast({
-      title: tCell('public_link_copied'),
-      color: 'success'
-    });
+    toast(tCell('public_link_copied'), { variant: 'success' });
   };
   const handleChangeStatus = (
     status: 'paid' | 'pending' | 'canceled' | undefined
@@ -115,9 +113,8 @@ const InvoiceTableCell = ({
 
       if (!response.ok) setIsPaid((prev) => !prev);
 
-      addToast({
-        title: response.message,
-        color: response.ok ? 'success' : 'danger'
+      toast(response.message, {
+        variant: response.ok ? 'success' : 'danger'
       });
     });
   };
@@ -126,6 +123,13 @@ const InvoiceTableCell = ({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsPaid(invoice.status === 'paid');
   }, [invoice.status]);
+
+  const renderTooltip = (content: string, children: JSX.Element) => (
+    <Tooltip delay={0}>
+      <Tooltip.Trigger>{children}</Tooltip.Trigger>
+      <Tooltip.Content>{content}</Tooltip.Content>
+    </Tooltip>
+  );
 
   const handleMarkAsPaidClick = () => {
     if (isStripePaid) return;
@@ -191,7 +195,7 @@ const InvoiceTableCell = ({
           className="capitalize"
           color={lifecycleStatusColorMap[lifecycleStatus]}
           size="sm"
-          variant="flat"
+          variant="soft"
         >
           {tTable(`lifecycle_status.${lifecycleStatus}`)}
         </Chip>
@@ -202,74 +206,74 @@ const InvoiceTableCell = ({
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             {isStripePaid ? (
-              <Tooltip content={tCell('status_locked')}>
+              renderTooltip(
+                tCell('status_locked'),
                 <Chip
                   className="capitalize"
                   color={statusColorMap[invoice.status as InvoiceStatus]}
                   size="sm"
-                  variant="flat"
+                  variant="soft"
                 >
                   {cellValue as string}
                 </Chip>
-              </Tooltip>
+              )
             ) : (
               <Dropdown>
                 <DropdownTrigger className="[&>button]:aria-expanded:rotate-180">
-                  <Chip
-                    as="button"
-                    isDisabled={isPending}
-                    className="cursor capitalize [&>svg]:aria-expanded:rotate-180"
-                    color={statusColorMap[invoice.status as InvoiceStatus]}
-                    size="sm"
-                    variant="flat"
-                    endContent={
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <Chip
+                      className="capitalize [&>svg]:aria-expanded:rotate-180"
+                      color={statusColorMap[invoice.status as InvoiceStatus]}
+                      size="sm"
+                      variant="soft"
+                    >
+                      {cellValue as string}
                       <ChevronDownIcon className="ml-0.5 h-3 w-3 transition-transform" />
+                    </Chip>
+                  </button>
+                </DropdownTrigger>
+                <DropdownPopover>
+                  <DropdownMenu
+                    aria-label={tForm('a11y.static_actions_label')}
+                    selectionMode="single"
+                    items={statusOptions}
+                    selectedKeys={[cellValue] as any}
+                    onSelectionChange={(key) =>
+                      handleChangeStatus(
+                        Array.from(key)[0] as
+                          | 'paid'
+                          | 'pending'
+                          | 'canceled'
+                          | undefined
+                      )
                     }
                   >
-                    {cellValue as string}
-                  </Chip>
-                </DropdownTrigger>
-                <DropdownMenu
-                  aria-label={tForm('a11y.static_actions_label')}
-                  selectionMode="single"
-                  items={statusOptions}
-                  selectedKeys={[cellValue] as any}
-                  onSelectionChange={(key) =>
-                    handleChangeStatus(
-                      Array.from(key)[0] as
-                        | 'paid'
-                        | 'pending'
-                        | 'canceled'
-                        | undefined
-                    )
-                  }
-                >
-                  {/* @ts-ignore */}
-                  {(item) => (
-                    <DropdownItem key={item.uid}>{item.name}</DropdownItem>
-                  )}
-                </DropdownMenu>
+                    {/* @ts-ignore */}
+                    {(item) => (
+                      <DropdownItem key={item.uid}>{item.name}</DropdownItem>
+                    )}
+                  </DropdownMenu>
+                </DropdownPopover>
               </Dropdown>
             )}
 
-            <Tooltip
-              content={
-                isStripePaid
-                  ? tCell('status_locked')
-                  : isPaid
-                    ? tCell('mark_as_pending')
-                    : tCell('mark_as_paid')
-              }
-            >
+            {renderTooltip(
+              isStripePaid
+                ? tCell('status_locked')
+                : isPaid
+                  ? tCell('mark_as_pending')
+                  : tCell('mark_as_paid'),
               <Checkbox
                 className="mr-0.5 max-w-5 p-0"
-                size="sm"
-                color="success"
                 isSelected={isPaid}
                 onChange={handleMarkAsPaidClick}
                 isDisabled={isPending || isStripePaid}
               />
-            </Tooltip>
+            )}
           </div>
 
           {isPastDue && (
@@ -286,48 +290,52 @@ const InvoiceTableCell = ({
     case 'actions':
       return (
         <div className="relative flex items-center justify-end gap-2">
-          <Tooltip content={tCell('tooltip_send_email')}>
+          {renderTooltip(
+            tCell('tooltip_send_email'),
             <PaperAirplaneIcon
               onClick={() => onSendEmail(invoice)}
               className="text-primary h-4 w-4 cursor-pointer"
             />
-          </Tooltip>
-          {invoice.publicInvoiceToken && (
-            <Tooltip content={tCell('tooltip_copy_public_link')}>
+          )}
+          {invoice.publicInvoiceToken &&
+            renderTooltip(
+              tCell('tooltip_copy_public_link'),
               <span
                 onClick={handleCopyPublicLink}
                 className="text-default-400 cursor-pointer text-lg active:opacity-50"
               >
                 <LinkIcon className="h-5 w-5" />
               </span>
-            </Tooltip>
-          )}
-          <Tooltip content={tCell('tooltip_view')}>
+            )}
+          {renderTooltip(
+            tCell('tooltip_view'),
             <span
               onClick={handleViewIconClick}
               className="text-default-400 cursor-pointer text-lg active:opacity-50"
             >
               <EyeIcon className="h-5 w-5" />
             </span>
-          </Tooltip>
+          )}
           {isDraft && (
             <>
-              <Tooltip content={tCell('tooltip_edit')}>
+              {renderTooltip(
+                tCell('tooltip_edit'),
                 <span
                   className="text-default-400 cursor-pointer text-lg active:opacity-50"
                   onClick={handleEditInvoiceClick}
                 >
                   <PencilSquareIcon className="h-5 w-5" />
                 </span>
-              </Tooltip>
-              <Tooltip color="danger" content={tCell('tooltip_delete')}>
+              )}
+              {renderTooltip(
+                tCell('tooltip_delete'),
                 <span
                   className="text-danger cursor-pointer text-lg active:opacity-50"
                   onClick={handleDeleteInvoiceClick}
                 >
                   <TrashIcon className="h-5 w-5" />
                 </span>
-              </Tooltip>
+              )}
             </>
           )}
         </div>

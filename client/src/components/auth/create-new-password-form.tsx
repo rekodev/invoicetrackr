@@ -3,11 +3,14 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
   CardHeader,
+  FieldError,
   Input,
+  Label,
   Link,
+  TextField,
   cn
 } from '@heroui/react';
 import {
@@ -83,50 +86,46 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
   };
 
   return (
-    <Card
-      className="mx-auto w-full max-w-lg dark:border dark:border-neutral-800"
-      isBlurred
-    >
+    <Card className="mx-auto w-full max-w-lg dark:border dark:border-neutral-800">
       <CardHeader className="p-8 pb-0">
         <h1 className="text-3xl font-medium">{t('title')}</h1>
       </CardHeader>
-      <CardBody className="p-8 pb-0">
+      <CardContent className="p-8 pb-0">
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
-          <Input
-            {...register('newPassword', {
-              onChange: () => clearFieldState('newPassword')
-            })}
-            labelPlacement="outside"
-            variant="faded"
-            id="newPassword"
-            type="password"
-            label={t('new_password')}
-            placeholder={t('new_password_placeholder')}
-            isInvalid={!!errors.newPassword}
-            errorMessage={errors.newPassword?.message}
-          />
-          <Input
-            {...register('confirmedNewPassword', {
-              onChange: () => clearFieldState('confirmedNewPassword')
-            })}
-            labelPlacement="outside"
-            variant="faded"
-            id="confirmedNewPassword"
-            type="password"
-            label={t('confirmed_new_password')}
-            placeholder={t('confirmed_new_password_placeholder')}
+          <TextField variant="secondary" isInvalid={!!errors.newPassword}>
+            <Label>{t('new_password')}</Label>
+            <Input
+              {...register('newPassword', {
+                onChange: () => clearFieldState('newPassword')
+              })}
+              id="newPassword"
+              type="password"
+              placeholder={t('new_password_placeholder')}
+            />
+            <FieldError>{errors.newPassword?.message}</FieldError>
+          </TextField>
+          <TextField
+            variant="secondary"
             isInvalid={!!errors.confirmedNewPassword}
-            errorMessage={errors.confirmedNewPassword?.message}
-          />
+          >
+            <Label>{t('confirmed_new_password')}</Label>
+            <Input
+              {...register('confirmedNewPassword', {
+                onChange: () => clearFieldState('confirmedNewPassword')
+              })}
+              id="confirmedNewPassword"
+              type="password"
+              placeholder={t('confirmed_new_password_placeholder')}
+            />
+            <FieldError>{errors.confirmedNewPassword?.message}</FieldError>
+          </TextField>
           <Button
             className="w-full justify-between"
             aria-disabled={isSubmitting}
-            isLoading={isSubmitting}
             type="submit"
-            endContent={<ArrowRightIcon className="h-5 w-5" />}
-            color="secondary"
           >
             {t('submit')}
+            <ArrowRightIcon className="h-5 w-5" />
           </Button>
           <div aria-live="polite" aria-atomic="true">
             {response?.message && (
@@ -134,6 +133,7 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
                 {response.ok ? (
                   <CheckCircleIcon className="text-success-500 h-5 w-5" />
                 ) : (
+                  // TODO: Replace red with danger
                   <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
                 )}
                 <p
@@ -148,13 +148,11 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
             )}
           </div>
         </form>
-      </CardBody>
+      </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
         <div className="flex gap-1">
           <p className="text-md">{t('remember_your_password')}</p>{' '}
-          <Link color="secondary" href={LOGIN_PAGE}>
-            {t('sign_in')}
-          </Link>
+          <Link href={LOGIN_PAGE}>{t('sign_in')}</Link>
         </div>
       </CardFooter>
     </Card>

@@ -1,14 +1,15 @@
 import {
   Button,
   Input,
-  Modal,
+  Label,
   ModalBody,
-  ModalContent,
   ModalFooter,
   ModalHeader,
-  addToast
+  TextField,
+  toast
 } from '@heroui/react';
 import { ChangeEvent, useState, useTransition } from 'react';
+import { AppModal } from '@/components/ui/app-modal';
 import { useTranslations } from 'next-intl';
 
 import { BankAccount } from '@invoicetrackr/types';
@@ -49,9 +50,8 @@ const EditBankingInformationDialog = ({
         newBankingInformation
       );
 
-      addToast({
-        title: response.message,
-        color: response.ok ? 'success' : 'danger'
+      toast(response.message, {
+        variant: response.ok ? 'success' : 'danger'
       });
 
       if (!response.ok) return;
@@ -60,53 +60,52 @@ const EditBankingInformationDialog = ({
     });
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalContent>
+    <AppModal isOpen={isOpen} onClose={onClose}>
+      <>
         <ModalHeader>{t('title.edit')}</ModalHeader>
         <ModalBody>
-          <Input
-            value={newBankingInformation.name}
-            onChange={(event) => handleChange(event, 'name')}
-            type="text"
-            label={t('bank_name')}
-            placeholder={t('bank_name_placeholder')}
-            variant="bordered"
-          />
-          <Input
-            value={newBankingInformation.code}
-            onChange={(event) => handleChange(event, 'code')}
-            type="text"
-            label={t('bank_code')}
-            placeholder={t('bank_code_placeholder')}
-            variant="bordered"
-          />
-          <Input
-            value={newBankingInformation.accountNumber}
-            onChange={(event) => handleChange(event, 'accountNumber')}
-            type="text"
-            label={t('bank_account_number')}
-            placeholder={t('bank_account_number_placeholder')}
-            variant="bordered"
-          />
+          <TextField variant="secondary">
+            <Label>{t('bank_name')}</Label>
+            <Input
+              value={newBankingInformation.name}
+              onChange={(event) => handleChange(event, 'name')}
+              type="text"
+              placeholder={t('bank_name_placeholder')}
+            />
+          </TextField>
+          <TextField variant="secondary">
+            <Label>{t('bank_code')}</Label>
+            <Input
+              value={newBankingInformation.code}
+              onChange={(event) => handleChange(event, 'code')}
+              type="text"
+              placeholder={t('bank_code_placeholder')}
+            />
+          </TextField>
+          <TextField variant="secondary">
+            <Label>{t('bank_account_number')}</Label>
+            <Input
+              value={newBankingInformation.accountNumber}
+              onChange={(event) => handleChange(event, 'accountNumber')}
+              type="text"
+              placeholder={t('bank_account_number_placeholder')}
+            />
+          </TextField>
         </ModalBody>
         <ModalFooter>
           <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
             <div className="flex w-full justify-end gap-1">
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button variant="danger-soft" onPress={onClose}>
                 {t('actions.cancel')}
               </Button>
-              <Button
-                isLoading={isPending}
-                color="secondary"
-                onPress={handleSubmit}
-              >
+              <Button isPending={isPending} onPress={handleSubmit}>
                 {t('actions.save')}
               </Button>
             </div>
           </div>
         </ModalFooter>
-      </ModalContent>
-    </Modal>
+      </>
+    </AppModal>
   );
 };
 

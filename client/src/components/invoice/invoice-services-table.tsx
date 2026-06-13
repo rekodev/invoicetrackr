@@ -3,20 +3,23 @@
 import {
   Button,
   Chip,
+  FieldError,
   Input,
   Table,
   TableBody,
   TableCell,
   TableColumn,
+  TableContent,
   TableHeader,
   TableRow,
+  TableScrollContainer,
+  TextField,
   Tooltip
 } from '@heroui/react';
+import { type ComponentProps, type Key, useEffect, useMemo } from 'react';
 import type { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useEffect, useMemo } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import type { Key } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
@@ -29,6 +32,8 @@ type Props = {
   errorMessage?: string;
   currency: Currency;
 };
+
+type ServiceInputProps = ComponentProps<typeof Input>;
 
 const InvoiceServicesTable = ({
   invoiceServices,
@@ -109,9 +114,24 @@ const InvoiceServicesTable = ({
     remove(index);
   };
 
+  const renderServiceInput = ({
+    isInvalid,
+    errorMessage,
+    inputProps
+  }: {
+    isInvalid: boolean;
+    errorMessage?: string;
+    inputProps: ServiceInputProps;
+  }) => (
+    <TextField isInvalid={isInvalid}>
+      <Input {...inputProps} variant="secondary" />
+      <FieldError>{errorMessage}</FieldError>
+    </TextField>
+  );
+
   const renderBottomContent = () => (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <Button variant="faded" color="secondary" onPress={handleAddService}>
+      <Button variant="secondary" onPress={handleAddService}>
         <PlusIcon className="h-5 w-5" />
         {t('add_service')}
       </Button>
@@ -140,100 +160,88 @@ const InvoiceServicesTable = ({
       case 'no':
         return <div aria-label={t('a11y.number_label')}>{index + 1}</div>;
       case 'description':
-        return (
-          <Input
-            className="min-w-40"
-            aria-label={t('a11y.description_label')}
-            type="text"
-            maxLength={200}
-            defaultValue={
-              (fields[index] as InvoiceServiceBody).description || ''
-            }
-            variant="bordered"
-            {...register(`services.${index}.description`)}
-            isInvalid={!!errors.services?.[index]?.description}
-            errorMessage={errors.services?.[index]?.description?.message}
-          />
-        );
+        return renderServiceInput({
+          isInvalid: !!errors.services?.[index]?.description,
+          errorMessage: errors.services?.[index]?.description?.message,
+          inputProps: {
+            className: 'min-w-40',
+            'aria-label': t('a11y.description_label'),
+            type: 'text',
+            maxLength: 200,
+            defaultValue:
+              (fields[index] as InvoiceServiceBody).description || '',
+            ...register(`services.${index}.description`)
+          }
+        });
       case 'unit':
-        return (
-          <Input
-            className="min-w-24"
-            aria-label={t('a11y.unit_label')}
-            type="text"
-            maxLength={20}
-            defaultValue={(fields[index] as InvoiceServiceBody).unit || ''}
-            variant="bordered"
-            {...register(`services.${index}.unit`)}
-            isInvalid={!!errors.services?.[index]?.unit}
-            errorMessage={errors.services?.[index]?.unit?.message}
-          />
-        );
+        return renderServiceInput({
+          isInvalid: !!errors.services?.[index]?.unit,
+          errorMessage: errors.services?.[index]?.unit?.message,
+          inputProps: {
+            className: 'min-w-24',
+            'aria-label': t('a11y.unit_label'),
+            type: 'text',
+            maxLength: 20,
+            defaultValue: (fields[index] as InvoiceServiceBody).unit || '',
+            ...register(`services.${index}.unit`)
+          }
+        });
       case 'quantity':
-        return (
-          <Input
-            className="min-w-24"
-            aria-label={t('a11y.quantity_label')}
-            type="number"
-            defaultValue={
-              (fields[index] as InvoiceServiceBody).quantity?.toString() || ''
-            }
-            variant="bordered"
-            {...register(`services.${index}.quantity`)}
-            isInvalid={!!errors.services?.[index]?.quantity}
-            errorMessage={errors.services?.[index]?.quantity?.message}
-          />
-        );
+        return renderServiceInput({
+          isInvalid: !!errors.services?.[index]?.quantity,
+          errorMessage: errors.services?.[index]?.quantity?.message,
+          inputProps: {
+            className: 'min-w-24',
+            'aria-label': t('a11y.quantity_label'),
+            type: 'number',
+            defaultValue:
+              (fields[index] as InvoiceServiceBody).quantity?.toString() || '',
+            ...register(`services.${index}.quantity`)
+          }
+        });
       case 'amount':
-        return (
-          <Input
-            className="min-w-36"
-            aria-label={t('a11y.amount_label')}
-            type="number"
-            defaultValue={
-              (fields[index] as InvoiceServiceBody).amount?.toString() || ''
-            }
-            variant="bordered"
-            {...register(`services.${index}.amount`)}
-            isInvalid={!!errors.services?.[index]?.amount}
-            errorMessage={errors.services?.[index]?.amount?.message}
-          />
-        );
+        return renderServiceInput({
+          isInvalid: !!errors.services?.[index]?.amount,
+          errorMessage: errors.services?.[index]?.amount?.message,
+          inputProps: {
+            className: 'min-w-36',
+            'aria-label': t('a11y.amount_label'),
+            type: 'number',
+            defaultValue:
+              (fields[index] as InvoiceServiceBody).amount?.toString() || '',
+            ...register(`services.${index}.amount`)
+          }
+        });
       case 'vatRate':
-        return (
-          <Input
-            className="w-20 min-w-20"
-            aria-label={t('a11y.vat_rate_label')}
-            type="number"
-            min={0}
-            max={100}
-            step="0.01"
-            endContent={<span className="text-default-400 text-sm">%</span>}
-            defaultValue={
-              (fields[index] as InvoiceServiceBody).vatRate?.toString() || '0'
-            }
-            variant="bordered"
-            {...register(`services.${index}.vatRate`)}
-            isInvalid={!!errors.services?.[index]?.vatRate}
-            errorMessage={errors.services?.[index]?.vatRate?.message}
-          />
-        );
+        return renderServiceInput({
+          isInvalid: !!errors.services?.[index]?.vatRate,
+          errorMessage: errors.services?.[index]?.vatRate?.message,
+          inputProps: {
+            className: 'w-20 min-w-20',
+            'aria-label': t('a11y.vat_rate_label'),
+            type: 'number',
+            min: 0,
+            max: 100,
+            step: '0.01',
+            defaultValue:
+              (fields[index] as InvoiceServiceBody).vatRate?.toString() || '0',
+            ...register(`services.${index}.vatRate`)
+          }
+        });
       case 'vatExemptionReason':
-        return (
-          <Input
-            className="min-w-48"
-            aria-label={t('a11y.vat_exemption_reason_label')}
-            type="text"
-            maxLength={255}
-            defaultValue={
-              (fields[index] as InvoiceServiceBody).vatExemptionReason || ''
-            }
-            variant="bordered"
-            {...register(`services.${index}.vatExemptionReason`)}
-            isInvalid={!!errors.services?.[index]?.vatExemptionReason}
-            errorMessage={errors.services?.[index]?.vatExemptionReason?.message}
-          />
-        );
+        return renderServiceInput({
+          isInvalid: !!errors.services?.[index]?.vatExemptionReason,
+          errorMessage: errors.services?.[index]?.vatExemptionReason?.message,
+          inputProps: {
+            className: 'min-w-48',
+            'aria-label': t('a11y.vat_exemption_reason_label'),
+            type: 'text',
+            maxLength: 255,
+            defaultValue:
+              (fields[index] as InvoiceServiceBody).vatExemptionReason || '',
+            ...register(`services.${index}.vatExemptionReason`)
+          }
+        });
       case 'lineTotal':
         return (
           <p className="min-w-24 text-right text-sm font-medium">
@@ -247,14 +255,17 @@ const InvoiceServicesTable = ({
             aria-label={t('a11y.actions_label')}
             className="relative flex items-center gap-2"
           >
-            <Tooltip color="danger" content={t('delete_service')}>
-              <Button
-                onPress={() => handleRemoveService(index)}
-                variant="light"
-                className="text-danger min-w-min cursor-pointer p-3 text-lg active:opacity-50"
-              >
-                <TrashIcon className="h-5 w-5" />
-              </Button>
+            <Tooltip delay={0}>
+              <Tooltip.Trigger>
+                <Button
+                  onPress={() => handleRemoveService(index)}
+                  variant="tertiary"
+                  className="text-danger min-w-min cursor-pointer p-3 text-lg active:opacity-50"
+                >
+                  <TrashIcon className="h-5 w-5" />
+                </Button>
+              </Tooltip.Trigger>
+              <Tooltip.Content>{t('delete_service')}</Tooltip.Content>
             </Tooltip>
           </div>
         );
@@ -265,35 +276,36 @@ const InvoiceServicesTable = ({
 
   return (
     <>
-      <Table
-        aria-label={t('a11y.table_label')}
-        bottomContent={renderBottomContent()}
-        bottomContentPlacement="outside"
-      >
-        <TableHeader columns={INVOICE_SERVICE_COLUMNS}>
-          {/* @ts-ignore */}
-          {(column) => (
-            <TableColumn key={column.uid}>{column.name}</TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={fields} className="bg-red-500">
-          {fields.map((field, index) => (
-            <TableRow key={index}>
-              {/* @ts-ignore */}
-              {(columnKey) => (
-                <TableCell>
-                  {renderCell(columnKey, fields.indexOf(field))}
-                </TableCell>
-              )}
-            </TableRow>
-          ))}
-        </TableBody>
+      <Table>
+        <TableScrollContainer>
+          <TableContent aria-label={t('a11y.table_label')}>
+            <TableHeader>
+              {INVOICE_SERVICE_COLUMNS.map((column) => (
+                <TableColumn key={column.uid} id={column.uid}>
+                  {column.name}
+                </TableColumn>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {fields.map((field, index) => (
+                <TableRow key={field.id} id={field.id}>
+                  {INVOICE_SERVICE_COLUMNS.map((column) => (
+                    <TableCell key={column.uid}>
+                      {renderCell(column.uid, index)}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </TableContent>
+        </TableScrollContainer>
       </Table>
+      {renderBottomContent()}
       {isInvalid && (
         <Chip
           className="mt-[-0.75rem]"
           size="sm"
-          variant="light"
+          variant="tertiary"
           color="danger"
         >
           {errorMessage}

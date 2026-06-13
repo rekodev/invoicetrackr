@@ -6,7 +6,7 @@ import {
   DocumentTextIcon,
   EyeIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, CardBody, CardHeader } from '@heroui/react';
+import { Button, Card, CardContent, CardHeader } from '@heroui/react';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
@@ -49,16 +49,12 @@ export default function InvoiceSigningSummary({
             </p>
           </div>
         </div>
-        <Button
-          variant="bordered"
-          color="secondary"
-          startContent={<EyeIcon className="h-4 w-4" />}
-          onPress={onOpenPdf}
-        >
+        <Button variant="outline" onPress={onOpenPdf}>
+          <EyeIcon className="h-4 w-4" />
           {t('view_pdf')}
         </Button>
       </CardHeader>
-      <CardBody className="gap-6 p-5 sm:p-6">
+      <CardContent className="gap-6 p-5 sm:p-6">
         <div className="grid gap-4 sm:grid-cols-2">
           {[invoice.sender, invoice.receiver].map((party) => (
             <div key={party.type} className="bg-default-100 rounded-lg p-4">
@@ -185,7 +181,7 @@ export default function InvoiceSigningSummary({
             </div>
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

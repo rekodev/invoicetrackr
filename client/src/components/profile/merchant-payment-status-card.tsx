@@ -9,7 +9,7 @@ import {
   CreditCardIcon,
   IdentificationIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, CardBody, CardHeader } from '@heroui/react';
+import { Button, Card, CardContent, CardHeader } from '@heroui/react';
 import { useEffect, useRef, useState } from 'react';
 import type { MerchantPaymentStatus } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
@@ -137,14 +137,11 @@ export default function MerchantPaymentStatusCard({
         <div className="flex w-full flex-col items-stretch gap-2 md:w-auto md:items-end">
           <Button
             className="w-full md:w-auto"
-            color="secondary"
-            variant={isReady ? 'bordered' : 'solid'}
-            isLoading={isLoading}
+            variant={isReady ? 'outline' : 'primary'}
+            isPending={isLoading}
             onPress={handleOnboarding}
-            endContent={
-              !isLoading && <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-            }
           >
+            {!isLoading && <ArrowTopRightOnSquareIcon className="h-4 w-4" />}
             {isReady
               ? t('action_update')
               : isConnected
@@ -158,7 +155,7 @@ export default function MerchantPaymentStatusCard({
           )}
         </div>
       </CardHeader>
-      <CardBody className="flex flex-col gap-5 p-6">
+      <CardContent className="flex flex-col gap-5 p-6">
         <div>
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
@@ -221,7 +218,7 @@ export default function MerchantPaymentStatusCard({
             </p>
           </div>
         )}
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

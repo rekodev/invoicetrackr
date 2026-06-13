@@ -1,8 +1,9 @@
 'use client';
 
-import { Button, Link } from '@heroui/react';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import Link from 'next/link';
+import { buttonVariants } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
 import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
@@ -30,18 +31,18 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
-                <Button
-                  as={Link}
+                <Link
                   href={CREATE_INVOICE_PAGE}
-                  size="lg"
-                  color="secondary"
-                  className="px-8"
+                  className={buttonVariants({ size: 'lg', className: 'px-8' })}
                 >
                   {t('hero.cta_primary')}
-                </Button>
-                <Button as={Link} href="#pricing" variant="ghost" size="lg">
+                </Link>
+                <Link
+                  href="#pricing"
+                  className={buttonVariants({ variant: 'ghost', size: 'lg' })}
+                >
                   {t('hero.cta_secondary')}
-                </Button>
+                </Link>
               </div>
             </div>
             <Image
@@ -183,9 +184,12 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex flex-col p-6 pt-0">
-                <Button as={Link} variant="shadow" href={CREATE_INVOICE_PAGE}>
+                <Link
+                  href={CREATE_INVOICE_PAGE}
+                  className={buttonVariants({ variant: 'primary' })}
+                >
                   {t('pricing.free.cta')}
-                </Button>
+                </Link>
               </div>
             </div>
             <div className="border-secondary-500/50 bg-secondary-50 border-1 flex w-full max-w-md flex-col rounded-lg bg-opacity-50 shadow-sm dark:bg-opacity-100">
@@ -242,14 +246,12 @@ export default function Home() {
                 </ul>
               </div>
               <div className="flex flex-col p-6 pt-0">
-                <Button
-                  as={Link}
+                <Link
                   href={SIGN_UP_PAGE}
-                  variant="solid"
-                  color="secondary"
+                  className={buttonVariants({ variant: 'primary' })}
                 >
                   {t('pricing.premium.cta')}
-                </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -266,16 +268,16 @@ export default function Home() {
               <p className="text-muted-foreground md:text-xl">
                 {t('cta.subtitle')}
               </p>
-              <Button
-                as={Link}
+              <Link
                 href={CREATE_INVOICE_PAGE}
-                variant="shadow"
-                color="default"
-                size="lg"
-                className="px-8"
+                className={buttonVariants({
+                  variant: 'primary',
+                  size: 'lg',
+                  className: 'px-8'
+                })}
               >
                 {t('cta.button')}
-              </Button>
+              </Link>
             </div>
             <div className="flex flex-col items-start space-y-4">
               <div className="bg-background inline-block rounded-lg px-3 py-1 text-sm">

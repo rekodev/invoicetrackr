@@ -1,10 +1,17 @@
 'use client';
 
-import { Button, Card, Input } from '@heroui/react';
+import {
+  Button,
+  Card,
+  FieldError,
+  Input,
+  Label,
+  TextField
+} from '@heroui/react';
+import { type ComponentProps, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
@@ -17,6 +24,8 @@ import InvoiceModal from './invoice-modal';
 import InvoiceServicesTable from './invoice-services-table';
 import PDFDocument from '../pdf/pdf-document';
 import SignaturePad from '../signature-pad';
+
+type TextInputProps = ComponentProps<typeof Input>;
 
 type Props = {
   language: string;
@@ -77,6 +86,24 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     clearErrors('senderSignature');
   };
 
+  const renderTextField = ({
+    label,
+    isInvalid,
+    errorMessage,
+    inputProps
+  }: {
+    label: string;
+    isInvalid: boolean;
+    errorMessage?: string;
+    inputProps: TextInputProps;
+  }) => (
+    <TextField variant="secondary" isInvalid={isInvalid}>
+      <Label>{label}</Label>
+      <Input {...inputProps} />
+      <FieldError>{errorMessage}</FieldError>
+    </TextField>
+  );
+
   const renderSenderAndReceiverFields = () => (
     <div className="col-span-4 flex w-full flex-col gap-4">
       <h4>{t('headings.sender_receiver_data')}</h4>
@@ -85,122 +112,122 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.from')}</p>
           </div>
-          <Input
-            label={t('labels.sender_name')}
-            size="sm"
-            aria-label={t('a11y.sender_name_label')}
-            type="text"
-            maxLength={20}
-            defaultValue=""
-            variant="bordered"
-            {...register('sender.name')}
-            isInvalid={!!errors.sender?.name}
-            errorMessage={errors.sender?.name?.message}
-          />
-          <Input
-            label={t(`labels.sender_business_number_business`)}
-            size="sm"
-            aria-label={t('a11y.sender_business_number_label_business')}
-            type="text"
-            maxLength={20}
-            variant="bordered"
-            {...register('sender.businessNumber')}
-            isInvalid={!!errors.sender?.businessNumber}
-            errorMessage={errors.sender?.businessNumber?.message}
-          />
-          <Input
-            label={t('labels.sender_vat_number')}
-            size="sm"
-            aria-label={t('a11y.sender_vat_number_label')}
-            type="text"
-            maxLength={20}
-            variant="bordered"
-            {...register('sender.vatNumber')}
-            isInvalid={!!errors.sender?.vatNumber}
-            errorMessage={errors.sender?.vatNumber?.message}
-          />
-          <Input
-            label={t('labels.sender_address')}
-            size="sm"
-            aria-label={t('a11y.sender_address_label')}
-            type="text"
-            maxLength={20}
-            variant="bordered"
-            {...register('sender.address')}
-            isInvalid={!!errors.sender?.address}
-            errorMessage={errors.sender?.address?.message}
-          />
-          <Input
-            label={t('labels.sender_email')}
-            size="sm"
-            aria-label={t('a11y.sender_email_label')}
-            type="text"
-            maxLength={20}
-            variant="bordered"
-            {...register('sender.email')}
-            isInvalid={!!errors.sender?.email}
-            errorMessage={errors.sender?.email?.message}
-          />
+          {renderTextField({
+            label: t('labels.sender_name'),
+            isInvalid: !!errors.sender?.name,
+            errorMessage: errors.sender?.name?.message,
+            inputProps: {
+              'aria-label': t('a11y.sender_name_label'),
+              type: 'text',
+              maxLength: 20,
+              defaultValue: '',
+              ...register('sender.name')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.sender_business_number_business'),
+            isInvalid: !!errors.sender?.businessNumber,
+            errorMessage: errors.sender?.businessNumber?.message,
+            inputProps: {
+              'aria-label': t('a11y.sender_business_number_label_business'),
+              type: 'text',
+              maxLength: 20,
+              ...register('sender.businessNumber')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.sender_vat_number'),
+            isInvalid: !!errors.sender?.vatNumber,
+            errorMessage: errors.sender?.vatNumber?.message,
+            inputProps: {
+              'aria-label': t('a11y.sender_vat_number_label'),
+              type: 'text',
+              maxLength: 20,
+              ...register('sender.vatNumber')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.sender_address'),
+            isInvalid: !!errors.sender?.address,
+            errorMessage: errors.sender?.address?.message,
+            inputProps: {
+              'aria-label': t('a11y.sender_address_label'),
+              type: 'text',
+              maxLength: 20,
+              ...register('sender.address')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.sender_email'),
+            isInvalid: !!errors.sender?.email,
+            errorMessage: errors.sender?.email?.message,
+            inputProps: {
+              'aria-label': t('a11y.sender_email_label'),
+              type: 'text',
+              maxLength: 20,
+              ...register('sender.email')
+            }
+          })}
         </Card>
         <Card className="flex w-full flex-col gap-4 p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.to')}</p>
           </div>
-          <Input
-            label={t('labels.receiver_name')}
-            size="sm"
-            aria-label={t('a11y.receiver_name_label')}
-            type="text"
-            maxLength={20}
-            variant="bordered"
-            {...register('receiver.name')}
-            isInvalid={!!errors.receiver?.name}
-            errorMessage={errors.receiver?.name?.message}
-          />
-          <Input
-            label={t('labels.receiver_business_number_business')}
-            size="sm"
-            aria-label={t('a11y.receiver_business_number_label_business')}
-            type="text"
-            maxLength={20}
-            variant="bordered"
-            {...register('receiver.businessNumber')}
-            isInvalid={!!errors.receiver?.businessNumber}
-            errorMessage={errors.receiver?.businessNumber?.message}
-          />
-          <Input
-            label={t('labels.receiver_vat_number')}
-            size="sm"
-            aria-label={t('a11y.receiver_vat_number_label')}
-            type="text"
-            maxLength={20}
-            variant="bordered"
-            {...register('receiver.vatNumber')}
-            isInvalid={!!errors.receiver?.vatNumber}
-            errorMessage={errors.receiver?.vatNumber?.message}
-          />
-          <Input
-            label={t('labels.receiver_address')}
-            size="sm"
-            aria-label={t('a11y.receiver_address_label')}
-            type="text"
-            maxLength={20}
-            variant="bordered"
-            {...register('receiver.address')}
-            isInvalid={!!errors.receiver?.address}
-            errorMessage={errors.receiver?.address?.message}
-          />
-          <Input
-            label={t('labels.receiver_email')}
-            size="sm"
-            aria-label={t('a11y.receiver_email_label')}
-            type="text"
-            maxLength={20}
-            variant="bordered"
-            {...register('receiver.email')}
-            isInvalid={!!errors.receiver?.email}
-            errorMessage={errors.receiver?.email?.message}
-          />
+          {renderTextField({
+            label: t('labels.receiver_name'),
+            isInvalid: !!errors.receiver?.name,
+            errorMessage: errors.receiver?.name?.message,
+            inputProps: {
+              'aria-label': t('a11y.receiver_name_label'),
+              type: 'text',
+              maxLength: 20,
+              ...register('receiver.name')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.receiver_business_number_business'),
+            isInvalid: !!errors.receiver?.businessNumber,
+            errorMessage: errors.receiver?.businessNumber?.message,
+            inputProps: {
+              'aria-label': t('a11y.receiver_business_number_label_business'),
+              type: 'text',
+              maxLength: 20,
+              ...register('receiver.businessNumber')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.receiver_vat_number'),
+            isInvalid: !!errors.receiver?.vatNumber,
+            errorMessage: errors.receiver?.vatNumber?.message,
+            inputProps: {
+              'aria-label': t('a11y.receiver_vat_number_label'),
+              type: 'text',
+              maxLength: 20,
+              ...register('receiver.vatNumber')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.receiver_address'),
+            isInvalid: !!errors.receiver?.address,
+            errorMessage: errors.receiver?.address?.message,
+            inputProps: {
+              'aria-label': t('a11y.receiver_address_label'),
+              type: 'text',
+              maxLength: 20,
+              ...register('receiver.address')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.receiver_email'),
+            isInvalid: !!errors.receiver?.email,
+            errorMessage: errors.receiver?.email?.message,
+            inputProps: {
+              'aria-label': t('a11y.receiver_email_label'),
+              type: 'text',
+              maxLength: 20,
+              ...register('receiver.email')
+            }
+          })}
         </Card>
       </div>
     </div>
@@ -221,38 +248,42 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     <div className="col-span-4 flex flex-col gap-4">
       <h4>{t('banking_details')}</h4>
       <div className="flex flex-col gap-4 md:flex-row">
-        <Input
-          label={t('labels.bank_name')}
-          labelPlacement="inside"
-          aria-label={t('a11y.bank_name_label')}
-          type="text"
-          placeholder={t('placeholders.bank_name')}
-          maxLength={20}
-          variant="flat"
-          {...register('bankingInformation.name')}
-          isInvalid={!!errors.bankingInformation?.name}
-          errorMessage={errors.bankingInformation?.name?.message}
-        />
-        <Input
-          label={t('labels.bank_code')}
-          aria-label={t('a11y.bank_code_label')}
-          type="text"
-          maxLength={20}
-          placeholder={t('placeholders.bank_code')}
-          {...register('bankingInformation.code')}
-          isInvalid={!!errors.bankingInformation?.code}
-          errorMessage={errors.bankingInformation?.code?.message}
-        />
-        <Input
-          label={t('labels.bank_account_number')}
-          aria-label={t('a11y.bank_account_number_label')}
-          placeholder={t('placeholders.bank_account_number')}
-          type="text"
-          maxLength={20}
-          {...register('bankingInformation.accountNumber')}
-          isInvalid={!!errors.bankingInformation?.accountNumber}
-          errorMessage={errors.bankingInformation?.accountNumber?.message}
-        />
+        {renderTextField({
+          label: t('labels.bank_name'),
+          isInvalid: !!errors.bankingInformation?.name,
+          errorMessage: errors.bankingInformation?.name?.message,
+          inputProps: {
+            'aria-label': t('a11y.bank_name_label'),
+            type: 'text',
+            placeholder: t('placeholders.bank_name'),
+            maxLength: 20,
+            ...register('bankingInformation.name')
+          }
+        })}
+        {renderTextField({
+          label: t('labels.bank_code'),
+          isInvalid: !!errors.bankingInformation?.code,
+          errorMessage: errors.bankingInformation?.code?.message,
+          inputProps: {
+            'aria-label': t('a11y.bank_code_label'),
+            type: 'text',
+            maxLength: 20,
+            placeholder: t('placeholders.bank_code'),
+            ...register('bankingInformation.code')
+          }
+        })}
+        {renderTextField({
+          label: t('labels.bank_account_number'),
+          isInvalid: !!errors.bankingInformation?.accountNumber,
+          errorMessage: errors.bankingInformation?.accountNumber?.message,
+          inputProps: {
+            'aria-label': t('a11y.bank_account_number_label'),
+            placeholder: t('placeholders.bank_account_number'),
+            type: 'text',
+            maxLength: 20,
+            ...register('bankingInformation.accountNumber')
+          }
+        })}
       </div>
     </div>
   );
@@ -272,18 +303,10 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
   const renderSubmissionMessageAndActions = () => (
     <div className="col-span-4 flex w-full items-center justify-between gap-5 overflow-x-hidden">
       <div className="flex w-full flex-col justify-end gap-1 sm:flex-row">
-        <Button
-          color="danger"
-          variant="light"
-          onPress={() => router.push(HOME_PAGE)}
-        >
+        <Button variant="danger-soft" onPress={() => router.push(HOME_PAGE)}>
           {t('buttons.cancel')}
         </Button>
-        <Button
-          type="button"
-          color="secondary"
-          onPress={() => setIsInvoiceModalOpen(true)}
-        >
+        <Button type="button" onPress={() => setIsInvoiceModalOpen(true)}>
           <EyeIcon className="h-5 w-5" />
           {t('buttons.preview')}
         </Button>
@@ -331,34 +354,40 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
               <div className="col-span-4 flex flex-col gap-4">
                 <h4>{t('invoice_details')}</h4>
                 <div className="col-span-4 flex flex-col gap-2 md:flex-row">
-                  <Input
-                    className="w-full"
-                    aria-label={t('a11y.invoice_id_label')}
-                    {...register('invoiceId')}
-                    label={t('labels.invoice_id')}
-                    placeholder={t('placeholders.invoice_id')}
-                    isInvalid={!!errors.invoiceId}
-                    errorMessage={errors.invoiceId?.message}
-                  />
-                  <Input
-                    className="w-full"
-                    aria-label={t('a11y.date_label')}
-                    {...register('date')}
-                    type="date"
-                    label={t('labels.date')}
-                    defaultValue={formatDate(new Date().toISOString())}
-                    errorMessage={errors.date?.message}
-                    isInvalid={!!errors.date}
-                  />
-                  <Input
-                    className="w-full"
-                    aria-label={t('a11y.due_date_label')}
-                    {...register('dueDate')}
-                    type="date"
-                    label={t('labels.due_date')}
-                    isInvalid={!!errors.dueDate}
-                    errorMessage={errors.dueDate?.message}
-                  />
+                  {renderTextField({
+                    label: t('labels.invoice_id'),
+                    isInvalid: !!errors.invoiceId,
+                    errorMessage: errors.invoiceId?.message,
+                    inputProps: {
+                      className: 'w-full',
+                      'aria-label': t('a11y.invoice_id_label'),
+                      placeholder: t('placeholders.invoice_id'),
+                      ...register('invoiceId')
+                    }
+                  })}
+                  {renderTextField({
+                    label: t('labels.date'),
+                    isInvalid: !!errors.date,
+                    errorMessage: errors.date?.message,
+                    inputProps: {
+                      className: 'w-full',
+                      'aria-label': t('a11y.date_label'),
+                      type: 'date',
+                      defaultValue: formatDate(new Date().toISOString()),
+                      ...register('date')
+                    }
+                  })}
+                  {renderTextField({
+                    label: t('labels.due_date'),
+                    isInvalid: !!errors.dueDate,
+                    errorMessage: errors.dueDate?.message,
+                    inputProps: {
+                      className: 'w-full',
+                      'aria-label': t('a11y.due_date_label'),
+                      type: 'date',
+                      ...register('dueDate')
+                    }
+                  })}
                 </div>
               </div>
               {renderSenderAndReceiverFields()}

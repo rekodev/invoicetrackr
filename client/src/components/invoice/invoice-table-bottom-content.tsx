@@ -1,4 +1,10 @@
-import { Button, Pagination } from '@heroui/react';
+import {
+  Button,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink
+} from '@heroui/react';
 import { Dispatch, SetStateAction, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 
@@ -35,22 +41,31 @@ const InvoiceTableBottomContent = ({
   return (
     <div className="flex items-center justify-between py-2">
       <div className="absolute flex w-full items-center justify-center">
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="secondary"
-          page={page}
-          total={pages}
-          onChange={setPage}
-          isDisabled={!filteredItemsLength || filteredItemsLength === 0}
-        />
+        <Pagination className="flex justify-center" aria-label="Invoice pages">
+          <PaginationContent>
+            {Array.from({ length: pages }, (_, index) => {
+              const pageNumber = index + 1;
+
+              return (
+                <PaginationItem key={pageNumber}>
+                  <PaginationLink
+                    isActive={pageNumber === page}
+                    isDisabled={!filteredItemsLength}
+                    onPress={() => setPage(pageNumber)}
+                  >
+                    {pageNumber}
+                  </PaginationLink>
+                </PaginationItem>
+              );
+            })}
+          </PaginationContent>
+        </Pagination>
       </div>
       <div className="hidden w-full justify-end gap-2 sm:flex">
         <Button
           isDisabled={prevButtonDisabled}
           size="sm"
-          variant="flat"
+          variant="secondary"
           onPress={onPreviousPage}
         >
           {t('previous')}
@@ -58,7 +73,7 @@ const InvoiceTableBottomContent = ({
         <Button
           isDisabled={nextButtonDisabled}
           size="sm"
-          variant="flat"
+          variant="secondary"
           onPress={onNextPage}
         >
           {t('next')}

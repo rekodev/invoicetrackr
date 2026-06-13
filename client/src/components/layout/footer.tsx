@@ -68,16 +68,14 @@ const Footer = () => {
                 <div className="text-default-500 font-medium">{t('legal')}</div>
                 <nav className="grid gap-2">
                   <Link
-                    color="foreground"
                     href={PRIVACY_POLICY_PAGE}
-                    className="mx-auto text-sm hover:underline sm:mx-0"
+                    className="text-foreground mx-auto text-sm hover:underline sm:mx-0"
                   >
                     {t('privacy_policy')}
                   </Link>
                   <Link
-                    color="foreground"
                     href={TERMS_OF_SERVICE_PAGE}
-                    className="text-sm hover:underline"
+                    className="text-foreground text-sm hover:underline"
                   >
                     {t('terms_of_service')}
                   </Link>
