@@ -4,15 +4,7 @@ import {
   BuildingLibraryIcon,
   PlusCircleIcon
 } from '@heroicons/react/24/outline';
-import {
-  Button,
-  Card,
-  CardContent,
-  ModalBody,
-  ModalFooter,
-  ModalHeader
-} from '@heroui/react';
-import { AppModal } from '@/components/ui/app-modal';
+import { Button, Card, CardContent, Modal } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -52,7 +44,7 @@ const BankingInformationDialog = ({
                 <BuildingLibraryIcon className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-small truncate pb-0.5 font-bold uppercase">
+                <div className="truncate pb-0.5 text-sm font-bold uppercase">
                   {bankingInformation.name}
                 </div>
                 <div className="text-default-500 flex gap-2 text-xs">
@@ -68,18 +60,28 @@ const BankingInformationDialog = ({
   };
 
   return (
-    <AppModal isOpen={isOpen} onClose={onClose}>
-      <>
-        <ModalHeader>{t('modals.select_bank_account')}</ModalHeader>
-        <ModalBody>{renderBody()}</ModalBody>
-        <ModalFooter>
-          <Button onPress={() => router.push(BANKING_INFORMATION_PAGE)}>
-            <PlusCircleIcon className="h-5 w-5" />
-            {t('buttons.add_new')}
-          </Button>
-        </ModalFooter>
-      </>
-    </AppModal>
+    <Modal>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => !open && onClose()}
+      >
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>{t('modals.select_bank_account')}</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>{renderBody()}</Modal.Body>
+            <Modal.Footer>
+              <Button onPress={() => router.push(BANKING_INFORMATION_PAGE)}>
+                <PlusCircleIcon className="h-5 w-5" />
+                {t('buttons.add_new')}
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 };
 

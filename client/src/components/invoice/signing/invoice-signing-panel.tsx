@@ -66,7 +66,7 @@ export default function InvoiceSigningPanel({
   const t = useTranslations('invoice_signing');
 
   return (
-    <Card className="dark:border-default-100 h-full border shadow-sm">
+    <Card className="h-full border shadow-sm">
       <CardHeader className="flex flex-col items-start gap-1 px-5 py-4 sm:px-6">
         <h2 className="text-lg font-semibold">{t('panel_title')}</h2>
         <p className="text-default-500 text-sm">{t('panel_description')}</p>

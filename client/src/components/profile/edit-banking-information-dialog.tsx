@@ -2,14 +2,11 @@ import {
   Button,
   Input,
   Label,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
+  Modal,
   TextField,
   toast
 } from '@heroui/react';
 import { ChangeEvent, useState, useTransition } from 'react';
-import { AppModal } from '@/components/ui/app-modal';
 import { useTranslations } from 'next-intl';
 
 import { BankAccount } from '@invoicetrackr/types';
@@ -60,10 +57,15 @@ const EditBankingInformationDialog = ({
     });
 
   return (
-    <AppModal isOpen={isOpen} onClose={onClose}>
-      <>
-        <ModalHeader>{t('title.edit')}</ModalHeader>
-        <ModalBody>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+        <Modal.Header>
+          <Modal.Heading>{t('title.edit')}</Modal.Heading>
+        </Modal.Header>
+        <Modal.Body>
           <TextField variant="secondary">
             <Label>{t('bank_name')}</Label>
             <Input
@@ -91,8 +93,8 @@ const EditBankingInformationDialog = ({
               placeholder={t('bank_account_number_placeholder')}
             />
           </TextField>
-        </ModalBody>
-        <ModalFooter>
+        </Modal.Body>
+        <Modal.Footer>
           <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
             <div className="flex w-full justify-end gap-1">
               <Button variant="danger-soft" onPress={onClose}>
@@ -103,9 +105,11 @@ const EditBankingInformationDialog = ({
               </Button>
             </div>
           </div>
-        </ModalFooter>
-      </>
-    </AppModal>
+        </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 };
 

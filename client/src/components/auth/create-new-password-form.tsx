@@ -86,7 +86,7 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
   };
 
   return (
-    <Card className="mx-auto w-full max-w-lg dark:border dark:border-neutral-800">
+    <Card className="mx-auto w-full max-w-lg border">
       <CardHeader className="p-8 pb-0">
         <h1 className="text-3xl font-medium">{t('title')}</h1>
       </CardHeader>
@@ -133,12 +133,11 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
                 {response.ok ? (
                   <CheckCircleIcon className="text-success-500 h-5 w-5" />
                 ) : (
-                  // TODO: Replace red with danger
-                  <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+                  <ExclamationCircleIcon className="text-danger-500 h-5 w-5" />
                 )}
                 <p
                   className={cn('text-sm', {
-                    'text-red-500': !response.ok,
+                    'text-danger-500': !response.ok,
                     'text-success-500': response.ok
                   })}
                 >

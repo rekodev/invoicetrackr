@@ -6,6 +6,7 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
+  Label,
   Radio,
   RadioGroup,
   Separator,
@@ -107,13 +108,17 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     accountNumber
   }: BankAccount) => (
     <Card key={id} className="col-span-2 lg:col-span-1">
-      <CardContent className="flex flex-row items-center gap-2">
-        <Radio value={String(id || 0)} />
-        <div>
-          <h4 className="text-large font-bold">{name}</h4>
-          <p className="text-tiny font-bold uppercase">{code}</p>
-          <small className="text-default-500">{accountNumber}</small>
-        </div>
+      <CardContent className="flex flex-row items-center gap-2 pr-24">
+        <Radio value={String(id || 0)} className="min-w-0">
+          <Radio.Control>
+            <Radio.Indicator />
+          </Radio.Control>
+          <Radio.Content>
+            <Label className="text-large font-bold">{name}</Label>
+            <p className="text-tiny font-bold uppercase">{code}</p>
+            <small className="text-default-500">{accountNumber}</small>
+          </Radio.Content>
+        </Radio>
         <div className="absolute right-4 flex gap-0.5">
           <Button
             isIconOnly
@@ -157,6 +162,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     return (
       <RadioGroup
         className="w-full"
+        variant="secondary"
         value={String(selectedBankAccountId)}
         onChange={setSelectedBankAccountId}
       >
@@ -178,7 +184,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
 
   return (
     <>
-      <Card className="dark:border-default-100 w-full bg-transparent dark:border">
+      <Card className="w-full border bg-transparent">
         <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
         <Separator />
         <CardContent className="flex flex-col items-end gap-6 p-6">

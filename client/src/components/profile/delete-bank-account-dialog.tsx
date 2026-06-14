@@ -1,11 +1,8 @@
 import {
   Button,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
+  Modal,
   toast
 } from '@heroui/react';
-import { AppModal } from '@/components/ui/app-modal';
 import { BankAccount } from '@invoicetrackr/types';
 import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
@@ -47,7 +44,7 @@ const DeleteBankAccountDialog = ({
     });
 
   const renderModalFooter = () => (
-    <ModalFooter>
+    <Modal.Footer>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
           <Button variant="outline" onPress={onClose}>
@@ -58,19 +55,26 @@ const DeleteBankAccountDialog = ({
           </Button>
         </div>
       </div>
-    </ModalFooter>
+    </Modal.Footer>
   );
 
   return (
-    <AppModal isOpen={isOpen} onClose={onClose}>
-      <>
-        <ModalHeader>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+        <Modal.Header>
+          <Modal.Heading>
           {t('title', { bank_number: bankAccount?.accountNumber })}
-        </ModalHeader>
-        <ModalBody>{t('description')}</ModalBody>
+          </Modal.Heading>
+        </Modal.Header>
+        <Modal.Body>{t('description')}</Modal.Body>
         {renderModalFooter()}
-      </>
-    </AppModal>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 };
 

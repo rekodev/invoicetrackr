@@ -6,7 +6,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownPopover,
-  DropdownTrigger
+  DropdownTrigger,
+  buttonVariants
 } from '@heroui/react';
 import {
   EllipsisVerticalIcon,
@@ -71,10 +72,15 @@ const ClientSection = ({ userId, clients }: Props) => {
 
   const renderMobileClientCardActions = (clientData: ClientBody) => (
     <Dropdown>
-      <DropdownTrigger className="absolute right-2 top-2">
-        <Button variant="tertiary" size="sm" isIconOnly className="sm:hidden">
-          <EllipsisVerticalIcon className="h-5 w-5" />
-        </Button>
+      <DropdownTrigger
+        className={buttonVariants({
+          variant: 'tertiary',
+          size: 'sm',
+          className:
+            'absolute right-2 top-2 flex items-center justify-center p-0 sm:hidden'
+        })}
+      >
+        <EllipsisVerticalIcon className="h-5 w-5" />
       </DropdownTrigger>
       <DropdownPopover>
         <DropdownMenu>
@@ -187,7 +193,7 @@ const ClientSection = ({ userId, clients }: Props) => {
         typeFilters={typeFilters}
         setTypeFilters={setTypeFilters}
       />
-      <div className="border-default-200 dark:border-default-100 flex flex-col gap-4 rounded-xl border p-4 shadow-sm">
+      <div className="flex flex-col gap-4 rounded-xl border p-4 shadow-sm">
         {renderSectionContent()}
       </div>
       <ClientSectionBottomContent

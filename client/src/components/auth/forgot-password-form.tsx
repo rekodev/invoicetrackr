@@ -58,7 +58,7 @@ export default function ForgotPasswordForm() {
   };
 
   return (
-    <Card className="mx-auto w-full max-w-lg dark:border dark:border-neutral-800">
+    <Card className="mx-auto w-full max-w-lg border">
       <CardHeader className="p-8 pb-0">
         <h1 className="text-3xl font-medium">{t('card_header')}</h1>
       </CardHeader>

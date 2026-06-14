@@ -165,13 +165,13 @@ const InvoiceTableCell = ({
         <div className="flex">
           <DocumentTextIcon className="h-5 w-5" />
           &nbsp;
-          <p className="text-bold text-small capitalize">{invoice.invoiceId}</p>
+          <p className="text-bold text-sm capitalize">{invoice.invoiceId}</p>
         </div>
       );
     case 'receiver':
       return (
         <div className="flex flex-col">
-          <p className="text-bold text-small text-nowrap capitalize">
+          <p className="text-bold text-nowrap text-sm capitalize">
             {invoice.receiver.name}
           </p>
         </div>
@@ -194,7 +194,6 @@ const InvoiceTableCell = ({
         <Chip
           className="capitalize"
           color={lifecycleStatusColorMap[lifecycleStatus]}
-          size="sm"
           variant="soft"
         >
           {tTable(`lifecycle_status.${lifecycleStatus}`)}
@@ -211,7 +210,6 @@ const InvoiceTableCell = ({
                 <Chip
                   className="capitalize"
                   color={statusColorMap[invoice.status as InvoiceStatus]}
-                  size="sm"
                   variant="soft"
                 >
                   {cellValue as string}
@@ -219,22 +217,18 @@ const InvoiceTableCell = ({
               )
             ) : (
               <Dropdown>
-                <DropdownTrigger className="[&>button]:aria-expanded:rotate-180">
-                  <button
-                    type="button"
-                    disabled={isPending}
-                    className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                <DropdownTrigger
+                  isDisabled={isPending}
+                  className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 [&[aria-expanded=true]_svg]:rotate-180"
+                >
+                  <Chip
+                    className="capitalize"
+                    color={statusColorMap[invoice.status as InvoiceStatus]}
+                    variant="soft"
                   >
-                    <Chip
-                      className="capitalize [&>svg]:aria-expanded:rotate-180"
-                      color={statusColorMap[invoice.status as InvoiceStatus]}
-                      size="sm"
-                      variant="soft"
-                    >
-                      {cellValue as string}
-                      <ChevronDownIcon className="ml-0.5 h-3 w-3 transition-transform" />
-                    </Chip>
-                  </button>
+                    {cellValue as string}
+                    <ChevronDownIcon className="ml-0.5 h-3 w-3 transition-transform" />
+                  </Chip>
                 </DropdownTrigger>
                 <DropdownPopover>
                   <DropdownMenu
@@ -252,7 +246,6 @@ const InvoiceTableCell = ({
                       )
                     }
                   >
-                    {/* @ts-ignore */}
                     {(item) => (
                       <DropdownItem key={item.uid}>{item.name}</DropdownItem>
                     )}
@@ -294,7 +287,7 @@ const InvoiceTableCell = ({
             tCell('tooltip_send_email'),
             <PaperAirplaneIcon
               onClick={() => onSendEmail(invoice)}
-              className="text-primary h-4 w-4 cursor-pointer"
+              className="text-accent h-4 w-4 cursor-pointer"
             />
           )}
           {invoice.publicInvoiceToken &&

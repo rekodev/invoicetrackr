@@ -969,6 +969,14 @@
             "vat_total": "PVM suma",
             "grand_total": "Bendra suma",
             "delete_service": "Ištrinti paslaugą",
+            "placeholders": {
+                "description": "pvz., Interneto svetainės kūrimas",
+                "unit": "pvz., val.",
+                "quantity": "pvz., 1",
+                "amount": "pvz., 100",
+                "vat_rate": "pvz., 21",
+                "vat_exemption_reason": "pvz., Atvirkštinis apmokestinimas"
+            },
             "a11y": {
                 "table_label": "Sąskaitos faktūros paslaugų lentelė",
                 "number_label": "Numeris",
@@ -1033,7 +1041,17 @@
                 "bank_code": "pvz., HABALT22",
                 "bank_account_number": "pvz., LT121000011101001000",
                 "invoice_id": "pvz., SF001",
-                "select_status": "Pasirinkite būseną"
+                "select_status": "Pasirinkite būseną",
+                "sender_name": "pvz., Jonas Jonaitis",
+                "sender_business_number": "pvz., 304000000",
+                "sender_vat_number": "pvz., LT100000000000",
+                "sender_address": "pvz., Gedimino pr. 1, Vilnius",
+                "sender_email": "pvz., jonas@example.com",
+                "receiver_name": "pvz., Klientas UAB",
+                "receiver_business_number": "pvz., 305000000",
+                "receiver_vat_number": "pvz., LT100000000000",
+                "receiver_address": "pvz., Konstitucijos pr. 7, Vilnius",
+                "receiver_email": "pvz., saskaitos@klientas.lt"
             },
             "headings": {
                 "sender_receiver_data": "Siuntėjo ir gavėjo duomenys",

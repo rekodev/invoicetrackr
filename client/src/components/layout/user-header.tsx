@@ -2,13 +2,14 @@
 
 import {
   Avatar,
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownPopover,
   DropdownTrigger,
   Link,
+  Separator,
+  buttonVariants,
   cn
 } from '@heroui/react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -53,10 +54,15 @@ export default function UserHeader({ user }: Props) {
 
   const renderMobileNavbarContent = () => (
     <Dropdown>
-      <DropdownTrigger className="md:hidden">
-        <Button isIconOnly variant="secondary">
-          <Bars3Icon className="h-5 w-5" />
-        </Button>
+      <DropdownTrigger
+        aria-label="Open menu"
+        className={buttonVariants({
+          variant: 'secondary',
+          isIconOnly: true,
+          className: 'flex items-center justify-center md:hidden'
+        })}
+      >
+        <Bars3Icon className="h-5 w-5" />
       </DropdownTrigger>
       <DropdownPopover>
         <DropdownMenu>
@@ -85,11 +91,9 @@ export default function UserHeader({ user }: Props) {
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-6">
         <Link className="flex gap-2 text-white" href={HOME_PAGE}>
           <AppLogo />
-          <p className="text-default-800 hidden font-bold sm:flex">
+          <p className="text-default-foreground hidden font-bold sm:flex">
             INVOICE
-            <span className="text-secondary-400 dark:text-secondary-600">
-              TRACKR
-            </span>
+            <span className="text-accent dark:text-secondary-600">TRACKR</span>
           </p>
         </Link>
 
@@ -114,16 +118,14 @@ export default function UserHeader({ user }: Props) {
 
         <div className="flex items-center justify-end gap-3">
           {renderMobileNavbarContent()}
-          <div className="h-full py-3 md:hidden">
-            <div className="border-default-300 dark:border-default-100 h-full border-r" />
-          </div>
+          <Separator orientation="vertical" className="md:hidden" />
           <Dropdown>
             <DropdownTrigger>
               <Avatar
                 className={cn(
                   'cursor-pointer transition-transform',
                   pathname?.includes('profile') &&
-                    'ring-primary ring-2 ring-offset-2'
+                    'ring-accent ring-2 ring-offset-2'
                 )}
               >
                 <Avatar.Image
@@ -152,6 +154,7 @@ export default function UserHeader({ user }: Props) {
                     {t('my_profile')}
                   </DropdownItem>
                   <DropdownItem
+                    onPress={logOutAction}
                     key="logout"
                     variant="danger"
                     className="text-left"
@@ -162,7 +165,7 @@ export default function UserHeader({ user }: Props) {
               </form>
             </DropdownPopover>
           </Dropdown>
-          <div className="border-default-100 border-l-1 h-10" />
+          <Separator orientation="vertical" />
           <LanguageSwitcher user={user} />
           <div className="-ml-2">
             <ThemeSwitcher />

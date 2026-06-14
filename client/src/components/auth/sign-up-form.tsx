@@ -111,10 +111,7 @@ export default function SignUpForm() {
   };
 
   return (
-    <Card
-      data-testid="sign-up-form"
-      className="dark:border-default-100 w-full dark:border"
-    >
+    <Card data-testid="sign-up-form" className="w-full border">
       <CardHeader className="p-8 pb-0">
         <h1 className="text-3xl font-medium">{t('title')}</h1>
       </CardHeader>

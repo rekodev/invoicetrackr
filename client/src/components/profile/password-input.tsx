@@ -34,7 +34,7 @@ export default function PasswordInput({
     <TextField
       variant="secondary"
       isInvalid={isInvalid}
-      className={`col-span-1 col-start-1 ${className}`}
+      className={`col-span-2 col-start-1 ${className}`}
     >
       <Label>{label}</Label>
       <div className="flex items-center gap-2">

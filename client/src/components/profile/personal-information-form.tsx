@@ -223,7 +223,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
       encType="multipart/form-data"
       className="w-full"
     >
-      <Card className="dark:border-default-100 w-full bg-transparent dark:border">
+      <Card className="w-full border bg-transparent">
         <Card.Header
           data-testid="personal-information-form-heading"
           className="p-4 px-6"

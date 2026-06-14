@@ -1,17 +1,6 @@
 'use client';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableContent,
-  TableHeader,
-  TableRow,
-  TableScrollContainer,
-  cn,
-  useOverlayState
-} from '@heroui/react';
+import { Table, cn, useOverlayState } from '@heroui/react';
 import { useMemo, useState } from 'react';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
@@ -19,7 +8,6 @@ import { useTranslations } from 'next-intl';
 import { Currency } from '@/lib/types/currency';
 import EmptyState from '@/components/empty-state';
 import type { SortDescriptor } from '@/lib/types/table';
-import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
 
@@ -86,7 +74,6 @@ const InvoiceTable = ({
   const [currentInvoice, setCurrentInvoice] = useState<InvoiceBody>();
 
   const [filterValue, setFilterValue] = useState('');
-  const [selectedKeys] = useState<Set<never> | 'all'>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Set<string> | 'all'>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
@@ -209,8 +196,8 @@ const InvoiceTable = ({
       page={page}
       setPage={setPage}
       pages={pages}
+      rowsPerPage={rowsPerPage}
       filteredItemsLength={filteredItems?.length}
-      selectedKeys={selectedKeys}
     />
   );
 
@@ -234,19 +221,20 @@ const InvoiceTable = ({
   };
 
   return (
-    <section className="max-w-full overflow-x-hidden">
+    <section className="flex max-w-full flex-col gap-4 overflow-x-hidden">
       {renderTopContent()}
       <Table variant="secondary">
-        <TableScrollContainer className="dark:border-default-100 min-h-[480px] w-full max-w-full overflow-x-auto bg-transparent dark:border">
-          <TableContent
+        <Table.ScrollContainer className="w-full max-w-full overflow-x-auto">
+          <Table.Content
             className="min-w-full"
             aria-label={t('a11y.table_label')}
             sortDescriptor={sortDescriptor as any}
             onSortChange={setSortDescriptor}
           >
-            <TableHeader>
-              {headerColumns.map((column) => (
-                <TableColumn
+            <Table.Header>
+              {headerColumns.map((column, index) => (
+                <Table.Column
+                  isRowHeader={index === 0}
                   key={column.uid}
                   id={column.uid}
                   allowsSorting={column.sortable}
@@ -255,46 +243,40 @@ const InvoiceTable = ({
                   })}
                 >
                   {column.name}
-                </TableColumn>
+                </Table.Column>
               ))}
-            </TableHeader>
-            <TableBody>
+            </Table.Header>
+            <Table.Body>
               {sortedItems.length ? (
-                sortedItems.map((item) => {
-                  const { isPastDue } = getInvoiceDueStatus(item);
-
-                  return (
-                    <TableRow
-                      className={cn({ 'bg-danger/10': isPastDue })}
-                      key={item.id}
-                      id={String(item.id)}
-                    >
-                      {headerColumns.map((column) => (
-                        <TableCell key={column.uid}>
-                          <InvoiceTableCell
-                            pdfDocument={pdfDocument}
-                            userId={userId}
-                            currency={currency}
-                            invoice={item}
-                            columnKey={column.uid}
-                            onSendEmail={handleSendInvoiceEmail}
-                            onView={handleViewInvoice}
-                            onEdit={handleEditInvoice}
-                            onDelete={handleDeleteInvoice}
-                          />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })
+                sortedItems.map((item) => (
+                  <Table.Row key={item.id} id={String(item.id)}>
+                    {headerColumns.map((column) => (
+                      <Table.Cell key={column.uid}>
+                        <InvoiceTableCell
+                          pdfDocument={pdfDocument}
+                          userId={userId}
+                          currency={currency}
+                          invoice={item}
+                          columnKey={column.uid}
+                          onSendEmail={handleSendInvoiceEmail}
+                          onView={handleViewInvoice}
+                          onEdit={handleEditInvoice}
+                          onDelete={handleDeleteInvoice}
+                        />
+                      </Table.Cell>
+                    ))}
+                  </Table.Row>
+                ))
               ) : (
-                <TableRow id="empty">
-                  <TableCell>{renderEmptyContent()}</TableCell>
-                </TableRow>
+                <Table.Row id="empty">
+                  <Table.Cell colSpan={headerColumns.length}>
+                    {renderEmptyContent()}
+                  </Table.Cell>
+                </Table.Row>
               )}
-            </TableBody>
-          </TableContent>
-        </TableScrollContainer>
+            </Table.Body>
+          </Table.Content>
+        </Table.ScrollContainer>
       </Table>
       {renderBottomContent()}
 

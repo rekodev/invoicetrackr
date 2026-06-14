@@ -1,11 +1,4 @@
-import {
-  Button,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  toast
-} from '@heroui/react';
-import { AppModal } from '@/components/ui/app-modal';
+import { Button, Modal, toast } from '@heroui/react';
 import { InvoiceBody } from '@invoicetrackr/types';
 import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
@@ -43,7 +36,7 @@ const DeleteInvoiceModal = ({
     });
 
   const renderModalFooter = () => (
-    <ModalFooter>
+    <Modal.Footer>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
           <Button variant="outline" onPress={onClose}>
@@ -54,19 +47,29 @@ const DeleteInvoiceModal = ({
           </Button>
         </div>
       </div>
-    </ModalFooter>
+    </Modal.Footer>
   );
 
   return (
-    <AppModal isOpen={isOpen} onClose={onClose}>
-      <>
-        <ModalHeader>{t('title')}</ModalHeader>
-        <ModalBody>
-          {t('description', { invoiceId: invoiceData.invoiceId || '' })}
-        </ModalBody>
-        {renderModalFooter()}
-      </>
-    </AppModal>
+    <Modal>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => !open && onClose()}
+      >
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>{t('title')}</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>
+              {t('description', { invoiceId: invoiceData.invoiceId || '' })}
+            </Modal.Body>
+            {renderModalFooter()}
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 };
 

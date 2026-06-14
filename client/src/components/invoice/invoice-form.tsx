@@ -72,15 +72,25 @@ const InvoiceForm = ({
 }: Props) => {
   const t = useTranslations('components.invoice_form');
   const methods = useForm<InvoiceBody>({
-    defaultValues: invoiceData || {
-      sender: user,
-      receiver: INITIAL_RECEIVER_DATA,
-      services: [
-        { amount: 0, quantity: 0, description: '', unit: '', vatRate: 0 }
-      ],
-      bankingInformation: { name: '', code: '', accountNumber: '' },
-      status: 'pending'
-    }
+    defaultValues: invoiceData
+      ? {
+          ...invoiceData,
+          date: invoiceData.date
+            ? formatDate(invoiceData.date)
+            : formatDate(new Date().toISOString()),
+          dueDate: invoiceData.dueDate ? formatDate(invoiceData.dueDate) : ''
+        }
+      : {
+          sender: user,
+          receiver: INITIAL_RECEIVER_DATA,
+          services: [
+            { amount: 0, quantity: 0, description: '', unit: '', vatRate: 0 }
+          ],
+          bankingInformation: { name: '', code: '', accountNumber: '' },
+          status: 'pending',
+          date: formatDate(new Date().toISOString()),
+          dueDate: ''
+        }
   });
   const {
     register,
@@ -173,18 +183,39 @@ const InvoiceForm = ({
     errorMessage?: string;
     inputProps: TextInputProps;
   }) => (
-    <TextField variant="secondary" isInvalid={isInvalid}>
+    <TextField className="w-full" variant="secondary" isInvalid={isInvalid}>
       <Label>{label}</Label>
       <Input {...inputProps} />
       <FieldError>{errorMessage}</FieldError>
     </TextField>
   );
 
+  const renderBusinessTypeOptions = () => (
+    <>
+      <Radio value="business">
+        <Radio.Control>
+          <Radio.Indicator />
+        </Radio.Control>
+        <Radio.Content>
+          <Label>{t('labels.business_type_business')}</Label>
+        </Radio.Content>
+      </Radio>
+      <Radio value="individual">
+        <Radio.Control>
+          <Radio.Indicator />
+        </Radio.Control>
+        <Radio.Content>
+          <Label>{t('labels.business_type_individual')}</Label>
+        </Radio.Content>
+      </Radio>
+    </>
+  );
+
   const renderSenderAndReceiverFields = () => (
     <div className="col-span-4 flex w-full flex-col gap-4">
       <h4>{t('headings.sender_receiver_data')}</h4>
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
-        <Card className="flex w-full flex-col gap-4 p-4 pb-6">
+        <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.from')}</p>
           </div>
@@ -192,13 +223,12 @@ const InvoiceForm = ({
             name="sender.businessType"
             control={control}
             render={({ field }) => (
-              <RadioGroup orientation="horizontal" {...field}>
-                <Radio value="business">
-                  {t('labels.business_type_business')}
-                </Radio>
-                <Radio value="individual">
-                  {t('labels.business_type_individual')}
-                </Radio>
+              <RadioGroup
+                variant="secondary"
+                orientation="horizontal"
+                {...field}
+              >
+                {renderBusinessTypeOptions()}
               </RadioGroup>
             )}
           />
@@ -208,6 +238,7 @@ const InvoiceForm = ({
             errorMessage: errors.sender?.name?.message,
             inputProps: {
               'aria-label': t('a11y.sender_name_label'),
+              placeholder: t('placeholders.sender_name'),
               maxLength: 20,
               ...register('sender.name')
             }
@@ -222,6 +253,7 @@ const InvoiceForm = ({
               'aria-label': t(
                 `a11y.sender_business_number_label_${isSenderBusiness ? 'business' : 'individual'}`
               ),
+              placeholder: t('placeholders.sender_business_number'),
               maxLength: 20,
               ...register('sender.businessNumber')
             }
@@ -233,6 +265,7 @@ const InvoiceForm = ({
               errorMessage: errors.sender?.vatNumber?.message,
               inputProps: {
                 'aria-label': t('a11y.sender_vat_number_label'),
+                placeholder: t('placeholders.sender_vat_number'),
                 maxLength: 20,
                 ...register('sender.vatNumber')
               }
@@ -243,6 +276,7 @@ const InvoiceForm = ({
             errorMessage: errors.sender?.address?.message,
             inputProps: {
               'aria-label': t('a11y.sender_address_label'),
+              placeholder: t('placeholders.sender_address'),
               maxLength: 20,
               ...register('sender.address')
             }
@@ -253,12 +287,13 @@ const InvoiceForm = ({
             errorMessage: errors.sender?.email?.message,
             inputProps: {
               'aria-label': t('a11y.sender_email_label'),
+              placeholder: t('placeholders.sender_email'),
               maxLength: 20,
               ...register('sender.email')
             }
           })}
         </Card>
-        <Card className="flex w-full flex-col gap-4 p-4 pb-6">
+        <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
           <div className="flex items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.to')}</p>
             <Button
@@ -275,13 +310,12 @@ const InvoiceForm = ({
             name="receiver.businessType"
             control={control}
             render={({ field }) => (
-              <RadioGroup {...field} orientation="horizontal">
-                <Radio value="business">
-                  {t('labels.business_type_business')}
-                </Radio>
-                <Radio value="individual">
-                  {t('labels.business_type_individual')}
-                </Radio>
+              <RadioGroup
+                variant="secondary"
+                orientation="horizontal"
+                {...field}
+              >
+                {renderBusinessTypeOptions()}
               </RadioGroup>
             )}
           />
@@ -296,6 +330,7 @@ const InvoiceForm = ({
                 inputProps: {
                   ...field,
                   'aria-label': t('a11y.receiver_name_label'),
+                  placeholder: t('placeholders.receiver_name'),
                   type: 'text',
                   maxLength: 20
                 }
@@ -317,6 +352,7 @@ const InvoiceForm = ({
                   'aria-label': t(
                     `a11y.receiver_business_number_label_${isReceiverBusiness ? 'business' : 'individual'}`
                   ),
+                  placeholder: t('placeholders.receiver_business_number'),
                   type: 'text'
                 }
               })
@@ -335,6 +371,7 @@ const InvoiceForm = ({
                     ...field,
                     value: field.value || '',
                     'aria-label': t('a11y.receiver_vat_number_label'),
+                    placeholder: t('placeholders.receiver_vat_number'),
                     type: 'text'
                   }
                 })
@@ -352,6 +389,7 @@ const InvoiceForm = ({
                 inputProps: {
                   ...field,
                   'aria-label': t('a11y.receiver_address_label'),
+                  placeholder: t('placeholders.receiver_address'),
                   type: 'text'
                 }
               })
@@ -368,6 +406,7 @@ const InvoiceForm = ({
                 inputProps: {
                   ...field,
                   'aria-label': t('a11y.receiver_email_label'),
+                  placeholder: t('placeholders.receiver_email'),
                   type: 'text'
                 }
               })
@@ -404,7 +443,7 @@ const InvoiceForm = ({
           {t('modals.select_bank_account')}
         </Button>
       </div>
-      <div className="flex flex-col gap-4 md:flex-row">
+      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         <Controller
           name="bankingInformation.name"
           control={control}
@@ -507,7 +546,7 @@ const InvoiceForm = ({
   return (
     <>
       <FormProvider {...methods}>
-        <Card className="dark:border-default-100 bg-transparent p-4 sm:p-8 dark:border">
+        <Card className="border bg-transparent p-4 sm:p-8">
           <form
             aria-label={t('a11y.form_label')}
             className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
@@ -516,18 +555,19 @@ const InvoiceForm = ({
           >
             <div className="col-span-4 flex flex-col gap-4">
               <h4>{t('invoice_details')}</h4>
-              <div className="flex flex-col gap-4 md:flex-row">
+              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-4">
                 <Controller
                   name="invoiceId"
                   control={control}
                   defaultValue={invoiceData?.invoiceId || ''}
                   render={({ field }) => (
                     <TextField
+                      className="w-full"
                       variant="secondary"
                       isInvalid={!!errors.invoiceId}
                     >
                       <Label>{t('labels.invoice_id')}</Label>
-                      <div className="flex gap-2">
+                      <div className="relative">
                         <Input
                           {...field}
                           onChange={(event) => {
@@ -536,17 +576,20 @@ const InvoiceForm = ({
                             });
                             field.onChange(event);
                           }}
+                          className="w-full pr-28"
                           aria-label={t('a11y.invoice_id_label')}
                           placeholder={t('placeholders.invoice_id')}
                         />
                         <Button
+                          type="button"
                           size="sm"
                           variant="secondary"
-                          className="px-7"
+                          className="absolute right-1 top-1/2 h-8 min-w-0 -translate-y-1/2 gap-1 px-2"
                           onPress={handleNextInvoiceIdSelect}
+                          isPending={isNextInvoiceNumberPending}
                         >
                           {!isNextInvoiceNumberPending && (
-                            <SparklesIcon className="min-h-4 min-w-4" />
+                            <SparklesIcon className="h-4 w-4 shrink-0" />
                           )}
                           {t('buttons.use_next')}
                         </Button>
@@ -560,10 +603,11 @@ const InvoiceForm = ({
                   control={control}
                   render={({ field }) => (
                     <Select
+                      className="w-full"
                       aria-label={t('a11y.status_label')}
                       variant="secondary"
-                      selectedKey={field.value || 'pending'}
-                      onSelectionChange={field.onChange}
+                      value={field.value || 'pending'}
+                      onChange={field.onChange}
                       isInvalid={!!errors.status}
                     >
                       <Label>{t('labels.status')}</Label>
@@ -596,13 +640,10 @@ const InvoiceForm = ({
                   inputProps: {
                     'aria-label': t('a11y.date_label'),
                     ...register('date'),
-                    type: 'date',
-                    defaultValue: invoiceData?.date
-                      ? formatDate(invoiceData.date)
-                      : formatDate(new Date().toISOString())
+                    type: 'date'
                   }
                 })}
-                <div className="relative mb-4 w-full sm:mb-0">
+                <div className="relative w-full">
                   <Controller
                     name="dueDate"
                     control={control}
@@ -638,6 +679,7 @@ const InvoiceForm = ({
                           }}
                         />
                         <TextField
+                          className="w-full"
                           variant="secondary"
                           isInvalid={!!errors.dueDate}
                         >
@@ -645,13 +687,9 @@ const InvoiceForm = ({
                           <Input
                             {...field}
                             ref={dueDateInputRef}
+                            value={field.value || ''}
                             aria-label={t('a11y.due_date_label')}
                             type="date"
-                            defaultValue={
-                              invoiceData?.dueDate
-                                ? formatDate(invoiceData.dueDate)
-                                : ''
-                            }
                           />
                           <FieldError>{errors.dueDate?.message}</FieldError>
                         </TextField>

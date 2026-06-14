@@ -9,7 +9,13 @@ import {
   CreditCardIcon,
   IdentificationIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, CardContent, CardHeader } from '@heroui/react';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Separator
+} from '@heroui/react';
 import { useEffect, useRef, useState } from 'react';
 import type { MerchantPaymentStatus } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
@@ -98,8 +104,8 @@ export default function MerchantPaymentStatusCard({
   };
 
   return (
-    <Card className="border-default-100 bg-background w-full rounded-xl border shadow-sm">
-      <CardHeader className="border-default-100 flex flex-col items-start justify-between gap-5 border-b p-6 md:flex-row md:items-start">
+    <Card className="w-full border shadow-sm">
+      <CardHeader className="flex flex-col items-start justify-between gap-5 p-6 md:flex-row md:items-start">
         <div className="min-w-0">
           <div className="text-default-500 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.12em]">
             <BanknotesIcon className="h-4 w-4" />
@@ -155,6 +161,9 @@ export default function MerchantPaymentStatusCard({
           )}
         </div>
       </CardHeader>
+
+      <Separator />
+
       <CardContent className="flex flex-col gap-5 p-6">
         <div>
           <div className="flex items-center justify-between gap-4">
@@ -171,7 +180,7 @@ export default function MerchantPaymentStatusCard({
 
               return (
                 <div
-                  className="border-default-100 bg-default-50/60 flex items-center gap-3 rounded-lg border px-3.5 py-3"
+                  className="flex items-center gap-3 rounded-lg border px-3.5 py-3"
                   key={key}
                 >
                   <span className="bg-background text-default-600 border-default-100 grid h-9 w-9 shrink-0 place-items-center rounded-lg border">

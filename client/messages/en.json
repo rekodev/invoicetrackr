@@ -969,6 +969,14 @@
             "vat_total": "VAT Total",
             "grand_total": "Grand Total",
             "delete_service": "Delete service",
+            "placeholders": {
+                "description": "e.g., Web design services",
+                "unit": "e.g., h",
+                "quantity": "e.g., 1",
+                "amount": "e.g., 100",
+                "vat_rate": "e.g., 21",
+                "vat_exemption_reason": "e.g., VAT exempt under reverse charge"
+            },
             "a11y": {
                 "table_label": "Invoice Services Table",
                 "number_label": "Number",
@@ -1033,7 +1041,17 @@
                 "bank_code": "e.g., HABALT22",
                 "bank_account_number": "e.g., LT121000011101001000",
                 "invoice_id": "e.g., INV001",
-                "select_status": "Select status"
+                "select_status": "Select status",
+                "sender_name": "e.g., John Smith",
+                "sender_business_number": "e.g., 304000000",
+                "sender_vat_number": "e.g., LT100000000000",
+                "sender_address": "e.g., Gedimino pr. 1, Vilnius",
+                "sender_email": "e.g., john@example.com",
+                "receiver_name": "e.g., Client UAB",
+                "receiver_business_number": "e.g., 305000000",
+                "receiver_vat_number": "e.g., LT100000000000",
+                "receiver_address": "e.g., Konstitucijos pr. 7, Vilnius",
+                "receiver_email": "e.g., billing@client.com"
             },
             "headings": {
                 "sender_receiver_data": "Sender and Receiver Data",

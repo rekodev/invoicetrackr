@@ -1,13 +1,13 @@
 'use client';
 
 import {
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownPopover,
   DropdownTrigger,
-  Selection
+  Selection,
+  buttonVariants
 } from '@heroui/react';
 import { Language, User } from '@invoicetrackr/types';
 import { useEffect, useState } from 'react';
@@ -73,16 +73,16 @@ export default function LanguageSwitcher({ user }: Props) {
 
   return (
     <Dropdown className="min-w-max">
-      <DropdownTrigger>
-        <Button
-          data-testid="language-switcher-trigger"
-          aria-label={t('a11y.label')}
-          isIconOnly
-          className="max-w-min"
-          variant="primary"
-        >
-          <LanguageIcon className="h-5 w-5" />
-        </Button>
+      <DropdownTrigger
+        data-testid="language-switcher-trigger"
+        aria-label={t('a11y.label')}
+        className={buttonVariants({
+          variant: 'primary',
+          className: 'flex items-center justify-center',
+          isIconOnly: true
+        })}
+      >
+        <LanguageIcon className="h-5 w-5" />
       </DropdownTrigger>
       <DropdownPopover>
         <DropdownMenu

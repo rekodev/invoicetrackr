@@ -6,15 +6,12 @@ import {
   Form,
   Input,
   Label,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
+  Modal,
   TextArea,
   TextField,
   toast
 } from '@heroui/react';
 import { useState, useTransition } from 'react';
-import { AppModal } from '@/components/ui/app-modal';
 import { useTranslations } from 'next-intl';
 
 import { isResponseError } from '@/lib/utils/error';
@@ -72,10 +69,19 @@ export default function ContactFormDialog() {
         {t('title')}
       </Button>
 
-      <AppModal isOpen={isOpen} onClose={handleClose} size="lg">
+      <Modal>
+        <Modal.Backdrop
+          isOpen={isOpen}
+          onOpenChange={(open) => !open && handleClose()}
+        >
+          <Modal.Container size="lg">
+            <Modal.Dialog>
+              <Modal.CloseTrigger />
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>{t('title')}</ModalHeader>
-          <ModalBody className="w-full flex-col">
+          <Modal.Header>
+            <Modal.Heading>{t('title')}</Modal.Heading>
+          </Modal.Header>
+          <Modal.Body className="w-full flex-col">
             <TextField variant="secondary" isInvalid={!!errors.email}>
               <Label>{t('email_label')}</Label>
               <Input
@@ -93,17 +99,20 @@ export default function ContactFormDialog() {
               />
               <FieldError>{errors.message?.message}</FieldError>
             </TextField>
-          </ModalBody>
-          <ModalFooter className="w-full">
+          </Modal.Body>
+          <Modal.Footer className="w-full">
             <Button variant="outline" onPress={handleClose}>
               {t('cancel')}
             </Button>
             <Button isPending={isPending} type="submit">
               {t('send')}
             </Button>
-          </ModalFooter>
+          </Modal.Footer>
         </Form>
-      </AppModal>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
+      </Modal>
     </>
   );
 }

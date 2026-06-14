@@ -63,7 +63,7 @@ export default function LoginForm() {
   };
 
   return (
-    <Card className="dark:border-default-100 mx-auto w-full max-w-lg dark:border">
+    <Card className="mx-auto w-full max-w-lg border">
       <CardHeader className="p-8 pb-0">
         <h1 className="text-3xl font-medium">{t('title')}</h1>
       </CardHeader>

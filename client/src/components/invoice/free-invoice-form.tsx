@@ -59,7 +59,9 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
       services: [
         { amount: 0, quantity: 0, description: '', unit: '', vatRate: 0 }
       ],
-      bankingInformation: { name: '', code: '', accountNumber: '' }
+      bankingInformation: { name: '', code: '', accountNumber: '' },
+      date: formatDate(new Date().toISOString()),
+      dueDate: ''
     }
   });
   const {
@@ -108,7 +110,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     <div className="col-span-4 flex w-full flex-col gap-4">
       <h4>{t('headings.sender_receiver_data')}</h4>
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
-        <Card className="flex w-full flex-col gap-4 p-4 pb-6">
+        <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.from')}</p>
           </div>
@@ -118,9 +120,9 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             errorMessage: errors.sender?.name?.message,
             inputProps: {
               'aria-label': t('a11y.sender_name_label'),
+              placeholder: t('placeholders.sender_name'),
               type: 'text',
               maxLength: 20,
-              defaultValue: '',
               ...register('sender.name')
             }
           })}
@@ -130,6 +132,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             errorMessage: errors.sender?.businessNumber?.message,
             inputProps: {
               'aria-label': t('a11y.sender_business_number_label_business'),
+              placeholder: t('placeholders.sender_business_number'),
               type: 'text',
               maxLength: 20,
               ...register('sender.businessNumber')
@@ -141,6 +144,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             errorMessage: errors.sender?.vatNumber?.message,
             inputProps: {
               'aria-label': t('a11y.sender_vat_number_label'),
+              placeholder: t('placeholders.sender_vat_number'),
               type: 'text',
               maxLength: 20,
               ...register('sender.vatNumber')
@@ -152,6 +156,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             errorMessage: errors.sender?.address?.message,
             inputProps: {
               'aria-label': t('a11y.sender_address_label'),
+              placeholder: t('placeholders.sender_address'),
               type: 'text',
               maxLength: 20,
               ...register('sender.address')
@@ -163,13 +168,14 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             errorMessage: errors.sender?.email?.message,
             inputProps: {
               'aria-label': t('a11y.sender_email_label'),
+              placeholder: t('placeholders.sender_email'),
               type: 'text',
               maxLength: 20,
               ...register('sender.email')
             }
           })}
         </Card>
-        <Card className="flex w-full flex-col gap-4 p-4 pb-6">
+        <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.to')}</p>
           </div>
@@ -179,6 +185,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             errorMessage: errors.receiver?.name?.message,
             inputProps: {
               'aria-label': t('a11y.receiver_name_label'),
+              placeholder: t('placeholders.receiver_name'),
               type: 'text',
               maxLength: 20,
               ...register('receiver.name')
@@ -190,6 +197,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             errorMessage: errors.receiver?.businessNumber?.message,
             inputProps: {
               'aria-label': t('a11y.receiver_business_number_label_business'),
+              placeholder: t('placeholders.receiver_business_number'),
               type: 'text',
               maxLength: 20,
               ...register('receiver.businessNumber')
@@ -201,6 +209,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             errorMessage: errors.receiver?.vatNumber?.message,
             inputProps: {
               'aria-label': t('a11y.receiver_vat_number_label'),
+              placeholder: t('placeholders.receiver_vat_number'),
               type: 'text',
               maxLength: 20,
               ...register('receiver.vatNumber')
@@ -212,6 +221,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             errorMessage: errors.receiver?.address?.message,
             inputProps: {
               'aria-label': t('a11y.receiver_address_label'),
+              placeholder: t('placeholders.receiver_address'),
               type: 'text',
               maxLength: 20,
               ...register('receiver.address')
@@ -223,6 +233,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             errorMessage: errors.receiver?.email?.message,
             inputProps: {
               'aria-label': t('a11y.receiver_email_label'),
+              placeholder: t('placeholders.receiver_email'),
               type: 'text',
               maxLength: 20,
               ...register('receiver.email')
@@ -247,7 +258,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
   const renderBankingInformation = () => (
     <div className="col-span-4 flex flex-col gap-4">
       <h4>{t('banking_details')}</h4>
-      <div className="flex flex-col gap-4 md:flex-row">
+      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         {renderTextField({
           label: t('labels.bank_name'),
           isInvalid: !!errors.bankingInformation?.name,
@@ -345,7 +356,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             </h1>
             <p className="text-default-500">{t('free_invoice.description')}</p>
           </div>
-          <Card className="dark:border-default-100 mt-8 bg-transparent p-4 sm:p-8 dark:border">
+          <Card className="mt-8 border bg-transparent p-4 sm:p-8">
             <form
               aria-label={t('a11y.form_label')}
               className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
@@ -353,7 +364,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             >
               <div className="col-span-4 flex flex-col gap-4">
                 <h4>{t('invoice_details')}</h4>
-                <div className="col-span-4 flex flex-col gap-2 md:flex-row">
+                <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
                   {renderTextField({
                     label: t('labels.invoice_id'),
                     isInvalid: !!errors.invoiceId,
@@ -373,7 +384,6 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
                       className: 'w-full',
                       'aria-label': t('a11y.date_label'),
                       type: 'date',
-                      defaultValue: formatDate(new Date().toISOString()),
                       ...register('date')
                     }
                   })}

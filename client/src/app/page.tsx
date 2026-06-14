@@ -1,9 +1,9 @@
 'use client';
 
+import { Separator, buttonVariants } from '@heroui/react';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from 'next/link';
-import { buttonVariants } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
 import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
@@ -11,10 +11,6 @@ import { getCurrencySymbol, getUserCurrency } from '@/lib/utils/currency';
 
 export default function Home() {
   const t = useTranslations('home');
-
-  const renderDivider = () => (
-    <div className="border-default-300 dark:border-default-100 w-full border-t" />
-  );
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -56,11 +52,11 @@ export default function Home() {
           </div>
         </section>
 
-        {renderDivider()}
+        <Separator />
 
         <section
           id="features"
-          className="max-w-8xl bg-muted mx-auto w-full max-w-7xl px-6 py-12 md:py-24 lg:py-32"
+          className="max-w-8xl muted mx-auto w-full max-w-7xl px-6 py-12 md:py-24 lg:py-32"
         >
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-4">
@@ -127,7 +123,7 @@ export default function Home() {
           </div>
         </section>
 
-        {renderDivider()}
+        <Separator />
 
         <section
           id="pricing"
@@ -144,7 +140,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-6 py-12 lg:flex-row lg:items-stretch">
-            <div className="bg-card text-card-foreground border-default-500/50 dark:border-default-500/50 flex min-h-[472px] w-full max-w-md flex-col justify-between rounded-lg border shadow-sm">
+            <div className="bg-card text-card-foreground flex min-h-[472px] w-full max-w-md flex-col justify-between rounded-lg border shadow-sm">
               <div>
                 <div className="flex flex-col space-y-1.5 p-6">
                   <h3 className="text-2xl font-bold">
@@ -257,9 +253,9 @@ export default function Home() {
           </div>
         </section>
 
-        {renderDivider()}
+        <Separator />
 
-        <section className="bg-muted mx-auto w-full max-w-7xl px-6 py-12 md:py-24 lg:py-32">
+        <section className="mx-auto w-full max-w-7xl px-6 py-12 md:py-24 lg:py-32">
           <div className="grid gap-12 md:gap-16 lg:grid-cols-2">
             <div className="space-y-6">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">

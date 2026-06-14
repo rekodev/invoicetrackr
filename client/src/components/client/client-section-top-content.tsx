@@ -8,7 +8,8 @@ import {
   DropdownMenu,
   DropdownPopover,
   DropdownTrigger,
-  Input
+  Input,
+  buttonVariants
 } from '@heroui/react';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import {
@@ -62,11 +63,14 @@ const ClientSectionTopContent = ({
 
   const renderTypeFilterSelect = () => (
     <Dropdown>
-      <DropdownTrigger className="hidden sm:flex">
-        <Button variant="secondary">
-          {t('type_filter')}
-          <ChevronDownIcon className="text-small min-w-4 max-w-4" />
-        </Button>
+      <DropdownTrigger
+        className={buttonVariants({
+          variant: 'secondary',
+          className: 'hidden items-center justify-center sm:flex'
+        })}
+      >
+        <span>{t('type_filter')}</span>
+        <ChevronDownIcon className="min-w-4 max-w-4 text-sm" />
       </DropdownTrigger>
       <DropdownPopover>
         <DropdownMenu
@@ -104,6 +108,7 @@ const ClientSectionTopContent = ({
           <div className="flex w-full items-center gap-2 sm:max-w-[44%]">
             <MagnifyingGlassIcon className="h-4 w-4" />
             <Input
+              variant="secondary"
               className="w-full"
               placeholder={t('search_placeholder')}
               value={searchTerm}
@@ -120,9 +125,7 @@ const ClientSectionTopContent = ({
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-small text-default-400">
-            {totalClientsText}
-          </span>
+          <span className="text-default-400 text-sm">{totalClientsText}</span>
         </div>
       </div>
 

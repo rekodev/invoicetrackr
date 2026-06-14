@@ -7,6 +7,7 @@ import {
   DropdownPopover,
   DropdownTrigger,
   Input,
+  buttonVariants,
   useOverlayState
 } from '@heroui/react';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
@@ -97,12 +98,13 @@ const InvoiceTableTopContent = ({
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pt-1">
       <div className="flex items-end justify-between gap-3">
         <div className="flex w-full items-center gap-2 sm:max-w-[44%]">
           <MagnifyingGlassIcon className="h-4 w-4" />
           <Input
             className="w-full"
+            variant="secondary"
             placeholder={t('top_content.search_placeholder')}
             value={filterValue}
             onChange={(event) => onSearchChange(event.target.value)}
@@ -111,11 +113,14 @@ const InvoiceTableTopContent = ({
         </div>
         <div className="flex gap-3">
           <Dropdown>
-            <DropdownTrigger className="hidden sm:flex">
-              <Button variant="secondary">
-                {t('table.filters.status')}
-                <ChevronDownIcon className="text-small h-4 w-4" />
-              </Button>
+            <DropdownTrigger
+              className={buttonVariants({
+                variant: 'secondary',
+                className: 'hidden items-center justify-center gap-2 sm:flex'
+              })}
+            >
+              {t('table.filters.status')}
+              <ChevronDownIcon className="h-4 w-4 text-sm" />
             </DropdownTrigger>
             <DropdownPopover>
               <DropdownMenu
@@ -139,11 +144,14 @@ const InvoiceTableTopContent = ({
             </DropdownPopover>
           </Dropdown>
           <Dropdown>
-            <DropdownTrigger className="hidden sm:flex">
-              <Button variant="secondary">
-                {t('table.filters.columns')}
-                <ChevronDownIcon className="text-small h-4 w-4" />
-              </Button>
+            <DropdownTrigger
+              className={buttonVariants({
+                variant: 'secondary',
+                className: 'hidden items-center justify-center sm:flex'
+              })}
+            >
+              <span>{t('table.filters.columns')}</span>
+              <ChevronDownIcon className="h-4 w-4 text-sm" />
             </DropdownTrigger>
             <DropdownPopover>
               <DropdownMenu
@@ -177,11 +185,11 @@ const InvoiceTableTopContent = ({
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-small text-default-400">{totalInvoicesText}</span>
-        <label className="text-small text-default-400 flex items-center">
+        <span className="text-default-400 text-sm">{totalInvoicesText}</span>
+        <label className="text-default-400 flex items-center text-sm">
           {t('table.rows_per_page')}
           <select
-            className="text-small text-default-400 bg-transparent outline-none"
+            className="text-default-400 bg-transparent text-sm outline-none"
             onChange={onRowsPerPageChange}
             defaultValue={10}
           >

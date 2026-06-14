@@ -6,7 +6,15 @@ import {
   CreditCardIcon,
   SparklesIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, CardContent, CardHeader, cn } from '@heroui/react';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Separator,
+  cn
+} from '@heroui/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
@@ -136,13 +144,13 @@ export default function SubscriptionStatusCard({
   };
 
   return (
-    <Card className="border-default-100 bg-background w-full flex-1 rounded-xl border shadow-sm">
-      <CardHeader className="border-default-100 flex flex-col items-start justify-between gap-5 border-b p-6 md:flex-row md:items-center">
+    <Card className="w-full flex-1 border shadow-sm">
+      <CardHeader className="flex flex-col items-start justify-between gap-5 p-6 md:flex-row md:items-center">
         <div className="max-w-2xl">
-          <div className="border-secondary/30 bg-secondary/10 text-secondary inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.08em]">
+          <Chip size="lg">
             <SparklesIcon className="h-3.5 w-3.5" />
             {t('badge')}
-          </div>
+          </Chip>
           <h1 className="text-foreground mt-4 text-2xl font-semibold tracking-tight">
             {t('title')}
           </h1>
@@ -157,9 +165,9 @@ export default function SubscriptionStatusCard({
           <Button
             onPress={handleClick}
             isPending={isLoading}
-            className="w-full rounded-xl font-medium md:w-auto"
+            className="w-full font-medium md:w-auto"
             size="md"
-            variant={isActive ? 'outline' : 'secondary'}
+            variant={isActive ? 'primary' : 'secondary'}
           >
             {!isLoading && <ArrowRightIcon className="h-4 w-4" />}
             {isTrialing
@@ -172,6 +180,8 @@ export default function SubscriptionStatusCard({
           </Button>
         )}
       </CardHeader>
+
+      <Separator />
 
       <CardContent className="grid gap-4 p-6 lg:grid-cols-[1fr_1fr]">
         <div className="p-1">
@@ -199,7 +209,9 @@ export default function SubscriptionStatusCard({
             </div>
           </div>
 
-          <div className="border-default-100 mt-5 border-t pt-5">
+          <Separator className="mt-5" />
+
+          <div className="pt-5">
             <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
               {t('current_rate_label')}
             </p>

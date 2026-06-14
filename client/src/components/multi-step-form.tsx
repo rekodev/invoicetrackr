@@ -108,7 +108,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
         >
           <div
             className={cn(
-              'border-default-400 dark:border-default-800 flex h-9 w-9 items-center justify-center rounded-full border-2 font-semibold',
+              'flex h-9 w-9 items-center justify-center rounded-full border-2 font-semibold',
               {
                 'border-1 bg-default-500 bg-opacity-25': index < currentStep,
                 'opacity-65': currentStep < index
@@ -198,7 +198,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
                   <div className="flex items-center gap-4">
                     <div
                       className={cn(
-                        `border-default-400 dark:border-default-800 flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold`,
+                        `flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold`,
                         {
                           'border-1 bg-default-500 bg-opacity-25':
                             index < currentStep

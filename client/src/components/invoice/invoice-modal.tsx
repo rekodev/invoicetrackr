@@ -5,16 +5,13 @@ import {
   Button,
   ListBox,
   ListBoxItem,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
+  Modal,
   Select,
   Spinner,
   cn
 } from '@heroui/react';
 import { ArrowDownTrayIcon, LanguageIcon } from '@heroicons/react/24/outline';
 import { JSX, useState } from 'react';
-import { AppModal } from '@/components/ui/app-modal';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
@@ -106,111 +103,116 @@ const InvoiceModal = ({
   };
 
   return (
-    <AppModal
-      isOpen={isOpen}
-      onClose={() => onOpenChange(false)}
-      size="4xl"
-      scroll="outside"
-    >
-      <>
-        <ModalHeader className="flex flex-col items-start gap-2 pb-2">
-          <div className="flex w-full items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-semibold">{invoiceId}</span>
-            </div>
-            <div
-              className={cn(
-                'bg-default flex shrink-0 items-center gap-1 rounded-lg p-0.5',
-                {
-                  'p-0': !userPreferredInvoiceLanguage
-                }
-              )}
-            >
-              {userPreferredInvoiceLanguage && (
-                <>
-                  <Select
-                    aria-label="Invoice language"
-                    className="min-w-28"
-                    variant="secondary"
-                    selectedKey={invoiceLanguage}
-                    onSelectionChange={(key) => {
-                      const selectedKey = key ? String(key) : '';
-                      if (selectedKey && setInvoiceLanguage)
-                        setInvoiceLanguage(selectedKey);
-                      setIsIFrameLoading(true);
-                    }}
-                  >
-                    <Select.Trigger>
-                      <LanguageIcon className="min-w-5 max-w-5" />
-                      <Select.Value />
-                      <Select.Indicator />
-                    </Select.Trigger>
-                    <Select.Popover>
-                      <ListBox>
-                        {availableLanguages.map((lang) => (
-                          <ListBoxItem
-                            key={lang.code}
-                            id={lang.code}
-                            textValue={lang.code.toUpperCase()}
-                          >
-                            {lang.code.toUpperCase()}
-                            <ListBoxItem.Indicator />
-                          </ListBoxItem>
-                        ))}
-                      </ListBox>
-                    </Select.Popover>
-                  </Select>
-
-                  <div className="border-default-400 h-6 border-r" />
-                </>
-              )}
-              {pdfDocument ? (
-                // @ts-ignore
-                <PDFDownloadLink
-                  document={pdfDocument}
-                  fileName={`${invoiceId}.pdf`}
+    <Modal>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => !open && onOpenChange(false)}
+      >
+        <Modal.Container size="cover" scroll="outside">
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+            <Modal.Header className="flex flex-col items-start gap-2 pb-2">
+              <div className="flex w-full items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-semibold">{invoiceId}</span>
+                </div>
+                <div
+                  className={cn(
+                    'bg-default flex shrink-0 items-center gap-1 rounded-lg p-0.5',
+                    {
+                      'p-0': !userPreferredInvoiceLanguage
+                    }
+                  )}
                 >
-                  {/* @ts-ignore */}
-                  {({ loading }) => {
-                    const isLoading = isIFrameLoading || loading;
-
-                    return (
-                      <Button
-                        size="sm"
-                        isDisabled={isLoading}
-                        variant="primary"
-                        onPress={() => {
-                          if (cookieConsent !== CookieConsentStatus.Accepted)
-                            return;
-
-                          window.dataLayer?.push({
-                            event: 'free_invoice_pdf_download',
-                            invoice_id: invoiceData.invoiceId,
-                            total_amount: invoiceData.totalAmount
-                          });
+                  {userPreferredInvoiceLanguage && (
+                    <>
+                      <Select
+                        aria-label="Invoice language"
+                        className="min-w-28"
+                        variant="secondary"
+                        value={invoiceLanguage}
+                        onChange={(key) => {
+                          const selectedKey = key ? String(key) : '';
+                          if (selectedKey && setInvoiceLanguage)
+                            setInvoiceLanguage(selectedKey);
+                          setIsIFrameLoading(true);
                         }}
                       >
-                        {!isLoading && (
-                          <ArrowDownTrayIcon className="h-5 w-5 dark:text-white" />
-                        )}
-                        {t('buttons.download_pdf')}
-                      </Button>
-                    );
-                  }}
-                </PDFDownloadLink>
-              ) : (
-                <Button isPending size="sm" variant="primary">
-                  {t('buttons.download_pdf')}
-                </Button>
-              )}
-            </div>
-          </div>
-          {renderAlert()}
-        </ModalHeader>
-        <ModalBody>{renderModalBody()}</ModalBody>
-        <ModalFooter />
-      </>
-    </AppModal>
+                        <Select.Trigger>
+                          <LanguageIcon className="min-w-5 max-w-5" />
+                          <Select.Value />
+                          <Select.Indicator />
+                        </Select.Trigger>
+                        <Select.Popover>
+                          <ListBox>
+                            {availableLanguages.map((lang) => (
+                              <ListBoxItem
+                                key={lang.code}
+                                id={lang.code}
+                                textValue={lang.code.toUpperCase()}
+                              >
+                                {lang.code.toUpperCase()}
+                                <ListBoxItem.Indicator />
+                              </ListBoxItem>
+                            ))}
+                          </ListBox>
+                        </Select.Popover>
+                      </Select>
+
+                      <div className="border-default-400 h-6 border-r" />
+                    </>
+                  )}
+                  {pdfDocument ? (
+                    // @ts-ignore
+                    <PDFDownloadLink
+                      document={pdfDocument}
+                      fileName={`${invoiceId}.pdf`}
+                    >
+                      {/* @ts-ignore */}
+                      {({ loading }) => {
+                        const isLoading = isIFrameLoading || loading;
+
+                        return (
+                          <Button
+                            size="sm"
+                            isDisabled={isLoading}
+                            variant="primary"
+                            onPress={() => {
+                              if (
+                                cookieConsent !== CookieConsentStatus.Accepted
+                              )
+                                return;
+
+                              window.dataLayer?.push({
+                                event: 'free_invoice_pdf_download',
+                                invoice_id: invoiceData.invoiceId,
+                                total_amount: invoiceData.totalAmount
+                              });
+                            }}
+                          >
+                            {!isLoading && (
+                              <ArrowDownTrayIcon className="h-5 w-5 dark:text-white" />
+                            )}
+                            {t('buttons.download_pdf')}
+                          </Button>
+                        );
+                      }}
+                    </PDFDownloadLink>
+                  ) : (
+                    <Button isPending size="sm" variant="primary">
+                      {t('buttons.download_pdf')}
+                    </Button>
+                  )}
+                </div>
+              </div>
+              {renderAlert()}
+            </Modal.Header>
+            <Modal.Body>{renderModalBody()}</Modal.Body>
+            <Modal.Footer />
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+    </Modal>
   );
 };
 

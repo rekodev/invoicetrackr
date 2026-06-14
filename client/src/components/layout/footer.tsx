@@ -7,19 +7,30 @@ import { useTranslations } from 'next-intl';
 import {
   ACCOUNT_SETTINGS_PAGE,
   BANKING_INFORMATION_PAGE,
+  BILLING_PAGE,
   CHANGE_PASSWORD_PAGE,
+  CLIENTS_PAGE,
+  CONTRACTS_PAGE,
   CREATE_INVOICE_PAGE,
+  DASHBOARD_PAGE,
   FORGOT_PASSWORD_PAGE,
   HOME_PAGE,
+  INVOICES_PAGE,
+  INVOICE_PAYMENTS_PAGE,
   LOGIN_PAGE,
+  ONBOARDING_PAGE,
+  PAYMENT_SUCCESS_PAGE,
   PERSONAL_INFORMATION_PAGE,
   PRIVACY_POLICY_PAGE,
+  RENEW_SUBSCRIPTION_PAGE,
   SIGN_UP_PAGE,
   TERMS_OF_SERVICE_PAGE
 } from '@/lib/constants/pages';
 
 import AppLogo from '../app-logo';
 import ContactFormDialog from './contact-form-dialog';
+
+const CREATE_NEW_PASSWORD_PAGE = '/create-new-password';
 
 const FULL_FOOTER_PATHNAMES = [
   HOME_PAGE,
@@ -29,22 +40,44 @@ const FULL_FOOTER_PATHNAMES = [
   LOGIN_PAGE,
   SIGN_UP_PAGE,
   FORGOT_PASSWORD_PAGE,
+  CREATE_NEW_PASSWORD_PAGE
+] as const;
+
+const HIDDEN_FOOTER_PATH_PREFIXES = [
+  DASHBOARD_PAGE,
+  INVOICES_PAGE,
+  CONTRACTS_PAGE,
+  CLIENTS_PAGE,
+  PERSONAL_INFORMATION_PAGE,
+  BANKING_INFORMATION_PAGE,
   CHANGE_PASSWORD_PAGE,
   ACCOUNT_SETTINGS_PAGE,
-  BANKING_INFORMATION_PAGE,
-  PERSONAL_INFORMATION_PAGE
+  BILLING_PAGE,
+  INVOICE_PAYMENTS_PAGE,
+  ONBOARDING_PAGE,
+  PAYMENT_SUCCESS_PAGE,
+  RENEW_SUBSCRIPTION_PAGE
 ] as const;
+
+const matchesPath = (pathname: string | null, path: string) =>
+  pathname === path || !!pathname?.startsWith(`${path}/`);
 
 const Footer = () => {
   const t = useTranslations('footer');
   const pathname = usePathname();
+  const shouldHideFooter = HIDDEN_FOOTER_PATH_PREFIXES.some((path) =>
+    matchesPath(pathname, path)
+  );
+  const shouldShowFullFooter = FULL_FOOTER_PATHNAMES.some((path) =>
+    matchesPath(pathname, path)
+  );
+
+  if (shouldHideFooter) return null;
 
   return (
     <footer className="flex flex-col items-center justify-center">
-      {FULL_FOOTER_PATHNAMES.some(
-        (name) => pathname && name.includes(pathname)
-      ) && (
-        <div className="border-t-1 border-default-300 dark:border-default-100 w-full gap-4 py-10 md:flex-row md:gap-8 md:py-12">
+      {shouldShowFullFooter && (
+        <div className="border-t-1 w-full gap-4 py-10 md:flex-row md:gap-8 md:py-12">
           <div className="m-auto flex w-full max-w-7xl flex-col items-center justify-between gap-8 px-6 text-center sm:flex-row sm:items-start sm:text-start">
             <div className="flex flex-col gap-6">
               <div className="mx-auto flex items-center gap-2 sm:mx-0">
@@ -85,7 +118,7 @@ const Footer = () => {
           </div>
         </div>
       )}
-      <div className="border-t-1 border-t-default-300 dark:border-t-default-100 flex w-full flex-col gap-4 py-6 md:flex-row md:items-center">
+      <div className="border-t-1 flex w-full flex-col gap-4 py-6 md:flex-row md:items-center">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-6">
           <div className="text-muted-foreground text-center text-xs">
             {t('copyright', { year: new Date().getFullYear() })}

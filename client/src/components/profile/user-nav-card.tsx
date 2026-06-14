@@ -63,7 +63,7 @@ export default function UserNavCard({ user }: Props) {
 
   const renderUserDetails = () => {
     return (
-      <>
+      <div className="flex flex-col items-center justify-center">
         <div className="relative">
           <Avatar
             onClick={initiateImageUpload}
@@ -106,14 +106,14 @@ export default function UserNavCard({ user }: Props) {
           />
         </div>
         <p className="text-md">{user?.name || 'User'}</p>
-        <p className="text-small text-default-500">{user?.email}</p>
-      </>
+        <p className="text-muted text-sm">{user?.email}</p>
+      </div>
     );
   };
 
   return (
     <aside>
-      <Card className="dark:border-default-100 flex max-h-min min-w-56 flex-col justify-between bg-transparent py-3 sm:max-w-56 dark:border">
+      <Card className="flex max-h-min min-w-64 flex-col justify-between border bg-transparent py-3 sm:max-w-56">
         <CardHeader className="flex-col">{renderUserDetails()}</CardHeader>
         <CardContent className="flex justify-center p-0 px-2">
           <Tabs

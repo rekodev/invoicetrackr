@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -9,7 +8,8 @@ import {
   DropdownTrigger,
   Link,
   Separator,
-  buttonVariants
+  buttonVariants,
+  cn
 } from '@heroui/react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import { usePathname } from 'next/navigation';
@@ -38,10 +38,13 @@ export default function GuestHeader() {
   const renderMobileNavbarContent = () => {
     return (
       <Dropdown>
-        <DropdownTrigger className="md:hidden">
-          <Button isIconOnly variant="secondary">
-            <Bars3Icon className="h-5 w-5" />
-          </Button>
+        <DropdownTrigger
+          className={buttonVariants({
+            variant: 'secondary',
+            className: 'flex size-10 items-center justify-center p-0 md:hidden'
+          })}
+        >
+          <Bars3Icon className="h-5 w-5" />
         </DropdownTrigger>
         <DropdownPopover>
           <DropdownMenu>
@@ -78,15 +81,13 @@ export default function GuestHeader() {
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-6">
         <Link className="flex gap-2" href={HOME_PAGE}>
           <AppLogo />
-          <p className="text-default-800 hidden font-bold sm:flex">
+          <p className="text-default-foreground hidden font-bold sm:flex">
             INVOICE
-            <span className="text-secondary-400 dark:text-secondary-600">
-              TRACKR
-            </span>
+            <span className="text-accent dark:text-secondary-600">TRACKR</span>
           </p>
         </Link>
 
-        <div className="hidden gap-4 sm:flex">
+        <div className="hidden gap-4 md:flex">
           {navbarItems.map((item, index) => {
             const isActive = pathname?.includes(item.href);
 
@@ -96,8 +97,8 @@ export default function GuestHeader() {
                   href={
                     pathname !== HOME_PAGE ? HOME_PAGE + item.href : item.href
                   }
-                  className={buttonVariants({
-                    variant: isActive ? 'secondary' : 'primary'
+                  className={cn('text-foreground', {
+                    'text-primary': isActive
                   })}
                 >
                   {t(item.name.toLowerCase())}
@@ -109,7 +110,7 @@ export default function GuestHeader() {
 
         <div className="flex items-center justify-end gap-3">
           {renderMobileNavbarContent()}
-          <div className="border-default-300 dark:border-default-100 hidden border-r pr-4 md:flex">
+          <div className="hidden border-r pr-4 md:flex">
             <Link
               className={buttonVariants({ variant: 'secondary' })}
               href={CREATE_INVOICE_PAGE}

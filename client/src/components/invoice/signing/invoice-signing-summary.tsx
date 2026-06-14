@@ -38,7 +38,7 @@ export default function InvoiceSigningSummary({
   const totalAmount = invoice.totalAmount || calculatedTotals.totalAmount;
 
   return (
-    <Card className="dark:border-default-100 h-full border shadow-sm">
+    <Card className="h-full border shadow-sm">
       <CardHeader className="border-default-200 flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4">
         <div className="flex items-center gap-3">
           <DocumentTextIcon className="text-secondary h-6 w-6" />

@@ -16,7 +16,13 @@ import {
   TextField,
   Tooltip
 } from '@heroui/react';
-import { type ComponentProps, type Key, useEffect, useMemo } from 'react';
+import {
+  type ComponentProps,
+  type Key,
+  useEffect,
+  useMemo,
+  useRef
+} from 'react';
 import type { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
@@ -52,6 +58,7 @@ const InvoiceServicesTable = ({
     name: 'services',
     control
   });
+  const servicesTableRef = useRef<HTMLDivElement>(null);
 
   const INVOICE_SERVICE_COLUMNS = [
     { name: t('column_number'), uid: 'no' },
@@ -96,6 +103,50 @@ const InvoiceServicesTable = ({
     replace(invoiceServices);
   }, [invoiceServices, replace]);
 
+  useEffect(() => {
+    const serviceTable = servicesTableRef.current;
+
+    if (!serviceTable) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+
+      const focusTarget =
+        event.target instanceof HTMLElement
+          ? event.target.closest<HTMLElement>(
+              '[data-invoice-service-focusable]'
+            )
+          : null;
+
+      if (!focusTarget) return;
+
+      const focusableElements = Array.from(
+        serviceTable.querySelectorAll<HTMLElement>(
+          '[data-invoice-service-focusable]:not(:disabled):not([aria-disabled="true"])'
+        )
+      );
+      const currentIndex = focusableElements.indexOf(focusTarget);
+      const nextIndex = event.shiftKey ? currentIndex - 1 : currentIndex + 1;
+      const nextElement = focusableElements[nextIndex];
+
+      if (!nextElement) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      nextElement.focus();
+    };
+
+    serviceTable.addEventListener('keydown', handleKeyDown, {
+      capture: true
+    });
+
+    return () => {
+      serviceTable.removeEventListener('keydown', handleKeyDown, {
+        capture: true
+      });
+    };
+  }, []);
+
   const handleAddService = () => {
     append({
       id: 0,
@@ -124,13 +175,17 @@ const InvoiceServicesTable = ({
     inputProps: ServiceInputProps;
   }) => (
     <TextField isInvalid={isInvalid}>
-      <Input {...inputProps} variant="secondary" />
+      <Input
+        {...inputProps}
+        data-invoice-service-focusable
+        variant="secondary"
+      />
       <FieldError>{errorMessage}</FieldError>
     </TextField>
   );
 
   const renderBottomContent = () => (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <Button variant="secondary" onPress={handleAddService}>
         <PlusIcon className="h-5 w-5" />
         {t('add_service')}
@@ -166,10 +221,9 @@ const InvoiceServicesTable = ({
           inputProps: {
             className: 'min-w-40',
             'aria-label': t('a11y.description_label'),
+            placeholder: t('placeholders.description'),
             type: 'text',
             maxLength: 200,
-            defaultValue:
-              (fields[index] as InvoiceServiceBody).description || '',
             ...register(`services.${index}.description`)
           }
         });
@@ -178,11 +232,11 @@ const InvoiceServicesTable = ({
           isInvalid: !!errors.services?.[index]?.unit,
           errorMessage: errors.services?.[index]?.unit?.message,
           inputProps: {
-            className: 'min-w-24',
+            className: 'w-20 min-w-20',
             'aria-label': t('a11y.unit_label'),
+            placeholder: t('placeholders.unit'),
             type: 'text',
             maxLength: 20,
-            defaultValue: (fields[index] as InvoiceServiceBody).unit || '',
             ...register(`services.${index}.unit`)
           }
         });
@@ -191,11 +245,10 @@ const InvoiceServicesTable = ({
           isInvalid: !!errors.services?.[index]?.quantity,
           errorMessage: errors.services?.[index]?.quantity?.message,
           inputProps: {
-            className: 'min-w-24',
+            className: 'w-20 min-w-20',
             'aria-label': t('a11y.quantity_label'),
+            placeholder: t('placeholders.quantity'),
             type: 'number',
-            defaultValue:
-              (fields[index] as InvoiceServiceBody).quantity?.toString() || '',
             ...register(`services.${index}.quantity`)
           }
         });
@@ -204,11 +257,10 @@ const InvoiceServicesTable = ({
           isInvalid: !!errors.services?.[index]?.amount,
           errorMessage: errors.services?.[index]?.amount?.message,
           inputProps: {
-            className: 'min-w-36',
+            className: 'w-28 min-w-28',
             'aria-label': t('a11y.amount_label'),
+            placeholder: t('placeholders.amount'),
             type: 'number',
-            defaultValue:
-              (fields[index] as InvoiceServiceBody).amount?.toString() || '',
             ...register(`services.${index}.amount`)
           }
         });
@@ -219,12 +271,11 @@ const InvoiceServicesTable = ({
           inputProps: {
             className: 'w-20 min-w-20',
             'aria-label': t('a11y.vat_rate_label'),
+            placeholder: t('placeholders.vat_rate'),
             type: 'number',
             min: 0,
             max: 100,
             step: '0.01',
-            defaultValue:
-              (fields[index] as InvoiceServiceBody).vatRate?.toString() || '0',
             ...register(`services.${index}.vatRate`)
           }
         });
@@ -235,16 +286,15 @@ const InvoiceServicesTable = ({
           inputProps: {
             className: 'min-w-48',
             'aria-label': t('a11y.vat_exemption_reason_label'),
+            placeholder: t('placeholders.vat_exemption_reason'),
             type: 'text',
             maxLength: 255,
-            defaultValue:
-              (fields[index] as InvoiceServiceBody).vatExemptionReason || '',
             ...register(`services.${index}.vatExemptionReason`)
           }
         });
       case 'lineTotal':
         return (
-          <p className="min-w-24 text-right text-sm font-medium">
+          <p className="min-w-20 text-right text-sm font-medium">
             {getCurrencySymbol(currency)}
             {(lineTotals[index] || 0).toFixed(2)}
           </p>
@@ -260,6 +310,7 @@ const InvoiceServicesTable = ({
                 <Button
                   onPress={() => handleRemoveService(index)}
                   variant="tertiary"
+                  data-invoice-service-focusable
                   className="text-danger min-w-min cursor-pointer p-3 text-lg active:opacity-50"
                 >
                   <TrashIcon className="h-5 w-5" />
@@ -275,13 +326,21 @@ const InvoiceServicesTable = ({
   };
 
   return (
-    <>
+    <div
+      ref={servicesTableRef}
+      data-invoice-services-table
+      className="contents"
+    >
       <Table>
         <TableScrollContainer>
           <TableContent aria-label={t('a11y.table_label')}>
             <TableHeader>
               {INVOICE_SERVICE_COLUMNS.map((column) => (
-                <TableColumn key={column.uid} id={column.uid}>
+                <TableColumn
+                  key={column.uid}
+                  id={column.uid}
+                  isRowHeader={column.uid === 'no'}
+                >
                   {column.name}
                 </TableColumn>
               ))}
@@ -311,7 +370,7 @@ const InvoiceServicesTable = ({
           {errorMessage}
         </Chip>
       )}
-    </>
+    </div>
   );
 };
 
