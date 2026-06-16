@@ -40,7 +40,7 @@ const ClientSectionBottomContent = ({
   };
 
   return (
-    <div className="relative flex items-center justify-center py-2">
+    <div className="relative mt-4 flex items-center justify-center py-2">
       <div className="absolute flex w-full items-center justify-center">
         <Pagination className="flex justify-center" aria-label="Clients pages">
           <PaginationContent>

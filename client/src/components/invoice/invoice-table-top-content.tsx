@@ -185,11 +185,13 @@ const InvoiceTableTopContent = ({
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-default-400 text-sm">{totalInvoicesText}</span>
-        <label className="text-default-400 flex items-center text-sm">
+        <span className="section-eyebrow text-default-500">
+          {totalInvoicesText}
+        </span>
+        <label className="section-eyebrow text-default-500 flex items-center">
           {t('table.rows_per_page')}
           <select
-            className="text-default-400 bg-transparent text-sm outline-none"
+            className="section-eyebrow text-default-500 bg-transparent outline-none"
             onChange={onRowsPerPageChange}
             defaultValue={10}
           >

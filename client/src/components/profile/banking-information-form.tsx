@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
   Label,
   Radio,
   RadioGroup,
@@ -185,16 +184,15 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   return (
     <>
       <Card className="w-full border bg-transparent">
-        <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
-        <Separator />
-        <CardContent className="flex flex-col items-end gap-6 p-6">
-          <Button variant="outline" onPress={handleAddNewBankAccount}>
+        <Card.Header className="flex flex-row items-center justify-between gap-4 p-2 px-6">
+          <Card.Title className="text-2xl">{t('title')}</Card.Title>
+          <Button variant="secondary" onPress={handleAddNewBankAccount}>
             <PlusIcon className="h-4 w-4" />
             {t('actions.add')}
           </Button>
-
-          {renderCardBody()}
-        </CardContent>
+        </Card.Header>
+        <Separator />
+        <CardContent className="p-6">{renderCardBody()}</CardContent>
         <CardFooter className="flex w-full items-center justify-between p-6">
           <div className="flex w-full flex-col items-center">
             <Button

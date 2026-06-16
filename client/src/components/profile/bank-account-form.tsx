@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
   FieldError,
   Input,
   Label,
@@ -83,7 +82,9 @@ export default function BankAccountForm({
   return (
     <Card className="w-full border bg-transparent">
       <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
-        <CardHeader className="p-4 px-6">{t('title.create')}</CardHeader>
+        <Card.Header className="p-4 px-6">
+          <Card.Title className="text-3xl">{t('title.create')}</Card.Title>
+        </Card.Header>
         <Separator />
         <CardContent className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2">
           <TextField variant="secondary" isInvalid={!!errors.name}>

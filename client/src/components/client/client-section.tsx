@@ -115,7 +115,7 @@ const ClientSection = ({ userId, clients }: Props) => {
   const renderClientCardActions = (clientData: ClientBody) => (
     <>
       {renderMobileClientCardActions(clientData)}
-      <div className="absolute right-2 top-2 z-10 hidden gap-0.5 sm:flex">
+      <div className="pointer-events-none absolute right-2 top-2 z-10 hidden gap-0.5 opacity-0 transition sm:flex group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
         <Button
           isIconOnly
           className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
@@ -174,11 +174,16 @@ const ClientSection = ({ userId, clients }: Props) => {
       );
 
     return (
-      <div className="min-h-[480px]">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredItems?.map((client, index) => renderClient(client, index))}
         </div>
-      </div>
+        <ClientSectionBottomContent
+          page={page}
+          setPage={setPage}
+          clientsLength={filteredItems?.length}
+        />
+      </>
     );
   };
 
@@ -193,14 +198,7 @@ const ClientSection = ({ userId, clients }: Props) => {
         typeFilters={typeFilters}
         setTypeFilters={setTypeFilters}
       />
-      <div className="flex flex-col gap-4 rounded-xl border p-4 shadow-sm">
-        {renderSectionContent()}
-      </div>
-      <ClientSectionBottomContent
-        page={page}
-        setPage={setPage}
-        clientsLength={filteredItems?.length}
-      />
+      <div className="min-h-[480px]">{renderSectionContent()}</div>
       {currentClientData && isEditClientModalOpen && (
         <ClientFormDialog
           userId={userId}

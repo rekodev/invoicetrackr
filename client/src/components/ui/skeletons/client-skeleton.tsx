@@ -4,7 +4,7 @@ import { Skeleton } from '@heroui/react';
 
 export function ClientSectionSkeleton() {
   const renderClientCard = (key: number) => {
-    return <Skeleton key={key} className="h-[104px] w-full rounded-xl" />;
+    return <Skeleton key={key} className="h-[156px] w-full rounded-3xl" />;
   };
 
   return (
@@ -20,17 +20,15 @@ export function ClientSectionSkeleton() {
 
         <Skeleton className="h-5 w-[100px] rounded-xl" />
       </div>
-      <div className="flex flex-col gap-4 rounded-xl border p-4 shadow-sm">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {Array.from({ length: 8 }).map((_, index) => renderClientCard(index))}
-        </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 8 }).map((_, index) => renderClientCard(index))}
       </div>
 
       <div className="relative mt-2 flex items-center justify-center">
         <Skeleton className="h-9 w-[108px] rounded-xl" />
         <div className="absolute right-0 hidden gap-2 sm:flex">
-          <Skeleton className="h-8 w-[72px] rounded-lg" />
-          <Skeleton className="h-8 w-16 rounded-lg" />
+          <Skeleton className="h-8 w-[72px] rounded-xl" />
+          <Skeleton className="h-8 w-16 rounded-xl" />
         </div>
       </div>
     </div>

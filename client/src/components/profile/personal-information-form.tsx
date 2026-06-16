@@ -228,7 +228,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
           data-testid="personal-information-form-heading"
           className="p-4 px-6"
         >
-          <Card.Title>{t('title')}</Card.Title>
+          <Card.Title className="text-2xl">{t('title')}</Card.Title>
         </Card.Header>
 
         <Separator />

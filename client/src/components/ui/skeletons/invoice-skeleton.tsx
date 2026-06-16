@@ -20,12 +20,12 @@ export function InvoiceTableSkeleton() {
           <Skeleton className="h-5 w-[136px] rounded-xl" />
         </div>
       </div>
-      <Skeleton className="min-h-[480px] rounded-xl" />
+      <Skeleton className="min-h-[480px] rounded-3xl" />
       <div className="relative mt-2 flex items-center justify-center">
         <Skeleton className="h-9 w-[108px] rounded-xl" />
         <div className="absolute right-0 hidden gap-2 sm:flex">
-          <Skeleton className="h-8 w-[72px] rounded-lg" />
-          <Skeleton className="h-8 w-16 rounded-lg" />
+          <Skeleton className="h-8 w-[72px] rounded-xl" />
+          <Skeleton className="h-8 w-16 rounded-xl" />
         </div>
       </div>
     </div>

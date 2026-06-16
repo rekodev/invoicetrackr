@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
   FieldError,
   Label,
   ListBox,
@@ -136,7 +135,6 @@ const AccountSettingsForm = ({ user }: Props) => {
           name="preferredInvoiceLanguage"
           render={({ field }) => (
             <Select
-              className="flex-col items-start gap-2"
               variant="secondary"
               value={field.value}
               onChange={field.onChange}
@@ -148,14 +146,7 @@ const AccountSettingsForm = ({ user }: Props) => {
                   {t('preferred_invoice_language')}
                   <Tooltip delay={0}>
                     <Tooltip.Trigger>
-                      <Button
-                        isIconOnly
-                        variant="tertiary"
-                        size="sm"
-                        className="h-min w-min min-w-0 p-0 pl-0"
-                      >
-                        <InformationCircleIcon className="text-default-500 z-50 h-4 w-4 cursor-pointer" />
-                      </Button>
+                      <InformationCircleIcon className="text-default-500 z-50 h-4 w-4 cursor-pointer" />
                     </Tooltip.Trigger>
                     <Tooltip.Content className="max-w-xs">
                       {t('preferred_invoice_language_tooltip')}
@@ -255,7 +246,9 @@ const AccountSettingsForm = ({ user }: Props) => {
           aria-label={t('a11y.form_label')}
           onSubmit={handleSubmit(onSubmit)}
         >
-          <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
+          <Card.Header className="p-4 px-6">
+            <Card.Title className="text-2xl">{t('title')}</Card.Title>
+          </Card.Header>
           <Separator />
           {renderCardBodyAndFooter()}
         </form>

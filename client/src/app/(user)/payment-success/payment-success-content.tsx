@@ -73,7 +73,7 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
                 size="sm"
                 variant="soft"
                 color="success"
-                className="border-success/35 bg-success/15 h-7 border px-2.5 text-[11px] font-medium uppercase tracking-[0.12em]"
+                className="section-eyebrow border-success/35 bg-success/15 h-7 border px-2.5"
               >
                 <CheckCircleIcon className="h-3.5 w-3.5" strokeWidth={2.4} />
                 {t(`${copyKey}.badge`)}
@@ -92,7 +92,7 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
 
               <div className="border-default-200 mt-6 grid max-w-[540px] gap-3 border-y py-4 sm:grid-cols-2">
                 <div>
-                  <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+                  <p className="section-eyebrow text-default-500">
                     {t('confirmation.status_label')}
                   </p>
                   <p className="text-foreground mt-1 text-sm font-medium">
@@ -100,7 +100,7 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
                   </p>
                 </div>
                 <div>
-                  <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+                  <p className="section-eyebrow text-default-500">
                     {t(`${copyKey}.summary.primary_label`)}
                   </p>
                   <p className="text-foreground mt-1 text-sm font-medium">

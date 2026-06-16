@@ -34,12 +34,13 @@ export default function PasswordInput({
     <TextField
       variant="secondary"
       isInvalid={isInvalid}
-      className={`col-span-2 col-start-1 ${className}`}
+      className={`w-full lg:w-1/2 ${className || ''}`}
     >
       <Label>{label}</Label>
-      <div className="flex items-center gap-2">
+      <div className="flex w-full items-center gap-2">
         <Input
           {...registeredPassword}
+          className="w-full"
           autoComplete={autoComplete}
           type={isVisible ? 'text' : 'password'}
           placeholder={placeholder}

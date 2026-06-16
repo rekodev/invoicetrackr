@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
   Separator,
   toast
 } from '@heroui/react';
@@ -72,7 +71,7 @@ export default function ChangePasswordForm({ userId }: Props) {
 
     return (
       <>
-        <CardContent className="grid grid-cols-1 gap-4 p-6 lg:grid-cols-2">
+        <CardContent className="grid grid-cols-1 gap-4 p-6">
           <PasswordInput
             autoComplete="new-password"
             placeholder={t('current_password_placeholder')}
@@ -88,7 +87,7 @@ export default function ChangePasswordForm({ userId }: Props) {
             isInvalid={!!errors.newPassword}
             errorMessage={errors.newPassword?.message}
           />
-          <small className="text-default-500 col-span-2 mt-[-8]">
+          <small className="text-default-500 -mt-2">
             {t('password_requirements')}
           </small>
           <PasswordInput
@@ -118,7 +117,9 @@ export default function ChangePasswordForm({ userId }: Props) {
   return (
     <Card className="w-full border bg-transparent">
       <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
-        <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
+        <Card.Header className="p-4 px-6">
+          <Card.Title className="text-2xl">{t('title')}</Card.Title>
+        </Card.Header>
         <Separator />
         {renderCardBodyAndFooter()}
       </form>

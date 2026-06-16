@@ -3,18 +3,9 @@
 import {
   ArrowRightIcon,
   CheckCircleIcon,
-  CreditCardIcon,
-  SparklesIcon
+  CreditCardIcon
 } from '@heroicons/react/24/outline';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Chip,
-  Separator,
-  cn
-} from '@heroui/react';
+import { Button, Card, CardContent, Separator, cn } from '@heroui/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
@@ -145,20 +136,14 @@ export default function SubscriptionStatusCard({
 
   return (
     <Card className="w-full flex-1 border shadow-sm">
-      <CardHeader className="flex flex-col items-start justify-between gap-5 p-6 md:flex-row md:items-center">
-        <div className="max-w-2xl">
-          <Chip size="lg">
-            <SparklesIcon className="h-3.5 w-3.5" />
-            {t('badge')}
-          </Chip>
-          <h1 className="text-foreground mt-4 text-2xl font-semibold tracking-tight">
-            {t('title')}
-          </h1>
-          <p className="text-default-500 mt-2 max-w-xl text-sm leading-6">
+      <Card.Header className="flex flex-col items-start justify-between gap-5 p-4 px-6 md:flex-row md:items-center">
+        <div className="flex flex-col gap-2">
+          <Card.Title className="text-2xl">{t('title')}</Card.Title>
+          <Card.Description>
             {isTrialing && hasPaymentMethod
               ? t('description.trial_ready')
               : t(`description.${statusKey}`)}
-          </p>
+          </Card.Description>
         </div>
 
         {showAction && (
@@ -179,7 +164,7 @@ export default function SubscriptionStatusCard({
                 : t('action.renew')}
           </Button>
         )}
-      </CardHeader>
+      </Card.Header>
 
       <Separator />
 
@@ -195,7 +180,7 @@ export default function SubscriptionStatusCard({
               <CheckCircleIcon className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+              <p className="section-eyebrow text-default-500">
                 {t('status_label')}
               </p>
               <p className="text-foreground mt-1 text-base font-semibold">
@@ -212,7 +197,7 @@ export default function SubscriptionStatusCard({
           <Separator className="mt-5" />
 
           <div className="pt-5">
-            <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+            <p className="section-eyebrow text-default-500">
               {t('current_rate_label')}
             </p>
             <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -234,11 +219,11 @@ export default function SubscriptionStatusCard({
 
         <div className="p-1">
           <div className="flex items-start gap-3">
-            <span className="bg-secondary/10 text-secondary grid h-9 w-9 shrink-0 place-items-center rounded-lg">
+            <span className="bg-secondary/15 text-secondary border-secondary/20 grid h-9 w-9 shrink-0 place-items-center rounded-xl border">
               <CreditCardIcon className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+              <p className="section-eyebrow text-default-500">
                 {t('billing_label')}
               </p>
               <p className="text-foreground mt-1 text-base font-semibold">
@@ -249,7 +234,7 @@ export default function SubscriptionStatusCard({
               </p>
               <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
                 <div>
-                  <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+                  <p className="section-eyebrow text-default-500">
                     {t('billing_name_label')}
                   </p>
                   <p className="text-foreground mt-1 font-medium">
@@ -257,7 +242,7 @@ export default function SubscriptionStatusCard({
                   </p>
                 </div>
                 <div>
-                  <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+                  <p className="section-eyebrow text-default-500">
                     {t('billing_email_label')}
                   </p>
                   <p className="text-foreground mt-1 font-medium">
@@ -266,7 +251,7 @@ export default function SubscriptionStatusCard({
                 </div>
               </div>
               <div className="mt-3 text-sm">
-                <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+                <p className="section-eyebrow text-default-500">
                   {t('payment_method_label')}
                 </p>
                 <p className="text-foreground mt-1 font-medium">

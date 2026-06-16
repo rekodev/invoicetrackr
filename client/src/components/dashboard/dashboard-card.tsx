@@ -10,7 +10,7 @@ type Props = {
 
 const DashboardCard = ({ icon, title, text, iconClassName }: Props) => {
   return (
-    <Card className="rounded-xl border bg-transparent">
+    <Card className="border">
       <CardContent className="flex h-full flex-col justify-between">
         <div className="text-default-500 flex items-center gap-2 text-sm font-medium">
           <span
