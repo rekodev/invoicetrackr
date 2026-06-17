@@ -13,11 +13,11 @@ import {
   FieldError,
   Input,
   Label,
+  Link,
   TextField
 } from '@heroui/react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import type { FormEvent } from 'react';
-import Link from 'next/link';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
@@ -117,10 +117,20 @@ export default function LoginForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
-        <Link href={FORGOT_PASSWORD_PAGE}>{t('forgot_password')}</Link>
-        <div className="flex gap-1">
-          <p className="text-md">{t('need_account')}</p>{' '}
-          <Link href={SIGN_UP_PAGE}>{t('sign_up_link')}</Link>
+        <Link
+          href={FORGOT_PASSWORD_PAGE}
+          className="text-accent text-sm font-medium decoration-current underline-offset-4 hover:underline"
+        >
+          {t('forgot_password')}
+        </Link>
+        <div className="flex gap-1 text-sm">
+          <p className="text-default-500">{t('need_account')}</p>{' '}
+          <Link
+            href={SIGN_UP_PAGE}
+            className="text-accent font-medium decoration-current underline-offset-4 hover:underline"
+          >
+            {t('sign_up_link')}
+          </Link>
         </div>
       </CardFooter>
     </Card>

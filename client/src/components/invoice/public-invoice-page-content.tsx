@@ -47,7 +47,7 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
       publicInvoice.payment.completedAt
   );
   const currency = publicInvoice.currency as Currency;
-  const { pdfDocument, isPdfDocumentLoading } = useDynamicPdf({
+  const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
     currency,
     defaultTranslator: pdfTranslator,
     invoiceLanguage,
@@ -130,7 +130,9 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
         invoiceData={invoice}
         invoiceLanguage={invoiceLanguage}
         pdfDocument={pdfDocument}
+        pdfUrl={pdfUrl}
         isPdfDocumentLoading={isPdfDocumentLoading}
+        showFooterStatus
       />
     </main>
   );

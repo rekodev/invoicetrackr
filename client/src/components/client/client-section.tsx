@@ -115,7 +115,7 @@ const ClientSection = ({ userId, clients }: Props) => {
   const renderClientCardActions = (clientData: ClientBody) => (
     <>
       {renderMobileClientCardActions(clientData)}
-      <div className="pointer-events-none absolute right-2 top-2 z-10 hidden gap-0.5 opacity-0 transition sm:flex group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+      <div className="pointer-events-none absolute right-2 top-2 z-10 hidden gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100 sm:flex">
         <Button
           isIconOnly
           className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
@@ -123,7 +123,7 @@ const ClientSection = ({ userId, clients }: Props) => {
           size="sm"
           onPress={() => handleEditClient(clientData)}
         >
-          <PencilSquareIcon className="h-5 w-5" />
+          <PencilSquareIcon className="h-4 w-4" />
         </Button>
         <Button
           isIconOnly
@@ -132,7 +132,7 @@ const ClientSection = ({ userId, clients }: Props) => {
           className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
           onPress={() => handleOpenDeleteClientModal(clientData)}
         >
-          <TrashIcon className="h-5 w-5" />
+          <TrashIcon className="h-4 w-4" />
         </Button>
       </div>
     </>

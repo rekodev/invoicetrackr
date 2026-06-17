@@ -454,7 +454,9 @@
             "payment_terms_label": "Payment terms: {days} days",
             "bank_info_label": "{bank_name}, bank code {bank_code}; Account number: {bank_account_number}",
             "buttons": {
-                "download_pdf": "Download PDF"
+                "download_pdf": "Download PDF",
+                "print_pdf": "Print PDF",
+                "close": "Close"
             },
             "past_due_alert": "Invoice is {days}d past due. Due date was {dueDate}."
         }

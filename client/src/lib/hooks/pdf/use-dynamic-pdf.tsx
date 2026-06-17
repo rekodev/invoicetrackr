@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useMemo, useState, useTransition } from 'react';
 import { InvoiceBody } from '@invoicetrackr/types';
 import { createTranslator } from 'next-intl';
+import { usePDF } from '@react-pdf/renderer';
 
 import { Currency } from '@/lib/types/currency';
 import PDFDocument from '@/components/pdf/pdf-document';
@@ -51,7 +52,7 @@ export default function useDynamicPdf({
     loadMessages();
   }, [invoiceLanguage]);
 
-  const renderPdfDocument = () => {
+  const pdfDocument = useMemo(() => {
     if (!invoiceData) return null;
 
     return (
@@ -64,10 +65,28 @@ export default function useDynamicPdf({
         receiverSignatureImage={receiverSignatureImage}
       />
     );
-  };
+  }, [
+    currency,
+    defaultTranslator,
+    invoiceData,
+    invoiceLanguage,
+    pdfDocumentTranslator,
+    receiverSignatureImage,
+    senderSignatureImage
+  ]);
+
+  const [pdfInstance, updatePdfInstance] = usePDF();
+
+  useEffect(() => {
+    if (!pdfDocument) return;
+
+    updatePdfInstance(pdfDocument);
+  }, [pdfDocument, updatePdfInstance]);
 
   return {
-    pdfDocument: renderPdfDocument(),
-    isPdfDocumentLoading: !pdfDocumentTranslator || isPending
+    pdfDocument,
+    pdfUrl: pdfInstance.url,
+    isPdfDocumentLoading:
+      !pdfDocumentTranslator || isPending || pdfInstance.loading
   };
 }

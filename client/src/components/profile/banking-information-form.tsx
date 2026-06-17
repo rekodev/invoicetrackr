@@ -9,6 +9,7 @@ import {
   Radio,
   RadioGroup,
   Separator,
+  cn,
   toast,
   useOverlayState
 } from '@heroui/react';
@@ -105,48 +106,61 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     name,
     code,
     accountNumber
-  }: BankAccount) => (
-    <Card key={id} className="col-span-2 lg:col-span-1">
-      <CardContent className="flex flex-row items-center gap-2 pr-24">
-        <Radio value={String(id || 0)} className="min-w-0">
-          <Radio.Control>
-            <Radio.Indicator />
-          </Radio.Control>
-          <Radio.Content>
-            <Label className="text-large font-bold">{name}</Label>
-            <p className="text-tiny font-bold uppercase">{code}</p>
-            <small className="text-default-500">{accountNumber}</small>
-          </Radio.Content>
-        </Radio>
-        <div className="absolute right-4 flex gap-0.5">
-          <Button
-            isIconOnly
-            variant="tertiary"
-            onPress={() => handleEdit({ id, name, code, accountNumber })}
-          >
-            <PencilSquareIcon className="h-5 w-5" />
-          </Button>
-          <Button
-            isIconOnly
-            isDisabled={id === user.selectedBankAccountId}
-            variant={id === user.selectedBankAccountId ? 'tertiary' : 'danger'}
-            className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
-            onPress={() => {
-              if (id === user.selectedBankAccountId) return;
+  }: BankAccount) => {
+    const isSelected = selectedBankAccountId === String(id || 0);
 
-              handleTrashIconClick({ id, name, code, accountNumber });
-            }}
-          >
-            {id === user.selectedBankAccountId ? (
-              <LockClosedIcon className="h-5 w-5" />
-            ) : (
-              <TrashIcon className="h-5 w-5" />
-            )}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
+    return (
+      <Card
+        key={id}
+        className={cn('group col-span-2 border pt-0 lg:col-span-1', {
+          'border-accent border-2': isSelected
+        })}
+      >
+        <CardContent className="flex flex-row items-center gap-2 pr-24">
+          <Radio value={String(id || 0)} className="min-w-0">
+            <Radio.Control>
+              <Radio.Indicator />
+            </Radio.Control>
+            <Radio.Content>
+              <Label className="text-large font-semibold">{name}</Label>
+              <p className="text-xs font-bold uppercase">{code}</p>
+              <small className="text-default-500 mt-1">{accountNumber}</small>
+            </Radio.Content>
+          </Radio>
+          <div className="pointer-events-none absolute right-2 top-2 flex gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
+            <Button
+              isIconOnly
+              size="sm"
+              variant="tertiary"
+              onPress={() => handleEdit({ id, name, code, accountNumber })}
+            >
+              <PencilSquareIcon className="h-4 w-4" />
+            </Button>
+            <Button
+              isIconOnly
+              size="sm"
+              isDisabled={id === user.selectedBankAccountId}
+              variant={
+                id === user.selectedBankAccountId ? 'tertiary' : 'danger-soft'
+              }
+              className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
+              onPress={() => {
+                if (id === user.selectedBankAccountId) return;
+
+                handleTrashIconClick({ id, name, code, accountNumber });
+              }}
+            >
+              {id === user.selectedBankAccountId ? (
+                <LockClosedIcon className="h-4 w-4" />
+              ) : (
+                <TrashIcon className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderCardBody = () => {
     if (bankAccounts?.length === 0)

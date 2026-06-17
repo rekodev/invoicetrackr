@@ -23,7 +23,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
+import { LOGIN_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
 import { ActionResponseModel } from '@/lib/types/action';
 import { resetPasswordAction } from '@/lib/actions';
 
@@ -109,12 +109,20 @@ export default function ForgotPasswordForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
-        <Link href={FORGOT_PASSWORD_PAGE}>
+        <Link
+          href={LOGIN_PAGE}
+          className="text-accent inline-flex items-center text-sm font-medium decoration-current underline-offset-4 hover:underline"
+        >
           <ArrowLeftIcon className="mr-1 h-4 w-4" /> {t('login')}
         </Link>
-        <div className="flex gap-1">
-          <p className="text-md">{t('create_account')}</p>
-          <Link href={SIGN_UP_PAGE}>{t('sign_up')}</Link>
+        <div className="flex gap-1 text-sm">
+          <p className="text-default-500">{t('create_account')}</p>
+          <Link
+            href={SIGN_UP_PAGE}
+            className="text-accent font-medium decoration-current underline-offset-4 hover:underline"
+          >
+            {t('sign_up')}
+          </Link>
         </div>
       </CardFooter>
     </Card>

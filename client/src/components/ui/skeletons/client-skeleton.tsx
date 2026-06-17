@@ -4,7 +4,7 @@ import { Skeleton } from '@heroui/react';
 
 export function ClientSectionSkeleton() {
   const renderClientCard = (key: number) => {
-    return <Skeleton key={key} className="h-[156px] w-full rounded-3xl" />;
+    return <Skeleton key={key} className="h-[182px] w-full rounded-3xl" />;
   };
 
   return (

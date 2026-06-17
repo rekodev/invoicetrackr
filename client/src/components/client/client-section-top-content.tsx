@@ -65,7 +65,7 @@ const ClientSectionTopContent = ({
     <Dropdown>
       <DropdownTrigger
         className={buttonVariants({
-          variant: 'secondary',
+          variant: 'tertiary',
           className: 'hidden items-center justify-center sm:flex'
         })}
       >

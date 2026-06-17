@@ -4,7 +4,7 @@ import { Skeleton } from '@heroui/react';
 
 export const DashboardCardSkeleton = () => {
   return (
-    <div className="border-default-200 flex min-h-32 flex-col justify-between rounded-3xl border p-4 shadow-sm sm:p-5">
+    <div className="border-default-200 flex min-h-[122px] flex-col justify-between rounded-3xl border p-4 shadow-sm sm:p-5">
       <div className="flex items-center gap-2">
         <Skeleton className="h-8 w-8 rounded-xl" />
         <Skeleton className="h-4 w-20 rounded-xl" />

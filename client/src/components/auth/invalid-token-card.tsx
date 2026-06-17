@@ -9,7 +9,6 @@ import {
   buttonVariants
 } from '@heroui/react';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { FORGOT_PASSWORD_PAGE, LOGIN_PAGE } from '@/lib/constants/pages';
@@ -24,7 +23,7 @@ export default function InvalidTokenCard() {
         <p className="text-default-500 text-center">{t('description')}</p>
       </CardHeader>
       <CardContent className="p-8 pb-4">
-        <NextLink
+        <Link
           href={FORGOT_PASSWORD_PAGE}
           className={buttonVariants({
             className: 'w-full justify-between'
@@ -32,12 +31,17 @@ export default function InvalidTokenCard() {
         >
           {t('request_new')}
           <ArrowRightIcon className="h-5 w-5" />
-        </NextLink>
+        </Link>
       </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
-        <div className="flex gap-1">
-          <p className="text-md">{t('remember_your_password')}</p>{' '}
-          <Link href={LOGIN_PAGE}>{t('sign_in')}</Link>
+        <div className="flex gap-1 text-sm">
+          <p className="text-default-500">{t('remember_your_password')}</p>{' '}
+          <Link
+            href={LOGIN_PAGE}
+            className="text-accent font-medium decoration-current underline-offset-4 hover:underline"
+          >
+            {t('sign_in')}
+          </Link>
         </div>
       </CardFooter>
     </Card>

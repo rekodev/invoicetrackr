@@ -100,7 +100,7 @@ const InvoiceTable = ({
     handleSendInvoiceEmail
   } = useInvoiceTableActionHandlers({ setCurrentInvoice, onOpen });
 
-  const { pdfDocument, isPdfDocumentLoading } = useDynamicPdf({
+  const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
     currency,
     defaultTranslator: pdfTranslator,
     invoiceLanguage,
@@ -289,7 +289,9 @@ const InvoiceTable = ({
           onOpenChange={onOpenChange}
           invoiceData={currentInvoice}
           pdfDocument={pdfDocument}
+          pdfUrl={pdfUrl}
           isPdfDocumentLoading={isPdfDocumentLoading}
+          showFooterStatus
         />
       )}
       {currentInvoice && (

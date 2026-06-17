@@ -149,9 +149,14 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
-        <div className="flex gap-1">
-          <p className="text-md">{t('remember_your_password')}</p>{' '}
-          <Link href={LOGIN_PAGE}>{t('sign_in')}</Link>
+        <div className="flex gap-1 text-sm">
+          <p className="text-default-500">{t('remember_your_password')}</p>{' '}
+          <Link
+            href={LOGIN_PAGE}
+            className="text-accent font-medium decoration-current underline-offset-4 hover:underline"
+          >
+            {t('sign_in')}
+          </Link>
         </div>
       </CardFooter>
     </Card>

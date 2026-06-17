@@ -14,19 +14,31 @@ import { Spinner } from '@heroui/react';
 type Props = {
   isIFrameLoading: boolean;
   setIsIFrameLoading: Dispatch<SetStateAction<boolean>>;
-  pdfDocument: JSX.Element;
+  pdfDocument: JSX.Element | null;
+  pdfUrl?: string | null;
 };
 
 type PdfComponents = Pick<typeof import('react-pdf'), 'Document' | 'Page'>;
 
+let cachedPdfComponents: PdfComponents | undefined;
+
+const PdfPreviewLoader = () => (
+  <div className="flex aspect-[794/1123] w-full items-center justify-center lg:min-h-[1123px]">
+    <Spinner />
+  </div>
+);
+
 export default function PdfViewerWrapper({
   pdfDocument,
+  pdfUrl,
   isIFrameLoading,
   setIsIFrameLoading
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
-  const [pdfComponents, setPdfComponents] = useState<PdfComponents>();
+  const [pdfComponents, setPdfComponents] = useState<PdfComponents | undefined>(
+    cachedPdfComponents
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -44,6 +56,11 @@ export default function PdfViewerWrapper({
 
   useEffect(() => {
     const loadPdfComponents = async () => {
+      if (cachedPdfComponents) {
+        setPdfComponents(cachedPdfComponents);
+        return;
+      }
+
       const { Document, Page, pdfjs } = await import('react-pdf');
 
       pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -51,39 +68,69 @@ export default function PdfViewerWrapper({
         import.meta.url
       ).toString();
 
-      setPdfComponents({ Document, Page });
+      cachedPdfComponents = { Document, Page };
+      setPdfComponents(cachedPdfComponents);
     };
 
     loadPdfComponents();
   }, []);
 
   return (
-    <div ref={containerRef} className="flex w-full justify-center">
-      <BlobProvider document={pdfDocument}>
-        {({ url, loading }) => {
-          if (loading || !url || !containerWidth || !pdfComponents) {
-            return <Spinner className="my-6" />;
-          }
+    <div
+      ref={containerRef}
+      className="flex w-full items-center justify-center overflow-visible"
+    >
+      {pdfUrl ? (
+        pdfComponents && containerWidth ? (
+          <pdfComponents.Document
+            file={pdfUrl}
+            loading={<PdfPreviewLoader />}
+            onLoadSuccess={() => setIsIFrameLoading(false)}
+            onLoadError={() => setIsIFrameLoading(false)}
+          >
+            <pdfComponents.Page
+              pageNumber={1}
+              width={containerWidth}
+              renderAnnotationLayer={false}
+              renderTextLayer={false}
+            />
+          </pdfComponents.Document>
+        ) : (
+          <PdfPreviewLoader />
+        )
+      ) : (
+        <>
+          {!pdfDocument ? (
+            <PdfPreviewLoader />
+          ) : (
+            <BlobProvider document={pdfDocument}>
+              {({ url, loading }) => {
+                if (loading || !url || !containerWidth || !pdfComponents) {
+                  return <PdfPreviewLoader />;
+                }
 
-          const { Document, Page } = pdfComponents;
+                const { Document, Page } = pdfComponents;
 
-          return (
-            <Document
-              file={url}
-              loading={<Spinner className="my-6" />}
-              onLoadSuccess={() => setIsIFrameLoading(false)}
-              onLoadError={() => setIsIFrameLoading(false)}
-            >
-              <Page
-                pageNumber={1}
-                width={containerWidth}
-                renderAnnotationLayer={false}
-                renderTextLayer={false}
-              />
-            </Document>
-          );
-        }}
-      </BlobProvider>
+                return (
+                  <Document
+                    file={url}
+                    loading={<PdfPreviewLoader />}
+                    onLoadSuccess={() => setIsIFrameLoading(false)}
+                    onLoadError={() => setIsIFrameLoading(false)}
+                  >
+                    <Page
+                      pageNumber={1}
+                      width={containerWidth}
+                      renderAnnotationLayer={false}
+                      renderTextLayer={false}
+                    />
+                  </Document>
+                );
+              }}
+            </BlobProvider>
+          )}
+        </>
+      )}
       {isIFrameLoading && <span className="sr-only">Loading PDF preview</span>}
     </div>
   );

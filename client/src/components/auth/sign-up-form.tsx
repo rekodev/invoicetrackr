@@ -9,6 +9,7 @@ import {
   FieldError,
   Input,
   Label,
+  Link,
   TextField
 } from '@heroui/react';
 import {
@@ -18,7 +19,6 @@ import {
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import type { FormEvent } from 'react';
-import Link from 'next/link';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
@@ -166,9 +166,14 @@ export default function SignUpForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
-        <div className="flex flex-col items-center gap-1 sm:flex-row">
-          <p className="text-md">{t('already_have_account')}</p>{' '}
-          <Link href={LOGIN_PAGE}>{t('login_link')}</Link>
+        <div className="flex flex-col items-center gap-1 text-sm sm:flex-row">
+          <p className="text-default-500">{t('already_have_account')}</p>{' '}
+          <Link
+            href={LOGIN_PAGE}
+            className="text-accent font-medium decoration-current underline-offset-4 hover:underline"
+          >
+            {t('login_link')}
+          </Link>
         </div>
       </CardFooter>
     </Card>

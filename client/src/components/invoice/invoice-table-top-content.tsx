@@ -115,7 +115,7 @@ const InvoiceTableTopContent = ({
           <Dropdown>
             <DropdownTrigger
               className={buttonVariants({
-                variant: 'secondary',
+                variant: 'tertiary',
                 className: 'hidden items-center justify-center gap-2 sm:flex'
               })}
             >
@@ -146,7 +146,7 @@ const InvoiceTableTopContent = ({
           <Dropdown>
             <DropdownTrigger
               className={buttonVariants({
-                variant: 'secondary',
+                variant: 'tertiary',
                 className: 'hidden items-center justify-center sm:flex'
               })}
             >

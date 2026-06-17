@@ -40,7 +40,7 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
     invoice.receiverSignature || invoice.recipientSignedAt
   );
   const currency = signing.currency as Currency;
-  const { pdfDocument, isPdfDocumentLoading } = useDynamicPdf({
+  const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
     currency,
     defaultTranslator: pdfTranslator,
     invoiceLanguage,
@@ -113,7 +113,9 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
         invoiceData={invoice}
         invoiceLanguage={invoiceLanguage}
         pdfDocument={pdfDocument}
+        pdfUrl={pdfUrl}
         isPdfDocumentLoading={isPdfDocumentLoading}
+        showFooterStatus
       />
     </main>
   );

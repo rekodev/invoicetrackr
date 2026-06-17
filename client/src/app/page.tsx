@@ -1,6 +1,6 @@
 'use client';
 
-import { Separator, buttonVariants } from '@heroui/react';
+import { Card, Chip, Separator, buttonVariants } from '@heroui/react';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,7 +29,10 @@ export default function Home() {
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Link
                   href={CREATE_INVOICE_PAGE}
-                  className={buttonVariants({ size: 'lg', className: 'px-8' })}
+                  className={buttonVariants({
+                    size: 'lg',
+                    className: 'px-8'
+                  })}
                 >
                   {t('hero.cta_primary')}
                 </Link>
@@ -81,7 +84,7 @@ export default function Home() {
               <ul className="grid gap-6">
                 <li className="flex items-start gap-4">
                   <div className="bg-primary/10 rounded-full p-1">
-                    <CheckIcon className="text-secondary h-5 w-5" />
+                    <CheckIcon className="text-accent h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="font-bold">
@@ -94,7 +97,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="bg-primary/10 rounded-full p-1">
-                    <CheckIcon className="text-secondary h-5 w-5" />
+                    <CheckIcon className="text-accent h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="font-bold">
@@ -107,7 +110,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="bg-primary/10 rounded-full p-1">
-                    <CheckIcon className="text-secondary h-5 w-5" />
+                    <CheckIcon className="text-accent h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="font-bold">
@@ -140,62 +143,65 @@ export default function Home() {
             </div>
           </div>
           <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-6 py-12 lg:flex-row lg:items-stretch">
-            <div className="bg-card text-card-foreground flex min-h-[472px] w-full max-w-md flex-col justify-between rounded-lg border shadow-sm">
+            <Card className="flex min-h-[472px] w-full max-w-md flex-col justify-between border">
               <div>
-                <div className="flex flex-col space-y-1.5 p-6">
-                  <h3 className="text-2xl font-bold">
+                <Card.Header className="flex flex-col items-start space-y-1.5 p-6">
+                  <Card.Title className="text-2xl font-bold">
                     {t('pricing.free.title')}
-                  </h3>
+                  </Card.Title>
                   <p className="text-muted-foreground">
                     {t('pricing.free.subtitle')}
                   </p>
-                </div>
-                <div className="p-6 pt-0">
+                </Card.Header>
+                <Card.Content className="p-6 pt-0">
                   <div className="text-4xl font-bold">
                     {getCurrencySymbol(getUserCurrency())}0
                   </div>
                   <div className="text-muted-foreground">
                     {t('pricing.free.price_label')}
                   </div>
-                </div>
-                <div className="p-6 pt-0">
+                </Card.Content>
+                <Card.Content className="p-6 pt-0">
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
-                      <CheckIcon className="text-secondary h-4 w-4" />
+                      <CheckIcon className="text-accent h-4 w-4" />
                       <span>{t('pricing.free.features.unlimited')}</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckIcon className="text-secondary h-4 w-4" />
+                      <CheckIcon className="text-accent h-4 w-4" />
                       <span>{t('pricing.free.features.template')}</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckIcon className="text-secondary h-4 w-4" />
+                      <CheckIcon className="text-accent h-4 w-4" />
                       <span>{t('pricing.free.features.export')}</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckIcon className="text-secondary h-4 w-4" />
+                      <CheckIcon className="text-accent h-4 w-4" />
                       <span>{t('pricing.free.features.signature')}</span>
                     </li>
                   </ul>
-                </div>
+                </Card.Content>
               </div>
-              <div className="flex flex-col p-6 pt-0">
+              <Card.Footer className="flex flex-col p-6 pt-0">
                 <Link
                   href={CREATE_INVOICE_PAGE}
-                  className={buttonVariants({ variant: 'primary' })}
+                  className={buttonVariants({
+                    variant: 'secondary',
+                    className: 'w-full'
+                  })}
                 >
                   {t('pricing.free.cta')}
                 </Link>
-              </div>
-            </div>
-            <div className="border-secondary-500/50 bg-secondary-50 border-1 flex w-full max-w-md flex-col rounded-lg bg-opacity-50 shadow-sm dark:bg-opacity-100">
-              <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-bold">
+              </Card.Footer>
+            </Card>
+            <Card className="border-accent/40 bg-accent/5 flex w-full max-w-md flex-col border shadow-md">
+              <Card.Header className="flex flex-col items-start space-y-1.5 p-6">
+                <Card.Title className="text-2xl font-bold">
                   {t('pricing.premium.title')}
-                </h3>
+                </Card.Title>
                 <p>{t('pricing.premium.subtitle')}</p>
-              </div>
-              <div className="p-6 pt-0">
+              </Card.Header>
+              <Card.Content className="p-6 pt-0">
                 <div className="flex flex-wrap items-end gap-2">
                   <div className="text-4xl font-bold">
                     {getCurrencySymbol(getUserCurrency())}49
@@ -204,52 +210,59 @@ export default function Home() {
                     {t('pricing.premium.annual_price_label')}
                   </div>
                 </div>
-                <div className="border-secondary/30 bg-secondary/10 text-secondary mt-2 inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-wider">
+                <Chip
+                  color="success"
+                  variant="soft"
+                  className="mt-2 self-start"
+                >
                   {t('pricing.premium.annual_badge')}
-                </div>
+                </Chip>
                 <div className="text-muted-foreground mt-3 text-sm">
                   {t('pricing.premium.monthly_option', {
                     price: `${getCurrencySymbol(getUserCurrency())}4.99`
                   })}
                 </div>
-              </div>
-              <div className="p-6 pt-0">
+              </Card.Content>
+              <Card.Content className="p-6 pt-0">
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
+                    <CheckIcon className="text-accent h-4 w-4" />
                     <span>{t('pricing.premium.features.everything')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
+                    <CheckIcon className="text-accent h-4 w-4" />
                     <span>{t('pricing.premium.features.save')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
+                    <CheckIcon className="text-accent h-4 w-4" />
                     <span>{t('pricing.premium.features.clients')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
+                    <CheckIcon className="text-accent h-4 w-4" />
                     <span>{t('pricing.premium.features.contracts')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
+                    <CheckIcon className="text-accent h-4 w-4" />
                     <span>{t('pricing.premium.features.currency')}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckIcon className="text-secondary dark:text-secondary-600 h-4 w-4" />
+                    <CheckIcon className="text-accent h-4 w-4" />
                     <span>{t('pricing.premium.features.email')}</span>
                   </li>
                 </ul>
-              </div>
-              <div className="flex flex-col p-6 pt-0">
+              </Card.Content>
+              <Card.Footer className="flex flex-col p-6 pt-0">
                 <Link
                   href={SIGN_UP_PAGE}
-                  className={buttonVariants({ variant: 'primary' })}
+                  className={buttonVariants({
+                    variant: 'primary',
+                    className: 'w-full'
+                  })}
                 >
                   {t('pricing.premium.cta')}
                 </Link>
-              </div>
-            </div>
+              </Card.Footer>
+            </Card>
           </div>
         </section>
 
