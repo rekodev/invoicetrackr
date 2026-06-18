@@ -24,7 +24,7 @@ export default function NotFound() {
           <h1 className="text-4xl font-semibold tracking-tight">
             {t('title')}
           </h1>
-          <p className="text-default-500">{t('description')}</p>
+          <p className="text-muted">{t('description')}</p>
         </div>
 
         <Link

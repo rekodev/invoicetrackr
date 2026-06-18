@@ -147,76 +147,248 @@
     },
     "home": {
         "hero": {
-            "title": "Sukurkite Profesionalias Sąskaitas Per Kelias Minutes",
-            "subtitle": "Paprastas, galingas ir nemokamas sąskaitų generatorius laisviems samdomiems ir mažam verslui. Pradėkite be registracijos.",
-            "cta_primary": "Sukurti Nemokamą Sąskaitą",
-            "cta_secondary": "Peržiūrėti Premium Funkcijas",
-            "a11y": {
-                "dashboard_preview_alt": "Sąskaitų programėlės valdymo skydas"
-            }
+            "badge_label": "Nauja",
+            "badge_text": "Stripe Connect mokėjimai jau veikia",
+            "title": "Išrašykite sąskaitas klientams.",
+            "title_accent": "Gaukite apmokėjimą greičiau.",
+            "subtitle": "Paprastas būdas siųsti sąskaitas, valdyti klientus ir priimti mokėjimus su tvarkingu dokumentu, kurį klientui malonu atsidaryti.",
+            "cta_primary": "Sukurti nemokamą sąskaitą",
+            "cta_secondary": "Pradėti Premium",
+            "note": "Sugeneruokite sąskaitą be registracijos · 7 dienų Premium bandomasis laikotarpis"
         },
-        "features": {
-            "title": "Viskas ko Reikia Profesionaliam Sąskaitų Faktūrų Išrašymui",
-            "subtitle": "Mūsų intuityvus sąskaitų generatorius padeda kurti, pritaikyti ir eksportuoti profesionalias sąskaitas per sekundes.",
-            "a11y": {
-                "editor_interface_alt": "Sąskaitų redaktoriaus sąsaja"
-            },
-            "save_edit": {
-                "title": "Išsaugokite ir Redaguokite Sąskaitas",
-                "description": "Lengvai kurkite, išsaugokite ir redaguokite sąskaitas kai tik reikia, užtikrindami lankstumo jūsų atsiskaitymo procese."
+        "preview": {
+            "sidebar": {
+                "eyebrow": "Darbo erdvė",
+                "dashboard": "Suvestinė",
+                "invoices": "Sąskaitos",
+                "contracts": "Sutartys",
+                "clients": "Klientai",
+                "soon": "Netrukus"
             },
             "dashboard": {
-                "title": "Pajamų Suvestinė",
-                "description": "Gaukite aiškų savo pajamų vaizdą su vizualia pajamų suvestine, rodančia mėnesinius pokyčius ir naujausias sąskaitas."
+                "cards": {
+                    "paid": {
+                        "label": "Apmokėtos sąskaitos",
+                        "value": "€18,420.00"
+                    },
+                    "pending": {
+                        "label": "Laukia apmokėjimo",
+                        "value": "€4,820.00"
+                    },
+                    "invoices": {
+                        "label": "Visos sąskaitos",
+                        "value": "24"
+                    },
+                    "clients": {
+                        "label": "Visi klientai",
+                        "value": "12"
+                    }
+                },
+                "revenue": {
+                    "title": "Sąskaitų pajamos pagal mėnesį"
+                },
+                "latest": {
+                    "title": "Naujausios sąskaitos",
+                    "subtitle": "Neseniai sukurtos sąskaitos",
+                    "view_all": "Peržiūrėti",
+                    "rows": {
+                        "paid": {
+                            "client": "Northstar Studio",
+                            "id": "SF-0242",
+                            "date": "Bir 18",
+                            "amount": "€1,440.00",
+                            "status": "Apmokėta"
+                        },
+                        "pending": {
+                            "client": "Baltic Design Co.",
+                            "id": "SF-0241",
+                            "date": "Bir 12",
+                            "amount": "€5,832.20",
+                            "status": "Laukia"
+                        },
+                        "overdue": {
+                            "client": "Aurora Labs",
+                            "id": "SF-0240",
+                            "date": "Geg 28",
+                            "amount": "€820.00",
+                            "status": "Vėluoja"
+                        }
+                    }
+                }
+            }
+        },
+        "product": {
+            "eyebrow": "Produktas",
+            "title": "Nedidelis įrankių rinkinys",
+            "title_accent": "kuris veikia kartu.",
+            "subtitle": "Suvestinė, sąskaitos, klientai ir mokėjimai veikia vienoje sąskaitų išrašymo eigoje nuo juodraščio iki apmokėjimo.",
+            "items": {
+                "invoices": {
+                    "eyebrow": "Sąskaitos",
+                    "title": "Lentelė, kuri valdo jūsų sąskaitas.",
+                    "body": "Ieškokite, filtruokite, eksportuokite pajamų žurnalą ir atsidarykite sąskaitas peržiūrai, siuntimui, redagavimui ar būsenos keitimui."
+                },
+                "dashboard": {
+                    "title": "Suvestinė be vargo.",
+                    "body": "Apmokėtos pajamos, laukiančios sąskaitos, klientų skaičius, mėnesio pajamos ir naujausios sąskaitos vienoje vietoje."
+                },
+                "clients": {
+                    "title": "Klientai tvarkingai vienoje vietoje.",
+                    "body": "Įmonės arba fizinio asmens duomenys, PVM kodai ir adresai paruošti naudoti kiekvienoje sąskaitoje."
+                },
+                "contracts": {
+                    "badge": "Netrukus",
+                    "title": "Sutartys suplanuotos, bet dar neišleistos.",
+                    "body": "Sutartys atsiras tada, kai sąskaitų, klientų, mokėjimų ir eksportavimo eiga bus tvirta."
+                }
             },
-            "multi_currency": {
-                "title": "Kelios Valiutos ir Kalbos",
-                "description": "Pritaikykite sąskaitas su pageidaujama valiuta ir kalba, kad tiktų tarptautiniams klientams."
+            "invoice_table": {
+                "search": "Ieškoti sąskaitų",
+                "add_new": "Pridėti",
+                "export": "Eksportuoti",
+                "total": "Iš viso 24 sąskaitos",
+                "rows_per_page": "Eilučių puslapyje:",
+                "columns": {
+                    "id": "ID",
+                    "receiver": "Gavėjas",
+                    "amount": "Suma",
+                    "date": "Data",
+                    "status": "Būsena"
+                },
+                "rows": {
+                    "paid": {
+                        "id": "SF-0242",
+                        "client": "Northstar Studio",
+                        "amount": "€1,440.00",
+                        "date": "Bir 18",
+                        "status": "Apmokėta"
+                    },
+                    "pending": {
+                        "id": "SF-0241",
+                        "client": "Baltic Design Co.",
+                        "amount": "€5,832.20",
+                        "date": "Bir 12",
+                        "status": "Laukia"
+                    },
+                    "canceled": {
+                        "id": "SF-0239",
+                        "client": "Aurora Labs",
+                        "amount": "€3,200.00",
+                        "date": "Bir 02",
+                        "status": "Atšaukta"
+                    }
+                }
+            },
+            "clients_preview": {
+                "search": "Ieškoti klientų",
+                "add_new": "Pridėti",
+                "total": "Iš viso 12 klientų",
+                "cards": {
+                    "first": {
+                        "type": "Įmonė",
+                        "name": "Northstar Studio",
+                        "code": "Kodas 304512734",
+                        "vat": "PVM LT100012345",
+                        "address": "Gedimino pr. 12, Vilnius",
+                        "email": "billing@northstar.example"
+                    },
+                    "second": {
+                        "type": "Fizinis asmuo",
+                        "name": "Milda Petrauskė",
+                        "code": "Kodas 49101010000",
+                        "vat": "Be PVM",
+                        "address": "Laisvės al. 20, Kaunas",
+                        "email": "milda@example.com"
+                    }
+                }
+            },
+            "contract_preview": {
+                "status": "Netrukus",
+                "description": "Sutarčių puslapis suplanuotas kaip vieta saugoti susitarimus, susieti sąskaitas ir matyti ilgesnių klientų darbų pinigų eigą."
+            },
+            "capabilities": {
+                "payments": {
+                    "badge": "Nauja",
+                    "title": "Stripe Connect mokėjimai.",
+                    "body": "Prijunkite savo Stripe paskyrą; sąskaitų nuorodos priima korteles ir automatiškai pažymi kaip apmokėtas."
+                },
+                "links": {
+                    "title": "Pasirašymo ir apmokėjimo nuorodos.",
+                    "body": "Siųskite unikalią nuorodą. Klientas pasirašo, apmoka arba padaro abu veiksmus be paskyros."
+                },
+                "email": {
+                    "title": "Siuntimas el. paštu ir priminimai.",
+                    "body": "Išsiųskite sąskaitą ir priminkite vėluojantiems klientams iš tos pačios vietos."
+                },
+                "language": {
+                    "title": "Anglų ir lietuvių kalba vienu paspaudimu.",
+                    "body": "Pakeiskite sąskaitos kalbą neperrašydami duomenų. Vėliau galima pridėti daugiau kalbų."
+                },
+                "export": {
+                    "title": "Eksportas į CSV bet kada.",
+                    "body": "Jūsų duomenys priklauso jums. Atsisiųskite sąskaitų žurnalą į skaičiuoklę kada tik reikia."
+                }
             }
         },
         "pricing": {
-            "title": "Paprastas, Skaidrus Kainodaras",
-            "subtitle": "Pradėkite nemokamai, atnaujinkite kai reikia daugiau funkcijų.",
+            "eyebrow": "Kainodara",
+            "title": "Aišku ir paprasta.",
+            "subtitle": "Pradėkite nemokamai. Pereikite prie Premium, kai reikia daugiau.",
             "free": {
-                "title": "Nemokama",
-                "subtitle": "Kurkite ir eksportuokite pagrindines sąskaitas",
-                "price_label": "Visam laikui nemokamai",
+                "title": "Nemokamas generatorius",
+                "tagline": "Sukurkite vienkartinę sąskaitą ir atsisiųskite PDF. Be paskyros.",
                 "features": {
-                    "unlimited": "Kurkite neribotą sąskaitų skaičių",
-                    "template": "Pagrindinis sąskaitos šablonas",
-                    "export": "Eksportuokite į PDF",
-                    "signature": "Pridėkite savo parašą"
+                    "single": "Kurkite po vieną sąskaitą",
+                    "download": "Atsisiųskite PDF formatu",
+                    "languages": "Angliškas arba lietuviškas sąskaitos dokumentas",
+                    "no_account": "Be išsaugojimo, siuntimo ar apmokėjimo nuorodos"
                 },
-                "cta": "Pradėti"
+                "cta": "Sugeneruoti sąskaitą"
             },
             "premium": {
+                "badge": "Rekomenduojama",
                 "title": "Premium",
-                "subtitle": "Viskas ko reikia efektyviam sąskaitų išrašymui",
-                "price_label": "per mėnesį",
-                "annual_price_label": "per metus",
-                "annual_badge": "Sutaupykite 18%",
-                "monthly_option": "Taip pat galima {price}/mėn. opcija",
+                "tagline": "Pilna programa: išsaugokite, siųskite, sekite ir gaukite apmokėjimą.",
+                "suffix": "/metus",
+                "alt": "arba €4.99 / mėn.",
                 "features": {
-                    "everything": "Viskas iš Nemokamos",
-                    "save": "Išsaugokite ir redaguokite sąskaitas",
-                    "clients": "Saugokite klientų informaciją",
-                    "contracts": "Kurkite ir valdykite sutartis",
-                    "currency": "Pasirinkite valiutą ir kalbą",
-                    "email": "Siųskite sąskaitas el. paštu"
+                    "saved": "Neribotos išsaugotos sąskaitos ir klientai",
+                    "email": "Siuntimas el. paštu ir priminimai",
+                    "links": "Pasirašymo ir apmokėjimo nuorodos klientams",
+                    "payments": "Stripe Connect mokėjimai",
+                    "export": "CSV sąskaitų žurnalo eksportas"
                 },
-                "cta": "Atnaujinti Dabar"
+                "cta": "Pradėti 7 dienų bandymą"
+            }
+        },
+        "faq": {
+            "eyebrow": "DUK",
+            "title": "Trumpi atsakymai.",
+            "items": {
+                "free": {
+                    "question": "Ar yra nemokamas planas?",
+                    "answer": "Galite nemokamai sugeneruoti sąskaitą ir atsisiųsti PDF be paskyros. Išsaugojimas, siuntimas, priminimai, apmokėjimo nuorodos ir visa programa yra Premium plane."
+                },
+                "export": {
+                    "question": "Ar galiu eksportuoti duomenis?",
+                    "answer": "Taip. Sąskaitų žurnalą į CSV galite eksportuoti kada tik norite."
+                },
+                "payments": {
+                    "question": "Kaip veikia mokėjimai?",
+                    "answer": "Prijunkite savo Stripe paskyrą ir sąskaitų nuorodos galės priimti kortelių mokėjimus. Apmokėtas sąskaitas galima žymėti automatiškai arba rankiniu būdu."
+                },
+                "languages": {
+                    "question": "Kokios kalbos palaikomos?",
+                    "answer": "Sąskaitas šiandien galima išrašyti anglų arba lietuvių kalba, keičiant kalbą kiekvienam dokumentui."
+                }
             }
         },
         "cta": {
-            "title": "Pasirengę supaprastinti sąskaitų išrašymo procesą?",
-            "subtitle": "Pradėkite kurti profesionalias sąskaitas šiandien, kredito kortelės nereikia.",
-            "button": "Išbandyti Nemokamai"
-        },
-        "testimonial": {
-            "label": "Atsiliepimas",
-            "quote": "InvoiceTrackr visiškai pakeitė kaip tvarkau sąskaitų išrašymą. Nemokama versija puiki pradėti, bet premium funkcijos sutaupo valandas kiekvieną mėnesį.",
-            "author": "Nikita K.",
-            "role": "Laisvai Samdomas Duomenų Analitikas"
+            "badge": "Nemokamas sąskaitos generatorius · be registracijos",
+            "title": "Pasiruošę išsiųsti geresnę sąskaitą?",
+            "subtitle": "Sugeneruokite vieną nemokamai arba pradėkite Premium bandymą, kad galėtumėte išsaugoti, siųsti ir gauti apmokėjimą.",
+            "primary": "Pradėti 7 dienų bandymą",
+            "secondary": "Sugeneruoti nemokamą sąskaitą"
         }
     },
     "footer": {

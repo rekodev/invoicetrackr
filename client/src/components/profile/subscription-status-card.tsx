@@ -135,7 +135,7 @@ export default function SubscriptionStatusCard({
   };
 
   return (
-    <Card className="w-full flex-1 border shadow-sm">
+    <Card className="w-full flex-1 border bg-transparent shadow-sm backdrop-blur-3xl">
       <Card.Header className="flex flex-col items-start justify-between gap-5 p-4 px-6 md:flex-row md:items-center">
         <div className="flex flex-col gap-2">
           <Card.Title className="text-2xl">{t('title')}</Card.Title>
@@ -180,13 +180,11 @@ export default function SubscriptionStatusCard({
               <CheckCircleIcon className="h-5 w-5" />
             </span>
             <div>
-              <p className="section-eyebrow text-default-500">
-                {t('status_label')}
-              </p>
+              <p className="section-eyebrow text-muted">{t('status_label')}</p>
               <p className="text-foreground mt-1 text-base font-semibold">
                 {t(`status.${statusKey}`)}
               </p>
-              <p className="text-default-500 mt-1 text-sm">
+              <p className="text-muted mt-1 text-sm">
                 {isTrialing && trialEndsAt
                   ? t('trial_ends', { date: trialEndsAt })
                   : t('access_note')}
@@ -197,7 +195,7 @@ export default function SubscriptionStatusCard({
           <Separator className="mt-5" />
 
           <div className="pt-5">
-            <p className="section-eyebrow text-default-500">
+            <p className="section-eyebrow text-muted">
               {t('current_rate_label')}
             </p>
             <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -207,13 +205,13 @@ export default function SubscriptionStatusCard({
               <p className="text-foreground text-2xl font-semibold leading-none tracking-tight">
                 {currentRate.amount}
                 {currentRate.interval ? (
-                  <span className="text-default-500 text-sm font-normal">
+                  <span className="text-muted text-sm font-normal">
                     /{currentRate.interval}
                   </span>
                 ) : null}
               </p>
             </div>
-            <p className="text-default-500 mt-2 text-sm">{currentRate.note}</p>
+            <p className="text-muted mt-2 text-sm">{currentRate.note}</p>
           </div>
         </div>
 
@@ -223,18 +221,16 @@ export default function SubscriptionStatusCard({
               <CreditCardIcon className="h-5 w-5" />
             </span>
             <div>
-              <p className="section-eyebrow text-default-500">
-                {t('billing_label')}
-              </p>
+              <p className="section-eyebrow text-muted">{t('billing_label')}</p>
               <p className="text-foreground mt-1 text-base font-semibold">
                 {t('billing_title')}
               </p>
-              <p className="text-default-500 mt-1 text-sm">
+              <p className="text-muted mt-1 text-sm">
                 {t('billing_description')}
               </p>
               <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
                 <div>
-                  <p className="section-eyebrow text-default-500">
+                  <p className="section-eyebrow text-muted">
                     {t('billing_name_label')}
                   </p>
                   <p className="text-foreground mt-1 font-medium">
@@ -242,7 +238,7 @@ export default function SubscriptionStatusCard({
                   </p>
                 </div>
                 <div>
-                  <p className="section-eyebrow text-default-500">
+                  <p className="section-eyebrow text-muted">
                     {t('billing_email_label')}
                   </p>
                   <p className="text-foreground mt-1 font-medium">
@@ -251,13 +247,13 @@ export default function SubscriptionStatusCard({
                 </div>
               </div>
               <div className="mt-3 text-sm">
-                <p className="section-eyebrow text-default-500">
+                <p className="section-eyebrow text-muted">
                   {t('payment_method_label')}
                 </p>
                 <p className="text-foreground mt-1 font-medium">
                   {cardLabel}
                   {cardExpiry ? (
-                    <span className="text-default-500 font-normal">
+                    <span className="text-muted font-normal">
                       {' '}
                       · {cardExpiry}
                     </span>

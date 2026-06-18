@@ -1,9 +1,44 @@
-@import "tailwindcss";
-@import "@heroui/styles";
+@import 'tailwindcss';
+@import '@heroui/styles';
 
 @utility section-eyebrow {
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+@utility landing-grid-overlay {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklab, currentColor 7.5%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, currentColor 7.5%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 28%, transparent 74%);
+}
+
+@utility landing-glow-mint {
+  background: radial-gradient(
+    closest-side,
+    rgb(61 220 151 / 0.38),
+    transparent
+  );
+}
+
+@utility landing-surface {
+  border-color: color-mix(in oklab, currentColor 14%, transparent);
+  background: transparent;
+}
+
+@layer components {
+  .link {
+    @apply no-underline;
+  }
 }

@@ -103,12 +103,12 @@ export default function MerchantPaymentStatusCard({
   };
 
   return (
-    <Card className="w-full border shadow-sm">
+    <Card className="w-full border bg-transparent shadow-sm backdrop-blur-3xl">
       <Card.Header className="flex flex-col items-start justify-between gap-5 p-4 px-6 md:flex-row md:items-start">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <Card.Title className="text-2xl">{t('title')}</Card.Title>
-            <Chip size="md" color={statusChipColor} variant="soft">
+            <Chip color={statusChipColor} variant="soft">
               <StatusChipIcon className="h-3.5 w-3.5" />
               {t(`status.${statusKey}`)}
             </Chip>
@@ -132,7 +132,7 @@ export default function MerchantPaymentStatusCard({
                 : t('action_start')}
           </Button>
           {accountReference && (
-            <span className="text-default-400 text-left text-[11px] md:text-right">
+            <span className="text-muted text-left text-[11px] md:text-right">
               {accountReference}
             </span>
           )}
@@ -151,9 +151,12 @@ export default function MerchantPaymentStatusCard({
         <div className="grid gap-3 md:grid-cols-3">
           {checks.map(({ key, enabled, icon: Icon }) => {
             return (
-              <Card className="border" key={key}>
+              <Card
+                className="border bg-transparent p-4 backdrop-blur-3xl"
+                key={key}
+              >
                 <Card.Content className="flex flex-row items-center gap-3 p-3">
-                  <span className="bg-background text-default-600 border-default-100 grid h-9 w-9 shrink-0 place-items-center rounded-xl border">
+                  <span className="bg-background-foreground text-muted border-default-100 grid h-9 w-9 shrink-0 place-items-center rounded-xl border">
                     <Icon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0 flex-1">
@@ -162,15 +165,14 @@ export default function MerchantPaymentStatusCard({
                         {t(`checks.${key}.title`)}
                       </p>
                       <Chip
-                        size="sm"
-                        color={enabled ? 'success' : 'default'}
+                        color={enabled ? 'success' : 'warning'}
                         variant="soft"
                         className="shrink-0 text-[11px]"
                       >
                         {enabled ? t('checks.ready') : t('checks.pending')}
                       </Chip>
                     </div>
-                    <p className="text-default-500 mt-1 truncate text-xs">
+                    <p className="text-muted mt-1 truncate text-xs">
                       {enabled
                         ? t(`checks.${key}.ready_meta`)
                         : t(`checks.${key}.pending_meta`)}

@@ -60,7 +60,7 @@ export default async function RootLayout({
         <div className="bg-radial-[at_0%_100%] from-primary fixed inset-0 -z-10 min-h-screen from-[-35%] via-transparent to-transparent" />
         <Providers messages={messages}>
           <Header />
-          <main className="mx-auto flex w-full flex-grow flex-col py-6">
+          <main className="mx-auto flex w-full flex-grow flex-col">
             <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
           <Footer />

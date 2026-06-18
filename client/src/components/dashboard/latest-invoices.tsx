@@ -36,7 +36,7 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
   });
 
   return (
-    <section className="border-default-200 w-full min-w-72 rounded-3xl border p-5 shadow-sm sm:p-6 xl:max-w-lg">
+    <section className="border-default-200 w-full min-w-72 rounded-3xl border p-5 shadow-sm backdrop-blur-3xl sm:p-6 xl:max-w-lg">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-base font-semibold">{t('title')}</h2>
