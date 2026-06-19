@@ -3,6 +3,7 @@ import { ContactMessageEmail } from '@invoicetrackr/emails';
 import { useI18n } from 'fastify-i18n';
 
 import { BadRequestError } from '../utils/error';
+import { appEmailFrom } from '../config/app';
 import { resend } from '../config/resend';
 
 export const postContactMessage = async (
@@ -20,7 +21,7 @@ export const postContactMessage = async (
   });
 
   const { error } = await resend.emails.send({
-    from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
+    from: appEmailFrom,
     to: 'support@ruwhia8088.resend.app',
     subject: 'New Contact Message',
     react: emailHtml

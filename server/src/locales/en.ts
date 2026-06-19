@@ -16,7 +16,6 @@ export default {
     },
     invoice: {
       title: 'InvoiceTrackr',
-      subtitle: 'Professional Invoice Management',
       defaultMessage: 'Please find your invoice attached.',
       detailsTitle: 'Invoice Details',
       sentBy: 'This invoice was sent from {senderName} via InvoiceTrackr.',
@@ -31,26 +30,24 @@ export default {
       signingMessage:
         'Open the secure invoice link to review the document, add your signature, and download the signed PDF.',
       signingButton: 'Review and sign',
-      signingFallback:
-        'If the button does not work, copy and paste this secure link into your browser:',
       publicInvoiceTitle: 'View invoice',
       publicInvoiceMessage:
         'Open the secure invoice page to review the PDF, see payment details, and pay online if the sender accepts card payments.',
       publicInvoiceButton: 'View invoice',
-      viewTitle: 'View signed invoice',
-      viewMessage:
-        'Open the secure invoice link to review and download the signed PDF.',
-      viewButton: 'View signed invoice',
       signedNotification: {
         recipient: 'The recipient',
         subject: 'Invoice %{invoiceId} was signed',
         message: '%{receiverName} signed invoice %{invoiceId}.',
-        review: 'You can review the signed invoice here:'
+        review: 'You can review the signed invoice here:',
+        reviewButton: 'View signed invoice'
       },
       footer: 'This email was sent by InvoiceTrackr',
       copyright: 'InvoiceTrackr. All rights reserved.'
     },
     billing: {
+      buttonText: 'Manage billing',
+      fallback: 'Or copy and paste this billing link into your browser:',
+      note: 'Keeping your billing details current keeps your invoice workflow available without interruption.',
       trialEnding: {
         subject: 'Your InvoiceTrackr trial is ending soon',
         text: 'Your 7-day trial is ending soon. Add a payment method in your account settings to keep using InvoiceTrackr.'

@@ -11,6 +11,7 @@ import {
   NotFoundError,
   UnauthorizedError
 } from '../utils/error';
+import { appEmailFrom, getAppUrl } from '../config/app';
 import {
   changeUserPasswordInDb,
   deleteUserFromDb,
@@ -345,7 +346,7 @@ export const resetUserPassword = async (
 
   await saveResetTokenToDb(user.id, resetToken, tokenExpiresAt);
 
-  const resetLink = `https://invoicetrackr.app/create-new-password/${resetToken}`;
+  const resetLink = getAppUrl(`/create-new-password/${resetToken}`);
 
   const emailHtml = ResetPasswordEmail({
     resetLink,
@@ -365,10 +366,11 @@ export const resetUserPassword = async (
   });
 
   const { error } = await resend.emails.send({
-    from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
+    from: appEmailFrom,
     to: [email],
     subject: i18n.t('emails.resetPassword.subject'),
-    react: emailHtml
+    react: emailHtml,
+    text: i18n.t('emails.resetPassword.text', { resetLink })
   });
 
   if (error) {

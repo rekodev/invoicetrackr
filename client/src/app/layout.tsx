@@ -8,6 +8,7 @@ import './globals.css';
 import Footer from '@/components/layout/footer';
 import GoogleAnalytics from '@/components/providers/google-analytics';
 import Header from '@/components/layout/header';
+import { appBaseUrl } from '@/lib/config/app';
 
 import CookieConsent from '../components/cookie-consent';
 import Loading from './loading';
@@ -16,9 +17,7 @@ import { Providers } from '../components/providers/providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
-  ),
+  metadataBase: new URL(appBaseUrl),
   title: 'InvoiceTrackr',
   description:
     'Create professional invoices, track payments, and monitor income for freelancers and small businesses.',

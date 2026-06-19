@@ -18,6 +18,7 @@ import {
   upsertStripeAccountInDb,
   upsertStripeMerchantAccountInDb
 } from '../database/payment';
+import { getAppBaseUrl } from '../config/app';
 import { getUserFromDb } from '../database/user';
 import { stripe } from '../config/stripe';
 
@@ -30,9 +31,6 @@ const timestampToIso = (timestamp?: number | null) =>
 
 const hasLiveSubscriptionStatus = (status?: string | null) =>
   !!status && LIVE_SUBSCRIPTION_STATUSES.includes(status);
-
-const getBaseUrl = () =>
-  process.env.APP_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL!;
 
 const refreshStripeMerchantAccountInDb = async (userId: number) => {
   const merchantAccount = await getStripeMerchantAccountFromDb(userId);
@@ -600,7 +598,7 @@ export const createMerchantPaymentOnboardingSession = async (
   if (!merchantAccount?.stripeConnectedAccountId)
     throw new InternalServerError('Unable to create merchant account');
 
-  const baseUrl = getBaseUrl();
+  const baseUrl = getAppBaseUrl();
   const stripeAccount = await stripe.accounts.retrieve(
     merchantAccount.stripeConnectedAccountId
   );
@@ -751,7 +749,7 @@ export const createBillingPortalSession = async (
   const customerId = await ensureStripeCustomer(userId);
   const session = await stripe.billingPortal.sessions.create({
     customer: customerId,
-    return_url: `${getBaseUrl()}/profile/billing`
+    return_url: `${getAppBaseUrl()}/profile/billing`
   });
 
   return reply.status(200).send({ url: session.url });
@@ -781,8 +779,8 @@ export const createCheckoutSession = async (
     subscription_data: {
       metadata: { userId: String(userId) }
     },
-    success_url: `${getBaseUrl()}/payment-success/confirm?checkout=true&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${getBaseUrl()}/renew-subscription`
+    success_url: `${getAppBaseUrl()}/payment-success/confirm?checkout=true&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${getAppBaseUrl()}/renew-subscription`
   });
   await updateBillingStatusInDb(userId, { paymentSuccessPending: true });
 
