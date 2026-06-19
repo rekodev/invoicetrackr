@@ -27,7 +27,7 @@ import {
   TERMS_OF_SERVICE_PAGE
 } from '@/lib/constants/pages';
 
-import AppLogo from '../app-logo';
+import AppBrand from '../app-brand';
 import ContactFormDialog from './contact-form-dialog';
 
 const CREATE_NEW_PASSWORD_PAGE = '/create-new-password';
@@ -80,25 +80,22 @@ const Footer = () => {
         <div className="border-t-1 w-full gap-4 py-10 md:flex-row md:gap-8 md:py-12">
           <div className="m-auto flex w-full max-w-7xl flex-col items-center justify-between gap-8 px-6 text-center sm:flex-row sm:items-start sm:text-start">
             <div className="flex flex-col gap-6">
-              <div className="mx-auto flex items-center gap-2 sm:mx-0">
-                <AppLogo />
-                <p className="font-bold text-inherit">
-                  INVOICE<span className="text-secondary-600">TRACKR</span>
-                </p>
-              </div>
+              <AppBrand
+                className="mx-auto sm:mx-0"
+                wordmarkClassName="text-inherit"
+                wordmarkAccentClassName="text-secondary-600 dark:text-secondary-600"
+              />
               <p className="text-muted-foreground text-sm">{t('tagline')}</p>
             </div>
             <div className="grid gap-8 sm:grid-cols-2 md:ml-auto">
               <div className="grid gap-3 text-sm">
-                <div className="text-default-500 font-medium">
-                  {t('support')}
-                </div>
+                <div className="text-muted font-medium">{t('support')}</div>
                 <ContactFormDialog />
               </div>
             </div>
             <div className="grid gap-8 sm:grid-cols-2 md:ml-auto">
               <div className="grid gap-3 text-sm">
-                <div className="text-default-500 font-medium">{t('legal')}</div>
+                <div className="text-muted font-medium">{t('legal')}</div>
                 <nav className="grid gap-2">
                   <Link
                     href={PRIVACY_POLICY_PAGE}

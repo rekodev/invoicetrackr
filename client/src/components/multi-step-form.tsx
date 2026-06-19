@@ -10,7 +10,7 @@ import {
   cn,
   toast
 } from '@heroui/react';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { User } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -18,7 +18,7 @@ import { useTranslations } from 'next-intl';
 import { PAYMENT_SUCCESS_CONFIRM_PAGE } from '@/lib/constants/pages';
 import { isUserPersonalInformationSetUp } from '@/lib/utils/user';
 
-import AppLogo from './app-logo';
+import AppBrand from './app-brand';
 import PaymentForm from './payment-form';
 import PersonalInformationForm from './profile/personal-information-form';
 import SignUpForm from './auth/sign-up-form';
@@ -34,16 +34,19 @@ export default function MultiStepForm({ existingUserData }: Props) {
   const steps = [
     {
       id: 'account',
+      shortName: t('steps.account.short_name'),
       name: t('steps.account.name'),
       description: t('steps.account.description')
     },
     {
       id: 'personal',
+      shortName: t('steps.personal.short_name'),
       name: t('steps.personal.name'),
       description: t('steps.personal.description')
     },
     {
       id: 'trial',
+      shortName: t('steps.trial.short_name'),
       name: t('steps.trial.name'),
       description: t('steps.trial.description')
     }
@@ -138,15 +141,84 @@ export default function MultiStepForm({ existingUserData }: Props) {
     </div>
   );
 
+  const renderHorizontalStepper = () => (
+    <div className="flex w-full items-start">
+      {steps.map((step, index) => {
+        const isCompleted = index < currentStep;
+        const isCurrent = index === currentStep;
+        const isLocked = !existingUserData || index < minimumAllowedStep;
+
+        return (
+          <Fragment key={step.id}>
+            <button
+              type="button"
+              disabled={isLocked}
+              onClick={() => goToStep(index)}
+              className={cn(
+                'flex min-w-7 items-center gap-2 text-left',
+                'disabled:cursor-default'
+              )}
+            >
+              <span
+                className={cn(
+                  'grid h-7 w-7 shrink-0 place-items-center rounded-full border text-xs font-semibold transition',
+                  {
+                    'border-secondary/40 bg-secondary/15 text-secondary':
+                      isCompleted,
+                    'bg-foreground text-background border-foreground':
+                      isCurrent,
+                    'border-foreground/20 text-muted':
+                      !isCompleted && !isCurrent
+                  }
+                )}
+              >
+                {isCompleted ? (
+                  <CheckIcon className="h-4 w-4" />
+                ) : (
+                  <span>{index + 1}</span>
+                )}
+              </span>
+              <span
+                className={cn(
+                  'max-w-16 truncate whitespace-nowrap text-xs font-medium max-[420px]:hidden',
+                  isCurrent
+                    ? 'text-foreground'
+                    : isCompleted
+                      ? 'text-muted'
+                      : 'text-muted'
+                )}
+              >
+                {step.shortName}
+              </span>
+            </button>
+            {index < steps.length - 1 && (
+              <span
+                className={cn(
+                  'mx-2 mt-3.5 h-0.5 min-w-6 flex-1 rounded-full bg-black/20 dark:bg-white/25',
+                  {
+                    'bg-secondary/70 dark:bg-secondary/70': isCompleted
+                  }
+                )}
+              />
+            )}
+          </Fragment>
+        );
+      })}
+    </div>
+  );
+
+  if (!existingUserData) {
+    return (
+      <section className="flex flex-1 items-center justify-center px-6 py-8">
+        <div className="w-full max-w-lg">
+          <SignUpForm headerContent={renderHorizontalStepper()} />
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section
-      className={cn(
-        'mx-auto flex w-full max-w-7xl flex-col justify-center gap-4 py-4 md:flex-row',
-        {
-          'px-6': !existingUserData
-        }
-      )}
-    >
+    <section className="mx-auto flex w-full max-w-7xl flex-col justify-center gap-4 py-4 md:flex-row">
       <Card className="border-default-100 from-default-100 via-secondary-50 h-full w-full gap-8 border bg-gradient-to-b md:max-w-sm dark:to-black">
         <CardHeader className="-mt-4 flex-col items-start gap-8 px-8 text-start md:mt-0 md:pt-8">
           <Button
@@ -159,21 +231,13 @@ export default function MultiStepForm({ existingUserData }: Props) {
             {t('actions.back')}
           </Button>
           <div className="hidden md:block">
-            <div className="flex items-start gap-2">
-              <AppLogo height={65} width={65} />
-
-              <div className="flex flex-col">
-                <p className="text-default-800 hidden font-bold sm:flex">
-                  INVOICE
-                  <span className="text-secondary-400 dark:text-secondary-600">
-                    TRACKR
-                  </span>
-                </p>
-                <p className="text-default-500 text-sm">
-                  {t('branding.tagline')}
-                </p>
-              </div>
-            </div>
+            <AppBrand
+              logoSize={65}
+              wordmarkClassName="hidden sm:flex"
+              wordmarkAccentClassName="text-secondary-400 dark:text-secondary-600"
+            >
+              <p className="text-muted text-sm">{t('branding.tagline')}</p>
+            </AppBrand>
           </div>
         </CardHeader>
         <CardContent className="flex max-h-min md:items-center md:justify-center">
@@ -214,9 +278,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
 
                     <div>
                       <p className="font-semibold">{step.name}</p>
-                      <p className="text-default-500 text-sm">
-                        {step.description}
-                      </p>
+                      <p className="text-muted text-sm">{step.description}</p>
                     </div>
                   </div>
                 </div>

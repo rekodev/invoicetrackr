@@ -22,7 +22,7 @@ import {
   SIGN_UP_PAGE
 } from '@/lib/constants/pages';
 
-import AppLogo from '../app-logo';
+import AppBrand from '../app-brand';
 import LanguageSwitcher from './language-switcher';
 import ThemeSwitcher from './theme-switcher';
 
@@ -58,7 +58,7 @@ export default function GuestHeader() {
             <Separator />
             <DropdownItem
               href={LOGIN_PAGE}
-              className="text-default-800 flex items-center justify-center"
+              className="text-muted flex items-center justify-center"
               key="login"
             >
               {t('login')}
@@ -66,7 +66,7 @@ export default function GuestHeader() {
             <DropdownItem
               key="sign-up"
               href={SIGN_UP_PAGE}
-              className="text-default-800"
+              className="text-muted"
             >
               {t('sign_up')}
             </DropdownItem>
@@ -80,11 +80,7 @@ export default function GuestHeader() {
     <header className="border-default-200 bg-background/80 sticky top-0 z-40 w-full border-b backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-6">
         <Link className="flex gap-2" href={HOME_PAGE}>
-          <AppLogo />
-          <p className="text-default-foreground hidden font-bold sm:flex">
-            INVOICE
-            <span className="text-accent dark:text-secondary-600">TRACKR</span>
-          </p>
+          <AppBrand wordmarkClassName="hidden sm:flex" />
         </Link>
 
         <div className="hidden gap-4 md:flex">

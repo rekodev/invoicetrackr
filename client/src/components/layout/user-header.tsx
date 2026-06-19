@@ -30,7 +30,7 @@ import { logOutAction } from '@/lib/actions';
 import LanguageSwitcher from './language-switcher';
 import ThemeSwitcher from './theme-switcher';
 
-import AppLogo from '../app-logo';
+import AppBrand from '../app-brand';
 
 const navbarItems = [
   { name: 'Dashboard', href: DASHBOARD_PAGE },
@@ -73,7 +73,7 @@ export default function UserHeader({ user }: Props) {
               <DropdownItem
                 key={`mobile-${index}`}
                 href={item.href}
-                className={cn('text-default-800 w-full', {
+                className={cn('text-muted w-full', {
                   'text-primary': isActive
                 })}
               >
@@ -90,11 +90,7 @@ export default function UserHeader({ user }: Props) {
     <header className="border-default-200 bg-background/80 sticky top-0 z-40 w-full border-b backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-6">
         <Link className="flex gap-2 text-white" href={HOME_PAGE}>
-          <AppLogo />
-          <p className="text-default-foreground hidden font-bold sm:flex">
-            INVOICE
-            <span className="text-accent dark:text-secondary-600">TRACKR</span>
-          </p>
+          <AppBrand wordmarkClassName="hidden sm:flex" />
         </Link>
 
         <div className="hidden gap-4 md:flex">

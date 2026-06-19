@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
   FieldError,
   Input,
   Label,
@@ -24,6 +23,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { ActionResponseModel } from '@/lib/types/action';
+import AuthCardHeader from '@/components/auth/auth-card-header';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
 import { createNewPasswordAction } from '@/lib/actions';
 
@@ -40,6 +40,7 @@ const initialFormValues = {
 type CreateNewPasswordFormModel = typeof initialFormValues;
 
 export default function CreateNewPasswordForm({ userId, token }: Props) {
+  const pageT = useTranslations('create_new_password');
   const t = useTranslations('create_new_password.form');
   const {
     register,
@@ -87,9 +88,10 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
 
   return (
     <Card className="mx-auto w-full max-w-lg border">
-      <CardHeader className="p-8 pb-0">
-        <h1 className="text-3xl font-medium">{t('title')}</h1>
-      </CardHeader>
+      <AuthCardHeader
+        title={pageT('title')}
+        description={pageT('description')}
+      />
       <CardContent className="p-8 pb-0">
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <TextField variant="secondary" isInvalid={!!errors.newPassword}>
@@ -150,7 +152,7 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
       </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
         <div className="flex gap-1 text-sm">
-          <p className="text-default-500">{t('remember_your_password')}</p>{' '}
+          <p className="text-muted">{t('remember_your_password')}</p>{' '}
           <Link
             href={LOGIN_PAGE}
             className="text-accent font-medium decoration-current underline-offset-4 hover:underline"

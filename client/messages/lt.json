@@ -405,7 +405,6 @@
         "welcome": "Sveiki",
         "subtitle": "Prisijunkite prie savo paskyros, kad tęstumėte",
         "form": {
-            "title": "Prisijungti",
             "email": "El. paštas",
             "email_placeholder": "Įveskite savo el. pašto adresą",
             "password": "Slaptažodis",
@@ -424,7 +423,6 @@
         "page_title": "Registruotis",
         "page_description": "Sukurkite savo InvoiceTrackr paskyrą.",
         "form": {
-            "title": "Registruotis",
             "email": "El. paštas",
             "email_placeholder": "Įveskite savo el. pašto adresą",
             "password": "Slaptažodis",
@@ -441,14 +439,17 @@
             },
             "steps": {
                 "account": {
+                    "short_name": "Paskyra",
                     "name": "Sukurti paskyrą",
                     "description": "Kuriame pagrindą"
                 },
                 "personal": {
+                    "short_name": "Profilis",
                     "name": "Asmeninė informacija",
                     "description": "Papasakokite apie save"
                 },
                 "trial": {
+                    "short_name": "Bandymas",
                     "name": "Pradėti nemokamą bandymą",
                     "description": "Naudokitės visomis funkcijomis 7 dienas"
                 }
@@ -989,7 +990,6 @@
     "forgot_password": {
         "title": "Atstatyti slaptažodį",
         "description": "Įveskite savo el. pašto adresą, kad gautumėte slaptažodžio atstatymo instrukcijas",
-        "card_header": "Pamiršote slaptažodį",
         "email": "El. paštas",
         "email_placeholder": "Įveskite savo el. pašto adresą",
         "reset_link": "Siųsti atstatymo nuorodą",
@@ -1008,7 +1008,6 @@
             "remember_your_password": "Prisimeni savo slaptažodį?"
         },
         "form": {
-            "title": "Sukurti naują slaptažodį",
             "new_password": "Naujas slaptažodis",
             "confirmed_new_password": "Patvirtinti naują slaptažodį",
             "new_password_placeholder": "Įveskite naują slaptažodį",

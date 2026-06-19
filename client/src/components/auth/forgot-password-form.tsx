@@ -6,7 +6,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
   FieldError,
   Input,
   Label,
@@ -25,6 +24,7 @@ import { useTranslations } from 'next-intl';
 
 import { LOGIN_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
 import { ActionResponseModel } from '@/lib/types/action';
+import AuthCardHeader from '@/components/auth/auth-card-header';
 import { resetPasswordAction } from '@/lib/actions';
 
 type ForgotPasswordFormModel = {
@@ -59,9 +59,7 @@ export default function ForgotPasswordForm() {
 
   return (
     <Card className="mx-auto w-full max-w-lg border">
-      <CardHeader className="p-8 pb-0">
-        <h1 className="text-3xl font-medium">{t('card_header')}</h1>
-      </CardHeader>
+      <AuthCardHeader title={t('title')} description={t('description')} />
       <CardContent className="p-8 pb-0">
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <TextField variant="secondary" isInvalid={!!errors.email}>
@@ -116,7 +114,7 @@ export default function ForgotPasswordForm() {
           <ArrowLeftIcon className="mr-1 h-4 w-4" /> {t('login')}
         </Link>
         <div className="flex gap-1 text-sm">
-          <p className="text-default-500">{t('create_account')}</p>
+          <p className="text-muted">{t('create_account')}</p>
           <Link
             href={SIGN_UP_PAGE}
             className="text-accent font-medium decoration-current underline-offset-4 hover:underline"

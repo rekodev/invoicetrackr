@@ -9,7 +9,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
   FieldError,
   Input,
   Label,
@@ -22,6 +21,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
+import AuthCardHeader from '@/components/auth/auth-card-header';
 import { authenticateAction } from '@/lib/actions';
 
 type LoginFormModel = {
@@ -30,6 +30,7 @@ type LoginFormModel = {
 };
 
 export default function LoginForm() {
+  const pageT = useTranslations('login');
   const t = useTranslations('login.form');
   const {
     register,
@@ -64,9 +65,10 @@ export default function LoginForm() {
 
   return (
     <Card className="mx-auto w-full max-w-lg border">
-      <CardHeader className="p-8 pb-0">
-        <h1 className="text-3xl font-medium">{t('title')}</h1>
-      </CardHeader>
+      <AuthCardHeader
+        title={pageT('welcome')}
+        description={pageT('subtitle')}
+      />
       <CardContent className="p-8 pb-0">
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <TextField variant="secondary" isInvalid={!!errors.email}>
@@ -124,7 +126,7 @@ export default function LoginForm() {
           {t('forgot_password')}
         </Link>
         <div className="flex gap-1 text-sm">
-          <p className="text-default-500">{t('need_account')}</p>{' '}
+          <p className="text-muted">{t('need_account')}</p>{' '}
           <Link
             href={SIGN_UP_PAGE}
             className="text-accent font-medium decoration-current underline-offset-4 hover:underline"

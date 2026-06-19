@@ -405,7 +405,6 @@
         "welcome": "Welcome",
         "subtitle": "Log into your account to continue",
         "form": {
-            "title": "Log In",
             "email": "Email",
             "email_placeholder": "Enter your email address",
             "password": "Password",
@@ -424,7 +423,6 @@
         "page_title": "Sign up",
         "page_description": "Create your InvoiceTrackr account.",
         "form": {
-            "title": "Sign Up",
             "email": "Email",
             "email_placeholder": "Enter your email address",
             "password": "Password",
@@ -441,14 +439,17 @@
             },
             "steps": {
                 "account": {
+                    "short_name": "Account",
                     "name": "Create an account",
                     "description": "Setting up your foundation"
                 },
                 "personal": {
+                    "short_name": "Profile",
                     "name": "Personal Information",
                     "description": "Tell us about yourself"
                 },
                 "trial": {
+                    "short_name": "Trial",
                     "name": "Start Free Trial",
                     "description": "Unlock the full product for 7 days"
                 }
@@ -989,7 +990,6 @@
     "forgot_password": {
         "title": "Reset Password",
         "description": "Enter your email to receive password reset instructions",
-        "card_header": "Forgot Password",
         "email": "Email",
         "email_placeholder": "Enter your email address",
         "reset_link": "Send Reset Link",
@@ -1008,7 +1008,6 @@
             "remember_your_password": "Remember your password?"
         },
         "form": {
-            "title": "Create New Password",
             "new_password": "New Password",
             "confirmed_new_password": "Confirm New Password",
             "new_password_placeholder": "Enter new password",

@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  CardHeader,
   FieldError,
   Input,
   Label,
@@ -19,9 +18,11 @@ import {
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import type { FormEvent } from 'react';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
+import AuthCardHeader from '@/components/auth/auth-card-header';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
 import { signUpAction } from '@/lib/actions';
 
@@ -38,7 +39,12 @@ const initialSubmissionMessage = {
 
 type SubmissionMessage = typeof initialSubmissionMessage | null;
 
-export default function SignUpForm() {
+type Props = {
+  headerContent?: ReactNode;
+};
+
+export default function SignUpForm({ headerContent }: Props) {
+  const pageT = useTranslations('sign_up');
   const t = useTranslations('sign_up.form');
   const {
     register,
@@ -112,9 +118,12 @@ export default function SignUpForm() {
 
   return (
     <Card data-testid="sign-up-form" className="w-full border">
-      <CardHeader className="p-8 pb-0">
-        <h1 className="text-3xl font-medium">{t('title')}</h1>
-      </CardHeader>
+      <AuthCardHeader
+        title={pageT('page_title')}
+        description={pageT('page_description')}
+      >
+        {headerContent}
+      </AuthCardHeader>
       <CardContent className="p-8 pb-0">
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <TextField variant="secondary" isInvalid={!!errors.email}>
@@ -167,7 +176,7 @@ export default function SignUpForm() {
       </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
         <div className="flex flex-col items-center gap-1 text-sm sm:flex-row">
-          <p className="text-default-500">{t('already_have_account')}</p>{' '}
+          <p className="text-muted">{t('already_have_account')}</p>{' '}
           <Link
             href={LOGIN_PAGE}
             className="text-accent font-medium decoration-current underline-offset-4 hover:underline"
