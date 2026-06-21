@@ -3,10 +3,9 @@
 import {
   ArrowRightIcon,
   CheckCircleIcon,
-  CreditCardIcon,
-  SparklesIcon
+  CreditCardIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, CardBody, CardHeader, cn } from '@heroui/react';
+import { Button, Card, CardContent, Separator, cn } from '@heroui/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
@@ -136,33 +135,26 @@ export default function SubscriptionStatusCard({
   };
 
   return (
-    <Card className="border-default-100 bg-background w-full flex-1 rounded-xl border shadow-sm">
-      <CardHeader className="border-default-100 flex flex-col items-start justify-between gap-5 border-b p-6 md:flex-row md:items-center">
-        <div className="max-w-2xl">
-          <div className="border-secondary/30 bg-secondary/10 text-secondary inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.08em]">
-            <SparklesIcon className="h-3.5 w-3.5" />
-            {t('badge')}
-          </div>
-          <h1 className="text-foreground mt-4 text-2xl font-semibold tracking-tight">
-            {t('title')}
-          </h1>
-          <p className="text-default-500 mt-2 max-w-xl text-sm leading-6">
+    <Card className="w-full flex-1 border bg-transparent shadow-sm backdrop-blur-3xl">
+      <Card.Header className="flex flex-col items-start justify-between gap-5 p-4 px-6 md:flex-row md:items-center">
+        <div className="flex flex-col gap-2">
+          <Card.Title className="text-2xl">{t('title')}</Card.Title>
+          <Card.Description>
             {isTrialing && hasPaymentMethod
               ? t('description.trial_ready')
               : t(`description.${statusKey}`)}
-          </p>
+          </Card.Description>
         </div>
 
         {showAction && (
           <Button
             onPress={handleClick}
-            isLoading={isLoading}
-            className="w-full rounded-xl font-medium md:w-auto"
+            isPending={isLoading}
+            className="w-full font-medium md:w-auto"
             size="md"
-            variant={isActive ? 'bordered' : 'solid'}
-            color={isActive ? 'secondary' : 'warning'}
-            endContent={!isLoading && <ArrowRightIcon className="h-4 w-4" />}
+            variant={isActive ? 'primary' : 'secondary'}
           >
+            {!isLoading && <ArrowRightIcon className="h-4 w-4" />}
             {isTrialing
               ? hasPaymentMethod
                 ? t('action.manage')
@@ -172,9 +164,11 @@ export default function SubscriptionStatusCard({
                 : t('action.renew')}
           </Button>
         )}
-      </CardHeader>
+      </Card.Header>
 
-      <CardBody className="grid gap-4 p-6 lg:grid-cols-[1fr_1fr]">
+      <Separator />
+
+      <CardContent className="grid gap-4 p-6 lg:grid-cols-[1fr_1fr]">
         <div className="p-1">
           <div className="flex items-start gap-3">
             <span
@@ -186,13 +180,11 @@ export default function SubscriptionStatusCard({
               <CheckCircleIcon className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
-                {t('status_label')}
-              </p>
+              <p className="section-eyebrow text-muted">{t('status_label')}</p>
               <p className="text-foreground mt-1 text-base font-semibold">
                 {t(`status.${statusKey}`)}
               </p>
-              <p className="text-default-500 mt-1 text-sm">
+              <p className="text-muted mt-1 text-sm">
                 {isTrialing && trialEndsAt
                   ? t('trial_ends', { date: trialEndsAt })
                   : t('access_note')}
@@ -200,8 +192,10 @@ export default function SubscriptionStatusCard({
             </div>
           </div>
 
-          <div className="border-default-100 mt-5 border-t pt-5">
-            <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+          <Separator className="mt-5" />
+
+          <div className="pt-5">
+            <p className="section-eyebrow text-muted">
               {t('current_rate_label')}
             </p>
             <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -211,34 +205,32 @@ export default function SubscriptionStatusCard({
               <p className="text-foreground text-2xl font-semibold leading-none tracking-tight">
                 {currentRate.amount}
                 {currentRate.interval ? (
-                  <span className="text-default-500 text-sm font-normal">
+                  <span className="text-muted text-sm font-normal">
                     /{currentRate.interval}
                   </span>
                 ) : null}
               </p>
             </div>
-            <p className="text-default-500 mt-2 text-sm">{currentRate.note}</p>
+            <p className="text-muted mt-2 text-sm">{currentRate.note}</p>
           </div>
         </div>
 
         <div className="p-1">
           <div className="flex items-start gap-3">
-            <span className="bg-secondary/10 text-secondary grid h-9 w-9 shrink-0 place-items-center rounded-lg">
+            <span className="bg-secondary/15 text-secondary border-secondary/20 grid h-9 w-9 shrink-0 place-items-center rounded-xl border">
               <CreditCardIcon className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
-                {t('billing_label')}
-              </p>
+              <p className="section-eyebrow text-muted">{t('billing_label')}</p>
               <p className="text-foreground mt-1 text-base font-semibold">
                 {t('billing_title')}
               </p>
-              <p className="text-default-500 mt-1 text-sm">
+              <p className="text-muted mt-1 text-sm">
                 {t('billing_description')}
               </p>
               <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
                 <div>
-                  <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+                  <p className="section-eyebrow text-muted">
                     {t('billing_name_label')}
                   </p>
                   <p className="text-foreground mt-1 font-medium">
@@ -246,7 +238,7 @@ export default function SubscriptionStatusCard({
                   </p>
                 </div>
                 <div>
-                  <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+                  <p className="section-eyebrow text-muted">
                     {t('billing_email_label')}
                   </p>
                   <p className="text-foreground mt-1 font-medium">
@@ -255,13 +247,13 @@ export default function SubscriptionStatusCard({
                 </div>
               </div>
               <div className="mt-3 text-sm">
-                <p className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
+                <p className="section-eyebrow text-muted">
                   {t('payment_method_label')}
                 </p>
                 <p className="text-foreground mt-1 font-medium">
                   {cardLabel}
                   {cardExpiry ? (
-                    <span className="text-default-500 font-normal">
+                    <span className="text-muted font-normal">
                       {' '}
                       · {cardExpiry}
                     </span>
@@ -271,7 +263,7 @@ export default function SubscriptionStatusCard({
             </div>
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

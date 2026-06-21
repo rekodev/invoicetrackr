@@ -2,12 +2,14 @@
 
 import {
   Button,
+  CloseButton,
   Dropdown,
   DropdownItem,
   DropdownMenu,
+  DropdownPopover,
   DropdownTrigger,
   Input,
-  Selection
+  buttonVariants
 } from '@heroui/react';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import {
@@ -61,30 +63,41 @@ const ClientSectionTopContent = ({
 
   const renderTypeFilterSelect = () => (
     <Dropdown>
-      <DropdownTrigger className="hidden sm:flex">
-        <Button
-          endContent={
-            <ChevronDownIcon className="text-small min-w-4 max-w-4" />
-          }
-          variant="flat"
-        >
-          {t('type_filter')}
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        disallowEmptySelection
-        aria-label={t('a11y.columns_label')}
-        closeOnSelect={false}
-        selectionMode="multiple"
-        selectedKeys={typeFilters}
-        onSelectionChange={setTypeFilters as (_keys: Selection) => any}
+      <DropdownTrigger
+        className={buttonVariants({
+          variant: 'tertiary',
+          className: 'hidden items-center justify-center sm:flex'
+        })}
       >
-        {filters.map((filter) => (
-          <DropdownItem key={filter} className="capitalize">
-            {tTypes(filter as 'business' | 'individual')}
-          </DropdownItem>
-        ))}
-      </DropdownMenu>
+        <span>{t('type_filter')}</span>
+        <ChevronDownIcon className="min-w-4 max-w-4 text-sm" />
+      </DropdownTrigger>
+      <DropdownPopover>
+        <DropdownMenu
+          disallowEmptySelection
+          aria-label={t('a11y.columns_label')}
+          selectionMode="multiple"
+          selectedKeys={typeFilters}
+          onSelectionChange={(keys) =>
+            setTypeFilters(
+              keys === 'all'
+                ? new Set()
+                : new Set(keys as Set<InvoicePartyBusinessType>)
+            )
+          }
+        >
+          {filters.map((filter) => (
+            <DropdownItem
+              key={filter}
+              id={filter}
+              textValue={tTypes(filter as 'business' | 'individual')}
+              className="capitalize"
+            >
+              {tTypes(filter as 'business' | 'individual')}
+            </DropdownItem>
+          ))}
+        </DropdownMenu>
+      </DropdownPopover>
     </Dropdown>
   );
 
@@ -92,28 +105,27 @@ const ClientSectionTopContent = ({
     <>
       <div className="flex flex-col gap-4">
         <div className="flex items-end justify-between gap-3">
-          <Input
-            isClearable
-            className="w-full sm:max-w-[44%]"
-            placeholder={t('search_placeholder')}
-            startContent={<MagnifyingGlassIcon className="h-4 w-4" />}
-            value={searchTerm}
-            onChange={onSearch}
-            onClear={onClear}
-          />
+          <div className="flex w-full items-center gap-2 sm:max-w-[44%]">
+            <MagnifyingGlassIcon className="h-4 w-4" />
+            <Input
+              variant="secondary"
+              className="w-full"
+              placeholder={t('search_placeholder')}
+              value={searchTerm}
+              onChange={onSearch}
+            />
+            {searchTerm && <CloseButton aria-label="Clear" onPress={onClear} />}
+          </div>
           <div className="flex gap-3">
             {renderTypeFilterSelect()}
-            <Button
-              color="secondary"
-              endContent={<PlusIcon className="h-4 w-4" />}
-              onPress={handleAddNewClient}
-            >
+            <Button onPress={handleAddNewClient}>
               {t('add_new')}
+              <PlusIcon className="h-4 w-4" />
             </Button>
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-small text-default-400">
+          <span className="section-eyebrow text-default-500">
             {totalClientsText}
           </span>
         </div>

@@ -22,7 +22,7 @@ export default function ThemeSwitcher() {
   if (!mounted) return null;
 
   return (
-    <Button variant="bordered" isIconOnly onPress={handleClick}>
+    <Button variant="outline" isIconOnly onPress={handleClick}>
       {theme === 'light' ? (
         <MoonIcon className="h-5 w-5" />
       ) : (

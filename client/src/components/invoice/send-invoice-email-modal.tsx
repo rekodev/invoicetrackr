@@ -1,25 +1,21 @@
 'use client';
 
 import {
+  Alert,
   Button,
   Card,
-  CardBody,
   Checkbox,
+  FieldError,
   Input,
+  Label,
   Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Textarea,
-  addToast
+  TextArea,
+  TextField,
+  toast
 } from '@heroui/react';
-import {
-  InformationCircleIcon,
-  PaperAirplaneIcon
-} from '@heroicons/react/24/outline';
 import { JSX, useEffect, useState, useTransition } from 'react';
 import { BlobProvider } from '@react-pdf/renderer';
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -66,6 +62,16 @@ export default function SendInvoiceEmailModal({
   const [requestSignature, setRequestSignature] = useState(
     Boolean(invoice.recipientSigningRequestedAt && !invoice.recipientSignedAt)
   );
+  const defaultRecipientEmail =
+    invoice.recipientSigningEmail || invoice.receiver.email || '';
+  const defaultSubject = `Invoice ${invoice.invoiceId} ${
+    invoice.totalAmount
+      ? `- Amount: ${getCurrencySymbol(currency)}${invoice.totalAmount}`
+      : ''
+  }`;
+  const defaultRequestSignature = Boolean(
+    invoice.recipientSigningRequestedAt && !invoice.recipientSignedAt
+  );
 
   const {
     register,
@@ -75,12 +81,15 @@ export default function SendInvoiceEmailModal({
     setError,
     watch,
     formState: { errors }
-  } = useForm<SendInvoiceForm>();
-  const defaultRecipientEmail =
-    invoice.recipientSigningEmail || invoice.receiver.email || '';
-  const defaultRequestSignature = Boolean(
-    invoice.recipientSigningRequestedAt && !invoice.recipientSignedAt
-  );
+  } = useForm<SendInvoiceForm>({
+    defaultValues: {
+      recipientEmail: defaultRecipientEmail,
+      subject: defaultSubject,
+      message: '',
+      includePublicLink: true,
+      requestSignature: defaultRequestSignature
+    }
+  });
   // eslint-disable-next-line react-hooks/incompatible-library
   const recipientEmail = watch('recipientEmail', defaultRecipientEmail);
   const shouldRotateSigningLink = Boolean(
@@ -105,7 +114,20 @@ export default function SendInvoiceEmailModal({
   useEffect(() => {
     setIncludePublicLink(true);
     setRequestSignature(defaultRequestSignature);
-  }, [defaultRequestSignature, invoice.id]);
+    reset({
+      recipientEmail: defaultRecipientEmail,
+      subject: defaultSubject,
+      message: '',
+      includePublicLink: true,
+      requestSignature: defaultRequestSignature
+    });
+  }, [
+    defaultRecipientEmail,
+    defaultRequestSignature,
+    defaultSubject,
+    invoice.id,
+    reset
+  ]);
 
   const onSubmit = (data: SendInvoiceForm, blob: Blob | null) =>
     startTransition(async () => {
@@ -121,9 +143,8 @@ export default function SendInvoiceEmailModal({
         requestSignature: includePublicLink && requestSignature
       });
 
-      addToast({
-        title: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+      toast(response.data.message, {
+        variant: isResponseError(response) ? 'danger' : 'success'
       });
 
       if (isResponseError(response)) {
@@ -152,9 +173,8 @@ export default function SendInvoiceEmailModal({
                 getValues('recipientEmail') || defaultRecipientEmail
             });
 
-      addToast({
-        title: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+      toast(response.data.message, {
+        variant: isResponseError(response) ? 'danger' : 'success'
       });
 
       if (!isResponseError(response)) {
@@ -164,181 +184,216 @@ export default function SendInvoiceEmailModal({
     });
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseSendDialog} size="3xl">
-      <ModalContent>
-        {/* @ts-ignore */}
-        <BlobProvider document={pdfDocument}>
-          {/* @ts-ignore */}
-          {({ blob }) => (
-            <form
-              onSubmit={handleSubmit((data) => onSubmit(data, blob))}
-              encType="multipart/form-data"
-            >
-              <ModalHeader>
-                {t('modal_title', { invoiceId: invoice.invoiceId || '' })}
-              </ModalHeader>
-              <ModalBody className="w-full">
-                <div className="border-secondary-200 bg-secondary-50 dark:bg-secondary-900/20 flex gap-3 rounded-lg border p-3">
-                  <InformationCircleIcon className="text-secondary-500 mt-0.5 h-5 w-5 shrink-0" />
-                  <div className="flex flex-col gap-1 text-sm">
-                    <p>{t('public_link_note')}</p>
-                    {requestSignature && <p>{t('signing_link_note')}</p>}
-                    {requestSignature && invoice.recipientSigningEmail && (
-                      <p className="text-default-500">
-                        {t('active_signing_recipient', {
-                          email: invoice.recipientSigningEmail
-                        })}
+    <Modal>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => {
+          if (!open) handleCloseSendDialog();
+        }}
+      >
+        <Modal.Container size="lg">
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+            <BlobProvider document={pdfDocument}>
+              {({ blob }) => (
+                <form
+                  onSubmit={handleSubmit((data) => onSubmit(data, blob))}
+                  encType="multipart/form-data"
+                >
+                  <Modal.Header>
+                    <Modal.Heading>
+                      {t('modal_title', { invoiceId: invoice.invoiceId || '' })}
+                    </Modal.Heading>
+                  </Modal.Header>
+                  <Modal.Body className="flex w-full flex-col gap-3">
+                    <Alert
+                      className="border"
+                      status={shouldRotateSigningLink ? 'warning' : 'default'}
+                    >
+                      <Alert.Indicator />
+                      <Alert.Content>
+                        <Alert.Description className="flex flex-col gap-1">
+                          <span>{t('public_link_note')}</span>
+                          {requestSignature && (
+                            <span>{t('signing_link_note')}</span>
+                          )}
+                          {requestSignature &&
+                            invoice.recipientSigningEmail && (
+                              <span className="text-default-500">
+                                {t('active_signing_recipient', {
+                                  email: invoice.recipientSigningEmail
+                                })}
+                              </span>
+                            )}
+                          {requestSignature &&
+                          invoice.recipientSigningRevokedAt ? (
+                            <span className="text-danger">
+                              {t('signing_link_revoked')}
+                            </span>
+                          ) : requestSignature &&
+                            invoice.recipientSigningExpiresAt ? (
+                            <span className="text-default-500">
+                              {t('signing_link_expires', {
+                                date: new Date(
+                                  invoice.recipientSigningExpiresAt
+                                ).toLocaleDateString()
+                              })}
+                            </span>
+                          ) : null}
+                          {requestSignature && shouldRotateSigningLink && (
+                            <span className="text-warning">
+                              {t('replacement_link_note')}
+                            </span>
+                          )}
+                        </Alert.Description>
+                      </Alert.Content>
+                    </Alert>
+                    <Checkbox
+                      id="include-public-link"
+                      variant="secondary"
+                      isSelected={includePublicLink}
+                      onChange={setIncludePublicLink}
+                    >
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      <Checkbox.Content>
+                        <Label htmlFor="include-public-link">
+                          {t('include_public_link')}
+                        </Label>
+                      </Checkbox.Content>
+                    </Checkbox>
+                    <Checkbox
+                      id="request-signature"
+                      variant="secondary"
+                      isDisabled={!includePublicLink}
+                      isSelected={includePublicLink && requestSignature}
+                      onChange={setRequestSignature}
+                    >
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      <Checkbox.Content>
+                        <Label htmlFor="request-signature">
+                          {t('request_signature')}
+                        </Label>
+                      </Checkbox.Content>
+                    </Checkbox>
+                    {!includePublicLink && requestSignature && (
+                      <p className="text-warning text-xs">
+                        {t('signature_requires_public_link')}
                       </p>
                     )}
-                    {requestSignature && invoice.recipientSigningRevokedAt ? (
-                      <p className="text-danger">{t('signing_link_revoked')}</p>
-                    ) : requestSignature &&
-                      invoice.recipientSigningExpiresAt ? (
-                      <p className="text-default-500">
-                        {t('signing_link_expires', {
-                          date: new Date(
-                            invoice.recipientSigningExpiresAt
-                          ).toLocaleDateString()
-                        })}
-                      </p>
-                    ) : null}
-                    {requestSignature && shouldRotateSigningLink && (
-                      <p className="text-warning">
-                        {t('replacement_link_note')}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className="border-default-100 grid gap-2 rounded-lg border p-3">
-                  <Checkbox
-                    classNames={{ label: 'text-sm' }}
-                    color="secondary"
-                    isSelected={includePublicLink}
-                    onValueChange={setIncludePublicLink}
-                  >
-                    {t('include_public_link')}
-                  </Checkbox>
-                  <Checkbox
-                    classNames={{ label: 'text-sm' }}
-                    color="secondary"
-                    isDisabled={!includePublicLink}
-                    isSelected={includePublicLink && requestSignature}
-                    onValueChange={setRequestSignature}
-                  >
-                    {t('request_signature')}
-                  </Checkbox>
-                  {!includePublicLink && requestSignature && (
-                    <p className="text-warning text-xs">
-                      {t('signature_requires_public_link')}
-                    </p>
-                  )}
-                </div>
-                <Input
-                  defaultValue={defaultRecipientEmail}
-                  {...register('recipientEmail')}
-                  variant="faded"
-                  label={t('recipient_email')}
-                  placeholder={t('recipient_placeholder')}
-                  isInvalid={!!errors.recipientEmail}
-                  errorMessage={errors.recipientEmail?.message}
-                />
-                <Input
-                  defaultValue={`Invoice ${invoice.invoiceId} ${invoice.totalAmount ? `- Amount: ${getCurrencySymbol(currency)}${invoice.totalAmount}` : ''}`}
-                  {...register('subject')}
-                  variant="faded"
-                  label={t('subject_label')}
-                  placeholder={t('subject_placeholder')}
-                  isInvalid={!!errors.subject}
-                  errorMessage={errors.subject?.message}
-                />
-                <Textarea
-                  {...register('message')}
-                  variant="faded"
-                  label={t('message_label')}
-                  placeholder={t('message_placeholder')}
-                  isInvalid={!!errors.message}
-                  errorMessage={errors.message?.message}
-                />
-                <Card className="none border-default-100 border-2 shadow">
-                  <CardBody className="flex flex-col gap-2">
-                    <p>{t('invoice_details')}</p>
-                    <p className="mt-2 flex items-center justify-between text-sm">
-                      <span className="text-default-500 text">
-                        {t('invoice')}:
-                      </span>{' '}
-                      {invoice.invoiceId}
-                    </p>
-                    <p className="flex items-center justify-between text-sm">
-                      <span className="text-default-500 text">
-                        {t('client')}:
-                      </span>{' '}
-                      {invoice.receiver.name}
-                    </p>
-                    <p className="flex items-center justify-between text-sm">
-                      <span className="text-default-500 text">
-                        {t('amount')}:
-                      </span>{' '}
-                      {getCurrencySymbol(currency)}
-                      {invoice.totalAmount}
-                    </p>
-                    <p className="flex items-center justify-between text-sm">
-                      <span className="text-default-500 text">
-                        {t('date')}:
-                      </span>
-                      {invoice.date}
-                    </p>
-                  </CardBody>
-                </Card>
-              </ModalBody>
-              <ModalFooter className="flex w-full flex-wrap justify-between gap-2">
-                <div className="flex flex-wrap gap-2">
-                  {requestSignature &&
-                    invoice.recipientSigningToken &&
-                    !invoice.recipientSigningRevokedAt && (
+                    <TextField
+                      variant="secondary"
+                      isInvalid={!!errors.recipientEmail}
+                    >
+                      <Label>{t('recipient_email')}</Label>
+                      <Input
+                        {...register('recipientEmail')}
+                        placeholder={t('recipient_placeholder')}
+                      />
+                      <FieldError>{errors.recipientEmail?.message}</FieldError>
+                    </TextField>
+                    <TextField variant="secondary" isInvalid={!!errors.subject}>
+                      <Label>{t('subject_label')}</Label>
+                      <Input
+                        {...register('subject')}
+                        placeholder={t('subject_placeholder')}
+                      />
+                      <FieldError>{errors.subject?.message}</FieldError>
+                    </TextField>
+                    <TextField variant="secondary" isInvalid={!!errors.message}>
+                      <Label>{t('message_label')}</Label>
+                      <TextArea
+                        {...register('message')}
+                        placeholder={t('message_placeholder')}
+                      />
+                      <FieldError>{errors.message?.message}</FieldError>
+                    </TextField>
+                    <Card className="border">
+                      <Card.Header className="pb-0">
+                        <Card.Title>{t('invoice_details')}</Card.Title>
+                      </Card.Header>
+                      <Card.Content className="flex flex-col gap-2">
+                        <p className="mt-2 flex items-center justify-between text-sm">
+                          <span className="text-default-500 text">
+                            {t('invoice')}:
+                          </span>{' '}
+                          {invoice.invoiceId}
+                        </p>
+                        <p className="flex items-center justify-between text-sm">
+                          <span className="text-default-500 text">
+                            {t('client')}:
+                          </span>{' '}
+                          {invoice.receiver.name}
+                        </p>
+                        <p className="flex items-center justify-between text-sm">
+                          <span className="text-default-500 text">
+                            {t('amount')}:
+                          </span>{' '}
+                          {getCurrencySymbol(currency)}
+                          {invoice.totalAmount}
+                        </p>
+                        <p className="flex items-center justify-between text-sm">
+                          <span className="text-default-500 text">
+                            {t('date')}:
+                          </span>
+                          {invoice.date}
+                        </p>
+                      </Card.Content>
+                    </Card>
+                  </Modal.Body>
+                  <Modal.Footer className="flex w-full flex-wrap justify-between gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      {requestSignature &&
+                        invoice.recipientSigningToken &&
+                        !invoice.recipientSigningRevokedAt && (
+                          <Button
+                            size="sm"
+                            variant="danger-soft"
+                            isDisabled={isPending}
+                            onPress={() => handleSigningLinkAction('revoke')}
+                          >
+                            {t('revoke_signing_link')}
+                          </Button>
+                        )}
+                      {requestSignature &&
+                        invoice.recipientSigningToken &&
+                        !invoice.recipientSignedAt && (
+                          <Button
+                            size="sm"
+                            variant="tertiary"
+                            isDisabled={isPending}
+                            onPress={() =>
+                              handleSigningLinkAction('regenerate')
+                            }
+                          >
+                            {t('regenerate_signing_link')}
+                          </Button>
+                        )}
+                    </div>
+                    <div className="ml-auto flex gap-2">
                       <Button
-                        size="sm"
-                        variant="light"
-                        color="danger"
-                        isDisabled={isPending}
-                        onPress={() => handleSigningLinkAction('revoke')}
+                        onPress={handleCloseSendDialog}
+                        variant="tertiary"
                       >
-                        {t('revoke_signing_link')}
+                        {t('cancel')}
                       </Button>
-                    )}
-                  {requestSignature &&
-                    invoice.recipientSigningToken &&
-                    !invoice.recipientSignedAt && (
-                      <Button
-                        size="sm"
-                        variant="light"
-                        isDisabled={isPending}
-                        onPress={() => handleSigningLinkAction('regenerate')}
-                      >
-                        {t('regenerate_signing_link')}
+                      <Button isPending={isPending} type="submit">
+                        <PaperAirplaneIcon className="h-4 w-4" />
+                        {shouldRotateSigningLink
+                          ? t('replace_link_and_send')
+                          : t('send')}
                       </Button>
-                    )}
-                </div>
-                <div className="ml-auto flex gap-2">
-                  <Button onPress={handleCloseSendDialog} variant="light">
-                    {t('cancel')}
-                  </Button>
-                  <Button
-                    isDisabled={isPending}
-                    isLoading={isPending}
-                    endContent={<PaperAirplaneIcon className="h-4 w-4" />}
-                    color="secondary"
-                    type="submit"
-                  >
-                    {shouldRotateSigningLink
-                      ? t('replace_link_and_send')
-                      : t('send')}
-                  </Button>
-                </div>
-              </ModalFooter>
-            </form>
-          )}
-        </BlobProvider>
-      </ModalContent>
+                    </div>
+                  </Modal.Footer>
+                </form>
+              )}
+            </BlobProvider>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { Input } from '@heroui/react';
+import { FieldError, Input, Label, TextField } from '@heroui/react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -31,18 +31,20 @@ export default function PasswordInput({
   const toggleVisibility = () => setIsVisible((prev) => !prev);
 
   return (
-    <Input
-      {...registeredPassword}
-      autoComplete={autoComplete}
-      label={label}
-      variant="faded"
-      labelPlacement="outside"
-      type={isVisible ? 'text' : 'password'}
-      className={`col-span-1 col-start-1 ${className}`}
-      placeholder={placeholder}
+    <TextField
+      variant="secondary"
       isInvalid={isInvalid}
-      errorMessage={errorMessage}
-      endContent={
+      className={`w-full lg:w-1/2 ${className || ''}`}
+    >
+      <Label>{label}</Label>
+      <div className="flex w-full items-center gap-2">
+        <Input
+          {...registeredPassword}
+          className="w-full"
+          autoComplete={autoComplete}
+          type={isVisible ? 'text' : 'password'}
+          placeholder={placeholder}
+        />
         <button
           className="focus:outline-none"
           type="button"
@@ -55,7 +57,8 @@ export default function PasswordInput({
             <EyeSlashIcon className="text-default-400 pointer-events-none h-5 w-5" />
           )}
         </button>
-      }
-    />
+      </div>
+      <FieldError>{errorMessage}</FieldError>
+    </TextField>
   );
 }

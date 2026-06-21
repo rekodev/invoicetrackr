@@ -17,7 +17,6 @@ export default {
     },
     invoice: {
       title: 'InvoiceTrackr',
-      subtitle: 'Profesionalus sąskaitų faktūrų valdymas',
       defaultMessage: 'Prašome rasti prisegtos sąskaitos faktūrą.',
       detailsTitle: 'Sąskaitos faktūros informacija',
       sentBy: 'Šią sąskaitą faktūrą per InvoiceTrackr išsiuntė {senderName}.',
@@ -32,26 +31,25 @@ export default {
       signingMessage:
         'Atidarykite saugią sąskaitos nuorodą, peržiūrėkite dokumentą, pridėkite parašą ir atsisiųskite pasirašytą PDF.',
       signingButton: 'Peržiūrėti ir pasirašyti',
-      signingFallback:
-        'Jei mygtukas neveikia, nukopijuokite ir įklijuokite šią saugią nuorodą į naršyklę:',
       publicInvoiceTitle: 'Peržiūrėti sąskaitą',
       publicInvoiceMessage:
         'Atidarykite saugų sąskaitos puslapį, peržiūrėkite PDF, mokėjimo informaciją ir apmokėkite internetu, jei siuntėjas priima kortelių mokėjimus.',
       publicInvoiceButton: 'Peržiūrėti sąskaitą',
-      viewTitle: 'Peržiūrėkite pasirašytą sąskaitą',
-      viewMessage:
-        'Atidarykite saugią sąskaitos nuorodą, peržiūrėkite ir atsisiųskite pasirašytą PDF.',
-      viewButton: 'Peržiūrėti pasirašytą sąskaitą',
       signedNotification: {
         recipient: 'Gavėjas',
         subject: 'Sąskaita %{invoiceId} buvo pasirašyta',
         message: '%{receiverName} pasirašė sąskaitą %{invoiceId}.',
-        review: 'Pasirašytą sąskaitą galite peržiūrėti čia:'
+        review: 'Pasirašytą sąskaitą galite peržiūrėti čia:',
+        reviewButton: 'Peržiūrėti pasirašytą sąskaitą'
       },
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
       copyright: 'InvoiceTrackr. Visos teisės saugomos.'
     },
     billing: {
+      buttonText: 'Tvarkyti mokėjimą',
+      fallback:
+        'Arba nukopijuokite ir įklijuokite šią mokėjimo nuorodą į naršyklę:',
+      note: 'Atnaujinti mokėjimo duomenys padeda be pertraukų naudotis sąskaitų išrašymo procesu.',
       trialEnding: {
         subject: 'Jūsų bandomasis laikotarpis netrukus baigsis',
         text: 'Jūsų 7 dienų bandomasis laikotarpis netrukus baigsis. Pridėkite mokėjimo būdą paskyros nustatymuose, kad galėtumėte toliau naudotis InvoiceTrackr.'
@@ -241,8 +239,7 @@ export default {
       unableToUpdateStatus: 'Nepavyko atnaujinti sąskaitos faktūros būsenos',
       unableToRetrieveData: 'Nepavyko gauti sąskaitos faktūros duomenų',
       unableToSendEmail: 'Nepavyko išsiųsti el. laiško',
-      unableToCreatePublicLink:
-        'Nepavyko sukurti viešos sąskaitos nuorodos',
+      unableToCreatePublicLink: 'Nepavyko sukurti viešos sąskaitos nuorodos',
       unableToCreateSigningLink:
         'Nepavyko sukurti sąskaitos pasirašymo nuorodos',
       unableToRegenerateSigningLink:

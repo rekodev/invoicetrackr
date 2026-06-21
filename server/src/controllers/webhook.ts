@@ -1,7 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { BillingEmail } from '@invoicetrackr/emails';
 import Stripe from 'stripe';
 
 import { BadRequestError, InternalServerError } from '../utils/error';
+import { appEmailFrom, getAppUrl } from '../config/app';
 import {
   getUserByStripeConnectedAccountIdFromDb,
   getUserByStripeCustomerIdFromDb,
@@ -41,11 +43,26 @@ const sendBillingEmail = async ({
     type === 'trial-ending'
       ? locale.emails.billing.trialEnding
       : locale.emails.billing.paymentFailed;
+  const billingUrl = getAppUrl('/profile/billing');
+  const emailHtml = BillingEmail({
+    subject: content.subject,
+    message: content.text,
+    buttonText: locale.emails.billing.buttonText,
+    fallbackLabel: locale.emails.billing.fallback,
+    note: locale.emails.billing.note,
+    billingUrl,
+    footer: locale.emails.resetPassword.footer,
+    copyright: locale.emails.resetPassword.copyright.replace(
+      '{year}',
+      String(new Date().getFullYear())
+    )
+  });
 
   const { error } = await resend.emails.send({
-    from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
+    from: appEmailFrom,
     to: email,
     subject: content.subject,
+    react: emailHtml,
     text: content.text
   });
 

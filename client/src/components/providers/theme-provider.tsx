@@ -9,7 +9,12 @@ type Props = {
 
 export default function ThemeProvider({ children }: Props) {
   return (
-    <NextThemeProvider attribute="class" defaultTheme="dark">
+    <NextThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
       {children}
     </NextThemeProvider>
   );

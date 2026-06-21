@@ -1,15 +1,6 @@
 'use client';
 
-import {
-  Button,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  addToast
-} from '@heroui/react';
+import { Button, Input, Label, Modal, TextField, toast } from '@heroui/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
@@ -45,7 +36,7 @@ export default function IncomeJournalExportModal({
     setIsExporting(false);
 
     if (isResponseError(response)) {
-      addToast({ title: response.data.message, color: 'danger' });
+      toast(response.data.message, { variant: 'danger' });
       return;
     }
 
@@ -62,42 +53,51 @@ export default function IncomeJournalExportModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader>{t('title')}</ModalHeader>
-            <ModalBody>
+    <Modal>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => !open && onOpenChange(false)}
+      >
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>{t('title')}</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>
               <p className="text-default-500 text-sm">{t('description')}</p>
-              <Input
-                type="date"
-                label={t('from')}
-                value={from}
-                onValueChange={setFrom}
-              />
-              <Input
-                type="date"
-                label={t('to')}
-                value={to}
-                onValueChange={setTo}
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="light" onPress={onClose}>
+              <TextField>
+                <Label>{t('from')}</Label>
+                <Input
+                  type="date"
+                  value={from}
+                  onChange={(event) => setFrom(event.target.value)}
+                />
+              </TextField>
+              <TextField>
+                <Label>{t('to')}</Label>
+                <Input
+                  type="date"
+                  value={to}
+                  onChange={(event) => setTo(event.target.value)}
+                />
+              </TextField>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="tertiary" onPress={() => onOpenChange(false)}>
                 {t('cancel')}
               </Button>
               <Button
-                color="secondary"
                 isDisabled={!from || !to || from > to}
-                isLoading={isExporting}
                 onPress={handleExport}
+                isPending={isExporting}
               >
                 {t('export')}
               </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 }

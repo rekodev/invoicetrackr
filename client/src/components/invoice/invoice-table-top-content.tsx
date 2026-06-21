@@ -1,11 +1,14 @@
 import {
   Button,
+  CloseButton,
   Dropdown,
   DropdownItem,
   DropdownMenu,
+  DropdownPopover,
   DropdownTrigger,
   Input,
-  useDisclosure
+  buttonVariants,
+  useOverlayState
 } from '@heroui/react';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 import {
@@ -55,9 +58,9 @@ const InvoiceTableTopContent = ({
   const router = useRouter();
   const {
     isOpen: isIncomeJournalModalOpen,
-    onOpen: openIncomeJournalModal,
-    onOpenChange: onIncomeJournalModalOpenChange
-  } = useDisclosure();
+    open: openIncomeJournalModal,
+    setOpen: onIncomeJournalModalOpenChange
+  } = useOverlayState();
 
   const totalInvoicesText = invoicesLength
     ? invoicesLength === 1
@@ -95,88 +98,100 @@ const InvoiceTableTopContent = ({
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pt-1">
       <div className="flex items-end justify-between gap-3">
-        <Input
-          isClearable
-          className="w-full sm:max-w-[44%]"
-          placeholder={t('top_content.search_placeholder')}
-          startContent={<MagnifyingGlassIcon className="h-4 w-4" />}
-          value={filterValue}
-          onClear={() => onClear()}
-          onValueChange={onSearchChange}
-        />
+        <div className="flex w-full items-center gap-2 sm:max-w-[44%]">
+          <MagnifyingGlassIcon className="h-4 w-4" />
+          <Input
+            className="w-full"
+            variant="secondary"
+            placeholder={t('top_content.search_placeholder')}
+            value={filterValue}
+            onChange={(event) => onSearchChange(event.target.value)}
+          />
+          {filterValue && <CloseButton aria-label="Clear" onPress={onClear} />}
+        </div>
         <div className="flex gap-3">
           <Dropdown>
-            <DropdownTrigger className="hidden sm:flex">
-              <Button
-                endContent={<ChevronDownIcon className="text-small h-4 w-4" />}
-                variant="flat"
-              >
-                {t('table.filters.status')}
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              aria-label={t('table.filters.a11y.status_label')}
-              closeOnSelect={false}
-              selectedKeys={statusFilter}
-              selectionMode="multiple"
-              onSelectionChange={setStatusFilter as any}
+            <DropdownTrigger
+              className={buttonVariants({
+                variant: 'tertiary',
+                className: 'hidden items-center justify-center gap-2 sm:flex'
+              })}
             >
-              {statusOptions.map((status) => (
-                <DropdownItem key={status.uid} className="capitalize">
-                  {capitalize(status.name)}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
+              {t('table.filters.status')}
+              <ChevronDownIcon className="h-4 w-4 text-sm" />
+            </DropdownTrigger>
+            <DropdownPopover>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label={t('table.filters.a11y.status_label')}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter as any}
+              >
+                {statusOptions.map((status) => (
+                  <DropdownItem
+                    key={status.uid}
+                    id={status.uid}
+                    textValue={capitalize(status.name)}
+                    className="capitalize"
+                  >
+                    {capitalize(status.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </DropdownPopover>
           </Dropdown>
           <Dropdown>
-            <DropdownTrigger className="hidden sm:flex">
-              <Button
-                endContent={<ChevronDownIcon className="text-small h-4 w-4" />}
-                variant="flat"
-              >
-                {t('table.filters.columns')}
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-              disallowEmptySelection
-              aria-label={t('table.filters.a11y.columns_label')}
-              closeOnSelect={false}
-              selectedKeys={visibleColumns}
-              selectionMode="multiple"
-              onSelectionChange={setVisibleColumns as any}
+            <DropdownTrigger
+              className={buttonVariants({
+                variant: 'tertiary',
+                className: 'hidden items-center justify-center sm:flex'
+              })}
             >
-              {columns.map((column) => (
-                <DropdownItem key={column.uid} className="capitalize">
-                  {capitalize(column.name)}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
+              <span>{t('table.filters.columns')}</span>
+              <ChevronDownIcon className="h-4 w-4 text-sm" />
+            </DropdownTrigger>
+            <DropdownPopover>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label={t('table.filters.a11y.columns_label')}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns as any}
+              >
+                {columns.map((column) => (
+                  <DropdownItem
+                    key={column.uid}
+                    id={column.uid}
+                    textValue={capitalize(column.name)}
+                    className="capitalize"
+                  >
+                    {capitalize(column.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </DropdownPopover>
           </Dropdown>
-          <Button
-            variant="flat"
-            endContent={<DocumentArrowDownIcon className="h-4 w-4" />}
-            onPress={openIncomeJournalModal}
-          >
+          <Button variant="secondary" onPress={openIncomeJournalModal}>
+            <DocumentArrowDownIcon className="h-4 w-4" />
             {t('income_journal.export')}
           </Button>
-          <Button
-            color="secondary"
-            endContent={<PlusIcon className="h-4 w-4" />}
-            onPress={handleAddNewInvoice}
-          >
+          <Button onPress={handleAddNewInvoice}>
+            <PlusIcon className="h-4 w-4" />
             {t('top_content.add_new')}
           </Button>
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-small text-default-400">{totalInvoicesText}</span>
-        <label className="text-small text-default-400 flex items-center">
+        <span className="section-eyebrow text-default-500">
+          {totalInvoicesText}
+        </span>
+        <label className="section-eyebrow text-default-500 flex items-center">
           {t('table.rows_per_page')}
           <select
-            className="text-small text-default-400 bg-transparent outline-none"
+            className="section-eyebrow text-default-500 bg-transparent outline-none"
             onChange={onRowsPerPageChange}
             defaultValue={10}
           >

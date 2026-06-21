@@ -11,7 +11,7 @@ const Loader = ({ fullHeight }: Props) => {
         'h-full': fullHeight
       })}
     >
-      <Spinner className="m-auto" color="secondary" />
+      <Spinner className="m-auto" />
     </div>
   );
 };

@@ -3,14 +3,15 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
-  CardHeader,
-  Divider,
+  Label,
   Radio,
   RadioGroup,
-  addToast,
-  useDisclosure
+  Separator,
+  cn,
+  toast,
+  useOverlayState
 } from '@heroui/react';
 import {
   LockClosedIcon,
@@ -44,12 +45,12 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { isOpen, close: onClose, open: onOpen } = useOverlayState();
   const {
     isOpen: isEditOpen,
-    onClose: onEditClose,
-    onOpen: onEditOpen
-  } = useDisclosure();
+    close: onEditClose,
+    open: onEditOpen
+  } = useOverlayState();
 
   const [selectedBankAccountId, setSelectedBankAccountId] = useState(
     String(user.selectedBankAccountId)
@@ -76,9 +77,8 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
         Number(selectedBankAccountId)
       );
 
-      addToast({
-        title: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+      toast(response.data.message, {
+        variant: isResponseError(response) ? 'danger' : 'success'
       });
 
       if (isResponseError(response)) return;
@@ -106,46 +106,61 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     name,
     code,
     accountNumber
-  }: BankAccount) => (
-    <Card key={id} className="col-span-2 lg:col-span-1">
-      <CardBody className="flex flex-row items-center gap-2">
-        <Radio color="secondary" value={String(id || 0)} />
-        <div>
-          <h4 className="text-large font-bold">{name}</h4>
-          <p className="text-tiny font-bold uppercase">{code}</p>
-          <small className="text-default-500">{accountNumber}</small>
-        </div>
-        <div className="absolute right-4 flex gap-0.5">
-          <Button
-            isIconOnly
-            variant="light"
-            color="default"
-            startContent={<PencilSquareIcon className="h-5 w-5" />}
-            onPress={() => handleEdit({ id, name, code, accountNumber })}
-          />
-          <Button
-            isIconOnly
-            isDisabled={id === user.selectedBankAccountId}
-            variant="light"
-            color={id === user.selectedBankAccountId ? 'default' : 'danger'}
-            className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
-            onPress={() => {
-              if (id === user.selectedBankAccountId) return;
+  }: BankAccount) => {
+    const isSelected = selectedBankAccountId === String(id || 0);
 
-              handleTrashIconClick({ id, name, code, accountNumber });
-            }}
-            startContent={
-              id === user.selectedBankAccountId ? (
-                <LockClosedIcon className="h-5 w-5" />
+    return (
+      <Card
+        key={id}
+        className={cn('group col-span-2 border pt-0 lg:col-span-1', {
+          'border-accent border-2': isSelected
+        })}
+      >
+        <CardContent className="flex flex-row items-center gap-2 pr-24">
+          <Radio value={String(id || 0)} className="min-w-0">
+            <Radio.Control>
+              <Radio.Indicator />
+            </Radio.Control>
+            <Radio.Content>
+              <Label className="text-large font-semibold">{name}</Label>
+              <p className="text-xs font-bold uppercase">{code}</p>
+              <small className="text-default-500 mt-1">{accountNumber}</small>
+            </Radio.Content>
+          </Radio>
+          <div className="pointer-events-none absolute right-2 top-2 flex gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
+            <Button
+              isIconOnly
+              size="sm"
+              variant="tertiary"
+              onPress={() => handleEdit({ id, name, code, accountNumber })}
+            >
+              <PencilSquareIcon className="h-4 w-4" />
+            </Button>
+            <Button
+              isIconOnly
+              size="sm"
+              isDisabled={id === user.selectedBankAccountId}
+              variant={
+                id === user.selectedBankAccountId ? 'tertiary' : 'danger-soft'
+              }
+              className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
+              onPress={() => {
+                if (id === user.selectedBankAccountId) return;
+
+                handleTrashIconClick({ id, name, code, accountNumber });
+              }}
+            >
+              {id === user.selectedBankAccountId ? (
+                <LockClosedIcon className="h-4 w-4" />
               ) : (
-                <TrashIcon className="h-5 w-5" />
-              )
-            }
-          />
-        </div>
-      </CardBody>
-    </Card>
-  );
+                <TrashIcon className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderCardBody = () => {
     if (bankAccounts?.length === 0)
@@ -160,8 +175,9 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     return (
       <RadioGroup
         className="w-full"
+        variant="secondary"
         value={String(selectedBankAccountId)}
-        onValueChange={setSelectedBankAccountId}
+        onChange={setSelectedBankAccountId}
       >
         <div className="grid grid-cols-2 gap-4">
           {bankAccounts?.map((account) => {
@@ -181,30 +197,24 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
 
   return (
     <>
-      <Card className="dark:border-default-100 w-full bg-transparent dark:border">
-        <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
-        <Divider />
-        <CardBody className="flex flex-col items-end gap-6 p-6">
-          <Button
-            color="secondary"
-            variant="bordered"
-            endContent={<PlusIcon className="h-4 w-4" />}
-            onPress={handleAddNewBankAccount}
-          >
+      <Card className="w-full border bg-transparent">
+        <Card.Header className="flex flex-row items-center justify-between gap-4 p-2 px-6">
+          <Card.Title className="text-2xl">{t('title')}</Card.Title>
+          <Button variant="secondary" onPress={handleAddNewBankAccount}>
+            <PlusIcon className="h-4 w-4" />
             {t('actions.add')}
           </Button>
-
-          {renderCardBody()}
-        </CardBody>
+        </Card.Header>
+        <Separator />
+        <CardContent className="p-6">{renderCardBody()}</CardContent>
         <CardFooter className="flex w-full items-center justify-between p-6">
           <div className="flex w-full flex-col items-center">
             <Button
               isDisabled={
                 selectedBankAccountId === String(user.selectedBankAccountId)
               }
-              isLoading={isPending}
-              color="secondary"
               onPress={handleSave}
+              isPending={isPending}
               className="self-end"
             >
               {t('actions.save')}

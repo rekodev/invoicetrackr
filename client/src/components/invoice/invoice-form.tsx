@@ -8,14 +8,18 @@ import {
 import {
   Button,
   Card,
+  FieldError,
   Input,
+  Label,
+  ListBox,
+  ListBoxItem,
   Radio,
   RadioGroup,
   Select,
-  SelectItem
+  TextField
 } from '@heroui/react';
+import { type ComponentProps, useRef, useState, useTransition } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { useRef, useState, useTransition } from 'react';
 import type { Client } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 
@@ -46,6 +50,8 @@ type Props = {
   currency: Currency;
 };
 
+type TextInputProps = ComponentProps<typeof Input>;
+
 const INITIAL_RECEIVER_DATA: Client = {
   id: 0,
   businessNumber: '',
@@ -66,15 +72,25 @@ const InvoiceForm = ({
 }: Props) => {
   const t = useTranslations('components.invoice_form');
   const methods = useForm<InvoiceBody>({
-    defaultValues: invoiceData || {
-      sender: user,
-      receiver: INITIAL_RECEIVER_DATA,
-      services: [
-        { amount: 0, quantity: 0, description: '', unit: '', vatRate: 0 }
-      ],
-      bankingInformation: { name: '', code: '', accountNumber: '' },
-      status: 'pending'
-    }
+    defaultValues: invoiceData
+      ? {
+          ...invoiceData,
+          date: invoiceData.date
+            ? formatDate(invoiceData.date)
+            : formatDate(new Date().toISOString()),
+          dueDate: invoiceData.dueDate ? formatDate(invoiceData.dueDate) : ''
+        }
+      : {
+          sender: user,
+          receiver: INITIAL_RECEIVER_DATA,
+          services: [
+            { amount: 0, quantity: 0, description: '', unit: '', vatRate: 0 }
+          ],
+          bankingInformation: { name: '', code: '', accountNumber: '' },
+          status: 'pending',
+          date: formatDate(new Date().toISOString()),
+          dueDate: ''
+        }
   });
   const {
     register,
@@ -156,11 +172,50 @@ const InvoiceForm = ({
     });
   };
 
+  const renderTextField = ({
+    label,
+    isInvalid,
+    errorMessage,
+    inputProps
+  }: {
+    label: string;
+    isInvalid: boolean;
+    errorMessage?: string;
+    inputProps: TextInputProps;
+  }) => (
+    <TextField className="w-full" variant="secondary" isInvalid={isInvalid}>
+      <Label>{label}</Label>
+      <Input {...inputProps} />
+      <FieldError>{errorMessage}</FieldError>
+    </TextField>
+  );
+
+  const renderBusinessTypeOptions = () => (
+    <>
+      <Radio value="business">
+        <Radio.Control>
+          <Radio.Indicator />
+        </Radio.Control>
+        <Radio.Content>
+          <Label>{t('labels.business_type_business')}</Label>
+        </Radio.Content>
+      </Radio>
+      <Radio value="individual">
+        <Radio.Control>
+          <Radio.Indicator />
+        </Radio.Control>
+        <Radio.Content>
+          <Label>{t('labels.business_type_individual')}</Label>
+        </Radio.Content>
+      </Radio>
+    </>
+  );
+
   const renderSenderAndReceiverFields = () => (
     <div className="col-span-4 flex w-full flex-col gap-4">
       <h4>{t('headings.sender_receiver_data')}</h4>
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
-        <Card className="flex w-full flex-col gap-4 p-4 pb-6">
+        <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.from')}</p>
           </div>
@@ -169,83 +224,81 @@ const InvoiceForm = ({
             control={control}
             render={({ field }) => (
               <RadioGroup
+                variant="secondary"
                 orientation="horizontal"
-                size="sm"
-                color="secondary"
                 {...field}
               >
-                <Radio value="business">
-                  {t('labels.business_type_business')}
-                </Radio>
-                <Radio value="individual">
-                  {t('labels.business_type_individual')}
-                </Radio>
+                {renderBusinessTypeOptions()}
               </RadioGroup>
             )}
           />
-          <Input
-            label={t('labels.sender_name')}
-            size="sm"
-            aria-label={t('a11y.sender_name_label')}
-            maxLength={20}
-            variant="bordered"
-            {...register('sender.name')}
-            isInvalid={!!errors.sender?.name}
-            errorMessage={errors.sender?.name?.message}
-          />
-          <Input
-            label={t(
+          {renderTextField({
+            label: t('labels.sender_name'),
+            isInvalid: !!errors.sender?.name,
+            errorMessage: errors.sender?.name?.message,
+            inputProps: {
+              'aria-label': t('a11y.sender_name_label'),
+              placeholder: t('placeholders.sender_name'),
+              maxLength: 20,
+              ...register('sender.name')
+            }
+          })}
+          {renderTextField({
+            label: t(
               `labels.sender_business_number_${isSenderBusiness ? 'business' : 'individual'}`
-            )}
-            size="sm"
-            aria-label={t(
-              `a11y.sender_business_number_label_${isSenderBusiness ? 'business' : 'individual'}`
-            )}
-            maxLength={20}
-            variant="bordered"
-            {...register('sender.businessNumber')}
-            isInvalid={!!errors.sender?.businessNumber}
-            errorMessage={errors.sender?.businessNumber?.message}
-          />
-          {isSenderBusiness && (
-            <Input
-              label={t('labels.sender_vat_number')}
-              size="sm"
-              aria-label={t('a11y.sender_vat_number_label')}
-              maxLength={20}
-              variant="bordered"
-              {...register('sender.vatNumber')}
-              isInvalid={!!errors.sender?.vatNumber}
-              errorMessage={errors.sender?.vatNumber?.message}
-            />
-          )}
-          <Input
-            label={t('labels.sender_address')}
-            size="sm"
-            aria-label={t('a11y.sender_address_label')}
-            maxLength={20}
-            variant="bordered"
-            {...register('sender.address')}
-            isInvalid={!!errors.sender?.address}
-            errorMessage={errors.sender?.address?.message}
-          />
-          <Input
-            label={t('labels.sender_email')}
-            size="sm"
-            aria-label={t('a11y.sender_email_label')}
-            maxLength={20}
-            variant="bordered"
-            {...register('sender.email')}
-            isInvalid={!!errors.sender?.email}
-            errorMessage={errors.sender?.email?.message}
-          />
+            ),
+            isInvalid: !!errors.sender?.businessNumber,
+            errorMessage: errors.sender?.businessNumber?.message,
+            inputProps: {
+              'aria-label': t(
+                `a11y.sender_business_number_label_${isSenderBusiness ? 'business' : 'individual'}`
+              ),
+              placeholder: t('placeholders.sender_business_number'),
+              maxLength: 20,
+              ...register('sender.businessNumber')
+            }
+          })}
+          {isSenderBusiness &&
+            renderTextField({
+              label: t('labels.sender_vat_number'),
+              isInvalid: !!errors.sender?.vatNumber,
+              errorMessage: errors.sender?.vatNumber?.message,
+              inputProps: {
+                'aria-label': t('a11y.sender_vat_number_label'),
+                placeholder: t('placeholders.sender_vat_number'),
+                maxLength: 20,
+                ...register('sender.vatNumber')
+              }
+            })}
+          {renderTextField({
+            label: t('labels.sender_address'),
+            isInvalid: !!errors.sender?.address,
+            errorMessage: errors.sender?.address?.message,
+            inputProps: {
+              'aria-label': t('a11y.sender_address_label'),
+              placeholder: t('placeholders.sender_address'),
+              maxLength: 20,
+              ...register('sender.address')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.sender_email'),
+            isInvalid: !!errors.sender?.email,
+            errorMessage: errors.sender?.email?.message,
+            inputProps: {
+              'aria-label': t('a11y.sender_email_label'),
+              placeholder: t('placeholders.sender_email'),
+              maxLength: 20,
+              ...register('sender.email')
+            }
+          })}
         </Card>
-        <Card className="flex w-full flex-col gap-4 p-4 pb-6">
+        <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
           <div className="flex items-center justify-between">
             <p className="text-default-500 text-sm">{t('headings.to')}</p>
             <Button
               size="sm"
-              variant="faded"
+              variant="secondary"
               className="min-w-unit-10 w-unit-26 h-unit-8 cursor-pointer"
               onPress={handleOpenReceiverModal}
             >
@@ -258,107 +311,106 @@ const InvoiceForm = ({
             control={control}
             render={({ field }) => (
               <RadioGroup
-                {...field}
-                color="secondary"
-                size="sm"
+                variant="secondary"
                 orientation="horizontal"
+                {...field}
               >
-                <Radio value="business">
-                  {t('labels.business_type_business')}
-                </Radio>
-                <Radio value="individual">
-                  {t('labels.business_type_individual')}
-                </Radio>
+                {renderBusinessTypeOptions()}
               </RadioGroup>
             )}
           />
           <Controller
             name="receiver.name"
             control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label={t('labels.receiver_name')}
-                size="sm"
-                aria-label={t('a11y.receiver_name_label')}
-                type="text"
-                maxLength={20}
-                variant="bordered"
-                isInvalid={!!errors.receiver?.name}
-                errorMessage={errors.receiver?.name?.message}
-              />
-            )}
+            render={({ field }) =>
+              renderTextField({
+                label: t('labels.receiver_name'),
+                isInvalid: !!errors.receiver?.name,
+                errorMessage: errors.receiver?.name?.message,
+                inputProps: {
+                  ...field,
+                  'aria-label': t('a11y.receiver_name_label'),
+                  placeholder: t('placeholders.receiver_name'),
+                  type: 'text',
+                  maxLength: 20
+                }
+              })
+            }
           />
           <Controller
             name="receiver.businessNumber"
             control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label={t(
+            render={({ field }) =>
+              renderTextField({
+                label: t(
                   `labels.receiver_business_number_${isReceiverBusiness ? 'business' : 'individual'}`
-                )}
-                size="sm"
-                aria-label={t(
-                  `a11y.receiver_business_number_label_${isReceiverBusiness ? 'business' : 'individual'}`
-                )}
-                type="text"
-                variant="bordered"
-                isInvalid={!!errors.receiver?.businessNumber}
-                errorMessage={errors.receiver?.businessNumber?.message}
-              />
-            )}
+                ),
+                isInvalid: !!errors.receiver?.businessNumber,
+                errorMessage: errors.receiver?.businessNumber?.message,
+                inputProps: {
+                  ...field,
+                  'aria-label': t(
+                    `a11y.receiver_business_number_label_${isReceiverBusiness ? 'business' : 'individual'}`
+                  ),
+                  placeholder: t('placeholders.receiver_business_number'),
+                  type: 'text'
+                }
+              })
+            }
           />
           {isReceiverBusiness && (
             <Controller
               name="receiver.vatNumber"
               control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  value={field.value || ''}
-                  label={t('labels.receiver_vat_number')}
-                  size="sm"
-                  aria-label={t('a11y.receiver_vat_number_label')}
-                  type="text"
-                  variant="bordered"
-                  isInvalid={!!errors.receiver?.vatNumber}
-                  errorMessage={errors.receiver?.vatNumber?.message}
-                />
-              )}
+              render={({ field }) =>
+                renderTextField({
+                  label: t('labels.receiver_vat_number'),
+                  isInvalid: !!errors.receiver?.vatNumber,
+                  errorMessage: errors.receiver?.vatNumber?.message,
+                  inputProps: {
+                    ...field,
+                    value: field.value || '',
+                    'aria-label': t('a11y.receiver_vat_number_label'),
+                    placeholder: t('placeholders.receiver_vat_number'),
+                    type: 'text'
+                  }
+                })
+              }
             />
           )}
           <Controller
             name="receiver.address"
             control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label={t('labels.receiver_address')}
-                size="sm"
-                aria-label={t('a11y.receiver_address_label')}
-                type="text"
-                variant="bordered"
-                isInvalid={!!errors.receiver?.address}
-                errorMessage={errors.receiver?.address?.message}
-              />
-            )}
+            render={({ field }) =>
+              renderTextField({
+                label: t('labels.receiver_address'),
+                isInvalid: !!errors.receiver?.address,
+                errorMessage: errors.receiver?.address?.message,
+                inputProps: {
+                  ...field,
+                  'aria-label': t('a11y.receiver_address_label'),
+                  placeholder: t('placeholders.receiver_address'),
+                  type: 'text'
+                }
+              })
+            }
           />
           <Controller
             name="receiver.email"
             control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label={t('labels.receiver_email')}
-                size="sm"
-                aria-label={t('a11y.receiver_email_label')}
-                type="text"
-                variant="bordered"
-                isInvalid={!!errors.receiver?.email}
-                errorMessage={errors.receiver?.email?.message}
-              />
-            )}
+            render={({ field }) =>
+              renderTextField({
+                label: t('labels.receiver_email'),
+                isInvalid: !!errors.receiver?.email,
+                errorMessage: errors.receiver?.email?.message,
+                inputProps: {
+                  ...field,
+                  'aria-label': t('a11y.receiver_email_label'),
+                  placeholder: t('placeholders.receiver_email'),
+                  type: 'text'
+                }
+              })
+            }
           />
         </Card>
       </div>
@@ -383,66 +435,70 @@ const InvoiceForm = ({
         <h4>{t('banking_details')}</h4>
         <Button
           size="sm"
-          variant="faded"
+          variant="secondary"
           className="min-w-unit-10 w-unit-26 h-unit-8 max-w-min cursor-pointer"
           onPress={() => setIsBankingInformationModalOpen(true)}
-          startContent={<BuildingLibraryIcon className="min-h-4 min-w-4" />}
         >
+          <BuildingLibraryIcon className="min-h-4 min-w-4" />
           {t('modals.select_bank_account')}
         </Button>
       </div>
-      <div className="flex flex-col gap-4 md:flex-row">
+      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         <Controller
           name="bankingInformation.name"
           control={control}
-          render={({ field }) => (
-            <Input
-              {...field}
-              label={t('labels.bank_name')}
-              labelPlacement="inside"
-              aria-label={t('a11y.bank_name_label')}
-              type="text"
-              placeholder={t('placeholders.bank_name')}
-              maxLength={20}
-              variant="flat"
-              isInvalid={!!errors.bankingInformation?.name}
-              errorMessage={errors.bankingInformation?.name?.message}
-            />
-          )}
+          render={({ field }) =>
+            renderTextField({
+              label: t('labels.bank_name'),
+              isInvalid: !!errors.bankingInformation?.name,
+              errorMessage: errors.bankingInformation?.name?.message,
+              inputProps: {
+                ...field,
+                'aria-label': t('a11y.bank_name_label'),
+                type: 'text',
+                placeholder: t('placeholders.bank_name'),
+                maxLength: 20
+              }
+            })
+          }
         />
 
         <Controller
           name="bankingInformation.code"
           control={control}
-          render={({ field }) => (
-            <Input
-              {...field}
-              label={t('labels.bank_code')}
-              aria-label={t('a11y.bank_code_label')}
-              type="text"
-              maxLength={20}
-              placeholder={t('placeholders.bank_code')}
-              isInvalid={!!errors.bankingInformation?.code}
-              errorMessage={errors.bankingInformation?.code?.message}
-            />
-          )}
+          render={({ field }) =>
+            renderTextField({
+              label: t('labels.bank_code'),
+              isInvalid: !!errors.bankingInformation?.code,
+              errorMessage: errors.bankingInformation?.code?.message,
+              inputProps: {
+                ...field,
+                'aria-label': t('a11y.bank_code_label'),
+                type: 'text',
+                maxLength: 20,
+                placeholder: t('placeholders.bank_code')
+              }
+            })
+          }
         />
 
         <Controller
           name="bankingInformation.accountNumber"
           control={control}
-          render={({ field }) => (
-            <Input
-              {...field}
-              label={t('labels.bank_account_number')}
-              aria-label={t('a11y.bank_account_number_label')}
-              placeholder={t('placeholders.bank_account_number')}
-              type="text"
-              maxLength={20}
-              isInvalid={!!errors.bankingInformation?.accountNumber}
-              errorMessage={errors.bankingInformation?.accountNumber?.message}
-            />
-          )}
+          render={({ field }) =>
+            renderTextField({
+              label: t('labels.bank_account_number'),
+              isInvalid: !!errors.bankingInformation?.accountNumber,
+              errorMessage: errors.bankingInformation?.accountNumber?.message,
+              inputProps: {
+                ...field,
+                'aria-label': t('a11y.bank_account_number_label'),
+                placeholder: t('placeholders.bank_account_number'),
+                type: 'text',
+                maxLength: 20
+              }
+            })
+          }
         />
       </div>
     </div>
@@ -465,14 +521,12 @@ const InvoiceForm = ({
   const renderActions = () => (
     <div className="col-span-4 flex w-full items-center justify-between gap-5 overflow-x-hidden">
       <div className="flex w-full flex-col justify-end gap-1 sm:flex-row">
-        <Button color="danger" variant="light" onPress={redirectToInvoicesPage}>
+        <Button variant="danger-soft" onPress={redirectToInvoicesPage}>
           {t('buttons.cancel')}
         </Button>
         <Button
           isDisabled={!methods.formState.isDirty || isSubmitting}
           type="submit"
-          isLoading={isSubmitting}
-          color="secondary"
         >
           {t('buttons.save')}
         </Button>
@@ -492,7 +546,7 @@ const InvoiceForm = ({
   return (
     <>
       <FormProvider {...methods}>
-        <Card className="dark:border-default-100 bg-transparent p-4 sm:p-8 dark:border">
+        <Card className="border bg-transparent p-4 sm:p-8">
           <form
             aria-label={t('a11y.form_label')}
             className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
@@ -501,75 +555,95 @@ const InvoiceForm = ({
           >
             <div className="col-span-4 flex flex-col gap-4">
               <h4>{t('invoice_details')}</h4>
-              <div className="flex flex-col gap-4 md:flex-row">
+              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-4">
                 <Controller
                   name="invoiceId"
                   control={control}
                   defaultValue={invoiceData?.invoiceId || ''}
                   render={({ field }) => (
-                    <Input
-                      {...field}
-                      onChange={(event) => {
-                        setValue('invoiceSeries', undefined, {
-                          shouldDirty: true
-                        });
-                        field.onChange(event);
-                      }}
-                      aria-label={t('a11y.invoice_id_label')}
-                      label={t('labels.invoice_id')}
-                      placeholder={t('placeholders.invoice_id')}
+                    <TextField
+                      className="w-full"
+                      variant="secondary"
                       isInvalid={!!errors.invoiceId}
-                      errorMessage={errors.invoiceId?.message}
-                      endContent={
+                    >
+                      <Label>{t('labels.invoice_id')}</Label>
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          onChange={(event) => {
+                            setValue('invoiceSeries', undefined, {
+                              shouldDirty: true
+                            });
+                            field.onChange(event);
+                          }}
+                          className="w-full pr-28"
+                          aria-label={t('a11y.invoice_id_label')}
+                          placeholder={t('placeholders.invoice_id')}
+                        />
                         <Button
+                          type="button"
                           size="sm"
-                          variant="faded"
-                          className="px-7"
-                          isLoading={isNextInvoiceNumberPending}
-                          startContent={
-                            !isNextInvoiceNumberPending && (
-                              <SparklesIcon className="min-h-4 min-w-4" />
-                            )
-                          }
+                          variant="secondary"
+                          className="absolute right-1 top-1/2 h-8 min-w-0 -translate-y-1/2 gap-1 px-2"
                           onPress={handleNextInvoiceIdSelect}
+                          isPending={isNextInvoiceNumberPending}
                         >
+                          {!isNextInvoiceNumberPending && (
+                            <SparklesIcon className="h-4 w-4 shrink-0" />
+                          )}
                           {t('buttons.use_next')}
                         </Button>
-                      }
-                    />
+                      </div>
+                      <FieldError>{errors.invoiceId?.message}</FieldError>
+                    </TextField>
                   )}
                 />
-                <Select
-                  aria-label={t('a11y.status_label')}
-                  {...register('status')}
-                  label={t('labels.status')}
-                  placeholder={t('placeholders.select_status')}
-                  defaultSelectedKeys={
-                    invoiceData?.status
-                      ? [`${invoiceData.status}`]
-                      : ['pending']
-                  }
-                  isInvalid={!!errors.status}
-                  errorMessage={errors.status?.message}
-                >
-                  {statusOptions.map((option) => (
-                    <SelectItem key={option.uid}>{option.name}</SelectItem>
-                  ))}
-                </Select>
-                <Input
-                  aria-label={t('a11y.date_label')}
-                  {...register('date')}
-                  type="date"
-                  label={t('labels.date')}
-                  defaultValue={
-                    invoiceData?.date
-                      ? formatDate(invoiceData.date)
-                      : formatDate(new Date().toISOString())
-                  }
-                  errorMessage={errors.date?.message}
-                  isInvalid={!!errors.date}
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      className="w-full"
+                      aria-label={t('a11y.status_label')}
+                      variant="secondary"
+                      value={field.value || 'pending'}
+                      onChange={field.onChange}
+                      isInvalid={!!errors.status}
+                    >
+                      <Label>{t('labels.status')}</Label>
+                      <Select.Trigger>
+                        <Select.Value />
+                        <Select.Indicator />
+                      </Select.Trigger>
+                      <Select.Popover>
+                        <ListBox>
+                          {statusOptions.map((option) => (
+                            <ListBoxItem
+                              key={option.uid}
+                              id={option.uid}
+                              textValue={option.name}
+                            >
+                              {option.name}
+                              <ListBoxItem.Indicator />
+                            </ListBoxItem>
+                          ))}
+                        </ListBox>
+                      </Select.Popover>
+                      <FieldError>{errors.status?.message}</FieldError>
+                    </Select>
+                  )}
                 />
-                <div className="relative mb-4 w-full sm:mb-0">
+                {renderTextField({
+                  label: t('labels.date'),
+                  isInvalid: !!errors.date,
+                  errorMessage: errors.date?.message,
+                  inputProps: {
+                    'aria-label': t('a11y.date_label'),
+                    ...register('date'),
+                    type: 'date'
+                  }
+                })}
+                <div className="relative w-full">
                   <Controller
                     name="dueDate"
                     control={control}
@@ -604,20 +678,21 @@ const InvoiceForm = ({
                             field.onChange(formattedDate);
                           }}
                         />
-                        <Input
-                          {...field}
-                          ref={dueDateInputRef}
-                          aria-label={t('a11y.due_date_label')}
-                          type="date"
-                          label={t('labels.due_date')}
-                          defaultValue={
-                            invoiceData?.dueDate
-                              ? formatDate(invoiceData.dueDate)
-                              : ''
-                          }
+                        <TextField
+                          className="w-full"
+                          variant="secondary"
                           isInvalid={!!errors.dueDate}
-                          errorMessage={errors.dueDate?.message}
-                        />
+                        >
+                          <Label>{t('labels.due_date')}</Label>
+                          <Input
+                            {...field}
+                            ref={dueDateInputRef}
+                            value={field.value || ''}
+                            aria-label={t('a11y.due_date_label')}
+                            type="date"
+                          />
+                          <FieldError>{errors.dueDate?.message}</FieldError>
+                        </TextField>
                       </>
                     )}
                   />

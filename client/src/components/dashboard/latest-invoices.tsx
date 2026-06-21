@@ -1,3 +1,4 @@
+import { Chip, buttonVariants } from '@heroui/react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -35,7 +36,7 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
   });
 
   return (
-    <section className="border-default-200 w-full min-w-72 rounded-xl border p-5 shadow-sm sm:p-6 xl:max-w-lg">
+    <section className="border-default-200 w-full min-w-72 rounded-3xl border p-5 shadow-sm backdrop-blur-3xl sm:p-6 xl:max-w-lg">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-base font-semibold">{t('title')}</h2>
@@ -43,7 +44,7 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
         </div>
         <Link
           href={INVOICES_PAGE}
-          className="border-default-200 text-default-500 hover:border-secondary hover:text-foreground inline-flex shrink-0 items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs transition"
+          className={buttonVariants({ size: 'sm', variant: 'outline' })}
         >
           {t('view_all')}
           <ArrowUpRightIcon className="h-3.5 w-3.5" />
@@ -76,17 +77,14 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
                     <span className="truncate text-sm font-medium">
                       {invoice.name}
                     </span>
-                    <span
-                      className={`inline-flex h-5 shrink-0 items-center rounded-full px-2 text-[11px] font-medium ${
-                        color === 'success'
-                          ? 'bg-success-100 text-success-700 dark:bg-success-50/20 dark:text-success-400'
-                          : color === 'warning'
-                            ? 'bg-warning-100 text-warning-700 dark:bg-warning-50/20 dark:text-warning-400'
-                            : 'bg-danger-100 text-danger-700 dark:bg-danger-50/20 dark:text-danger-400'
-                      }`}
+                    <Chip
+                      size="sm"
+                      color={color}
+                      variant="soft"
+                      className="h-5 shrink-0 text-[11px] font-medium"
                     >
                       {t(`statuses.${status}`)}
-                    </span>
+                    </Chip>
                   </div>
                   <div className="text-default-500 mt-0.5 flex min-w-0 items-center gap-1.5 text-[11px]">
                     <span className="shrink-0 tabular-nums">

@@ -3,11 +3,7 @@
 import {
   Button,
   Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  addToast
+  toast
 } from '@heroui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useTransition } from 'react';
@@ -31,9 +27,8 @@ const DeleteAccountModal = ({ userId, isOpen, onClose }: Props) => {
     startTransition(async () => {
       const response = await deleteUserAccount(userId);
 
-      addToast({
-        title: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+      toast(response.data.message, {
+        variant: isResponseError(response) ? 'danger' : 'success'
       });
 
       if (isResponseError(response)) return;
@@ -43,30 +38,35 @@ const DeleteAccountModal = ({ userId, isOpen, onClose }: Props) => {
     });
 
   const renderModalFooter = () => (
-    <ModalFooter>
+    <Modal.Footer>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
-          <Button variant="bordered" onPress={onClose}>
+          <Button variant="outline" onPress={onClose}>
             {t('cancel_button')}
           </Button>
-          <Button isLoading={isPending} color="danger" onPress={handleSubmit}>
+          <Button variant="danger" isPending={isPending} onPress={handleSubmit}>
             {t('confirm_button')}
           </Button>
         </div>
       </div>
-    </ModalFooter>
+    </Modal.Footer>
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalContent>
-        <ModalHeader className="flex items-end gap-2">
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+        <Modal.Header className="flex items-end gap-2">
           <ExclamationTriangleIcon className="text-danger-400 h-6 w-6" />
-          {t('title')}
-        </ModalHeader>
-        <ModalBody>{t('description')}</ModalBody>
+          <Modal.Heading>{t('title')}</Modal.Heading>
+        </Modal.Header>
+        <Modal.Body>{t('description')}</Modal.Body>
         {renderModalFooter()}
-      </ModalContent>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 };

@@ -62,13 +62,13 @@ const DashboardCards = async ({ userId, currency }: Props) => {
       />
       <DashboardCard
         icon={<DocumentCurrencyDollarIcon className="h-4 w-4" />}
-        iconClassName="bg-secondary/15 text-secondary"
+        iconClassName="bg-accent/15 text-accent"
         title={t('total_invoices')}
         text={`${invoices?.length || '0'}`}
       />
       <DashboardCard
         icon={<UsersIcon className="h-4 w-4" />}
-        iconClassName="bg-primary/15 text-primary"
+        iconClassName="bg-accent/15 text-accent"
         title={t('total_clients')}
         text={`${totalClients || '0'}`}
       />

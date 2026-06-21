@@ -3,14 +3,14 @@
 import {
   Button,
   Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
+  FieldError,
   Input,
+  Label,
+  ListBox,
   Select,
-  SelectItem,
-  addToast
+  Separator,
+  TextField,
+  toast
 } from '@heroui/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useState } from 'react';
@@ -30,19 +30,25 @@ type Props = {
 
 const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
   const t = useTranslations('profile.personal_information.form');
+
   const {
     register,
     handleSubmit,
     formState: { isDirty, isSubmitting, errors },
     reset,
     setError,
-    getValues
+    setValue,
+    watch
   } = useForm<User>({
     defaultValues
   });
+
   const [formSignature, setFormSignature] = useState<
     File | string | undefined
   >();
+
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const businessType = watch('businessType');
 
   const onSubmit: SubmitHandler<User> = async (data) => {
     if (!defaultValues?.id) return;
@@ -52,10 +58,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
       signature: formSignature || defaultValues.signature
     });
 
-    addToast({
-      title: response.message,
-      color: response.ok ? 'success' : 'danger'
-    });
+    toast(response.message, { variant: response.ok ? 'success' : 'danger' });
 
     if (!response?.ok) {
       if (response.validationErrors) {
@@ -73,116 +76,166 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
     await onSuccess?.();
   };
 
+  const renderTextField = ({
+    name,
+    label,
+    placeholder,
+    isDisabled = false
+  }: {
+    name: keyof User;
+    label: string;
+    placeholder: string;
+    isDisabled?: boolean;
+  }) => {
+    const error = errors[name];
+
+    return (
+      <TextField
+        isDisabled={isDisabled}
+        isInvalid={Boolean(error)}
+        className="w-full"
+      >
+        <Label>{label}</Label>
+
+        <Input
+          {...register(name)}
+          placeholder={placeholder}
+          className="input input--secondary"
+        />
+
+        {error?.message ? <FieldError>{error.message}</FieldError> : null}
+      </TextField>
+    );
+  };
+
   const renderCardBodyAndFooter = () => {
     return (
       <>
-        <CardBody className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
-          <Input
-            isDisabled
-            {...register('email')}
-            label={t('email')}
-            placeholder={t('email_placeholder')}
-            labelPlacement="outside"
-            variant="faded"
-            isInvalid={Boolean(errors.email)}
-            errorMessage={errors.email?.message}
-          />
-          <Input
-            {...register('name')}
-            label={t('name')}
-            placeholder={t('name_placeholder')}
-            labelPlacement="outside"
-            variant="faded"
-            isInvalid={Boolean(errors.name)}
-            errorMessage={errors.name?.message}
-          />
+        <Card.Content className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
+          {renderTextField({
+            name: 'email',
+            label: t('email'),
+            placeholder: t('email_placeholder'),
+            isDisabled: true
+          })}
+
+          {renderTextField({
+            name: 'name',
+            label: t('name'),
+            placeholder: t('name_placeholder')
+          })}
+
           <Select
-            {...register('businessType')}
-            label={t('business_type')}
+            className="w-full"
             placeholder={t('business_type_placeholder')}
-            labelPlacement="outside"
-            variant="faded"
-            defaultSelectedKeys={
-              defaultValues?.businessType
-                ? [`${defaultValues?.businessType}`]
-                : undefined
-            }
+            variant="secondary"
             isInvalid={Boolean(errors.businessType)}
-            errorMessage={errors.businessType?.message}
+            defaultValue={defaultValues?.businessType}
+            onChange={(value) => {
+              setValue('businessType', value as User['businessType'], {
+                shouldDirty: true,
+                shouldValidate: true
+              });
+            }}
           >
-            {CLIENT_BUSINESS_TYPES.map((type) => (
-              <SelectItem key={type}>{capitalize(type)}</SelectItem>
-            ))}
+            <Label>{t('business_type')}</Label>
+
+            <Select.Trigger>
+              <Select.Value />
+              <Select.Indicator />
+            </Select.Trigger>
+
+            <Select.Popover>
+              <ListBox>
+                {CLIENT_BUSINESS_TYPES.map((type) => {
+                  const label = capitalize(type);
+
+                  return (
+                    <ListBox.Item key={type} id={type} textValue={label}>
+                      {label}
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                  );
+                })}
+              </ListBox>
+            </Select.Popover>
+
+            {errors.businessType?.message ? (
+              <FieldError>{errors.businessType.message}</FieldError>
+            ) : null}
           </Select>
-          <Input
-            {...register('businessNumber')}
-            label={t('business_number')}
-            placeholder={t('business_number_placeholder')}
-            labelPlacement="outside"
-            variant="faded"
-            isInvalid={Boolean(errors.businessNumber)}
-            errorMessage={errors.businessNumber?.message}
-          />
-          {getValues('businessType') === 'business' && (
-            <Input
-              {...register('vatNumber')}
-              label="VAT Number"
-              placeholder="Enter VAT number"
-              labelPlacement="outside"
-              variant="faded"
-              isInvalid={Boolean(errors.vatNumber)}
-              errorMessage={errors.vatNumber?.message}
-            />
+
+          {renderTextField({
+            name: 'businessNumber',
+            label: t('business_number'),
+            placeholder: t('business_number_placeholder')
+          })}
+
+          {businessType === 'business' && (
+            <TextField isInvalid={Boolean(errors.vatNumber)} className="w-full">
+              <Label>VAT Number</Label>
+
+              <Input
+                {...register('vatNumber')}
+                placeholder="Enter VAT number"
+                className="input input--secondary"
+              />
+
+              {errors.vatNumber?.message ? (
+                <FieldError>{errors.vatNumber.message}</FieldError>
+              ) : null}
+            </TextField>
           )}
-          <Input
-            {...register('address')}
-            label={t('address')}
-            placeholder={t('address_placeholder')}
-            labelPlacement="outside"
-            variant="faded"
-            isInvalid={Boolean(errors.address)}
-            errorMessage={errors.address?.message}
-          />
+
+          {renderTextField({
+            name: 'address',
+            label: t('address'),
+            placeholder: t('address_placeholder')
+          })}
+
           <div className="mt-[-0.25rem] flex flex-col gap-2">
             <label className="self-start text-sm">Signature</label>
+
             <SignaturePad
               signature={formSignature || defaultValues?.signature}
               onSignatureChange={setFormSignature}
             />
           </div>
-        </CardBody>
-        <CardFooter className="flex w-full flex-col p-6">
+        </Card.Content>
+
+        <Card.Footer className="flex w-full flex-col p-6">
           <Button
-            isDisabled={!isDirty && !Boolean(formSignature)}
+            isDisabled={isSubmitting || (!isDirty && !Boolean(formSignature))}
             type="submit"
-            isLoading={isSubmitting}
-            color="secondary"
             className="self-end"
           >
             {t('save_changes')}
           </Button>
-        </CardFooter>
+        </Card.Footer>
       </>
     );
   };
 
   return (
-    <Card
-      as="form"
+    <form
       aria-label={t('a11y.form_label')}
       onSubmit={handleSubmit(onSubmit)}
-      className="dark:border-default-100 w-full bg-transparent dark:border"
       encType="multipart/form-data"
+      className="w-full"
     >
-      <CardHeader
-        data-testid="personal-information-form-heading"
-        className="p-4 px-6"
-      >
-        {t('title')}
-      </CardHeader>
-      <Divider />
-      {renderCardBodyAndFooter()}
-    </Card>
+      <Card className="w-full border bg-transparent">
+        <Card.Header
+          data-testid="personal-information-form-heading"
+          className="p-4 px-6"
+        >
+          <Card.Title className="text-2xl">{t('title')}</Card.Title>
+        </Card.Header>
+
+        <Separator />
+
+        {renderCardBodyAndFooter()}
+      </Card>
+    </form>
   );
 };
 

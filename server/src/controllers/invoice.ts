@@ -4,7 +4,10 @@ import type {
   InvoiceBody,
   PublicInvoice
 } from '@invoicetrackr/types';
-import { InvoiceEmail } from '@invoicetrackr/emails';
+import {
+  InvoiceEmail,
+  InvoiceSignedNotificationEmail
+} from '@invoicetrackr/emails';
 import { MultipartFile } from '@fastify/multipart';
 import { v2 as cloudinary } from 'cloudinary';
 import { invoiceBodySchema } from '@invoicetrackr/types';
@@ -42,6 +45,7 @@ import {
   updateInvoiceInDb,
   updateInvoiceStatusInDb
 } from '../database/invoice';
+import { appEmailFrom, getAppUrl } from '../config/app';
 import {
   getStripeMerchantAccountFromDb,
   toMerchantPaymentStatus
@@ -78,14 +82,6 @@ const uploadSignatureFile = async (
 
   return uploadedSignature.url.replace('http://', 'https://');
 };
-
-const escapeEmailHtml = (value: string) =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 
 const escapeCsvValue = (value: string | null | undefined) =>
   `"${String(value || '').replace(/"/g, '""')}"`;
@@ -648,10 +644,8 @@ export const sendInvoiceEmail = async (
       );
   }
 
-  const publicBaseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   const publicInvoiceLink = includePublicLink
-    ? `${publicBaseUrl}/invoices/public/${publicInvoiceToken}`
+    ? getAppUrl(`/invoices/public/${publicInvoiceToken}`)
     : undefined;
 
   const attachment = file
@@ -666,7 +660,6 @@ export const sendInvoiceEmail = async (
     message: message || i18n.t('emails.invoice.defaultMessage'),
     translations: {
       title: i18n.t('emails.invoice.title'),
-      subtitle: i18n.t('emails.invoice.subtitle'),
       detailsTitle: i18n.t('emails.invoice.detailsTitle'),
       sentBy: i18n.t('emails.invoice.sentBy'),
       invoiceNumber: i18n.t('emails.invoice.invoiceNumber'),
@@ -678,13 +671,9 @@ export const sendInvoiceEmail = async (
       signingTitle: i18n.t('emails.invoice.signingTitle'),
       signingMessage: i18n.t('emails.invoice.signingMessage'),
       signingButton: i18n.t('emails.invoice.signingButton'),
-      signingFallback: i18n.t('emails.invoice.signingFallback'),
       publicInvoiceTitle: i18n.t('emails.invoice.publicInvoiceTitle'),
       publicInvoiceMessage: i18n.t('emails.invoice.publicInvoiceMessage'),
       publicInvoiceButton: i18n.t('emails.invoice.publicInvoiceButton'),
-      viewTitle: i18n.t('emails.invoice.viewTitle'),
-      viewMessage: i18n.t('emails.invoice.viewMessage'),
-      viewButton: i18n.t('emails.invoice.viewButton'),
       footer: i18n.t('emails.invoice.footer'),
       copyright: i18n.t('emails.invoice.copyright', {
         year: new Date().getFullYear()
@@ -696,7 +685,7 @@ export const sendInvoiceEmail = async (
 
   const { error } = await resend.emails.send({
     to: recipientEmail,
-    from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
+    from: appEmailFrom,
     replyTo: user.email,
     subject,
     react: htmlContent,
@@ -859,8 +848,6 @@ export const createPublicInvoicePayment = async (
   if (!Number.isFinite(amount) || amount <= 0)
     throw new BadRequestError(i18n.t('error.invoice.notPayable'));
 
-  const publicBaseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   const invoiceNumber = invoice.invoiceId || String(invoice.id);
   const session = await stripe.checkout.sessions.create(
     {
@@ -892,8 +879,12 @@ export const createPublicInvoicePayment = async (
         userId: String(publicInvoice.userId),
         publicInvoiceToken: req.params.token
       },
-      success_url: `${publicBaseUrl}/invoices/public/${req.params.token}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${publicBaseUrl}/invoices/public/${req.params.token}?payment=cancelled`
+      success_url: getAppUrl(
+        `/invoices/public/${req.params.token}?payment=success&session_id={CHECKOUT_SESSION_ID}`
+      ),
+      cancel_url: getAppUrl(
+        `/invoices/public/${req.params.token}?payment=cancelled`
+      )
     },
     { stripeAccount: merchantPayment.connectedAccountId }
   );
@@ -1010,7 +1001,7 @@ export const signPublicInvoice = async (
       locales[signing.language as keyof typeof locales] || locales.en;
     const translations = locale.emails.invoice.signedNotification;
     const receiverName = invoice?.receiver?.name || translations.recipient;
-    const downloadLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/invoices/public/${req.params.token}`;
+    const downloadLink = getAppUrl(`/invoices/public/${req.params.token}`);
     const notificationMessage = interpolateTranslation(translations.message, {
       receiverName,
       invoiceId
@@ -1019,17 +1010,22 @@ export const signPublicInvoice = async (
       invoiceId
     });
     const reviewMessage = translations.review;
+    const emailHtml = InvoiceSignedNotificationEmail({
+      subject,
+      message: notificationMessage,
+      reviewMessage,
+      buttonText: translations.reviewButton,
+      invoiceUrl: downloadLink,
+      footer: locale.emails.invoice.footer,
+      copyright: `© ${new Date().getFullYear()} ${locale.emails.invoice.copyright}`
+    });
 
     await resend.emails
       .send({
         to: invoice.sender.email,
-        from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
+        from: appEmailFrom,
         subject,
-        html: `
-          <p>${escapeEmailHtml(notificationMessage)}</p>
-          <p>${escapeEmailHtml(reviewMessage)}</p>
-          <p><a href="${escapeEmailHtml(downloadLink)}">${escapeEmailHtml(downloadLink)}</a></p>
-        `,
+        react: emailHtml,
         text: [notificationMessage, '', reviewMessage, downloadLink].join('\n')
       })
       .catch((error) => {

@@ -3,11 +3,10 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
-  CardHeader,
-  Divider,
-  addToast
+  Separator,
+  toast
 } from '@heroui/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
@@ -46,9 +45,8 @@ export default function ChangePasswordForm({ userId }: Props) {
       confirmedNewPassword: data.confirmedNewPassword
     });
 
-    addToast({
-      title: response.message,
-      color: response.ok ? 'success' : 'danger'
+    toast(response.message, {
+      variant: response.ok ? 'success' : 'danger'
     });
 
     if (!response.ok) {
@@ -73,7 +71,7 @@ export default function ChangePasswordForm({ userId }: Props) {
 
     return (
       <>
-        <CardBody className="grid grid-cols-1 gap-4 p-6 lg:grid-cols-2">
+        <CardContent className="grid grid-cols-1 gap-4 p-6">
           <PasswordInput
             autoComplete="new-password"
             placeholder={t('current_password_placeholder')}
@@ -89,7 +87,7 @@ export default function ChangePasswordForm({ userId }: Props) {
             isInvalid={!!errors.newPassword}
             errorMessage={errors.newPassword?.message}
           />
-          <small className="text-default-500 col-span-2 mt-[-8]">
+          <small className="text-default-500 -mt-2">
             {t('password_requirements')}
           </small>
           <PasswordInput
@@ -99,14 +97,13 @@ export default function ChangePasswordForm({ userId }: Props) {
             isInvalid={!!errors.confirmedNewPassword}
             errorMessage={errors.confirmedNewPassword?.message}
           />
-        </CardBody>
+        </CardContent>
         <CardFooter className="relative w-full justify-between p-6">
           <div className="flex w-full flex-col gap-2 self-end">
             <Button
+              isPending={isSubmitting}
               isDisabled={!isDirty}
               type="submit"
-              isLoading={isSubmitting}
-              color="secondary"
               className="self-end"
             >
               {t('save_changes')}
@@ -118,15 +115,14 @@ export default function ChangePasswordForm({ userId }: Props) {
   };
 
   return (
-    <Card
-      as="form"
-      aria-label={t('a11y.form_label')}
-      onSubmit={handleSubmit(onSubmit)}
-      className="dark:border-default-100 w-full bg-transparent dark:border"
-    >
-      <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
-      <Divider />
-      {renderCardBodyAndFooter()}
+    <Card className="w-full border bg-transparent">
+      <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
+        <Card.Header className="p-4 px-6">
+          <Card.Title className="text-2xl">{t('title')}</Card.Title>
+        </Card.Header>
+        <Separator />
+        {renderCardBodyAndFooter()}
+      </form>
     </Card>
   );
 }

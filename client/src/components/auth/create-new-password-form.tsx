@@ -3,11 +3,13 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
-  CardHeader,
+  FieldError,
   Input,
+  Label,
   Link,
+  TextField,
   cn
 } from '@heroui/react';
 import {
@@ -21,6 +23,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { ActionResponseModel } from '@/lib/types/action';
+import AuthCardHeader from '@/components/auth/auth-card-header';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
 import { createNewPasswordAction } from '@/lib/actions';
 
@@ -37,6 +40,7 @@ const initialFormValues = {
 type CreateNewPasswordFormModel = typeof initialFormValues;
 
 export default function CreateNewPasswordForm({ userId, token }: Props) {
+  const pageT = useTranslations('create_new_password');
   const t = useTranslations('create_new_password.form');
   const {
     register,
@@ -83,50 +87,47 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
   };
 
   return (
-    <Card
-      className="mx-auto w-full max-w-lg dark:border dark:border-neutral-800"
-      isBlurred
-    >
-      <CardHeader className="p-8 pb-0">
-        <h1 className="text-3xl font-medium">{t('title')}</h1>
-      </CardHeader>
-      <CardBody className="p-8 pb-0">
+    <Card className="mx-auto w-full max-w-lg border">
+      <AuthCardHeader
+        title={pageT('title')}
+        description={pageT('description')}
+      />
+      <CardContent className="p-8 pb-0">
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
-          <Input
-            {...register('newPassword', {
-              onChange: () => clearFieldState('newPassword')
-            })}
-            labelPlacement="outside"
-            variant="faded"
-            id="newPassword"
-            type="password"
-            label={t('new_password')}
-            placeholder={t('new_password_placeholder')}
-            isInvalid={!!errors.newPassword}
-            errorMessage={errors.newPassword?.message}
-          />
-          <Input
-            {...register('confirmedNewPassword', {
-              onChange: () => clearFieldState('confirmedNewPassword')
-            })}
-            labelPlacement="outside"
-            variant="faded"
-            id="confirmedNewPassword"
-            type="password"
-            label={t('confirmed_new_password')}
-            placeholder={t('confirmed_new_password_placeholder')}
+          <TextField variant="secondary" isInvalid={!!errors.newPassword}>
+            <Label>{t('new_password')}</Label>
+            <Input
+              {...register('newPassword', {
+                onChange: () => clearFieldState('newPassword')
+              })}
+              id="newPassword"
+              type="password"
+              placeholder={t('new_password_placeholder')}
+            />
+            <FieldError>{errors.newPassword?.message}</FieldError>
+          </TextField>
+          <TextField
+            variant="secondary"
             isInvalid={!!errors.confirmedNewPassword}
-            errorMessage={errors.confirmedNewPassword?.message}
-          />
+          >
+            <Label>{t('confirmed_new_password')}</Label>
+            <Input
+              {...register('confirmedNewPassword', {
+                onChange: () => clearFieldState('confirmedNewPassword')
+              })}
+              id="confirmedNewPassword"
+              type="password"
+              placeholder={t('confirmed_new_password_placeholder')}
+            />
+            <FieldError>{errors.confirmedNewPassword?.message}</FieldError>
+          </TextField>
           <Button
             className="w-full justify-between"
             aria-disabled={isSubmitting}
-            isLoading={isSubmitting}
             type="submit"
-            endContent={<ArrowRightIcon className="h-5 w-5" />}
-            color="secondary"
           >
             {t('submit')}
+            <ArrowRightIcon className="h-5 w-5" />
           </Button>
           <div aria-live="polite" aria-atomic="true">
             {response?.message && (
@@ -134,11 +135,11 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
                 {response.ok ? (
                   <CheckCircleIcon className="text-success-500 h-5 w-5" />
                 ) : (
-                  <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+                  <ExclamationCircleIcon className="text-danger-500 h-5 w-5" />
                 )}
                 <p
                   className={cn('text-sm', {
-                    'text-red-500': !response.ok,
+                    'text-danger-500': !response.ok,
                     'text-success-500': response.ok
                   })}
                 >
@@ -148,11 +149,14 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
             )}
           </div>
         </form>
-      </CardBody>
+      </CardContent>
       <CardFooter className="flex flex-col items-center justify-center gap-1 pb-8 pt-0">
-        <div className="flex gap-1">
-          <p className="text-md">{t('remember_your_password')}</p>{' '}
-          <Link color="secondary" href={LOGIN_PAGE}>
+        <div className="flex gap-1 text-sm">
+          <p className="text-muted">{t('remember_your_password')}</p>{' '}
+          <Link
+            href={LOGIN_PAGE}
+            className="text-accent font-medium decoration-current underline-offset-4 hover:underline"
+          >
             {t('sign_in')}
           </Link>
         </div>

@@ -8,7 +8,7 @@ import {
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
   CardHeader,
   cn
@@ -175,7 +175,7 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
             </div>
           </CardHeader>
 
-          <CardBody className="gap-5 p-0 pt-4">
+          <CardContent className="gap-5 p-0 pt-4">
             <p className="text-default-500 max-w-md text-sm leading-6">
               {canStartTrial
                 ? t('trial_description')
@@ -194,7 +194,7 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
                 </li>
               ))}
             </ul>
-          </CardBody>
+          </CardContent>
         </div>
 
         <div className="flex h-full flex-col p-8 md:px-10 md:pb-10 md:pt-20">
@@ -265,10 +265,8 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
             {canStartTrial ? (
               <>
                 <Button
-                  color="secondary"
                   size="lg"
                   className="w-full font-medium"
-                  isLoading={loadingAction === 'checkout'}
                   isDisabled={isBusy && loadingAction !== 'checkout'}
                   onPress={() =>
                     run('checkout', () =>
@@ -279,10 +277,9 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
                   {t('actions.subscribe')}
                 </Button>
                 <Button
-                  variant="bordered"
+                  variant="outline"
                   size="lg"
                   className="w-full font-medium"
-                  isLoading={loadingAction === 'trial'}
                   isDisabled={isBusy && loadingAction !== 'trial'}
                   onPress={startFreeTrial}
                 >
@@ -292,20 +289,17 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
             ) : isPaused ? (
               <>
                 <Button
-                  color="secondary"
                   size="lg"
                   className="w-full font-medium"
-                  isLoading={loadingAction === 'resume'}
                   isDisabled={isBusy && loadingAction !== 'resume'}
                   onPress={resumePausedSubscription}
                 >
                   {t('actions.resume')}
                 </Button>
                 <Button
-                  variant="bordered"
+                  variant="outline"
                   size="lg"
                   className="w-full font-medium"
-                  isLoading={loadingAction === 'portal'}
                   isDisabled={isBusy && loadingAction !== 'portal'}
                   onPress={() =>
                     run('portal', () => createBillingPortalSession(user.id!))
@@ -316,10 +310,8 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
               </>
             ) : canStartCheckout ? (
               <Button
-                color="secondary"
                 size="lg"
                 className="w-full font-medium"
-                isLoading={loadingAction === 'checkout'}
                 isDisabled={isBusy && loadingAction !== 'checkout'}
                 onPress={() =>
                   run('checkout', () =>
@@ -331,10 +323,8 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
               </Button>
             ) : (
               <Button
-                color="secondary"
                 size="lg"
                 className="w-full font-medium"
-                isLoading={loadingAction === 'portal'}
                 isDisabled={isBusy && loadingAction !== 'portal'}
                 onPress={() =>
                   run('portal', () => createBillingPortalSession(user.id!))

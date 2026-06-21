@@ -1,11 +1,12 @@
 import {
-  Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
   CardHeader,
-  Link
+  Link,
+  buttonVariants
 } from '@heroui/react';
+import NextLink from 'next/link';
 import { UserIcon } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
 
@@ -24,18 +25,17 @@ const CompleteProfile = ({ title }: Props) => {
         <UserIcon className="text-secondary-500 size-12" />
         {t('title')}
       </CardHeader>
-      <CardBody className="px-6 pt-0 text-center">
+      <CardContent className="px-6 pt-0 text-center">
         <p className="text-muted-foreground">{t('description', { title })}</p>
-      </CardBody>
+      </CardContent>
       <CardFooter className="justify-center p-6 pt-0 text-center">
-        <Button
+        <NextLink
           href={PERSONAL_INFORMATION_PAGE}
-          as={Link}
-          color="secondary"
-          showAnchorIcon
+          className={buttonVariants({ variant: 'primary' })}
         >
           {t('go_to_profile')}
-        </Button>
+          <Link.Icon />
+        </NextLink>
       </CardFooter>
     </Card>
   );

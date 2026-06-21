@@ -1,4 +1,10 @@
-import { Button, Pagination } from '@heroui/react';
+import {
+  Button,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink
+} from '@heroui/react';
 import { Dispatch, SetStateAction } from 'react';
 
 const PER_PAGE = 8;
@@ -34,24 +40,33 @@ const ClientSectionBottomContent = ({
   };
 
   return (
-    <div className="relative flex items-center justify-center py-2">
+    <div className="relative mt-4 flex items-center justify-center py-2">
       <div className="absolute flex w-full items-center justify-center">
-        <Pagination
-          isCompact
-          showControls
-          color="secondary"
-          total={pages}
-          page={page}
-          className="flex justify-center"
-          onChange={setPage}
-          isDisabled={!clientsLength}
-        />
+        <Pagination className="flex justify-center" aria-label="Clients pages">
+          <PaginationContent>
+            {Array.from({ length: pages }, (_, index) => {
+              const pageNumber = index + 1;
+
+              return (
+                <PaginationItem key={pageNumber}>
+                  <PaginationLink
+                    isActive={pageNumber === page}
+                    isDisabled={!clientsLength}
+                    onPress={() => setPage(pageNumber)}
+                  >
+                    {pageNumber}
+                  </PaginationLink>
+                </PaginationItem>
+              );
+            })}
+          </PaginationContent>
+        </Pagination>
       </div>
       <div className="hidden w-full justify-end gap-2 sm:flex">
         <Button
           isDisabled={prevButtonDisabled}
           size="sm"
-          variant="flat"
+          variant="secondary"
           onPress={onPreviousPage}
         >
           Previous
@@ -59,7 +74,7 @@ const ClientSectionBottomContent = ({
         <Button
           isDisabled={nextButtonDisabled}
           size="sm"
-          variant="flat"
+          variant="secondary"
           onPress={onNextPage}
         >
           Next

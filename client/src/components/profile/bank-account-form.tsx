@@ -3,12 +3,14 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
-  CardHeader,
-  Divider,
+  FieldError,
   Input,
-  addToast
+  Label,
+  Separator,
+  TextField,
+  toast
 } from '@heroui/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { BankAccountBody } from '@invoicetrackr/types';
@@ -54,9 +56,8 @@ export default function BankAccountForm({
       isUserOnboarding
     );
 
-    addToast({
-      title: response.message,
-      color: response.ok ? 'success' : 'danger'
+    toast(response.message, {
+      variant: response.ok ? 'success' : 'danger'
     });
 
     if (!response.ok) {
@@ -79,45 +80,43 @@ export default function BankAccountForm({
   };
 
   return (
-    <Card className="w-full bg-transparent dark:border dark:border-neutral-800">
+    <Card className="w-full border bg-transparent">
       <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
-        <CardHeader className="p-4 px-6">{t('title.create')}</CardHeader>
-        <Divider />
-        <CardBody className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2">
-          <Input
-            {...register('name')}
-            label={t('bank_name')}
-            variant="faded"
-            labelPlacement="outside"
-            placeholder={t('bank_name_placeholder')}
-            isInvalid={!!errors.name}
-            errorMessage={errors.name?.message}
-          />
-          <Input
-            {...register('code')}
-            label={t('bank_code')}
-            variant="faded"
-            labelPlacement="outside"
-            placeholder={t('bank_code_placeholder')}
-            isInvalid={!!errors.code}
-            errorMessage={errors.code?.message}
-          />
-          <Input
-            {...register('accountNumber')}
-            label={t('bank_account_number')}
-            variant="faded"
-            labelPlacement="outside"
-            placeholder={t('bank_account_number_placeholder')}
-            isInvalid={!!errors.accountNumber}
-            errorMessage={errors.accountNumber?.message}
-          />
-        </CardBody>
+        <Card.Header className="p-4 px-6">
+          <Card.Title className="text-3xl">{t('title.create')}</Card.Title>
+        </Card.Header>
+        <Separator />
+        <CardContent className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2">
+          <TextField variant="secondary" isInvalid={!!errors.name}>
+            <Label>{t('bank_name')}</Label>
+            <Input
+              {...register('name')}
+              placeholder={t('bank_name_placeholder')}
+            />
+            <FieldError>{errors.name?.message}</FieldError>
+          </TextField>
+          <TextField variant="secondary" isInvalid={!!errors.code}>
+            <Label>{t('bank_code')}</Label>
+            <Input
+              {...register('code')}
+              placeholder={t('bank_code_placeholder')}
+            />
+            <FieldError>{errors.code?.message}</FieldError>
+          </TextField>
+          <TextField variant="secondary" isInvalid={!!errors.accountNumber}>
+            <Label>{t('bank_account_number')}</Label>
+            <Input
+              {...register('accountNumber')}
+              placeholder={t('bank_account_number_placeholder')}
+            />
+            <FieldError>{errors.accountNumber?.message}</FieldError>
+          </TextField>
+        </CardContent>
         <CardFooter className="justify-end gap-2 p-6">
           <div className="flex gap-2">
             {!isUserOnboarding && (
               <Button
-                color="danger"
-                variant="light"
+                variant="danger-soft"
                 onPress={() => router.push(BANKING_INFORMATION_PAGE)}
               >
                 {t('actions.cancel')}
@@ -125,9 +124,8 @@ export default function BankAccountForm({
             )}
             <Button
               type="submit"
-              color="secondary"
               isDisabled={!isDirty}
-              isLoading={isSubmitting}
+              isPending={isSubmitting}
             >
               {t('actions.save')}
             </Button>

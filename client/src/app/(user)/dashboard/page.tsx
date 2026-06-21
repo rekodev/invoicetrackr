@@ -4,7 +4,7 @@ import {
   DashboardCardsSkeleton,
   LatestInvoicesSkeleton,
   RevenueChartSkeleton
-} from '@/components/ui/skeletons';
+} from '@/components/ui/skeletons/dashboard-skeleton';
 import DashboardCards from '@/components/dashboard/dashboard-cards';
 import LatestInvoices from '@/components/dashboard/latest-invoices';
 import RevenueChart from '@/components/dashboard/revenue-chart';

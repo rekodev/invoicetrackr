@@ -1,16 +1,11 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   Chip,
-  Image,
   Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   cn,
-  useDisclosure
+  useOverlayState
 } from '@heroui/react';
 import { CheckCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -18,6 +13,7 @@ import SignatureCanvas from 'react-signature-canvas';
 import { useTranslations } from 'next-intl';
 
 import { base64ToFile, imageUrlToBase64 } from '@/lib/utils/base64';
+import Image from 'next/image';
 
 type Props = {
   signature?: File | string;
@@ -39,7 +35,12 @@ const SignaturePad = ({
   isReadOnly = false
 }: Props) => {
   const t = useTranslations('components.signature_pad');
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const {
+    isOpen,
+    open: onOpen,
+    close: onClose,
+    setOpen: onOpenChange
+  } = useOverlayState();
   const [signatureImage, setSignatureImage] = useState('');
 
   const signatureRef = useRef<SignatureCanvas>(null);
@@ -106,21 +107,20 @@ const SignaturePad = ({
     <>
       <div className="flex flex-col gap-1.5">
         <Card
-          radius="lg"
           className={cn(
-            'shadow-small dark:border-default-100 aspect-4/3 relative flex max-w-64 items-center justify-center overflow-hidden dark:border',
+            'shadow-small aspect-4/3 relative flex max-w-64 items-center justify-center overflow-hidden border',
             {
               'bg-[#F3126040]': isInvalid,
               'hover:border-none': !!signatureImgUrl && !isReadOnly
             }
           )}
-          onPress={isReadOnly ? undefined : onOpen}
-          isPressable={!isReadOnly}
+          onClick={isReadOnly ? undefined : onOpen}
         >
-          <CardBody className="group flex h-full w-full flex-col items-center justify-center gap-2 overflow-visible p-0">
+          <CardContent className="group flex h-full w-full flex-col items-center justify-center gap-2 overflow-visible p-0">
             {signatureImgUrl ? (
               <>
                 <Image
+                  fill
                   src={signatureImgUrl}
                   alt={t('signature_alt')}
                   className="z-0 rounded-none"
@@ -138,29 +138,38 @@ const SignaturePad = ({
                 <p className="font-medium">{t('add_signature')}</p>
               </>
             )}
-          </CardBody>
+          </CardContent>
         </Card>
         {profileSignature && isChipVisible && (
-          <Chip
-            onClose={setProfileSignature}
-            endContent={<CheckCircleIcon className="mr-0.5 h-4 w-4" />}
-            color="secondary"
-            variant="faded"
-          >
+          <Button size="sm" variant="secondary" onPress={setProfileSignature}>
+            <CheckCircleIcon className="mr-0.5 h-4 w-4" />
             {t('use_profile_signature')}
-          </Chip>
+          </Button>
         )}
         {isInvalid && (
-          <Chip variant="light" className="mt-[-4px]" size="sm" color="danger">
+          <Chip
+            variant="tertiary"
+            className="mt-[-4px]"
+            size="sm"
+            color="danger"
+          >
             {errorMessage}
           </Chip>
         )}
       </div>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
-        <ModalContent>
-          <ModalHeader>{t('modal_title')}</ModalHeader>
-          <ModalBody>
+      <Modal>
+        <Modal.Backdrop
+          isOpen={isOpen}
+          onOpenChange={(open) => !open && onOpenChange(false)}
+        >
+          <Modal.Container size="cover">
+            <Modal.Dialog>
+              <Modal.CloseTrigger />
+          <Modal.Header>
+            <Modal.Heading>{t('modal_title')}</Modal.Heading>
+          </Modal.Header>
+          <Modal.Body>
             <SignatureCanvas
               ref={signatureRef}
               canvasProps={{
@@ -172,19 +181,19 @@ const SignaturePad = ({
               }}
               backgroundColor="white"
             />
-          </ModalBody>
-          <ModalFooter>
+          </Modal.Body>
+          <Modal.Footer>
             <Button
-              color="danger"
+              variant="danger"
               onPress={() => signatureRef.current?.clear()}
             >
               {t('clear')}
             </Button>
-            <Button color="secondary" onPress={saveSignature}>
-              {t('save')}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+            <Button onPress={saveSignature}>{t('save')}</Button>
+          </Modal.Footer>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
       </Modal>
     </>
   );

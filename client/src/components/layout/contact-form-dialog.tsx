@@ -2,15 +2,14 @@
 
 import {
   Button,
+  FieldError,
   Form,
   Input,
+  Label,
   Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Textarea,
-  addToast
+  TextArea,
+  TextField,
+  toast
 } from '@heroui/react';
 import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
@@ -51,72 +50,68 @@ export default function ContactFormDialog() {
           setError(key as keyof ContactForm, { message: value });
         });
 
-        addToast({
-          title: response.data.message,
-          color: 'danger'
+        toast(response.data.message, {
+          variant: 'danger'
         });
 
         return;
       }
 
-      addToast({
-        title: response.data.message,
-        color: 'success'
+      toast(response.data.message, {
+        variant: 'success'
       });
       handleClose();
     });
 
   return (
     <>
-      <Button
-        onPress={() => setIsOpen(true)}
-        className="max-w-min"
-        color="secondary"
-      >
+      <Button onPress={() => setIsOpen(true)} className="max-w-min">
         {t('title')}
       </Button>
 
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
-        onClose={handleClose}
-        size="lg"
-      >
-        <ModalContent as={Form} onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>{t('title')}</ModalHeader>
-          <ModalBody className="w-full flex-col">
-            <Input
-              {...register('email')}
-              variant="faded"
-              placeholder={t('email_placeholder')}
-              label={t('email_label')}
-              isInvalid={!!errors.email}
-              errorMessage={errors.email?.message}
-            />
-            <Textarea
-              variant="faded"
-              {...register('message')}
-              label={t('message_label')}
-              placeholder={t('message_placeholder')}
-              maxLength={5000}
-              isInvalid={!!errors.message}
-              errorMessage={errors.message?.message}
-            />
-          </ModalBody>
-          <ModalFooter className="w-full">
-            <Button variant="bordered" onPress={handleClose}>
+      <Modal>
+        <Modal.Backdrop
+          isOpen={isOpen}
+          onOpenChange={(open) => !open && handleClose()}
+        >
+          <Modal.Container size="lg">
+            <Modal.Dialog>
+              <Modal.CloseTrigger />
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <Modal.Header>
+            <Modal.Heading>{t('title')}</Modal.Heading>
+          </Modal.Header>
+          <Modal.Body className="w-full flex-col">
+            <TextField variant="secondary" isInvalid={!!errors.email}>
+              <Label>{t('email_label')}</Label>
+              <Input
+                {...register('email')}
+                placeholder={t('email_placeholder')}
+              />
+              <FieldError>{errors.email?.message}</FieldError>
+            </TextField>
+            <TextField variant="secondary" isInvalid={!!errors.message}>
+              <Label>{t('message_label')}</Label>
+              <TextArea
+                {...register('message')}
+                placeholder={t('message_placeholder')}
+                maxLength={5000}
+              />
+              <FieldError>{errors.message?.message}</FieldError>
+            </TextField>
+          </Modal.Body>
+          <Modal.Footer className="w-full">
+            <Button variant="outline" onPress={handleClose}>
               {t('cancel')}
             </Button>
-            <Button
-              isLoading={isPending}
-              isDisabled={isPending}
-              type="submit"
-              color="secondary"
-            >
+            <Button isPending={isPending} type="submit">
               {t('send')}
             </Button>
-          </ModalFooter>
-        </ModalContent>
+          </Modal.Footer>
+        </Form>
+            </Modal.Dialog>
+          </Modal.Container>
+        </Modal.Backdrop>
       </Modal>
     </>
   );

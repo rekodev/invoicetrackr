@@ -332,7 +332,7 @@ export default function PrivacyPolicyPageContent() {
           <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
             {t('sections.contact.intro')}
           </p>
-          <div className="border-default-300 dark:border-default-100 rounded-md border p-4">
+          <div className="rounded-md border p-4">
             <p className="text-gray-700 dark:text-gray-300">
               <strong>{t('sections.contact.company')}</strong>
               <br />

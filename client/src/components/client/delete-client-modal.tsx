@@ -3,11 +3,7 @@
 import {
   Button,
   Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  addToast
+  toast
 } from '@heroui/react';
 import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
@@ -35,9 +31,8 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
         clientId: clientData.id
       });
 
-      addToast({
-        title: response.message || '',
-        color: response.ok ? 'success' : 'danger'
+      toast(response.message || '', {
+        variant: response.ok ? 'success' : 'danger'
       });
 
       if (!response.ok) return;
@@ -46,29 +41,36 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
     });
 
   const renderModalFooter = () => (
-    <ModalFooter>
+    <Modal.Footer>
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full justify-end gap-1">
-          <Button variant="bordered" onPress={onClose}>
+          <Button variant="outline" onPress={onClose}>
             {t('cancel')}
           </Button>
-          <Button isLoading={isPending} color="danger" onPress={handleSubmit}>
+          <Button isPending={isPending} variant="danger" onPress={handleSubmit}>
             {t('confirm')}
           </Button>
         </div>
       </div>
-    </ModalFooter>
+    </Modal.Footer>
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalContent>
-        <ModalHeader>{t('title')}</ModalHeader>
-        <ModalBody>
+    <Modal>
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <Modal.Container>
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+        <Modal.Header>
+          <Modal.Heading>{t('title')}</Modal.Heading>
+        </Modal.Header>
+        <Modal.Body>
           {t('description', { clientName: clientData.name })}
-        </ModalBody>
+        </Modal.Body>
         {renderModalFooter()}
-      </ModalContent>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 };

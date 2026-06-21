@@ -3,23 +3,23 @@
 import {
   Alert,
   Button,
+  ListBox,
+  ListBoxItem,
   Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   Select,
-  SelectItem,
   Spinner,
   cn
 } from '@heroui/react';
-import { ArrowDownTrayIcon, LanguageIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowDownTrayIcon,
+  LanguageIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline';
 import { JSX, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
 const PDFDownloadLink = dynamic(
-  // @ts-ignore
   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
   {
     ssr: false,
@@ -28,7 +28,7 @@ const PDFDownloadLink = dynamic(
       const t = useTranslations('invoices.pdf');
 
       return (
-        <Button isLoading size="sm" color="secondary" variant="solid">
+        <Button isPending size="sm" variant="primary">
           {t('buttons.download_pdf')}
         </Button>
       );
@@ -36,13 +36,22 @@ const PDFDownloadLink = dynamic(
   }
 );
 
+import type { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
 import { CookieConsentStatus } from '@/lib/types';
-import { InvoiceBody } from '@invoicetrackr/types';
 import { availableLanguages } from '@/lib/constants/profile';
 import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 
 import PdfViewerWrapper from '../pdf/pdf-viewer-wrapper';
+
+const statusIndicatorClassMap: Record<
+  InvoiceStatus,
+  { dot: string; text: string }
+> = {
+  paid: { dot: 'bg-success', text: 'text-success' },
+  pending: { dot: 'bg-warning', text: 'text-warning' },
+  canceled: { dot: 'bg-danger', text: 'text-danger' }
+};
 
 type Props = {
   invoiceLanguage: string;
@@ -52,7 +61,9 @@ type Props = {
   invoiceData: InvoiceBody;
   userPreferredInvoiceLanguage?: string;
   pdfDocument: JSX.Element | null;
+  pdfUrl?: string | null;
   isPdfDocumentLoading?: boolean;
+  showFooterStatus?: boolean;
 };
 
 const InvoiceModal = ({
@@ -63,22 +74,30 @@ const InvoiceModal = ({
   onOpenChange,
   invoiceData,
   userPreferredInvoiceLanguage,
-  isPdfDocumentLoading
+  pdfUrl,
+  isPdfDocumentLoading,
+  showFooterStatus = false
 }: Props) => {
   const t = useTranslations('invoices.pdf');
+  const tTable = useTranslations('invoices.table');
   const { invoiceId } = invoiceData;
   const [isIFrameLoading, setIsIFrameLoading] = useState(false);
 
   const { cookieConsent } = useCookieConsent();
 
   const renderModalBody = () => {
-    if (isPdfDocumentLoading || !pdfDocument) {
-      return <Spinner variant="wave" color="secondary" className="my-6" />;
+    if (isPdfDocumentLoading || (!pdfUrl && !pdfDocument)) {
+      return (
+        <div className="flex aspect-[794/1123] w-full items-center justify-center lg:min-h-[1123px]">
+          <Spinner />
+        </div>
+      );
     }
 
     return (
       <PdfViewerWrapper
         pdfDocument={pdfDocument}
+        pdfUrl={pdfUrl}
         isIFrameLoading={isIFrameLoading}
         setIsIFrameLoading={setIsIFrameLoading}
       />
@@ -91,122 +110,194 @@ const InvoiceModal = ({
     if (!isPastDue) return null;
 
     return (
-      <Alert
-        className="mt-2 py-1 pl-2"
-        variant="flat"
-        color="danger"
-        description={t('past_due_alert', {
-          days: daysPastDue,
-          dueDate: invoiceData.dueDate
-        })}
-      />
+      <Alert className="bg-transparent p-0 shadow-none" status="danger">
+        <Alert.Indicator />
+        <Alert.Content className="justify-center">
+          <Alert.Description className="text-danger-soft-foreground font-medium">
+            {t('past_due_alert', {
+              days: daysPastDue,
+              dueDate: invoiceData.dueDate
+            })}
+          </Alert.Description>
+        </Alert.Content>
+      </Alert>
     );
   };
 
+  const renderFooterStatus = () => {
+    if (!showFooterStatus) return null;
+
+    const statusClasses = statusIndicatorClassMap[invoiceData.status];
+
+    return (
+      <div
+        className={cn(
+          'flex items-center gap-2 text-xs font-medium',
+          statusClasses.text
+        )}
+      >
+        <span
+          className={cn(
+            'inline-flex h-2 w-2 shrink-0 rounded-full',
+            statusClasses.dot
+          )}
+        />
+        {tTable(`status.${invoiceData.status}`)}
+      </div>
+    );
+  };
+
+  const pastDueAlert = renderAlert();
+
   return (
-    <Modal
-      isOpen={isOpen}
-      hideCloseButton
-      onOpenChange={onOpenChange}
-      size="4xl"
-      className="flex-1"
-      scrollBehavior="outside"
-    >
-      <ModalContent>
-        <ModalHeader className="flex flex-col items-start gap-2 pb-2">
-          <div className="flex w-full items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-semibold">{invoiceId}</span>
-            </div>
-            <div
-              className={cn(
-                'bg-default flex shrink-0 items-center gap-1 rounded-lg p-0.5',
-                {
-                  'p-0': !userPreferredInvoiceLanguage
-                }
-              )}
-            >
-              {userPreferredInvoiceLanguage && (
-                <>
-                  <Select
-                    aria-label="Invoice language"
-                    size="sm"
-                    className="min-w-28"
-                    variant="bordered"
-                    startContent={<LanguageIcon className="min-w-5 max-w-5" />}
-                    selectedKeys={[invoiceLanguage]}
-                    onSelectionChange={(keys) => {
-                      const selectedKey = Array.from(keys).join('');
-                      if (selectedKey && setInvoiceLanguage)
-                        setInvoiceLanguage(selectedKey);
-                      setIsIFrameLoading(true);
-                    }}
-                  >
-                    {availableLanguages.map((lang) => (
-                      <SelectItem
-                        key={lang.code}
-                        textValue={lang.code.toUpperCase()}
-                      >
-                        {lang.code.toUpperCase()}
-                      </SelectItem>
-                    ))}
-                  </Select>
-
-                  <div className="border-default-400 h-6 border-r" />
-                </>
-              )}
-              {pdfDocument ? (
-                // @ts-ignore
-                <PDFDownloadLink
-                  document={pdfDocument}
-                  fileName={`${invoiceId}.pdf`}
+    <Modal>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => !open && onOpenChange(false)}
+      >
+        <Modal.Container size="cover">
+          <Modal.Dialog
+            className={cn(
+              'grid h-full overflow-hidden p-0',
+              pastDueAlert
+                ? 'grid-rows-[auto_auto_minmax(0,1fr)_auto]'
+                : 'grid-rows-[auto_minmax(0,1fr)_auto]'
+            )}
+          >
+            <Modal.Header className="border-default-200 bg-overlay/95 flex flex-col items-start gap-2 border-b px-5 py-3 backdrop-blur-xl sm:px-6">
+              <div className="flex w-full items-center justify-between gap-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="min-w-0">
+                    <span className="block truncate text-sm font-semibold">
+                      {invoiceId}
+                    </span>
+                    {invoiceData.receiver.name && (
+                      <span className="text-muted block truncate text-xs">
+                        {invoiceData.receiver.name}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div
+                  className={cn('flex shrink-0 items-center gap-1.5', {
+                    'p-0': !userPreferredInvoiceLanguage
+                  })}
                 >
-                  {/* @ts-ignore */}
-                  {({ loading }) => {
-                    const isLoading = isIFrameLoading || loading;
-
-                    return (
-                      <Button
-                        startContent={
-                          <ArrowDownTrayIcon
-                            className={cn('h-5 w-5 dark:text-white', {
-                              hidden: isLoading
-                            })}
-                          />
-                        }
-                        size="sm"
-                        isLoading={isLoading}
-                        isDisabled={isLoading}
-                        color="secondary"
-                        variant="solid"
-                        onPress={() => {
-                          if (cookieConsent !== CookieConsentStatus.Accepted)
-                            return;
-
-                          window.dataLayer?.push({
-                            event: 'free_invoice_pdf_download',
-                            invoice_id: invoiceData.invoiceId,
-                            total_amount: invoiceData.totalAmount
-                          });
+                  {userPreferredInvoiceLanguage && (
+                    <>
+                      <Select
+                        aria-label="Invoice language"
+                        className="min-w-28"
+                        variant="secondary"
+                        value={invoiceLanguage}
+                        onChange={(key) => {
+                          const selectedKey = key ? String(key) : '';
+                          if (selectedKey && setInvoiceLanguage)
+                            setInvoiceLanguage(selectedKey);
+                          setIsIFrameLoading(true);
                         }}
                       >
-                        {t('buttons.download_pdf')}
-                      </Button>
-                    );
-                  }}
-                </PDFDownloadLink>
-              ) : (
-                <Button isLoading size="sm" color="secondary" variant="solid">
-                  {t('buttons.download_pdf')}
-                </Button>
-              )}
+                        <Select.Trigger>
+                          <LanguageIcon className="min-w-5 max-w-5" />
+                          <Select.Value />
+                          <Select.Indicator />
+                        </Select.Trigger>
+                        <Select.Popover>
+                          <ListBox>
+                            {availableLanguages.map((lang) => (
+                              <ListBoxItem
+                                key={lang.code}
+                                id={lang.code}
+                                textValue={lang.code.toUpperCase()}
+                              >
+                                {lang.code.toUpperCase()}
+                                <ListBoxItem.Indicator />
+                              </ListBoxItem>
+                            ))}
+                          </ListBox>
+                        </Select.Popover>
+                      </Select>
+
+                      <div className="border-default-400 h-6 border-r" />
+                    </>
+                  )}
+                  {pdfDocument ? (
+                    <PDFDownloadLink
+                      document={pdfDocument}
+                      fileName={`${invoiceId}.pdf`}
+                    >
+                      {({ loading }) => {
+                        const isLoading = isIFrameLoading || loading;
+
+                        return (
+                          <Button
+                            size="sm"
+                            isDisabled={isLoading}
+                            variant="primary"
+                            onPress={() => {
+                              if (
+                                cookieConsent !== CookieConsentStatus.Accepted
+                              )
+                                return;
+
+                              window.dataLayer?.push({
+                                event: 'free_invoice_pdf_download',
+                                invoice_id: invoiceData.invoiceId,
+                                total_amount: invoiceData.totalAmount
+                              });
+                            }}
+                          >
+                            <ArrowDownTrayIcon className="h-5 w-5 dark:text-white" />
+                            {t('buttons.download_pdf')}
+                          </Button>
+                        );
+                      }}
+                    </PDFDownloadLink>
+                  ) : (
+                    <Button isPending size="sm" variant="primary">
+                      {t('buttons.download_pdf')}
+                    </Button>
+                  )}
+                  <div className="border-default-400 mx-1 h-6 border-r" />
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="ghost"
+                    aria-label={t('buttons.close')}
+                    onPress={() => onOpenChange(false)}
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </Modal.Header>
+            {pastDueAlert && (
+              <div className="border-danger-soft bg-danger/5 flex border-b px-5 py-2 sm:px-6">
+                {pastDueAlert}
+              </div>
+            )}
+            <div className="bg-default-100 scrollbar min-h-0 overflow-y-auto overscroll-contain">
+              <div className="flex min-h-full justify-center px-4 py-8 sm:px-10 sm:py-10">
+                <div className="w-full max-w-[794px] rounded-sm bg-white shadow-[0_24px_60px_-20px_rgba(0,0,0,0.18),0_4px_12px_-4px_rgba(0,0,0,0.08)]">
+                  {renderModalBody()}
+                </div>
+              </div>
             </div>
-          </div>
-          {renderAlert()}
-        </ModalHeader>
-        <ModalBody>{renderModalBody()}</ModalBody>
-        <ModalFooter />
-      </ModalContent>
+            <footer className="border-default-200 bg-overlay grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-t px-5 py-3 sm:px-6">
+              <div className="text-muted flex min-w-0 items-center gap-2 text-xs">
+                {renderFooterStatus()}
+              </div>
+              <Button
+                size="sm"
+                variant="secondary"
+                onPress={() => onOpenChange(false)}
+              >
+                {t('buttons.close')}
+              </Button>
+            </footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </Modal>
   );
 };

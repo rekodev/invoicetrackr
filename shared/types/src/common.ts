@@ -34,3 +34,7 @@ export type StripeSubscriptionStatus = z.infer<
 export const billingIntervalSchema = z.enum(['monthly', 'annual']);
 
 export type BillingInterval = z.infer<typeof billingIntervalSchema>;
+
+export const languageSchema = z.enum(['lt', 'en']);
+
+export type Language = z.infer<typeof languageSchema>;

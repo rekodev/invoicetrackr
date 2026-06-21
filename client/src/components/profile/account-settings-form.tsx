@@ -3,22 +3,24 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardFooter,
-  CardHeader,
-  Divider,
+  FieldError,
+  Label,
+  ListBox,
+  ListBoxItem,
   Select,
-  SelectItem,
+  Separator,
   Tooltip,
-  addToast
+  toast
 } from '@heroui/react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import {
   CurrencyDollarIcon,
   DocumentArrowUpIcon,
   InformationCircleIcon,
   LanguageIcon
 } from '@heroicons/react/24/outline';
-import { SubmitHandler, useForm } from 'react-hook-form';
 import { User } from 'next-auth';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -46,8 +48,8 @@ const AccountSettingsForm = ({ user }: Props) => {
   const baseT = useTranslations();
   const t = useTranslations('profile.account_settings');
   const {
-    register,
     handleSubmit,
+    control,
     formState: { isDirty, errors, isSubmitting },
     setError,
     reset
@@ -71,9 +73,8 @@ const AccountSettingsForm = ({ user }: Props) => {
       preferredInvoiceLanguage: data.preferredInvoiceLanguage
     });
 
-    addToast({
-      title: response.message,
-      color: response.ok ? 'success' : 'danger'
+    toast(response.message, {
+      variant: response.ok ? 'success' : 'danger'
     });
 
     if (!response.ok) {
@@ -91,110 +92,144 @@ const AccountSettingsForm = ({ user }: Props) => {
 
   const renderCardBodyAndFooter = () => (
     <>
-      <CardBody className="grid grid-cols-1 gap-4 p-6 lg:w-1/2">
-        <Select
-          {...register('language')}
-          label={
-            <div className="flex items-center gap-1">
-              <LanguageIcon className="h-5 w-5" /> {t('language')}
-            </div>
-          }
-          labelPlacement="outside"
-          variant="faded"
-          defaultSelectedKeys={user?.language ? [user.language] : undefined}
-          isInvalid={!!errors.language}
-          errorMessage={errors.language?.message}
-        >
-          {availableLanguages.map((language) => (
-            <SelectItem
-              key={language.code}
-              textValue={baseT(language.nameTranslationKey)}
+      <CardContent className="grid grid-cols-1 gap-4 p-6 lg:w-1/2">
+        <Controller
+          control={control}
+          name="language"
+          render={({ field }) => (
+            <Select
+              variant="secondary"
+              value={field.value}
+              onChange={field.onChange}
+              isInvalid={!!errors.language}
             >
-              {baseT(language.nameTranslationKey)}
-            </SelectItem>
-          ))}
-        </Select>
-        <Select
-          className="flex-col items-start gap-2"
-          {...register('preferredInvoiceLanguage')}
-          label={
-            <div className="flex items-center gap-1">
-              <DocumentArrowUpIcon className="h-5 w-5" />
-              {t('preferred_invoice_language')}
-              <Tooltip
-                showArrow
-                content={t('preferred_invoice_language_tooltip')}
-                className="max-w-xs"
-              >
-                <Button
-                  isIconOnly
-                  variant="light"
-                  size="sm"
-                  className="h-min w-min min-w-0 p-0 pl-0"
-                >
-                  <InformationCircleIcon className="text-default-500 z-50 h-4 w-4 cursor-pointer" />
-                </Button>
-              </Tooltip>
-            </div>
-          }
-          labelPlacement="outside-left"
-          variant="faded"
-          defaultSelectedKeys={
-            user?.preferredInvoiceLanguage
-              ? [user.preferredInvoiceLanguage]
-              : [user?.language]
-          }
-          isInvalid={!!errors.preferredInvoiceLanguage}
-          errorMessage={errors.preferredInvoiceLanguage?.message}
-        >
-          {availableLanguages.map((language) => (
-            <SelectItem
-              key={language.code}
-              textValue={baseT(language.nameTranslationKey)}
+              <Label>
+                <div className="flex items-center gap-1">
+                  <LanguageIcon className="h-5 w-5" /> {t('language')}
+                </div>
+              </Label>
+              <Select.Trigger>
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {availableLanguages.map((language) => (
+                    <ListBoxItem
+                      key={language.code}
+                      id={language.code}
+                      textValue={baseT(language.nameTranslationKey)}
+                    >
+                      {baseT(language.nameTranslationKey)}
+                      <ListBoxItem.Indicator />
+                    </ListBoxItem>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+              <FieldError>{errors.language?.message}</FieldError>
+            </Select>
+          )}
+        />
+        <Controller
+          control={control}
+          name="preferredInvoiceLanguage"
+          render={({ field }) => (
+            <Select
+              variant="secondary"
+              value={field.value}
+              onChange={field.onChange}
+              isInvalid={!!errors.preferredInvoiceLanguage}
             >
-              {baseT(language.nameTranslationKey)}
-            </SelectItem>
-          ))}
-        </Select>
-        <Select
-          {...register('currency')}
-          label={
-            <div className="flex items-center gap-1">
-              <CurrencyDollarIcon className="h-5 w-5" /> {t('currency')}
-            </div>
-          }
-          labelPlacement="outside"
-          variant="faded"
-          defaultSelectedKeys={user?.currency ? [user.currency] : undefined}
-          isInvalid={!!errors.currency}
-          errorMessage={errors.currency?.message}
-        >
-          {availableCurrencies.map((currency) => (
-            <SelectItem
-              key={currency.code}
-              textValue={baseT(currency.nameTranslationKey)}
+              <Label>
+                <div className="flex items-center gap-1">
+                  <DocumentArrowUpIcon className="h-5 w-5" />
+                  {t('preferred_invoice_language')}
+                  <Tooltip delay={0}>
+                    <Tooltip.Trigger>
+                      <InformationCircleIcon className="text-default-500 z-50 h-4 w-4 cursor-pointer" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content className="max-w-xs">
+                      {t('preferred_invoice_language_tooltip')}
+                    </Tooltip.Content>
+                  </Tooltip>
+                </div>
+              </Label>
+              <Select.Trigger>
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {availableLanguages.map((language) => (
+                    <ListBoxItem
+                      key={language.code}
+                      id={language.code}
+                      textValue={baseT(language.nameTranslationKey)}
+                    >
+                      {baseT(language.nameTranslationKey)}
+                      <ListBoxItem.Indicator />
+                    </ListBoxItem>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+              <FieldError>
+                {errors.preferredInvoiceLanguage?.message}
+              </FieldError>
+            </Select>
+          )}
+        />
+        <Controller
+          control={control}
+          name="currency"
+          render={({ field }) => (
+            <Select
+              variant="secondary"
+              value={field.value}
+              onChange={field.onChange}
+              isInvalid={!!errors.currency}
             >
-              {`${baseT(currency.nameTranslationKey)} (${currency.symbol})`}
-            </SelectItem>
-          ))}
-        </Select>
-      </CardBody>
+              <Label>
+                <div className="flex items-center gap-1">
+                  <CurrencyDollarIcon className="h-5 w-5" /> {t('currency')}
+                </div>
+              </Label>
+              <Select.Trigger>
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {availableCurrencies.map((currency) => (
+                    <ListBoxItem
+                      key={currency.code}
+                      id={currency.code}
+                      textValue={baseT(currency.nameTranslationKey)}
+                    >
+                      {`${baseT(currency.nameTranslationKey)} (${currency.symbol})`}
+                      <ListBoxItem.Indicator />
+                    </ListBoxItem>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+              <FieldError>{errors.currency?.message}</FieldError>
+            </Select>
+          )}
+        />
+      </CardContent>
       <CardFooter className="w-full flex-col justify-between p-6">
         <div className="flex w-full gap-2 self-end md:w-min">
           <Button
             className="w-full md:w-min"
-            variant="faded"
+            variant="danger-soft"
             type="button"
-            color="danger"
             onPress={() => setIsDeleteAccountModalOpen(true)}
           >
             {t('delete_account.action')}
           </Button>
           <Button
             isDisabled={!isDirty}
+            isPending={isSubmitting}
             type="submit"
-            isLoading={isSubmitting}
-            color="secondary"
             className="w-full md:w-min"
           >
             {t('save_changes')}
@@ -206,15 +241,17 @@ const AccountSettingsForm = ({ user }: Props) => {
 
   return (
     <>
-      <Card
-        as="form"
-        aria-label={t('a11y.form_label')}
-        onSubmit={handleSubmit(onSubmit)}
-        className="dark:border-default-100 w-full bg-transparent dark:border"
-      >
-        <CardHeader className="p-4 px-6">{t('title')}</CardHeader>
-        <Divider />
-        {renderCardBodyAndFooter()}
+      <Card className="w-full border bg-transparent">
+        <form
+          aria-label={t('a11y.form_label')}
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Card.Header className="p-4 px-6">
+            <Card.Title className="text-2xl">{t('title')}</Card.Title>
+          </Card.Header>
+          <Separator />
+          {renderCardBodyAndFooter()}
+        </form>
       </Card>
       <DeleteAccountModal
         userId={Number(user.id)}

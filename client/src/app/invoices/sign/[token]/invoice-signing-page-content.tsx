@@ -1,7 +1,7 @@
 'use client';
 
 import type { InvoiceBody, PublicInvoiceSigning } from '@invoicetrackr/types';
-import { addToast, useDisclosure } from '@heroui/react';
+import { toast, useOverlayState } from '@heroui/react';
 import { useMemo, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
@@ -29,9 +29,9 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
   const [isPending, startTransition] = useTransition();
   const {
     isOpen: isPdfModalOpen,
-    onOpen: openPdfModal,
-    onOpenChange: setIsPdfModalOpen
-  } = useDisclosure();
+    open: openPdfModal,
+    setOpen: setIsPdfModalOpen
+  } = useOverlayState();
   const invoiceLanguage = useMemo(
     () => signing.preferredInvoiceLanguage || signing.language,
     [signing.language, signing.preferredInvoiceLanguage]
@@ -40,7 +40,7 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
     invoice.receiverSignature || invoice.recipientSignedAt
   );
   const currency = signing.currency as Currency;
-  const { pdfDocument, isPdfDocumentLoading } = useDynamicPdf({
+  const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
     currency,
     defaultTranslator: pdfTranslator,
     invoiceLanguage,
@@ -54,7 +54,7 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
 
   const handleSign = () => {
     if (!signature || typeof signature === 'string') {
-      addToast({
+      ({
         title: t('signature_required'),
         color: 'danger'
       });
@@ -68,9 +68,8 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
         signature
       });
 
-      addToast({
-        title: response.data.message,
-        color: isResponseError(response) ? 'danger' : 'success'
+      toast(response.data.message, {
+        variant: isResponseError(response) ? 'danger' : 'success'
       });
 
       if (isResponseError(response)) return;
@@ -114,7 +113,9 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
         invoiceData={invoice}
         invoiceLanguage={invoiceLanguage}
         pdfDocument={pdfDocument}
+        pdfUrl={pdfUrl}
         isPdfDocumentLoading={isPdfDocumentLoading}
+        showFooterStatus
       />
     </main>
   );

@@ -8,6 +8,7 @@ import './globals.css';
 import Footer from '@/components/layout/footer';
 import GoogleAnalytics from '@/components/providers/google-analytics';
 import Header from '@/components/layout/header';
+import { appBaseUrl } from '@/lib/config/app';
 
 import CookieConsent from '../components/cookie-consent';
 import Loading from './loading';
@@ -16,9 +17,7 @@ import { Providers } from '../components/providers/providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
-  ),
+  metadataBase: new URL(appBaseUrl),
   title: 'InvoiceTrackr',
   description:
     'Create professional invoices, track payments, and monitor income for freelancers and small businesses.',
@@ -57,10 +56,10 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
-        <div className="bg-radial-[at_0%_100%] fixed inset-0 -z-10 min-h-screen from-purple-900 from-[-35%] via-transparent to-transparent" />
+        <div className="bg-radial-[at_0%_100%] from-primary fixed inset-0 -z-10 min-h-screen from-[-35%] via-transparent to-transparent" />
         <Providers messages={messages}>
           <Header />
-          <main className="mx-auto flex w-full flex-grow flex-col py-6">
+          <main className="mx-auto flex w-full flex-grow flex-col">
             <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
           <Footer />

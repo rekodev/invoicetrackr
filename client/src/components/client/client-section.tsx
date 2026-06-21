@@ -5,7 +5,9 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
-  DropdownTrigger
+  DropdownPopover,
+  DropdownTrigger,
+  buttonVariants
 } from '@heroui/react';
 import {
   EllipsisVerticalIcon,
@@ -70,58 +72,68 @@ const ClientSection = ({ userId, clients }: Props) => {
 
   const renderMobileClientCardActions = (clientData: ClientBody) => (
     <Dropdown>
-      <DropdownTrigger className="absolute right-2 top-2">
-        <Button variant="light" size="sm" isIconOnly className="sm:hidden">
-          <EllipsisVerticalIcon className="h-5 w-5" />
-        </Button>
+      <DropdownTrigger
+        className={buttonVariants({
+          variant: 'tertiary',
+          size: 'sm',
+          className:
+            'absolute right-2 top-2 flex items-center justify-center p-0 sm:hidden'
+        })}
+      >
+        <EllipsisVerticalIcon className="h-5 w-5" />
       </DropdownTrigger>
-      <DropdownMenu>
-        <DropdownItem
-          color="warning"
-          key="edit-client"
-          onPress={() => handleEditClient(clientData)}
-        >
-          <div className="flex items-center gap-1">
-            <PencilIcon className="h-4 w-4" />
-            {t('edit')}
-          </div>
-        </DropdownItem>
-        <DropdownItem
-          color="danger"
-          key="remove-client"
-          onPress={() => handleOpenDeleteClientModal(clientData)}
-        >
-          <div className="flex items-center gap-1">
-            <TrashIcon className="h-4 w-4" />
-            {t('remove')}
-          </div>
-        </DropdownItem>
-      </DropdownMenu>
+      <DropdownPopover>
+        <DropdownMenu>
+          <DropdownItem
+            key="edit-client"
+            id="edit-client"
+            textValue={t('edit')}
+            onAction={() => handleEditClient(clientData)}
+          >
+            <div className="flex items-center gap-1">
+              <PencilIcon className="h-4 w-4" />
+              {t('edit')}
+            </div>
+          </DropdownItem>
+          <DropdownItem
+            key="remove-client"
+            id="remove-client"
+            textValue={t('remove')}
+            variant="danger"
+            onAction={() => handleOpenDeleteClientModal(clientData)}
+          >
+            <div className="flex items-center gap-1">
+              <TrashIcon className="h-4 w-4" />
+              {t('remove')}
+            </div>
+          </DropdownItem>
+        </DropdownMenu>
+      </DropdownPopover>
     </Dropdown>
   );
 
   const renderClientCardActions = (clientData: ClientBody) => (
     <>
       {renderMobileClientCardActions(clientData)}
-      <div className="absolute right-2 top-2 z-10 hidden gap-0.5 sm:flex">
+      <div className="pointer-events-none absolute right-2 top-2 z-10 hidden gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100 sm:flex">
         <Button
           isIconOnly
           className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
-          color="warning"
-          variant="light"
+          variant="tertiary"
           size="sm"
           onPress={() => handleEditClient(clientData)}
-          startContent={<PencilSquareIcon className="h-5 w-5" />}
-        />
+        >
+          <PencilSquareIcon className="h-4 w-4" />
+        </Button>
         <Button
           isIconOnly
-          variant="light"
-          color="danger"
+          variant="danger-soft"
           size="sm"
           className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
           onPress={() => handleOpenDeleteClientModal(clientData)}
-          startContent={<TrashIcon className="h-5 w-5" />}
-        />
+        >
+          <TrashIcon className="h-4 w-4" />
+        </Button>
       </div>
     </>
   );
@@ -162,11 +174,16 @@ const ClientSection = ({ userId, clients }: Props) => {
       );
 
     return (
-      <div className="min-h-[480px]">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredItems?.map((client, index) => renderClient(client, index))}
         </div>
-      </div>
+        <ClientSectionBottomContent
+          page={page}
+          setPage={setPage}
+          clientsLength={filteredItems?.length}
+        />
+      </>
     );
   };
 
@@ -181,19 +198,14 @@ const ClientSection = ({ userId, clients }: Props) => {
         typeFilters={typeFilters}
         setTypeFilters={setTypeFilters}
       />
-      <div className="border-default-200 dark:border-default-100 flex flex-col gap-4 rounded-xl border p-4 shadow-sm">
-        {renderSectionContent()}
-      </div>
-      <ClientSectionBottomContent
-        page={page}
-        setPage={setPage}
-        clientsLength={filteredItems?.length}
-      />
+      <div className="min-h-[480px]">{renderSectionContent()}</div>
       {currentClientData && isEditClientModalOpen && (
         <ClientFormDialog
+          key={currentClientData.id}
           userId={userId}
           isOpen={isEditClientModalOpen}
           onClose={handleCloseEditClientModal}
+          mode="edit"
           clientData={currentClientData}
         />
       )}

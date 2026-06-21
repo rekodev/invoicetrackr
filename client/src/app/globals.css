@@ -1,32 +1,44 @@
- @import "tailwindcss";
- @plugin './hero.ts';
- @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
- @custom-variant dark (&:is(.dark *));
+@import 'tailwindcss';
+@import '@heroui/styles';
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
+@utility section-eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@utility landing-grid-overlay {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklab, currentColor 7.5%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
       to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      color-mix(in oklab, currentColor 7.5%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 28%, transparent 74%);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .glass-card {
-    @apply border-default-200 border bg-white/50 shadow-md shadow-black/5 backdrop-blur-lg transition-colors dark:border-default-100 dark:bg-default-100/25;
-  }
-
-  .glass-card-interactive {
-    @apply hover:bg-white/65 dark:hover:bg-default-100/35;
-  }
+@utility landing-glow-mint {
+  background: radial-gradient(
+    closest-side,
+    rgb(61 220 151 / 0.38),
+    transparent
+  );
 }
 
-@theme {
-  --aspect-4-3: 4 / 3;
+@utility landing-surface {
+  border-color: color-mix(in oklab, currentColor 14%, transparent);
+  background: transparent;
+}
+
+@layer components {
+  .link {
+    @apply no-underline;
+  }
 }

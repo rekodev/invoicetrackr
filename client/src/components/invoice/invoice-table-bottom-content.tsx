@@ -1,12 +1,12 @@
-import { Button, Pagination } from '@heroui/react';
-import { Dispatch, SetStateAction, useCallback } from 'react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
+import { Pagination } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
 type Props = {
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
   pages: number;
-  selectedKeys: Set<never> | 'all';
+  rowsPerPage: number;
   filteredItemsLength: number | undefined;
 };
 
@@ -14,57 +14,64 @@ const InvoiceTableBottomContent = ({
   page,
   setPage,
   pages,
-  filteredItemsLength
+  rowsPerPage,
+  filteredItemsLength = 0
 }: Props) => {
   const t = useTranslations('invoices.bottom_content');
-  const prevButtonDisabled = page === 1;
-  const nextButtonDisabled = page === pages;
 
-  const onNextPage = useCallback(() => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }, [page, pages, setPage]);
+  const pageNumbers = useMemo(
+    () => Array.from({ length: pages }, (_, index) => index + 1),
+    [pages]
+  );
 
-  const onPreviousPage = useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page, setPage]);
+  const start = filteredItemsLength === 0 ? 0 : (page - 1) * rowsPerPage + 1;
+
+  const end = Math.min(page * rowsPerPage, filteredItemsLength);
 
   return (
-    <div className="flex items-center justify-between py-2">
-      <div className="absolute flex w-full items-center justify-center">
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="secondary"
-          page={page}
-          total={pages}
-          onChange={setPage}
-          isDisabled={!filteredItemsLength || filteredItemsLength === 0}
-        />
-      </div>
-      <div className="hidden w-full justify-end gap-2 sm:flex">
-        <Button
-          isDisabled={prevButtonDisabled}
-          size="sm"
-          variant="flat"
-          onPress={onPreviousPage}
-        >
-          {t('previous')}
-        </Button>
-        <Button
-          isDisabled={nextButtonDisabled}
-          size="sm"
-          variant="flat"
-          onPress={onNextPage}
-        >
-          {t('next')}
-        </Button>
-      </div>
-    </div>
+    <Pagination size="sm" className="w-full justify-between">
+      <Pagination.Summary>
+        {start} to {end} of {filteredItemsLength} results
+      </Pagination.Summary>
+
+      <Pagination.Content>
+        <Pagination.Item>
+          <Pagination.Previous
+            isDisabled={page === 1 || filteredItemsLength === 0}
+            onPress={() =>
+              setPage((currentPage) => Math.max(1, currentPage - 1))
+            }
+          >
+            <Pagination.PreviousIcon />
+            {t('previous')}
+          </Pagination.Previous>
+        </Pagination.Item>
+
+        {pageNumbers.map((pageNumber) => (
+          <Pagination.Item key={pageNumber}>
+            <Pagination.Link
+              isActive={pageNumber === page}
+              isDisabled={filteredItemsLength === 0}
+              onPress={() => setPage(pageNumber)}
+            >
+              {pageNumber}
+            </Pagination.Link>
+          </Pagination.Item>
+        ))}
+
+        <Pagination.Item>
+          <Pagination.Next
+            isDisabled={page === pages || filteredItemsLength === 0}
+            onPress={() =>
+              setPage((currentPage) => Math.min(pages, currentPage + 1))
+            }
+          >
+            {t('next')}
+            <Pagination.NextIcon />
+          </Pagination.Next>
+        </Pagination.Item>
+      </Pagination.Content>
+    </Pagination>
   );
 };
 

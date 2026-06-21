@@ -1,15 +1,14 @@
 'use client';
 
+import { Alert, Button, Card, Chip, Separator } from '@heroui/react';
 import {
   ArrowTopRightOnSquareIcon,
-  BanknotesIcon,
   BuildingLibraryIcon,
   CheckCircleIcon,
   ClockIcon,
   CreditCardIcon,
   IdentificationIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, CardBody, CardHeader } from '@heroui/react';
 import { useEffect, useRef, useState } from 'react';
 import type { MerchantPaymentStatus } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
@@ -53,6 +52,12 @@ export default function MerchantPaymentStatusCard({
       : isConnected
         ? 'action_needed'
         : 'not_connected';
+  const StatusChipIcon = isReady ? CheckCircleIcon : ClockIcon;
+  const statusChipColor: 'success' | 'warning' | 'default' = isReady
+    ? 'success'
+    : hasOpenRequirements
+      ? 'warning'
+      : 'default';
   const accountReference = merchantPayment?.connectedAccountId
     ? merchantPayment.connectedAccountId.replace(/^(.{8}).+(.{4})$/, '$1....$2')
     : null;
@@ -98,53 +103,28 @@ export default function MerchantPaymentStatusCard({
   };
 
   return (
-    <Card className="border-default-100 bg-background w-full rounded-xl border shadow-sm">
-      <CardHeader className="border-default-100 flex flex-col items-start justify-between gap-5 border-b p-6 md:flex-row md:items-start">
+    <Card className="w-full border bg-transparent shadow-sm backdrop-blur-3xl">
+      <Card.Header className="flex flex-col items-start justify-between gap-5 p-4 px-6 md:flex-row md:items-start">
         <div className="min-w-0">
-          <div className="text-default-500 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.12em]">
-            <BanknotesIcon className="h-4 w-4" />
-            {t('eyebrow')}
-          </div>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <h2 className="text-foreground text-2xl font-semibold leading-tight">
-              {t('title')}
-            </h2>
-            <span
-              className={
-                isReady
-                  ? 'border-success/30 bg-success/10 text-success inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium'
-                  : hasOpenRequirements
-                    ? 'border-warning/30 bg-warning/10 text-warning inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium'
-                    : 'border-default-200 bg-default-100 text-default-600 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium'
-              }
-            >
-              <span
-                className={
-                  isReady
-                    ? 'bg-success h-1.5 w-1.5 rounded-full'
-                    : hasOpenRequirements
-                      ? 'bg-warning h-1.5 w-1.5 rounded-full'
-                      : 'bg-default-400 h-1.5 w-1.5 rounded-full'
-                }
-              />
+          <div className="flex flex-wrap items-center gap-2">
+            <Card.Title className="text-2xl">{t('title')}</Card.Title>
+            <Chip color={statusChipColor} variant="soft">
+              <StatusChipIcon className="h-3.5 w-3.5" />
               {t(`status.${statusKey}`)}
-            </span>
+            </Chip>
           </div>
-          <p className="text-default-500 mt-2 max-w-2xl text-sm leading-6">
+          <Card.Description className="mt-2">
             {isReady ? t('description_ready') : t('description')}
-          </p>
+          </Card.Description>
         </div>
         <div className="flex w-full flex-col items-stretch gap-2 md:w-auto md:items-end">
           <Button
             className="w-full md:w-auto"
-            color="secondary"
-            variant={isReady ? 'bordered' : 'solid'}
-            isLoading={isLoading}
+            variant={isReady ? 'outline' : 'primary'}
+            isPending={isLoading}
             onPress={handleOnboarding}
-            endContent={
-              !isLoading && <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-            }
           >
+            {!isLoading && <ArrowTopRightOnSquareIcon className="h-4 w-4" />}
             {isReady
               ? t('action_update')
               : isConnected
@@ -152,76 +132,78 @@ export default function MerchantPaymentStatusCard({
                 : t('action_start')}
           </Button>
           {accountReference && (
-            <span className="text-default-400 text-left text-[11px] md:text-right">
+            <span className="text-muted text-left text-[11px] md:text-right">
               {accountReference}
             </span>
           )}
         </div>
-      </CardHeader>
-      <CardBody className="flex flex-col gap-5 p-6">
-        <div>
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-default-500 text-[11px] font-medium uppercase tracking-[0.12em]">
-              {t('capabilities_title')}
-            </h3>
-            <span className="text-default-500 text-[11px]">
-              {t('capabilities_ready_count', { ready: readyCount, total: 3 })}
-            </span>
-          </div>
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
-            {checks.map(({ key, enabled, icon: Icon }) => {
-              const StatusIcon = enabled ? CheckCircleIcon : ClockIcon;
+      </Card.Header>
 
-              return (
-                <div
-                  className="border-default-100 bg-default-50/60 flex items-center gap-3 rounded-lg border px-3.5 py-3"
-                  key={key}
-                >
-                  <span className="bg-background text-default-600 border-default-100 grid h-9 w-9 shrink-0 place-items-center rounded-lg border">
+      <Separator />
+
+      <Card.Content className="flex flex-col gap-4 p-6">
+        <div className="flex items-center justify-between gap-4">
+          <Card.Title className="text-xl">{t('capabilities_title')}</Card.Title>
+          <Chip size="sm" variant="soft">
+            {t('capabilities_ready_count', { ready: readyCount, total: 3 })}
+          </Chip>
+        </div>
+        <div className="grid gap-3 md:grid-cols-3">
+          {checks.map(({ key, enabled, icon: Icon }) => {
+            return (
+              <Card
+                className="border bg-transparent p-4 backdrop-blur-3xl"
+                key={key}
+              >
+                <Card.Content className="flex flex-row items-center gap-3 p-3">
+                  <span className="bg-background-foreground text-muted border-default-100 grid h-9 w-9 shrink-0 place-items-center rounded-xl border">
                     <Icon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center justify-between gap-2">
                       <p className="text-foreground truncate text-sm font-semibold">
                         {t(`checks.${key}.title`)}
                       </p>
-                      <StatusIcon
-                        className={
-                          enabled
-                            ? 'text-success h-4 w-4 shrink-0'
-                            : 'text-default-400 h-4 w-4 shrink-0'
-                        }
-                      />
+                      <Chip
+                        color={enabled ? 'success' : 'warning'}
+                        variant="soft"
+                        className="shrink-0 text-[11px]"
+                      >
+                        {enabled ? t('checks.ready') : t('checks.pending')}
+                      </Chip>
                     </div>
-                    <p className="text-default-500 mt-1 truncate text-xs">
+                    <p className="text-muted mt-1 truncate text-xs">
                       {enabled
                         ? t(`checks.${key}.ready_meta`)
                         : t(`checks.${key}.pending_meta`)}
                     </p>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                </Card.Content>
+              </Card>
+            );
+          })}
         </div>
 
         {!isReady && isConnected && (
-          <div className="border-default-100 bg-default-50 rounded-lg border p-4 text-sm">
-            <p className="text-foreground font-medium">
-              {hasOpenRequirements
-                ? t('requirements_title')
-                : t('verification_title')}
-            </p>
-            <p className="text-default-500 mt-2 leading-6">
-              {hasOpenRequirements
-                ? t('requirements_description')
-                : hasPendingVerification
-                  ? t('verification_description')
-                  : t('no_requirements')}
-            </p>
-          </div>
+          <Alert status={hasOpenRequirements ? 'warning' : 'default'}>
+            <Alert.Indicator />
+            <Alert.Content>
+              <p className="text-foreground font-medium">
+                {hasOpenRequirements
+                  ? t('requirements_title')
+                  : t('verification_title')}
+              </p>
+              <Alert.Description>
+                {hasOpenRequirements
+                  ? t('requirements_description')
+                  : hasPendingVerification
+                    ? t('verification_description')
+                    : t('no_requirements')}
+              </Alert.Description>
+            </Alert.Content>
+          </Alert>
         )}
-      </CardBody>
+      </Card.Content>
     </Card>
   );
 }

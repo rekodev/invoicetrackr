@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  BreadcrumbItem,
+  BreadcrumbsItem,
   Breadcrumbs as HeroUIBreadcrumbs
 } from '@heroui/react';
 import { usePathname } from 'next/navigation';
@@ -25,7 +25,7 @@ const Breadcrumbs = () => {
   const renderBreadcrumbs = () => {
     if (!pathname) return null;
     if (pathname === HOME_PAGE) {
-      return <BreadcrumbItem>Home</BreadcrumbItem>;
+      return <BreadcrumbsItem>Home</BreadcrumbsItem>;
     }
 
     return splitPathnameToSegments(pathname).map((segment) => {
@@ -34,14 +34,14 @@ const Breadcrumbs = () => {
 
       if (splitSegments.length > 1) {
         return (
-          <BreadcrumbItem key={segment}>{t(joinedSegments)}</BreadcrumbItem>
+          <BreadcrumbsItem key={segment}>{t(joinedSegments)}</BreadcrumbsItem>
         );
       }
 
       return (
-        <BreadcrumbItem key={segment}>
+        <BreadcrumbsItem key={segment}>
           {isNaN(Number(segment)) ? t(segment) : segment}
-        </BreadcrumbItem>
+        </BreadcrumbsItem>
       );
     });
   };

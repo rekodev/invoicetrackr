@@ -59,7 +59,10 @@
         "message": "We use cookies to provide the best experience. By clicking \"Accept All,\" you agree to our use of cookies, including the analytics data described in our",
         "privacy_policy": "Privacy Policy",
         "accept": "Accept All",
-        "decline": "Decline"
+        "decline": "Decline",
+        "a11y": {
+            "close": "Close cookie notice"
+        }
     },
     "not_found": {
         "title": "Page not found",
@@ -147,76 +150,248 @@
     },
     "home": {
         "hero": {
-            "title": "Create Professional Invoices in Minutes",
-            "subtitle": "Simple, powerful, and free invoice generator for freelancers and small businesses. No account required to get started.",
-            "cta_primary": "Create Free Invoice",
-            "cta_secondary": "See Premium Features",
-            "a11y": {
-                "dashboard_preview_alt": "Invoice app dashboard preview"
-            }
+            "badge_label": "New",
+            "badge_text": "Stripe Connect payments are live",
+            "title": "Invoice clients.",
+            "title_accent": "Get paid faster.",
+            "subtitle": "The simplest way to send invoices, manage clients, and collect payments with a polished document your clients will actually enjoy opening.",
+            "cta_primary": "Create a free invoice",
+            "cta_secondary": "Start Premium",
+            "note": "Generate a free invoice without signing up · 7-day Premium trial"
         },
-        "features": {
-            "title": "Everything You Need for Professional Invoicing",
-            "subtitle": "Our intuitive invoice generator helps you create, customize, and export professional invoices in seconds.",
-            "a11y": {
-                "editor_interface_alt": "Invoice editor interface"
-            },
-            "save_edit": {
-                "title": "Save & Edit Invoices",
-                "description": "Easily create, save, and edit invoices whenever needed, ensuring flexibility in your billing process."
+        "preview": {
+            "sidebar": {
+                "eyebrow": "Workspace",
+                "dashboard": "Dashboard",
+                "invoices": "Invoices",
+                "contracts": "Contracts",
+                "clients": "Clients",
+                "soon": "Soon"
             },
             "dashboard": {
-                "title": "Income Dashboard",
-                "description": "Get a clear overview of your earnings with a visual income dashboard displaying monthly trends and recent invoices."
+                "cards": {
+                    "paid": {
+                        "label": "Paid invoices",
+                        "value": "€18,420.00"
+                    },
+                    "pending": {
+                        "label": "Pending invoices",
+                        "value": "€4,820.00"
+                    },
+                    "invoices": {
+                        "label": "Total invoices",
+                        "value": "24"
+                    },
+                    "clients": {
+                        "label": "Total clients",
+                        "value": "12"
+                    }
+                },
+                "revenue": {
+                    "title": "Invoice Revenue by Month"
+                },
+                "latest": {
+                    "title": "Latest invoices",
+                    "subtitle": "Recently created invoices",
+                    "view_all": "View all",
+                    "rows": {
+                        "paid": {
+                            "client": "Northstar Studio",
+                            "id": "INV-0242",
+                            "date": "18 Jun",
+                            "amount": "€1,440.00",
+                            "status": "Paid"
+                        },
+                        "pending": {
+                            "client": "Baltic Design Co.",
+                            "id": "INV-0241",
+                            "date": "12 Jun",
+                            "amount": "€5,832.20",
+                            "status": "Pending"
+                        },
+                        "overdue": {
+                            "client": "Aurora Labs",
+                            "id": "INV-0240",
+                            "date": "28 May",
+                            "amount": "€820.00",
+                            "status": "Overdue"
+                        }
+                    }
+                }
+            }
+        },
+        "product": {
+            "eyebrow": "The product",
+            "title": "A small set of tools",
+            "title_accent": "that actually fit together.",
+            "subtitle": "Your dashboard, invoices, clients and payments follow the same billing workflow from first draft to paid invoice.",
+            "items": {
+                "invoices": {
+                    "eyebrow": "Invoices",
+                    "title": "The table that runs your billing.",
+                    "body": "Search, filter, export the income journal, and open each invoice for preview, sending, editing, or status updates."
+                },
+                "dashboard": {
+                    "title": "A dashboard, not a chore.",
+                    "body": "Paid revenue, pending invoices, client count, monthly revenue, and latest invoices at a glance."
+                },
+                "clients": {
+                    "title": "Clients in one tidy place.",
+                    "body": "Company or individual details, VAT IDs and addresses ready to drop into any invoice."
+                },
+                "contracts": {
+                    "badge": "Soon",
+                    "title": "Contracts are planned, not shipped.",
+                    "body": "Contracts will come after the core invoice, client, payment and export workflows are solid."
+                }
             },
-            "multi_currency": {
-                "title": "Multi-Currency & Language",
-                "description": "Customize invoices with your preferred currency and language to suit international clients."
+            "invoice_table": {
+                "search": "Search invoices",
+                "add_new": "Add New",
+                "export": "Export",
+                "total": "Total 24 invoices",
+                "rows_per_page": "Rows per page:",
+                "columns": {
+                    "id": "ID",
+                    "receiver": "Receiver",
+                    "amount": "Amount",
+                    "date": "Date",
+                    "status": "Status"
+                },
+                "rows": {
+                    "paid": {
+                        "id": "INV-0242",
+                        "client": "Northstar Studio",
+                        "amount": "€1,440.00",
+                        "date": "18 Jun",
+                        "status": "Paid"
+                    },
+                    "pending": {
+                        "id": "INV-0241",
+                        "client": "Baltic Design Co.",
+                        "amount": "€5,832.20",
+                        "date": "12 Jun",
+                        "status": "Pending"
+                    },
+                    "canceled": {
+                        "id": "INV-0239",
+                        "client": "Aurora Labs",
+                        "amount": "€3,200.00",
+                        "date": "02 Jun",
+                        "status": "Canceled"
+                    }
+                }
+            },
+            "clients_preview": {
+                "search": "Search clients",
+                "add_new": "Add New",
+                "total": "Total 12 clients",
+                "cards": {
+                    "first": {
+                        "type": "Company",
+                        "name": "Northstar Studio",
+                        "code": "Code 304512734",
+                        "vat": "VAT LT100012345",
+                        "address": "Gedimino pr. 12, Vilnius",
+                        "email": "billing@northstar.example"
+                    },
+                    "second": {
+                        "type": "Individual",
+                        "name": "Milda Petrauskė",
+                        "code": "Code 49101010000",
+                        "vat": "No VAT",
+                        "address": "Laisvės al. 20, Kaunas",
+                        "email": "milda@example.com"
+                    }
+                }
+            },
+            "contract_preview": {
+                "status": "Coming soon",
+                "description": "The contracts page is planned as a place to keep agreements, attach related invoices, and follow the money trail for longer client work."
+            },
+            "capabilities": {
+                "payments": {
+                    "badge": "New",
+                    "title": "Stripe Connect payments.",
+                    "body": "Connect your Stripe account; invoice links accept cards and auto-mark as paid."
+                },
+                "links": {
+                    "title": "Sign and pay links.",
+                    "body": "Send a unique URL. Your client signs, pays, or both without an account."
+                },
+                "email": {
+                    "title": "Email delivery and reminders.",
+                    "body": "Send the invoice and nudge overdue ones from the same screen."
+                },
+                "language": {
+                    "title": "English and Lithuanian, one click.",
+                    "body": "Switch the invoice language without re-typing anything. More languages can come later."
+                },
+                "export": {
+                    "title": "Export to CSV anytime.",
+                    "body": "Your data is yours. Pull the invoice ledger into a spreadsheet whenever you want."
+                }
             }
         },
         "pricing": {
-            "title": "Simple, Transparent Pricing",
-            "subtitle": "Start for free, upgrade when you need more features.",
+            "eyebrow": "Pricing",
+            "title": "Honest, simple.",
+            "subtitle": "Start free. Upgrade when you outgrow it.",
             "free": {
-                "title": "Free",
-                "subtitle": "Create and export basic invoices",
-                "price_label": "Forever free",
+                "title": "Free generator",
+                "tagline": "Make a one-off invoice and download the PDF. No account.",
                 "features": {
-                    "unlimited": "Create unlimited invoices",
-                    "template": "Basic invoice template",
-                    "export": "Export to PDF",
-                    "signature": "Add your signature"
+                    "single": "Create one invoice at a time",
+                    "download": "Download as PDF",
+                    "languages": "English or Lithuanian invoice output",
+                    "no_account": "No save, send, or payment link"
                 },
-                "cta": "Get Started"
+                "cta": "Generate an invoice"
             },
             "premium": {
+                "badge": "Recommended",
                 "title": "Premium",
-                "subtitle": "Everything you need for efficient invoicing",
-                "price_label": "per month",
-                "annual_price_label": "per year",
-                "annual_badge": "Save 18%",
-                "monthly_option": "{price}/month option also available",
+                "tagline": "The full app: save, send, track, get paid.",
+                "suffix": "/year",
+                "alt": "or €4.99 / month",
                 "features": {
-                    "everything": "Everything in Free",
-                    "save": "Save and edit invoices",
-                    "clients": "Store client information",
-                    "contracts": "Create and manage contracts",
-                    "currency": "Choose currency and language",
-                    "email": "Email invoices directly"
+                    "saved": "Unlimited saved invoices and clients",
+                    "email": "Send by email and remind clients",
+                    "links": "Sign and pay links for clients",
+                    "payments": "Stripe Connect payments",
+                    "export": "CSV export of your invoice ledger"
                 },
-                "cta": "Upgrade Now"
+                "cta": "Start 7-day trial"
+            }
+        },
+        "faq": {
+            "eyebrow": "FAQ",
+            "title": "Straight answers.",
+            "items": {
+                "free": {
+                    "question": "Is there a free plan?",
+                    "answer": "You can generate an invoice and download the PDF for free without an account. Saving, sending, reminders, payment links and the rest of the app live on Premium."
+                },
+                "export": {
+                    "question": "Can I export my data?",
+                    "answer": "Yes. Export your invoice ledger to CSV whenever you want."
+                },
+                "payments": {
+                    "question": "How do payments work?",
+                    "answer": "Connect your Stripe account and invoice links can accept card payments. Paid invoices can be marked automatically or manually."
+                },
+                "languages": {
+                    "question": "Which languages are supported?",
+                    "answer": "Invoices can be issued in English or Lithuanian today, switchable per document."
+                }
             }
         },
         "cta": {
-            "title": "Ready to streamline your invoicing process?",
-            "subtitle": "Start creating professional invoices today, no credit card required.",
-            "button": "Try For Free"
-        },
-        "testimonial": {
-            "label": "Testimonial",
-            "quote": "InvoiceTrackr has completely transformed how I handle invoicing. The free version is great to start, but the premium features save me hours every month.",
-            "author": "Nikita K.",
-            "role": "Freelance Data Analyst"
+            "badge": "Free invoice generator · no sign-up",
+            "title": "Ready to send a better invoice?",
+            "subtitle": "Generate one for free, or start a Premium trial to save, send and get paid.",
+            "primary": "Start 7-day trial",
+            "secondary": "Generate a free invoice"
         }
     },
     "footer": {
@@ -233,7 +408,6 @@
         "welcome": "Welcome",
         "subtitle": "Log into your account to continue",
         "form": {
-            "title": "Log In",
             "email": "Email",
             "email_placeholder": "Enter your email address",
             "password": "Password",
@@ -252,7 +426,6 @@
         "page_title": "Sign up",
         "page_description": "Create your InvoiceTrackr account.",
         "form": {
-            "title": "Sign Up",
             "email": "Email",
             "email_placeholder": "Enter your email address",
             "password": "Password",
@@ -269,14 +442,17 @@
             },
             "steps": {
                 "account": {
+                    "short_name": "Account",
                     "name": "Create an account",
                     "description": "Setting up your foundation"
                 },
                 "personal": {
+                    "short_name": "Profile",
                     "name": "Personal Information",
                     "description": "Tell us about yourself"
                 },
                 "trial": {
+                    "short_name": "Trial",
                     "name": "Start Free Trial",
                     "description": "Unlock the full product for 7 days"
                 }
@@ -454,7 +630,9 @@
             "payment_terms_label": "Payment terms: {days} days",
             "bank_info_label": "{bank_name}, bank code {bank_code}; Account number: {bank_account_number}",
             "buttons": {
-                "download_pdf": "Download PDF"
+                "download_pdf": "Download PDF",
+                "print_pdf": "Print PDF",
+                "close": "Close"
             },
             "past_due_alert": "Invoice is {days}d past due. Due date was {dueDate}."
         }
@@ -815,7 +993,6 @@
     "forgot_password": {
         "title": "Reset Password",
         "description": "Enter your email to receive password reset instructions",
-        "card_header": "Forgot Password",
         "email": "Email",
         "email_placeholder": "Enter your email address",
         "reset_link": "Send Reset Link",
@@ -834,7 +1011,6 @@
             "remember_your_password": "Remember your password?"
         },
         "form": {
-            "title": "Create New Password",
             "new_password": "New Password",
             "confirmed_new_password": "Confirm New Password",
             "new_password_placeholder": "Enter new password",
@@ -969,6 +1145,14 @@
             "vat_total": "VAT Total",
             "grand_total": "Grand Total",
             "delete_service": "Delete service",
+            "placeholders": {
+                "description": "e.g., Web design services",
+                "unit": "e.g., h",
+                "quantity": "e.g., 1",
+                "amount": "e.g., 100",
+                "vat_rate": "e.g., 21",
+                "vat_exemption_reason": "e.g., VAT exempt under reverse charge"
+            },
             "a11y": {
                 "table_label": "Invoice Services Table",
                 "number_label": "Number",
@@ -1033,7 +1217,17 @@
                 "bank_code": "e.g., HABALT22",
                 "bank_account_number": "e.g., LT121000011101001000",
                 "invoice_id": "e.g., INV001",
-                "select_status": "Select status"
+                "select_status": "Select status",
+                "sender_name": "e.g., John Smith",
+                "sender_business_number": "e.g., 304000000",
+                "sender_vat_number": "e.g., LT100000000000",
+                "sender_address": "e.g., Gedimino pr. 1, Vilnius",
+                "sender_email": "e.g., john@example.com",
+                "receiver_name": "e.g., Client UAB",
+                "receiver_business_number": "e.g., 305000000",
+                "receiver_vat_number": "e.g., LT100000000000",
+                "receiver_address": "e.g., Konstitucijos pr. 7, Vilnius",
+                "receiver_email": "e.g., billing@client.com"
             },
             "headings": {
                 "sender_receiver_data": "Sender and Receiver Data",
