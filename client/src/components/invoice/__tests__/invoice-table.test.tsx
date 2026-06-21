@@ -27,7 +27,8 @@ vi.mock('@react-pdf/renderer', () => ({
   },
   Font: {
     register: (_: any) => {}
-  }
+  },
+  usePDF: () => [{ url: '', loading: false, error: null }, vi.fn()]
 }));
 vi.mock('next/navigation', () =>
   vi.importActual('next-router-mock/navigation')

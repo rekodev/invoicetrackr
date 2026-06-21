@@ -48,7 +48,9 @@ describe('<ClientFormDialog />', () => {
       email: 'test@example.com'
     };
 
-    renderHelper(<ClientFormDialog {...props} clientData={clientData} />);
+    renderHelper(
+      <ClientFormDialog {...props} mode="edit" clientData={clientData} />
+    );
 
     expect(screen.getByText(/Edit/i)).toBeDefined();
     expect(screen.getByDisplayValue('Test Client')).toBeDefined();

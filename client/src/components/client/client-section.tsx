@@ -201,9 +201,11 @@ const ClientSection = ({ userId, clients }: Props) => {
       <div className="min-h-[480px]">{renderSectionContent()}</div>
       {currentClientData && isEditClientModalOpen && (
         <ClientFormDialog
+          key={currentClientData.id}
           userId={userId}
           isOpen={isEditClientModalOpen}
           onClose={handleCloseEditClientModal}
+          mode="edit"
           clientData={currentClientData}
         />
       )}

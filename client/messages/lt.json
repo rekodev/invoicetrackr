@@ -59,7 +59,10 @@
         "message": "Mes naudojame slapukus, kad suteiktume geriausią patirtį. Paspaudę \"Priimti viską\" sutinkate su mūsų slapukų naudojimu, įskaitant analitikos duomenis, aprašytus mūsų",
         "privacy_policy": "Privatumo Politikoje",
         "accept": "Priimti viską",
-        "decline": "Atmesti"
+        "decline": "Atmesti",
+        "a11y": {
+            "close": "Uždaryti slapukų pranešimą"
+        }
     },
     "not_found": {
         "title": "Puslapis nerastas",

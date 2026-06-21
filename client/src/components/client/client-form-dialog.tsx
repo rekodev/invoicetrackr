@@ -13,6 +13,7 @@ import {
   toast
 } from '@heroui/react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { addClientAction, updateClientAction } from '@/lib/actions/client';
@@ -34,35 +35,58 @@ type Props = {
   userId: number;
   isOpen: boolean;
   onClose: () => void;
+  mode?: 'add' | 'edit';
   clientData?: ClientBody;
 };
 
 type ClientFormData = ClientBody;
 
-const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
+const getInitialClientData = (clientData?: ClientBody): ClientFormData => ({
+  ...INITIAL_CLIENT_DATA,
+  ...clientData,
+  type: 'receiver'
+});
+
+const ClientFormDialog = ({
+  userId,
+  isOpen,
+  onClose,
+  mode = 'add',
+  clientData
+}: Props) => {
   const t = useTranslations('clients.form_dialog');
   const tTypes = useTranslations('clients.form_dialog.business_types');
+  const isEditMode = mode === 'edit';
 
   const {
     register,
     control,
     handleSubmit,
     formState: { isDirty, isLoading, errors },
-    setError
+    setError,
+    reset
   } = useForm<ClientFormData>({
-    defaultValues: clientData || INITIAL_CLIENT_DATA
+    defaultValues: getInitialClientData(clientData)
   });
 
+  useEffect(() => {
+    if (!isOpen) return;
+    if (isEditMode && !clientData) return;
+
+    reset(getInitialClientData(clientData));
+  }, [clientData, isEditMode, isOpen, reset]);
+
   const onSubmit: SubmitHandler<ClientFormData> = async (data) => {
-    const response = !clientData
-      ? await addClientAction({
-          userId,
-          clientData: { ...data, type: 'receiver' }
-        })
-      : await updateClientAction({
-          userId,
-          clientData: { ...data, type: 'receiver' }
-        });
+    const response =
+      isEditMode && clientData
+        ? await updateClientAction({
+            userId,
+            clientData: { ...data, type: 'receiver' }
+          })
+        : await addClientAction({
+            userId,
+            clientData: { ...data, type: 'receiver' }
+          });
 
     toast(response.message || '', {
       variant: response.ok ? 'success' : 'danger'
@@ -85,6 +109,8 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
     onClose();
   };
 
+  if (isEditMode && !clientData) return null;
+
   return (
     <Modal>
       <Modal.Backdrop
@@ -97,7 +123,7 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <Modal.Header>
                 <Modal.Heading>
-                  {!!clientData ? t('title_edit') : t('title_add')}
+                  {isEditMode ? t('title_edit') : t('title_add')}
                 </Modal.Heading>
               </Modal.Header>
               <Modal.Body className="flex flex-col gap-2">
@@ -174,7 +200,7 @@ const ClientFormDialog = ({ userId, isOpen, onClose, clientData }: Props) => {
                       isDisabled={isLoading || !isDirty}
                       type="submit"
                     >
-                      {!!clientData ? t('submit_edit') : t('submit_add')}
+                      {isEditMode ? t('submit_edit') : t('submit_add')}
                     </Button>
                   </div>
                 </div>

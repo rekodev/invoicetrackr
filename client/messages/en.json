@@ -59,7 +59,10 @@
         "message": "We use cookies to provide the best experience. By clicking \"Accept All,\" you agree to our use of cookies, including the analytics data described in our",
         "privacy_policy": "Privacy Policy",
         "accept": "Accept All",
-        "decline": "Decline"
+        "decline": "Decline",
+        "a11y": {
+            "close": "Close cookie notice"
+        }
     },
     "not_found": {
         "title": "Page not found",

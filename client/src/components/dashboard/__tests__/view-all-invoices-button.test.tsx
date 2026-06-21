@@ -11,14 +11,14 @@ describe('<ViewAllInvoicesButton />', () => {
   it('renders correctly', () => {
     renderHelper(<ViewAllInvoicesButton />);
 
-    expect(screen.getByRole('button')).toBeDefined();
+    expect(screen.getByRole('link', { name: 'View All' })).toBeDefined();
     expect(screen.getByText('View All')).toBeDefined();
   });
 
   it('has correct href attribute', () => {
     renderHelper(<ViewAllInvoicesButton />);
 
-    const link = screen.getByRole('button');
+    const link = screen.getByRole('link', { name: 'View All' });
     expect(link.getAttribute('href')).toBe('/invoices');
   });
 });
