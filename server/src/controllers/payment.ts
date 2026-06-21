@@ -172,12 +172,12 @@ const getSubscriptionBillingRateFromStripe = async (
 };
 
 const getInvoiceLinePriceSource = (
-  line: Stripe.InvoiceLineItem
+  line: Stripe.Invoice['lines']['data'][number]
 ): Stripe.Price | string | null | undefined => {
-  const lineWithLegacyPrice = line as Stripe.InvoiceLineItem & {
+  const lineWithLegacyPrice = line as typeof line & {
     price?: Stripe.Price | string | null;
   };
-  const lineWithPricingDetails = line as Stripe.InvoiceLineItem & {
+  const lineWithPricingDetails = line as typeof line & {
     pricing?: {
       price_details?: {
         price?: Stripe.Price | string | null;
@@ -192,8 +192,8 @@ const getInvoiceLinePriceSource = (
 };
 
 const getBillingIntervalFromPeriod = (
-  period?: Stripe.InvoiceLineItem.Period | null
-): Stripe.Price.Recurring.Interval | undefined => {
+  period?: Stripe.Invoice['lines']['data'][number]['period'] | null
+): NonNullable<Stripe.Price['recurring']>['interval'] | undefined => {
   if (!period) return undefined;
 
   const days = (period.end - period.start) / 86_400;
@@ -204,7 +204,9 @@ const getBillingIntervalFromPeriod = (
   return undefined;
 };
 
-const getBillingRateFromInvoiceLine = (line: Stripe.InvoiceLineItem) => ({
+const getBillingRateFromInvoiceLine = (
+  line: Stripe.Invoice['lines']['data'][number]
+) => ({
   amount: line.amount,
   currency: line.currency,
   interval: getBillingIntervalFromPeriod(line.period),

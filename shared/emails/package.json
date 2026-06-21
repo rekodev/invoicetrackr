@@ -16,12 +16,10 @@
     "dev:watch": "tsc --watch"
   },
   "dependencies": {
-    "@react-email/components": "^1.0.12",
     "react": "19.2.7",
     "react-dom": "19.2.7"
   },
   "devDependencies": {
-    "@react-email/preview-server": "5.2.10",
     "@react-email/ui": "6.6.3",
     "@types/react": "19.2.1",
     "react-email": "^6.6.3",
