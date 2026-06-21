@@ -15,6 +15,21 @@ export default {
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
       copyright: '© {year} InvoiceTrackr. Visos teisės saugomos.'
     },
+    verifyEmail: {
+      subject: 'Patvirtinkite InvoiceTrackr el. paštą',
+      text: 'Spustelėkite nuorodą, kad patvirtintumėte el. paštą: %{verificationLink}',
+      greeting: 'Sveiki prisijungę prie InvoiceTrackr!',
+      message:
+        'Patvirtinkite el. pašto adresą, kad galėtumėte siųsti sąskaitas ir gauti paskyros pranešimus.',
+      buttonText: 'Patvirtinti el. paštą',
+      orCopy: 'Arba nukopijuokite ir įklijuokite šią nuorodą į savo naršyklę:',
+      linkExpiry:
+        'Ši nuoroda baigs galioti po 24 valandų dėl saugumo priežasčių.',
+      noRequest:
+        'Jei nekūrėte InvoiceTrackr paskyros, galite drąsiai ignoruoti šį laišką.',
+      footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
+      copyright: '© {year} InvoiceTrackr. Visos teisės saugomos.'
+    },
     invoice: {
       title: 'InvoiceTrackr',
       defaultMessage: 'Prašome rasti prisegtos sąskaitos faktūrą.',
@@ -177,6 +192,9 @@ export default {
       passwordChanged: 'Slaptažodis pakeistas sėkmingai',
       resetLinkSent:
         'Slaptažodžio atstatymo nuoroda išsiųsta į nurodytą el. paštą',
+      verificationEmailSent: 'Patvirtinimo laiškas išsiųstas',
+      emailVerified: 'El. paštas patvirtintas sėkmingai',
+      emailAlreadyVerified: 'El. paštas jau patvirtintas',
       selectedBankAccountUpdated:
         'Pagrindinė banko sąskaita atnaujinta sėkmingai'
     },
@@ -224,8 +242,15 @@ export default {
       unableToChangePassword: 'Nepavyko pakeisti slaptažodžio',
       unableToSendResetLink:
         'Nepavyko išsiųsti nuorodos slaptažodžiui atkurti. Bandykite vėliau',
+      unableToSendVerificationEmail:
+        'Nepavyko išsiųsti patvirtinimo laiško. Bandykite vėliau',
+      emailVerificationRequired:
+        'Patvirtinkite el. paštą prieš siųsdami sąskaitas el. paštu',
+      emailVerificationCooldown:
+        'Palaukite prieš prašydami kito patvirtinimo laiško',
       tokenInvalid: 'Raktas yra neteisingas',
       tokenExpired: 'Rakto galiojimo laikas pasibaigė',
+      tokenAlreadyUsed: 'Raktas jau panaudotas',
       unableToUploadSignature: 'Nepavyko įkelti parašo',
       unableToUpdateSelectedBankAccount:
         'Nepavyko atnaujinti pagrindinės banko sąskaitos'

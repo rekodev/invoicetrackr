@@ -12,7 +12,8 @@ import {
   PRIVACY_POLICY_PAGE,
   RENEW_SUBSCRIPTION_PAGE,
   SIGN_UP_PAGE,
-  TERMS_OF_SERVICE_PAGE
+  TERMS_OF_SERVICE_PAGE,
+  VERIFY_EMAIL_PAGE
 } from './lib/constants/pages';
 import { Currency } from './lib/types/currency';
 
@@ -33,9 +34,11 @@ export const authConfig = {
       ];
       const path = nextUrl.pathname;
       const isPublicInvoiceSigningPage = path.startsWith('/invoices/sign/');
+      const isEmailVerificationPage = path.startsWith(VERIFY_EMAIL_PAGE);
       const pathIsPublic =
         publicPaths.includes(path) ||
         path.startsWith('/create-new-password') ||
+        isEmailVerificationPage ||
         isPublicInvoiceSigningPage;
 
       const isOnboarded = !!auth?.user?.isOnboarded;
@@ -104,6 +107,7 @@ export const authConfig = {
       if (
         isLoggedIn &&
         !sharedPaths.includes(path) &&
+        !isEmailVerificationPage &&
         !isPublicInvoiceSigningPage
       ) {
         return Response.redirect(new URL(DASHBOARD_PAGE, nextUrl));
@@ -116,6 +120,7 @@ export const authConfig = {
         const isOnboarded = !!user.onboardingCompletedAt;
 
         token.language = user.language;
+        token.emailVerifiedAt = user.emailVerifiedAt;
         token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
         token.currency = user.currency;
         token.hasPaymentMethod = user.hasPaymentMethod;
@@ -136,6 +141,7 @@ export const authConfig = {
         token = {
           ...token,
           isOnboarded: session.user.isOnboarded,
+          emailVerifiedAt: session.user.emailVerifiedAt,
           language: session.user.language,
           preferredInvoiceLanguage: session.user.preferredInvoiceLanguage,
           currency: session.user.currency,
@@ -157,6 +163,7 @@ export const authConfig = {
     session({ session, token }) {
       session.user.id = token.sub!;
       session.user.language = token.language as string;
+      session.user.emailVerifiedAt = token.emailVerifiedAt as string | null;
       session.user.preferredInvoiceLanguage =
         token.preferredInvoiceLanguage as string;
       session.user.currency = token.currency as Currency;

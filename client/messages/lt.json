@@ -802,6 +802,16 @@
             "language": "Kalba",
             "preferred_invoice_language": "Pageidaujama Sąskaitos Kalba",
             "preferred_invoice_language_tooltip": "Tai numatytoji sąskaitų eksporto ir el. laiškų kalba. Galite keisti kiekvienai sąskaitai atskirai.",
+            "email_verification": {
+                "title": "El. pašto patvirtinimas",
+                "email": "El. paštas",
+                "verified": "Patvirtintas",
+                "unverified": "Nepatvirtintas",
+                "verified_description": "Jūsų el. paštas patvirtintas ir gali būti naudojamas sąskaitoms siųsti.",
+                "unverified_description": "Patvirtinkite el. paštą prieš siųsdami sąskaitas klientams.",
+                "resend": "Siųsti patvirtinimo laišką",
+                "sent_at": "Patvirtinta {date}"
+            },
             "available_languages": {
                 "en": "Anglų",
                 "lt": "Lietuvių"
@@ -1020,6 +1030,24 @@
             "sign_in": "Prisijungti"
         }
     },
+    "verify_email": {
+        "verified": {
+            "title": "El. paštas patvirtintas",
+            "description": "Jūsų el. paštas patvirtintas. Dabar galite siųsti sąskaitas el. paštu."
+        },
+        "already_verified": {
+            "title": "El. paštas jau patvirtintas",
+            "description": "Šis el. pašto adresas jau patvirtintas jūsų paskyroje."
+        },
+        "error": {
+            "title": "Nepavyko patvirtinti el. pašto",
+            "description": "Ši patvirtinimo nuoroda neteisinga arba nebegalioja."
+        },
+        "actions": {
+            "dashboard": "Eiti į skydelį",
+            "account_settings": "Eiti į paskyros nustatymus"
+        }
+    },
     "under_construction": {
         "title": "Kuriama",
         "description": "Šis puslapis vis dar kuriamas ir bus prieinamas netrukus. Dėkojame už kantrybę."
@@ -1117,6 +1145,7 @@
             "date": "Data",
             "public_link_note": "Šiame laiške gali būti saugus sąskaitos puslapis su PDF, banko rekvizitais ir internetiniu mokėjimu, jei jis įjungtas.",
             "signing_link_note": "Šiame laiške bus saugi pasirašymo nuoroda gavėjui.",
+            "email_verification_required": "Patvirtinkite paskyros el. paštą prieš siųsdami sąskaitas klientams.",
             "include_public_link": "Įtraukti viešą sąskaitos puslapį",
             "request_signature": "Prašyti gavėjo parašo",
             "signature_requires_public_link": "Gavėjo pasirašymui reikia viešo sąskaitos puslapio.",

@@ -1,13 +1,14 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { ResetPasswordEmail, VerifyEmailEmail } from '@invoicetrackr/emails';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { MultipartFile } from '@fastify/multipart';
-import { ResetPasswordEmail } from '@invoicetrackr/emails';
 import { UserBody } from '@invoicetrackr/types';
 import bcrypt from 'bcryptjs';
 import { useI18n } from 'fastify-i18n';
 
 import {
   BadRequestError,
+  ForbiddenError,
   NotFoundError,
   UnauthorizedError
 } from '../utils/error';
@@ -16,6 +17,7 @@ import {
   changeUserPasswordInDb,
   deleteUserFromDb,
   getUserByEmailFromDb,
+  getUserEmailVerificationStatusFromDb,
   getUserFromDb,
   getUserPasswordHashFromDb,
   getUserResetPasswordTokenFromDb,
@@ -24,12 +26,76 @@ import {
   updateUserAccountSettingsInDb,
   updateUserInDb,
   updateUserProfilePictureInDb,
-  updateUserSelectedBankAccountInDb
+  updateUserSelectedBankAccountInDb,
+  verifyUserEmailInDb
 } from '../database/user';
+import {
+  getEmailVerificationTokenFromDb,
+  getLatestEmailVerificationTokenForUserFromDb,
+  markEmailVerificationTokenUsedInDb,
+  saveEmailVerificationTokenToDb
+} from '../database/email-verification';
 import { getStripeCustomerIdFromDb } from '../database/payment';
 import { resend } from '../config/resend';
 import { saveResetTokenToDb } from '../database/password-reset';
 import { stripe } from '../config/stripe';
+
+const EMAIL_VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+const EMAIL_VERIFICATION_RESEND_COOLDOWN_MS = 15 * 60 * 1000;
+
+const createEmailVerificationToken = async (userId: number) => {
+  const token = crypto.randomUUID();
+  const expiresAt = new Date(
+    Date.now() + EMAIL_VERIFICATION_TOKEN_TTL_MS
+  ).toISOString();
+
+  await saveEmailVerificationTokenToDb(userId, token, expiresAt);
+
+  return token;
+};
+
+const sendVerificationEmail = async ({
+  email,
+  token,
+  i18n
+}: {
+  email: string;
+  token: string;
+  i18n: Awaited<ReturnType<typeof useI18n>>;
+}) => {
+  const verificationLink = getAppUrl(`/verify-email/${token}`);
+  const emailHtml = VerifyEmailEmail({
+    verificationLink,
+    translations: {
+      subject: i18n.t('emails.verifyEmail.subject'),
+      greeting: i18n.t('emails.verifyEmail.greeting'),
+      message: i18n.t('emails.verifyEmail.message'),
+      buttonText: i18n.t('emails.verifyEmail.buttonText'),
+      orCopy: i18n.t('emails.verifyEmail.orCopy'),
+      linkExpiry: i18n.t('emails.verifyEmail.linkExpiry'),
+      noRequest: i18n.t('emails.verifyEmail.noRequest'),
+      footer: i18n.t('emails.verifyEmail.footer'),
+      copyright: i18n.t('emails.verifyEmail.copyright', {
+        year: new Date().getFullYear()
+      })
+    }
+  });
+
+  const { error } = await resend.emails.send({
+    from: appEmailFrom,
+    to: [email],
+    subject: i18n.t('emails.verifyEmail.subject'),
+    react: emailHtml,
+    text: i18n.t('emails.verifyEmail.text', { verificationLink })
+  });
+
+  if (error) {
+    console.error({ error });
+    throw new BadRequestError(
+      i18n.t('error.user.unableToSendVerificationEmail')
+    );
+  }
+};
 
 export const getUser = async (
   req: FastifyRequest<{ Params: { userId: string } }>,
@@ -73,7 +139,13 @@ export const postUser = async (
 ) => {
   const { email, password, confirmedPassword } = req.body;
   const i18n = await useI18n(req);
-  const language = req.headers['accept-language'] || 'en';
+  const languageHeader = req.headers['accept-language'];
+  const requestedLanguage = Array.isArray(languageHeader)
+    ? languageHeader.at(0)
+    : languageHeader;
+  const language = requestedLanguage?.startsWith('lt') ? 'lt' : 'en';
+
+  if (!email) throw new BadRequestError(i18n.t('validation.user.email'));
 
   if (password !== confirmedPassword)
     throw new BadRequestError(i18n.t('error.user.passwordsDoNotMatch'));
@@ -91,6 +163,15 @@ export const postUser = async (
 
   if (!createdUser)
     throw new BadRequestError(i18n.t('error.user.unableToCreate'));
+
+  try {
+    const verificationToken = await createEmailVerificationToken(
+      createdUser.id
+    );
+    await sendVerificationEmail({ email, token: verificationToken, i18n });
+  } catch (error) {
+    req.log.error({ error, email }, 'Unable to send verification email');
+  }
 
   return reply
     .status(201)
@@ -142,10 +223,16 @@ export const updateUser = async (
   const foundUser = await getUserFromDb(userId);
 
   if (!foundUser) throw new NotFoundError(i18n.t('error.user.notFound'));
+  if (!email) throw new BadRequestError(i18n.t('validation.user.email'));
 
   const signatureUrl = uploadedSignature?.url
     ? uploadedSignature.url.replace('http://', 'https://')
     : signature;
+  const shouldResetEmailVerification = foundUser.email !== email;
+
+  if (shouldResetEmailVerification && !foundUser.emailVerifiedAt) {
+    throw new ForbiddenError(i18n.t('error.user.emailVerificationRequired'));
+  }
 
   const updatedUser = await updateUserInDb(
     {
@@ -157,11 +244,17 @@ export const updateUser = async (
       vatNumber,
       address
     },
-    signatureUrl || ''
+    signatureUrl || '',
+    shouldResetEmailVerification
   );
 
   if (!updatedUser)
     throw new BadRequestError(i18n.t('error.user.unableToUpdate'));
+
+  if (shouldResetEmailVerification) {
+    const verificationToken = await createEmailVerificationToken(userId);
+    await sendVerificationEmail({ email, token: verificationToken, i18n });
+  }
 
   reply.status(200).send({
     user: updatedUser,
@@ -379,6 +472,95 @@ export const resetUserPassword = async (
   }
 
   reply.status(200).send({ message: i18n.t('success.user.resetLinkSent') });
+};
+
+export const verifyUserEmail = async (
+  req: FastifyRequest<{ Params: { token: string } }>,
+  reply: FastifyReply
+) => {
+  const { token } = req.params;
+  const i18n = await useI18n(req);
+  const tokenFromDb = await getEmailVerificationTokenFromDb(token);
+
+  if (!tokenFromDb)
+    throw new BadRequestError(i18n.t('error.user.tokenInvalid'));
+
+  const user = await getUserEmailVerificationStatusFromDb(tokenFromDb.userId);
+
+  if (!user) throw new BadRequestError(i18n.t('error.user.tokenInvalid'));
+
+  if (user.emailVerifiedAt) {
+    if (!tokenFromDb.usedAt) await markEmailVerificationTokenUsedInDb(token);
+
+    return reply.status(200).send({
+      status: 'already_verified',
+      emailVerifiedAt: user.emailVerifiedAt,
+      message: i18n.t('success.user.emailAlreadyVerified')
+    });
+  }
+
+  if (tokenFromDb.usedAt)
+    throw new BadRequestError(i18n.t('error.user.tokenAlreadyUsed'));
+
+  const currentDate = new Date();
+  const tokenExpirationDate = new Date(tokenFromDb.expiresAt);
+
+  if (currentDate > tokenExpirationDate)
+    throw new BadRequestError(i18n.t('error.user.tokenExpired'));
+
+  const verifiedUser = await verifyUserEmailInDb(tokenFromDb.userId);
+
+  if (!verifiedUser)
+    throw new BadRequestError(i18n.t('error.user.tokenInvalid'));
+
+  await markEmailVerificationTokenUsedInDb(token);
+
+  reply.status(200).send({
+    status: 'verified',
+    emailVerifiedAt: verifiedUser.emailVerifiedAt,
+    message: i18n.t('success.user.emailVerified')
+  });
+};
+
+export const resendUserVerificationEmail = async (
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const i18n = await useI18n(req);
+  const user = await getUserEmailVerificationStatusFromDb(userId);
+
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
+
+  if (user.emailVerifiedAt) {
+    return reply
+      .status(200)
+      .send({ message: i18n.t('success.user.emailAlreadyVerified') });
+  }
+
+  const latestToken =
+    await getLatestEmailVerificationTokenForUserFromDb(userId);
+  const lastSentAt = latestToken?.lastSentAt
+    ? new Date(latestToken.lastSentAt)
+    : null;
+
+  if (
+    lastSentAt &&
+    Date.now() - lastSentAt.getTime() < EMAIL_VERIFICATION_RESEND_COOLDOWN_MS
+  ) {
+    throw new BadRequestError(i18n.t('error.user.emailVerificationCooldown'));
+  }
+
+  const verificationToken = await createEmailVerificationToken(userId);
+  await sendVerificationEmail({
+    email: user.email,
+    token: verificationToken,
+    i18n
+  });
+
+  reply
+    .status(200)
+    .send({ message: i18n.t('success.user.verificationEmailSent') });
 };
 
 export const getUserResetPasswordToken = async (

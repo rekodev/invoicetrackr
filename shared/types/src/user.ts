@@ -14,6 +14,7 @@ export const userBodySchema = z.object({
   vatNumber: z.string().nullish(),
   address: z.string(),
   email: z.email('validation.user.email').optional().or(z.literal('')),
+  emailVerifiedAt: z.string().nullish(),
   signature: z.string().optional(),
   selectedBankAccountId: z.number().nullish(),
   password: passwordSchema.optional(),
@@ -43,9 +44,16 @@ export const resetPasswordTokenGetSchema = z.object({
   createdAt: z.string()
 });
 
+export const verifyEmailResponseSchema = z.object({
+  status: z.enum(['verified', 'already_verified']),
+  emailVerifiedAt: z.string().nullish(),
+  message: z.string()
+});
+
 // Types
 export type UserBody = z.infer<typeof userBodySchema>;
 export type User = UserBody;
 export type UserWithPassword = UserBody;
 export type ResetPasswordTokenGet = z.infer<typeof resetPasswordTokenGetSchema>;
 export type ResetPasswordToken = ResetPasswordTokenGet;
+export type VerifyEmailResponse = z.infer<typeof verifyEmailResponseSchema>;

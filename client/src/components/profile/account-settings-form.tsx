@@ -14,13 +14,16 @@ import {
   Tooltip,
   toast
 } from '@heroui/react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import {
+  CheckCircleIcon,
   CurrencyDollarIcon,
   DocumentArrowUpIcon,
+  EnvelopeIcon,
+  ExclamationCircleIcon,
   InformationCircleIcon,
   LanguageIcon
 } from '@heroicons/react/24/outline';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { User } from 'next-auth';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -29,8 +32,11 @@ import {
   availableCurrencies,
   availableLanguages
 } from '@/lib/constants/profile';
+import {
+  resendVerificationEmailAction,
+  updateUserAccountSettingsAction
+} from '@/lib/actions/user';
 import { Currency } from '@/lib/types/currency';
-import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 
 import DeleteAccountModal from './delete-account-modal';
 
@@ -62,6 +68,14 @@ const AccountSettingsForm = ({ user }: Props) => {
   });
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
+  const [isResendingVerificationEmail, setIsResendingVerificationEmail] =
+    useState(false);
+
+  const emailVerifiedAt = user.emailVerifiedAt;
+  const isEmailVerified = Boolean(emailVerifiedAt);
+  const verifiedDate = emailVerifiedAt
+    ? new Date(emailVerifiedAt).toLocaleDateString(user.language || 'en')
+    : null;
 
   const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) => {
     if (!user?.id) return;
@@ -90,9 +104,74 @@ const AccountSettingsForm = ({ user }: Props) => {
     reset(data);
   };
 
+  const handleResendVerificationEmail = async () => {
+    if (!user?.id) return;
+
+    setIsResendingVerificationEmail(true);
+    try {
+      const response = await resendVerificationEmailAction({
+        userId: Number(user.id)
+      });
+
+      toast(response.message, {
+        variant: response.ok ? 'success' : 'danger'
+      });
+    } finally {
+      setIsResendingVerificationEmail(false);
+    }
+  };
+
   const renderCardBodyAndFooter = () => (
     <>
       <CardContent className="grid grid-cols-1 gap-4 p-6 lg:w-1/2">
+        <div className="border-border bg-content1/40 rounded-lg border p-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex gap-3">
+              <EnvelopeIcon className="text-muted mt-0.5 h-5 w-5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium">
+                  {t('email_verification.title')}
+                </p>
+                <p className="text-muted mt-1 text-sm">
+                  {t('email_verification.email')}: {user.email}
+                </p>
+                <p className="text-muted mt-2 text-sm">
+                  {isEmailVerified
+                    ? t('email_verification.verified_description')
+                    : t('email_verification.unverified_description')}
+                </p>
+                {verifiedDate ? (
+                  <p className="text-muted mt-2 text-xs">
+                    {t('email_verification.sent_at', { date: verifiedDate })}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className="flex flex-col items-start gap-3 sm:items-end">
+              <div className="flex items-center gap-1 text-sm font-medium">
+                {isEmailVerified ? (
+                  <CheckCircleIcon className="text-success h-4 w-4" />
+                ) : (
+                  <ExclamationCircleIcon className="text-warning h-4 w-4" />
+                )}
+                {isEmailVerified
+                  ? t('email_verification.verified')
+                  : t('email_verification.unverified')}
+              </div>
+              {!isEmailVerified ? (
+                <Button
+                  size="sm"
+                  type="button"
+                  variant="secondary"
+                  isPending={isResendingVerificationEmail}
+                  onPress={handleResendVerificationEmail}
+                >
+                  {t('email_verification.resend')}
+                </Button>
+              ) : null}
+            </div>
+          </div>
+        </div>
         <Controller
           control={control}
           name="language"

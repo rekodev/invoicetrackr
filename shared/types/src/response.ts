@@ -1,5 +1,9 @@
 import z from 'zod/v4';
-import { userBodySchema, resetPasswordTokenGetSchema } from './user';
+import {
+  resetPasswordTokenGetSchema,
+  userBodySchema,
+  verifyEmailResponseSchema
+} from './user';
 import {
   billingIntervalSchema,
   stripeSubscriptionStatusSchema
@@ -31,6 +35,8 @@ export const registerUserResponseSchema = z.object({
   email: z.string(),
   message: z.string()
 });
+
+export const verifyEmailTokenResponseSchema = verifyEmailResponseSchema;
 
 export const updateUserResponseSchema = z.object({
   user: userBodySchema.pick({ id: true }),
@@ -231,6 +237,10 @@ export type LoginUserResponse = z.infer<typeof loginUserResponseSchema>;
 export type UpdateUserAccountSettingsResponse = MessageResponse;
 export type DeleteUserAccountResponse = MessageResponse;
 export type ResetPasswordResponse = MessageResponse;
+export type ResendVerificationEmailResponse = MessageResponse;
+export type VerifyEmailTokenResponse = z.infer<
+  typeof verifyEmailTokenResponseSchema
+>;
 export type GetUserResetPasswordTokenResponse = z.infer<
   typeof resetPasswordTokenGetSchema
 >;

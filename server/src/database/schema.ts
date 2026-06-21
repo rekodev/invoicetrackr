@@ -302,6 +302,10 @@ export const usersTable = pgTable(
     vatNumber: varchar('vat_number', { length: 255 }),
     address: text().notNull(),
     email: varchar({ length: 255 }).notNull(),
+    emailVerifiedAt: timestamp('email_verified_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
     createdAt: timestamp('created_at', {
       withTimezone: true,
       mode: 'string'
@@ -396,6 +400,33 @@ export const passwordResetTokensTable = pgTable('password_reset_tokens', {
     mode: 'string'
   }).default(sql`CURRENT_TIMESTAMP`)
 });
+
+export const emailVerificationTokensTable = pgTable(
+  'email_verification_tokens',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => usersTable.id, { onDelete: 'cascade' }),
+    token: varchar({ length: 255 }).notNull().unique(),
+    expiresAt: timestamp('expires_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).notNull(),
+    usedAt: timestamp('used_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    lastSentAt: timestamp('last_sent_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).default(sql`CURRENT_TIMESTAMP`),
+    createdAt: timestamp('created_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).default(sql`CURRENT_TIMESTAMP`)
+  }
+);
 
 export const stripeAccountsTable = pgTable('stripe_accounts', {
   id: serial('id').primaryKey(),

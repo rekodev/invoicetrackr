@@ -12,11 +12,13 @@ import {
   getUserResetPasswordTokenOptions,
   loginUserOptions,
   postUserOptions,
+  resendUserVerificationEmailOptions,
   resetUserPasswordOptions,
   updateUserAccountSettingsOptions,
   updateUserOptions,
   updateUserProfilePictureOptions,
-  updateUserSelectedBankAccountOptions
+  updateUserSelectedBankAccountOptions,
+  verifyUserEmailOptions
 } from '../options/user';
 
 const userRoutes = (
@@ -52,6 +54,13 @@ const userRoutes = (
   fastify.put('/api/users/:userId/change-password', changeUserPasswordOptions);
 
   fastify.post('/api/forgot-password', resetUserPasswordOptions);
+
+  fastify.get('/api/email-verification/:token', verifyUserEmailOptions);
+
+  fastify.post(
+    '/api/users/:userId/email-verification/resend',
+    resendUserVerificationEmailOptions
+  );
 
   fastify.get(
     '/api/reset-password-token/:token',

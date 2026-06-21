@@ -802,6 +802,16 @@
             "language": "Language",
             "preferred_invoice_language": "Preferred Invoice Language",
             "preferred_invoice_language_tooltip": "This is the default language for invoice exports and emails. You can change it per invoice.",
+            "email_verification": {
+                "title": "Email verification",
+                "email": "Email",
+                "verified": "Verified",
+                "unverified": "Not verified",
+                "verified_description": "Your email is verified and can be used for invoice delivery.",
+                "unverified_description": "Verify your email before sending invoices to clients.",
+                "resend": "Send verification email",
+                "sent_at": "Verified {date}"
+            },
             "available_languages": {
                 "en": "English",
                 "lt": "Lithuanian"
@@ -1020,6 +1030,24 @@
             "sign_in": "Sign in"
         }
     },
+    "verify_email": {
+        "verified": {
+            "title": "Email verified",
+            "description": "Your email has been verified. You can now send invoices by email."
+        },
+        "already_verified": {
+            "title": "Email already verified",
+            "description": "This email address is already verified on your account."
+        },
+        "error": {
+            "title": "Email verification failed",
+            "description": "This verification link is invalid or has expired."
+        },
+        "actions": {
+            "dashboard": "Go to dashboard",
+            "account_settings": "Go to account settings"
+        }
+    },
     "under_construction": {
         "title": "Under Construction",
         "description": "This page is still in development and is going to be available soon. Thank you for your patience."
@@ -1117,6 +1145,7 @@
             "date": "Date",
             "public_link_note": "This email can include a secure invoice page with the PDF, bank details, and online payment if enabled.",
             "signing_link_note": "This email will include a secure signing link for the recipient.",
+            "email_verification_required": "Verify your account email before sending invoices to clients.",
             "include_public_link": "Include public invoice page",
             "request_signature": "Request recipient signature",
             "signature_requires_public_link": "Recipient signing requires the public invoice page.",

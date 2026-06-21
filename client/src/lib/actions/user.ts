@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import {
   changeUserPassword,
   getUser,
+  resendVerificationEmail,
   updateUser,
   updateUserAccountSettings,
   updateUserProfilePicture
@@ -131,6 +132,23 @@ export async function changeUserPasswordAction({
   }
 
   revalidatePath(CHANGE_PASSWORD_PAGE);
+  return { ok: true, message: response.data.message };
+}
+
+export async function resendVerificationEmailAction({
+  userId
+}: {
+  userId: number;
+}) {
+  const response = await resendVerificationEmail(userId);
+
+  if (isResponseError(response)) {
+    return {
+      ok: false,
+      message: response.data.message
+    };
+  }
+
   return { ok: true, message: response.data.message };
 }
 
