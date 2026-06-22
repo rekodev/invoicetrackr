@@ -233,7 +233,7 @@ export default function SendInvoiceEmailModal({
                           )}
                           {requestSignature &&
                             invoice.recipientSigningEmail && (
-                              <span className="text-default-500">
+                              <span className="text-muted">
                                 {t('active_signing_recipient', {
                                   email: invoice.recipientSigningEmail
                                 })}
@@ -246,7 +246,7 @@ export default function SendInvoiceEmailModal({
                             </span>
                           ) : requestSignature &&
                             invoice.recipientSigningExpiresAt ? (
-                            <span className="text-default-500">
+                            <span className="text-muted">
                               {t('signing_link_expires', {
                                 date: new Date(
                                   invoice.recipientSigningExpiresAt
@@ -331,26 +331,26 @@ export default function SendInvoiceEmailModal({
                       </Card.Header>
                       <Card.Content className="flex flex-col gap-2">
                         <p className="mt-2 flex items-center justify-between text-sm">
-                          <span className="text-default-500 text">
+                          <span className="text-muted text">
                             {t('invoice')}:
                           </span>{' '}
                           {invoice.invoiceId}
                         </p>
                         <p className="flex items-center justify-between text-sm">
-                          <span className="text-default-500 text">
+                          <span className="text-muted text">
                             {t('client')}:
                           </span>{' '}
                           {invoice.receiver.name}
                         </p>
                         <p className="flex items-center justify-between text-sm">
-                          <span className="text-default-500 text">
+                          <span className="text-muted text">
                             {t('amount')}:
                           </span>{' '}
                           {getCurrencySymbol(currency)}
                           {invoice.totalAmount}
                         </p>
                         <p className="flex items-center justify-between text-sm">
-                          <span className="text-default-500 text">
+                          <span className="text-muted text">
                             {t('date')}:
                           </span>
                           {invoice.date}

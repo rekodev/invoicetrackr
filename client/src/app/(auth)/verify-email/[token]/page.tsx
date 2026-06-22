@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 
 import VerifyEmailResultCard from '@/components/auth/verify-email-result-card';
 import { auth } from '@/auth';
-import { isResponseError } from '@/lib/utils/error';
-import { verifyEmailToken } from '@/api/user';
 
 export const metadata: Metadata = {
   title: 'Verify email',
@@ -23,23 +21,13 @@ type Props = {
 
 export default async function VerifyEmailPage({ params }: Props) {
   const { token } = await params;
-  const response = await verifyEmailToken(token);
-
-  if (isResponseError(response)) {
-    return (
-      <section className="flex flex-1 items-center justify-center px-6 py-8">
-        <VerifyEmailResultCard status="error" message={response.data.message} />
-      </section>
-    );
-  }
-
   const session = await auth();
 
   return (
     <section className="flex flex-1 items-center justify-center px-6 py-8">
       <VerifyEmailResultCard
-        status={response.data.status}
-        emailVerifiedAt={response.data.emailVerifiedAt}
+        status="pending"
+        token={token}
         shouldSyncSession={Boolean(session?.user)}
       />
     </section>

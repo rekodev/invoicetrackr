@@ -269,7 +269,7 @@ describe('User Controller', () => {
     });
   });
 
-  describe('GET /api/email-verification/:token', () => {
+  describe('POST /api/email-verification/:token', () => {
     it('should verify user email with a valid token', async () => {
       const token = 'valid-token';
       vi.mocked(
@@ -300,11 +300,11 @@ describe('User Controller', () => {
       const { verifyUserEmail } = userController;
 
       const app = await createTestApp((fastifyApp) => {
-        fastifyApp.get('/api/email-verification/:token', verifyUserEmail);
+        fastifyApp.post('/api/email-verification/:token', verifyUserEmail);
       });
 
       const response = await app.inject({
-        method: 'GET',
+        method: 'POST',
         url: `/api/email-verification/${token}`
       });
 

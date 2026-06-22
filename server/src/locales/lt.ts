@@ -13,7 +13,7 @@ export default {
       noRequest:
         'Jei jūs neprašėte atkurti slaptažodžio, galite drąsiai ignoruoti šį laišką.',
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
-      copyright: '© {year} InvoiceTrackr. Visos teisės saugomos.'
+      copyright: '© %{year} InvoiceTrackr. Visos teisės saugomos.'
     },
     verifyEmail: {
       subject: 'Patvirtinkite InvoiceTrackr el. paštą',
@@ -28,13 +28,13 @@ export default {
       noRequest:
         'Jei nekūrėte InvoiceTrackr paskyros, galite drąsiai ignoruoti šį laišką.',
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
-      copyright: '© {year} InvoiceTrackr. Visos teisės saugomos.'
+      copyright: '© %{year} InvoiceTrackr. Visos teisės saugomos.'
     },
     invoice: {
       title: 'InvoiceTrackr',
       defaultMessage: 'Prašome rasti prisegtos sąskaitos faktūrą.',
       detailsTitle: 'Sąskaitos faktūros informacija',
-      sentBy: 'Šią sąskaitą faktūrą per InvoiceTrackr išsiuntė {senderName}.',
+      sentBy: 'Šią sąskaitą faktūrą per InvoiceTrackr išsiuntė %{senderName}.',
       invoiceNumber: 'Sąskaitos numeris:',
       amount: 'Suma:',
       dueDate: 'Terminas:',

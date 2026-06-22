@@ -44,7 +44,7 @@ export default function InvoiceSigningSummary({
           <DocumentTextIcon className="text-secondary h-6 w-6" />
           <div>
             <h2 className="font-semibold">{t('summary_title')}</h2>
-            <p className="text-default-500 text-sm">
+            <p className="text-muted text-sm">
               {invoice.invoiceId || t('invoice')}
             </p>
           </div>
@@ -58,14 +58,14 @@ export default function InvoiceSigningSummary({
         <div className="grid gap-4 sm:grid-cols-2">
           {[invoice.sender, invoice.receiver].map((party) => (
             <div key={party.type} className="bg-default-100 rounded-lg p-4">
-              <p className="text-default-500 text-xs font-medium uppercase">
+              <p className="text-muted text-xs font-medium uppercase">
                 {t(party.type)}
               </p>
               <p className="mt-2 font-medium">{party.name}</p>
-              <p className="text-default-500 mt-1 text-sm">{party.address}</p>
-              <p className="text-default-500 text-sm">{party.businessNumber}</p>
+              <p className="text-muted mt-1 text-sm">{party.address}</p>
+              <p className="text-muted text-sm">{party.businessNumber}</p>
               {party.vatNumber && (
-                <p className="text-default-500 text-sm">
+                <p className="text-muted text-sm">
                   {t('vat_number')}: {party.vatNumber}
                 </p>
               )}
@@ -79,9 +79,9 @@ export default function InvoiceSigningSummary({
             [t('due_date'), invoice.dueDate]
           ].map(([label, value]) => (
             <div key={label} className="flex items-center gap-3">
-              <CalendarDaysIcon className="text-default-500 h-5 w-5" />
+              <CalendarDaysIcon className="text-muted h-5 w-5" />
               <div>
-                <p className="text-default-500 text-xs">{label}</p>
+                <p className="text-muted text-xs">{label}</p>
                 <p className="text-sm font-medium">{value}</p>
               </div>
             </div>
@@ -91,7 +91,7 @@ export default function InvoiceSigningSummary({
         <div className="overflow-x-auto">
           <table className="w-full min-w-[620px] text-left text-sm">
             <thead className="border-default-200 border-y">
-              <tr className="text-default-500">
+              <tr className="text-muted">
                 <th className="px-2 py-3 font-medium">{t('description')}</th>
                 <th className="px-2 py-3 font-medium">{t('unit')}</th>
                 <th className="px-2 py-3 text-right font-medium">
@@ -141,14 +141,14 @@ export default function InvoiceSigningSummary({
 
         <div className="flex justify-end pr-2">
           <div className="grid min-w-64 grid-cols-[1fr_auto] gap-x-6 gap-y-2 text-sm">
-            <p className="text-default-500">{t('subtotal')}</p>
+            <p className="text-muted">{t('subtotal')}</p>
             <p className="text-right">
               {currencySymbol}
               {subtotalAmount}
             </p>
             {Number(vatAmount) > 0 && (
               <>
-                <p className="text-default-500">{t('vat_total')}</p>
+                <p className="text-muted">{t('vat_total')}</p>
                 <p className="text-right">
                   {currencySymbol}
                   {vatAmount}
@@ -166,15 +166,15 @@ export default function InvoiceSigningSummary({
         </div>
 
         <div className="bg-default-100 mt-auto flex gap-3 rounded-lg p-4">
-          <BanknotesIcon className="text-default-500 h-5 w-5 shrink-0" />
+          <BanknotesIcon className="text-muted h-5 w-5 shrink-0" />
           <div className="min-w-0 text-sm">
             <p className="font-medium">{t('payment_details')}</p>
             <div className="mt-3 grid gap-x-6 gap-y-1 sm:grid-cols-[auto_1fr]">
-              <p className="text-default-500">{t('bank')}</p>
+              <p className="text-muted">{t('bank')}</p>
               <p>{invoice.bankingInformation.name}</p>
-              <p className="text-default-500">{t('bank_code')}</p>
+              <p className="text-muted">{t('bank_code')}</p>
               <p>{invoice.bankingInformation.code}</p>
-              <p className="text-default-500">{t('account_number')}</p>
+              <p className="text-muted">{t('account_number')}</p>
               <p className="break-all">
                 {invoice.bankingInformation.accountNumber}
               </p>

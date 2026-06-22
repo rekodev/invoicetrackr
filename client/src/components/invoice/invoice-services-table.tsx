@@ -191,12 +191,12 @@ const InvoiceServicesTable = ({
         {t('add_service')}
       </Button>
       <div className="grid min-w-64 grid-cols-[1fr_auto] gap-x-6 gap-y-1 self-end pr-3 text-sm">
-        <p className="text-default-500">{t('subtotal')}:</p>
+        <p className="text-muted">{t('subtotal')}:</p>
         <p className="text-right">
           {getCurrencySymbol(currency)}
           {invoiceTotals.subtotalAmount}
         </p>
-        <p className="text-default-500">{t('vat_total')}:</p>
+        <p className="text-muted">{t('vat_total')}:</p>
         <p className="text-right">
           {getCurrencySymbol(currency)}
           {invoiceTotals.vatAmount}

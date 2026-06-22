@@ -5,8 +5,8 @@ export default function ContractsSoonPreview() {
 
   return (
     <div className="bg-default-50/70 mt-6 rounded-3xl border border-dashed p-5">
-      <span className="text-default-500 font-mono text-xs">CTR-0014</span>
-      <p className="text-default-500 mt-3 text-sm">{t('description')}</p>
+      <span className="text-muted font-mono text-xs">CTR-0014</span>
+      <p className="text-muted mt-3 text-sm">{t('description')}</p>
     </div>
   );
 }

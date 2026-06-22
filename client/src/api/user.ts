@@ -153,7 +153,7 @@ export const createNewUserPassword = async ({
   );
 
 export const verifyEmailToken = async (token: string) =>
-  await api.get<VerifyEmailTokenResponse>(`/api/email-verification/${token}`);
+  await api.post<VerifyEmailTokenResponse>(`/api/email-verification/${token}`);
 
 export const resendVerificationEmail = async (userId: number) =>
   await api.post<ResendVerificationEmailResponse>(

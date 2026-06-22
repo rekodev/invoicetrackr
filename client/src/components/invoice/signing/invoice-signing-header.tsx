@@ -12,14 +12,14 @@ export default function InvoiceSigningHeader({ invoice }: Props) {
     <section className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-default-500 text-sm">{t('eyebrow')}</p>
+          <p className="text-muted text-sm">{t('eyebrow')}</p>
           <h1 className="text-2xl font-semibold">
             {t('title')}{' '}
             <span className="text-secondary">{invoice.sender.name}</span>
           </h1>
         </div>
       </div>
-      <p className="text-default-600 max-w-3xl text-sm">
+      <p className="text-muted max-w-3xl text-sm">
         {t('subtitle', { invoiceId: invoice.invoiceId || '' })}
       </p>
     </section>

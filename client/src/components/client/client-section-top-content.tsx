@@ -125,7 +125,7 @@ const ClientSectionTopContent = ({
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="section-eyebrow text-default-500">
+          <span className="section-eyebrow text-muted">
             {totalClientsText}
           </span>
         </div>

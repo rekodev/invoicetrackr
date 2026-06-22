@@ -124,7 +124,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
             <Radio.Content>
               <Label className="text-large font-semibold">{name}</Label>
               <p className="text-xs font-bold uppercase">{code}</p>
-              <small className="text-default-500 mt-1">{accountNumber}</small>
+              <small className="text-muted mt-1">{accountNumber}</small>
             </Radio.Content>
           </Radio>
           <div className="pointer-events-none absolute right-2 top-2 flex gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">

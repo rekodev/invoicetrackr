@@ -30,7 +30,7 @@ const InvoiceFormPartyModal = ({
 
   const renderBody = () => {
     if (!clients?.length) {
-      return <p className="text-default-500">{t('modals.no_clients')}</p>;
+      return <p className="text-muted">{t('modals.no_clients')}</p>;
     }
 
     return clients?.map((client) => (

@@ -790,7 +790,16 @@
                 "address": "Adresas",
                 "address_placeholder": "Įveskite savo adresą",
                 "signature": "Parašas",
-                "save_changes": "Išsaugoti pakeitimus"
+                "save_changes": "Išsaugoti pakeitimus",
+                "email_verification": {
+                    "title": "El. pašto patvirtinimas",
+                    "verified": "Patvirtintas",
+                    "unverified": "Nepatvirtintas",
+                    "verified_description": "Jūsų el. paštas patvirtintas ir gali būti naudojamas sąskaitoms siųsti.",
+                    "unverified_description": "Patvirtinkite el. paštą prieš siųsdami sąskaitas klientams.",
+                    "resend": "Siųsti patvirtinimo laišką",
+                    "sent_at": "Patvirtinta {date}"
+                }
             }
         },
         "account_settings": {
@@ -802,16 +811,6 @@
             "language": "Kalba",
             "preferred_invoice_language": "Pageidaujama Sąskaitos Kalba",
             "preferred_invoice_language_tooltip": "Tai numatytoji sąskaitų eksporto ir el. laiškų kalba. Galite keisti kiekvienai sąskaitai atskirai.",
-            "email_verification": {
-                "title": "El. pašto patvirtinimas",
-                "email": "El. paštas",
-                "verified": "Patvirtintas",
-                "unverified": "Nepatvirtintas",
-                "verified_description": "Jūsų el. paštas patvirtintas ir gali būti naudojamas sąskaitoms siųsti.",
-                "unverified_description": "Patvirtinkite el. paštą prieš siųsdami sąskaitas klientams.",
-                "resend": "Siųsti patvirtinimo laišką",
-                "sent_at": "Patvirtinta {date}"
-            },
             "available_languages": {
                 "en": "Anglų",
                 "lt": "Lietuvių"
@@ -1031,6 +1030,10 @@
         }
     },
     "verify_email": {
+        "pending": {
+            "title": "Tikriname el. paštą",
+            "description": "Palaukite, kol patvirtinsime šį adresą ir užbaigsime paskyros apsaugą."
+        },
         "verified": {
             "title": "El. paštas patvirtintas",
             "description": "Jūsų el. paštas patvirtintas. Dabar galite siųsti sąskaitas el. paštu."
@@ -1044,8 +1047,9 @@
             "description": "Ši patvirtinimo nuoroda neteisinga arba nebegalioja."
         },
         "actions": {
+            "confirm": "Patvirtinti el. paštą",
             "dashboard": "Eiti į skydelį",
-            "account_settings": "Eiti į paskyros nustatymus"
+            "profile": "Eiti į profilį"
         }
     },
     "under_construction": {

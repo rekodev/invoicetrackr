@@ -69,16 +69,16 @@ export default function InvoiceSigningPanel({
     <Card className="h-full border shadow-sm">
       <CardHeader className="flex flex-col items-start gap-1 px-5 py-4 sm:px-6">
         <h2 className="text-lg font-semibold">{t('panel_title')}</h2>
-        <p className="text-default-500 text-sm">{t('panel_description')}</p>
+        <p className="text-muted text-sm">{t('panel_description')}</p>
       </CardHeader>
       <Separator />
       <CardContent className="flex flex-1 flex-col gap-5 px-5 py-6 sm:px-6">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
           {[invoice.sender, invoice.receiver].map((party) => (
             <div key={party.type} className="text-sm">
-              <p className="text-default-500">{t(party.type)}</p>
+              <p className="text-muted">{t(party.type)}</p>
               <p className="font-medium">{party.name}</p>
-              {party.email && <p className="text-default-500">{party.email}</p>}
+              {party.email && <p className="text-muted">{party.email}</p>}
             </div>
           ))}
         </div>
@@ -106,7 +106,7 @@ export default function InvoiceSigningPanel({
                   ? t('payment_action_paid_title')
                   : t('payment_action_title')}
               </h3>
-              <p className="text-default-500 mt-1 text-sm leading-5">
+              <p className="text-muted mt-1 text-sm leading-5">
                 {isPaymentAvailable
                   ? t('payment_action_online')
                   : isPaid
@@ -140,7 +140,7 @@ export default function InvoiceSigningPanel({
                     <h3 className="text-sm font-semibold">
                       {t('signature_received_title')}
                     </h3>
-                    <p className="text-default-500 mt-1 text-sm leading-5">
+                    <p className="text-muted mt-1 text-sm leading-5">
                       {t('signature_received_subtitle')}
                     </p>
                   </div>
@@ -156,7 +156,7 @@ export default function InvoiceSigningPanel({
             ) : (
               <section className="flex flex-col gap-4">
                 <div className="text-sm">
-                  <p className="text-default-500 mb-2">{t('method_title')}</p>
+                  <p className="text-muted mb-2">{t('method_title')}</p>
                   <div className="grid grid-cols-1 gap-2">
                     <Button
                       variant="secondary"

@@ -53,9 +53,9 @@ export default function PreviewToolbar({
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <span className="section-eyebrow text-default-500">{total}</span>
+        <span className="section-eyebrow text-muted">{total}</span>
         {rowsPerPage && (
-          <span className="section-eyebrow text-default-500">
+          <span className="section-eyebrow text-muted">
             {rowsPerPage} 10
           </span>
         )}

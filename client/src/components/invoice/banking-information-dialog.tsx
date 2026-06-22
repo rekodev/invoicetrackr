@@ -29,7 +29,7 @@ const BankingInformationDialog = ({
 
   const renderBody = () => {
     if (!bankingInformationEntries?.length) {
-      return <p className="text-default-500">{t('modals.no_bank_accounts')}</p>;
+      return <p className="text-muted">{t('modals.no_bank_accounts')}</p>;
     }
 
     return bankingInformationEntries?.map((bankingInformation) => (
@@ -47,7 +47,7 @@ const BankingInformationDialog = ({
                 <div className="truncate pb-0.5 text-sm font-bold uppercase">
                   {bankingInformation.name}
                 </div>
-                <div className="text-default-500 flex gap-2 text-xs">
+                <div className="text-muted flex gap-2 text-xs">
                   <span>{bankingInformation.code}</span>
                   <span>{bankingInformation.accountNumber}</span>
                 </div>

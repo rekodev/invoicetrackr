@@ -95,7 +95,7 @@ export default function ProductSection() {
                 {['EN', 'LT'].map((language) => (
                   <span
                     key={language}
-                    className="bg-default-50 text-default-600 rounded-xl border px-2 py-1 text-[11px] font-medium"
+                    className="bg-default-50 text-muted rounded-xl border px-2 py-1 text-[11px] font-medium"
                   >
                     {language}
                   </span>
@@ -103,7 +103,7 @@ export default function ProductSection() {
               </div>
             )}
             {key === 'export' && (
-              <div className="bg-default-50 text-default-500 mt-5 inline-flex items-center gap-2 rounded-xl border px-3 py-2 font-mono text-[11px]">
+              <div className="bg-default-50 text-muted mt-5 inline-flex items-center gap-2 rounded-xl border px-3 py-2 font-mono text-[11px]">
                 <ArrowDownTrayIcon className="h-3 w-3" />
                 invoices_2026.csv
               </div>

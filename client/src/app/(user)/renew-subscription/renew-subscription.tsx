@@ -29,7 +29,7 @@ export default function RenewSubscriptionPageContent({ user }: Props) {
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           {t('title')}
         </h1>
-        <p className="text-default-500 text-lg">{t('description')}</p>
+        <p className="text-muted text-lg">{t('description')}</p>
       </div>
       <PaymentForm user={user} />
     </section>

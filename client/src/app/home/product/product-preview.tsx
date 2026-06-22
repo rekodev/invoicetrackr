@@ -35,7 +35,7 @@ export default function ProductPreview() {
 
         <div className="-mt-3 grid grid-cols-12">
           <aside className="bg-default/60 hidden border-r p-4 text-start md:col-span-3 md:block dark:bg-zinc-950/40">
-            <div className="section-eyebrow text-default-500 mb-4 dark:text-zinc-500">
+            <div className="section-eyebrow text-muted mb-4 dark:text-zinc-500">
               {t('sidebar.eyebrow')}
             </div>
             {navItems.map(({ icon: Icon, key, active, disabled }) => (
@@ -45,7 +45,7 @@ export default function ProductPreview() {
                   'rounded-medium mb-1 flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs',
                   active
                     ? 'bg-accent/15 text-foreground ring-accent/20 ring-1 dark:bg-white/[0.08] dark:text-zinc-100 dark:ring-white/[0.06]'
-                    : 'text-default-500 dark:text-zinc-500',
+                    : 'text-muted dark:text-zinc-500',
                   disabled && 'opacity-60'
                 )}
               >

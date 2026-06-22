@@ -112,7 +112,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
         <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
-            <p className="text-default-500 text-sm">{t('headings.from')}</p>
+            <p className="text-muted text-sm">{t('headings.from')}</p>
           </div>
           {renderTextField({
             label: t('labels.sender_name'),
@@ -177,7 +177,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
         </Card>
         <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
-            <p className="text-default-500 text-sm">{t('headings.to')}</p>
+            <p className="text-muted text-sm">{t('headings.to')}</p>
           </div>
           {renderTextField({
             label: t('labels.receiver_name'),
@@ -354,7 +354,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             <h1 className="text-3xl font-semibold">
               {t('free_invoice.title')}
             </h1>
-            <p className="text-default-500">{t('free_invoice.description')}</p>
+            <p className="text-muted">{t('free_invoice.description')}</p>
           </div>
           <Card className="mt-8 border bg-transparent p-4 sm:p-8">
             <form

@@ -12,7 +12,7 @@ export default {
       noRequest:
         "If you didn't request a password reset, you can safely ignore this email.",
       footer: 'This email was sent by InvoiceTrackr',
-      copyright: '© {year} InvoiceTrackr. All rights reserved.'
+      copyright: '© %{year} InvoiceTrackr. All rights reserved.'
     },
     verifyEmail: {
       subject: 'Verify your InvoiceTrackr email',
@@ -26,13 +26,13 @@ export default {
       noRequest:
         "If you didn't create an InvoiceTrackr account, you can safely ignore this email.",
       footer: 'This email was sent by InvoiceTrackr',
-      copyright: '© {year} InvoiceTrackr. All rights reserved.'
+      copyright: '© %{year} InvoiceTrackr. All rights reserved.'
     },
     invoice: {
       title: 'InvoiceTrackr',
       defaultMessage: 'Please find your invoice attached.',
       detailsTitle: 'Invoice Details',
-      sentBy: 'This invoice was sent from {senderName} via InvoiceTrackr.',
+      sentBy: 'This invoice was sent from %{senderName} via InvoiceTrackr.',
       invoiceNumber: 'Invoice Number:',
       amount: 'Amount:',
       dueDate: 'Due Date:',

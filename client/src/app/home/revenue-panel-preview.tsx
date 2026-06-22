@@ -30,7 +30,7 @@ export default function RevenuePanelPreview() {
           />
         ))}
       </div>
-      <div className="text-default-500 mt-3 flex justify-between text-[10px]">
+      <div className="text-muted mt-3 flex justify-between text-[10px]">
         {months.map((month) => (
           <span key={month}>{month}</span>
         ))}

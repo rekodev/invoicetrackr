@@ -55,7 +55,7 @@ const userRoutes = (
 
   fastify.post('/api/forgot-password', resetUserPasswordOptions);
 
-  fastify.get('/api/email-verification/:token', verifyUserEmailOptions);
+  fastify.post('/api/email-verification/:token', verifyUserEmailOptions);
 
   fastify.post(
     '/api/users/:userId/email-verification/resend',

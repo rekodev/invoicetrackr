@@ -790,7 +790,16 @@
                 "address": "Address",
                 "address_placeholder": "Enter your address",
                 "signature": "Signature",
-                "save_changes": "Save Changes"
+                "save_changes": "Save Changes",
+                "email_verification": {
+                    "title": "Email verification",
+                    "verified": "Verified",
+                    "unverified": "Not verified",
+                    "verified_description": "Your email is verified and can be used for invoice delivery.",
+                    "unverified_description": "Verify your email before sending invoices to clients.",
+                    "resend": "Send verification email",
+                    "sent_at": "Verified {date}"
+                }
             }
         },
         "account_settings": {
@@ -802,16 +811,6 @@
             "language": "Language",
             "preferred_invoice_language": "Preferred Invoice Language",
             "preferred_invoice_language_tooltip": "This is the default language for invoice exports and emails. You can change it per invoice.",
-            "email_verification": {
-                "title": "Email verification",
-                "email": "Email",
-                "verified": "Verified",
-                "unverified": "Not verified",
-                "verified_description": "Your email is verified and can be used for invoice delivery.",
-                "unverified_description": "Verify your email before sending invoices to clients.",
-                "resend": "Send verification email",
-                "sent_at": "Verified {date}"
-            },
             "available_languages": {
                 "en": "English",
                 "lt": "Lithuanian"
@@ -1031,6 +1030,10 @@
         }
     },
     "verify_email": {
+        "pending": {
+            "title": "Verifying your email",
+            "description": "Hang tight while we confirm this address and finish securing your account."
+        },
         "verified": {
             "title": "Email verified",
             "description": "Your email has been verified. You can now send invoices by email."
@@ -1044,8 +1047,9 @@
             "description": "This verification link is invalid or has expired."
         },
         "actions": {
+            "confirm": "Confirm email",
             "dashboard": "Go to dashboard",
-            "account_settings": "Go to account settings"
+            "profile": "Go to profile"
         }
     },
     "under_construction": {

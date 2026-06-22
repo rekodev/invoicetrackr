@@ -101,8 +101,8 @@ const InvoiceDataBarChart = ({ revenueByMonth, currency }: Props) => {
   return (
     <div className="min-h-96 w-full">
       <span ref={accentRef} className="text-accent hidden" />
-      <span ref={gridRef} className="text-default-400 hidden" />
-      <span ref={tickRef} className="text-default-500 hidden" />
+      <span ref={gridRef} className="text-muted hidden" />
+      <span ref={tickRef} className="text-muted hidden" />
       <Bar data={data} options={options} />
     </div>
   );

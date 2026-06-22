@@ -52,9 +52,9 @@ export default function PasswordInput({
           aria-label={t('toggle_visibility')}
         >
           {isVisible ? (
-            <EyeIcon className="text-default-400 pointer-events-none h-5 w-5" />
+            <EyeIcon className="text-muted pointer-events-none h-5 w-5" />
           ) : (
-            <EyeSlashIcon className="text-default-400 pointer-events-none h-5 w-5" />
+            <EyeSlashIcon className="text-muted pointer-events-none h-5 w-5" />
           )}
         </button>
       </div>

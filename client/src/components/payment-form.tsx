@@ -176,7 +176,7 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
           </CardHeader>
 
           <CardContent className="gap-5 p-0 pt-4">
-            <p className="text-default-500 max-w-md text-sm leading-6">
+            <p className="text-muted max-w-md text-sm leading-6">
               {canStartTrial
                 ? t('trial_description')
                 : t('recovery_description')}
@@ -223,7 +223,7 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
                     <span
                       className={cn('mt-1 block text-xs leading-4', {
                         'text-secondary-foreground/80': isSelected,
-                        'text-default-500': !isSelected
+                        'text-muted': !isSelected
                       })}
                     >
                       {interval.description}
@@ -250,11 +250,11 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
               <span className="text-foreground text-4xl font-semibold leading-none tracking-tight">
                 {selectedPrice.amount}
               </span>
-              <span className="text-default-500 text-sm">
+              <span className="text-muted text-sm">
                 {selectedPrice.interval}
               </span>
             </div>
-            <p className="text-default-400 mt-1 text-xs uppercase tracking-wider">
+            <p className="text-muted mt-1 text-xs uppercase tracking-wider">
               {selectedPrice.note}
             </p>
           </div>
@@ -333,7 +333,7 @@ export default function PaymentForm({ user, onTrialStarted }: Props) {
                 {t('actions.manage')}
               </Button>
             )}
-            <p className="text-default-400 pt-1 text-center text-xs">
+            <p className="text-muted pt-1 text-center text-xs">
               {t('checkout_note')}
             </p>
           </CardFooter>

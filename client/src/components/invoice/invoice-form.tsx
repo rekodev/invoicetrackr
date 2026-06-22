@@ -217,7 +217,7 @@ const InvoiceForm = ({
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
         <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
           <div className="flex min-h-8 items-center justify-between">
-            <p className="text-default-500 text-sm">{t('headings.from')}</p>
+            <p className="text-muted text-sm">{t('headings.from')}</p>
           </div>
           <Controller
             name="sender.businessType"
@@ -295,7 +295,7 @@ const InvoiceForm = ({
         </Card>
         <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
           <div className="flex items-center justify-between">
-            <p className="text-default-500 text-sm">{t('headings.to')}</p>
+            <p className="text-muted text-sm">{t('headings.to')}</p>
             <Button
               size="sm"
               variant="secondary"
@@ -519,7 +519,7 @@ const InvoiceForm = ({
   );
 
   const renderActions = () => (
-    <div className="col-span-4 flex w-full items-center justify-between gap-5 overflow-x-hidden">
+    <div className="col-span-4 flex w-full items-center justify-between gap-5">
       <div className="flex w-full flex-col justify-end gap-1 sm:flex-row">
         <Button variant="danger-soft" onPress={redirectToInvoicesPage}>
           {t('buttons.cancel')}

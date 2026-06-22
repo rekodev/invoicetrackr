@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Alert,
   Button,
   Card,
   FieldError,
@@ -12,14 +13,21 @@ import {
   TextField,
   toast
 } from '@heroui/react';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon
+} from '@heroicons/react/24/outline';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
+import {
+  resendVerificationEmailAction,
+  updateUserAction
+} from '@/lib/actions/user';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { User } from '@invoicetrackr/types';
 import { capitalize } from '@/lib/utils';
-import { updateUserAction } from '@/lib/actions/user';
 
 import SignaturePad from '../signature-pad';
 
@@ -46,9 +54,22 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
   const [formSignature, setFormSignature] = useState<
     File | string | undefined
   >();
+  const [isResendingVerificationEmail, setIsResendingVerificationEmail] =
+    useState(false);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
+  const emailVerifiedAt = defaultValues?.emailVerifiedAt;
+  const isEmailVerified = Boolean(emailVerifiedAt);
+  const verifiedDate = emailVerifiedAt
+    ? new Date(emailVerifiedAt).toLocaleDateString(
+        defaultValues?.language || 'en'
+      )
+    : null;
+
   const businessType = watch('businessType');
+
+  useEffect(() => {
+    if (defaultValues) reset(defaultValues);
+  }, [defaultValues, reset]);
 
   const onSubmit: SubmitHandler<User> = async (data) => {
     if (!defaultValues?.id) return;
@@ -74,6 +95,23 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
 
     reset(data);
     await onSuccess?.();
+  };
+
+  const handleResendVerificationEmail = async () => {
+    if (!defaultValues?.id) return;
+
+    setIsResendingVerificationEmail(true);
+    try {
+      const response = await resendVerificationEmailAction({
+        userId: Number(defaultValues.id)
+      });
+
+      toast(response.message, {
+        variant: response.ok ? 'success' : 'danger'
+      });
+    } finally {
+      setIsResendingVerificationEmail(false);
+    }
   };
 
   const renderTextField = ({
@@ -108,10 +146,56 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
     );
   };
 
+  const renderEmailVerificationBanner = () => {
+    return (
+      <Alert
+        status={isEmailVerified ? 'success' : 'warning'}
+        className="md:col-span-2"
+      >
+        <Alert.Indicator>
+          {isEmailVerified ? (
+            <CheckCircleIcon className="h-5 w-5" />
+          ) : (
+            <ExclamationCircleIcon className="h-5 w-5" />
+          )}
+        </Alert.Indicator>
+
+        <Alert.Content>
+          <Alert.Title>{t('email_verification.title')}</Alert.Title>
+
+          <Alert.Description>
+            {isEmailVerified
+              ? t('email_verification.verified_description')
+              : t('email_verification.unverified_description')}
+
+            {verifiedDate ? (
+              <span className="mt-2 block text-xs">
+                {t('email_verification.sent_at', { date: verifiedDate })}
+              </span>
+            ) : null}
+          </Alert.Description>
+        </Alert.Content>
+        {!isEmailVerified ? (
+          <Button
+            className="self-center"
+            size="sm"
+            type="button"
+            variant="secondary"
+            isPending={isResendingVerificationEmail}
+            onPress={handleResendVerificationEmail}
+          >
+            {t('email_verification.resend')}
+          </Button>
+        ) : null}
+      </Alert>
+    );
+  };
+
   const renderCardBodyAndFooter = () => {
     return (
       <>
         <Card.Content className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
+          {renderEmailVerificationBanner()}
           {renderTextField({
             name: 'email',
             label: t('email'),

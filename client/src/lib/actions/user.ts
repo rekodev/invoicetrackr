@@ -8,7 +8,8 @@ import {
   resendVerificationEmail,
   updateUser,
   updateUserAccountSettings,
-  updateUserProfilePicture
+  updateUserProfilePicture,
+  verifyEmailToken
 } from '@/api/user';
 
 import {
@@ -16,12 +17,21 @@ import {
   CHANGE_PASSWORD_PAGE,
   PERSONAL_INFORMATION_PAGE
 } from '../constants/pages';
+import { User, VerifyEmailResponse } from '@invoicetrackr/types';
 import { ActionResponseModel } from '../types/action';
 import { Currency } from '../types/currency';
-import { User } from '@invoicetrackr/types';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 import { updateSessionAction } from '../actions';
+
+type VerifyEmailTokenActionResponse =
+  | {
+      ok: false;
+      message: string;
+    }
+  | ({
+      ok: true;
+    } & Pick<VerifyEmailResponse, 'emailVerifiedAt' | 'message' | 'status'>);
 
 export async function updateUserAction({
   user,
@@ -150,6 +160,38 @@ export async function resendVerificationEmailAction({
   }
 
   return { ok: true, message: response.data.message };
+}
+
+export async function verifyEmailTokenAction({
+  token,
+  shouldSyncSession = false
+}: {
+  token: string;
+  shouldSyncSession?: boolean;
+}): Promise<VerifyEmailTokenActionResponse> {
+  const response = await verifyEmailToken(token);
+
+  if (isResponseError(response)) {
+    return {
+      ok: false,
+      message: response.data.message
+    };
+  }
+
+  if (response.data.emailVerifiedAt && shouldSyncSession) {
+    await updateSessionAction({
+      newSession: {
+        emailVerifiedAt: response.data.emailVerifiedAt
+      }
+    });
+  }
+
+  return {
+    ok: true,
+    message: response.data.message,
+    status: response.data.status,
+    emailVerifiedAt: response.data.emailVerifiedAt
+  };
 }
 
 /**
