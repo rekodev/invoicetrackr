@@ -28,14 +28,14 @@ export default async function CreateNewPasswordPage({ params }: Props) {
 
   if (isResponseError(response)) {
     return (
-      <section className="flex flex-1 items-center justify-center px-6 py-8">
+      <section className="flex flex-1 items-center justify-center">
         <InvalidTokenCard />
       </section>
     );
   }
 
   return (
-    <section className="flex flex-1 items-center justify-center px-6 py-8">
+    <section className="flex flex-1 items-center justify-center">
       <CreateNewPasswordForm userId={response.data.userId} token={token} />
     </section>
   );

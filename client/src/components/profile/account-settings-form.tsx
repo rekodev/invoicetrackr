@@ -224,7 +224,7 @@ const AccountSettingsForm = ({ user }: Props) => {
           )}
         />
       </CardContent>
-      <CardFooter className="w-full flex-col justify-between p-6">
+      <CardFooter className="w-full flex-col justify-between px-6 py-4">
         <div className="flex w-full gap-2 self-end md:w-min">
           <Button
             className="w-full md:w-min"
@@ -249,18 +249,19 @@ const AccountSettingsForm = ({ user }: Props) => {
 
   return (
     <>
-      <Card className="w-full border bg-transparent">
-        <form
-          aria-label={t('a11y.form_label')}
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Card.Header className="p-4 px-6">
+      <form
+        className="w-full"
+        aria-label={t('a11y.form_label')}
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Card className="w-full border bg-transparent">
+          <Card.Header className="px-6 py-4">
             <Card.Title className="text-2xl">{t('title')}</Card.Title>
           </Card.Header>
           <Separator />
           {renderCardBodyAndFooter()}
-        </form>
-      </Card>
+        </Card>
+      </form>
       <DeleteAccountModal
         userId={Number(user.id)}
         isOpen={isDeleteAccountModalOpen}

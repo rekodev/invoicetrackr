@@ -82,7 +82,7 @@ export default function BankAccountForm({
   return (
     <Card className="w-full border bg-transparent">
       <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
-        <Card.Header className="p-4 px-6">
+        <Card.Header className="px-6 py-4">
           <Card.Title className="text-3xl">{t('title.create')}</Card.Title>
         </Card.Header>
         <Separator />
@@ -112,7 +112,7 @@ export default function BankAccountForm({
             <FieldError>{errors.accountNumber?.message}</FieldError>
           </TextField>
         </CardContent>
-        <CardFooter className="justify-end gap-2 p-6">
+        <CardFooter className="justify-end gap-2 px-6 py-4">
           <div className="flex gap-2">
             {!isUserOnboarding && (
               <Button

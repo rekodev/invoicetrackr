@@ -24,7 +24,8 @@ import {
   PRIVACY_POLICY_PAGE,
   RENEW_SUBSCRIPTION_PAGE,
   SIGN_UP_PAGE,
-  TERMS_OF_SERVICE_PAGE
+  TERMS_OF_SERVICE_PAGE,
+  VERIFY_EMAIL_PAGE
 } from '@/lib/constants/pages';
 
 import AppBrand from '../app-brand';
@@ -56,7 +57,8 @@ const HIDDEN_FOOTER_PATH_PREFIXES = [
   INVOICE_PAYMENTS_PAGE,
   ONBOARDING_PAGE,
   PAYMENT_SUCCESS_PAGE,
-  RENEW_SUBSCRIPTION_PAGE
+  RENEW_SUBSCRIPTION_PAGE,
+  VERIFY_EMAIL_PAGE
 ] as const;
 
 const matchesPath = (pathname: string | null, path: string) =>

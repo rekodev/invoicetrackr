@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function LogInPage() {
   return (
-    <section className="flex flex-1 items-center justify-center px-6 py-8">
+    <section className="flex flex-1 items-center justify-center">
       <LoginForm />
     </section>
   );

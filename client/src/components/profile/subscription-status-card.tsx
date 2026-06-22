@@ -136,7 +136,7 @@ export default function SubscriptionStatusCard({
 
   return (
     <Card className="w-full flex-1 border bg-transparent shadow-sm backdrop-blur-3xl">
-      <Card.Header className="flex flex-col items-start justify-between gap-5 p-4 px-6 md:flex-row md:items-center">
+      <Card.Header className="flex flex-col items-start justify-between gap-5 px-6 py-4 md:flex-row">
         <div className="flex flex-col gap-2">
           <Card.Title className="text-2xl">{t('title')}</Card.Title>
           <Card.Description>

@@ -98,7 +98,7 @@ export default function ChangePasswordForm({ userId }: Props) {
             errorMessage={errors.confirmedNewPassword?.message}
           />
         </CardContent>
-        <CardFooter className="relative w-full justify-between p-6">
+        <CardFooter className="relative w-full justify-between px-6 py-4">
           <div className="flex w-full flex-col gap-2 self-end">
             <Button
               isPending={isSubmitting}
@@ -115,14 +115,18 @@ export default function ChangePasswordForm({ userId }: Props) {
   };
 
   return (
-    <Card className="w-full border bg-transparent">
-      <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
-        <Card.Header className="p-4 px-6">
+    <form
+      className="w-full"
+      aria-label={t('a11y.form_label')}
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <Card className="border bg-transparent">
+        <Card.Header className="px-6 py-4">
           <Card.Title className="text-2xl">{t('title')}</Card.Title>
         </Card.Header>
         <Separator />
         {renderCardBodyAndFooter()}
-      </form>
-    </Card>
+      </Card>
+    </form>
   );
 }

@@ -3,3 +3,14 @@ packages:
   - server
   - shared/types
   - shared/emails
+allowBuilds:
+  '@tailwindcss/oxide': true
+  better-sqlite3: true
+  bufferutil: true
+  esbuild: true
+  sharp: true
+overrides:
+  '@types/react': 19.2.17
+  '@types/react-dom': 19.2.3
+publicHoistPattern:
+  - '*@heroui/*'

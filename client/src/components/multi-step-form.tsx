@@ -209,7 +209,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
 
   if (!existingUserData) {
     return (
-      <section className="flex flex-1 items-center justify-center px-6 py-8">
+      <section className="flex flex-1 items-center justify-center">
         <div className="w-full max-w-lg">
           <SignUpForm headerContent={renderHorizontalStepper()} />
         </div>
@@ -218,7 +218,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
   }
 
   return (
-    <section className="mx-auto flex w-full max-w-7xl flex-col justify-center gap-4 py-4 md:flex-row">
+    <section className="mx-auto flex w-full max-w-7xl flex-col justify-center gap-4 md:flex-row">
       <Card className="border-default-100 from-default-100 via-secondary-50 h-full w-full gap-8 border bg-gradient-to-b md:max-w-sm dark:to-black">
         <CardHeader className="-mt-4 flex-col items-start gap-8 px-8 text-start md:mt-0 md:pt-8">
           <Button

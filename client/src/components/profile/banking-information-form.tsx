@@ -198,7 +198,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   return (
     <>
       <Card className="w-full border bg-transparent">
-        <Card.Header className="flex flex-row items-center justify-between gap-4 p-2 px-6">
+        <Card.Header className="flex flex-row items-center justify-between gap-4 px-6 py-4">
           <Card.Title className="text-2xl">{t('title')}</Card.Title>
           <Button variant="secondary" onPress={handleAddNewBankAccount}>
             <PlusIcon className="h-4 w-4" />
@@ -207,7 +207,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
         </Card.Header>
         <Separator />
         <CardContent className="p-6">{renderCardBody()}</CardContent>
-        <CardFooter className="flex w-full items-center justify-between p-6">
+        <CardFooter className="flex w-full items-center justify-between px-6 py-4">
           <div className="flex w-full flex-col items-center">
             <Button
               isDisabled={

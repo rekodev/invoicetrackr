@@ -104,7 +104,7 @@ export default function MerchantPaymentStatusCard({
 
   return (
     <Card className="w-full border bg-transparent shadow-sm backdrop-blur-3xl">
-      <Card.Header className="flex flex-col items-start justify-between gap-5 p-4 px-6 md:flex-row md:items-start">
+      <Card.Header className="flex flex-col items-start justify-between gap-5 px-6 py-4 md:flex-row md:items-start">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <Card.Title className="text-2xl">{t('title')}</Card.Title>

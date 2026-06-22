@@ -167,15 +167,13 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
             {isEmailVerified
               ? t('email_verification.verified_description')
               : t('email_verification.unverified_description')}
-
-            {verifiedDate ? (
-              <span className="mt-2 block text-xs">
-                {t('email_verification.sent_at', { date: verifiedDate })}
-              </span>
-            ) : null}
           </Alert.Description>
         </Alert.Content>
-        {!isEmailVerified ? (
+        {isEmailVerified && verifiedDate ? (
+          <span className="text-muted self-start whitespace-nowrap text-right text-xs">
+            {t('email_verification.sent_at', { date: verifiedDate })}
+          </span>
+        ) : !isEmailVerified ? (
           <Button
             className="self-center"
             size="sm"
@@ -287,7 +285,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
           </div>
         </Card.Content>
 
-        <Card.Footer className="flex w-full flex-col p-6">
+        <Card.Footer className="flex w-full flex-col px-6 py-4">
           <Button
             isDisabled={isSubmitting || (!isDirty && !Boolean(formSignature))}
             type="submit"
@@ -310,13 +308,11 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
       <Card className="w-full border bg-transparent">
         <Card.Header
           data-testid="personal-information-form-heading"
-          className="p-4 px-6"
+          className="px-6 py-4"
         >
           <Card.Title className="text-2xl">{t('title')}</Card.Title>
         </Card.Header>
-
         <Separator />
-
         {renderCardBodyAndFooter()}
       </Card>
     </form>

@@ -24,7 +24,7 @@ export default async function VerifyEmailPage({ params }: Props) {
   const session = await auth();
 
   return (
-    <section className="flex flex-1 items-center justify-center px-6 py-8">
+    <section className="flex flex-1 items-center justify-center">
       <VerifyEmailResultCard
         status="pending"
         token={token}

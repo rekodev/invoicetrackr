@@ -1,10 +1,10 @@
 'use client';
 
-import { Card, Link, buttonVariants } from '@heroui/react';
+import { Card, Link, buttonVariants, cn } from '@heroui/react';
 import {
   CheckCircleIcon,
-  EnvelopeIcon,
-  ExclamationCircleIcon
+  ExclamationCircleIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
@@ -35,6 +35,7 @@ export default function VerifyEmailResultCard({
     message,
     emailVerifiedAt
   });
+  const isPending = result.status === 'pending';
   const isSuccess =
     result.status === 'verified' || result.status === 'already_verified';
   const isError = result.status === 'error';
@@ -42,7 +43,7 @@ export default function VerifyEmailResultCard({
     ? 'bg-success/10 ring-success/30'
     : isError
       ? 'bg-danger-500/10 ring-danger-400/30'
-      : 'bg-primary/10 ring-primary/30';
+      : 'bg-warning/10 ring-warning/30';
 
   const content = useMemo(() => {
     if (result.status === 'pending') {
@@ -127,15 +128,9 @@ export default function VerifyEmailResultCard({
                 strokeWidth={2.25}
               />
             ) : isError ? (
-              <ExclamationCircleIcon
-                className="text-danger-300 h-5 w-5"
-                strokeWidth={2.25}
-              />
+              <ExclamationCircleIcon className="text-danger-300 h-5 w-5" />
             ) : (
-              <EnvelopeIcon
-                className="text-primary h-5 w-5"
-                strokeWidth={2.25}
-              />
+              <ShieldCheckIcon className="text-warning h-5 w-5" />
             )}
           </div>
 
@@ -151,20 +146,22 @@ export default function VerifyEmailResultCard({
         </div>
       </Card.Content>
 
-      {result.status !== 'pending' ? (
-        <Card.Footer className="flex items-center gap-2 px-8 pb-7 pt-0">
-          <Link
-            href={isSuccess ? DASHBOARD_PAGE : ACCOUNT_SETTINGS_PAGE}
-            className={buttonVariants({
-              className:
-                'group flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[13px] font-medium transition'
-            })}
-          >
-            {isSuccess ? t('actions.dashboard') : t('actions.profile')}
-            <ArrowRightIcon className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
-          </Link>
-        </Card.Footer>
-      ) : null}
+      <Card.Footer className="flex items-center gap-2 px-8 pb-7 pt-0">
+        <Link
+          href={isError ? ACCOUNT_SETTINGS_PAGE : DASHBOARD_PAGE}
+          aria-disabled={isPending}
+          aria-busy={isPending}
+          className={buttonVariants({
+            className: cn(
+              'group flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[13px] font-medium transition',
+              isPending && 'pointer-events-none opacity-60'
+            )
+          })}
+        >
+          {isError ? t('actions.profile') : t('actions.dashboard')}
+          <ArrowRightIcon className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+        </Link>
+      </Card.Footer>
     </Card>
   );
 }
