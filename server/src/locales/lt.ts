@@ -195,6 +195,7 @@ export default {
       verificationEmailSent: 'Patvirtinimo laiškas išsiųstas',
       emailVerified: 'El. paštas patvirtintas sėkmingai',
       emailAlreadyVerified: 'El. paštas jau patvirtintas',
+      oauthLinked: 'Google paskyra prijungta sėkmingai',
       selectedBankAccountUpdated:
         'Pagrindinė banko sąskaita atnaujinta sėkmingai'
     },
@@ -248,6 +249,8 @@ export default {
         'Patvirtinkite el. paštą prieš siųsdami sąskaitas el. paštu',
       emailVerificationCooldown:
         'Palaukite prieš prašydami kito patvirtinimo laiško',
+      oauthEmailNotVerified:
+        'Google nepatvirtino šio el. pašto adreso. Naudokite kitą prisijungimo būdą',
       tokenInvalid: 'Raktas yra neteisingas',
       tokenExpired: 'Rakto galiojimo laikas pasibaigė',
       tokenAlreadyUsed: 'Raktas jau panaudotas',

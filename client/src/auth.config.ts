@@ -190,6 +190,10 @@ export const authConfig = {
       return session;
     }
   },
+  pages: {
+    signIn: LOGIN_PAGE,
+    error: LOGIN_PAGE
+  },
   session: {},
   providers: []
 } satisfies NextAuthConfig;

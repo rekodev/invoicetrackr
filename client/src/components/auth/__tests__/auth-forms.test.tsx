@@ -11,6 +11,7 @@ import SignUpForm from '../sign-up-form';
 const mockAuthenticateAction = vi.fn();
 const mockCreateNewPasswordAction = vi.fn();
 const mockResetPasswordAction = vi.fn();
+const mockSignInWithGoogleAction = vi.fn();
 const mockSignUpAction = vi.fn();
 
 vi.mock('@/lib/actions', () => ({
@@ -20,6 +21,8 @@ vi.mock('@/lib/actions', () => ({
     mockCreateNewPasswordAction(...args),
   resetPasswordAction: (...args: Array<unknown>) =>
     mockResetPasswordAction(...args),
+  signInWithGoogleAction: (...args: Array<unknown>) =>
+    mockSignInWithGoogleAction(...args),
   signUpAction: (...args: Array<unknown>) => mockSignUpAction(...args)
 }));
 
@@ -34,6 +37,7 @@ describe('auth forms', () => {
       ok: true,
       message: 'Reset link sent'
     });
+    mockSignInWithGoogleAction.mockResolvedValue(undefined);
     mockSignUpAction.mockResolvedValue({
       ok: true,
       message: ''
@@ -100,6 +104,23 @@ describe('auth forms', () => {
     expect(
       screen.queryByText('Invalid email or password')
     ).not.toBeInTheDocument();
+  });
+
+  it('renders Google OAuth actions on login and signup forms', () => {
+    const { unmount } = render(withIntl(<LoginForm />));
+
+    expect(
+      screen.getByRole('button', { name: /continue with google/i })
+    ).toBeInTheDocument();
+    expect(screen.getByText('or continue with email')).toBeInTheDocument();
+
+    unmount();
+    render(withIntl(<SignUpForm />));
+
+    expect(
+      screen.getByRole('button', { name: /continue with google/i })
+    ).toBeInTheDocument();
+    expect(screen.getByText('or continue with email')).toBeInTheDocument();
   });
 
   it('keeps forgot-password email and clears the stale response when edited', async () => {

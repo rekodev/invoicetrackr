@@ -16,20 +16,24 @@ import {
   TextField
 } from '@heroui/react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import type { FormEvent } from 'react';
+import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
+import { authenticateAction, signInWithGoogleAction } from '@/lib/actions';
 import AuthCardHeader from '@/components/auth/auth-card-header';
-import { authenticateAction } from '@/lib/actions';
 
 type LoginFormModel = {
   email: string;
   password: string;
 };
 
-export default function LoginForm() {
+type Props = {
+  initialErrorMessage?: string;
+};
+
+export default function LoginForm({ initialErrorMessage }: Props) {
   const pageT = useTranslations('login');
   const t = useTranslations('login.form');
   const {
@@ -43,7 +47,9 @@ export default function LoginForm() {
       password: ''
     }
   });
-  const [errorMessage, setErrorMessage] = useState<string>();
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(
+    initialErrorMessage
+  );
 
   const onSubmit: SubmitHandler<LoginFormModel> = async (data) => {
     setErrorMessage(undefined);
@@ -56,7 +62,7 @@ export default function LoginForm() {
     setErrorMessage(response);
   };
 
-  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: ChangeEvent<HTMLFormElement>) => {
     clearErrors();
     setErrorMessage(undefined);
 
@@ -70,6 +76,23 @@ export default function LoginForm() {
         description={pageT('subtitle')}
       />
       <CardContent className="p-8 pb-0">
+        <form action={signInWithGoogleAction}>
+          <Button
+            className="w-full justify-center gap-3"
+            type="submit"
+            variant="outline"
+          >
+            <span className="text-base font-semibold">G</span>
+            {t('google_submit')}
+          </Button>
+        </form>
+
+        <div className="flex items-center gap-3 py-5">
+          <div className="border-default-200 h-px flex-1 border-t" />
+          <span className="text-muted text-xs">{t('oauth_divider')}</span>
+          <div className="border-default-200 h-px flex-1 border-t" />
+        </div>
+
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <TextField variant="secondary" isInvalid={!!errors.email}>
             <Label>{t('email')}</Label>

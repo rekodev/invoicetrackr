@@ -11,20 +11,19 @@ import {
   Link,
   TextField
 } from '@heroui/react';
+import type { ChangeEvent, ReactNode } from 'react';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import type { FormEvent } from 'react';
-import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
+import { signInWithGoogleAction, signUpAction } from '@/lib/actions';
 import AuthCardHeader from '@/components/auth/auth-card-header';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
-import { signUpAction } from '@/lib/actions';
 
 type SignUpFormModel = {
   email: string;
@@ -89,7 +88,7 @@ export default function SignUpForm({ headerContent }: Props) {
     }
   };
 
-  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: ChangeEvent<HTMLFormElement>) => {
     clearErrors();
     setSubmissionMessage(null);
 
@@ -125,6 +124,23 @@ export default function SignUpForm({ headerContent }: Props) {
         {headerContent}
       </AuthCardHeader>
       <CardContent className="p-8 pb-0">
+        <form action={signInWithGoogleAction}>
+          <Button
+            className="w-full justify-center gap-3"
+            type="submit"
+            variant="outline"
+          >
+            <span className="text-base font-semibold">G</span>
+            {t('google_submit')}
+          </Button>
+        </form>
+
+        <div className="flex items-center gap-3 py-5">
+          <div className="border-default-200 h-px flex-1 border-t" />
+          <span className="text-muted text-xs">{t('oauth_divider')}</span>
+          <div className="border-default-200 h-px flex-1 border-t" />
+        </div>
+
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
           <TextField variant="secondary" isInvalid={!!errors.email}>
             <Label>{t('email')}</Label>

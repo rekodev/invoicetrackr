@@ -112,25 +112,30 @@ export const getUserByEmailFromDb = async (
 export const registerUser = async ({
   email,
   password,
-  language
-}: Pick<InsertUser, 'email' | 'password' | 'language'>): Promise<
-  { id: number; email: string } | undefined
-> => {
+  language,
+  name = '',
+  profilePictureUrl = '',
+  emailVerifiedAt = null
+}: Pick<InsertUser, 'email' | 'password' | 'language'> &
+  Partial<
+    Pick<InsertUser, 'name' | 'profilePictureUrl' | 'emailVerifiedAt'>
+  >): Promise<{ id: number; email: string } | undefined> => {
   const users = await db
     .insert(usersTable)
     .values({
       email,
       password,
+      emailVerifiedAt,
       currency: 'eur',
       language,
       type: 'sender',
       businessType: 'individual',
       businessNumber: '',
       vatNumber: null,
-      name: '',
+      name,
       address: '',
       signature: '',
-      profilePictureUrl: ''
+      profilePictureUrl
     })
     .returning({ id: usersTable.id, email: usersTable.email });
 

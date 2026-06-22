@@ -190,6 +190,7 @@ export default {
       verificationEmailSent: 'Verification email has been sent',
       emailVerified: 'Email verified successfully',
       emailAlreadyVerified: 'Email is already verified',
+      oauthLinked: 'Google account connected successfully',
       selectedBankAccountUpdated: 'Selected bank account updated successfully'
     },
     invoice: {
@@ -242,6 +243,8 @@ export default {
         'Verify your email before sending invoice emails',
       emailVerificationCooldown:
         'Please wait before requesting another verification email',
+      oauthEmailNotVerified:
+        'Google did not confirm this email address. Please use another sign-in method',
       tokenInvalid: 'Token is invalid',
       tokenExpired: 'Token has expired',
       tokenAlreadyUsed: 'Token has already been used',

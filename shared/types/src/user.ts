@@ -50,6 +50,14 @@ export const verifyEmailResponseSchema = z.object({
   message: z.string()
 });
 
+export const oauthUserBodySchema = z.object({
+  email: z.email('validation.user.email'),
+  name: z.string().optional(),
+  image: z.string().optional(),
+  provider: z.literal('google'),
+  emailVerified: z.boolean()
+});
+
 // Types
 export type UserBody = z.infer<typeof userBodySchema>;
 export type User = UserBody;
@@ -57,3 +65,4 @@ export type UserWithPassword = UserBody;
 export type ResetPasswordTokenGet = z.infer<typeof resetPasswordTokenGetSchema>;
 export type ResetPasswordToken = ResetPasswordTokenGet;
 export type VerifyEmailResponse = z.infer<typeof verifyEmailResponseSchema>;
+export type OAuthUserBody = z.infer<typeof oauthUserBodySchema>;

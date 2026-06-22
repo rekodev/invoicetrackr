@@ -27,6 +27,11 @@ export const loginUserResponseSchema = z.object({
   message: z.string()
 });
 
+export const oauthUserResponseSchema = z.object({
+  user: userBodySchema,
+  message: z.string()
+});
+
 export const getUserResponseSchema = z.object({
   user: userBodySchema
 });
@@ -234,6 +239,7 @@ export type GetUserResponse = z.infer<typeof getUserResponseSchema>;
 export type RegisterUserResponse = z.infer<typeof registerUserResponseSchema>;
 export type UpdateUserResponse = z.infer<typeof updateUserResponseSchema>;
 export type LoginUserResponse = z.infer<typeof loginUserResponseSchema>;
+export type OAuthUserResponse = z.infer<typeof oauthUserResponseSchema>;
 export type UpdateUserAccountSettingsResponse = MessageResponse;
 export type DeleteUserAccountResponse = MessageResponse;
 export type ResetPasswordResponse = MessageResponse;

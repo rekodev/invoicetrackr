@@ -83,6 +83,12 @@ export async function authenticateAction(
   }
 }
 
+export async function signInWithGoogleAction() {
+  await signIn('google', {
+    redirectTo: DASHBOARD_PAGE
+  });
+}
+
 export async function logOutAction() {
   await signOut({ redirect: true, redirectTo: '/' });
 }
