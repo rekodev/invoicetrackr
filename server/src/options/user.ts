@@ -7,7 +7,8 @@ import {
   passwordSchema,
   registerUserResponseSchema,
   updateUserResponseSchema,
-  userBodySchema
+  userBodySchema,
+  verifyEmailTokenResponseSchema
 } from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
@@ -20,11 +21,13 @@ import {
   getUserResetPasswordToken,
   loginUser,
   postUser,
+  resendUserVerificationEmail,
   resetUserPassword,
   updateUser,
   updateUserAccountSettings,
   updateUserProfilePicture,
-  updateUserSelectedBankAccount
+  updateUserSelectedBankAccount,
+  verifyUserEmail
 } from '../controllers/user';
 import { authMiddleware } from '../middleware/auth';
 import { preValidateFileAndFields } from '../utils/multipart';
@@ -208,3 +211,26 @@ export const createNewUserPasswordOptions: RouteShorthandOptionsWithHandler = {
   preHandler: authMiddleware,
   handler: createNewUserPassword
 };
+
+export const verifyUserEmailOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    params: z.object({
+      token: z.string().min(1)
+    }),
+    response: {
+      200: verifyEmailTokenResponseSchema
+    }
+  },
+  handler: verifyUserEmail
+};
+
+export const resendUserVerificationEmailOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      response: {
+        200: messageResponseSchema
+      }
+    },
+    preHandler: authMiddleware,
+    handler: resendUserVerificationEmail
+  };

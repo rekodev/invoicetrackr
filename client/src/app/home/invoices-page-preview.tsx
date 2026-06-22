@@ -21,7 +21,7 @@ export function InvoicesPagePreview() {
         rowsPerPage={t('rows_per_page')}
       />
       <div className="bg-background overflow-hidden rounded-3xl border">
-        <div className="text-default-500 grid grid-cols-[1.2fr_1.3fr_1fr_1fr_1fr] gap-3 border-b px-4 py-3 text-[10px] font-medium uppercase tracking-wide">
+        <div className="text-muted grid grid-cols-[1.2fr_1.3fr_1fr_1fr_1fr] gap-3 border-b px-4 py-3 text-[10px] font-medium uppercase tracking-wide">
           <span>{t('columns.id')}</span>
           <span>{t('columns.receiver')}</span>
           <span className="text-right">{t('columns.amount')}</span>
@@ -33,7 +33,7 @@ export function InvoicesPagePreview() {
             key={key}
             className="grid grid-cols-[1.2fr_1.3fr_1fr_1fr_1fr] items-center gap-3 border-b px-4 py-3 text-xs last:border-b-0"
           >
-            <span className="text-default-600 font-mono">
+            <span className="text-muted font-mono">
               {t(`rows.${key}.id`)}
             </span>
             <span className="truncate font-medium">
@@ -42,7 +42,7 @@ export function InvoicesPagePreview() {
             <span className="text-right font-semibold tabular-nums">
               {t(`rows.${key}.amount`)}
             </span>
-            <span className="text-default-500">{t(`rows.${key}.date`)}</span>
+            <span className="text-muted">{t(`rows.${key}.date`)}</span>
             <Chip color={color} size="sm" variant="soft" className="w-max">
               {t(`rows.${key}.status`)}
             </Chip>

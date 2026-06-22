@@ -86,7 +86,8 @@ describe('<InvoiceTable/>', () => {
           ]
         }
       ],
-      language: 'en'
+      language: 'en',
+      isEmailVerified: true
     };
   });
 

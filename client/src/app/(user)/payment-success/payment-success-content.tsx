@@ -86,13 +86,13 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
                 </span>
               </h1>
 
-              <p className="text-default-500 mt-5 max-w-[460px] text-sm leading-relaxed">
+              <p className="text-muted mt-5 max-w-[460px] text-sm leading-relaxed">
                 {t(`${copyKey}.description`)}
               </p>
 
               <div className="border-default-200 mt-6 grid max-w-[540px] gap-3 border-y py-4 sm:grid-cols-2">
                 <div>
-                  <p className="section-eyebrow text-default-500">
+                  <p className="section-eyebrow text-muted">
                     {t('confirmation.status_label')}
                   </p>
                   <p className="text-foreground mt-1 text-sm font-medium">
@@ -100,7 +100,7 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
                   </p>
                 </div>
                 <div>
-                  <p className="section-eyebrow text-default-500">
+                  <p className="section-eyebrow text-muted">
                     {t(`${copyKey}.summary.primary_label`)}
                   </p>
                   <p className="text-foreground mt-1 text-sm font-medium">
@@ -137,14 +137,14 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
             <div className="relative">
               <div className="border-default-200 bg-default-50/70 dark:bg-default-50/5 rounded-xl border p-5">
                 <div className="flex items-center justify-between gap-4">
-                  <div className="text-default-500 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em]">
+                  <div className="text-muted flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em]">
                     <SparklesIcon
                       className="text-secondary h-3.5 w-3.5"
                       strokeWidth={2.4}
                     />
                     {t(`${copyKey}.summary.title`)}
                   </div>
-                  <div className="text-default-500 text-[11px] tabular-nums">
+                  <div className="text-muted text-[11px] tabular-nums">
                     {t(`${copyKey}.summary.status`)}
                   </div>
                 </div>
@@ -163,7 +163,7 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
 
                 <dl className="mt-6 grid grid-cols-2 gap-5">
                   <div>
-                    <dt className="text-default-500 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.1em]">
+                    <dt className="text-muted flex items-center gap-1.5 text-[11px] uppercase tracking-[0.1em]">
                       <CalendarDaysIcon
                         className="h-3.5 w-3.5"
                         strokeWidth={2.2}
@@ -175,7 +175,7 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-default-500 text-[11px] uppercase tracking-[0.1em]">
+                    <dt className="text-muted text-[11px] uppercase tracking-[0.1em]">
                       {t(`${copyKey}.summary.secondary_label`)}
                     </dt>
                     <dd className="text-foreground mt-1.5 text-[22px] font-semibold tabular-nums leading-none tracking-tight">
@@ -213,7 +213,7 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
               <h2 className="text-foreground text-sm font-semibold">
                 {t('security.title')}
               </h2>
-              <p className="text-default-500 mt-1 text-sm leading-relaxed">
+              <p className="text-muted mt-1 text-sm leading-relaxed">
                 {t('security.description')}
               </p>
             </div>
@@ -229,7 +229,7 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
               <h2 className="text-foreground text-sm font-semibold">
                 {t('support.title')}
               </h2>
-              <p className="text-default-500 mt-1 text-sm leading-relaxed">
+              <p className="text-muted mt-1 text-sm leading-relaxed">
                 {t('support.description')}
               </p>
             </div>
@@ -239,10 +239,10 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
 
       <div className="mt-8">
         <div className="mb-4 flex items-baseline justify-between gap-4">
-          <h2 className="text-default-500 text-[13px] font-medium uppercase tracking-[0.14em]">
+          <h2 className="text-muted text-[13px] font-medium uppercase tracking-[0.14em]">
             {t('quick_start.title')}
           </h2>
-          <span className="text-default-500 text-[12px]">
+          <span className="text-muted text-[12px]">
             {t('quick_start.subtitle')}
           </span>
         </div>
@@ -261,11 +261,11 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
                 <div className="text-foreground mt-4 text-sm font-medium">
                   {t(titleKey)}
                 </div>
-                <p className="text-default-500 mt-1 text-[12.5px] leading-relaxed">
+                <p className="text-muted mt-1 text-[12.5px] leading-relaxed">
                   {t(descriptionKey)}
                 </p>
                 <ArrowRightIcon
-                  className="text-default-500 group-hover:text-secondary absolute right-5 top-5 h-3.5 w-3.5 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100"
+                  className="text-muted group-hover:text-secondary absolute right-5 top-5 h-3.5 w-3.5 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100"
                   strokeWidth={2.4}
                 />
               </Link>

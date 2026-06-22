@@ -1,6 +1,7 @@
 export const LOGIN_PAGE = '/login';
 export const SIGN_UP_PAGE = '/sign-up';
 export const FORGOT_PASSWORD_PAGE = '/forgot-password';
+export const VERIFY_EMAIL_PAGE = '/verify-email';
 
 export const HOME_PAGE = '/';
 export const CREATE_INVOICE_PAGE = '/create-invoice';

@@ -32,13 +32,13 @@ export default function ClientsPagePreview() {
                 <Card.Title className="truncate text-base font-semibold">
                   {t(`cards.${key}.name`)}
                 </Card.Title>
-                <div className="text-default-500 mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-medium uppercase tracking-wide">
+                <div className="text-muted mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-medium uppercase tracking-wide">
                   <span>{t(`cards.${key}.code`)}</span>
                   <span aria-hidden>·</span>
                   <span>{t(`cards.${key}.vat`)}</span>
                 </div>
               </div>
-              <div className="text-default-500 flex flex-col gap-2 text-sm">
+              <div className="text-muted flex flex-col gap-2 text-sm">
                 <span className="text-foreground/80 truncate">
                   {t(`cards.${key}.address`)}
                 </span>

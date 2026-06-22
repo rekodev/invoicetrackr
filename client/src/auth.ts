@@ -30,6 +30,7 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
             id: String(user.id),
             name: user.name,
             email: user.email,
+            emailVerifiedAt: user.emailVerifiedAt,
             language: user.language,
             preferredInvoiceLanguage:
               user.preferredInvoiceLanguage || user.language,

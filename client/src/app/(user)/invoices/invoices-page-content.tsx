@@ -12,6 +12,7 @@ export default async function InvoicesPageContent() {
   const currency = session.user.currency;
   const language = session.user.language;
   const userPreferredInvoiceLanguage = session.user.preferredInvoiceLanguage;
+  const isEmailVerified = Boolean(session.user.emailVerifiedAt);
 
   const invoicesResp = await getInvoices(userId);
 
@@ -24,6 +25,7 @@ export default async function InvoicesPageContent() {
       invoices={invoicesResp.data.invoices}
       currency={currency}
       userId={userId}
+      isEmailVerified={isEmailVerified}
     />
   );
 }

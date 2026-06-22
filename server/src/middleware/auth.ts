@@ -1,7 +1,9 @@
 import { FastifyRequest } from 'fastify';
 import { decode } from 'next-auth/jwt';
+import { useI18n } from 'fastify-i18n';
 
-import { UnauthorizedError } from '../utils/error';
+import { ForbiddenError, UnauthorizedError } from '../utils/error';
+import { getUserEmailVerificationStatusFromDb } from '../database/user';
 import { loadEnv } from '../config/env';
 
 loadEnv();
@@ -26,5 +28,20 @@ export const authMiddleware = async (
 
   if (!decodedToken || decodedToken.sub !== req.params.userId) {
     throw new UnauthorizedError();
+  }
+};
+
+export const requireVerifiedEmail = async (
+  req: FastifyRequest<{ Params: { userId?: string } }>
+) => {
+  const i18n = await useI18n(req);
+  const userId = Number(req.params.userId);
+
+  if (!userId) throw new UnauthorizedError();
+
+  const user = await getUserEmailVerificationStatusFromDb(userId);
+
+  if (!user?.emailVerifiedAt) {
+    throw new ForbiddenError(i18n.t('error.user.emailVerificationRequired'));
   }
 };

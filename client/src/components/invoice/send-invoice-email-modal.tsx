@@ -37,6 +37,7 @@ type Props = {
   userId: number;
   invoice: InvoiceBody;
   currency: Currency;
+  isEmailVerified: boolean;
 };
 
 type SendInvoiceForm = {
@@ -53,7 +54,8 @@ export default function SendInvoiceEmailModal({
   pdfDocument,
   userId,
   invoice,
-  currency
+  currency,
+  isEmailVerified
 }: Props) {
   const t = useTranslations('components.send_invoice_email');
   const router = useRouter();
@@ -131,6 +133,8 @@ export default function SendInvoiceEmailModal({
 
   const onSubmit = (data: SendInvoiceForm, blob: Blob | null) =>
     startTransition(async () => {
+      if (!isEmailVerified) return;
+
       const response = await sendInvoiceEmail({
         id: Number(invoice.id),
         userId,
@@ -206,6 +210,16 @@ export default function SendInvoiceEmailModal({
                     </Modal.Heading>
                   </Modal.Header>
                   <Modal.Body className="flex w-full flex-col gap-3">
+                    {!isEmailVerified ? (
+                      <Alert className="border" status="warning">
+                        <Alert.Indicator />
+                        <Alert.Content>
+                          <Alert.Description>
+                            {t('email_verification_required')}
+                          </Alert.Description>
+                        </Alert.Content>
+                      </Alert>
+                    ) : null}
                     <Alert
                       className="border"
                       status={shouldRotateSigningLink ? 'warning' : 'default'}
@@ -219,7 +233,7 @@ export default function SendInvoiceEmailModal({
                           )}
                           {requestSignature &&
                             invoice.recipientSigningEmail && (
-                              <span className="text-default-500">
+                              <span className="text-muted">
                                 {t('active_signing_recipient', {
                                   email: invoice.recipientSigningEmail
                                 })}
@@ -232,7 +246,7 @@ export default function SendInvoiceEmailModal({
                             </span>
                           ) : requestSignature &&
                             invoice.recipientSigningExpiresAt ? (
-                            <span className="text-default-500">
+                            <span className="text-muted">
                               {t('signing_link_expires', {
                                 date: new Date(
                                   invoice.recipientSigningExpiresAt
@@ -317,26 +331,26 @@ export default function SendInvoiceEmailModal({
                       </Card.Header>
                       <Card.Content className="flex flex-col gap-2">
                         <p className="mt-2 flex items-center justify-between text-sm">
-                          <span className="text-default-500 text">
+                          <span className="text-muted text">
                             {t('invoice')}:
                           </span>{' '}
                           {invoice.invoiceId}
                         </p>
                         <p className="flex items-center justify-between text-sm">
-                          <span className="text-default-500 text">
+                          <span className="text-muted text">
                             {t('client')}:
                           </span>{' '}
                           {invoice.receiver.name}
                         </p>
                         <p className="flex items-center justify-between text-sm">
-                          <span className="text-default-500 text">
+                          <span className="text-muted text">
                             {t('amount')}:
                           </span>{' '}
                           {getCurrencySymbol(currency)}
                           {invoice.totalAmount}
                         </p>
                         <p className="flex items-center justify-between text-sm">
-                          <span className="text-default-500 text">
+                          <span className="text-muted text">
                             {t('date')}:
                           </span>
                           {invoice.date}
@@ -380,7 +394,11 @@ export default function SendInvoiceEmailModal({
                       >
                         {t('cancel')}
                       </Button>
-                      <Button isPending={isPending} type="submit">
+                      <Button
+                        isDisabled={!isEmailVerified}
+                        isPending={isPending}
+                        type="submit"
+                      >
                         <PaperAirplaneIcon className="h-4 w-4" />
                         {shouldRotateSigningLink
                           ? t('replace_link_and_send')

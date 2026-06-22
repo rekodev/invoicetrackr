@@ -24,6 +24,7 @@ declare module 'next-auth' {
     selectedBankAccountId: number;
     address: string;
     email: string;
+    emailVerifiedAt?: string | null;
     stripeCustomerId?: string | null;
     stripeSubscriptionId?: string | null;
     hasPaymentMethod?: boolean;

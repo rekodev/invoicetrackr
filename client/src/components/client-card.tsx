@@ -81,7 +81,7 @@ const ClientCard = ({
             >
               {client.name}
             </div>
-            <div className="text-default-500 flex flex-col gap-1 text-xs">
+            <div className="text-muted flex flex-col gap-1 text-xs">
               {client.address && <span>{client.address}</span>}
               <span className={cn('', { 'max-w-40 truncate': truncate })}>
                 {client.email}
@@ -134,7 +134,7 @@ const ClientCard = ({
                 {client.name}
               </Card.Title>
             </div>
-            <div className="text-default-500 mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-medium uppercase tracking-wide">
+            <div className="text-muted mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-medium uppercase tracking-wide">
               {client.businessNumber && (
                 <span className="inline-flex min-w-0 items-center gap-1">
                   <BuildingOffice2Icon className="h-3 w-3 shrink-0" />
@@ -153,7 +153,7 @@ const ClientCard = ({
           </div>
         </div>
 
-        <div className="text-default-500 flex flex-col gap-2 text-sm">
+        <div className="text-muted flex flex-col gap-2 text-sm">
           {client.address && (
             <div className="flex items-start gap-2">
               <MapPinIcon className="mt-0.5 h-4 w-4 shrink-0" />

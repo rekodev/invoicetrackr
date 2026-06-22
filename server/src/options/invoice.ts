@@ -21,6 +21,7 @@ import {
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
+import { authMiddleware, requireVerifiedEmail } from '../middleware/auth';
 import {
   confirmPublicInvoicePayment,
   createPublicInvoicePayment,
@@ -42,7 +43,6 @@ import {
   updateInvoice,
   updateInvoiceStatus
 } from '../controllers/invoice';
-import { authMiddleware } from '../middleware/auth';
 import { preValidateFileAndFields } from '../utils/multipart';
 import { requirePaidEntitlement } from '../middleware/entitlement';
 
@@ -171,7 +171,7 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
     },
     body: sendInvoiceEmailBodySchema
   },
-  preHandler: paidAccess,
+  preHandler: [...paidAccess, requireVerifiedEmail],
   preValidation: preValidateFileAndFields,
   handler: sendInvoiceEmail
 };

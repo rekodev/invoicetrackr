@@ -65,7 +65,7 @@ export default function IncomeJournalExportModal({
               <Modal.Heading>{t('title')}</Modal.Heading>
             </Modal.Header>
             <Modal.Body>
-              <p className="text-default-500 text-sm">{t('description')}</p>
+              <p className="text-muted text-sm">{t('description')}</p>
               <TextField>
                 <Label>{t('from')}</Label>
                 <Input

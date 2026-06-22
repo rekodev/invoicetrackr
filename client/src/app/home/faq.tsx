@@ -21,11 +21,11 @@ export default function FAQ() {
             <Accordion.Heading>
               <Accordion.Trigger className="flex w-full items-center justify-between gap-4 py-5 text-left text-sm font-medium">
                 {t(`items.${key}.question`)}
-                <Accordion.Indicator className="text-default-500 h-4 w-4 shrink-0" />
+                <Accordion.Indicator className="text-muted h-4 w-4 shrink-0" />
               </Accordion.Trigger>
             </Accordion.Heading>
             <Accordion.Panel>
-              <Accordion.Body className="text-default-500 pb-5 text-sm leading-relaxed">
+              <Accordion.Body className="text-muted pb-5 text-sm leading-relaxed">
                 {t(`items.${key}.answer`)}
               </Accordion.Body>
             </Accordion.Panel>

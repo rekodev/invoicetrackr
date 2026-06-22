@@ -790,7 +790,16 @@
                 "address": "Adresas",
                 "address_placeholder": "Įveskite savo adresą",
                 "signature": "Parašas",
-                "save_changes": "Išsaugoti pakeitimus"
+                "save_changes": "Išsaugoti pakeitimus",
+                "email_verification": {
+                    "title": "El. pašto patvirtinimas",
+                    "verified": "Patvirtintas",
+                    "unverified": "Nepatvirtintas",
+                    "verified_description": "Jūsų el. paštas patvirtintas ir gali būti naudojamas sąskaitoms siųsti.",
+                    "unverified_description": "Patvirtinkite el. paštą prieš siųsdami sąskaitas klientams.",
+                    "resend": "Siųsti patvirtinimo laišką",
+                    "sent_at": "Patvirtinta {date}"
+                }
             }
         },
         "account_settings": {
@@ -1020,6 +1029,29 @@
             "sign_in": "Prisijungti"
         }
     },
+    "verify_email": {
+        "pending": {
+            "title": "Tikriname el. paštą",
+            "description": "Palaukite, kol patvirtinsime šį adresą ir užbaigsime paskyros apsaugą."
+        },
+        "verified": {
+            "title": "El. paštas patvirtintas",
+            "description": "Jūsų el. paštas patvirtintas. Dabar galite siųsti sąskaitas el. paštu."
+        },
+        "already_verified": {
+            "title": "El. paštas jau patvirtintas",
+            "description": "Šis el. pašto adresas jau patvirtintas jūsų paskyroje."
+        },
+        "error": {
+            "title": "Nepavyko patvirtinti el. pašto",
+            "description": "Ši patvirtinimo nuoroda neteisinga arba nebegalioja."
+        },
+        "actions": {
+            "confirm": "Patvirtinti el. paštą",
+            "dashboard": "Eiti į skydelį",
+            "profile": "Eiti į profilį"
+        }
+    },
     "under_construction": {
         "title": "Kuriama",
         "description": "Šis puslapis vis dar kuriamas ir bus prieinamas netrukus. Dėkojame už kantrybę."
@@ -1117,6 +1149,7 @@
             "date": "Data",
             "public_link_note": "Šiame laiške gali būti saugus sąskaitos puslapis su PDF, banko rekvizitais ir internetiniu mokėjimu, jei jis įjungtas.",
             "signing_link_note": "Šiame laiške bus saugi pasirašymo nuoroda gavėjui.",
+            "email_verification_required": "Patvirtinkite paskyros el. paštą prieš siųsdami sąskaitas klientams.",
             "include_public_link": "Įtraukti viešą sąskaitos puslapį",
             "request_signature": "Prašyti gavėjo parašo",
             "signature_requires_public_link": "Gavėjo pasirašymui reikia viešo sąskaitos puslapio.",

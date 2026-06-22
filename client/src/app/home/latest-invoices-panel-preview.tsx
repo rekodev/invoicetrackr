@@ -15,7 +15,7 @@ export default function LatestInvoicesPanelPreview() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h3 className="text-base font-semibold">{t('title')}</h3>
-          <p className="text-default-500 mt-1 text-sm">{t('subtitle')}</p>
+          <p className="text-muted mt-1 text-sm">{t('subtitle')}</p>
         </div>
         <span
           className={buttonVariants({
@@ -49,7 +49,7 @@ export default function LatestInvoicesPanelPreview() {
                   {t(`rows.${key}.status`)}
                 </Chip>
               </div>
-              <div className="text-default-500 mt-0.5 flex min-w-0 items-center gap-1.5 text-[11px]">
+              <div className="text-muted mt-0.5 flex min-w-0 items-center gap-1.5 text-[11px]">
                 <span className="shrink-0 tabular-nums">
                   {t(`rows.${key}.id`)}
                 </span>

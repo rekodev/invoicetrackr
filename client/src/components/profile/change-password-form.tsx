@@ -87,7 +87,7 @@ export default function ChangePasswordForm({ userId }: Props) {
             isInvalid={!!errors.newPassword}
             errorMessage={errors.newPassword?.message}
           />
-          <small className="text-default-500 -mt-2">
+          <small className="text-muted -mt-2">
             {t('password_requirements')}
           </small>
           <PasswordInput

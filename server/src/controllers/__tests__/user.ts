@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import bcrypt from 'bcryptjs';
 
+import * as emailVerificationDb from '../../database/email-verification';
 import * as paymentDb from '../../database/payment';
 import * as userController from '../user';
 import * as userDb from '../../database/user';
@@ -9,9 +10,11 @@ import {
   userFactory,
   userWithPasswordFactory
 } from '../../test/factories/user';
+import { mockResendSend } from '../../test/setup';
 import { stripe } from '../../config/stripe';
 
 vi.mock('../../database/user');
+vi.mock('../../database/email-verification');
 vi.mock('../../database/payment');
 vi.mock('bcryptjs');
 vi.mock('../../config/stripe', () => ({
@@ -177,6 +180,7 @@ describe('User Controller', () => {
       vi.mocked(userDb.getUserByEmailFromDb).mockResolvedValue(undefined);
       vi.mocked(bcrypt.hash).mockResolvedValue('hashedPassword' as never);
       vi.mocked(userDb.registerUser).mockResolvedValue({
+        id: testUserId,
         email: mockUser.email
       });
 
@@ -200,6 +204,18 @@ describe('User Controller', () => {
       const body = JSON.parse(response.body);
       expect(body.email).toBeDefined();
       expect(body.message).toBeDefined();
+      expect(
+        emailVerificationDb.saveEmailVerificationTokenToDb
+      ).toHaveBeenCalledWith(
+        testUserId,
+        expect.any(String),
+        expect.any(String)
+      );
+      expect(mockResendSend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: ['newuser@example.com']
+        })
+      );
 
       await app.close();
     });
@@ -248,6 +264,101 @@ describe('User Controller', () => {
       });
 
       expect(response.statusCode).toBe(400);
+
+      await app.close();
+    });
+  });
+
+  describe('POST /api/email-verification/:token', () => {
+    it('should verify user email with a valid token', async () => {
+      const token = 'valid-token';
+      vi.mocked(
+        emailVerificationDb.getEmailVerificationTokenFromDb
+      ).mockResolvedValue({
+        id: 1,
+        userId: testUserId,
+        token,
+        expiresAt: new Date(Date.now() + 3600000).toISOString(),
+        usedAt: null,
+        lastSentAt: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      });
+      vi.mocked(userDb.getUserEmailVerificationStatusFromDb).mockResolvedValue({
+        id: testUserId,
+        email: mockUser.email,
+        emailVerifiedAt: null,
+        language: 'en'
+      });
+      vi.mocked(userDb.verifyUserEmailInDb).mockResolvedValue({
+        id: testUserId,
+        emailVerifiedAt: new Date().toISOString()
+      });
+      vi.mocked(
+        emailVerificationDb.markEmailVerificationTokenUsedInDb
+      ).mockResolvedValue(1);
+
+      const { verifyUserEmail } = userController;
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post('/api/email-verification/:token', verifyUserEmail);
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/email-verification/${token}`
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.status).toBe('verified');
+      expect(userDb.verifyUserEmailInDb).toHaveBeenCalledWith(testUserId);
+      expect(
+        emailVerificationDb.markEmailVerificationTokenUsedInDb
+      ).toHaveBeenCalledWith(token);
+
+      await app.close();
+    });
+  });
+
+  describe('POST /api/:userId/email-verification/resend', () => {
+    it('should reject resend requests during cooldown', async () => {
+      vi.mocked(userDb.getUserEmailVerificationStatusFromDb).mockResolvedValue({
+        id: testUserId,
+        email: mockUser.email,
+        emailVerifiedAt: null,
+        language: 'en'
+      });
+      vi.mocked(
+        emailVerificationDb.getLatestEmailVerificationTokenForUserFromDb
+      ).mockResolvedValue({
+        id: 1,
+        userId: testUserId,
+        token: 'recent-token',
+        expiresAt: new Date(Date.now() + 3600000).toISOString(),
+        usedAt: null,
+        lastSentAt: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      });
+
+      const { resendUserVerificationEmail } = userController;
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/email-verification/resend',
+          {
+            preHandler: mockAuthMiddleware
+          },
+          resendUserVerificationEmail
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/email-verification/resend`
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(mockResendSend).not.toHaveBeenCalled();
 
       await app.close();
     });

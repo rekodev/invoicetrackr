@@ -26,7 +26,7 @@ export default function CTA() {
           <h2 className="mt-6 text-4xl font-medium tracking-tight md:text-6xl">
             {t('title')}
           </h2>
-          <p className="text-default-500 mx-auto mt-4 max-w-md">
+          <p className="text-muted mx-auto mt-4 max-w-md">
             {t('subtitle')}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">

@@ -10,6 +10,7 @@ export const userFactory = Factory.define<
   id: sequence,
   name: `Test User ${sequence}`,
   email: `user${sequence}@example.com`,
+  emailVerifiedAt: new Date().toISOString(),
   address: `${sequence} Test Street`,
   businessNumber: `BN${sequence}`,
   vatNumber: null,

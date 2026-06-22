@@ -12,13 +12,27 @@ export default {
       noRequest:
         "If you didn't request a password reset, you can safely ignore this email.",
       footer: 'This email was sent by InvoiceTrackr',
-      copyright: '© {year} InvoiceTrackr. All rights reserved.'
+      copyright: '© %{year} InvoiceTrackr. All rights reserved.'
+    },
+    verifyEmail: {
+      subject: 'Verify your InvoiceTrackr email',
+      text: 'Click the link to verify your email: %{verificationLink}',
+      greeting: 'Welcome to InvoiceTrackr!',
+      message:
+        'Confirm your email address so you can send invoices and receive account notifications.',
+      buttonText: 'Verify email',
+      orCopy: 'Or copy and paste this link into your browser:',
+      linkExpiry: 'This link will expire in 24 hours for security reasons.',
+      noRequest:
+        "If you didn't create an InvoiceTrackr account, you can safely ignore this email.",
+      footer: 'This email was sent by InvoiceTrackr',
+      copyright: '© %{year} InvoiceTrackr. All rights reserved.'
     },
     invoice: {
       title: 'InvoiceTrackr',
       defaultMessage: 'Please find your invoice attached.',
       detailsTitle: 'Invoice Details',
-      sentBy: 'This invoice was sent from {senderName} via InvoiceTrackr.',
+      sentBy: 'This invoice was sent from %{senderName} via InvoiceTrackr.',
       invoiceNumber: 'Invoice Number:',
       amount: 'Amount:',
       dueDate: 'Due Date:',
@@ -173,6 +187,9 @@ export default {
       accountSettingsUpdated: 'Account settings updated successfully',
       passwordChanged: 'Password changed successfully',
       resetLinkSent: 'Reset link has been sent to the entered email',
+      verificationEmailSent: 'Verification email has been sent',
+      emailVerified: 'Email verified successfully',
+      emailAlreadyVerified: 'Email is already verified',
       selectedBankAccountUpdated: 'Selected bank account updated successfully'
     },
     invoice: {
@@ -219,8 +236,15 @@ export default {
       unableToUpdateAccountSettings: 'Unable to update account settings',
       unableToChangePassword: 'Unable to change password',
       unableToSendResetLink: 'Unable to send reset link. Please try again',
+      unableToSendVerificationEmail:
+        'Unable to send verification email. Please try again',
+      emailVerificationRequired:
+        'Verify your email before sending invoice emails',
+      emailVerificationCooldown:
+        'Please wait before requesting another verification email',
       tokenInvalid: 'Token is invalid',
       tokenExpired: 'Token has expired',
+      tokenAlreadyUsed: 'Token has already been used',
       unableToUploadSignature: 'Unable to upload signature',
       unableToUpdateSelectedBankAccount:
         'Unable to update selected bank account'

@@ -285,49 +285,61 @@ const InvoiceTableCell = ({
         <div className="relative flex items-center justify-end gap-2">
           {renderTooltip(
             tCell('tooltip_send_email'),
-            <PaperAirplaneIcon
+            <button
+              type="button"
+              aria-label={tCell('tooltip_send_email')}
               onClick={() => onSendEmail(invoice)}
-              className="text-accent h-4 w-4 cursor-pointer"
-            />
+              className="text-accent cursor-pointer active:opacity-50"
+            >
+              <PaperAirplaneIcon className="h-4 w-4" />
+            </button>
           )}
           {invoice.publicInvoiceToken &&
             renderTooltip(
               tCell('tooltip_copy_public_link'),
-              <span
+              <button
+                type="button"
+                aria-label={tCell('tooltip_copy_public_link')}
                 onClick={handleCopyPublicLink}
-                className="text-default-400 cursor-pointer text-lg active:opacity-50"
+                className="text-muted cursor-pointer text-lg active:opacity-50"
               >
                 <LinkIcon className="h-5 w-5" />
-              </span>
+              </button>
             )}
           {renderTooltip(
             tCell('tooltip_view'),
-            <span
+            <button
+              type="button"
+              aria-label={tCell('tooltip_view')}
               onClick={handleViewIconClick}
-              className="text-default-400 cursor-pointer text-lg active:opacity-50"
+              className="text-muted cursor-pointer text-lg active:opacity-50"
             >
               <EyeIcon className="h-5 w-5" />
-            </span>
+            </button>
           )}
           {isDraft && (
             <>
               {renderTooltip(
                 tCell('tooltip_edit'),
-                <span
-                  className="text-default-400 cursor-pointer text-lg active:opacity-50"
+                <button
+                  type="button"
+                  aria-label={tCell('tooltip_edit')}
+                  className="text-muted cursor-pointer text-lg active:opacity-50"
                   onClick={handleEditInvoiceClick}
                 >
                   <PencilSquareIcon className="h-5 w-5" />
-                </span>
+                </button>
               )}
               {renderTooltip(
                 tCell('tooltip_delete'),
-                <span
+                <button
+                  type="button"
+                  aria-label={tCell('tooltip_delete')}
                   className="text-danger cursor-pointer text-lg active:opacity-50"
                   onClick={handleDeleteInvoiceClick}
                 >
                   <TrashIcon className="h-5 w-5" />
-                </span>
+                </button>
               )}
             </>
           )}

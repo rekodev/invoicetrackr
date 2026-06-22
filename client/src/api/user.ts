@@ -5,10 +5,12 @@ import {
   GetUserResponse,
   LoginUserResponse,
   RegisterUserResponse,
+  ResendVerificationEmailResponse,
   ResetPasswordResponse,
   UpdateUserAccountSettingsResponse,
   UpdateUserResponse,
-  User
+  User,
+  VerifyEmailTokenResponse
 } from '@invoicetrackr/types';
 
 import api from './api-instance';
@@ -148,4 +150,12 @@ export const createNewUserPassword = async ({
       confirmedNewPassword,
       token
     }
+  );
+
+export const verifyEmailToken = async (token: string) =>
+  await api.post<VerifyEmailTokenResponse>(`/api/email-verification/${token}`);
+
+export const resendVerificationEmail = async (userId: number) =>
+  await api.post<ResendVerificationEmailResponse>(
+    `/api/users/${userId}/email-verification/resend`
   );

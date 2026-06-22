@@ -35,6 +35,7 @@ type Props = {
   currency: Currency;
   language: string;
   userPreferredInvoiceLanguage?: string;
+  isEmailVerified: boolean;
 };
 
 const InvoiceTable = ({
@@ -42,7 +43,8 @@ const InvoiceTable = ({
   invoices,
   currency,
   language,
-  userPreferredInvoiceLanguage
+  userPreferredInvoiceLanguage,
+  isEmailVerified
 }: Props) => {
   const t = useTranslations('invoices.table');
   const pdfTranslator = useTranslations('invoices.pdf');
@@ -310,6 +312,7 @@ const InvoiceTable = ({
           invoice={currentInvoice}
           currency={currency}
           userId={userId}
+          isEmailVerified={isEmailVerified}
         />
       )}
     </section>

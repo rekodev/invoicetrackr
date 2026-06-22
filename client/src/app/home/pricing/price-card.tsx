@@ -51,18 +51,18 @@ export default function PriceCard({
             {plan === 'free' ? `${currencySymbol}0` : `${currencySymbol}49`}
           </span>
           {plan === 'premium' && (
-            <span className="text-default-500 text-sm">{t('suffix')}</span>
+            <span className="text-muted text-sm">{t('suffix')}</span>
           )}
         </div>
         {plan === 'premium' && (
-          <div className="text-default-500 mt-1 text-[11px]">{t('alt')}</div>
+          <div className="text-muted mt-1 text-[11px]">{t('alt')}</div>
         )}
 
         <ul className="mt-7 space-y-2.5">
           {featureKeys.map((key) => (
             <li
               key={key}
-              className="text-default-600 flex items-start gap-2 text-sm"
+              className="text-muted flex items-start gap-2 text-sm"
             >
               <CheckIcon className="text-accent mt-0.5 h-3.5 w-3.5 shrink-0" />
               {t(`features.${key}`)}

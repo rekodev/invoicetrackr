@@ -146,7 +146,15 @@ const AccountSettingsForm = ({ user }: Props) => {
                   {t('preferred_invoice_language')}
                   <Tooltip delay={0}>
                     <Tooltip.Trigger>
-                      <InformationCircleIcon className="text-default-500 z-50 h-4 w-4 cursor-pointer" />
+                      <Button
+                        type="button"
+                        variant="tertiary"
+                        size="sm"
+                        isIconOnly
+                        className="z-50 size-5 min-w-5 p-0"
+                      >
+                        <InformationCircleIcon className="text-muted h-4 w-4" />
+                      </Button>
                     </Tooltip.Trigger>
                     <Tooltip.Content className="max-w-xs">
                       {t('preferred_invoice_language_tooltip')}

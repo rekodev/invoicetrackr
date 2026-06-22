@@ -25,6 +25,12 @@ type Props = {
   isReadOnly?: boolean;
 };
 
+const SIGNATURE_CANVAS_ASPECT_RATIO = 254 / 190;
+const SIGNATURE_CANVAS_MAX_WIDTH = 508;
+const SIGNATURE_CANVAS_FALLBACK_WIDTH = 508;
+const SIGNATURE_CANVAS_CURSOR =
+  'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724%27 height=%2724%27 viewBox=%270 0 24 24%27%3E%3Cpath d=%27M4 20l4.5-1 10-10-3.5-3.5-10 10L4 20z%27 fill=%27%2315181C%27 stroke=%27white%27 stroke-width=%271.5%27/%3E%3Cpath d=%27M14.5 5.5l3.5 3.5%27 stroke=%27white%27 stroke-width=%271.5%27 stroke-linecap=%27round%27/%3E%3C/svg%3E") 3 21, crosshair';
+
 const SignaturePad = ({
   signature,
   profileSignature,
@@ -42,8 +48,15 @@ const SignaturePad = ({
     setOpen: onOpenChange
   } = useOverlayState();
   const [signatureImage, setSignatureImage] = useState('');
+  const [canvasSize, setCanvasSize] = useState({
+    width: SIGNATURE_CANVAS_FALLBACK_WIDTH,
+    height: Math.round(
+      SIGNATURE_CANVAS_FALLBACK_WIDTH / SIGNATURE_CANVAS_ASPECT_RATIO
+    )
+  });
 
   const signatureRef = useRef<SignatureCanvas>(null);
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
 
   const signatureImgUrl = useMemo(
     () =>
@@ -76,8 +89,43 @@ const SignaturePad = ({
   useEffect(() => {
     if (!isOpen || !signatureImage) return;
 
-    signatureRef.current?.fromDataURL(signatureImage);
-  }, [isOpen, signatureImage]);
+    signatureRef.current?.fromDataURL(signatureImage, {
+      width: canvasSize.width,
+      height: canvasSize.height,
+      ratio: 1
+    });
+  }, [canvasSize, isOpen, signatureImage]);
+
+  useEffect(() => {
+    if (!isOpen || !canvasContainerRef.current) return;
+
+    const updateCanvasSize = () => {
+      const containerWidth =
+        canvasContainerRef.current?.getBoundingClientRect().width || 0;
+
+      if (!containerWidth) return;
+
+      const width = Math.floor(
+        Math.min(containerWidth, SIGNATURE_CANVAS_MAX_WIDTH)
+      );
+      const height = Math.round(width / SIGNATURE_CANVAS_ASPECT_RATIO);
+
+      setCanvasSize((currentSize) => {
+        if (currentSize.width === width && currentSize.height === height) {
+          return currentSize;
+        }
+
+        return { width, height };
+      });
+    };
+
+    updateCanvasSize();
+
+    const resizeObserver = new ResizeObserver(updateCanvasSize);
+    resizeObserver.observe(canvasContainerRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, [isOpen]);
 
   const saveSignature = () => {
     const trimmedDataURL = signatureRef.current
@@ -108,7 +156,7 @@ const SignaturePad = ({
       <div className="flex flex-col gap-1.5">
         <Card
           className={cn(
-            'shadow-small aspect-4/3 relative flex max-w-64 items-center justify-center overflow-hidden border',
+            'shadow-small aspect-4/3 relative flex max-w-64 items-center justify-center overflow-hidden border p-0',
             {
               'bg-[#F3126040]': isInvalid,
               'hover:border-none': !!signatureImgUrl && !isReadOnly
@@ -116,17 +164,18 @@ const SignaturePad = ({
           )}
           onClick={isReadOnly ? undefined : onOpen}
         >
-          <CardContent className="group flex h-full w-full flex-col items-center justify-center gap-2 overflow-visible p-0">
+          <CardContent className="group relative flex h-full w-full flex-col items-center justify-center gap-2 overflow-visible p-0">
             {signatureImgUrl ? (
               <>
                 <Image
                   fill
                   src={signatureImgUrl}
                   alt={t('signature_alt')}
+                  sizes="256px"
                   className="z-0 rounded-none"
                 />
                 {!isReadOnly && (
-                  <div className="absolute hidden h-full w-full flex-col items-center justify-center gap-2 bg-black/50 text-white group-hover:flex dark:bg-black/75">
+                  <div className="absolute hidden h-full w-full cursor-pointer flex-col items-center justify-center gap-2 bg-black/50 text-white group-hover:flex dark:bg-black/75">
                     <PencilSquareIcon className="h-10 w-10" />
                     <p className="font-medium">{t('edit_signature')}</p>
                   </div>
@@ -163,34 +212,47 @@ const SignaturePad = ({
           isOpen={isOpen}
           onOpenChange={(open) => !open && onOpenChange(false)}
         >
-          <Modal.Container size="cover">
-            <Modal.Dialog>
+          <Modal.Container>
+            <Modal.Dialog className="mx-auto !w-[min(92vw,548px)] !max-w-[548px]">
               <Modal.CloseTrigger />
-          <Modal.Header>
-            <Modal.Heading>{t('modal_title')}</Modal.Heading>
-          </Modal.Header>
-          <Modal.Body>
-            <SignatureCanvas
-              ref={signatureRef}
-              canvasProps={{
-                style: {
-                  backgroundColor: 'white',
-                  touchAction: 'none',
-                  aspectRatio: '4 / 3'
-                }
-              }}
-              backgroundColor="white"
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="danger"
-              onPress={() => signatureRef.current?.clear()}
-            >
-              {t('clear')}
-            </Button>
-            <Button onPress={saveSignature}>{t('save')}</Button>
-          </Modal.Footer>
+              <Modal.Header>
+                <Modal.Heading>{t('modal_title')}</Modal.Heading>
+              </Modal.Header>
+              <Modal.Body className="items-center">
+                <div
+                  ref={canvasContainerRef}
+                  className="border-default-200 w-full max-w-[508px] overflow-hidden rounded-lg border bg-white"
+                >
+                  <SignatureCanvas
+                    ref={signatureRef}
+                    clearOnResize={false}
+                    throttle={0}
+                    minDistance={1}
+                    canvasProps={{
+                      width: canvasSize.width,
+                      height: canvasSize.height,
+                      className: 'block',
+                      style: {
+                        width: canvasSize.width,
+                        height: canvasSize.height,
+                        backgroundColor: 'white',
+                        cursor: SIGNATURE_CANVAS_CURSOR,
+                        touchAction: 'none'
+                      }
+                    }}
+                    backgroundColor="white"
+                  />
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="danger"
+                  onPress={() => signatureRef.current?.clear()}
+                >
+                  {t('clear')}
+                </Button>
+                <Button onPress={saveSignature}>{t('save')}</Button>
+              </Modal.Footer>
             </Modal.Dialog>
           </Modal.Container>
         </Modal.Backdrop>

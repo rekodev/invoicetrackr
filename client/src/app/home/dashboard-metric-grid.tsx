@@ -37,7 +37,7 @@ export default function DashboardMetricGrid() {
       {cards.map(({ key, icon: Icon, iconClassName }) => (
         <Card key={key} className="border bg-transparent shadow-none">
           <Card.Content className="flex h-full flex-col justify-between p-3">
-            <div className="text-default-500 flex items-center gap-2 text-xs font-medium">
+            <div className="text-muted flex items-center gap-2 text-xs font-medium">
               <span
                 className={cn(
                   'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg',

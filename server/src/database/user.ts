@@ -30,6 +30,7 @@ export const getUserFromDb = async (
       selectedBankAccountId: usersTable.selectedBankAccountId,
       address: usersTable.address,
       email: usersTable.email,
+      emailVerifiedAt: usersTable.emailVerifiedAt,
       createdAt: usersTable.createdAt,
       updatedAt: usersTable.updatedAt,
       signature: usersTable.signature,
@@ -78,6 +79,7 @@ export const getUserByEmailFromDb = async (
       selectedBankAccountId: usersTable.selectedBankAccountId,
       address: usersTable.address,
       email: usersTable.email,
+      emailVerifiedAt: usersTable.emailVerifiedAt,
       createdAt: usersTable.createdAt,
       updatedAt: usersTable.updatedAt,
       signature: usersTable.signature,
@@ -112,7 +114,7 @@ export const registerUser = async ({
   password,
   language
 }: Pick<InsertUser, 'email' | 'password' | 'language'>): Promise<
-  { email: string } | undefined
+  { id: number; email: string } | undefined
 > => {
   const users = await db
     .insert(usersTable)
@@ -130,7 +132,7 @@ export const registerUser = async ({
       signature: '',
       profilePictureUrl: ''
     })
-    .returning({ email: usersTable.email });
+    .returning({ id: usersTable.id, email: usersTable.email });
 
   return users.at(0);
 };
@@ -162,7 +164,8 @@ export const updateUserInDb = async (
     | 'vatNumber'
     | 'address'
   >,
-  signature: string
+  signature: string,
+  shouldResetEmailVerification = false
 ): Promise<{ id: number } | undefined> => {
   const { name, address, businessNumber, businessType, email, vatNumber } =
     user;
@@ -176,6 +179,7 @@ export const updateUserInDb = async (
       vatNumber,
       address,
       email,
+      ...(shouldResetEmailVerification ? { emailVerifiedAt: null } : {}),
       signature,
       onboardingCompletedAt: new Date().toISOString()
     })
@@ -215,6 +219,7 @@ export const updateUserProfilePictureInDb = async (
       vatNumber: usersTable.vatNumber,
       address: usersTable.address,
       email: usersTable.email,
+      emailVerifiedAt: usersTable.emailVerifiedAt,
       signature: usersTable.signature,
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
@@ -254,6 +259,7 @@ export const updateUserAccountSettingsInDb = async (
       vatNumber: usersTable.vatNumber,
       address: usersTable.address,
       email: usersTable.email,
+      emailVerifiedAt: usersTable.emailVerifiedAt,
       signature: usersTable.signature,
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
@@ -329,4 +335,33 @@ export const getUserCurrencyFromDb = async (userId: number) => {
     .where(eq(usersTable.id, userId));
 
   return user?.currency as 'eur' | 'usd';
+};
+
+export const verifyUserEmailInDb = async (
+  userId: number
+): Promise<{ id: number; emailVerifiedAt: string | null } | undefined> => {
+  const [user] = await db
+    .update(usersTable)
+    .set({ emailVerifiedAt: new Date().toISOString() })
+    .where(eq(usersTable.id, userId))
+    .returning({
+      id: usersTable.id,
+      emailVerifiedAt: usersTable.emailVerifiedAt
+    });
+
+  return user;
+};
+
+export const getUserEmailVerificationStatusFromDb = async (userId: number) => {
+  const [user] = await db
+    .select({
+      id: usersTable.id,
+      email: usersTable.email,
+      emailVerifiedAt: usersTable.emailVerifiedAt,
+      language: usersTable.language
+    })
+    .from(usersTable)
+    .where(eq(usersTable.id, userId));
+
+  return user;
 };
