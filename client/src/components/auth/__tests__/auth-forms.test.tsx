@@ -68,7 +68,7 @@ describe('auth forms', () => {
     expect(screen.getByLabelText('Password')).toHaveValue('12345678');
     expect(screen.getByLabelText('Confirm Password')).toHaveValue('12345678');
 
-    fireEvent.submit(screen.getByTestId('sign-up-form').querySelector('form')!);
+    fireEvent.submit(screen.getByTestId('sign-up-email-form'));
 
     await waitFor(() => {
       expect(mockSignUpAction).toHaveBeenCalledTimes(2);

@@ -141,7 +141,11 @@ export default function SignUpForm({ headerContent }: Props) {
           <div className="border-default-200 h-px flex-1 border-t" />
         </div>
 
-        <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
+        <form
+          data-testid="sign-up-email-form"
+          onSubmit={handleFormSubmit}
+          className="flex flex-col gap-4"
+        >
           <TextField variant="secondary" isInvalid={!!errors.email}>
             <Label>{t('email')}</Label>
             <Input

@@ -1,18 +1,18 @@
+import Google, { type GoogleProfile } from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
-import Google from 'next-auth/providers/google';
-import { type GoogleProfile } from 'next-auth/providers/google';
 import type { User as InvoiceTrackrUser } from '@invoicetrackr/types';
 import NextAuth from 'next-auth';
 import type { User } from 'next-auth';
 import { z } from 'zod';
 
-import { loginUser, upsertGoogleOAuthUser } from './api/user';
 import { Currency } from './lib/types/currency';
 import { authConfig } from './auth.config';
 import { isResponseError } from './lib/utils/error';
+import { loginUser } from './api/user';
 
 const mapUserToSessionUser = (user: InvoiceTrackrUser): User => {
   if (!user.email) throw new Error('User email is required');
+  if (!user.id) throw new Error('User id is required');
 
   return {
     id: String(user.id),
@@ -44,19 +44,13 @@ export const { auth, signIn, signOut, unstable_update, handlers } = NextAuth({
   ...authConfig,
   providers: [
     Google({
-      async profile(profile: GoogleProfile) {
-        const response = await upsertGoogleOAuthUser({
-          email: profile.email,
+      profile(profile: GoogleProfile) {
+        return {
+          id: profile.sub,
           name: profile.name,
-          image: profile.picture,
-          emailVerified: profile.email_verified
-        });
-
-        if (isResponseError(response)) {
-          throw new Error(response.data.message);
-        }
-
-        return mapUserToSessionUser(response.data.user);
+          email: profile.email,
+          image: profile.picture
+        } as User;
       }
     }),
     Credentials({
