@@ -1,4 +1,4 @@
 #!/bin/bash
 
-(cd client && pnpm run start) &
-cd server && pnpm run start
+(cd client && node server.js) &
+cd server && node dist/app.js

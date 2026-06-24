@@ -14,3 +14,5 @@ overrides:
   '@types/react-dom': 19.2.3
 publicHoistPattern:
   - '*@heroui/*'
+verifyDepsBeforeRun: false
+forceLegacyDeploy: true

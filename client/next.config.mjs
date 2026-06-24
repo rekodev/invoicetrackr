@@ -20,6 +20,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const nextConfig = {
+  output: 'standalone',
+  outputFileTracingRoot: rootDirectory,
   transpilePackages: ['@invoicetrackr/types'],
   experimental: {
     authInterrupts: true

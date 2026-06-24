@@ -10,39 +10,35 @@ ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
 
 # Stage 1: Install dependencies
 FROM base AS deps
-COPY . .
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY client/package.json ./client/package.json
+COPY server/package.json ./server/package.json
+COPY shared/types/package.json ./shared/types/package.json
+COPY shared/emails/package.json ./shared/emails/package.json
 RUN pnpm install --frozen-lockfile
 
 # Stage 2: Build the types, emails, client and server
 FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/shared/types/node_modules ./shared/types/node_modules
-COPY --from=deps /app/shared/emails/node_modules ./shared/emails/node_modules
-COPY --from=deps /app/client/node_modules ./client/node_modules
-COPY --from=deps /app/server/node_modules ./server/node_modules
+COPY --from=deps /app ./
 COPY . .
 RUN cd shared/types && pnpm run build && cd ../.. && \
     cd shared/emails && pnpm run build && cd ../.. && \
     cd client && pnpm run build && cd .. && \
     cd server && pnpm run build
 
-# Stage 3: Production server
+# Stage 3: Prune the server workspace package for production
+FROM builder AS server-deploy
+RUN pnpm --filter @invoicetrackr/server --prod deploy --legacy /prod/server
+
+# Stage 4: Production server
 FROM base AS runner
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/shared/types/node_modules ./shared/types/node_modules
-COPY --from=deps /app/shared/types/package.json ./shared/types/package.json
-COPY --from=deps /app/shared/emails/node_modules ./shared/emails/node_modules
-COPY --from=deps /app/shared/emails/package.json ./shared/emails/package.json
-COPY --from=deps /app/client/node_modules ./client/node_modules
-COPY --from=deps /app/client/package.json ./client/package.json
-COPY --from=deps /app/server/node_modules ./server/node_modules
-COPY --from=deps /app/server/package.json ./server/package.json
 ENV NODE_ENV=production
-COPY --from=builder /app/shared/types/dist ./shared/types/dist
-COPY --from=builder /app/shared/emails/dist ./shared/emails/dist
+ENV HOSTNAME=0.0.0.0
+
+COPY --from=builder /app/client/.next/standalone ./
+COPY --from=builder /app/client/.next/static ./client/.next/static
 COPY --from=builder /app/client/public ./client/public
-COPY --from=builder /app/client/.next ./client/.next
-COPY --from=builder /app/server/dist ./server/dist
+COPY --from=server-deploy /prod/server ./server
 COPY ./prod.sh /app/prod.sh
 
 CMD ["bash", "./prod.sh"]
