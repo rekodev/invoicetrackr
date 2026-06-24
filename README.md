@@ -88,6 +88,13 @@ run:
 pnpm run server migrate
 ```
 
+Google OAuth uses Auth.js. Configure `AUTH_GOOGLE_ID` and
+`AUTH_GOOGLE_SECRET` in `.env.local` and in production. The Google Cloud OAuth
+client must allow these redirect URIs:
+
+- Local: `http://localhost:3000/api/auth/callback/google`
+- Production: `https://YOUR_DOMAIN/api/auth/callback/google`
+
 ### Type Safety
 - Zod schemas defined in `shared/types/` are the single source of truth
 - Server uses Zod for runtime validation

@@ -4,6 +4,8 @@ import {
   loginPasswordSchema,
   loginUserResponseSchema,
   messageResponseSchema,
+  oauthUserBodySchema,
+  oauthUserResponseSchema,
   passwordSchema,
   registerUserResponseSchema,
   updateUserResponseSchema,
@@ -20,6 +22,7 @@ import {
   getUser,
   getUserResetPasswordToken,
   loginUser,
+  postOAuthUser,
   postUser,
   resendUserVerificationEmail,
   resetUserPassword,
@@ -78,6 +81,17 @@ export const postUserOptions: RouteShorthandOptionsWithHandler = {
     }
   },
   handler: postUser
+};
+
+export const postOAuthUserOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    body: oauthUserBodySchema,
+    response: {
+      200: oauthUserResponseSchema,
+      201: oauthUserResponseSchema
+    }
+  },
+  handler: postOAuthUser
 };
 
 export const updateUserOptions: RouteShorthandOptionsWithHandler = {

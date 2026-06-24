@@ -3,6 +3,12 @@ import { getTranslations } from 'next-intl/server';
 
 import LoginForm from '@/components/auth/login-form';
 
+type Props = {
+  searchParams: Promise<{
+    error?: string;
+  }>;
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('login');
 
@@ -24,10 +30,14 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function LogInPage() {
+export default async function LogInPage({ searchParams }: Props) {
+  const { error } = await searchParams;
+  const t = await getTranslations('login.error');
+  const initialErrorMessage = error ? t('oauth') : undefined;
+
   return (
     <section className="flex flex-1 items-center justify-center">
-      <LoginForm />
+      <LoginForm initialErrorMessage={initialErrorMessage} />
     </section>
   );
 }

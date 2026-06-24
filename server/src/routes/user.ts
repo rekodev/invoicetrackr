@@ -11,6 +11,7 @@ import {
   getUserOptions,
   getUserResetPasswordTokenOptions,
   loginUserOptions,
+  postOAuthUserOptions,
   postUserOptions,
   resendUserVerificationEmailOptions,
   resetUserPasswordOptions,
@@ -31,6 +32,8 @@ const userRoutes = (
   fastify.post('/api/users/login', loginUserOptions);
 
   fastify.post('/api/users', postUserOptions);
+
+  fastify.post('/api/users/oauth/google', postOAuthUserOptions);
 
   fastify.put('/api/users/:userId', updateUserOptions);
 

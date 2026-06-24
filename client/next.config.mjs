@@ -41,7 +41,7 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
+        source: '/api/:path((?!auth(?:/|$)|webhook/stripe(?:/|$)).*)',
         destination: `http://localhost:${process.env.SERVER_PORT}/api/:path*`
       }
     ];

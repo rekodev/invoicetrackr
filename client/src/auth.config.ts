@@ -1,5 +1,13 @@
-import type { NextAuthConfig } from 'next-auth';
-import { StripeSubscriptionStatus } from '@invoicetrackr/types';
+import type { JWT } from 'next-auth/jwt';
+
+import type { User as AuthUser, NextAuthConfig } from 'next-auth';
+
+import {
+  type User as InvoiceTrackrUser,
+  StripeSubscriptionStatus
+} from '@invoicetrackr/types';
+
+import { type GoogleProfile } from 'next-auth/providers/google';
 
 import {
   CREATE_INVOICE_PAGE,
@@ -15,7 +23,77 @@ import {
   TERMS_OF_SERVICE_PAGE,
   VERIFY_EMAIL_PAGE
 } from './lib/constants/pages';
+
 import { Currency } from './lib/types/currency';
+
+const getServerBaseUrl = () => `http://localhost:${process.env.SERVER_PORT}`;
+
+type TokenUser = (InvoiceTrackrUser | AuthUser) & {
+  hasPaymentMethod?: boolean;
+};
+
+const setUserTokenFields = (token: JWT, user: TokenUser) => {
+  const isOnboarded = !!user.onboardingCompletedAt;
+
+  token.sub = String(user.id);
+  token.language = user.language;
+  token.emailVerifiedAt = user.emailVerifiedAt;
+  token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
+  token.currency = user.currency;
+  token.hasPaymentMethod = user.hasPaymentMethod;
+  token.isOnboarded = isOnboarded;
+  token.subscriptionStatus = user.subscriptionStatus;
+  token.onboardingCompletedAt = user.onboardingCompletedAt;
+  token.trialStartedAt = user.trialStartedAt;
+  token.trialEndsAt = user.trialEndsAt;
+  token.subscriptionGraceEndsAt = user.subscriptionGraceEndsAt;
+  token.subscriptionCurrentPeriodEndsAt = user.subscriptionCurrentPeriodEndsAt;
+  token.subscriptionCancelAt = user.subscriptionCancelAt;
+  token.selectedBankAccountId = user.selectedBankAccountId;
+  token.vatNumber = user.vatNumber;
+};
+
+const upsertGoogleOAuthUserForSession = async ({
+  profile,
+  user,
+  token
+}: {
+  profile?: GoogleProfile;
+  user?: AuthUser;
+  token: JWT;
+}) => {
+  const email = profile?.email || user?.email || token.email;
+
+  if (!email) {
+    throw new Error('Google user is missing an email');
+  }
+
+  const response = await fetch(`${getServerBaseUrl()}/api/users/oauth/google`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      email,
+      name: profile?.name || user?.name || undefined,
+      image: profile?.picture || user?.image || undefined,
+      provider: 'google',
+      emailVerified: profile?.email_verified ?? true
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error('Unable to resolve Google user');
+  }
+
+  const data = (await response.json()) as { user: InvoiceTrackrUser };
+
+  if (!data.user.id) {
+    throw new Error('Google user is missing an InvoiceTrackr id');
+  }
+
+  return data.user;
+};
 
 export const authConfig = {
   callbacks: {
@@ -115,31 +193,23 @@ export const authConfig = {
 
       return true;
     },
-    async jwt({ token, user, trigger, session }) {
-      if (user) {
-        const isOnboarded = !!user.onboardingCompletedAt;
+    async jwt({ token, user, account, profile, trigger, session }) {
+      if (account?.provider === 'google') {
+        const oauthUser = await upsertGoogleOAuthUserForSession({
+          profile: profile as GoogleProfile | undefined,
+          user,
+          token
+        });
 
-        token.language = user.language;
-        token.emailVerifiedAt = user.emailVerifiedAt;
-        token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
-        token.currency = user.currency;
-        token.hasPaymentMethod = user.hasPaymentMethod;
-        token.isOnboarded = isOnboarded;
-        token.subscriptionStatus = user.subscriptionStatus;
-        token.onboardingCompletedAt = user.onboardingCompletedAt;
-        token.trialStartedAt = user.trialStartedAt;
-        token.trialEndsAt = user.trialEndsAt;
-        token.subscriptionGraceEndsAt = user.subscriptionGraceEndsAt;
-        token.subscriptionCurrentPeriodEndsAt =
-          user.subscriptionCurrentPeriodEndsAt;
-        token.subscriptionCancelAt = user.subscriptionCancelAt;
-        token.selectedBankAccountId = user.selectedBankAccountId;
-        token.vatNumber = user.vatNumber;
+        setUserTokenFields(token, oauthUser);
+      } else if (user) {
+        setUserTokenFields(token, user);
       }
 
       if (trigger === 'update') {
         token = {
           ...token,
+          sub: session.user.id,
           isOnboarded: session.user.isOnboarded,
           emailVerifiedAt: session.user.emailVerifiedAt,
           language: session.user.language,
@@ -189,6 +259,10 @@ export const authConfig = {
 
       return session;
     }
+  },
+  pages: {
+    signIn: LOGIN_PAGE,
+    error: LOGIN_PAGE
   },
   session: {},
   providers: []

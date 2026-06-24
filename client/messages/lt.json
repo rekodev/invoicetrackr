@@ -413,12 +413,15 @@
             "password": "Slaptažodis",
             "password_placeholder": "Įveskite slaptažodį",
             "submit": "Prisijungti",
+            "google_submit": "Tęsti su Google",
+            "oauth_divider": "arba tęskite su el. paštu",
             "forgot_password": "Pamiršote slaptažodį?",
             "need_account": "Reikia sukurti paskyrą?",
             "sign_up_link": "Registruotis"
         },
         "error": {
             "invalid_credentials": "Neteisingas el. paštas arba slaptažodis.",
+            "oauth": "Prisijungimas su Google atšauktas arba nepavyko. Bandykite dar kartą.",
             "general": "Prisijungti nepavyko. Bandykite dar kartą."
         }
     },
@@ -433,6 +436,8 @@
             "confirm_password": "Patvirtinti slaptažodį",
             "confirm_password_placeholder": "Patvirtinkite slaptažodį",
             "submit": "Registruotis",
+            "google_submit": "Tęsti su Google",
+            "oauth_divider": "arba tęskite su el. paštu",
             "already_have_account": "Jau turite paskyrą?",
             "login_link": "Prisijungti"
         },

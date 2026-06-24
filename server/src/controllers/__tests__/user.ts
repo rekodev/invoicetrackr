@@ -269,6 +269,106 @@ describe('User Controller', () => {
     });
   });
 
+  describe('POST /api/oauth/google', () => {
+    it('should create a verified user from a verified Google profile', async () => {
+      vi.mocked(userDb.getUserByEmailFromDb).mockResolvedValue(undefined);
+      vi.mocked(bcrypt.hash).mockResolvedValue('generatedHash' as never);
+      vi.mocked(userDb.registerUser).mockResolvedValue({
+        id: testUserId,
+        email: mockUser.email
+      });
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
+
+      const { postOAuthUser } = userController;
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post('/api/oauth/google', postOAuthUser);
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/oauth/google',
+        payload: {
+          email: 'test@example.com',
+          name: 'Test User',
+          image: 'https://example.com/avatar.png',
+          provider: 'google',
+          emailVerified: true
+        }
+      });
+
+      expect(response.statusCode).toBe(201);
+      expect(userDb.registerUser).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'test@example.com',
+          name: 'Test User',
+          profilePictureUrl: 'https://example.com/avatar.png',
+          emailVerifiedAt: expect.any(String)
+        })
+      );
+      expect(userDb.getUserFromDb).toHaveBeenCalledWith(testUserId);
+
+      await app.close();
+    });
+
+    it('should link an existing password account by verified Google email', async () => {
+      vi.mocked(userDb.getUserByEmailFromDb).mockResolvedValue({
+        ...mockUserWithPassword,
+        emailVerifiedAt: null
+      });
+      vi.mocked(userDb.verifyUserEmailInDb).mockResolvedValue({
+        id: testUserId,
+        emailVerifiedAt: new Date().toISOString()
+      });
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
+
+      const { postOAuthUser } = userController;
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post('/api/oauth/google', postOAuthUser);
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/oauth/google',
+        payload: {
+          email: 'test@example.com',
+          provider: 'google',
+          emailVerified: true
+        }
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(userDb.verifyUserEmailInDb).toHaveBeenCalledWith(testUserId);
+      expect(userDb.registerUser).not.toHaveBeenCalled();
+
+      await app.close();
+    });
+
+    it('should reject unverified Google email profiles', async () => {
+      const { postOAuthUser } = userController;
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post('/api/oauth/google', postOAuthUser);
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/oauth/google',
+        payload: {
+          email: 'test@example.com',
+          provider: 'google',
+          emailVerified: false
+        }
+      });
+
+      expect(response.statusCode).toBe(401);
+      expect(userDb.registerUser).not.toHaveBeenCalled();
+
+      await app.close();
+    });
+  });
+
   describe('POST /api/email-verification/:token', () => {
     it('should verify user email with a valid token', async () => {
       const token = 'valid-token';

@@ -23,7 +23,6 @@ declare module 'next-auth' {
     vatNumber: string | null | undefined;
     selectedBankAccountId: number;
     address: string;
-    email: string;
     emailVerifiedAt?: string | null;
     stripeCustomerId?: string | null;
     stripeSubscriptionId?: string | null;
@@ -56,6 +55,5 @@ declare module 'next-auth' {
   // eslint-disable-next-line no-unused-vars
   interface Session {
     user: User & DefaultSession['user'];
-    accessToken: string;
   }
 }

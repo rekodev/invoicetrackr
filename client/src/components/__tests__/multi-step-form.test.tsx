@@ -22,6 +22,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('@/lib/actions', () => ({
+  signInWithGoogleAction: vi.fn(),
   signUpAction: (...args: Array<unknown>) => mockSignUpAction(...args),
   updateUserAction: (...args: Array<unknown>) =>
     mockPersonalInfoAction(...args),

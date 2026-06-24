@@ -4,6 +4,7 @@ import {
   GetUserResetPasswordTokenResponse,
   GetUserResponse,
   LoginUserResponse,
+  OAuthUserResponse,
   RegisterUserResponse,
   ResendVerificationEmailResponse,
   ResetPasswordResponse,
@@ -38,6 +39,25 @@ export const loginUser = async (email: string, password: string) =>
   await api.post<LoginUserResponse>('/api/users/login', {
     email,
     password
+  });
+
+export const upsertGoogleOAuthUser = async ({
+  email,
+  name,
+  image,
+  emailVerified
+}: {
+  email: string;
+  name?: string | null;
+  image?: string | null;
+  emailVerified: boolean;
+}) =>
+  await api.post<OAuthUserResponse>('/api/users/oauth/google', {
+    email,
+    name: name || undefined,
+    image: image || undefined,
+    provider: 'google',
+    emailVerified
   });
 
 export const updateUser = async (

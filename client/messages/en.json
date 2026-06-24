@@ -413,12 +413,15 @@
             "password": "Password",
             "password_placeholder": "Enter password",
             "submit": "Log in",
+            "google_submit": "Continue with Google",
+            "oauth_divider": "or continue with email",
             "forgot_password": "Forgot Password?",
             "need_account": "Need to create an account?",
             "sign_up_link": "Sign Up"
         },
         "error": {
             "invalid_credentials": "Invalid email or password",
+            "oauth": "Google sign-in was canceled or failed. Please try again.",
             "general": "Sign in failed. Please try again."
         }
     },
@@ -433,6 +436,8 @@
             "confirm_password": "Confirm Password",
             "confirm_password_placeholder": "Confirm your password",
             "submit": "Sign Up",
+            "google_submit": "Continue with Google",
+            "oauth_divider": "or continue with email",
             "already_have_account": "Already have an account?",
             "login_link": "Log In"
         },

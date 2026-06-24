@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { OAuthUserBody, UserBody } from '@invoicetrackr/types';
 import { ResetPasswordEmail, VerifyEmailEmail } from '@invoicetrackr/emails';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { MultipartFile } from '@fastify/multipart';
-import { UserBody } from '@invoicetrackr/types';
 import bcrypt from 'bcryptjs';
 import { useI18n } from 'fastify-i18n';
 
@@ -176,6 +176,62 @@ export const postUser = async (
   return reply
     .status(201)
     .send({ email, message: i18n.t('success.user.created') });
+};
+
+export const postOAuthUser = async (
+  req: FastifyRequest<{ Body: OAuthUserBody }>,
+  reply: FastifyReply
+) => {
+  const { email, name, image, provider, emailVerified } = req.body;
+  const i18n = await useI18n(req);
+  const languageHeader = req.headers['accept-language'];
+  const requestedLanguage = Array.isArray(languageHeader)
+    ? languageHeader.at(0)
+    : languageHeader;
+  const language = requestedLanguage?.startsWith('lt') ? 'lt' : 'en';
+
+  if (provider !== 'google' || !emailVerified) {
+    throw new UnauthorizedError(i18n.t('error.user.oauthEmailNotVerified'));
+  }
+
+  const existingUser = await getUserByEmailFromDb(email);
+
+  if (existingUser) {
+    if (!existingUser.emailVerifiedAt) {
+      await verifyUserEmailInDb(existingUser.id);
+    }
+
+    const user = await getUserFromDb(existingUser.id);
+
+    if (!user) throw new BadRequestError(i18n.t('error.user.notFound'));
+
+    return reply.status(200).send({
+      user,
+      message: i18n.t('success.user.oauthLinked')
+    });
+  }
+
+  const generatedPassword = await bcrypt.hash(crypto.randomUUID(), 10);
+  const createdUser = await registerUser({
+    email,
+    password: generatedPassword,
+    language,
+    name: name || '',
+    profilePictureUrl: image || '',
+    emailVerifiedAt: new Date().toISOString()
+  });
+
+  if (!createdUser)
+    throw new BadRequestError(i18n.t('error.user.unableToCreate'));
+
+  const user = await getUserFromDb(createdUser.id);
+
+  if (!user) throw new BadRequestError(i18n.t('error.user.notFound'));
+
+  return reply.status(201).send({
+    user,
+    message: i18n.t('success.user.oauthLinked')
+  });
 };
 
 export const updateUser = async (
