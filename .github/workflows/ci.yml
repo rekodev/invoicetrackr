@@ -12,6 +12,7 @@ jobs:
 
     steps:
       - name: Clone Repository
+        # TODO: Upgrade to actions/checkout@v5 once the Node 24-backed release is available.
         uses: actions/checkout@v4
 
       - name: Install Dependencies
@@ -32,3 +33,6 @@ jobs:
 
       - name: Push Docker Image to Production
         run: docker image save invoicetrackr:${{ github.sha }} | ssh dokku@${{ secrets.PROD_IP_ADDRESS }} -i ~/.ssh/key git:load-image invoice-app invoicetrackr:${{ github.sha }}
+
+      - name: Prune Unused Docker Images on Production
+        run: ssh dokku@${{ secrets.PROD_IP_ADDRESS }} -i ~/.ssh/key docker image prune -f
