@@ -11,11 +11,12 @@ CREATE TABLE "invoice_number_sequences" (
 ALTER TABLE "invoice_number_sequences" ADD CONSTRAINT "fk_invoice_number_sequences_user_id" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 INSERT INTO "invoice_number_sequences" ("user_id", "series", "next_number")
 SELECT
-	"user_id",
+	"invoices"."user_id",
 	UPPER(SUBSTRING("invoice_id" FROM '^([A-Za-z]{2,8})[0-9]{1,9}$')) AS "series",
 	MAX((SUBSTRING("invoice_id" FROM '^[A-Za-z]{2,8}([0-9]{1,9})$'))::integer) + 1 AS "next_number"
 FROM "invoices"
+INNER JOIN "users" ON "users"."id" = "invoices"."user_id"
 WHERE "invoice_id" ~ '^[A-Za-z]{2,8}[0-9]{1,9}$'
-GROUP BY "user_id", "series";
+GROUP BY "invoices"."user_id", "series";
 --> statement-breakpoint
 ALTER TABLE "invoices" ADD CONSTRAINT "invoices_user_invoice_id_key" UNIQUE("user_id","invoice_id");
