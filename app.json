@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dokku": {
+      "predeploy": "cd server && node node_modules/drizzle-kit/bin.cjs migrate --config=drizzle.config.ts"
+    }
+  }
+}

@@ -39,6 +39,7 @@ COPY --from=builder /app/client/.next/standalone ./
 COPY --from=builder /app/client/.next/static ./client/.next/static
 COPY --from=builder /app/client/public ./client/public
 COPY --from=server-deploy /prod/server ./server
+COPY ./app.json /app/app.json
 COPY ./prod.sh /app/prod.sh
 
 CMD ["bash", "./prod.sh"]
