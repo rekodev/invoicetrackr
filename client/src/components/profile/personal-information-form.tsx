@@ -352,16 +352,14 @@ const PersonalInformationForm = ({
       <Card className="w-full border bg-transparent">
         {isOnboardingCard ? (
           <AuthCardHeader
+            data-testid="personal-information-form-heading"
             title={cardHeaderTitle!}
             description={cardHeaderDescription!}
           >
             {headerContent}
           </AuthCardHeader>
         ) : (
-          <Card.Header
-            data-testid="personal-information-form-heading"
-            className="flex-col items-start gap-4 px-6 py-4"
-          >
+          <Card.Header className="flex-col items-start gap-4 px-6 py-4">
             <Card.Title className="text-2xl">{t('title')}</Card.Title>
             {headerContent}
           </Card.Header>
