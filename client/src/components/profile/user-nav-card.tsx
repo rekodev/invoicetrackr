@@ -64,16 +64,16 @@ export default function UserNavCard({ user }: Props) {
   const renderUserDetails = () => {
     return (
       <div className="flex flex-col items-center justify-center">
-        <div className="relative">
-          <Avatar
+        <div className="group relative mb-2">
+          <button
+            type="button"
+            aria-label={t('a11y.upload_profile_picture')}
             onClick={initiateImageUpload}
-            className="absolute left-0 top-0 z-10 h-14 w-14 cursor-pointer opacity-0 hover:opacity-100"
+            className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center rounded-full bg-black/55 text-white opacity-0 transition group-hover:opacity-100"
           >
-            <Avatar.Fallback>
-              <CameraIcon className="h-5 w-5" />
-            </Avatar.Fallback>
-          </Avatar>
-          <Avatar size="lg" className="mb-2">
+            <CameraIcon className="h-5 w-5" />
+          </button>
+          <Avatar size="lg">
             <Avatar.Image
               src={
                 uploadedImage
@@ -113,7 +113,7 @@ export default function UserNavCard({ user }: Props) {
 
   return (
     <aside>
-      <Card className="flex max-h-min min-w-64 flex-col justify-between border bg-transparent py-3 sm:max-w-56">
+      <Card className="flex max-h-min min-w-64 flex-col justify-between border bg-transparent py-5 sm:max-w-56">
         <CardHeader className="flex-col">{renderUserDetails()}</CardHeader>
         <CardContent className="flex justify-center p-0 px-2">
           <Tabs

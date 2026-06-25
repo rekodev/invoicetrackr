@@ -755,7 +755,8 @@
     "profile": {
         "user_nav_card": {
             "a11y": {
-                "actions_label": "Veiksmai"
+                "actions_label": "Veiksmai",
+                "upload_profile_picture": "Įkelti profilio nuotrauką"
             },
             "personal_information": {
                 "title": "Asmeninė informacija"
@@ -1283,6 +1284,7 @@
             "modals": {
                 "select_client": "Pasirinkti klientą",
                 "select_bank_account": "Pasirinkti banko sąskaitą",
+                "add_bank_account": "Pridėti banko sąskaitą",
                 "no_clients": "Neturite klientų. Sukurkite vieną, kad pradėtumėte.",
                 "no_bank_accounts": "Neturite banko sąskaitų. Sukurkite vieną, kad pradėtumėte."
             },

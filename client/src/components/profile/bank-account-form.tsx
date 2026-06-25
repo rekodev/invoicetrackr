@@ -3,16 +3,15 @@
 import {
   Button,
   Card,
-  CardContent,
-  CardFooter,
   FieldError,
   Input,
   Label,
   Separator,
   TextField,
+  cn,
   toast
 } from '@heroui/react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { BankAccountBody } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -20,12 +19,21 @@ import { useTranslations } from 'next-intl';
 import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 import { addBankingInformationAction } from '@/lib/actions/banking-information';
 
+const INITIAL_BANK_ACCOUNT_DATA: BankAccountBody = {
+  name: '',
+  code: '',
+  accountNumber: ''
+};
+
 type Props = {
   userId: number | undefined;
   userSelectedBankAccountId?: number | null;
   defaultValues?: BankAccountBody;
-  onSuccess?: () => void;
+  onCancel?: () => void;
+  onSuccess?: (_bankAccount?: BankAccountBody) => void;
   isUserOnboarding?: boolean;
+  shouldSelectOnCreate?: boolean;
+  variant?: 'card' | 'inline';
 };
 
 export default function BankAccountForm({
@@ -33,17 +41,23 @@ export default function BankAccountForm({
   userId,
   defaultValues,
   userSelectedBankAccountId,
-  isUserOnboarding
+  isUserOnboarding,
+  onCancel,
+  shouldSelectOnCreate,
+  variant = 'card'
 }: Props) {
   const t = useTranslations('profile.banking_information.form');
   const router = useRouter();
   const {
-    register,
+    control,
     handleSubmit,
     setError,
     formState: { isSubmitting, isDirty, errors }
   } = useForm<BankAccountBody>({
-    defaultValues
+    defaultValues: {
+      ...INITIAL_BANK_ACCOUNT_DATA,
+      ...defaultValues
+    }
   });
 
   const onSubmit: SubmitHandler<BankAccountBody> = async (data) => {
@@ -52,7 +66,9 @@ export default function BankAccountForm({
     const response = await addBankingInformationAction(
       userId,
       data,
-      !!userSelectedBankAccountId,
+      shouldSelectOnCreate === undefined
+        ? !!userSelectedBankAccountId
+        : !shouldSelectOnCreate,
       isUserOnboarding
     );
 
@@ -72,65 +88,124 @@ export default function BankAccountForm({
       return;
     }
 
+    const bankAccount = (
+      response.data as { bankAccount?: BankAccountBody } | undefined
+    )?.bankAccount;
+
     if (onSuccess) {
-      onSuccess();
+      onSuccess(bankAccount);
     } else {
       router.push(BANKING_INFORMATION_PAGE);
     }
   };
 
-  return (
-    <Card className="w-full border bg-transparent">
-      <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+      return;
+    }
+
+    router.push(BANKING_INFORMATION_PAGE);
+  };
+
+  const renderTextField = ({
+    name,
+    label,
+    placeholder
+  }: {
+    name: keyof BankAccountBody;
+    label: string;
+    placeholder: string;
+  }) => {
+    const error = errors[name];
+
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <TextField variant="secondary" isInvalid={Boolean(error)}>
+            <Label>{label}</Label>
+            <Input
+              name={field.name}
+              value={String(field.value ?? '')}
+              placeholder={placeholder}
+              onBlur={field.onBlur}
+              onChange={field.onChange}
+            />
+            {error?.message ? <FieldError>{error.message}</FieldError> : null}
+          </TextField>
+        )}
+      />
+    );
+  };
+
+  const formContent = (
+    <>
+      {variant === 'card' && (
         <Card.Header className="px-6 py-4">
           <Card.Title className="text-3xl">{t('title.create')}</Card.Title>
         </Card.Header>
-        <Separator />
-        <CardContent className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2">
-          <TextField variant="secondary" isInvalid={!!errors.name}>
-            <Label>{t('bank_name')}</Label>
-            <Input
-              {...register('name')}
-              placeholder={t('bank_name_placeholder')}
-            />
-            <FieldError>{errors.name?.message}</FieldError>
-          </TextField>
-          <TextField variant="secondary" isInvalid={!!errors.code}>
-            <Label>{t('bank_code')}</Label>
-            <Input
-              {...register('code')}
-              placeholder={t('bank_code_placeholder')}
-            />
-            <FieldError>{errors.code?.message}</FieldError>
-          </TextField>
-          <TextField variant="secondary" isInvalid={!!errors.accountNumber}>
-            <Label>{t('bank_account_number')}</Label>
-            <Input
-              {...register('accountNumber')}
-              placeholder={t('bank_account_number_placeholder')}
-            />
-            <FieldError>{errors.accountNumber?.message}</FieldError>
-          </TextField>
-        </CardContent>
-        <CardFooter className="justify-end gap-2 px-6 py-4">
-          <div className="flex gap-2">
-            {!isUserOnboarding && (
-              <Button
-                variant="danger-soft"
-                onPress={() => router.push(BANKING_INFORMATION_PAGE)}
-              >
-                {t('actions.cancel')}
-              </Button>
-            )}
-            <Button
-              type="submit"
-              isDisabled={!isDirty}
-              isPending={isSubmitting}
-            >
-              {t('actions.save')}
+      )}
+      {variant === 'card' && <Separator />}
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-4',
+          variant === 'card' ? 'p-6 sm:grid-cols-2' : 'p-0'
+        )}
+      >
+        {renderTextField({
+          name: 'name',
+          label: t('bank_name'),
+          placeholder: t('bank_name_placeholder')
+        })}
+        {renderTextField({
+          name: 'code',
+          label: t('bank_code'),
+          placeholder: t('bank_code_placeholder')
+        })}
+        {renderTextField({
+          name: 'accountNumber',
+          label: t('bank_account_number'),
+          placeholder: t('bank_account_number_placeholder')
+        })}
+      </div>
+      <div
+        className={cn(
+          'flex justify-end gap-2',
+          variant === 'card' ? 'px-6 py-4' : 'px-0 pb-0 pt-4'
+        )}
+      >
+        <div className="flex gap-2">
+          {!isUserOnboarding && (
+            <Button variant="danger-soft" onPress={handleCancel}>
+              {t('actions.cancel')}
             </Button>
-          </div>
-        </CardFooter>
+          )}
+          <Button type="submit" isDisabled={!isDirty} isPending={isSubmitting}>
+            {t('actions.save')}
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+
+  if (variant === 'inline') {
+    return (
+      <form
+        aria-label={t('a11y.form_label')}
+        className="w-full"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        {formContent}
+      </form>
+    );
+  }
+
+  return (
+    <Card className="w-full border bg-transparent">
+      <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
+        {formContent}
       </form>
     </Card>
   );

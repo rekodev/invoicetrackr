@@ -35,7 +35,11 @@ export async function addBankingInformationAction(
   }
 
   revalidatePath(isUserOnboarding ? ONBOARDING_PAGE : BANKING_INFORMATION_PAGE);
-  return { ok: true, message: response.data.message };
+  return {
+    ok: true,
+    message: response.data.message,
+    data: { bankAccount: response.data.bankAccount }
+  };
 }
 
 export async function updateBankingInformationAction(

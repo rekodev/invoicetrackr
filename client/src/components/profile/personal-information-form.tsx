@@ -11,14 +11,16 @@ import {
   Select,
   Separator,
   TextField,
+  cn,
   toast
 } from '@heroui/react';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -29,23 +31,34 @@ import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { User } from '@invoicetrackr/types';
 import { capitalize } from '@/lib/utils';
 
+import AuthCardHeader from '../auth/auth-card-header';
 import SignaturePad from '../signature-pad';
 
 type Props = {
+  cardHeaderDescription?: string;
+  cardHeaderTitle?: string;
   defaultValues?: Partial<User> | undefined;
+  headerContent?: ReactNode;
+  hideEmailVerificationBanner?: boolean;
   onSuccess?: () => void | Promise<void>;
 };
 
-const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
+const PersonalInformationForm = ({
+  cardHeaderDescription,
+  cardHeaderTitle,
+  defaultValues,
+  headerContent,
+  hideEmailVerificationBanner = false,
+  onSuccess
+}: Props) => {
   const t = useTranslations('profile.personal_information.form');
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { isDirty, isSubmitting, errors },
     reset,
     setError,
-    setValue,
     watch
   } = useForm<User>({
     defaultValues
@@ -56,6 +69,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
   >();
   const [isResendingVerificationEmail, setIsResendingVerificationEmail] =
     useState(false);
+  const isOnboardingCard = Boolean(cardHeaderTitle && cardHeaderDescription);
 
   const emailVerifiedAt = defaultValues?.emailVerifiedAt;
   const isEmailVerified = Boolean(emailVerifiedAt);
@@ -118,31 +132,43 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
     name,
     label,
     placeholder,
-    isDisabled = false
+    isDisabled = false,
+    isReadOnly = false
   }: {
     name: keyof User;
     label: string;
     placeholder: string;
     isDisabled?: boolean;
+    isReadOnly?: boolean;
   }) => {
     const error = errors[name];
 
     return (
-      <TextField
-        isDisabled={isDisabled}
-        isInvalid={Boolean(error)}
-        className="w-full"
-      >
-        <Label>{label}</Label>
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <TextField
+            variant="secondary"
+            isDisabled={isDisabled}
+            isInvalid={Boolean(error)}
+            className="w-full"
+          >
+            <Label>{label}</Label>
 
-        <Input
-          {...register(name)}
-          placeholder={placeholder}
-          className="input input--secondary"
-        />
+            <Input
+              name={field.name}
+              value={String(field.value ?? '')}
+              readOnly={isReadOnly}
+              placeholder={placeholder}
+              onBlur={field.onBlur}
+              onChange={field.onChange}
+            />
 
-        {error?.message ? <FieldError>{error.message}</FieldError> : null}
-      </TextField>
+            {error?.message ? <FieldError>{error.message}</FieldError> : null}
+          </TextField>
+        )}
+      />
     );
   };
 
@@ -192,8 +218,13 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
   const renderCardBodyAndFooter = () => {
     return (
       <>
-        <Card.Content className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
-          {renderEmailVerificationBanner()}
+        <Card.Content
+          className={cn(
+            'grid grid-cols-1 gap-4 p-6',
+            !isOnboardingCard && 'md:grid-cols-2'
+          )}
+        >
+          {!hideEmailVerificationBanner && renderEmailVerificationBanner()}
           {renderTextField({
             name: 'email',
             label: t('email'),
@@ -207,45 +238,46 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
             placeholder: t('name_placeholder')
           })}
 
-          <Select
-            className="w-full"
-            placeholder={t('business_type_placeholder')}
-            variant="secondary"
-            isInvalid={Boolean(errors.businessType)}
-            defaultValue={defaultValues?.businessType}
-            onChange={(value) => {
-              setValue('businessType', value as User['businessType'], {
-                shouldDirty: true,
-                shouldValidate: true
-              });
-            }}
-          >
-            <Label>{t('business_type')}</Label>
+          <Controller
+            control={control}
+            name="businessType"
+            render={({ field }) => (
+              <Select
+                className="w-full"
+                placeholder={t('business_type_placeholder')}
+                variant="secondary"
+                isInvalid={Boolean(errors.businessType)}
+                value={field.value}
+                onChange={field.onChange}
+              >
+                <Label>{t('business_type')}</Label>
 
-            <Select.Trigger>
-              <Select.Value />
-              <Select.Indicator />
-            </Select.Trigger>
+                <Select.Trigger>
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
 
-            <Select.Popover>
-              <ListBox>
-                {CLIENT_BUSINESS_TYPES.map((type) => {
-                  const label = capitalize(type);
+                <Select.Popover>
+                  <ListBox>
+                    {CLIENT_BUSINESS_TYPES.map((type) => {
+                      const label = capitalize(type);
 
-                  return (
-                    <ListBox.Item key={type} id={type} textValue={label}>
-                      {label}
-                      <ListBox.ItemIndicator />
-                    </ListBox.Item>
-                  );
-                })}
-              </ListBox>
-            </Select.Popover>
+                      return (
+                        <ListBox.Item key={type} id={type} textValue={label}>
+                          {label}
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      );
+                    })}
+                  </ListBox>
+                </Select.Popover>
 
-            {errors.businessType?.message ? (
-              <FieldError>{errors.businessType.message}</FieldError>
-            ) : null}
-          </Select>
+                {errors.businessType?.message ? (
+                  <FieldError>{errors.businessType.message}</FieldError>
+                ) : null}
+              </Select>
+            )}
+          />
 
           {renderTextField({
             name: 'businessNumber',
@@ -254,19 +286,31 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
           })}
 
           {businessType === 'business' && (
-            <TextField isInvalid={Boolean(errors.vatNumber)} className="w-full">
-              <Label>VAT Number</Label>
+            <Controller
+              control={control}
+              name="vatNumber"
+              render={({ field }) => (
+                <TextField
+                  variant="secondary"
+                  isInvalid={Boolean(errors.vatNumber)}
+                  className="w-full"
+                >
+                  <Label>VAT Number</Label>
 
-              <Input
-                {...register('vatNumber')}
-                placeholder="Enter VAT number"
-                className="input input--secondary"
-              />
+                  <Input
+                    name={field.name}
+                    value={String(field.value ?? '')}
+                    placeholder="Enter VAT number"
+                    onBlur={field.onBlur}
+                    onChange={field.onChange}
+                  />
 
-              {errors.vatNumber?.message ? (
-                <FieldError>{errors.vatNumber.message}</FieldError>
-              ) : null}
-            </TextField>
+                  {errors.vatNumber?.message ? (
+                    <FieldError>{errors.vatNumber.message}</FieldError>
+                  ) : null}
+                </TextField>
+              )}
+            />
           )}
 
           {renderTextField({
@@ -289,7 +333,7 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
           <Button
             isDisabled={isSubmitting || (!isDirty && !Boolean(formSignature))}
             type="submit"
-            className="self-end"
+            className={cn(isOnboardingCard ? 'w-full' : 'self-end')}
           >
             {t('save_changes')}
           </Button>
@@ -306,12 +350,20 @@ const PersonalInformationForm = ({ defaultValues, onSuccess }: Props) => {
       className="w-full"
     >
       <Card className="w-full border bg-transparent">
-        <Card.Header
-          data-testid="personal-information-form-heading"
-          className="px-6 py-4"
-        >
-          <Card.Title className="text-2xl">{t('title')}</Card.Title>
-        </Card.Header>
+        {isOnboardingCard ? (
+          <AuthCardHeader
+            data-testid="personal-information-form-heading"
+            title={cardHeaderTitle!}
+            description={cardHeaderDescription!}
+          >
+            {headerContent}
+          </AuthCardHeader>
+        ) : (
+          <Card.Header className="flex-col items-start gap-4 px-6 py-4">
+            <Card.Title className="text-2xl">{t('title')}</Card.Title>
+            {headerContent}
+          </Card.Header>
+        )}
         <Separator />
         {renderCardBodyAndFooter()}
       </Card>

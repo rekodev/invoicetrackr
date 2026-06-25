@@ -716,6 +716,7 @@ const InvoiceForm = ({
         onReceiverSelect={handleSelectReceiver}
       />
       <BankingInformationDialog
+        userId={user.id || 0}
         isOpen={isBankingInformationModalOpen}
         onClose={() => setIsBankingInformationModalOpen(false)}
         bankingInformationEntries={bankingInformationEntries}

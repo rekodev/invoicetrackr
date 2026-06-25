@@ -39,6 +39,9 @@ const navbarItems = [
   { name: 'Clients', href: CLIENTS_PAGE }
 ];
 
+const matchesPath = (pathname: string | null, path: string) =>
+  pathname === path || !!pathname?.startsWith(`${path}/`);
+
 type Props = {
   user: User;
 };
@@ -67,14 +70,14 @@ export default function UserHeader({ user }: Props) {
       <DropdownPopover>
         <DropdownMenu>
           {navbarItems.map((item, index) => {
-            const isActive = pathname?.includes(item.href);
+            const isActive = matchesPath(pathname, item.href);
 
             return (
               <DropdownItem
                 key={`mobile-${index}`}
                 href={item.href}
                 className={cn('text-muted w-full', {
-                  'text-primary': isActive
+                  'text-accent': isActive
                 })}
               >
                 {item.name}
@@ -95,14 +98,14 @@ export default function UserHeader({ user }: Props) {
 
         <div className="hidden gap-4 md:flex">
           {navbarItems.map((item, index) => {
-            const isActive = pathname?.includes(item.href);
+            const isActive = matchesPath(pathname, item.href);
 
             return (
               <div key={index} aria-current={isActive ? 'page' : undefined}>
                 <Link
                   href={item.href}
                   className={cn('text-foreground', {
-                    'text-primary': isActive
+                    'text-accent': isActive
                   })}
                 >
                   {t(item.name.toLowerCase())}

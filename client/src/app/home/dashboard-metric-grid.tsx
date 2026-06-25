@@ -36,7 +36,7 @@ export default function DashboardMetricGrid() {
     <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       {cards.map(({ key, icon: Icon, iconClassName }) => (
         <Card key={key} className="border bg-transparent shadow-none">
-          <Card.Content className="flex h-full flex-col justify-between p-3">
+          <Card.Content className="flex h-full flex-col justify-between p-0 sm:p-3">
             <div className="text-muted flex items-center gap-2 text-xs font-medium">
               <span
                 className={cn(

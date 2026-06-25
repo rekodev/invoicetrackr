@@ -59,10 +59,9 @@ const ClientFormDialog = ({
   const isEditMode = mode === 'edit';
 
   const {
-    register,
     control,
     handleSubmit,
-    formState: { isDirty, isLoading, errors },
+    formState: { isDirty, isSubmitting, errors },
     setError,
     reset
   } = useForm<ClientFormData>({
@@ -109,6 +108,38 @@ const ClientFormDialog = ({
     onClose();
   };
 
+  const renderTextField = ({
+    name,
+    label,
+    type = 'text'
+  }: {
+    name: keyof ClientFormData;
+    label: string;
+    type?: string;
+  }) => {
+    const error = errors[name];
+
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <TextField variant="secondary" isInvalid={Boolean(error)}>
+            <Label>{label}</Label>
+            <Input
+              name={field.name}
+              value={String(field.value ?? '')}
+              type={type}
+              onBlur={field.onBlur}
+              onChange={field.onChange}
+            />
+            {error?.message ? <FieldError>{error.message}</FieldError> : null}
+          </TextField>
+        )}
+      />
+    );
+  };
+
   if (isEditMode && !clientData) return null;
 
   return (
@@ -127,11 +158,7 @@ const ClientFormDialog = ({
                 </Modal.Heading>
               </Modal.Header>
               <Modal.Body className="flex flex-col gap-2">
-                <TextField variant="secondary" isInvalid={!!errors.name}>
-                  <Label>{t('fields.name')}</Label>
-                  <Input {...register('name')} type="text" />
-                  <FieldError>{errors.name?.message}</FieldError>
-                </TextField>
+                {renderTextField({ name: 'name', label: t('fields.name') })}
                 <Controller
                   control={control}
                   name="businessType"
@@ -165,29 +192,23 @@ const ClientFormDialog = ({
                     </Select>
                   )}
                 />
-                <TextField
-                  variant="secondary"
-                  isInvalid={!!errors.businessNumber}
-                >
-                  <Label>{t('fields.business_number')}</Label>
-                  <Input {...register('businessNumber')} type="text" />
-                  <FieldError>{errors.businessNumber?.message}</FieldError>
-                </TextField>
-                <TextField variant="secondary" isInvalid={!!errors.vatNumber}>
-                  <Label>{t('fields.vat_number')}</Label>
-                  <Input {...register('vatNumber')} type="text" />
-                  <FieldError>{errors.vatNumber?.message}</FieldError>
-                </TextField>
-                <TextField variant="secondary" isInvalid={!!errors.address}>
-                  <Label>{t('fields.address')}</Label>
-                  <Input {...register('address')} type="text" />
-                  <FieldError>{errors.address?.message}</FieldError>
-                </TextField>
-                <TextField variant="secondary" isInvalid={!!errors.email}>
-                  <Label>{t('fields.email')}</Label>
-                  <Input {...register('email')} type="email" />
-                  <FieldError>{errors.email?.message}</FieldError>
-                </TextField>
+                {renderTextField({
+                  name: 'businessNumber',
+                  label: t('fields.business_number')
+                })}
+                {renderTextField({
+                  name: 'vatNumber',
+                  label: t('fields.vat_number')
+                })}
+                {renderTextField({
+                  name: 'address',
+                  label: t('fields.address')
+                })}
+                {renderTextField({
+                  name: 'email',
+                  label: t('fields.email'),
+                  type: 'email'
+                })}
               </Modal.Body>
               <Modal.Footer>
                 <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
@@ -197,7 +218,7 @@ const ClientFormDialog = ({
                     </Button>
                     <Button
                       data-testid="client-form-dialog-submit-button"
-                      isDisabled={isLoading || !isDirty}
+                      isDisabled={isSubmitting || !isDirty}
                       type="submit"
                     >
                       {isEditMode ? t('submit_edit') : t('submit_add')}

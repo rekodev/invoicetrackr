@@ -39,6 +39,7 @@ const FULL_FOOTER_PATHNAMES = [
   TERMS_OF_SERVICE_PAGE,
   CREATE_INVOICE_PAGE,
   LOGIN_PAGE,
+  ONBOARDING_PAGE,
   SIGN_UP_PAGE,
   FORGOT_PASSWORD_PAGE,
   CREATE_NEW_PASSWORD_PAGE
@@ -55,7 +56,6 @@ const HIDDEN_FOOTER_PATH_PREFIXES = [
   ACCOUNT_SETTINGS_PAGE,
   BILLING_PAGE,
   INVOICE_PAYMENTS_PAGE,
-  ONBOARDING_PAGE,
   PAYMENT_SUCCESS_PAGE,
   RENEW_SUBSCRIPTION_PAGE,
   VERIFY_EMAIL_PAGE
@@ -85,7 +85,6 @@ const Footer = () => {
               <AppBrand
                 className="mx-auto sm:mx-0"
                 wordmarkClassName="text-inherit"
-                wordmarkAccentClassName="text-secondary-600 dark:text-secondary-600"
               />
               <p className="text-muted-foreground text-sm">{t('tagline')}</p>
             </div>

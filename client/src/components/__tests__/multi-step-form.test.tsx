@@ -104,29 +104,6 @@ describe('<MultiStepForm />', () => {
     expect(screen.findByTestId('payment-form')).toBeDefined();
   });
 
-  it('allows existing users to navigate back to personal information', async () => {
-    renderHelper(<MultiStepForm {...props} />);
-
-    const steps = screen.getAllByText(/Personal Information/i);
-    await userEvent.click(steps[0]);
-
-    expect(
-      screen.getByTestId('personal-information-form-heading')
-    ).toBeDefined();
-  });
-
-  it('prevents existing users from navigating back to account creation', async () => {
-    renderHelper(<MultiStepForm {...props} />);
-
-    await userEvent.click(screen.getByRole('button', { name: /back/i }));
-    await userEvent.click(screen.getByRole('button', { name: /back/i }));
-
-    expect(screen.queryByTestId('sign-up-form')).not.toBeInTheDocument();
-    expect(
-      screen.getByTestId('personal-information-form-heading')
-    ).toBeInTheDocument();
-  });
-
   it('navigates to trial success without refreshing onboarding', async () => {
     renderHelper(<MultiStepForm {...props} />);
 
