@@ -154,7 +154,7 @@ export default function SubscriptionStatusCard({
             size="md"
             variant={isActive ? 'primary' : 'secondary'}
           >
-            {!isLoading && <ArrowRightIcon className="h-4 w-4" />}
+            <ArrowRightIcon className="h-4 w-4" />
             {isTrialing
               ? hasPaymentMethod
                 ? t('action.manage')

@@ -36,6 +36,7 @@ const InvoiceFormPartyModal = ({
     return clients?.map((client) => (
       <ClientCard
         key={client.id}
+        fullDetails
         onClick={() => onReceiverSelect(client)}
         client={client}
       />
@@ -49,7 +50,7 @@ const InvoiceFormPartyModal = ({
           isOpen={isOpen}
           onOpenChange={(open) => !open && onClose()}
         >
-          <Modal.Container>
+          <Modal.Container size="lg">
             <Modal.Dialog>
               <Modal.CloseTrigger />
               <Modal.Header>

@@ -110,22 +110,14 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
               </div>
 
               <div className="mt-7 flex flex-wrap items-center gap-3">
-                <Link
-                  href={ADD_NEW_INVOICE_PAGE}
-                  className={buttonVariants({
-                    size: 'lg',
-                    className: 'rounded-xl font-medium'
-                  })}
-                >
+                <Link href={ADD_NEW_INVOICE_PAGE} className={buttonVariants()}>
                   {t('actions.create_invoice')}
                   <ArrowRightIcon className="h-4 w-4" strokeWidth={2.4} />
                 </Link>
                 <Link
                   href={DASHBOARD_PAGE}
                   className={buttonVariants({
-                    variant: 'outline',
-                    size: 'lg',
-                    className: 'rounded-xl font-medium'
+                    variant: 'outline'
                   })}
                 >
                   <Squares2X2Icon className="h-4 w-4" strokeWidth={2.2} />

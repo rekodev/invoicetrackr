@@ -156,9 +156,11 @@ const SignaturePad = ({
       <div className="flex flex-col gap-1.5">
         <Card
           className={cn(
-            'shadow-small aspect-4/3 relative flex max-w-64 items-center justify-center overflow-hidden border p-0',
+            'shadow-small aspect-4/3 relative flex max-w-64 items-center justify-center overflow-hidden border p-0 transition',
             {
               'bg-[#F3126040]': isInvalid,
+              'hover:border-secondary hover:bg-secondary/5 cursor-pointer':
+                !isReadOnly,
               'hover:border-none': !!signatureImgUrl && !isReadOnly
             }
           )}
@@ -221,7 +223,7 @@ const SignaturePad = ({
               <Modal.Body className="items-center">
                 <div
                   ref={canvasContainerRef}
-                  className="border-default-200 w-full max-w-[508px] overflow-hidden rounded-lg border bg-white"
+                  className="border-default-300 w-full max-w-[508px] overflow-hidden rounded-lg border-2 border-dashed bg-white"
                 >
                   <SignatureCanvas
                     ref={signatureRef}
