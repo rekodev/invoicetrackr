@@ -23,11 +23,41 @@ import { stripe } from '../config/stripe';
 import { syncSubscriptionInDb } from './payment';
 
 const GRACE_PERIOD_DAYS = 3;
+const DEFAULT_FORWARD_TO_EMAIL = 'reko.jsx@gmail.com';
+const DEFAULT_FORWARD_FROM_EMAIL = 'noreply@invoicetrackr.app';
 const locales = { en, lt };
+
+type ResendForwardResponse = {
+  data: unknown;
+  error: { message: string } | null;
+};
+
+type ResendReceiving = typeof resend.emails.receiving & {
+  forward: (payload: {
+    emailId: string;
+    to: string;
+    from: string;
+  }) => Promise<ResendForwardResponse>;
+};
 
 const getCustomerId = (
   customer: string | Stripe.Customer | Stripe.DeletedCustomer | null
 ) => (typeof customer === 'string' ? customer : customer?.id);
+
+const forwardReceivedEmail = async (
+  emailId: string
+): Promise<ResendForwardResponse> => {
+  const receiving = resend.emails.receiving as ResendReceiving;
+  const to = process.env.RESEND_FORWARD_TO_EMAIL || DEFAULT_FORWARD_TO_EMAIL;
+  const from =
+    process.env.RESEND_FORWARD_FROM_EMAIL || DEFAULT_FORWARD_FROM_EMAIL;
+
+  return receiving.forward({
+    emailId,
+    to,
+    from
+  });
+};
 
 const sendBillingEmail = async ({
   email,
@@ -249,4 +279,32 @@ export const handleStripeWebhook = async (
     console.error('Error processing webhook:', error);
     throw new InternalServerError('Error processing webhook');
   }
+};
+
+export const handleResendWebhook = async (
+  req: FastifyRequest<{
+    Body: {
+      type?: string;
+      data?: { email_id?: string };
+    };
+  }>,
+  reply: FastifyReply
+) => {
+  if (req.body.type !== 'email.received') {
+    return reply.status(200).send({ received: true });
+  }
+
+  const emailId = req.body.data?.email_id;
+
+  if (!emailId) {
+    throw new BadRequestError('Received email webhook is missing email_id');
+  }
+
+  const { data, error } = await forwardReceivedEmail(emailId);
+
+  if (error) {
+    throw new InternalServerError(error.message);
+  }
+
+  return reply.status(200).send({ received: true, data });
 };

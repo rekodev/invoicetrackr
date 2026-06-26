@@ -41,7 +41,7 @@ This is a `pnpm` monorepo.
 - Include the Linear issue ID in branch names, commit messages, PR titles, and PR descriptions.
 - Use PR titles in the format `[REK-48] Add invoice domain foundation`.
 - PR descriptions should start with `### Overview`, followed by a short summary and bullet points of key changes.
-- Reference Linear issues in the PR description, for example `Refs REK-48, REK-61`.
+- Do not add standalone `Validation:` or `Refs` sections to PR descriptions. Mention skipped or completed checks only in prose when it materially helps the reviewer.
 - Let the user review and test locally before creating commits or pull requests.
 - Linear PR auto-linking requires the Linear GitHub integration. Without it, issue IDs are plain text references.
 
