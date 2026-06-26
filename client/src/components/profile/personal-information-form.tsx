@@ -352,7 +352,6 @@ const PersonalInformationForm = ({
       <Card className="w-full border bg-transparent">
         {isOnboardingCard ? (
           <AuthCardHeader
-            data-testid="personal-information-form-heading"
             title={cardHeaderTitle!}
             description={cardHeaderDescription!}
           >

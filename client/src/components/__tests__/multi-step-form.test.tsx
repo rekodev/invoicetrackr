@@ -94,7 +94,7 @@ describe('<MultiStepForm />', () => {
     renderHelper(<MultiStepForm existingUserData={userWithoutPersonalInfo} />);
 
     expect(
-      screen.getByTestId('personal-information-form-heading')
+      screen.getByRole('heading', { name: 'Personal Information' })
     ).toBeDefined();
   });
 

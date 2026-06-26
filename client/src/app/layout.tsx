@@ -13,6 +13,7 @@ import { appBaseUrl } from '@/lib/config/app';
 import CookieConsent from '../components/cookie-consent';
 import Loading from './loading';
 import { Providers } from '../components/providers/providers';
+import RouteAmbientBackground from './route-ambient-background';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -56,8 +57,8 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
-        <div className="bg-radial-[at_0%_100%] from-primary fixed inset-0 -z-10 min-h-screen from-[-35%] via-transparent to-transparent" />
         <Providers messages={messages}>
+          <RouteAmbientBackground />
           <Header />
           <main className="mx-auto flex w-full flex-grow flex-col">
             <Suspense fallback={<Loading />}>{children}</Suspense>

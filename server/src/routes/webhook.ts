@@ -4,7 +4,7 @@ import {
   FastifyPluginOptions
 } from 'fastify';
 
-import { stripeWebhookOptions } from '../options/webhook';
+import { resendWebhookOptions, stripeWebhookOptions } from '../options/webhook';
 
 const webhookRoutes = (
   fastify: FastifyInstance,
@@ -12,6 +12,7 @@ const webhookRoutes = (
   done: DoneFuncWithErrOrRes
 ) => {
   fastify.post('/api/webhook/stripe', stripeWebhookOptions);
+  fastify.post('/api/webhook/resend', resendWebhookOptions);
 
   done();
 };

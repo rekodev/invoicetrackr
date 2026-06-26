@@ -15,6 +15,10 @@ export const mockResendSend = vi.fn().mockResolvedValue({
   data: { id: 'mock-email-id' },
   error: null
 });
+export const mockResendForward = vi.fn().mockResolvedValue({
+  data: { id: 'mock-forwarded-email-id' },
+  error: null
+});
 
 export const mockStripeCustomerCreate = vi.fn().mockResolvedValue({
   id: 'mock-customer-id'
@@ -68,7 +72,10 @@ vi.mock('cloudinary', () => ({
 vi.mock('../config/resend', () => ({
   resend: {
     emails: {
-      send: mockResendSend
+      send: mockResendSend,
+      receiving: {
+        forward: mockResendForward
+      }
     }
   }
 }));
