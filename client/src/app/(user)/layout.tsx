@@ -9,7 +9,6 @@ import { auth } from '@/auth';
 
 import '../globals.css';
 import Loading from '../loading';
-import UserAmbientBackground from './user-ambient-background';
 
 export const metadata: Metadata = {
   robots: {
@@ -33,7 +32,6 @@ export default async function UserLayout({
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col p-6">
-      <UserAmbientBackground />
       <Breadcrumbs />
       <SubscriptionSync userId={session.user.id} />
       <Suspense fallback={<Loading />}>{children}</Suspense>

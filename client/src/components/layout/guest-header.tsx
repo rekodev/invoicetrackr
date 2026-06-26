@@ -66,7 +66,7 @@ export default function GuestHeader() {
             <DropdownItem
               key="sign-up"
               href={SIGN_UP_PAGE}
-              className="text-muted"
+              className="text-muted flex items-center justify-center"
             >
               {t('sign_up')}
             </DropdownItem>
@@ -115,7 +115,10 @@ export default function GuestHeader() {
             </Link>
           </div>
           <div className="hidden md:flex">
-            <Link className="text-secondary" href={LOGIN_PAGE}>
+            <Link
+              className={buttonVariants({ variant: 'ghost' })}
+              href={LOGIN_PAGE}
+            >
               {t('login')}
             </Link>
           </div>
