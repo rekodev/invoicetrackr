@@ -173,16 +173,23 @@ const InvoiceServicesTable = ({
     isInvalid: boolean;
     errorMessage?: string;
     inputProps: ServiceInputProps;
-  }) => (
-    <TextField isInvalid={isInvalid}>
-      <Input
-        {...inputProps}
-        data-invoice-service-focusable
-        variant="secondary"
-      />
-      <FieldError>{errorMessage}</FieldError>
-    </TextField>
-  );
+  }) => {
+    const ariaLabel = inputProps['aria-label'];
+
+    return (
+      <TextField
+        aria-label={typeof ariaLabel === 'string' ? ariaLabel : undefined}
+        isInvalid={isInvalid}
+      >
+        <Input
+          {...inputProps}
+          data-invoice-service-focusable
+          variant="secondary"
+        />
+        <FieldError>{errorMessage}</FieldError>
+      </TextField>
+    );
+  };
 
   const renderBottomContent = () => (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -308,6 +315,7 @@ const InvoiceServicesTable = ({
             <Tooltip delay={0}>
               <Tooltip.Trigger>
                 <Button
+                  aria-label={t('delete_service')}
                   onPress={() => handleRemoveService(index)}
                   variant="tertiary"
                   data-invoice-service-focusable

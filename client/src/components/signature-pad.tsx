@@ -1,12 +1,4 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Modal,
-  cn,
-  useOverlayState
-} from '@heroui/react';
+import { Button, Chip, Modal, cn, useOverlayState } from '@heroui/react';
 import { CheckCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
@@ -154,19 +146,24 @@ const SignaturePad = ({
   return (
     <>
       <div className="flex flex-col gap-1.5">
-        <Card
+        <Button
+          variant={isInvalid ? 'danger-soft' : 'tertiary'}
+          aria-label={
+            signatureImgUrl ? t('edit_signature') : t('add_signature')
+          }
+          isDisabled={isReadOnly}
           className={cn(
-            'shadow-small aspect-4/3 relative flex max-w-64 items-center justify-center overflow-hidden border p-0 transition',
+            'relative flex h-auto min-h-44 w-full max-w-sm items-center justify-center overflow-hidden border p-6 text-base transition sm:min-h-52',
             {
-              'bg-[#F3126040]': isInvalid,
+              'border-danger-soft': isInvalid,
               'hover:border-secondary hover:bg-secondary/5 cursor-pointer':
                 !isReadOnly,
-              'hover:border-none': !!signatureImgUrl && !isReadOnly
+              'p-0 hover:border-none': !!signatureImgUrl && !isReadOnly
             }
           )}
-          onClick={isReadOnly ? undefined : onOpen}
+          onPress={isReadOnly ? undefined : onOpen}
         >
-          <CardContent className="group relative flex h-full w-full flex-col items-center justify-center gap-2 overflow-visible p-0">
+          <div className="group relative flex h-full w-full flex-col items-center justify-center gap-2 overflow-visible p-0">
             {signatureImgUrl ? (
               <>
                 <Image
@@ -185,12 +182,12 @@ const SignaturePad = ({
               </>
             ) : (
               <>
-                <PencilSquareIcon className="h-8 w-8" />
+                <PencilSquareIcon className="h-10 w-10" />
                 <p className="font-medium">{t('add_signature')}</p>
               </>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </Button>
         {profileSignature && isChipVisible && (
           <Button size="sm" variant="secondary" onPress={setProfileSignature}>
             <CheckCircleIcon className="mr-0.5 h-4 w-4" />

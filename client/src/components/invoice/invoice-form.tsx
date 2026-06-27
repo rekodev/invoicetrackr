@@ -224,6 +224,7 @@ const InvoiceForm = ({
             control={control}
             render={({ field }) => (
               <RadioGroup
+                aria-label={t('a11y.sender_business_type_label')}
                 variant="secondary"
                 orientation="horizontal"
                 {...field}
@@ -311,6 +312,7 @@ const InvoiceForm = ({
             control={control}
             render={({ field }) => (
               <RadioGroup
+                aria-label={t('a11y.receiver_business_type_label')}
                 variant="secondary"
                 orientation="horizontal"
                 {...field}

@@ -145,9 +145,17 @@ export default function UserHeader({ user }: Props) {
             <DropdownPopover>
               <form action={logOutAction}>
                 <DropdownMenu aria-label={t('a11y.profile_actions_label')}>
-                  <DropdownItem key="signed-in-as" className="h-14 gap-2">
-                    <p className="font-semibold">{t('signed_in_as')}</p>
-                    <p className="font-semibold">{user.email}</p>
+                  <DropdownItem
+                    key="signed-in-as"
+                    className="h-auto min-h-14"
+                    textValue={`${t('signed_in_as')} ${user.email}`}
+                  >
+                    <div className="flex min-w-0 flex-col items-start gap-0.5 py-1">
+                      <p className="text-muted text-xs">{t('signed_in_as')}</p>
+                      <p className="text-foreground max-w-56 truncate text-sm font-semibold">
+                        {user.email}
+                      </p>
+                    </div>
                   </DropdownItem>
                   <DropdownItem key="profile" onPress={navigateToProfilePage}>
                     {t('my_profile')}

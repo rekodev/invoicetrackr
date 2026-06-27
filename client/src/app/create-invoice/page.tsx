@@ -1,6 +1,6 @@
-import { cookies, headers } from 'next/headers';
 import { getLocale, getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 
 import {
   getSoftwareApplicationJsonLd,
@@ -24,16 +24,7 @@ export default async function CreateInvoicePage() {
   const seoT = await getTranslations('seo.home');
   const featureList = seoT.raw('features') as string[];
 
-  const headersList = await headers();
-  const acceptLanguage = headersList.get('Accept-Language') || 'en-US,en;q=0.9';
-
-  const locale = acceptLanguage
-    .split(',')[0]
-    .split(';')[0]
-    .substring(0, 2)
-    .toLowerCase();
-
-  const currency = language === 'lt' ? 'eur' : locale === 'en' ? 'usd' : 'eur';
+  const currency = 'eur';
 
   return (
     <>

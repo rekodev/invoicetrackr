@@ -2,11 +2,21 @@
 
 import { useTranslations } from 'next-intl';
 
+import {
+  SUBSCRIPTION_AMOUNT,
+  SUBSCRIPTION_ANNUAL_AMOUNT,
+  formatSubscriptionPrice
+} from '@/lib/constants/subscription';
+
 const LAST_UPDATED = '06/27/2026';
 const CONTACT_EMAIL = 'support@invoicetrackr.app';
 
 export default function TermsOfServicePageContent() {
   const t = useTranslations('terms_of_service');
+  const priceValues = {
+    monthlyPrice: formatSubscriptionPrice(SUBSCRIPTION_AMOUNT),
+    annualPrice: formatSubscriptionPrice(SUBSCRIPTION_ANNUAL_AMOUNT)
+  };
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-8">
@@ -97,7 +107,7 @@ export default function TermsOfServicePageContent() {
             {t('sections.subscription.premium.heading')}
           </h3>
           <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
-            {t('sections.subscription.premium.content')}
+            {t('sections.subscription.premium.content', priceValues)}
           </p>
 
           <h3 className="mb-3 text-xl font-medium">

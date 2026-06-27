@@ -349,7 +349,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
   return (
     <>
       <FormProvider {...methods}>
-        <div className="mx-auto max-w-7xl p-6">
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 sm:py-10 md:py-12 lg:py-14">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-semibold">
               {t('free_invoice.title')}
