@@ -1,28 +1,15 @@
 import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale } from 'next-intl/server';
+
+import { getPageMetadata } from '@/lib/seo/metadata';
+import { getSeoLocale } from '@/lib/seo/site';
 
 import PrivacyPolicyPageContent from './privacy-policy-page-content';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('privacy_policy');
+  const locale = getSeoLocale(await getLocale());
 
-  return {
-    title: t('title'),
-    description: t('sections.introduction.content'),
-    keywords: ['privacy policy', 'cookies', 'data protection', 'analytics'],
-    authors: [{ name: 'InvoiceTrackr' }],
-    creator: 'InvoiceTrackr',
-    openGraph: {
-      type: 'website',
-      siteName: 'InvoiceTrackr',
-      title: t('title'),
-      description: t('sections.introduction.content'),
-      url: '/privacy-policy'
-    },
-    alternates: {
-      canonical: '/privacy-policy'
-    }
-  };
+  return getPageMetadata('privacyPolicy', locale);
 }
 
 export default function PrivacyPolicyPage() {

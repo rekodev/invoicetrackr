@@ -1,19 +1,45 @@
-'use client';
+import { getLocale, getTranslations } from 'next-intl/server';
+import type { Metadata } from 'next';
 
-import CTA from './home/cta';
-import FAQ from './home/faq';
-import Hero from './home/hero';
-import Pricing from './home/pricing/pricing';
-import ProductSection from './home/product/product-section';
+import {
+  getFaqJsonLd,
+  getOrganizationJsonLd,
+  getSoftwareApplicationJsonLd,
+  getWebsiteJsonLd
+} from '@/lib/seo/structured-data';
+import JsonLd from '@/components/seo/json-ld';
+import { getPageMetadata } from '@/lib/seo/metadata';
+import { getSeoLocale } from '@/lib/seo/site';
 
-export default function Home() {
+import HomePageContent from './home/home-page-content';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getSeoLocale(await getLocale());
+
+  return getPageMetadata('home', locale);
+}
+
+export default async function Home() {
+  const locale = getSeoLocale(await getLocale());
+  const t = await getTranslations('home.faq.items');
+  const seoT = await getTranslations('seo.home');
+  const faqItems = ['free', 'export', 'payments', 'languages'].map((key) => ({
+    question: t(`${key}.question`),
+    answer: t(`${key}.answer`)
+  }));
+  const featureList = seoT.raw('features') as string[];
+
   return (
-    <main className="relative isolate overflow-hidden">
-      <Hero />
-      <ProductSection />
-      <Pricing />
-      <FAQ />
-      <CTA />
-    </main>
+    <>
+      <JsonLd
+        data={[
+          getOrganizationJsonLd(),
+          getWebsiteJsonLd(locale),
+          getSoftwareApplicationJsonLd({ locale, featureList }),
+          getFaqJsonLd(faqItems)
+        ]}
+      />
+      <HomePageContent />
+    </>
   );
 }

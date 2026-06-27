@@ -402,6 +402,61 @@
         "terms_of_service": "Naudojimosi Sąlygos",
         "copyright": "© {year} InvoiceTrackr. Visos teisės saugomos."
     },
+    "seo": {
+        "home": {
+            "title": "Sąskaitų faktūrų programa Lietuvai",
+            "description": "InvoiceTrackr padeda kurti sąskaitas faktūras, valdyti klientus, priimti mokėjimus ir eksportuoti pajamų žurnalą Lietuvos freelanceriams ir mažam verslui.",
+            "keywords": [
+                "sąskaitų faktūrų programa",
+                "sąskaita faktūra",
+                "PVM sąskaita faktūra",
+                "sąskaitų išrašymas",
+                "pajamų žurnalas",
+                "freelanceriai Lietuvoje",
+                "mažas verslas Lietuvoje"
+            ],
+            "features": [
+                "Sąskaitų faktūrų kūrimas",
+                "Klientų valdymas",
+                "Stripe Connect mokėjimai",
+                "Sąskaitų siuntimas el. paštu",
+                "CSV pajamų žurnalo eksportas"
+            ]
+        },
+        "createInvoice": {
+            "title": "Nemokamas sąskaitos faktūros generatorius",
+            "description": "Sukurkite nemokamą sąskaitą faktūrą internetu, pasirinkite lietuvišką arba anglišką dokumentą ir atsisiųskite tvarkingą PDF be registracijos.",
+            "keywords": [
+                "nemokamas sąskaitos faktūros generatorius",
+                "sąskaita faktūra PDF",
+                "PVM sąskaita faktūra",
+                "sukurti sąskaitą faktūrą",
+                "invoice generator Lithuania"
+            ]
+        },
+        "privacyPolicy": {
+            "title": "Privatumo politika",
+            "description": "Sužinokite, kaip InvoiceTrackr tvarko paskyros, sąskaitų, slapukų, analitikos ir mokėjimų duomenis.",
+            "keywords": [
+                "InvoiceTrackr privatumo politika",
+                "slapukai",
+                "duomenų apsauga",
+                "analitika",
+                "mokėjimų duomenys"
+            ]
+        },
+        "terms": {
+            "title": "Naudojimosi sąlygos",
+            "description": "InvoiceTrackr naudojimosi sąlygos paskyroms, sąskaitų kūrimui, prenumeratai, mokėjimams ir atsakomybei.",
+            "keywords": [
+                "InvoiceTrackr naudojimosi sąlygos",
+                "sąlygos",
+                "prenumerata",
+                "mokėjimai",
+                "paskyros naudojimas"
+            ]
+        }
+    },
     "login": {
         "page_title": "Prisijungti",
         "page_description": "Prisijunkite prie savo InvoiceTrackr paskyros.",

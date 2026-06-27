@@ -402,6 +402,60 @@
         "terms_of_service": "Terms of Service",
         "copyright": "© {year} InvoiceTrackr. All rights reserved."
     },
+    "seo": {
+        "home": {
+            "title": "Invoice software for Lithuanian freelancers",
+            "description": "Create polished invoices, manage clients, collect payments, export your invoice ledger, and issue documents in Lithuanian or English.",
+            "keywords": [
+                "invoice software Lithuania",
+                "invoice generator",
+                "Lithuanian invoice",
+                "VAT invoice",
+                "freelancer invoicing",
+                "small business invoicing"
+            ],
+            "features": [
+                "Invoice creation",
+                "Client management",
+                "Stripe Connect payments",
+                "Invoice email sending",
+                "CSV invoice ledger export"
+            ]
+        },
+        "createInvoice": {
+            "title": "Free invoice generator for PDF invoices",
+            "description": "Create a free invoice online, choose English or Lithuanian output, add line items and a signature, then download a polished PDF.",
+            "keywords": [
+                "free invoice generator",
+                "PDF invoice generator",
+                "Lithuanian invoice template",
+                "English invoice template",
+                "create invoice online"
+            ]
+        },
+        "privacyPolicy": {
+            "title": "Privacy Policy",
+            "description": "Learn how InvoiceTrackr handles account, invoice, cookie, analytics, and payment-related data.",
+            "keywords": [
+                "InvoiceTrackr privacy policy",
+                "cookies",
+                "data protection",
+                "analytics",
+                "payment data"
+            ]
+        },
+        "terms": {
+            "title": "Terms of Service",
+            "description": "InvoiceTrackr terms for account usage, invoice creation, subscriptions, payments, and service responsibilities.",
+            "keywords": [
+                "InvoiceTrackr terms of service",
+                "terms",
+                "subscription",
+                "payments",
+                "account usage"
+            ]
+        }
+    },
     "login": {
         "page_title": "Log In",
         "page_description": "Access your InvoiceTrackr account.",

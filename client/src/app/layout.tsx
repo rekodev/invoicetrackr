@@ -15,6 +15,8 @@ import Footer from '@/components/layout/footer';
 import Header from '@/components/layout/header';
 import { appBaseUrl } from '@/lib/config/app';
 import { auth } from '@/auth';
+import { getPageMetadata } from '@/lib/seo/metadata';
+import { getSeoLocale } from '@/lib/seo/site';
 
 import CookieConsent from '../components/cookie-consent';
 import Loading from './loading';
@@ -23,34 +25,19 @@ import RouteAmbientBackground from './route-ambient-background';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(appBaseUrl),
-  title: 'InvoiceTrackr',
-  description:
-    'Create professional invoices, track payments, and monitor income for freelancers and small businesses.',
-  keywords: [
-    'invoicing',
-    'invoice generator',
-    'billing',
-    'payments',
-    'income tracking',
-    'small business',
-    'freelancer'
-  ],
-  authors: [{ name: 'InvoiceTrackr' }],
-  creator: 'InvoiceTrackr',
-  openGraph: {
-    type: 'website',
-    siteName: 'InvoiceTrackr',
-    title: 'InvoiceTrackr',
-    description:
-      'Create professional invoices, track payments, and monitor income for freelancers and small businesses.',
-    url: '/'
-  },
-  alternates: {
-    canonical: '/'
-  }
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = getSeoLocale(await getLocale());
+  const metadata = await getPageMetadata('home', locale);
+
+  return {
+    ...metadata,
+    metadataBase: new URL(appBaseUrl),
+    title: {
+      default: 'InvoiceTrackr',
+      template: '%s · InvoiceTrackr'
+    }
+  };
+}
 
 export default async function RootLayout({
   children
