@@ -1345,8 +1345,23 @@
                 "no_bank_accounts": "You have no bank accounts. Create one to get started."
             },
             "free_invoice": {
-                "title": "Create Invoice",
-                "description": "Create, preview and download an invoice for free"
+                "eyebrow": "Free invoice generator",
+                "title": "Create a polished PDF invoice without signing up",
+                "description": "Build a real invoice, preview the PDF, and download it for free. When you are ready to run the full workflow, start a 7-day trial to save, send, track, and reuse everything.",
+                "benefits": [
+                    "Professional English or Lithuanian PDF output",
+                    "VAT/PVM-ready line items and totals",
+                    "No account required for one-off PDF downloads"
+                ],
+                "upgrade_title": "Need more than a PDF?",
+                "upgrade_description": "Create an account to save invoices, reuse clients and bank accounts, send secure links, and track payment status.",
+                "upgrade_cta": "Start 7-day trial",
+                "actions_title": "Preview the invoice before downloading.",
+                "actions_description": "The PDF download stays free. Trial features are for saving, sending, history, reminders, and payment tracking.",
+                "start_trial_cta": "Save and send with trial",
+                "modal_cta_title": "Want to save, send, and track invoices?",
+                "modal_cta_description": "Start a 7-day trial to manage real client workflows instead of downloading one PDF at a time.",
+                "modal_cta_button": "Start trial"
             },
             "services_heading": "Services",
             "signature_heading": "Signature",
