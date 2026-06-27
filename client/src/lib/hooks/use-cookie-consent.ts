@@ -3,12 +3,11 @@
 import { useEffect, useState } from 'react';
 
 import {
-  ANALYTICS_CONSENT_CHANGED_EVENT,
   ANALYTICS_CONSENT_COOKIE,
   analyticsConsentStatuses
 } from '../analytics/constants';
 import type { CookieConsentStatus } from '../types';
-import { updateAnalyticsConsentAction } from '../actions/analytics';
+import { useAnalyticsConsent } from '../analytics/consent-context';
 
 const getConsentCookie = () => {
   if (typeof document === 'undefined') return null;
@@ -24,22 +23,28 @@ const getConsentCookie = () => {
 };
 
 export default function useCookieConsent() {
+  const {
+    consentStatus: analyticsConsentStatus,
+    setConsentStatus: setAnalyticsConsentStatus
+  } = useAnalyticsConsent();
   const [cookieConsent, setCookieConsent] = useState<
     CookieConsentStatus | null | undefined
-  >(undefined);
+  >(analyticsConsentStatus);
 
-  const updateCookieConsent = async (consent: CookieConsentStatus) => {
+  const updateCookieConsent = (consent: CookieConsentStatus) => {
     setCookieConsent(consent);
-    await updateAnalyticsConsentAction(consent);
-    window.dispatchEvent(
-      new CustomEvent(ANALYTICS_CONSENT_CHANGED_EVENT, { detail: consent })
-    );
+    setAnalyticsConsentStatus(consent);
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (analyticsConsentStatus !== undefined) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCookieConsent(analyticsConsentStatus);
+      return;
+    }
+
     setCookieConsent(getConsentCookie());
-  }, []);
+  }, [analyticsConsentStatus]);
 
   return { cookieConsent, updateCookieConsent };
 }

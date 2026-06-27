@@ -48,6 +48,7 @@ export const getUserFromDb = async (
       subscriptionCurrentPeriodEndsAt:
         usersTable.subscriptionCurrentPeriodEndsAt,
       subscriptionCancelAt: usersTable.subscriptionCancelAt,
+      paymentSuccessPending: usersTable.paymentSuccessPending,
       analyticsConsentStatus: usersTable.analyticsConsentStatus,
       analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
     })
@@ -100,6 +101,7 @@ export const getUserByEmailFromDb = async (
       subscriptionCurrentPeriodEndsAt:
         usersTable.subscriptionCurrentPeriodEndsAt,
       subscriptionCancelAt: usersTable.subscriptionCancelAt,
+      paymentSuccessPending: usersTable.paymentSuccessPending,
       analyticsConsentStatus: usersTable.analyticsConsentStatus,
       analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
     })

@@ -7,7 +7,18 @@ import { withIntl } from '@/test/with-intl';
 
 import CookieConsent from '../cookie-consent';
 
-const mockUpdateCookieConsent = vi.fn();
+const { mockUpdateAnalyticsConsentAction, mockUpdateCookieConsent } =
+  vi.hoisted(() => ({
+    mockUpdateAnalyticsConsentAction: vi.fn().mockResolvedValue({
+      ok: true,
+      analyticsConsentStatus: 'accepted'
+    }),
+    mockUpdateCookieConsent: vi.fn()
+  }));
+
+vi.mock('@/lib/actions/analytics', () => ({
+  updateAnalyticsConsentAction: mockUpdateAnalyticsConsentAction
+}));
 
 vi.mock('@/lib/hooks/use-cookie-consent', () => ({
   default: () => ({
@@ -21,6 +32,7 @@ describe('<CookieConsent />', () => {
 
   beforeEach(() => {
     mockUpdateCookieConsent.mockClear();
+    mockUpdateAnalyticsConsentAction.mockClear();
   });
 
   it('renders correctly when cookieConsent is null', () => {
@@ -38,6 +50,7 @@ describe('<CookieConsent />', () => {
 
     expect(mockUpdateCookieConsent).toHaveBeenCalledWith('accepted');
     expect(mockUpdateCookieConsent).toHaveBeenCalledTimes(1);
+    expect(mockUpdateAnalyticsConsentAction).toHaveBeenCalledWith('accepted');
   });
 
   it('calls updateCookieConsent with declined when decline button is clicked', async () => {
@@ -47,5 +60,6 @@ describe('<CookieConsent />', () => {
 
     expect(mockUpdateCookieConsent).toHaveBeenCalledWith('declined');
     expect(mockUpdateCookieConsent).toHaveBeenCalledTimes(1);
+    expect(mockUpdateAnalyticsConsentAction).toHaveBeenCalledWith('declined');
   });
 });

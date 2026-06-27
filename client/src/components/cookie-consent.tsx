@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { PRIVACY_POLICY_PAGE } from '@/lib/constants/pages';
+import { updateAnalyticsConsentAction } from '@/lib/actions/analytics';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 
 export default function CookieConsent() {
@@ -15,13 +16,15 @@ export default function CookieConsent() {
 
   const handleAccept = async () => {
     setIsPending(true);
-    await updateCookieConsent('accepted');
+    await updateAnalyticsConsentAction('accepted');
+    updateCookieConsent('accepted');
     setIsVisible(false);
   };
 
   const handleDecline = async () => {
     setIsPending(true);
-    await updateCookieConsent('declined');
+    await updateAnalyticsConsentAction('declined');
+    updateCookieConsent('declined');
     setIsVisible(false);
   };
 

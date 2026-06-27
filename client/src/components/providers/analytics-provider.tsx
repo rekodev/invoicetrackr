@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
 
@@ -15,17 +15,19 @@ import {
   resetAnalyticsUser,
   setAnalyticsConsent
 } from '@/lib/analytics/client';
-import { ANALYTICS_CONSENT_CHANGED_EVENT } from '@/lib/analytics/constants';
+import { AnalyticsConsentContext } from '@/lib/analytics/consent-context';
 import { analyticsEvents } from '@/lib/analytics/events';
 import { updateAnalyticsConsentAction } from '@/lib/actions/analytics';
 
 type Props = {
+  children: ReactNode;
   consentStatus?: AnalyticsConsentStatus | null;
   userConsentStatus?: AnalyticsConsentStatus | null;
   userId?: string | null;
 };
 
 export default function AnalyticsProvider({
+  children,
   consentStatus,
   userConsentStatus,
   userId
@@ -36,25 +38,13 @@ export default function AnalyticsProvider({
     useState(consentStatus);
   const [hasSyncedUserConsent, setHasSyncedUserConsent] = useState(false);
   const hasConsent = currentConsentStatus === 'accepted';
-
-  useEffect(() => {
-    const handleConsentChange = (event: Event) => {
-      setCurrentConsentStatus(
-        (event as CustomEvent<AnalyticsConsentStatus>).detail
-      );
-    };
-
-    window.addEventListener(
-      ANALYTICS_CONSENT_CHANGED_EVENT,
-      handleConsentChange
-    );
-
-    return () =>
-      window.removeEventListener(
-        ANALYTICS_CONSENT_CHANGED_EVENT,
-        handleConsentChange
-      );
-  }, []);
+  const contextValue = useMemo(
+    () => ({
+      consentStatus: currentConsentStatus,
+      setConsentStatus: setCurrentConsentStatus
+    }),
+    [currentConsentStatus]
+  );
 
   useEffect(() => {
     setAnalyticsConsent(hasConsent);
@@ -105,5 +95,9 @@ export default function AnalyticsProvider({
     }
   }, [hasConsent, pathname, searchParams, userId]);
 
-  return null;
+  return (
+    <AnalyticsConsentContext.Provider value={contextValue}>
+      {children}
+    </AnalyticsConsentContext.Provider>
+  );
 }

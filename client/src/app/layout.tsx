@@ -77,15 +77,16 @@ export default async function RootLayout({
               consentStatus={consentStatus}
               userConsentStatus={session?.user?.analyticsConsentStatus}
               userId={session?.user?.id}
-            />
+            >
+              <RouteAmbientBackground />
+              <Header />
+              <main className="mx-auto flex w-full flex-grow flex-col">
+                <Suspense fallback={<Loading />}>{children}</Suspense>
+              </main>
+              <Footer />
+              <CookieConsent />
+            </AnalyticsProvider>
           </Suspense>
-          <RouteAmbientBackground />
-          <Header />
-          <main className="mx-auto flex w-full flex-grow flex-col">
-            <Suspense fallback={<Loading />}>{children}</Suspense>
-          </main>
-          <Footer />
-          <CookieConsent />
         </Providers>
       </body>
     </html>
