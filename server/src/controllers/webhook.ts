@@ -23,21 +23,12 @@ import { stripe } from '../config/stripe';
 import { syncSubscriptionInDb } from './payment';
 
 const GRACE_PERIOD_DAYS = 3;
-const DEFAULT_FORWARD_TO_EMAIL = 'reko.jsx@gmail.com';
-const DEFAULT_FORWARD_FROM_EMAIL = 'noreply@invoicetrackr.app';
+const DEFAULT_FORWARD_FROM_EMAIL = 'support@invoicetrackr.app';
 const locales = { en, lt };
 
 type ResendForwardResponse = {
   data: unknown;
   error: { message: string } | null;
-};
-
-type ResendReceiving = typeof resend.emails.receiving & {
-  forward: (payload: {
-    emailId: string;
-    to: string;
-    from: string;
-  }) => Promise<ResendForwardResponse>;
 };
 
 const getCustomerId = (
@@ -47,16 +38,20 @@ const getCustomerId = (
 const forwardReceivedEmail = async (
   emailId: string
 ): Promise<ResendForwardResponse> => {
-  const receiving = resend.emails.receiving as ResendReceiving;
-  const to = process.env.RESEND_FORWARD_TO_EMAIL || DEFAULT_FORWARD_TO_EMAIL;
+  const to = process.env.RESEND_FORWARD_TO_EMAIL!;
   const from =
     process.env.RESEND_FORWARD_FROM_EMAIL || DEFAULT_FORWARD_FROM_EMAIL;
 
-  return receiving.forward({
+  const { data, error } = await resend.emails.receiving.forward({
     emailId,
     to,
     from
   });
+
+  return {
+    data,
+    error: error ? { message: error.message } : null
+  };
 };
 
 const sendBillingEmail = async ({

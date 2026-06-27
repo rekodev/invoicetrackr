@@ -19,12 +19,18 @@ export const postContactMessage = async (
     email,
     message
   });
+  const contactToEmail = process.env.RESEND_FORWARD_TO_EMAIL;
+
+  if (!contactToEmail) {
+    throw new BadRequestError(i18n.t('error.contact.unableToSendMessage'));
+  }
 
   const { error } = await resend.emails.send({
     from: appEmailFrom,
-    to: 'support@ruwhia8088.resend.app',
+    to: contactToEmail,
     subject: 'New Contact Message',
-    react: emailHtml
+    react: emailHtml,
+    replyTo: email
   });
 
   if (error) {
