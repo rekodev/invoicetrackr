@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-export enum CookieConsentStatus {
-  Accepted = 'accepted',
-  Declined = 'declined'
-}
+import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
+
+export type CookieConsentStatus = AnalyticsConsentStatus;

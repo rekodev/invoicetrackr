@@ -49,6 +49,8 @@ const setUserTokenFields = (token: JWT, user: TokenUser) => {
   token.subscriptionGraceEndsAt = user.subscriptionGraceEndsAt;
   token.subscriptionCurrentPeriodEndsAt = user.subscriptionCurrentPeriodEndsAt;
   token.subscriptionCancelAt = user.subscriptionCancelAt;
+  token.analyticsConsentStatus = user.analyticsConsentStatus;
+  token.analyticsConsentUpdatedAt = user.analyticsConsentUpdatedAt;
   token.selectedBankAccountId = user.selectedBankAccountId;
   token.vatNumber = user.vatNumber;
 };
@@ -224,6 +226,8 @@ export const authConfig = {
           subscriptionCurrentPeriodEndsAt:
             session.user.subscriptionCurrentPeriodEndsAt,
           subscriptionCancelAt: session.user.subscriptionCancelAt,
+          analyticsConsentStatus: session.user.analyticsConsentStatus,
+          analyticsConsentUpdatedAt: session.user.analyticsConsentUpdatedAt,
           selectedBankAccountId: session.user.selectedBankAccountId
         };
       }
@@ -254,6 +258,10 @@ export const authConfig = {
       session.user.subscriptionCancelAt = token.subscriptionCancelAt as
         | string
         | null;
+      session.user.analyticsConsentStatus =
+        token.analyticsConsentStatus as AuthUser['analyticsConsentStatus'];
+      session.user.analyticsConsentUpdatedAt =
+        token.analyticsConsentUpdatedAt as string | null;
       session.user.selectedBankAccountId =
         token.selectedBankAccountId as number;
 

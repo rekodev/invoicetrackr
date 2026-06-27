@@ -3,7 +3,11 @@ import {
   invoicePartyBusinessTypeSchema,
   invoicePartyTypeSchema
 } from './invoice';
-import { passwordSchema, stripeSubscriptionStatusSchema } from './common';
+import {
+  analyticsConsentStatusSchema,
+  passwordSchema,
+  stripeSubscriptionStatusSchema
+} from './common';
 
 export const userBodySchema = z.object({
   id: z.number().optional(),
@@ -32,7 +36,9 @@ export const userBodySchema = z.object({
   trialEndsAt: z.string().nullish(),
   subscriptionGraceEndsAt: z.string().nullish(),
   subscriptionCurrentPeriodEndsAt: z.string().nullish(),
-  subscriptionCancelAt: z.string().nullish()
+  subscriptionCancelAt: z.string().nullish(),
+  analyticsConsentStatus: analyticsConsentStatusSchema.nullish(),
+  analyticsConsentUpdatedAt: z.string().nullish()
 });
 
 // Reset Password Token Schema

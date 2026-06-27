@@ -1,4 +1,5 @@
 import type {
+  AnalyticsConsentStatus,
   BillingInterval,
   StripeSubscriptionStatus
 } from '@invoicetrackr/types';
@@ -50,6 +51,8 @@ declare module 'next-auth' {
     subscriptionGraceEndsAt?: string | null;
     subscriptionCurrentPeriodEndsAt?: string | null;
     subscriptionCancelAt?: string | null;
+    analyticsConsentStatus?: AnalyticsConsentStatus | null;
+    analyticsConsentUpdatedAt?: string | null;
   }
 
   // eslint-disable-next-line no-unused-vars

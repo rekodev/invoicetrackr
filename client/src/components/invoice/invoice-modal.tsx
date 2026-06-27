@@ -19,6 +19,15 @@ import { JSX, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
+import type { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
+import { analyticsEvents } from '@/lib/analytics/events';
+import { availableLanguages } from '@/lib/constants/profile';
+import { captureAnalyticsEvent } from '@/lib/analytics/client';
+import { getInvoiceDueStatus } from '@/lib/utils/invoice';
+import useCookieConsent from '@/lib/hooks/use-cookie-consent';
+
+import PdfViewerWrapper from '../pdf/pdf-viewer-wrapper';
+
 const PDFDownloadLink = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
   {
@@ -35,14 +44,6 @@ const PDFDownloadLink = dynamic(
     }
   }
 );
-
-import type { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
-import { CookieConsentStatus } from '@/lib/types';
-import { availableLanguages } from '@/lib/constants/profile';
-import { getInvoiceDueStatus } from '@/lib/utils/invoice';
-import useCookieConsent from '@/lib/hooks/use-cookie-consent';
-
-import PdfViewerWrapper from '../pdf/pdf-viewer-wrapper';
 
 const statusIndicatorClassMap: Record<
   InvoiceStatus,
@@ -235,16 +236,18 @@ const InvoiceModal = ({
                             isDisabled={isLoading}
                             variant="primary"
                             onPress={() => {
-                              if (
-                                cookieConsent !== CookieConsentStatus.Accepted
-                              )
-                                return;
+                              if (cookieConsent !== 'accepted') return;
 
-                              window.dataLayer?.push({
-                                event: 'free_invoice_pdf_download',
-                                invoice_id: invoiceData.invoiceId,
-                                total_amount: invoiceData.totalAmount
-                              });
+                              captureAnalyticsEvent(
+                                analyticsEvents.pdfDownloaded,
+                                {
+                                  source: invoiceData.id
+                                    ? 'saved_invoice'
+                                    : 'free_invoice',
+                                  invoice_status: invoiceData.status,
+                                  line_count: invoiceData.services.length
+                                }
+                              );
                             }}
                           >
                             <ArrowDownTrayIcon className="h-5 w-5 dark:text-white" />

@@ -31,6 +31,12 @@ export type StripeSubscriptionStatus = z.infer<
   typeof stripeSubscriptionStatusSchema
 >;
 
+export const analyticsConsentStatusSchema = z.enum(['accepted', 'declined']);
+
+export type AnalyticsConsentStatus = z.infer<
+  typeof analyticsConsentStatusSchema
+>;
+
 export const billingIntervalSchema = z.enum(['monthly', 'annual']);
 
 export type BillingInterval = z.infer<typeof billingIntervalSchema>;

@@ -50,6 +50,8 @@ import {
   getStripeMerchantAccountFromDb,
   toMerchantPaymentStatus
 } from '../database/payment';
+import { analyticsEvents } from '../analytics/events';
+import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import en from '../locales/en';
 import { getClientsFromDb } from '../database/client';
 import { getUserFromDb } from '../database/user';
@@ -365,6 +367,19 @@ export const postInvoice = async (
 
   if (!insertedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToCreate'));
+
+  await captureAnalyticsEventForUser({
+    userId,
+    event: analyticsEvents.invoiceCreated,
+    properties: {
+      invoice_status: insertedInvoice.status,
+      line_count: insertedInvoice.services?.length,
+      has_custom_vat: insertedInvoice.services?.some(
+        ({ vatRate }) => vatRate !== undefined && vatRate !== null
+      ),
+      payment_provider: insertedInvoice.paymentProvider || null
+    }
+  });
 
   reply.status(201).send({
     invoice: insertedInvoice,
@@ -712,6 +727,16 @@ export const sendInvoiceEmail = async (
   ) {
     await revokeInvoiceSigningFromDb({ userId, id });
   }
+
+  await captureAnalyticsEventForUser({
+    userId,
+    event: analyticsEvents.invoiceEmailed,
+    properties: {
+      include_public_link: includePublicLink,
+      request_signature: requestSignature,
+      has_attachment: Boolean(attachment)
+    }
+  });
 
   reply.status(200).send({ message: i18n.t('success.invoice.emailSent') });
 };

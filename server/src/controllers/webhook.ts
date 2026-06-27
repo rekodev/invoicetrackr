@@ -16,6 +16,8 @@ import {
   markInvoicePaidByCheckoutSessionInDb,
   markInvoicePaymentFailedByIntentInDb
 } from '../database/invoice';
+import { analyticsEvents } from '../analytics/events';
+import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import en from '../locales/en';
 import lt from '../locales/lt';
 import { resend } from '../config/resend';
@@ -155,6 +157,13 @@ export const handleStripeWebhook = async (
           await syncSubscriptionInDb(user.id, subscription, {
             paymentSuccessPending: true
           });
+          await captureAnalyticsEventForUser({
+            userId: user.id,
+            event: analyticsEvents.subscriptionStarted,
+            properties: {
+              subscription_status: subscription.status
+            }
+          });
         }
         break;
       }
@@ -201,13 +210,24 @@ export const handleStripeWebhook = async (
           ? await getUserByStripeCustomerIdFromDb(customerId)
           : undefined;
 
-        if (user)
+        if (user) {
           await syncSubscriptionInDb(user.id, subscription, {
             paymentSuccessPending:
               event.type === 'customer.subscription.created' ||
               event.type === 'customer.subscription.resumed' ||
               undefined
           });
+
+          if (event.type === 'customer.subscription.deleted') {
+            await captureAnalyticsEventForUser({
+              userId: user.id,
+              event: analyticsEvents.subscriptionCanceled,
+              properties: {
+                subscription_status: subscription.status
+              }
+            });
+          }
+        }
         break;
       }
 
@@ -246,6 +266,13 @@ export const handleStripeWebhook = async (
             email: user.email,
             language: user.language,
             type: 'payment-failed'
+          });
+          await captureAnalyticsEventForUser({
+            userId: user.id,
+            event: analyticsEvents.paymentFailed,
+            properties: {
+              grace_period_days: GRACE_PERIOD_DAYS
+            }
           });
         }
         break;

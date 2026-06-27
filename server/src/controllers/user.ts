@@ -24,6 +24,7 @@ import {
   invalidateTokenInDb,
   registerUser,
   updateUserAccountSettingsInDb,
+  updateUserAnalyticsConsentInDb,
   updateUserInDb,
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb,
@@ -35,6 +36,9 @@ import {
   markEmailVerificationTokenUsedInDb,
   saveEmailVerificationTokenToDb
 } from '../database/email-verification';
+import { ANALYTICS_CONSENT_COOKIE } from '../analytics/constants';
+import { analyticsEvents } from '../analytics/events';
+import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import { getStripeCustomerIdFromDb } from '../database/payment';
 import { resend } from '../config/resend';
 import { saveResetTokenToDb } from '../database/password-reset';
@@ -144,6 +148,8 @@ export const postUser = async (
     ? languageHeader.at(0)
     : languageHeader;
   const language = requestedLanguage?.startsWith('lt') ? 'lt' : 'en';
+  const analyticsConsentStatus =
+    req.cookies[ANALYTICS_CONSENT_COOKIE] === 'accepted' ? 'accepted' : null;
 
   if (!email) throw new BadRequestError(i18n.t('validation.user.email'));
 
@@ -158,7 +164,8 @@ export const postUser = async (
   const createdUser = await registerUser({
     email,
     password: hashedPassword,
-    language
+    language,
+    analyticsConsentStatus
   });
 
   if (!createdUser)
@@ -172,6 +179,12 @@ export const postUser = async (
   } catch (error) {
     req.log.error({ error, email }, 'Unable to send verification email');
   }
+
+  await captureAnalyticsEventForUser({
+    userId: createdUser.id,
+    event: analyticsEvents.signUpCompleted,
+    properties: { method: 'email', language }
+  });
 
   return reply
     .status(201)
@@ -189,6 +202,8 @@ export const postOAuthUser = async (
     ? languageHeader.at(0)
     : languageHeader;
   const language = requestedLanguage?.startsWith('lt') ? 'lt' : 'en';
+  const analyticsConsentStatus =
+    req.cookies[ANALYTICS_CONSENT_COOKIE] === 'accepted' ? 'accepted' : null;
 
   if (provider !== 'google' || !emailVerified) {
     throw new UnauthorizedError(i18n.t('error.user.oauthEmailNotVerified'));
@@ -218,7 +233,8 @@ export const postOAuthUser = async (
     language,
     name: name || '',
     profilePictureUrl: image || '',
-    emailVerifiedAt: new Date().toISOString()
+    emailVerifiedAt: new Date().toISOString(),
+    analyticsConsentStatus
   });
 
   if (!createdUser)
@@ -227,6 +243,12 @@ export const postOAuthUser = async (
   const user = await getUserFromDb(createdUser.id);
 
   if (!user) throw new BadRequestError(i18n.t('error.user.notFound'));
+
+  await captureAnalyticsEventForUser({
+    userId: createdUser.id,
+    event: analyticsEvents.signUpCompleted,
+    properties: { method: 'google', language }
+  });
 
   return reply.status(201).send({
     user,
@@ -312,6 +334,14 @@ export const updateUser = async (
     await sendVerificationEmail({ email, token: verificationToken, i18n });
   }
 
+  if (!foundUser.onboardingCompletedAt) {
+    await captureAnalyticsEventForUser({
+      userId,
+      event: analyticsEvents.onboardingStepCompleted,
+      properties: { step: 'business_profile' }
+    });
+  }
+
   reply.status(200).send({
     user: updatedUser,
     message: i18n.t('success.user.updated')
@@ -362,6 +392,30 @@ export const updateUserSelectedBankAccount = async (
   reply.status(200).send({
     message: i18n.t('success.user.selectedBankAccountUpdated')
   });
+};
+
+export const updateUserAnalyticsConsent = async (
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Body: Pick<UserBody, 'analyticsConsentStatus'>;
+  }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const { analyticsConsentStatus } = req.body;
+  const i18n = await useI18n(req);
+
+  if (!analyticsConsentStatus)
+    throw new BadRequestError(i18n.t('error.user.unableToUpdate'));
+
+  const user = await updateUserAnalyticsConsentInDb(
+    userId,
+    analyticsConsentStatus
+  );
+
+  if (!user) throw new BadRequestError(i18n.t('error.user.unableToUpdate'));
+
+  reply.status(200).send({ user, message: i18n.t('success.user.updated') });
 };
 
 export const updateUserProfilePicture = async (

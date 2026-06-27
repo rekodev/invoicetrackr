@@ -190,6 +190,13 @@
       "when": 1782032400000,
       "tag": "0027_rek_70_email_verification",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1782569566387,
+      "tag": "0028_careful_vengeance",
+      "breakpoints": true
     }
   ]
 }

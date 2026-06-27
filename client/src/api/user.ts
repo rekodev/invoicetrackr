@@ -1,4 +1,5 @@
 import {
+  type AnalyticsConsentStatus,
   CreateNewPasswordResponse,
   DeleteUserAccountResponse,
   GetUserResetPasswordTokenResponse,
@@ -123,6 +124,14 @@ export const updateUserAccountSettings = async (
       preferredInvoiceLanguage
     }
   );
+
+export const updateUserAnalyticsConsent = async (
+  userId: number,
+  analyticsConsentStatus: AnalyticsConsentStatus
+) =>
+  await api.put<UpdateUserResponse>(`/api/users/${userId}/analytics-consent`, {
+    analyticsConsentStatus
+  });
 
 export const deleteUserAccount = async (userId: number) =>
   await api.delete<DeleteUserAccountResponse>(`/api/users/${userId}`);

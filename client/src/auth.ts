@@ -36,7 +36,9 @@ const mapUserToSessionUser = (user: InvoiceTrackrUser): User => {
     trialEndsAt: user.trialEndsAt,
     subscriptionGraceEndsAt: user.subscriptionGraceEndsAt,
     subscriptionCurrentPeriodEndsAt: user.subscriptionCurrentPeriodEndsAt,
-    subscriptionCancelAt: user.subscriptionCancelAt
+    subscriptionCancelAt: user.subscriptionCancelAt,
+    analyticsConsentStatus: user.analyticsConsentStatus,
+    analyticsConsentUpdatedAt: user.analyticsConsentUpdatedAt
   };
 };
 

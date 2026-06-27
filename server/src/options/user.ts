@@ -28,6 +28,7 @@ import {
   resetUserPassword,
   updateUser,
   updateUserAccountSettings,
+  updateUserAnalyticsConsent,
   updateUserProfilePicture,
   updateUserSelectedBankAccount,
   verifyUserEmail
@@ -167,6 +168,27 @@ export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler 
     },
     preHandler: authMiddleware,
     handler: updateUserAccountSettings
+  };
+
+export const updateUserAnalyticsConsentOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      body: userBodySchema.pick({
+        analyticsConsentStatus: true
+      }),
+      response: {
+        200: z.object({
+          user: userBodySchema.pick({
+            id: true,
+            analyticsConsentStatus: true,
+            analyticsConsentUpdatedAt: true
+          }),
+          message: z.string()
+        })
+      }
+    },
+    preHandler: authMiddleware,
+    handler: updateUserAnalyticsConsent
   };
 
 export const changeUserPasswordOptions: RouteShorthandOptionsWithHandler = {

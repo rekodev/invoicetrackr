@@ -9,6 +9,13 @@ export default function ThemeSwitcher() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
+  const icon =
+    theme === 'light' ? (
+      <MoonIcon className="h-5 w-5" />
+    ) : (
+      <SunIcon className="h-5 w-5" />
+    );
+
   const handleClick = () => {
     if (theme === 'dark') setTheme('light');
     else setTheme('dark');
@@ -19,15 +26,14 @@ export default function ThemeSwitcher() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
-
   return (
-    <Button variant="outline" isIconOnly onPress={handleClick}>
-      {theme === 'light' ? (
-        <MoonIcon className="h-5 w-5" />
-      ) : (
-        <SunIcon className="h-5 w-5" />
-      )}
+    <Button
+      isDisabled={!mounted}
+      variant="outline"
+      isIconOnly
+      onPress={handleClick}
+    >
+      {icon}
     </Button>
   );
 }

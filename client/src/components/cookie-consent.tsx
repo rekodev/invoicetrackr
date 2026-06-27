@@ -4,7 +4,6 @@ import { Alert, Button, CloseButton, Link } from '@heroui/react';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { CookieConsentStatus } from '@/lib/types';
 import { PRIVACY_POLICY_PAGE } from '@/lib/constants/pages';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 
@@ -12,14 +11,17 @@ export default function CookieConsent() {
   const t = useTranslations('cookie_consent');
   const { cookieConsent, updateCookieConsent } = useCookieConsent();
   const [isVisible, setIsVisible] = useState(true);
+  const [isPending, setIsPending] = useState(false);
 
-  const handleAccept = () => {
-    updateCookieConsent(CookieConsentStatus.Accepted);
+  const handleAccept = async () => {
+    setIsPending(true);
+    await updateCookieConsent('accepted');
     setIsVisible(false);
   };
 
-  const handleDecline = () => {
-    updateCookieConsent(CookieConsentStatus.Declined);
+  const handleDecline = async () => {
+    setIsPending(true);
+    await updateCookieConsent('declined');
     setIsVisible(false);
   };
 
@@ -46,6 +48,7 @@ export default function CookieConsent() {
                 <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
                   <Button
                     className="w-full md:max-w-max"
+                    isPending={isPending}
                     onPress={handleAccept}
                   >
                     {t('accept')}
@@ -53,6 +56,7 @@ export default function CookieConsent() {
 
                   <Button
                     className="w-full border md:max-w-max"
+                    isDisabled={isPending}
                     variant="outline"
                     onPress={handleDecline}
                   >
