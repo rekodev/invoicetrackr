@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 
 const LAST_UPDATED = '10/30/2025';
-const CONTACT_EMAIL = 'invoicetrackr@gmail.com';
+const CONTACT_EMAIL = 'support@invoicetrackr.app';
 
 export default function TermsOfServicePageContent() {
   const t = useTranslations('terms_of_service');

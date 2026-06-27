@@ -1,15 +1,17 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createTestApp } from '../../test/app';
-import { handleResendWebhook } from '../webhook';
 import { mockResendForward } from '../../test/setup';
+import { handleResendWebhook } from '../webhook';
 
 describe('Webhook Controller', () => {
   describe('POST /api/webhook/resend', () => {
-    it('forwards received emails to the configured inbox', async () => {
-      process.env.RESEND_FORWARD_TO_EMAIL = 'reko.jsx@gmail.com';
-      process.env.RESEND_FORWARD_FROM_EMAIL = 'noreply@invoicetrackr.app';
+    beforeEach(() => {
+      process.env.RESEND_FORWARD_TO_EMAIL = 'owner@example.com';
+      process.env.RESEND_FORWARD_FROM_EMAIL = 'support@invoicetrackr.app';
+    });
 
+    it('forwards received emails to the configured inbox', async () => {
       const app = await createTestApp((fastifyApp) => {
         fastifyApp.post('/api/webhook/resend', handleResendWebhook);
       });
@@ -28,8 +30,8 @@ describe('Webhook Controller', () => {
       expect(response.statusCode).toBe(200);
       expect(mockResendForward).toHaveBeenCalledWith({
         emailId: 'eml_received_123',
-        to: 'reko.jsx@gmail.com',
-        from: 'noreply@invoicetrackr.app'
+        to: 'owner@example.com',
+        from: 'support@invoicetrackr.app'
       });
 
       await app.close();
@@ -79,6 +81,7 @@ describe('Webhook Controller', () => {
       });
 
       expect(response.statusCode).toBe(500);
+      expect(JSON.parse(response.body).message).toBe('Forward failed');
 
       await app.close();
     });

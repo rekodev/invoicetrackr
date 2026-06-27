@@ -9,6 +9,7 @@ vi.mock('../../config/resend');
 describe('Contact Controller', () => {
   describe('POST /api/contact', () => {
     it('should send contact message successfully', async () => {
+      process.env.RESEND_FORWARD_TO_EMAIL = 'owner@example.com';
       vi.mocked(resend.emails.send).mockResolvedValue({
         data: { id: 'test-email-id' },
         headers: null,
@@ -35,9 +36,10 @@ describe('Contact Controller', () => {
       expect(body.message).toBeDefined();
       expect(resend.emails.send).toHaveBeenCalledWith({
         from: 'InvoiceTrackr <noreply@invoicetrackr.app>',
-        to: 'support@ruwhia8088.resend.app',
+        to: 'owner@example.com',
         subject: 'New Contact Message',
-        react: expect.anything()
+        react: expect.anything(),
+        replyTo: 'test@example.com'
       });
 
       await app.close();

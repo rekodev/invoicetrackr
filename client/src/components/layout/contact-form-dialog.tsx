@@ -35,6 +35,8 @@ export default function ContactFormDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
+  const openDialog = () => setIsOpen(true);
+
   const handleClose = () => {
     setIsOpen(false);
     reset();
@@ -65,50 +67,52 @@ export default function ContactFormDialog() {
 
   return (
     <>
-      <Button onPress={() => setIsOpen(true)} className="max-w-min">
+      <Button type="button" onPress={openDialog} className="max-w-min">
         {t('title')}
       </Button>
 
-      <Modal>
-        <Modal.Backdrop
-          isOpen={isOpen}
-          onOpenChange={(open) => !open && handleClose()}
-        >
+      <Modal isOpen={isOpen} onOpenChange={(open) => !open && handleClose()}>
+        <Modal.Backdrop>
           <Modal.Container size="lg">
             <Modal.Dialog>
               <Modal.CloseTrigger />
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Modal.Header>
-            <Modal.Heading>{t('title')}</Modal.Heading>
-          </Modal.Header>
-          <Modal.Body className="w-full flex-col">
-            <TextField variant="secondary" isInvalid={!!errors.email}>
-              <Label>{t('email_label')}</Label>
-              <Input
-                {...register('email')}
-                placeholder={t('email_placeholder')}
-              />
-              <FieldError>{errors.email?.message}</FieldError>
-            </TextField>
-            <TextField variant="secondary" isInvalid={!!errors.message}>
-              <Label>{t('message_label')}</Label>
-              <TextArea
-                {...register('message')}
-                placeholder={t('message_placeholder')}
-                maxLength={5000}
-              />
-              <FieldError>{errors.message?.message}</FieldError>
-            </TextField>
-          </Modal.Body>
-          <Modal.Footer className="w-full">
-            <Button variant="outline" onPress={handleClose}>
-              {t('cancel')}
-            </Button>
-            <Button isPending={isPending} type="submit">
-              {t('send')}
-            </Button>
-          </Modal.Footer>
-        </Form>
+              <Form onSubmit={handleSubmit(onSubmit)}>
+                <Modal.Header>
+                  <Modal.Heading>{t('title')}</Modal.Heading>
+                </Modal.Header>
+                <Modal.Body className="flex w-full flex-col gap-3">
+                  <TextField variant="secondary" isInvalid={!!errors.email}>
+                    <Label>{t('email_label')}</Label>
+                    <Input
+                      {...register('email')}
+                      placeholder={t('email_placeholder')}
+                    />
+                    <FieldError>{errors.email?.message}</FieldError>
+                  </TextField>
+                  <TextField variant="secondary" isInvalid={!!errors.message}>
+                    <Label>{t('message_label')}</Label>
+                    <TextArea
+                      {...register('message')}
+                      placeholder={t('message_placeholder')}
+                      maxLength={5000}
+                    />
+                    <FieldError>{errors.message?.message}</FieldError>
+                  </TextField>
+                </Modal.Body>
+                <Modal.Footer className="w-full">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    isDisabled={isPending}
+                    onPress={handleClose}
+                  >
+                    {t('cancel')}
+                  </Button>
+                  <Button isPending={isPending} type="submit">
+                    {t('send')}
+                  </Button>
+                </Modal.Footer>
+              </Form>
             </Modal.Dialog>
           </Modal.Container>
         </Modal.Backdrop>
