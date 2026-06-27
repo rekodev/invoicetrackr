@@ -1,34 +1,15 @@
 import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale } from 'next-intl/server';
+
+import { getPageMetadata } from '@/lib/seo/metadata';
+import { getSeoLocale } from '@/lib/seo/site';
 
 import TermsOfServicePageContent from './terms-of-service-page-content';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('terms_of_service');
+  const locale = getSeoLocale(await getLocale());
 
-  return {
-    title: t('title'),
-    description: t('sections.agreement.content'),
-    keywords: [
-      'terms of service',
-      'legal',
-      'agreements',
-      'billing',
-      'account usage'
-    ],
-    authors: [{ name: 'InvoiceTrackr' }],
-    creator: 'InvoiceTrackr',
-    openGraph: {
-      type: 'website',
-      siteName: 'InvoiceTrackr',
-      title: t('title'),
-      description: t('sections.agreement.content'),
-      url: '/terms-of-service'
-    },
-    alternates: {
-      canonical: '/terms-of-service'
-    }
-  };
+  return getPageMetadata('terms', locale);
 }
 
 export default function TermsOfServicePage() {

@@ -98,6 +98,7 @@ export default function LanguageSwitcher({ user }: Props) {
               textValue={baseT(item.nameTranslationKey)}
             >
               {baseT(item.nameTranslationKey)}
+              <Dropdown.ItemIndicator />
             </DropdownItem>
           )}
         </DropdownMenu>

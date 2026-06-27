@@ -12,6 +12,7 @@ export const EDIT_INVOICE_PAGE = (invoiceId: number) =>
   `/invoices/edit/${invoiceId}`;
 export const CONTRACTS_PAGE = '/contracts';
 export const CLIENTS_PAGE = '/clients';
+export const PROFILE_PAGE = '/profile';
 export const PERSONAL_INFORMATION_PAGE = '/profile/personal-information';
 export const BANKING_INFORMATION_PAGE = '/profile/banking-information';
 export const ADD_NEW_BANK_ACCOUNT_PAGE = '/profile/banking-information/new';

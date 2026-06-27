@@ -1,19 +1,21 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
+import { VERIFY_EMAIL_PAGE } from '@/lib/constants/pages';
 import VerifyEmailResultCard from '@/components/auth/verify-email-result-card';
 import { auth } from '@/auth';
+import { getNoIndexMetadata } from '@/lib/seo/metadata';
 
-export const metadata: Metadata = {
-  title: 'Verify email',
-  description: 'Verify your InvoiceTrackr account email.',
-  alternates: { canonical: '/verify-email' },
-  referrer: 'no-referrer',
-  robots: {
-    index: false,
-    follow: false,
-    googleBot: { index: false, follow: false }
-  }
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('verify_email.pending');
+
+  return getNoIndexMetadata({
+    title: t('title'),
+    description: t('description'),
+    canonical: VERIFY_EMAIL_PAGE,
+    referrer: 'no-referrer'
+  });
+}
 
 type Props = {
   params: Promise<{ token: string }>;

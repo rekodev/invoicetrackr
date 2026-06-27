@@ -1,17 +1,19 @@
 import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
+import { FORGOT_PASSWORD_PAGE } from '@/lib/constants/pages';
 import ForgotPasswordForm from '@/components/auth/forgot-password-form';
+import { getNoIndexMetadata } from '@/lib/seo/metadata';
 
-export const metadata: Metadata = {
-  title: 'Forgot password',
-  description: 'Reset your InvoiceTrackr account password.',
-  alternates: { canonical: '/forgot-password' },
-  robots: {
-    index: false,
-    follow: false,
-    googleBot: { index: false, follow: false }
-  }
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('forgot_password');
+
+  return getNoIndexMetadata({
+    title: t('title'),
+    description: t('description'),
+    canonical: FORGOT_PASSWORD_PAGE
+  });
+}
 
 export default function ForgotPasswordPage() {
   return (

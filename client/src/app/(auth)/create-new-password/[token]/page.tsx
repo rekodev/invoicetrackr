@@ -1,21 +1,22 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
 import CreateNewPasswordForm from '@/components/auth/create-new-password-form';
 import InvalidTokenCard from '@/components/auth/invalid-token-card';
+import { getNoIndexMetadata } from '@/lib/seo/metadata';
 import { getUserResetPasswordToken } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
-export const metadata: Metadata = {
-  title: 'Create new password',
-  description: 'Set a new password for your InvoiceTrackr account.',
-  alternates: { canonical: '/create-new-password' },
-  referrer: 'no-referrer',
-  robots: {
-    index: false,
-    follow: false,
-    googleBot: { index: false, follow: false }
-  }
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('create_new_password');
+
+  return getNoIndexMetadata({
+    title: t('title'),
+    description: t('description'),
+    canonical: '/create-new-password',
+    referrer: 'no-referrer'
+  });
+}
 
 type Props = {
   params: Promise<{ token: string }>;

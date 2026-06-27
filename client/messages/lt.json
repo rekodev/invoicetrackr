@@ -353,7 +353,7 @@
                 "title": "Premium",
                 "tagline": "Pilna programa: išsaugokite, siųskite, sekite ir gaukite apmokėjimą.",
                 "suffix": "/metus",
-                "alt": "arba €4.99 / mėn.",
+                "alt": "arba {monthlyPrice} / mėn.",
                 "features": {
                     "saved": "Neribotos išsaugotos sąskaitos ir klientai",
                     "email": "Siuntimas el. paštu ir priminimai",
@@ -401,6 +401,61 @@
         "privacy_policy": "Privatumo Politika",
         "terms_of_service": "Naudojimosi Sąlygos",
         "copyright": "© {year} InvoiceTrackr. Visos teisės saugomos."
+    },
+    "seo": {
+        "home": {
+            "title": "Sąskaitų faktūrų programa Lietuvai",
+            "description": "InvoiceTrackr padeda kurti sąskaitas faktūras, valdyti klientus, priimti mokėjimus ir eksportuoti pajamų žurnalą Lietuvos freelanceriams ir mažam verslui.",
+            "keywords": [
+                "sąskaitų faktūrų programa",
+                "sąskaita faktūra",
+                "PVM sąskaita faktūra",
+                "sąskaitų išrašymas",
+                "pajamų žurnalas",
+                "freelanceriai Lietuvoje",
+                "mažas verslas Lietuvoje"
+            ],
+            "features": [
+                "Sąskaitų faktūrų kūrimas",
+                "Klientų valdymas",
+                "Stripe Connect mokėjimai",
+                "Sąskaitų siuntimas el. paštu",
+                "CSV pajamų žurnalo eksportas"
+            ]
+        },
+        "createInvoice": {
+            "title": "Nemokamas sąskaitos faktūros generatorius",
+            "description": "Sukurkite nemokamą sąskaitą faktūrą internetu, pasirinkite lietuvišką arba anglišką dokumentą ir atsisiųskite tvarkingą PDF be registracijos.",
+            "keywords": [
+                "nemokamas sąskaitos faktūros generatorius",
+                "sąskaita faktūra PDF",
+                "PVM sąskaita faktūra",
+                "sukurti sąskaitą faktūrą",
+                "invoice generator Lithuania"
+            ]
+        },
+        "privacyPolicy": {
+            "title": "Privatumo politika",
+            "description": "Sužinokite, kaip InvoiceTrackr tvarko paskyros, sąskaitų, slapukų, analitikos ir mokėjimų duomenis.",
+            "keywords": [
+                "InvoiceTrackr privatumo politika",
+                "slapukai",
+                "duomenų apsauga",
+                "analitika",
+                "mokėjimų duomenys"
+            ]
+        },
+        "terms": {
+            "title": "Naudojimosi sąlygos",
+            "description": "InvoiceTrackr naudojimosi sąlygos paskyroms, sąskaitų kūrimui, prenumeratai, mokėjimams ir atsakomybei.",
+            "keywords": [
+                "InvoiceTrackr naudojimosi sąlygos",
+                "sąlygos",
+                "prenumerata",
+                "mokėjimai",
+                "paskyros naudojimas"
+            ]
+        }
     },
     "login": {
         "page_title": "Prisijungti",
@@ -1096,22 +1151,22 @@
             "intervals": {
                 "annual": {
                     "title": "Metinis",
-                    "description": "€49/metus",
+                    "description": "{annualPrice}/metus",
                     "badge": "Sutaupykite 18%"
                 },
                 "monthly": {
                     "title": "Mėnesinis",
-                    "description": "€4.99/mėn."
+                    "description": "{monthlyPrice}/mėn."
                 }
             },
             "prices": {
                 "annual": {
-                    "amount": "€49",
+                    "amount": "{annualPrice}",
                     "interval": "/ metus",
-                    "note": "Atitinka €4.08/mėn. · atšaukti galima bet kada"
+                    "note": "Atitinka {monthlyEquivalentPrice}/mėn. · atšaukti galima bet kada"
                 },
                 "monthly": {
-                    "amount": "€4.99",
+                    "amount": "{monthlyPrice}",
                     "interval": "/ mėn.",
                     "note": "Mokama kas mėnesį · atšaukti galima bet kada"
                 }
@@ -1213,12 +1268,14 @@
                 "sender_vat_number_label": "Siuntėjo PVM mokėtojo kodas",
                 "sender_address_label": "Siuntėjo adresas",
                 "sender_email_label": "Siuntėjo el. paštas",
+                "sender_business_type_label": "Siuntėjo veiklos tipas",
                 "receiver_name_label": "Gavėjo vardas",
                 "receiver_business_number_label_business": "Gavėjo įmonės kodas",
                 "receiver_business_number_label_individual": "Gavėjo IV pažymos Nr.",
                 "receiver_vat_number_label": "Gavėjo PVM mokėtojo kodas",
                 "receiver_address_label": "Gavėjo adresas",
                 "receiver_email_label": "Gavėjo el. paštas",
+                "receiver_business_type_label": "Gavėjo veiklos tipas",
                 "bank_name_label": "Banko pavadinimas",
                 "bank_code_label": "Banko kodas",
                 "bank_account_number_label": "Banko sąskaitos numeris",
@@ -1525,7 +1582,7 @@
                 },
                 "premium": {
                     "heading": "4.2 Premium planas",
-                    "content": "Mūsų premium planas (€4.99/mėn. arba €49/metus) apima visas nemokamas funkcijas ir galimybę išsaugoti bei redaguoti sąskaitas faktūras, saugoti klientų informaciją, kurti ir valdyti sutartis, pasirinkti valiutą ir kalbos nuostatas bei siųsti sąskaitas faktūras tiesiogiai klientams el. paštu."
+                    "content": "Mūsų premium planas ({monthlyPrice}/mėn. arba {annualPrice}/metus) apima visas nemokamas funkcijas ir galimybę išsaugoti bei redaguoti sąskaitas faktūras, saugoti klientų informaciją, kurti ir valdyti sutartis, pasirinkti valiutą ir kalbos nuostatas bei siųsti sąskaitas faktūras tiesiogiai klientams el. paštu."
                 },
                 "payment": {
                     "heading": "4.3 Mokėjimo sąlygos",

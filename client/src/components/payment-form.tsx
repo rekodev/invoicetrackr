@@ -20,6 +20,12 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import {
+  SUBSCRIPTION_AMOUNT,
+  SUBSCRIPTION_ANNUAL_AMOUNT,
+  SUBSCRIPTION_MONTHLY_EQUIVALENT_AMOUNT,
+  formatSubscriptionPrice
+} from '@/lib/constants/subscription';
+import {
   createBillingPortalSession,
   createCheckoutSession,
   resumeSubscription,
@@ -138,22 +144,29 @@ export default function PaymentForm({
     canStartTrial ||
     (subscriptionStatus && reusableCheckoutStatuses.has(subscriptionStatus));
   const isBusy = !!loadingAction;
-  const selectedPrice = t.raw(`prices.${selectedInterval}`) as {
-    amount: string;
-    interval: string;
-    note: string;
+  const priceValues = {
+    monthlyPrice: formatSubscriptionPrice(SUBSCRIPTION_AMOUNT),
+    annualPrice: formatSubscriptionPrice(SUBSCRIPTION_ANNUAL_AMOUNT),
+    monthlyEquivalentPrice: formatSubscriptionPrice(
+      SUBSCRIPTION_MONTHLY_EQUIVALENT_AMOUNT
+    )
+  };
+  const selectedPrice = {
+    amount: t(`prices.${selectedInterval}.amount`, priceValues),
+    interval: t(`prices.${selectedInterval}.interval`),
+    note: t(`prices.${selectedInterval}.note`, priceValues)
   };
   const billingIntervals = [
     {
       key: 'annual',
       title: t('intervals.annual.title'),
-      description: t('intervals.annual.description'),
+      description: t('intervals.annual.description', priceValues),
       badge: t('intervals.annual.badge')
     },
     {
       key: 'monthly',
       title: t('intervals.monthly.title'),
-      description: t('intervals.monthly.description')
+      description: t('intervals.monthly.description', priceValues)
     }
   ] as const;
   const features = [

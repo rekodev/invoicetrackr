@@ -1,7 +1,13 @@
-import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
 import { Card, Chip, Link, buttonVariants, cn } from '@heroui/react';
-import { CheckIcon } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
+
+import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
+import {
+  SUBSCRIPTION_AMOUNT,
+  SUBSCRIPTION_ANNUAL_AMOUNT,
+  formatSubscriptionPrice
+} from '@/lib/constants/subscription';
+import { CheckIcon } from '@heroicons/react/24/outline';
 
 import { PRICING_PLANS } from './constants';
 
@@ -15,6 +21,8 @@ export default function PriceCard({
   highlighted?: boolean;
 }) {
   const t = useTranslations(`home.pricing.${plan}`);
+  const monthlyPrice = formatSubscriptionPrice(SUBSCRIPTION_AMOUNT);
+  const annualPrice = formatSubscriptionPrice(SUBSCRIPTION_ANNUAL_AMOUNT);
   const featureKeys =
     plan === 'free'
       ? (['single', 'download', 'languages', 'no_account'] as const)
@@ -48,22 +56,21 @@ export default function PriceCard({
       <Card.Content className="p-0">
         <div className="mt-6 flex items-baseline gap-1">
           <span className="text-5xl font-medium tracking-tight">
-            {plan === 'free' ? `${currencySymbol}0` : `${currencySymbol}49`}
+            {plan === 'free' ? `${currencySymbol}0` : annualPrice}
           </span>
           {plan === 'premium' && (
             <span className="text-muted text-sm">{t('suffix')}</span>
           )}
         </div>
         {plan === 'premium' && (
-          <div className="text-muted mt-1 text-[11px]">{t('alt')}</div>
+          <div className="text-muted mt-1 text-[11px]">
+            {t('alt', { monthlyPrice })}
+          </div>
         )}
 
         <ul className="mt-7 space-y-2.5">
           {featureKeys.map((key) => (
-            <li
-              key={key}
-              className="text-muted flex items-start gap-2 text-sm"
-            >
+            <li key={key} className="text-muted flex items-start gap-2 text-sm">
               <CheckIcon className="text-accent mt-0.5 h-3.5 w-3.5 shrink-0" />
               {t(`features.${key}`)}
             </li>

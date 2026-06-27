@@ -353,7 +353,7 @@
                 "title": "Premium",
                 "tagline": "The full app: save, send, track, get paid.",
                 "suffix": "/year",
-                "alt": "or €4.99 / month",
+                "alt": "or {monthlyPrice} / month",
                 "features": {
                     "saved": "Unlimited saved invoices and clients",
                     "email": "Send by email and remind clients",
@@ -401,6 +401,60 @@
         "privacy_policy": "Privacy Policy",
         "terms_of_service": "Terms of Service",
         "copyright": "© {year} InvoiceTrackr. All rights reserved."
+    },
+    "seo": {
+        "home": {
+            "title": "Invoice software for Lithuanian freelancers",
+            "description": "Create polished invoices, manage clients, collect payments, export your invoice ledger, and issue documents in Lithuanian or English.",
+            "keywords": [
+                "invoice software Lithuania",
+                "invoice generator",
+                "Lithuanian invoice",
+                "VAT invoice",
+                "freelancer invoicing",
+                "small business invoicing"
+            ],
+            "features": [
+                "Invoice creation",
+                "Client management",
+                "Stripe Connect payments",
+                "Invoice email sending",
+                "CSV invoice ledger export"
+            ]
+        },
+        "createInvoice": {
+            "title": "Free invoice generator for PDF invoices",
+            "description": "Create a free invoice online, choose English or Lithuanian output, add line items and a signature, then download a polished PDF.",
+            "keywords": [
+                "free invoice generator",
+                "PDF invoice generator",
+                "Lithuanian invoice template",
+                "English invoice template",
+                "create invoice online"
+            ]
+        },
+        "privacyPolicy": {
+            "title": "Privacy Policy",
+            "description": "Learn how InvoiceTrackr handles account, invoice, cookie, analytics, and payment-related data.",
+            "keywords": [
+                "InvoiceTrackr privacy policy",
+                "cookies",
+                "data protection",
+                "analytics",
+                "payment data"
+            ]
+        },
+        "terms": {
+            "title": "Terms of Service",
+            "description": "InvoiceTrackr terms for account usage, invoice creation, subscriptions, payments, and service responsibilities.",
+            "keywords": [
+                "InvoiceTrackr terms of service",
+                "terms",
+                "subscription",
+                "payments",
+                "account usage"
+            ]
+        }
     },
     "login": {
         "page_title": "Log In",
@@ -1096,22 +1150,22 @@
             "intervals": {
                 "annual": {
                     "title": "Annual",
-                    "description": "€49/year",
+                    "description": "{annualPrice}/year",
                     "badge": "Save 18%"
                 },
                 "monthly": {
                     "title": "Monthly",
-                    "description": "€4.99/month"
+                    "description": "{monthlyPrice}/month"
                 }
             },
             "prices": {
                 "annual": {
-                    "amount": "€49",
+                    "amount": "{annualPrice}",
                     "interval": "/ year",
-                    "note": "Equivalent to €4.08/month · cancel anytime"
+                    "note": "Equivalent to {monthlyEquivalentPrice}/month · cancel anytime"
                 },
                 "monthly": {
-                    "amount": "€4.99",
+                    "amount": "{monthlyPrice}",
                     "interval": "/ month",
                     "note": "Billed monthly · cancel anytime"
                 }
@@ -1213,11 +1267,13 @@
                 "sender_vat_number_label": "Sender's VAT Number",
                 "sender_address_label": "Sender's Address",
                 "sender_email_label": "Sender's Email",
+                "sender_business_type_label": "Sender business type",
                 "receiver_name_label": "Receiver's Name",
                 "receiver_business_number_label_business": "Receiver's Company Code",
                 "receiver_business_number_label_individual": "Receiver's Sole Proprietorship Certificate Number",
                 "receiver_address_label": "Receiver's Address",
                 "receiver_email_label": "Receiver's Email",
+                "receiver_business_type_label": "Receiver business type",
                 "bank_name_label": "Bank Name",
                 "receiver_vat_number_label": "Receiver's VAT Number",
                 "bank_code_label": "Bank Code",
@@ -1525,7 +1581,7 @@
                 },
                 "premium": {
                     "heading": "4.2 Premium Plan",
-                    "content": "Our premium plan (€4.99/month or €49/year) includes all free features plus the ability to save and edit invoices, store client information, create and manage contracts, choose currency and language preferences, and email invoices directly to clients."
+                    "content": "Our premium plan ({monthlyPrice}/month or {annualPrice}/year) includes all free features plus the ability to save and edit invoices, store client information, create and manage contracts, choose currency and language preferences, and email invoices directly to clients."
                 },
                 "payment": {
                     "heading": "4.3 Payment Terms",
