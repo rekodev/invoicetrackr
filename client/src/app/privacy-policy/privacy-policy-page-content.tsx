@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-const LAST_UPDATED = '10/30/2025';
+const LAST_UPDATED = '06/27/2026';
 const CONTACT_EMAIL = 'support@invoicetrackr.app';
 
 export default function PrivacyPolicyPageContent() {
@@ -126,16 +126,7 @@ export default function PrivacyPolicyPageContent() {
             {t('sections.information_we_collect.analytics_data.heading')}
           </h3>
           <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
-            {t('sections.information_we_collect.analytics_data.intro')}{' '}
-            <a
-              href="https://policies.google.com/privacy"
-              className="text-secondary-600 hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              https://policies.google.com/privacy
-            </a>
-            .
+            {t('sections.information_we_collect.analytics_data.intro')}
           </p>
         </section>
 
@@ -186,7 +177,7 @@ export default function PrivacyPolicyPageContent() {
               {t('sections.how_we_share.service_providers.items.cloudinary')}
             </li>
             <li>
-              <strong>Google Analytics:</strong>{' '}
+              <strong>PostHog:</strong>{' '}
               {t('sections.how_we_share.service_providers.items.analytics')}
             </li>
             <li>

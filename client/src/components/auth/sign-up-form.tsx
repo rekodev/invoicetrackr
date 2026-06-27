@@ -24,6 +24,8 @@ import { useTranslations } from 'next-intl';
 import { signInWithGoogleAction, signUpAction } from '@/lib/actions';
 import AuthCardHeader from '@/components/auth/auth-card-header';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
+import { analyticsEvents } from '@/lib/analytics/events';
+import { captureAnalyticsEvent } from '@/lib/analytics/client';
 
 type SignUpFormModel = {
   email: string;
@@ -68,6 +70,9 @@ export default function SignUpForm({ headerContent }: Props) {
 
   const onSubmit: SubmitHandler<SignUpFormModel> = async (data) => {
     setSubmissionMessage(null);
+    captureAnalyticsEvent(analyticsEvents.signUpStarted, {
+      method: 'email'
+    });
 
     const formData = new FormData();
     formData.append('email', data.email);
@@ -129,6 +134,11 @@ export default function SignUpForm({ headerContent }: Props) {
             className="w-full justify-center gap-3"
             type="submit"
             variant="outline"
+            onPress={() =>
+              captureAnalyticsEvent(analyticsEvents.signUpStarted, {
+                method: 'google'
+              })
+            }
           >
             <span className="text-base font-semibold">G</span>
             {t('google_submit')}

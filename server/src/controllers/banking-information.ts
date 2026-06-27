@@ -1,9 +1,12 @@
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { BankAccountBody } from '@invoicetrackr/types';
+import { useI18n } from 'fastify-i18n';
+
 import {
   AlreadyExistsError,
   BadRequestError,
   NotFoundError
 } from '../utils/error';
-import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   deleteBankAccountFromDb,
   findBankAccountByAccountNumber,
@@ -16,8 +19,8 @@ import {
   getUserFromDb,
   updateUserSelectedBankAccountInDb
 } from '../database/user';
-import { BankAccountBody } from '@invoicetrackr/types';
-import { useI18n } from 'fastify-i18n';
+import { analyticsEvents } from '../analytics/events';
+import { captureAnalyticsEventForUser } from '../analytics/posthog';
 
 export const getBankAccounts = async (
   req: FastifyRequest<{ Params: { userId: string } }>,
@@ -73,6 +76,14 @@ export const postBankAccount = async (
 
   if (!insertedBankAccount)
     throw new BadRequestError(i18n.t('error.bankAccount.unableToCreate'));
+
+  await captureAnalyticsEventForUser({
+    userId,
+    event: analyticsEvents.bankAccountAdded,
+    properties: {
+      became_selected_account: !hasSelectedBankAccount
+    }
+  });
 
   if (!hasSelectedBankAccount) {
     const updatedUserSelectedBankAccount =

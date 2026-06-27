@@ -18,6 +18,8 @@ import {
   upsertStripeAccountInDb,
   upsertStripeMerchantAccountInDb
 } from '../database/payment';
+import { analyticsEvents } from '../analytics/events';
+import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import { getAppBaseUrl } from '../config/app';
 import { getUserFromDb } from '../database/user';
 import { stripe } from '../config/stripe';
@@ -659,6 +661,11 @@ export const startTrial = async (
   await upsertStripeAccountInDb(userId, customerId, subscription.id);
   await syncSubscriptionInDb(userId, subscription, {
     paymentSuccessPending: true
+  });
+  await captureAnalyticsEventForUser({
+    userId,
+    event: analyticsEvents.trialStarted,
+    properties: { billing_interval: interval }
   });
 
   return sendBillingStatus(userId, reply);

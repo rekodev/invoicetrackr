@@ -353,6 +353,13 @@ export const usersTable = pgTable(
       withTimezone: true,
       mode: 'string'
     }),
+    analyticsConsentStatus: varchar('analytics_consent_status', {
+      length: 20
+    }),
+    analyticsConsentUpdatedAt: timestamp('analytics_consent_updated_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
     paymentSuccessPending: boolean('payment_success_pending')
       .default(false)
       .notNull()

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-const LAST_UPDATED = '10/30/2025';
+const LAST_UPDATED = '06/27/2026';
 const CONTACT_EMAIL = 'support@invoicetrackr.app';
 
 export default function TermsOfServicePageContent() {
@@ -205,8 +205,7 @@ export default function TermsOfServicePageContent() {
               {t('sections.third_party.cloudinary')}
             </li>
             <li>
-              <strong>Google Analytics:</strong>{' '}
-              {t('sections.third_party.analytics')}
+              <strong>PostHog:</strong> {t('sections.third_party.analytics')}
             </li>
           </ul>
           <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">

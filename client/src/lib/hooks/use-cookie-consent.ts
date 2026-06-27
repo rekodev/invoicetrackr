@@ -1,36 +1,50 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CookieConsentStatus } from '../types';
+import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
+
+import {
+  ANALYTICS_CONSENT_COOKIE,
+  analyticsConsentStatuses
+} from '../analytics/constants';
+import { useAnalyticsConsent } from '../analytics/consent-context';
+
+const getConsentCookie = () => {
+  if (typeof document === 'undefined') return null;
+
+  const cookie = document.cookie
+    .split('; ')
+    .find((item) => item.startsWith(`${ANALYTICS_CONSENT_COOKIE}=`));
+  const value = cookie?.split('=').at(1);
+
+  return value && analyticsConsentStatuses.has(value as AnalyticsConsentStatus)
+    ? (value as AnalyticsConsentStatus)
+    : null;
+};
 
 export default function useCookieConsent() {
+  const {
+    consentStatus: analyticsConsentStatus,
+    setConsentStatus: setAnalyticsConsentStatus
+  } = useAnalyticsConsent();
   const [cookieConsent, setCookieConsent] = useState<
-    CookieConsentStatus | null | undefined
-  >(undefined);
+    AnalyticsConsentStatus | null | undefined
+  >(analyticsConsentStatus);
 
-  const updateCookieConsent = (consent: CookieConsentStatus) => {
-    localStorage.setItem('cookie-consent', consent);
+  const updateCookieConsent = (consent: AnalyticsConsentStatus) => {
     setCookieConsent(consent);
+    setAnalyticsConsentStatus(consent);
   };
 
   useEffect(() => {
-    const consent = localStorage.getItem('cookie-consent');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCookieConsent(consent as CookieConsentStatus | null);
-  }, []);
-
-  useEffect(() => {
-    if (cookieConsent === undefined) return;
-
-    const analyticsStorage =
-      cookieConsent === CookieConsentStatus.Accepted ? 'granted' : 'denied';
-
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('consent', 'update', {
-        analytics_storage: analyticsStorage
-      });
+    if (analyticsConsentStatus !== undefined) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCookieConsent(analyticsConsentStatus);
+      return;
     }
-  }, [cookieConsent]);
+
+    setCookieConsent(getConsentCookie());
+  }, [analyticsConsentStatus]);
 
   return { cookieConsent, updateCookieConsent };
 }

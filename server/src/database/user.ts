@@ -1,3 +1,4 @@
+import { AnalyticsConsentStatus, UserBody } from '@invoicetrackr/types';
 import { and, eq } from 'drizzle-orm';
 
 import {
@@ -7,7 +8,6 @@ import {
   stripeAccountsTable,
   usersTable
 } from './schema';
-import { UserBody } from '@invoicetrackr/types';
 import { db } from './db';
 
 export const getUserFromDb = async (
@@ -47,7 +47,10 @@ export const getUserFromDb = async (
       subscriptionGraceEndsAt: usersTable.subscriptionGraceEndsAt,
       subscriptionCurrentPeriodEndsAt:
         usersTable.subscriptionCurrentPeriodEndsAt,
-      subscriptionCancelAt: usersTable.subscriptionCancelAt
+      subscriptionCancelAt: usersTable.subscriptionCancelAt,
+      paymentSuccessPending: usersTable.paymentSuccessPending,
+      analyticsConsentStatus: usersTable.analyticsConsentStatus,
+      analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
     })
     .from(usersTable)
     .leftJoin(
@@ -97,7 +100,10 @@ export const getUserByEmailFromDb = async (
       subscriptionGraceEndsAt: usersTable.subscriptionGraceEndsAt,
       subscriptionCurrentPeriodEndsAt:
         usersTable.subscriptionCurrentPeriodEndsAt,
-      subscriptionCancelAt: usersTable.subscriptionCancelAt
+      subscriptionCancelAt: usersTable.subscriptionCancelAt,
+      paymentSuccessPending: usersTable.paymentSuccessPending,
+      analyticsConsentStatus: usersTable.analyticsConsentStatus,
+      analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
     })
     .from(usersTable)
     .leftJoin(
@@ -115,10 +121,17 @@ export const registerUser = async ({
   language,
   name = '',
   profilePictureUrl = '',
-  emailVerifiedAt = null
+  emailVerifiedAt = null,
+  analyticsConsentStatus = null
 }: Pick<InsertUser, 'email' | 'password' | 'language'> &
   Partial<
-    Pick<InsertUser, 'name' | 'profilePictureUrl' | 'emailVerifiedAt'>
+    Pick<
+      InsertUser,
+      | 'name'
+      | 'profilePictureUrl'
+      | 'emailVerifiedAt'
+      | 'analyticsConsentStatus'
+    >
   >): Promise<{ id: number; email: string } | undefined> => {
   const users = await db
     .insert(usersTable)
@@ -135,7 +148,11 @@ export const registerUser = async ({
       name,
       address: '',
       signature: '',
-      profilePictureUrl
+      profilePictureUrl,
+      analyticsConsentStatus,
+      analyticsConsentUpdatedAt: analyticsConsentStatus
+        ? new Date().toISOString()
+        : null
     })
     .returning({ id: usersTable.id, email: usersTable.email });
 
@@ -207,6 +224,39 @@ export const updateUserSelectedBankAccountInDb = async (
   return users.at(0);
 };
 
+export const updateUserAnalyticsConsentInDb = async (
+  userId: number,
+  analyticsConsentStatus: AnalyticsConsentStatus
+): Promise<
+  | {
+      id: number;
+      analyticsConsentStatus: AnalyticsConsentStatus | null;
+      analyticsConsentUpdatedAt: string | null;
+    }
+  | undefined
+> => {
+  const users = await db
+    .update(usersTable)
+    .set({
+      analyticsConsentStatus,
+      analyticsConsentUpdatedAt: new Date().toISOString()
+    })
+    .where(eq(usersTable.id, userId))
+    .returning({
+      id: usersTable.id,
+      analyticsConsentStatus: usersTable.analyticsConsentStatus,
+      analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
+    });
+
+  return users.at(0) as
+    | {
+        id: number;
+        analyticsConsentStatus: AnalyticsConsentStatus | null;
+        analyticsConsentUpdatedAt: string | null;
+      }
+    | undefined;
+};
+
 export const updateUserProfilePictureInDb = async (
   userId: number,
   url: string
@@ -230,7 +280,9 @@ export const updateUserProfilePictureInDb = async (
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
       currency: usersTable.currency,
-      subscriptionStatus: usersTable.subscriptionStatus
+      subscriptionStatus: usersTable.subscriptionStatus,
+      analyticsConsentStatus: usersTable.analyticsConsentStatus,
+      analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
     });
 
   return users.at(0);
@@ -270,7 +322,9 @@ export const updateUserAccountSettingsInDb = async (
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
       currency: usersTable.currency,
-      subscriptionStatus: usersTable.subscriptionStatus
+      subscriptionStatus: usersTable.subscriptionStatus,
+      analyticsConsentStatus: usersTable.analyticsConsentStatus,
+      analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
     });
 
   return users.at(0);

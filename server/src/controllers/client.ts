@@ -1,4 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { ClientBody } from '@invoicetrackr/types';
 import { useI18n } from 'fastify-i18n';
 
 import { BadRequestError, NotFoundError } from '../utils/error';
@@ -10,7 +11,8 @@ import {
   insertClientInDb,
   updateClientInDb
 } from '../database/client';
-import { ClientBody } from '@invoicetrackr/types';
+import { analyticsEvents } from '../analytics/events';
+import { captureAnalyticsEventForUser } from '../analytics/posthog';
 
 export const getClients = async (
   req: FastifyRequest<{ Params: { userId: string } }>,
@@ -59,6 +61,16 @@ export const postClient = async (
 
   if (!insertedClient)
     throw new BadRequestError(i18n.t('error.client.unableToCreate'));
+
+  await captureAnalyticsEventForUser({
+    userId,
+    event: analyticsEvents.clientCreated,
+    properties: {
+      business_type: insertedClient.businessType,
+      has_email: Boolean(insertedClient.email),
+      has_vat_number: Boolean(insertedClient.vatNumber)
+    }
+  });
 
   reply.status(201).send({
     client: insertedClient,

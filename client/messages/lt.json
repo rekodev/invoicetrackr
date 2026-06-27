@@ -56,7 +56,7 @@
     },
     "general_error": "Ajajai! Kažkas negerai...",
     "cookie_consent": {
-        "message": "Mes naudojame slapukus, kad suteiktume geriausią patirtį. Paspaudę \"Priimti viską\" sutinkate su mūsų slapukų naudojimu, įskaitant analitikos duomenis, aprašytus mūsų",
+        "message": "Naudojame pasirenkamus analitikos slapukus, kad suprastume produkto naudojimą ir gerintume InvoiceTrackr. Analitika pradedama tik jums sutikus, kaip aprašyta mūsų",
         "privacy_policy": "Privatumo Politikoje",
         "accept": "Priimti viską",
         "decline": "Atmesti",
@@ -1358,7 +1358,7 @@
                 },
                 "analytics_data": {
                     "heading": "2.5 Analitikos duomenys",
-                    "intro": "Mes naudojame Google Analytics, kad suprastume, kaip lankytojai naudoja mūsų svetainę. Google Analytics renka informaciją, pvz., kaip dažnai naudotojai lanko mūsų svetainę, kokius puslapius jie aplanko ir kokias kitas svetaines jie naudojo prieš apsilankydami. Mes naudojame šią informaciją, kad pagerintume mūsų paslaugą ir naudotojo patirtį. Google Analytics gali naudoti slapukus ir kitas stebėjimo technologijas. Galite sužinoti daugiau apie Google privatumo praktikas"
+                    "intro": "Gavę jūsų sutikimą, naudojame PostHog, kad suprastume paleidimo piltuvėlius ir pagrindinį produkto naudojimą, pvz., puslapių peržiūras, kainodaros peržiūras, registracijos žingsnius, sąskaitų kūrimą, PDF atsisiuntimus, siuntimą el. paštu, klientų kūrimą, banko sąskaitos pridėjimą ir prenumeratos įvykius. Analitikos įvykių savybėse nesiunčiame sąskaitų numerių, sąskaitų teksto, klientų duomenų, banko sąskaitų duomenų, mokėjimo kortelių duomenų, el. pašto adresų, adresų, Stripe identifikatorių ar sąskaitų sumų."
                 }
             },
             "how_we_use": {
@@ -1388,7 +1388,7 @@
                     "items": {
                         "stripe": "Mokėjimų apdorojimas prenumeratos valdymui",
                         "cloudinary": "Vaizdų talpinimas profilio nuotraukoms ir kitai medijai",
-                        "analytics": "Svetainės analitika ir lankytojų sekimas",
+                        "analytics": "Sutikimu pagrįsta produkto analitika per PostHog",
                         "email": "El. pašto paslaugų teikėjai"
                     }
                 },
@@ -1449,7 +1449,7 @@
             },
             "cookies": {
                 "heading": "8. Slapukai ir stebėjimo technologijos",
-                "content": "Mes naudojame slapukus ir panašias stebėjimo technologijas, kad sektume veiklą mūsų paslaugoje ir saugotume tam tikrą informaciją. Slapukai yra failai su nedideliu duomenų kiekiu, kurie saugomi jūsų įrenginyje. Galite nurodyti savo naršyklei atsisakyti visų slapukų arba nurodyti, kada slapukas siunčiamas. Tačiau, jei nesutinkate su slapukais, galite negalėti naudoti kai kurių mūsų paslaugos funkcijų."
+                "content": "Naudojame būtinus slapukus paslaugai teikti, įskaitant autentifikavimo, kalbos pasirinkimo ir saugumo slapukus. Pasirenkamus analitikos slapukus naudojame tik tada, kai sutinkate su analitika. Analitikos sutikimo pasirinkimas saugomas pirmosios šalies slapuke ir gali būti pakeistas atšaukiant arba atnaujinant sutikimą. Analitikos slapukų atsisakymas netrukdo naudotis InvoiceTrackr."
             },
             "third_party_links": {
                 "heading": "9. Trečiųjų šalių nuorodos",
@@ -1589,7 +1589,7 @@
                 "intro": "Paslauga integruojasi arba remiasi trečiųjų šalių paslaugomis, įskaitant:",
                 "stripe": "Mokėjimų apdorojimas",
                 "cloudinary": "Vaizdų saugojimas ir valdymas",
-                "analytics": "Svetainės analizė ir naudojimo sekimas",
+                "analytics": "Sutikimu pagrįsta produkto analitika ir paleidimo piltuvėlio matavimas",
                 "disclaimer": "Jūsų naudojimasis šiomis trečiųjų šalių paslaugomis yra jų atitinkamų paslaugų teikimo sąlygų ir privatumo politikų objektas. Mes nesame atsakingi už šių trečiųjų šalių paslaugų prieinamumą, funkcionalumą ar praktiką."
             },
             "service_availability": {

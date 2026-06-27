@@ -56,7 +56,7 @@
     },
     "general_error": "Uh oh! Something went wrong...",
     "cookie_consent": {
-        "message": "We use cookies to provide the best experience. By clicking \"Accept All,\" you agree to our use of cookies, including the analytics data described in our",
+        "message": "We use optional analytics cookies to understand product usage and improve InvoiceTrackr. Analytics starts only if you accept, as described in our",
         "privacy_policy": "Privacy Policy",
         "accept": "Accept All",
         "decline": "Decline",
@@ -1358,7 +1358,7 @@
                 },
                 "analytics_data": {
                     "heading": "2.5 Analytics Data",
-                    "intro": "We use Google Analytics to understand how visitors use our website. Google Analytics collects information such as how often users visit our site, what pages they visit, and what other sites they used prior to visiting. We use this information to improve our service and user experience. Google Analytics may use cookies and other tracking technologies. You can learn more about Google's privacy practices at"
+                    "intro": "With your consent, we use PostHog to understand launch funnels and basic product usage, such as page views, pricing views, sign-up steps, invoice creation, PDF downloads, email sending, client creation, bank-account setup, and billing lifecycle events. We do not send invoice numbers, invoice text, client details, bank account details, payment card details, email addresses, addresses, Stripe identifiers, or invoice amounts as analytics event properties."
                 }
             },
             "how_we_use": {
@@ -1388,7 +1388,7 @@
                     "items": {
                         "stripe": "Payment processing for subscription management",
                         "cloudinary": "Image hosting for profile pictures and other media",
-                        "analytics": "Website analytics and visitor tracking",
+                        "analytics": "Consent-based product analytics through PostHog",
                         "email": "Email service providers"
                     }
                 },
@@ -1449,7 +1449,7 @@
             },
             "cookies": {
                 "heading": "8. Cookies and Tracking Technologies",
-                "content": "We use cookies and similar tracking technologies to track activity on our service and store certain information. Cookies are files with a small amount of data that are stored on your device. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some features of our service."
+                "content": "We use necessary cookies to operate the service, including authentication, locale, and security-related cookies. We use optional analytics cookies only after you accept analytics consent. The analytics consent choice is saved in a first-party cookie and can be changed by withdrawing or updating consent. Declining analytics cookies does not prevent you from using InvoiceTrackr."
             },
             "third_party_links": {
                 "heading": "9. Third-Party Links",
@@ -1589,7 +1589,7 @@
                 "intro": "The Service integrates with or relies on third-party services, including:",
                 "stripe": "Payment processing",
                 "cloudinary": "Image hosting and management",
-                "analytics": "Website analytics and usage tracking",
+                "analytics": "Consent-based product analytics and launch funnel measurement",
                 "disclaimer": "Your use of these third-party services is subject to their respective terms of service and privacy policies. We are not responsible for the availability, functionality, or practices of these third-party services."
             },
             "service_availability": {
