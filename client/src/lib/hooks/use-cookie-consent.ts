@@ -1,7 +1,7 @@
 'use client';
 
-import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
 import { useEffect, useState } from 'react';
+import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
 
 import {
   ANALYTICS_CONSENT_COOKIE,
