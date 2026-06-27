@@ -15,6 +15,7 @@ export default function Pricing() {
   const t = useTranslations('home.pricing');
   const currencySymbol = getCurrencySymbol(getUserCurrency());
   const sectionRef = useRef<HTMLElement>(null);
+  const hasCapturedPricingView = useRef(false);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -22,8 +23,9 @@ export default function Pricing() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry?.isIntersecting) return;
+        if (!entry?.isIntersecting || hasCapturedPricingView.current) return;
 
+        hasCapturedPricingView.current = true;
         captureAnalyticsEvent(analyticsEvents.pricingViewed);
         observer.disconnect();
       },

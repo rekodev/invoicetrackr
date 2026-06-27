@@ -1,14 +1,10 @@
 'use client';
 
-import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
 
-import {
-  CREATE_INVOICE_PAGE,
-  HOME_PAGE,
-  SIGN_UP_PAGE
-} from '@/lib/constants/pages';
+import { CREATE_INVOICE_PAGE, HOME_PAGE } from '@/lib/constants/pages';
 import {
   captureAnalyticsEvent,
   identifyAnalyticsUser,
@@ -37,6 +33,7 @@ export default function AnalyticsProvider({
   const [currentConsentStatus, setCurrentConsentStatus] =
     useState(consentStatus);
   const [hasSyncedUserConsent, setHasSyncedUserConsent] = useState(false);
+  const lastCapturedRouteKeyRef = useRef<string | null>(null);
   const hasConsent = currentConsentStatus === 'accepted';
   const contextValue = useMemo(
     () => ({
@@ -75,21 +72,24 @@ export default function AnalyticsProvider({
     if (!hasConsent || !pathname) return;
 
     const authState = userId ? 'authenticated' : 'anonymous';
+    const search = searchParams?.toString();
+    const routeKey = [pathname, search, authState].filter(Boolean).join('|');
 
     if (pathname === HOME_PAGE) {
+      if (lastCapturedRouteKeyRef.current === routeKey) return;
+
+      lastCapturedRouteKeyRef.current = routeKey;
       captureAnalyticsEvent(analyticsEvents.landingPageViewed, {
         auth_state: authState
       });
+      return;
     }
 
     if (pathname === CREATE_INVOICE_PAGE) {
-      captureAnalyticsEvent(analyticsEvents.freeInvoiceGeneratorOpened, {
-        auth_state: authState
-      });
-    }
+      if (lastCapturedRouteKeyRef.current === routeKey) return;
 
-    if (pathname === SIGN_UP_PAGE) {
-      captureAnalyticsEvent(analyticsEvents.signUpStarted, {
+      lastCapturedRouteKeyRef.current = routeKey;
+      captureAnalyticsEvent(analyticsEvents.freeInvoiceGeneratorOpened, {
         auth_state: authState
       });
     }
