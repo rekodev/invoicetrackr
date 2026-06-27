@@ -67,7 +67,7 @@ export default function ContactFormDialog() {
 
   return (
     <>
-      <Button type="button" onPress={openDialog} className="max-w-min">
+      <Button type="button" onPress={openDialog} className="w-full sm:w-auto">
         {t('title')}
       </Button>
 

@@ -1,23 +1,33 @@
 'use client';
 
 import {
+  Alert,
   Button,
   Card,
+  Chip,
   FieldError,
   Input,
   Label,
-  TextField
+  Link,
+  TextField,
+  buttonVariants
 } from '@heroui/react';
+import {
+  ArrowRightIcon,
+  CheckCircleIcon,
+  EyeIcon,
+  PaperAirplaneIcon
+} from '@heroicons/react/24/outline';
 import { type ComponentProps, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { EyeIcon } from '@heroicons/react/24/outline';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
-import { HOME_PAGE } from '@/lib/constants/pages';
 import type { InvoiceBody } from '@invoicetrackr/types';
+import { SIGN_UP_PAGE } from '@/lib/constants/pages';
+import { analyticsEvents } from '@/lib/analytics/events';
 import { calculateInvoiceTotals } from '@/lib/utils';
+import { captureAnalyticsEvent } from '@/lib/analytics/client';
 import { formatDate } from '@/lib/utils/date';
 
 import InvoiceModal from './invoice-modal';
@@ -35,7 +45,6 @@ type Props = {
 const FreeInvoiceForm = ({ language, currency }: Props) => {
   const t = useTranslations('components.invoice_form');
   const pdfTranslator = useTranslations('invoices.pdf');
-  const router = useRouter();
   const methods = useForm<InvoiceBody>({
     defaultValues: {
       sender: {
@@ -81,11 +90,19 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     !senderSignature || typeof senderSignature === 'string'
       ? ''
       : URL.createObjectURL(senderSignature);
+  const trialSignupUrl = `${SIGN_UP_PAGE}?trial=true&source=free-invoice`;
 
   const handleSignatureChange = (signature: string | File) => {
     setSenderSignature(signature);
     setValue('senderSignature', signature);
     clearErrors('senderSignature');
+  };
+
+  const handleTrialSignupClick = (source: string) => {
+    captureAnalyticsEvent(analyticsEvents.freeInvoiceSignUpClicked, {
+      source,
+      line_count: getValues('services').length
+    });
   };
 
   const renderTextField = ({
@@ -312,18 +329,81 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
   );
 
   const renderSubmissionMessageAndActions = () => (
-    <div className="col-span-4 flex w-full items-center justify-between gap-5 overflow-x-hidden">
-      <div className="flex w-full flex-col justify-end gap-1 sm:flex-row">
-        <Button variant="danger-soft" onPress={() => router.push(HOME_PAGE)}>
-          {t('buttons.cancel')}
-        </Button>
-        <Button type="button" onPress={() => setIsInvoiceModalOpen(true)}>
+    <div className="col-span-4 flex w-full flex-col gap-4 border-t pt-6 lg:flex-row lg:items-center lg:justify-between">
+      <div className="max-w-2xl">
+        <p className="text-sm font-medium">{t('free_invoice.actions_title')}</p>
+        <p className="text-muted mt-1 text-sm">
+          {t('free_invoice.actions_description')}
+        </p>
+      </div>
+      <div className="flex w-full flex-col justify-end gap-2 sm:flex-row lg:w-auto">
+        <Button
+          type="button"
+          variant="secondary"
+          className="w-full sm:w-auto"
+          onPress={() => setIsInvoiceModalOpen(true)}
+        >
           <EyeIcon className="h-5 w-5" />
           {t('buttons.preview')}
         </Button>
+        <Link
+          href={trialSignupUrl}
+          onClick={() => handleTrialSignupClick('form_actions')}
+          className={buttonVariants({
+            className: 'w-full justify-center gap-2 sm:w-auto'
+          })}
+        >
+          <PaperAirplaneIcon className="h-5 w-5" />
+          {t('free_invoice.start_trial_cta')}
+        </Link>
       </div>
     </div>
   );
+
+  const renderTrialPrompt = () => (
+    <div className="border-default-200 bg-content1/70 flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="min-w-0">
+        <p className="text-sm font-semibold">
+          {t('free_invoice.modal_cta_title')}
+        </p>
+        <p className="text-muted mt-1 text-sm">
+          {t('free_invoice.modal_cta_description')}
+        </p>
+      </div>
+      <Link
+        href={trialSignupUrl}
+        onClick={() => handleTrialSignupClick('preview_modal')}
+        className={buttonVariants({
+          size: 'sm',
+          className: 'shrink-0 gap-2'
+        })}
+      >
+        {t('free_invoice.modal_cta_button')}
+        <ArrowRightIcon className="h-4 w-4" />
+      </Link>
+    </div>
+  );
+
+  const renderBenefits = () => {
+    const benefits = t.raw('free_invoice.benefits') as Array<string>;
+
+    return (
+      <div className="grid gap-3 md:grid-cols-3">
+        {benefits.map((benefit) => (
+          <Alert key={benefit} status="default" className="border px-3 py-1.5">
+            <Alert.Indicator>
+              <CheckCircleIcon className="text-accent h-5 w-5" />
+            </Alert.Indicator>
+            <Alert.Content className="flex-row">
+              <Alert.Title className="text-muted self-center font-normal">
+                {benefit}
+              </Alert.Title>
+            </Alert.Content>
+          </Alert>
+        ))}
+      </div>
+    );
+  };
 
   const getInvoicePreviewData = () => {
     const invoiceTotals = calculateInvoiceTotals(getValues('services'));
@@ -350,12 +430,43 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     <>
       <FormProvider {...methods}>
         <div className="mx-auto w-full max-w-7xl px-6 py-8 sm:py-10 md:py-12 lg:py-14">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-3xl font-semibold">
-              {t('free_invoice.title')}
-            </h1>
-            <p className="text-muted">{t('free_invoice.description')}</p>
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] lg:items-end">
+            <div className="flex max-w-3xl flex-col gap-3">
+              <Chip color="accent" variant="soft" className="w-max">
+                {t('free_invoice.eyebrow')}
+              </Chip>
+              <h1 className="text-3xl font-semibold sm:text-4xl">
+                {t('free_invoice.title')}
+              </h1>
+              <p className="text-muted max-w-2xl">
+                {t('free_invoice.description')}
+              </p>
+            </div>
+            <Card className="parent border p-4">
+              <Card.Header className="flex flex-col items-start gap-1 p-0">
+                <Card.Title className="text-sm font-semibold">
+                  {t('free_invoice.upgrade_title')}
+                </Card.Title>
+                <Card.Description>
+                  {t('free_invoice.upgrade_description')}
+                </Card.Description>
+              </Card.Header>
+              <Card.Footer className="p-0">
+                <Link
+                  href={trialSignupUrl}
+                  onClick={() => handleTrialSignupClick('intro_panel')}
+                  className={buttonVariants({
+                    variant: 'secondary',
+                    className: 'mt-4 w-full justify-between'
+                  })}
+                >
+                  {t('free_invoice.upgrade_cta')}
+                  <ArrowRightIcon className="h-4 w-4" />
+                </Link>
+              </Card.Footer>
+            </Card>
           </div>
+          <div className="mt-6">{renderBenefits()}</div>
           <Card className="mt-8 border bg-transparent p-4 sm:p-8">
             <form
               aria-label={t('a11y.form_label')}
@@ -416,6 +527,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
         invoiceLanguage={language}
         isOpen={isInvoiceModalOpen}
         onOpenChange={setIsInvoiceModalOpen}
+        conversionContent={renderTrialPrompt()}
       />
     </>
   );

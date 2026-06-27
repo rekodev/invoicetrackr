@@ -15,7 +15,7 @@ import {
   LanguageIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
-import { JSX, useState } from 'react';
+import { JSX, ReactNode, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
@@ -65,6 +65,7 @@ type Props = {
   pdfUrl?: string | null;
   isPdfDocumentLoading?: boolean;
   showFooterStatus?: boolean;
+  conversionContent?: ReactNode;
 };
 
 const InvoiceModal = ({
@@ -77,7 +78,8 @@ const InvoiceModal = ({
   userPreferredInvoiceLanguage,
   pdfUrl,
   isPdfDocumentLoading,
-  showFooterStatus = false
+  showFooterStatus = false,
+  conversionContent
 }: Props) => {
   const t = useTranslations('invoices.pdf');
   const tTable = useTranslations('invoices.table');
@@ -286,9 +288,12 @@ const InvoiceModal = ({
                 </div>
               </div>
             </div>
-            <footer className="border-default-200 bg-overlay grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-t px-5 py-3 sm:px-6">
-              <div className="text-muted flex min-w-0 items-center gap-2 text-xs">
-                {renderFooterStatus()}
+            <footer className="border-default-200 bg-overlay grid grid-cols-1 items-center gap-4 border-t px-5 py-3 sm:px-6 lg:grid-cols-[minmax(0,1fr)_auto]">
+              <div className="flex min-w-0 flex-col gap-3">
+                <div className="text-muted flex min-w-0 items-center gap-2 text-xs">
+                  {renderFooterStatus()}
+                </div>
+                {conversionContent}
               </div>
               <Button
                 size="sm"

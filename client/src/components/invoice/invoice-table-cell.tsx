@@ -247,7 +247,14 @@ const InvoiceTableCell = ({
                     }
                   >
                     {(item) => (
-                      <DropdownItem key={item.uid}>{item.name}</DropdownItem>
+                      <DropdownItem
+                        key={item.uid}
+                        id={item.uid}
+                        textValue={item.name}
+                      >
+                        {item.name}
+                        <Dropdown.ItemIndicator />
+                      </DropdownItem>
                     )}
                   </DropdownMenu>
                 </DropdownPopover>

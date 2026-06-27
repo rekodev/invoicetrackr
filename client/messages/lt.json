@@ -1346,8 +1346,23 @@
                 "no_bank_accounts": "Neturite banko sąskaitų. Sukurkite vieną, kad pradėtumėte."
             },
             "free_invoice": {
-                "title": "Sukurti sąskaitą faktūrą",
-                "description": "Sukurkite, peržiūrėkite ir atsisiųskite sąskaitą faktūrą nemokamai"
+                "eyebrow": "Nemokamas sąskaitos generatorius",
+                "title": "Sukurkite tvarkingą PDF sąskaitą be registracijos",
+                "description": "Paruoškite tikrą sąskaitą, peržiūrėkite PDF ir atsisiųskite nemokamai. Kai reikės pilno darbo proceso, pradėkite 7 dienų bandymą, kad galėtumėte išsaugoti, siųsti, sekti ir naudoti duomenis pakartotinai.",
+                "benefits": [
+                    "Profesionali lietuviška arba angliška PDF sąskaita",
+                    "PVM eilutės ir sumos paruoštos Lietuvos darbui",
+                    "Vienkartiniam PDF atsisiuntimui paskyros nereikia"
+                ],
+                "upgrade_title": "Reikia daugiau nei PDF?",
+                "upgrade_description": "Sukurkite paskyrą, kad galėtumėte išsaugoti sąskaitas, naudoti klientus ir banko sąskaitas pakartotinai, siųsti saugias nuorodas ir sekti apmokėjimą.",
+                "upgrade_cta": "Pradėti 7 dienų bandymą",
+                "actions_title": "Peržiūrėkite sąskaitą prieš atsisiųsdami.",
+                "actions_description": "PDF atsisiuntimas lieka nemokamas. Bandomasis laikotarpis skirtas išsaugojimui, siuntimui, istorijai, priminimams ir mokėjimų sekimui.",
+                "start_trial_cta": "Išsaugoti ir siųsti su bandymu",
+                "modal_cta_title": "Norite išsaugoti, siųsti ir sekti sąskaitas?",
+                "modal_cta_description": "Pradėkite 7 dienų bandymą, kad valdytumėte realius klientų procesus, o ne atsisiųstumėte po vieną PDF.",
+                "modal_cta_button": "Pradėti bandymą"
             },
             "services_heading": "Paslaugos",
             "signature_heading": "Parašas",

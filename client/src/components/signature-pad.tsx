@@ -153,7 +153,7 @@ const SignaturePad = ({
           }
           isDisabled={isReadOnly}
           className={cn(
-            'relative flex h-auto min-h-44 w-full max-w-sm items-center justify-center overflow-hidden border p-6 text-base transition sm:min-h-52',
+            'relative flex h-auto min-h-44 w-full max-w-none items-center justify-center overflow-hidden border p-6 text-base transition sm:min-h-52 sm:max-w-sm',
             {
               'border-danger-soft': isInvalid,
               'hover:border-secondary hover:bg-secondary/5 cursor-pointer':
