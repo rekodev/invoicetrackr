@@ -6,6 +6,8 @@ import { getUserFromDb } from '../database/user';
 let posthog: PostHog | undefined;
 
 const getPostHog = () => {
+  if (process.env.NODE_ENV === 'test') return undefined;
+
   const key = process.env.POSTHOG_KEY;
   if (!key) return undefined;
 
@@ -30,10 +32,10 @@ export const captureAnalyticsEventForUser = async ({
   const client = getPostHog();
   if (!client) return;
 
-  const user = await getUserFromDb(userId);
-  if (user?.analyticsConsentStatus !== 'accepted') return;
-
   try {
+    const user = await getUserFromDb(userId);
+    if (user?.analyticsConsentStatus !== 'accepted') return;
+
     client.capture({
       distinctId: `user:${userId}`,
       event,

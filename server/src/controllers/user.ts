@@ -149,7 +149,9 @@ export const postUser = async (
     : languageHeader;
   const language = requestedLanguage?.startsWith('lt') ? 'lt' : 'en';
   const analyticsConsentStatus =
-    req.cookies[ANALYTICS_CONSENT_COOKIE] === 'accepted' ? 'accepted' : null;
+    req.cookies?.[ANALYTICS_CONSENT_COOKIE] === 'accepted'
+      ? 'accepted'
+      : null;
 
   if (!email) throw new BadRequestError(i18n.t('validation.user.email'));
 
@@ -203,7 +205,9 @@ export const postOAuthUser = async (
     : languageHeader;
   const language = requestedLanguage?.startsWith('lt') ? 'lt' : 'en';
   const analyticsConsentStatus =
-    req.cookies[ANALYTICS_CONSENT_COOKIE] === 'accepted' ? 'accepted' : null;
+    req.cookies?.[ANALYTICS_CONSENT_COOKIE] === 'accepted'
+      ? 'accepted'
+      : null;
 
   if (provider !== 'google' || !emailVerified) {
     throw new UnauthorizedError(i18n.t('error.user.oauthEmailNotVerified'));

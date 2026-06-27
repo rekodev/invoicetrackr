@@ -1,12 +1,12 @@
 'use client';
 
+import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
 import { useEffect, useState } from 'react';
 
 import {
   ANALYTICS_CONSENT_COOKIE,
   analyticsConsentStatuses
 } from '../analytics/constants';
-import type { CookieConsentStatus } from '../types';
 import { useAnalyticsConsent } from '../analytics/consent-context';
 
 const getConsentCookie = () => {
@@ -17,8 +17,8 @@ const getConsentCookie = () => {
     .find((item) => item.startsWith(`${ANALYTICS_CONSENT_COOKIE}=`));
   const value = cookie?.split('=').at(1);
 
-  return value && analyticsConsentStatuses.has(value as CookieConsentStatus)
-    ? (value as CookieConsentStatus)
+  return value && analyticsConsentStatuses.has(value as AnalyticsConsentStatus)
+    ? (value as AnalyticsConsentStatus)
     : null;
 };
 
@@ -28,10 +28,10 @@ export default function useCookieConsent() {
     setConsentStatus: setAnalyticsConsentStatus
   } = useAnalyticsConsent();
   const [cookieConsent, setCookieConsent] = useState<
-    CookieConsentStatus | null | undefined
+    AnalyticsConsentStatus | null | undefined
   >(analyticsConsentStatus);
 
-  const updateCookieConsent = (consent: CookieConsentStatus) => {
+  const updateCookieConsent = (consent: AnalyticsConsentStatus) => {
     setCookieConsent(consent);
     setAnalyticsConsentStatus(consent);
   };
