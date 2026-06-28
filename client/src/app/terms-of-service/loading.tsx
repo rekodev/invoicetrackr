@@ -1,0 +1,5 @@
+import { LegalPageSkeleton } from '@/components/ui/skeletons/public-page-skeletons';
+
+export default function TermsOfServiceLoading() {
+  return <LegalPageSkeleton />;
+}

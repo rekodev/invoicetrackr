@@ -3,15 +3,18 @@ import { ReactNode } from 'react';
 
 export default function Tile({
   className,
-  children
+  children,
+  reveal
 }: {
   className?: string;
   children: ReactNode;
+  reveal?: boolean;
 }) {
   return (
     <Card
+      data-scroll-reveal={reveal ? '' : undefined}
       className={cn(
-        'landing-surface hover:border-default-300 backdrop-blur-xs group relative overflow-hidden border p-6 transition',
+        'landing-surface landing-hover-lift hover:border-default-300 backdrop-blur-xs group relative overflow-hidden border p-6 transition',
         className
       )}
     >

@@ -27,27 +27,38 @@ import LanguageSwitcher from './language-switcher';
 import ThemeSwitcher from './theme-switcher';
 
 const navbarItems = [
-  { name: 'Features', href: '#features' },
-  { name: 'Pricing', href: '#pricing' }
+  { key: 'features', href: '#features' },
+  { key: 'pricing', href: '#pricing' },
+  { key: 'faq', href: '#faq' }
 ];
 
 export default function GuestHeader() {
   const t = useTranslations('header.guest');
   const pathname = usePathname();
+  const getNavbarHref = (href: string) =>
+    pathname !== HOME_PAGE ? HOME_PAGE + href : href;
 
   const renderMobileNavbarContent = () => {
     return (
       <Dropdown>
         <DropdownTrigger
+          aria-label={t('mobile_menu')}
           className={buttonVariants({
             variant: 'secondary',
-            className: 'flex size-10 items-center justify-center p-0 md:hidden'
+            isIconOnly: true,
+            className: 'md:hidden'
           })}
         >
           <Bars3Icon className="h-5 w-5" />
         </DropdownTrigger>
         <DropdownPopover>
           <DropdownMenu>
+            {navbarItems.map((item) => (
+              <DropdownItem key={item.key} href={getNavbarHref(item.href)}>
+                {t(item.key)}
+              </DropdownItem>
+            ))}
+            <Separator />
             <DropdownItem
               key="create-invoice"
               className="text-secondary"
@@ -84,20 +95,18 @@ export default function GuestHeader() {
         </Link>
 
         <div className="hidden gap-4 md:flex">
-          {navbarItems.map((item, index) => {
+          {navbarItems.map((item) => {
             const isActive = pathname?.includes(item.href);
 
             return (
-              <div key={index} aria-current={isActive ? 'page' : undefined}>
+              <div key={item.key} aria-current={isActive ? 'page' : undefined}>
                 <Link
-                  href={
-                    pathname !== HOME_PAGE ? HOME_PAGE + item.href : item.href
-                  }
+                  href={getNavbarHref(item.href)}
                   className={cn('text-foreground', {
                     'text-primary': isActive
                   })}
                 >
-                  {t(item.name.toLowerCase())}
+                  {t(item.key)}
                 </Link>
               </div>
             );

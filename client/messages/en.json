@@ -24,8 +24,10 @@
             "login": "Log In",
             "sign_up": "Sign Up",
             "create_invoice": "Create Invoice",
+            "mobile_menu": "Open menu",
             "features": "Features",
-            "pricing": "Pricing"
+            "pricing": "Pricing",
+            "faq": "FAQ"
         }
     },
     "breadcrumbs": {

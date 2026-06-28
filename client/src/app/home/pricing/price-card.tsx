@@ -14,11 +14,15 @@ import { PRICING_PLANS } from './constants';
 export default function PriceCard({
   plan,
   currencySymbol,
-  highlighted
+  highlighted,
+  className,
+  reveal
 }: {
   plan: (typeof PRICING_PLANS)[number];
   currencySymbol: string;
   highlighted?: boolean;
+  className?: string;
+  reveal?: boolean;
 }) {
   const t = useTranslations(`home.pricing.${plan}`);
   const monthlyPrice = formatSubscriptionPrice(SUBSCRIPTION_AMOUNT);
@@ -30,11 +34,13 @@ export default function PriceCard({
 
   return (
     <Card
+      data-scroll-reveal={reveal ? '' : undefined}
       className={cn(
-        'relative overflow-hidden border p-8',
+        'landing-hover-lift relative overflow-hidden border p-8',
         highlighted
           ? 'border-accent/40 shadow-accent/10 backdrop-blur-xs bg-transparent shadow-lg'
-          : 'backdrop-blur-xs bg-transparent'
+          : 'backdrop-blur-xs bg-transparent',
+        className
       )}
     >
       {highlighted && (
