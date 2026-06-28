@@ -9,14 +9,15 @@ export default function FAQ() {
   const t = useTranslations('home.faq');
 
   return (
-    <section className="mx-auto max-w-3xl px-6 py-24">
+    <section id="faq" className="mx-auto max-w-3xl scroll-mt-20 px-6 py-24">
       <SectionHeading eyebrow={t('eyebrow')} title={t('title')} />
       <Accordion hideSeparator className="mt-12 border-y">
         {FAQ_ITEMS.map((key) => (
           <Accordion.Item
             key={key}
             id={key}
-            className="border-b last:border-b-0"
+            data-scroll-reveal=""
+            className="landing-scroll-reveal border-b last:border-b-0"
           >
             <Accordion.Heading>
               <Accordion.Trigger className="flex w-full items-center justify-between gap-4 py-5 text-left text-sm font-medium">

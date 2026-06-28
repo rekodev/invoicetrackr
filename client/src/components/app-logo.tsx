@@ -15,6 +15,7 @@ const AppLogo = ({ height = 40, width = 40 }: Props) => {
       height={height}
       src="/logo.png"
       alt={t('app_logo_alt')}
+      style={{ width, height: 'auto' }}
       loading="eager"
       priority
     />

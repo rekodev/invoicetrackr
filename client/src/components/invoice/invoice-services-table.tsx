@@ -13,8 +13,7 @@ import {
   TableHeader,
   TableRow,
   TableScrollContainer,
-  TextField,
-  Tooltip
+  TextField
 } from '@heroui/react';
 import {
   type ComponentProps,
@@ -312,20 +311,15 @@ const InvoiceServicesTable = ({
             aria-label={t('a11y.actions_label')}
             className="relative flex items-center gap-2"
           >
-            <Tooltip delay={0}>
-              <Tooltip.Trigger>
-                <Button
-                  aria-label={t('delete_service')}
-                  onPress={() => handleRemoveService(index)}
-                  variant="tertiary"
-                  data-invoice-service-focusable
-                  className="text-danger min-w-min cursor-pointer p-3 text-lg active:opacity-50"
-                >
-                  <TrashIcon className="h-5 w-5" />
-                </Button>
-              </Tooltip.Trigger>
-              <Tooltip.Content>{t('delete_service')}</Tooltip.Content>
-            </Tooltip>
+            <Button
+              aria-label={t('delete_service')}
+              onPress={() => handleRemoveService(index)}
+              variant="tertiary"
+              data-invoice-service-focusable
+              className="text-danger min-w-min cursor-pointer p-3 text-lg active:opacity-50"
+            >
+              <TrashIcon className="h-5 w-5" />
+            </Button>
           </div>
         );
       default:
@@ -355,7 +349,7 @@ const InvoiceServicesTable = ({
             </TableHeader>
             <TableBody>
               {fields.map((field, index) => (
-                <TableRow key={field.id} id={field.id}>
+                <TableRow key={field.id} id={`service-${index}`}>
                   {INVOICE_SERVICE_COLUMNS.map((column) => (
                     <TableCell key={column.uid}>
                       {renderCell(column.uid, index)}

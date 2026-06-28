@@ -219,7 +219,7 @@ const InvoiceTableCell = ({
               <Dropdown>
                 <DropdownTrigger
                   isDisabled={isPending}
-                  className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 [&[aria-expanded=true]_svg]:rotate-180"
+                  className="h-auto min-w-0 cursor-pointer bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-50 [&[aria-expanded=true]_svg]:rotate-180"
                 >
                   <Chip
                     className="capitalize"

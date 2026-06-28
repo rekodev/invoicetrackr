@@ -46,7 +46,10 @@ export default function ProductSection() {
   const t = useTranslations('home.product');
 
   return (
-    <section id="features" className="mx-auto max-w-7xl px-6 pb-16 pt-24">
+    <section
+      id="features"
+      className="mx-auto max-w-7xl scroll-mt-20 px-6 pb-16 pt-24"
+    >
       <SectionHeading
         eyebrow={t('eyebrow')}
         title={t('title')}
@@ -56,7 +59,13 @@ export default function ProductSection() {
 
       <div className="mt-14 grid grid-cols-1 gap-3 md:grid-cols-6">
         {productTiles.map(({ key, icon, className }) => (
-          <Tile key={key} className={className}>
+          <Tile
+            key={key}
+            reveal
+            className={['landing-scroll-reveal', className]
+              .filter(Boolean)
+              .join(' ')}
+          >
             <TileBody
               icon={icon}
               eyebrow={
@@ -78,7 +87,13 @@ export default function ProductSection() {
 
       <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
         {capabilityTiles.map(({ key, icon, className }) => (
-          <Tile key={key} className={className}>
+          <Tile
+            key={key}
+            reveal
+            className={['landing-scroll-reveal', className]
+              .filter(Boolean)
+              .join(' ')}
+          >
             <TileBody
               icon={icon}
               title={t(`capabilities.${key}.title`)}

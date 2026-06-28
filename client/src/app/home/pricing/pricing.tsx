@@ -41,7 +41,7 @@ export default function Pricing() {
     <section
       ref={sectionRef}
       id="pricing"
-      className="mx-auto max-w-5xl px-6 py-24"
+      className="mx-auto max-w-5xl scroll-mt-20 px-6 py-24"
     >
       <SectionHeading
         eyebrow={t('eyebrow')}
@@ -56,6 +56,8 @@ export default function Pricing() {
             plan={plan}
             currencySymbol={currencySymbol}
             highlighted={plan === 'premium'}
+            reveal
+            className="landing-scroll-reveal"
           />
         ))}
       </div>

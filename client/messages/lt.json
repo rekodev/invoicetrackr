@@ -24,8 +24,10 @@
             "login": "Prisijungti",
             "sign_up": "Registruotis",
             "create_invoice": "Sukurti sąskaitą faktūrą",
+            "mobile_menu": "Atidaryti meniu",
             "features": "Privalumai",
-            "pricing": "Kainos"
+            "pricing": "Kainos",
+            "faq": "DUK"
         }
     },
     "breadcrumbs": {
@@ -152,9 +154,9 @@
         "hero": {
             "badge_label": "Nauja",
             "badge_text": "Stripe Connect mokėjimai jau veikia",
-            "title": "Išrašykite sąskaitas klientams.",
-            "title_accent": "Gaukite apmokėjimą greičiau.",
-            "subtitle": "Paprastas būdas siųsti sąskaitas, valdyti klientus ir priimti mokėjimus su tvarkingu dokumentu, kurį klientui malonu atsidaryti.",
+            "title": "Sąskaitos klientams.",
+            "title_accent": "Apmokėjimas greičiau.",
+            "subtitle": "Išrašykite sąskaitas, valdykite klientus ir priimkite mokėjimus vienoje aiškioje darbo vietoje.",
             "cta_primary": "Sukurti nemokamą sąskaitą",
             "cta_secondary": "Pradėti Premium",
             "note": "Sugeneruokite sąskaitą be registracijos · 7 dienų Premium bandomasis laikotarpis"

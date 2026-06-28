@@ -10,10 +10,11 @@ export default function SectionHeading({
   body?: string;
 }) {
   return (
-    <div className="mx-auto max-w-2xl text-center">
-      {eyebrow && (
-        <div className="section-eyebrow text-muted">{eyebrow}</div>
-      )}
+    <div
+      className="landing-scroll-reveal mx-auto max-w-2xl text-center"
+      data-scroll-reveal=""
+    >
+      {eyebrow && <div className="section-eyebrow text-muted">{eyebrow}</div>}
       <h2 className="mt-3 text-4xl font-medium tracking-tight md:text-5xl">
         {title}
         {accent && (
