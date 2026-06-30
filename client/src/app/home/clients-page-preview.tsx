@@ -17,7 +17,8 @@ export default function ClientsPagePreview() {
         {clients.map((key) => (
           <Card
             key={key}
-            className="hover:border-secondary/50 group relative overflow-hidden border transition hover:shadow-md"
+            variant="secondary"
+            className="relative overflow-hidden border"
           >
             <Card.Content className="flex h-full flex-col gap-3 px-3 py-2">
               <div className="pr-20">

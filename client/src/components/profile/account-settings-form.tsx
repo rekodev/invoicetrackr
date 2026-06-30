@@ -254,7 +254,7 @@ const AccountSettingsForm = ({ user }: Props) => {
         aria-label={t('a11y.form_label')}
         onSubmit={handleSubmit(onSubmit)}
       >
-        <Card className="w-full border bg-transparent">
+        <Card className="w-full border">
           <Card.Header className="px-6 py-4">
             <Card.Title className="text-2xl">{t('title')}</Card.Title>
           </Card.Header>

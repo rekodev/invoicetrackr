@@ -37,9 +37,6 @@ export default function PriceCard({
       data-scroll-reveal={reveal ? '' : undefined}
       className={cn(
         'landing-hover-lift relative overflow-hidden border p-8',
-        highlighted
-          ? 'border-accent/40 shadow-accent/10 backdrop-blur-xs bg-transparent shadow-lg'
-          : 'backdrop-blur-xs bg-transparent',
         className
       )}
     >

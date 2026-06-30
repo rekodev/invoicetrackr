@@ -46,7 +46,7 @@ export default function GuestHeader() {
           className={buttonVariants({
             variant: 'secondary',
             isIconOnly: true,
-            className: 'md:hidden'
+            className: 'flex size-10 items-center justify-center p-0 md:hidden'
           })}
         >
           <Bars3Icon className="h-5 w-5" />
@@ -54,14 +54,18 @@ export default function GuestHeader() {
         <DropdownPopover>
           <DropdownMenu>
             {navbarItems.map((item) => (
-              <DropdownItem key={item.key} href={getNavbarHref(item.href)}>
+              <DropdownItem
+                key={item.key}
+                href={getNavbarHref(item.href)}
+                className="justify-start text-left"
+              >
                 {t(item.key)}
               </DropdownItem>
             ))}
             <Separator />
             <DropdownItem
               key="create-invoice"
-              className="text-secondary"
+              className="text-secondary justify-start text-left"
               href={CREATE_INVOICE_PAGE}
             >
               {t('create_invoice')}
@@ -69,7 +73,7 @@ export default function GuestHeader() {
             <Separator />
             <DropdownItem
               href={LOGIN_PAGE}
-              className="text-muted flex items-center justify-center"
+              className="text-muted justify-start text-left"
               key="login"
             >
               {t('login')}
@@ -77,7 +81,7 @@ export default function GuestHeader() {
             <DropdownItem
               key="sign-up"
               href={SIGN_UP_PAGE}
-              className="text-muted flex items-center justify-center"
+              className="text-muted justify-start text-left"
             >
               {t('sign_up')}
             </DropdownItem>

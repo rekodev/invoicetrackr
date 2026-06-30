@@ -11,6 +11,7 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { useTranslations } from 'next-intl';
 
 import { ACCOUNT_SETTINGS_PAGE, DASHBOARD_PAGE } from '@/lib/constants/pages';
+import IconContainer from '@/components/ui/icon-container';
 import { verifyEmailTokenAction } from '@/lib/actions/user';
 
 type Props = {
@@ -39,11 +40,16 @@ export default function VerifyEmailResultCard({
   const isSuccess =
     result.status === 'verified' || result.status === 'already_verified';
   const isError = result.status === 'error';
-  const indicatorClass = isSuccess
-    ? 'bg-success/10 ring-success/30'
+  const indicatorVariant = isSuccess
+    ? 'success'
     : isError
-      ? 'bg-danger-500/10 ring-danger-400/30'
-      : 'bg-warning/10 ring-warning/30';
+      ? 'danger'
+      : 'warning';
+  const indicatorRingClass = isSuccess
+    ? 'ring-success/30'
+    : isError
+      ? 'ring-danger-400/30'
+      : 'ring-warning/30';
 
   const content = useMemo(() => {
     if (result.status === 'pending') {
@@ -116,11 +122,16 @@ export default function VerifyEmailResultCard({
   }, [result.status, token]);
 
   return (
-    <Card className="relative mx-auto w-full max-w-lg overflow-hidden rounded-2xl border">
+    <Card
+      variant="secondary"
+      className="relative mx-auto w-full max-w-lg overflow-hidden rounded-2xl border"
+    >
       <Card.Content className="px-8 pb-7 pt-8">
         <div className="flex items-center gap-4">
-          <div
-            className={`relative grid h-11 w-11 shrink-0 place-items-center rounded-xl ring-1 ${indicatorClass}`}
+          <IconContainer
+            size="lg"
+            variant={indicatorVariant}
+            className={cn('relative border-0 ring-1', indicatorRingClass)}
           >
             {isSuccess ? (
               <CheckCircleIcon
@@ -132,7 +143,7 @@ export default function VerifyEmailResultCard({
             ) : (
               <ShieldCheckIcon className="text-warning h-5 w-5" />
             )}
-          </div>
+          </IconContainer>
 
           <div className="min-w-0">
             <h1 className="mt-1 text-[19px] font-semibold tracking-tight">

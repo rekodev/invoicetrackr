@@ -1,3 +1,4 @@
+import { Card } from '@heroui/react';
 import { getTranslations } from 'next-intl/server';
 
 import { auth } from '@/auth';
@@ -18,12 +19,20 @@ const RevenueChart = async ({ userId }: Props) => {
   if (isResponseError(response)) throw new Error('Failed to fetch data');
 
   return (
-    <section className="border-default-200 flex w-full flex-col rounded-3xl border p-5 shadow-sm backdrop-blur-3xl sm:p-6">
-      <h2 className="text-base font-semibold">{t('title')}</h2>
-      <InvoiceDataBarChart
-        revenueByMonth={response.data.revenueByMonth}
-        currency={session?.user.currency}
-      />
+    <section className="w-full">
+      <Card className="w-full border">
+        <Card.Header>
+          <Card.Title className="text-base font-semibold">
+            {t('title')}
+          </Card.Title>
+        </Card.Header>
+        <Card.Content>
+          <InvoiceDataBarChart
+            revenueByMonth={response.data.revenueByMonth}
+            currency={session?.user.currency}
+          />
+        </Card.Content>
+      </Card>
     </section>
   );
 };

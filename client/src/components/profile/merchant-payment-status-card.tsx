@@ -14,6 +14,7 @@ import type { MerchantPaymentStatus } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
+import IconContainer from '@/components/ui/icon-container';
 import { createMerchantPaymentOnboardingSession } from '@/api/payment';
 import { isResponseError } from '@/lib/utils/error';
 
@@ -103,7 +104,7 @@ export default function MerchantPaymentStatusCard({
   };
 
   return (
-    <Card className="w-full border bg-transparent shadow-sm backdrop-blur-3xl">
+    <Card className="w-full border">
       <Card.Header className="flex flex-col items-start justify-between gap-6 px-6 py-4 md:flex-row md:items-start md:gap-12">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -151,11 +152,11 @@ export default function MerchantPaymentStatusCard({
         <div className="grid gap-3">
           {checks.map(({ key, enabled, icon: Icon }) => {
             return (
-              <Card className="border" key={key}>
+              <Card variant="secondary" className="border" key={key}>
                 <Card.Content className="flex flex-row items-start gap-3">
-                  <span className="bg-background-foreground text-muted border-default-100 grid h-9 w-9 shrink-0 place-items-center rounded-xl border">
+                  <IconContainer>
                     <Icon className="h-4 w-4" />
-                  </span>
+                  </IconContainer>
                   <div className="w-full min-w-0">
                     <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
                       <p className="text-foreground text-sm font-semibold leading-5">

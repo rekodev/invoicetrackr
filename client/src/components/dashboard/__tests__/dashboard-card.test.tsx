@@ -14,7 +14,7 @@ describe('<DashboardCard />', () => {
       title: 'Test Title',
       text: 'Test Text Content',
       icon: <>icon</>,
-      iconClassName: ''
+      iconVariant: 'accent'
     };
   });
 

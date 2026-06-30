@@ -1,27 +1,27 @@
-import { Card, CardContent } from '@heroui/react';
+import { Card } from '@heroui/react';
 import { ReactNode } from 'react';
+
+import IconContainer from '@/components/ui/icon-container';
 
 type Props = {
   icon: ReactNode;
   title: ReactNode;
   text: string;
-  iconClassName: string;
+  iconVariant: 'success' | 'warning' | 'accent';
 };
 
-const DashboardCard = ({ icon, title, text, iconClassName }: Props) => {
+const DashboardCard = ({ icon, title, text, iconVariant }: Props) => {
   return (
-    <Card className="border bg-transparent backdrop-blur-3xl">
-      <CardContent className="flex h-full flex-col justify-between">
+    <Card className="border">
+      <Card.Content className="flex h-full flex-col justify-between">
         <div className="text-muted flex items-center gap-2 text-sm font-medium">
-          <span
-            className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${iconClassName}`}
-          >
+          <IconContainer size="sm" variant={iconVariant}>
             {icon}
-          </span>
+          </IconContainer>
           {title}
         </div>
         <p className="mt-5 text-2xl font-semibold tabular-nums">{text}</p>
-      </CardContent>
+      </Card.Content>
     </Card>
   );
 };

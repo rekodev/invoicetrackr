@@ -11,7 +11,7 @@ export default function CTA() {
     <section id="start" className="mx-auto max-w-5xl scroll-mt-20 px-6 py-24">
       <Card
         data-scroll-reveal=""
-        className="landing-scroll-reveal landing-hover-lift backdrop-blur-xs relative overflow-hidden border bg-transparent p-8 text-center shadow-none sm:p-16"
+        className="landing-scroll-reveal landing-hover-lift relative overflow-hidden border p-8 text-center sm:p-16"
       >
         <div className="landing-glow-mint text-accent pointer-events-none absolute left-1/2 top-0 h-64 w-full -translate-x-1/2 opacity-25 blur-3xl" />
         <div className="via-accent/50 pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent" />

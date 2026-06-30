@@ -1,4 +1,6 @@
 import { Chip } from '@heroui/react';
+import IconContainer from '@/components/ui/icon-container';
+
 import { IconComponent } from './types';
 
 export default function TileBody({
@@ -19,9 +21,9 @@ export default function TileBody({
   return (
     <div>
       {Icon && (
-        <div className="bg-default-50 text-muted mb-4 inline-grid h-9 w-9 place-items-center rounded-lg border">
+        <IconContainer className="mb-4 rounded-lg">
           <Icon className="h-4 w-4" />
-        </div>
+        </IconContainer>
       )}
       {eyebrow && (
         <div className="section-eyebrow text-muted mb-2">{eyebrow}</div>

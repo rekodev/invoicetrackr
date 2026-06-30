@@ -32,11 +32,6 @@
   );
 }
 
-@utility landing-surface {
-  border-color: color-mix(in oklab, currentColor 14%, transparent);
-  background: transparent;
-}
-
 @layer components {
   html {
     scroll-behavior: smooth;

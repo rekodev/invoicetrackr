@@ -5,12 +5,13 @@ import {
   CheckCircleIcon,
   CreditCardIcon
 } from '@heroicons/react/24/outline';
-import { Button, Card, CardContent, Separator, cn } from '@heroui/react';
+import { Button, Card, CardContent, Separator } from '@heroui/react';
 import { useLocale, useTranslations } from 'next-intl';
 import { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import IconContainer from '@/components/ui/icon-container';
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
 import { createBillingPortalSession } from '@/api/payment';
 import { formatLocalizedDate } from '@/lib/utils/date';
@@ -135,7 +136,7 @@ export default function SubscriptionStatusCard({
   };
 
   return (
-    <Card className="w-full flex-1 border bg-transparent shadow-sm backdrop-blur-3xl">
+    <Card className="w-full flex-1 border">
       <Card.Header className="flex flex-col items-start justify-between gap-5 px-6 py-4 md:flex-row">
         <div className="flex flex-col gap-2">
           <Card.Title className="text-2xl">{t('title')}</Card.Title>
@@ -171,14 +172,12 @@ export default function SubscriptionStatusCard({
       <CardContent className="grid gap-4 p-6 lg:grid-cols-[1fr_1fr]">
         <div className="p-1">
           <div className="flex items-start gap-3">
-            <span
-              className={cn(
-                'bg-success/10 text-success grid h-9 w-9 shrink-0 place-items-center rounded-lg',
-                { 'bg-danger/10 text-danger': !isActive }
-              )}
+            <IconContainer
+              variant={isActive ? 'success' : 'danger'}
+              className="rounded-lg"
             >
               <CheckCircleIcon className="h-5 w-5" />
-            </span>
+            </IconContainer>
             <div>
               <p className="section-eyebrow text-muted">{t('status_label')}</p>
               <p className="text-foreground mt-1 text-base font-semibold">
@@ -217,9 +216,9 @@ export default function SubscriptionStatusCard({
 
         <div className="p-1">
           <div className="flex items-start gap-3">
-            <span className="bg-secondary/15 text-secondary border-secondary/20 grid h-9 w-9 shrink-0 place-items-center rounded-xl border">
+            <IconContainer variant="secondary">
               <CreditCardIcon className="h-5 w-5" />
-            </span>
+            </IconContainer>
             <div>
               <p className="section-eyebrow text-muted">{t('billing_label')}</p>
               <p className="text-foreground mt-1 text-base font-semibold">

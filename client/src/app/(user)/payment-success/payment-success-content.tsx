@@ -24,6 +24,7 @@ import {
   DASHBOARD_PAGE,
   RENEW_SUBSCRIPTION_PAGE
 } from '@/lib/constants/pages';
+import IconContainer from '@/components/ui/icon-container';
 import { formatLocalizedDate } from '@/lib/utils/date';
 
 type Props = {
@@ -247,9 +248,9 @@ export default function PaymentSuccessContent({ isTrial, billing }: Props) {
                 href={href}
                 className="glass-card glass-card-interactive hover:border-secondary/40 group relative overflow-hidden rounded-2xl p-5"
               >
-                <div className="bg-secondary/10 text-secondary grid h-9 w-9 place-items-center rounded-lg">
+                <IconContainer variant="secondary" className="rounded-lg">
                   <Icon className="h-4 w-4" strokeWidth={2.2} />
-                </div>
+                </IconContainer>
                 <div className="text-foreground mt-4 text-sm font-medium">
                   {t(titleKey)}
                 </div>
