@@ -94,6 +94,10 @@ Use the existing auth middleware, error classes, i18n messages, and response sta
 - Server runtime and Drizzle commands load env files from the workspace root, even when commands run from `server/`.
 - Outside production, root `.env.local` is loaded before root `.env`; real shell/process env vars still take precedence.
 - Production should use VPS process env vars. Root `.env` is only a compatibility fallback.
+- Production deploys build the Docker image in GitHub Actions and load it into Dokku with `git:load-image`; Dokku config is runtime-only for that already-built image.
+- `.dockerignore` excludes `.env*`, so production client build-time values must come from GitHub Actions secrets passed as Docker build args.
+- Any `NEXT_PUBLIC_*` value read by client/browser code during `next build` must be present in both `.github/workflows/ci.yml` as a `--build-arg` and in `Dockerfile` as matching `ARG` plus `ENV` before the client build runs. Runtime-only Dokku config is not enough for browser chunks.
+- Server-only runtime values such as database, Resend, Stripe secret keys, webhooks, and server PostHog keys can remain Dokku/VPS process env vars unless they are needed during the Docker build.
 - For local migrations, confirm `.env.local` contains the development `DATABASE_URL`, then run `pnpm run server migrate`.
 
 ## Invoice Domain Rules
