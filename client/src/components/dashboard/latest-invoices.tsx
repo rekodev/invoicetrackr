@@ -1,4 +1,4 @@
-import { Chip, buttonVariants } from '@heroui/react';
+import { Card, Chip, buttonVariants } from '@heroui/react';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -36,90 +36,98 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
   });
 
   return (
-    <section className="border-default-200 w-full min-w-72 rounded-3xl border p-5 shadow-sm backdrop-blur-3xl sm:p-6 xl:max-w-lg">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-base font-semibold">{t('title')}</h2>
-          <p className="text-muted mt-1 text-sm">{t('subtitle')}</p>
-        </div>
-        <Link
-          href={INVOICES_PAGE}
-          className={buttonVariants({ size: 'sm', variant: 'outline' })}
-        >
-          {t('view_all')}
-          <ArrowUpRightIcon className="h-3.5 w-3.5" />
-        </Link>
-      </div>
+    <section className="w-full min-w-72 xl:max-w-lg">
+      <Card className="border">
+        <Card.Header className="items-start justify-between gap-4">
+          <div>
+            <Card.Title className="text-base font-semibold">
+              {t('title')}
+            </Card.Title>
+            <Card.Description className="mt-1">
+              {t('subtitle')}
+            </Card.Description>
+          </div>
+          <Link
+            href={INVOICES_PAGE}
+            className={buttonVariants({ size: 'sm', variant: 'outline' })}
+          >
+            {t('view_all')}
+            <ArrowUpRightIcon className="h-3.5 w-3.5" />
+          </Link>
+        </Card.Header>
 
-      {invoices.length ? (
-        <ul className="divide-default-200 mt-4 divide-y">
-          {invoices.map((invoice) => {
-            const isOverdue =
-              invoice.status === 'pending' &&
-              new Date(invoice.dueDate).getTime() < currentTimestamp;
-            const status: InvoiceStatus = isOverdue
-              ? 'overdue'
-              : (invoice.status as InvoiceStatus);
-            const color =
-              status === 'paid'
-                ? 'success'
-                : status === 'pending'
-                  ? 'warning'
-                  : 'danger';
+        <Card.Content>
+          {invoices.length ? (
+            <ul className="divide-default-200 divide-y">
+              {invoices.map((invoice) => {
+                const isOverdue =
+                  invoice.status === 'pending' &&
+                  new Date(invoice.dueDate).getTime() < currentTimestamp;
+                const status: InvoiceStatus = isOverdue
+                  ? 'overdue'
+                  : (invoice.status as InvoiceStatus);
+                const color =
+                  status === 'paid'
+                    ? 'success'
+                    : status === 'pending'
+                      ? 'warning'
+                      : 'danger';
 
-            return (
-              <li
-                key={invoice.id}
-                className="flex items-center gap-3 py-3.5 first:pt-2 last:pb-2"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate text-sm font-medium">
-                      {invoice.name}
-                    </span>
-                    <Chip
-                      size="sm"
-                      color={color}
-                      variant="soft"
-                      className="h-5 shrink-0 text-[11px] font-medium"
-                    >
-                      {t(`statuses.${status}`)}
-                    </Chip>
-                  </div>
-                  <div className="text-muted mt-0.5 flex min-w-0 items-center gap-1.5 text-[11px]">
-                    <span className="shrink-0 tabular-nums">
-                      {invoice.invoiceId}
-                    </span>
-                    <span aria-hidden>·</span>
-                    <span className="shrink-0">
-                      {dateFormatter.format(new Date(invoice.date))}
-                    </span>
-                    {invoice.email && (
-                      <>
+                return (
+                  <li
+                    key={invoice.id}
+                    className="flex items-center gap-3 py-3.5 first:pt-0 last:pb-0"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="truncate text-sm font-medium">
+                          {invoice.name}
+                        </span>
+                        <Chip
+                          size="sm"
+                          color={color}
+                          variant="soft"
+                          className="h-5 shrink-0 text-[11px] font-medium"
+                        >
+                          {t(`statuses.${status}`)}
+                        </Chip>
+                      </div>
+                      <div className="text-muted mt-0.5 flex min-w-0 items-center gap-1.5 text-[11px]">
+                        <span className="shrink-0 tabular-nums">
+                          {invoice.invoiceId}
+                        </span>
                         <span aria-hidden>·</span>
-                        <span className="truncate">{invoice.email}</span>
-                      </>
-                    )}
-                  </div>
-                </div>
+                        <span className="shrink-0">
+                          {dateFormatter.format(new Date(invoice.date))}
+                        </span>
+                        {invoice.email && (
+                          <>
+                            <span aria-hidden>·</span>
+                            <span className="truncate">{invoice.email}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
 
-                <div className="shrink-0 text-right text-sm font-semibold tabular-nums">
-                  {getCurrencySymbol(currency)}
-                  {currencyFormatter.format(Number(invoice.totalAmount))}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <EmptyState
-          className="min-h-[260px]"
-          title={t('empty_state.title')}
-          description={t('empty_state.description')}
-          actionLabel={t('empty_state.action')}
-          actionHref={ADD_NEW_INVOICE_PAGE}
-        />
-      )}
+                    <div className="shrink-0 text-right text-sm font-semibold tabular-nums">
+                      {getCurrencySymbol(currency)}
+                      {currencyFormatter.format(Number(invoice.totalAmount))}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <EmptyState
+              className="min-h-[260px]"
+              title={t('empty_state.title')}
+              description={t('empty_state.description')}
+              actionLabel={t('empty_state.action')}
+              actionHref={ADD_NEW_INVOICE_PAGE}
+            />
+          )}
+        </Card.Content>
+      </Card>
     </section>
   );
 };

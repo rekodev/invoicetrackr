@@ -14,7 +14,7 @@ export default function Tile({
     <Card
       data-scroll-reveal={reveal ? '' : undefined}
       className={cn(
-        'landing-surface landing-hover-lift hover:border-default-300 backdrop-blur-xs group relative overflow-hidden border p-6 transition',
+        'landing-hover-lift group relative overflow-hidden border p-6 transition',
         className
       )}
     >

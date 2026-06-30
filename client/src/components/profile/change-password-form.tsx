@@ -120,7 +120,7 @@ export default function ChangePasswordForm({ userId }: Props) {
       aria-label={t('a11y.form_label')}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Card className="border bg-transparent">
+      <Card className="border">
         <Card.Header className="px-6 py-4">
           <Card.Title className="text-2xl">{t('title')}</Card.Title>
         </Card.Header>

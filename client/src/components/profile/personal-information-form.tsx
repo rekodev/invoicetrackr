@@ -349,7 +349,7 @@ const PersonalInformationForm = ({
       encType="multipart/form-data"
       className="w-full"
     >
-      <Card className="w-full border bg-transparent">
+      <Card className="w-full border">
         {isOnboardingCard ? (
           <AuthCardHeader
             title={cardHeaderTitle!}

@@ -1,4 +1,4 @@
-import { Chip } from '@heroui/react';
+import { Card, Chip } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
 import PreviewToolbar from './preview-toolbar';
@@ -20,7 +20,7 @@ export function InvoicesPagePreview() {
         total={t('total')}
         rowsPerPage={t('rows_per_page')}
       />
-      <div className="bg-background overflow-hidden rounded-3xl border">
+      <Card variant="secondary" className="overflow-hidden border">
         <div className="text-muted grid grid-cols-[1.2fr_1.3fr_1fr_1fr_1fr] gap-3 border-b px-4 py-3 text-[10px] font-medium uppercase tracking-wide">
           <span>{t('columns.id')}</span>
           <span>{t('columns.receiver')}</span>
@@ -33,9 +33,7 @@ export function InvoicesPagePreview() {
             key={key}
             className="grid grid-cols-[1.2fr_1.3fr_1fr_1fr_1fr] items-center gap-3 border-b px-4 py-3 text-xs last:border-b-0"
           >
-            <span className="text-muted font-mono">
-              {t(`rows.${key}.id`)}
-            </span>
+            <span className="text-muted font-mono">{t(`rows.${key}.id`)}</span>
             <span className="truncate font-medium">
               {t(`rows.${key}.client`)}
             </span>
@@ -48,7 +46,7 @@ export function InvoicesPagePreview() {
             </Chip>
           </div>
         ))}
-      </div>
+      </Card>
     </div>
   );
 }

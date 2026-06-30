@@ -112,6 +112,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     return (
       <Card
         key={id}
+        variant="secondary"
         className={cn('group col-span-2 border pt-0 lg:col-span-1', {
           'border-accent border-2': isSelected
         })}
@@ -197,7 +198,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
 
   return (
     <>
-      <Card className="w-full border bg-transparent">
+      <Card className="w-full border">
         <Card.Header className="flex flex-row items-center justify-between gap-4 px-6 py-4">
           <Card.Title className="text-2xl">{t('title')}</Card.Title>
           <Button variant="secondary" onPress={handleAddNewBankAccount}>

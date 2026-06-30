@@ -48,13 +48,13 @@ const DashboardCards = async ({ userId, currency }: Props) => {
     <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       <DashboardCard
         icon={<BanknotesIcon className="h-4 w-4" />}
-        iconClassName="bg-success/15 text-success"
+        iconVariant="success"
         title={t('paid')}
         text={`${currencySymbol}${totalInvoiceRevenue?.paid.toFixed(2) || '0'}`}
       />
       <DashboardCard
         icon={<ClockIcon className="h-4 w-4" />}
-        iconClassName="bg-warning/15 text-warning"
+        iconVariant="warning"
         title={t('pending')}
         text={`${currencySymbol}${
           totalInvoiceRevenue?.pending.toFixed(2) || '0'
@@ -62,13 +62,13 @@ const DashboardCards = async ({ userId, currency }: Props) => {
       />
       <DashboardCard
         icon={<DocumentCurrencyDollarIcon className="h-4 w-4" />}
-        iconClassName="bg-accent/15 text-accent"
+        iconVariant="accent"
         title={t('total_invoices')}
         text={`${invoices?.length || '0'}`}
       />
       <DashboardCard
         icon={<UsersIcon className="h-4 w-4" />}
-        iconClassName="bg-accent/15 text-accent"
+        iconVariant="accent"
         title={t('total_clients')}
         text={`${totalClients || '0'}`}
       />

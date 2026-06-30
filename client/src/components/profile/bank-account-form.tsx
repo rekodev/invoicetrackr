@@ -203,7 +203,7 @@ export default function BankAccountForm({
   }
 
   return (
-    <Card className="w-full border bg-transparent">
+    <Card className="w-full border">
       <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
         {formContent}
       </form>

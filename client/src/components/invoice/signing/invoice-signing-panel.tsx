@@ -19,6 +19,7 @@ import type { JSX } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
+import IconContainer from '@/components/ui/icon-container';
 import SignaturePad from '@/components/signature-pad';
 
 const PDFDownloadLink = dynamic(
@@ -87,19 +88,16 @@ export default function InvoiceSigningPanel({
 
         <section className="flex flex-col gap-3">
           <div className="flex items-start gap-3">
-            <span
-              className={
-                isPaid
-                  ? 'bg-success/10 text-success grid h-9 w-9 shrink-0 place-items-center rounded-lg'
-                  : 'bg-secondary/10 text-secondary grid h-9 w-9 shrink-0 place-items-center rounded-lg'
-              }
+            <IconContainer
+              variant={isPaid ? 'success' : 'secondary'}
+              className="rounded-lg"
             >
               {isPaid ? (
                 <CheckCircleIcon className="h-5 w-5" />
               ) : (
                 <CreditCardIcon className="h-5 w-5" />
               )}
-            </span>
+            </IconContainer>
             <div className="min-w-0">
               <h3 className="text-sm font-semibold">
                 {isPaid
@@ -133,9 +131,9 @@ export default function InvoiceSigningPanel({
             {isSigned ? (
               <section className="flex flex-col gap-3">
                 <div className="flex items-start gap-3">
-                  <span className="bg-success/10 text-success grid h-9 w-9 shrink-0 place-items-center rounded-lg">
+                  <IconContainer variant="success" className="rounded-lg">
                     <CheckCircleIcon className="h-5 w-5" />
-                  </span>
+                  </IconContainer>
                   <div className="min-w-0">
                     <h3 className="text-sm font-semibold">
                       {t('signature_received_title')}
