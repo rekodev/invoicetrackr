@@ -11,10 +11,10 @@ import { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import IconContainer from '@/components/ui/icon-container';
 import { RENEW_SUBSCRIPTION_PAGE } from '@/lib/constants/pages';
 import { createBillingPortalSession } from '@/api/payment';
 import { formatLocalizedDate } from '@/lib/utils/date';
-import IconContainer from '@/components/ui/icon-container';
 import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
