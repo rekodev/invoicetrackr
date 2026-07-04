@@ -84,16 +84,23 @@ export default function IncomeJournalExportModal({
               </TextField>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="tertiary" onPress={() => onOpenChange(false)}>
-                {t('cancel')}
-              </Button>
-              <Button
-                isDisabled={!from || !to || from > to}
-                onPress={handleExport}
-                isPending={isExporting}
-              >
-                {t('export')}
-              </Button>
+              <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <Button
+                  variant="tertiary"
+                  className="w-full sm:w-auto"
+                  onPress={() => onOpenChange(false)}
+                >
+                  {t('cancel')}
+                </Button>
+                <Button
+                  isDisabled={!from || !to || from > to}
+                  onPress={handleExport}
+                  isPending={isExporting}
+                  className="w-full sm:w-auto"
+                >
+                  {t('export')}
+                </Button>
+              </div>
             </Modal.Footer>
           </Modal.Dialog>
         </Modal.Container>

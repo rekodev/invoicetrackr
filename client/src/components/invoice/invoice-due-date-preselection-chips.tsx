@@ -48,14 +48,13 @@ export default function InvoiceDueDatePreselectionChips({
   }, [dateDiffFromDueDate]);
 
   return (
-    <div className="absolute -top-7 right-0 flex justify-end gap-1">
+    <div className="mb-2 flex flex-wrap justify-start gap-1.5 sm:absolute sm:-top-7 sm:right-0 sm:mb-0 sm:justify-end sm:gap-1">
       {DUE_DATE_PRESELECTIONS.map(({ label, value }) => (
         <Chip
           key={value}
-          size="sm"
           color={currentlyActiveChip === value ? 'accent' : 'default'}
           onClick={() => handleDueDatePreselectionChange(value)}
-          className="cursor-pointer"
+          className="min-h-8 cursor-pointer text-sm sm:min-h-0 sm:text-xs"
         >
           {t(label)}
         </Chip>

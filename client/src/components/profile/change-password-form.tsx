@@ -104,7 +104,7 @@ export default function ChangePasswordForm({ userId }: Props) {
               isPending={isSubmitting}
               isDisabled={!isDirty}
               type="submit"
-              className="self-end"
+              className="w-full sm:w-auto sm:self-end"
             >
               {t('save_changes')}
             </Button>

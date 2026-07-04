@@ -117,6 +117,11 @@ export const updateInvoiceResponseSchema = z.object({
   message: z.string()
 });
 
+export const createInvoiceCorrectionResponseSchema = z.object({
+  invoice: invoiceBodySchema,
+  message: z.string()
+});
+
 export const signInvoiceResponseSchema = z.object({
   invoice: invoiceBodySchema,
   message: z.string()
@@ -297,6 +302,9 @@ export type ConfirmPublicInvoicePaymentResponse = z.infer<
 >;
 export type PostInvoiceResponse = z.infer<typeof postInvoiceResponseSchema>;
 export type UpdateInvoiceResponse = z.infer<typeof updateInvoiceResponseSchema>;
+export type CreateInvoiceCorrectionResponse = z.infer<
+  typeof createInvoiceCorrectionResponseSchema
+>;
 export type SignInvoiceResponse = z.infer<typeof signInvoiceResponseSchema>;
 export type GetNextInvoiceNumberResponse = z.infer<
   typeof getNextInvoiceNumberResponseSchema

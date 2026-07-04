@@ -225,9 +225,9 @@ const AccountSettingsForm = ({ user }: Props) => {
         />
       </CardContent>
       <CardFooter className="w-full flex-col justify-between px-6 py-4">
-        <div className="flex w-full gap-2 self-end md:w-min">
+        <div className="flex w-full flex-col-reverse gap-2 self-end sm:w-auto sm:flex-row">
           <Button
-            className="w-full md:w-min"
+            className="w-full sm:w-auto"
             variant="danger-soft"
             type="button"
             onPress={() => setIsDeleteAccountModalOpen(true)}
@@ -238,7 +238,7 @@ const AccountSettingsForm = ({ user }: Props) => {
             isDisabled={!isDirty}
             isPending={isSubmitting}
             type="submit"
-            className="w-full md:w-min"
+            className="w-full sm:w-auto"
           >
             {t('save_changes')}
           </Button>

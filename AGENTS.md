@@ -69,6 +69,7 @@ import { InvoiceBody } from '@invoicetrackr/types';
 - Use client components only for interactivity.
 - Mutations should go through server actions or existing action hooks, not direct component API calls.
 - Follow existing HeroUI and layout conventions.
+- Prefer HeroUI theme tokens and variants over custom colors, gradients, or background treatments; the theme should handle most light/dark styling.
 - Keep client-side validation minimal; authoritative validation belongs on the server.
 - Locale behavior should respect explicit cookie choice and logged-in user settings. The intended MVP behavior is Lithuanian for Lithuanian visitors and English otherwise.
 

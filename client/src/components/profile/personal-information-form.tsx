@@ -172,48 +172,46 @@ const PersonalInformationForm = ({
     );
   };
 
-  const renderEmailVerificationBanner = () => {
-    return (
-      <Alert
-        status={isEmailVerified ? 'success' : 'warning'}
-        className="md:col-span-2"
-      >
-        <Alert.Indicator>
-          {isEmailVerified ? (
-            <CheckCircleIcon className="h-5 w-5" />
-          ) : (
-            <ExclamationCircleIcon className="h-5 w-5" />
-          )}
-        </Alert.Indicator>
+  const renderEmailVerificationBanner = () => (
+    <Alert
+      status={isEmailVerified ? 'success' : 'warning'}
+      className="bg-surface-secondary border md:col-span-2"
+    >
+      <Alert.Indicator>
+        {isEmailVerified ? (
+          <CheckCircleIcon className="h-5 w-5" />
+        ) : (
+          <ExclamationCircleIcon className="h-5 w-5" />
+        )}
+      </Alert.Indicator>
 
-        <Alert.Content>
-          <Alert.Title>{t('email_verification.title')}</Alert.Title>
+      <Alert.Content>
+        <Alert.Title>{t('email_verification.title')}</Alert.Title>
 
-          <Alert.Description>
-            {isEmailVerified
-              ? t('email_verification.verified_description')
-              : t('email_verification.unverified_description')}
-          </Alert.Description>
-        </Alert.Content>
-        {isEmailVerified && verifiedDate ? (
-          <span className="text-muted self-start whitespace-nowrap text-right text-xs">
-            {t('email_verification.sent_at', { date: verifiedDate })}
-          </span>
-        ) : !isEmailVerified ? (
-          <Button
-            className="self-center"
-            size="sm"
-            type="button"
-            variant="secondary"
-            isPending={isResendingVerificationEmail}
-            onPress={handleResendVerificationEmail}
-          >
-            {t('email_verification.resend')}
-          </Button>
-        ) : null}
-      </Alert>
-    );
-  };
+        <Alert.Description>
+          {isEmailVerified
+            ? t('email_verification.verified_description')
+            : t('email_verification.unverified_description')}
+        </Alert.Description>
+      </Alert.Content>
+      {isEmailVerified && verifiedDate ? (
+        <span className="text-muted self-start whitespace-nowrap text-right text-xs">
+          {t('email_verification.sent_at', { date: verifiedDate })}
+        </span>
+      ) : !isEmailVerified ? (
+        <Button
+          className="self-center"
+          size="sm"
+          type="button"
+          variant="secondary"
+          isPending={isResendingVerificationEmail}
+          onPress={handleResendVerificationEmail}
+        >
+          {t('email_verification.resend')}
+        </Button>
+      ) : null}
+    </Alert>
+  );
 
   const renderCardBodyAndFooter = () => {
     return (
@@ -333,7 +331,7 @@ const PersonalInformationForm = ({
           <Button
             isDisabled={isSubmitting || (!isDirty && !Boolean(formSignature))}
             type="submit"
-            className={cn(isOnboardingCard ? 'w-full' : 'self-end')}
+            className={cn(isOnboardingCard ? 'w-full' : 'w-full sm:w-auto sm:self-end')}
           >
             {t('save_changes')}
           </Button>

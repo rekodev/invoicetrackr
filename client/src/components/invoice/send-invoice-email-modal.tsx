@@ -358,8 +358,8 @@ export default function SendInvoiceEmailModal({
                       </Card.Content>
                     </Card>
                   </Modal.Body>
-                  <Modal.Footer className="flex w-full flex-wrap justify-between gap-2">
-                    <div className="flex flex-wrap gap-2">
+                  <Modal.Footer className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-between">
+                    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
                       {requestSignature &&
                         invoice.recipientSigningToken &&
                         !invoice.recipientSigningRevokedAt && (
@@ -367,6 +367,7 @@ export default function SendInvoiceEmailModal({
                             size="sm"
                             variant="danger-soft"
                             isDisabled={isPending}
+                            className="w-full sm:w-auto"
                             onPress={() => handleSigningLinkAction('revoke')}
                           >
                             {t('revoke_signing_link')}
@@ -379,6 +380,7 @@ export default function SendInvoiceEmailModal({
                             size="sm"
                             variant="tertiary"
                             isDisabled={isPending}
+                            className="w-full sm:w-auto"
                             onPress={() =>
                               handleSigningLinkAction('regenerate')
                             }
@@ -387,10 +389,11 @@ export default function SendInvoiceEmailModal({
                           </Button>
                         )}
                     </div>
-                    <div className="ml-auto flex gap-2">
+                    <div className="flex w-full flex-col-reverse gap-2 sm:ml-auto sm:w-auto sm:flex-row">
                       <Button
                         onPress={handleCloseSendDialog}
                         variant="tertiary"
+                        className="w-full sm:w-auto"
                       >
                         {t('cancel')}
                       </Button>
@@ -398,6 +401,7 @@ export default function SendInvoiceEmailModal({
                         isDisabled={!isEmailVerified}
                         isPending={isPending}
                         type="submit"
+                        className="w-full sm:w-auto"
                       >
                         <PaperAirplaneIcon className="h-4 w-4" />
                         {shouldRotateSigningLink

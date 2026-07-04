@@ -105,6 +105,7 @@ export default {
       dueDateAfterDate: 'Due date must be after invoice date',
       incomeJournalDateRange: 'End date must not be before start date',
       status: 'Valid status is required',
+      documentType: 'Valid invoice document type is required',
       businessType: '"Business" or "Individual" required',
       partyType: 'Valid party type is required',
       totalAmount: 'Total amount is required',
@@ -201,7 +202,9 @@ export default {
       emailSent: 'Email sent successfully',
       signed: 'Invoice signed successfully',
       signingLinkRevoked: 'Signing link revoked',
-      signingLinkRegenerated: 'Fresh signing link generated'
+      signingLinkRegenerated: 'Fresh signing link generated',
+      correctionCreated: 'Correction draft created',
+      creditNoteCreated: 'Credit note draft created'
     },
     client: {
       created: 'Client added successfully',
@@ -263,6 +266,8 @@ export default {
       unableToSendEmail: 'Unable to send email',
       unableToCreatePublicLink: 'Unable to create public invoice link',
       unableToCreateSigningLink: 'Unable to create invoice signing link',
+      unableToCreateCorrection:
+        'Unable to create a correction for this invoice',
       unableToRegenerateSigningLink:
         'Unable to regenerate invoice signing link',
       signingLinkExpired:
@@ -281,6 +286,8 @@ export default {
       alreadySigned: 'Invoice is already signed',
       paidIssuedImmutable:
         'This invoice was paid through Stripe, so its status cannot be changed manually.',
+      voidedImmutable:
+        'Voided invoices cannot be changed from the status dropdown.',
       issuedImmutable:
         'Issued invoices cannot be edited or deleted from this flow'
     },

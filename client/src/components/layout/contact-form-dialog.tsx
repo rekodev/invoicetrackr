@@ -100,17 +100,24 @@ export default function ContactFormDialog() {
                   </TextField>
                 </Modal.Body>
                 <Modal.Footer className="w-full">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    isDisabled={isPending}
-                    onPress={handleClose}
-                  >
-                    {t('cancel')}
-                  </Button>
-                  <Button isPending={isPending} type="submit">
-                    {t('send')}
-                  </Button>
+                  <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      isDisabled={isPending}
+                      className="w-full sm:w-auto"
+                      onPress={handleClose}
+                    >
+                      {t('cancel')}
+                    </Button>
+                    <Button
+                      isPending={isPending}
+                      type="submit"
+                      className="w-full sm:w-auto"
+                    >
+                      {t('send')}
+                    </Button>
+                  </div>
                 </Modal.Footer>
               </Form>
             </Modal.Dialog>

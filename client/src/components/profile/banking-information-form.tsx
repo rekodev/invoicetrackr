@@ -199,9 +199,13 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
   return (
     <>
       <Card className="w-full border">
-        <Card.Header className="flex flex-row items-center justify-between gap-4 px-6 py-4">
+        <Card.Header className="flex flex-col items-stretch justify-between gap-4 px-6 py-4 sm:flex-row sm:items-center">
           <Card.Title className="text-2xl">{t('title')}</Card.Title>
-          <Button variant="secondary" onPress={handleAddNewBankAccount}>
+          <Button
+            variant="secondary"
+            className="w-full sm:w-auto"
+            onPress={handleAddNewBankAccount}
+          >
             <PlusIcon className="h-4 w-4" />
             {t('actions.add')}
           </Button>
@@ -216,7 +220,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
               }
               onPress={handleSave}
               isPending={isPending}
-              className="self-end"
+              className="w-full sm:w-auto sm:self-end"
             >
               {t('actions.save')}
             </Button>

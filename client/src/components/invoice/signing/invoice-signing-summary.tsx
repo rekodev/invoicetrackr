@@ -49,7 +49,11 @@ export default function InvoiceSigningSummary({
             </p>
           </div>
         </div>
-        <Button variant="outline" onPress={onOpenPdf}>
+        <Button
+          variant="outline"
+          className="w-full sm:w-auto"
+          onPress={onOpenPdf}
+        >
           <EyeIcon className="h-4 w-4" />
           {t('view_pdf')}
         </Button>

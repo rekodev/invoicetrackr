@@ -99,7 +99,7 @@ const InvoiceTableTopContent = ({
 
   return (
     <div className="flex flex-col gap-4 pt-1">
-      <div className="flex items-end justify-between gap-3">
+      <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-end">
         <div className="flex w-full items-center gap-2 sm:max-w-[44%]">
           <MagnifyingGlassIcon className="h-4 w-4" />
           <Input
@@ -111,12 +111,13 @@ const InvoiceTableTopContent = ({
           />
           {filterValue && <CloseButton aria-label="Clear" onPress={onClear} />}
         </div>
-        <div className="flex gap-3">
+        <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:gap-3">
           <Dropdown>
             <DropdownTrigger
               className={buttonVariants({
                 variant: 'tertiary',
-                className: 'hidden items-center justify-center gap-2 sm:flex'
+                className:
+                  'flex w-full items-center justify-center gap-2 sm:w-auto'
               })}
             >
               {t('table.filters.status')}
@@ -147,7 +148,8 @@ const InvoiceTableTopContent = ({
             <DropdownTrigger
               className={buttonVariants({
                 variant: 'tertiary',
-                className: 'hidden items-center justify-center sm:flex'
+                className:
+                  'flex w-full items-center justify-center gap-2 sm:w-auto'
               })}
             >
               <span>{t('table.filters.columns')}</span>
@@ -174,11 +176,15 @@ const InvoiceTableTopContent = ({
               </DropdownMenu>
             </DropdownPopover>
           </Dropdown>
-          <Button variant="secondary" onPress={openIncomeJournalModal}>
+          <Button
+            variant="secondary"
+            className="w-full sm:w-auto"
+            onPress={openIncomeJournalModal}
+          >
             <DocumentArrowDownIcon className="h-4 w-4" />
             {t('income_journal.export')}
           </Button>
-          <Button onPress={handleAddNewInvoice}>
+          <Button className="w-full sm:w-auto" onPress={handleAddNewInvoice}>
             <PlusIcon className="h-4 w-4" />
             {t('top_content.add_new')}
           </Button>

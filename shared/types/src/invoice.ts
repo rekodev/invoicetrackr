@@ -13,6 +13,18 @@ export const invoiceLifecycleStatusSchema = z.enum(
   }
 );
 
+export const invoiceDocumentTypeSchema = z.enum(
+  ['invoice', 'corrected_invoice', 'credit_note'],
+  {
+    message: 'validation.invoice.documentType'
+  }
+);
+
+export const invoiceCorrectionTypeSchema = z.enum([
+  'corrected_invoice',
+  'credit_note'
+]);
+
 export const invoicePartyBusinessTypeSchema = z.enum(
   ['business', 'individual'],
   {
@@ -109,6 +121,12 @@ export const invoiceBodySchema = z
     totalAmount: z.string({ message: 'validation.invoice.totalAmount' }),
     status: invoiceStatusSchema,
     lifecycleStatus: invoiceLifecycleStatusSchema.optional(),
+    documentType: invoiceDocumentTypeSchema.optional(),
+    originalInvoiceId: z.coerce.number().nullish(),
+    originalInvoiceNumber: z.string().nullish(),
+    correctedByInvoiceId: z.coerce.number().nullish(),
+    correctedByInvoiceNumber: z.string().nullish(),
+    correctionReason: z.string().trim().max(500).nullish(),
     issuedAt: z.string().nullish(),
     paidAt: z.string().nullish(),
     voidedAt: z.string().nullish(),
@@ -192,6 +210,11 @@ export const sendInvoiceEmailBodySchema = z.object({
   file: z.any().nullish()
 });
 
+export const createInvoiceCorrectionBodySchema = z.object({
+  type: invoiceCorrectionTypeSchema,
+  reason: z.string().trim().max(500).optional()
+});
+
 export const incomeJournalQuerySchema = z
   .object({
     from: z.iso.date(),
@@ -207,6 +230,10 @@ export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
 export type InvoiceNumberSeries = z.infer<typeof invoiceNumberSeriesSchema>;
 export type InvoiceLifecycleStatus = z.infer<
   typeof invoiceLifecycleStatusSchema
+>;
+export type InvoiceDocumentType = z.infer<typeof invoiceDocumentTypeSchema>;
+export type InvoiceCorrectionType = z.infer<
+  typeof invoiceCorrectionTypeSchema
 >;
 export type InvoicePartyBusinessType = z.infer<
   typeof invoicePartyBusinessTypeSchema
@@ -225,4 +252,7 @@ export type InvoiceBody = z.infer<typeof invoiceBodySchema>;
 export type PublicInvoiceSigning = z.infer<typeof publicInvoiceSigningSchema>;
 export type PublicInvoice = z.infer<typeof publicInvoiceSchema>;
 export type PublicInvoicePayment = z.infer<typeof publicInvoicePaymentSchema>;
+export type CreateInvoiceCorrectionBody = z.infer<
+  typeof createInvoiceCorrectionBodySchema
+>;
 export type IncomeJournalQuery = z.infer<typeof incomeJournalQuerySchema>;

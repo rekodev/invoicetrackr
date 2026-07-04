@@ -192,11 +192,15 @@ const InvoiceServicesTable = ({
 
   const renderBottomContent = () => (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-      <Button variant="secondary" onPress={handleAddService}>
+      <Button
+        variant="secondary"
+        className="w-full sm:w-auto"
+        onPress={handleAddService}
+      >
         <PlusIcon className="h-5 w-5" />
         {t('add_service')}
       </Button>
-      <div className="grid min-w-64 grid-cols-[1fr_auto] gap-x-6 gap-y-1 self-end pr-3 text-sm">
+      <div className="grid w-full grid-cols-[1fr_auto] gap-x-6 gap-y-1 pr-0 text-sm sm:min-w-64 sm:w-auto sm:self-end sm:pr-3">
         <p className="text-muted">{t('subtotal')}:</p>
         <p className="text-right">
           {getCurrencySymbol(currency)}
