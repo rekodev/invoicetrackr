@@ -109,6 +109,7 @@ export default {
       incomeJournalDateRange:
         'Pabaigos data negali būti ankstesnė už pradžios datą',
       status: 'Tinkama būsena yra privaloma',
+      documentType: 'Tinkamas sąskaitos dokumento tipas yra privalomas',
       businessType: 'Reikalingas "Verslas" arba "Fizinis asmuo"',
       partyType: 'Tinkamas šalies tipas yra privalomas',
       totalAmount: 'Bendra suma yra privaloma',
@@ -207,7 +208,9 @@ export default {
       emailSent: 'El. laiškas išsiųstas sėkmingai',
       signed: 'Sąskaita faktūra pasirašyta sėkmingai',
       signingLinkRevoked: 'Pasirašymo nuoroda atšaukta',
-      signingLinkRegenerated: 'Sugeneruota nauja pasirašymo nuoroda'
+      signingLinkRegenerated: 'Sugeneruota nauja pasirašymo nuoroda',
+      correctionCreated: 'Sukurtas tikslinimo juodraštis',
+      creditNoteCreated: 'Sukurtas kreditinės sąskaitos juodraštis'
     },
     client: {
       created: 'Klientas pridėtas sėkmingai',
@@ -270,6 +273,8 @@ export default {
       unableToCreatePublicLink: 'Nepavyko sukurti viešos sąskaitos nuorodos',
       unableToCreateSigningLink:
         'Nepavyko sukurti sąskaitos pasirašymo nuorodos',
+      unableToCreateCorrection:
+        'Nepavyko sukurti šios sąskaitos tikslinimo',
       unableToRegenerateSigningLink:
         'Nepavyko atnaujinti sąskaitos pasirašymo nuorodos',
       signingLinkExpired:
@@ -288,6 +293,8 @@ export default {
       alreadySigned: 'Sąskaita faktūra jau pasirašyta',
       paidIssuedImmutable:
         'Ši sąskaita apmokėta per Stripe, todėl jos būsenos rankiniu būdu keisti negalima.',
+      voidedImmutable:
+        'Anuliuotų sąskaitų būsenos negalima keisti iš lentelės pasirinkimo.',
       issuedImmutable:
         'Išrašytų sąskaitų negalima redaguoti ar ištrinti šiame sraute'
     },

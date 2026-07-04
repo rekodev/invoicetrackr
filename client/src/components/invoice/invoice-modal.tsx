@@ -135,7 +135,7 @@ const InvoiceModal = ({
     return (
       <div
         className={cn(
-          'flex items-center gap-2 text-xs font-medium',
+          'hidden items-center gap-2 text-xs font-medium sm:flex',
           statusClasses.text
         )}
       >
@@ -221,7 +221,7 @@ const InvoiceModal = ({
                         </Select.Popover>
                       </Select>
 
-                      <div className="border-default-400 h-6 border-r" />
+                      <div className="border-default-400 hidden h-6 border-r sm:block" />
                     </>
                   )}
                   {pdfDocument ? (
@@ -237,6 +237,7 @@ const InvoiceModal = ({
                             size="sm"
                             isDisabled={isLoading}
                             variant="primary"
+                            className="hidden sm:inline-flex"
                             onPress={() => {
                               if (cookieConsent !== 'accepted') return;
 
@@ -259,11 +260,16 @@ const InvoiceModal = ({
                       }}
                     </PDFDownloadLink>
                   ) : (
-                    <Button isPending size="sm" variant="primary">
+                    <Button
+                      isPending
+                      size="sm"
+                      variant="primary"
+                      className="hidden sm:inline-flex"
+                    >
                       {t('buttons.download_pdf')}
                     </Button>
                   )}
-                  <div className="border-default-400 mx-1 h-6 border-r" />
+                  <div className="border-default-400 mx-1 hidden h-6 border-r sm:block" />
                   <Button
                     isIconOnly
                     size="sm"
@@ -295,13 +301,58 @@ const InvoiceModal = ({
                 </div>
                 {conversionContent}
               </div>
-              <Button
-                size="sm"
-                variant="secondary"
-                onPress={() => onOpenChange(false)}
-              >
-                {t('buttons.close')}
-              </Button>
+              <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+                {pdfDocument ? (
+                  <PDFDownloadLink
+                    document={pdfDocument}
+                    fileName={`${invoiceId}.pdf`}
+                    className="w-full sm:hidden"
+                  >
+                    {({ loading }) => (
+                      <Button
+                        size="sm"
+                        isDisabled={isIFrameLoading || loading}
+                        variant="primary"
+                        className="w-full"
+                        onPress={() => {
+                          if (cookieConsent !== 'accepted') return;
+
+                          captureAnalyticsEvent(
+                            analyticsEvents.pdfDownloaded,
+                            {
+                              source: invoiceData.id
+                                ? 'saved_invoice'
+                                : 'free_invoice',
+                              invoice_status: invoiceData.status,
+                              line_count: invoiceData.services.length
+                            }
+                          );
+                        }}
+                      >
+                        <ArrowDownTrayIcon className="h-5 w-5 dark:text-white" />
+                        {t('buttons.download_pdf')}
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
+                ) : (
+                  <Button
+                    isPending
+                    size="sm"
+                    variant="primary"
+                    className="w-full sm:hidden"
+                  >
+                    {t('buttons.download_pdf')}
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="w-full sm:w-auto"
+                  onPress={() => onOpenChange(false)}
+                >
+                  {t('buttons.close')}
+                </Button>
+              </div>
             </footer>
           </Modal.Dialog>
         </Modal.Container>

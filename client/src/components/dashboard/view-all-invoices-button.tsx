@@ -12,7 +12,11 @@ export default function ViewAllInvoicesButton() {
   return (
     <Link
       href={INVOICES_PAGE}
-      className={buttonVariants({ variant: 'outline', size: 'sm' })}
+      className={buttonVariants({
+        variant: 'outline',
+        size: 'sm',
+        className: 'w-full justify-center sm:w-auto'
+      })}
     >
       {t('view_all')}
     </Link>

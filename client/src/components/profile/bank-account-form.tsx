@@ -176,13 +176,22 @@ export default function BankAccountForm({
           variant === 'card' ? 'px-6 py-4' : 'px-0 pb-0 pt-4'
         )}
       >
-        <div className="flex gap-2">
+        <div className="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row">
           {!isUserOnboarding && (
-            <Button variant="danger-soft" onPress={handleCancel}>
+            <Button
+              variant="danger-soft"
+              className="w-full sm:w-auto"
+              onPress={handleCancel}
+            >
               {t('actions.cancel')}
             </Button>
           )}
-          <Button type="submit" isDisabled={!isDirty} isPending={isSubmitting}>
+          <Button
+            type="submit"
+            isDisabled={!isDirty}
+            isPending={isSubmitting}
+            className="w-full sm:w-auto"
+          >
             {t('actions.save')}
           </Button>
         </div>

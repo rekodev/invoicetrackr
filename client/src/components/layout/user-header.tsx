@@ -92,7 +92,7 @@ export default function UserHeader({ user }: Props) {
   return (
     <header className="border-default-200 bg-background/80 sticky top-0 z-40 w-full border-b backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-6">
-        <Link className="flex gap-2 text-white" href={HOME_PAGE}>
+        <Link className="flex gap-2" href={HOME_PAGE}>
           <AppBrand wordmarkClassName="hidden sm:flex" />
         </Link>
 

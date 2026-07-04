@@ -33,14 +33,18 @@ const InvoiceFormPartyModal = ({
       return <p className="text-muted">{t('modals.no_clients')}</p>;
     }
 
-    return clients?.map((client) => (
-      <ClientCard
-        key={client.id}
-        fullDetails
-        onClick={() => onReceiverSelect(client)}
-        client={client}
-      />
-    ));
+    return (
+      <div className="flex max-h-[60vh] flex-col gap-3 overflow-y-auto pr-1">
+        {clients?.map((client) => (
+          <ClientCard
+            key={client.id}
+            fullDetails
+            onClick={() => onReceiverSelect(client)}
+            client={client}
+          />
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -58,7 +62,10 @@ const InvoiceFormPartyModal = ({
               </Modal.Header>
               <Modal.Body>{renderBody()}</Modal.Body>
               <Modal.Footer>
-                <Button onPress={() => setIsAddNewClientModalOpen(true)}>
+                <Button
+                  className="w-full sm:w-auto"
+                  onPress={() => setIsAddNewClientModalOpen(true)}
+                >
                   <PlusCircleIcon className="h-5 w-5" />
                   {t('buttons.add_new')}
                 </Button>

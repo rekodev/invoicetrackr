@@ -136,9 +136,9 @@ export default function UserNavCard({ user }: Props) {
                   <Tabs.Tab
                     id={tab.key}
                     key={tab.key}
-                    className="justify-start"
+                    className="justify-center sm:justify-start"
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="flex w-full items-center justify-center space-x-2 sm:justify-start">
                       {tab.icon}
                       <span>{t(tab.name)}</span>
                     </div>

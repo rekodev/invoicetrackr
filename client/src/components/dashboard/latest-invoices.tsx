@@ -37,8 +37,8 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
 
   return (
     <section className="w-full min-w-72 xl:max-w-lg">
-      <Card className="border">
-        <Card.Header className="items-start justify-between gap-4">
+      <Card className="flex h-full flex-col border">
+        <Card.Header className="flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-start">
           <div>
             <Card.Title className="text-base font-semibold">
               {t('title')}
@@ -49,14 +49,18 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
           </div>
           <Link
             href={INVOICES_PAGE}
-            className={buttonVariants({ size: 'sm', variant: 'outline' })}
+            className={buttonVariants({
+              size: 'sm',
+              variant: 'outline',
+              className: 'w-full justify-center sm:w-auto'
+            })}
           >
             {t('view_all')}
             <ArrowUpRightIcon className="h-3.5 w-3.5" />
           </Link>
         </Card.Header>
 
-        <Card.Content>
+        <Card.Content className="flex flex-1 flex-col pt-4">
           {invoices.length ? (
             <ul className="divide-default-200 divide-y">
               {invoices.map((invoice) => {

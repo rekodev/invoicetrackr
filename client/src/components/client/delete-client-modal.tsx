@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  Button,
-  Modal,
-  toast
-} from '@heroui/react';
+import { Button, Modal, toast } from '@heroui/react';
 import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
@@ -43,11 +39,20 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
   const renderModalFooter = () => (
     <Modal.Footer>
       <div className="flex w-full items-center justify-between">
-        <div className="flex w-full justify-end gap-1">
-          <Button variant="outline" onPress={onClose}>
+        <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+          <Button
+            className="w-full sm:w-auto"
+            variant="outline"
+            onPress={onClose}
+          >
             {t('cancel')}
           </Button>
-          <Button isPending={isPending} variant="danger" onPress={handleSubmit}>
+          <Button
+            isPending={isPending}
+            variant="danger"
+            className="w-full sm:w-auto"
+            onPress={handleSubmit}
+          >
             {t('confirm')}
           </Button>
         </div>
@@ -57,17 +62,20 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
 
   return (
     <Modal>
-      <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => !open && onClose()}
+      >
         <Modal.Container>
           <Modal.Dialog>
             <Modal.CloseTrigger />
-        <Modal.Header>
-          <Modal.Heading>{t('title')}</Modal.Heading>
-        </Modal.Header>
-        <Modal.Body>
-          {t('description', { clientName: clientData.name })}
-        </Modal.Body>
-        {renderModalFooter()}
+            <Modal.Header>
+              <Modal.Heading>{t('title')}</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>
+              {t('description', { clientName: clientData.name })}
+            </Modal.Body>
+            {renderModalFooter()}
           </Modal.Dialog>
         </Modal.Container>
       </Modal.Backdrop>

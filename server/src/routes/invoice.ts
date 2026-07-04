@@ -6,6 +6,7 @@ import {
 
 import {
   confirmPublicInvoicePaymentOptions,
+  createInvoiceCorrectionOptions,
   createPublicInvoicePaymentOptions,
   deleteInvoiceOptions,
   getIncomeJournalOptions,
@@ -47,6 +48,11 @@ const invoiceRoutes = (
   fastify.put('/api/:userId/invoices/:id', updateInvoiceOptions);
 
   fastify.put('/api/:userId/invoices/:id/status', updateInvoiceStatusOptions);
+
+  fastify.post(
+    '/api/:userId/invoices/:id/corrections',
+    createInvoiceCorrectionOptions
+  );
 
   fastify.delete('/api/:userId/invoices/:id', deleteInvoiceOptions);
 

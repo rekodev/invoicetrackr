@@ -51,6 +51,7 @@ type Props = {
 };
 
 type TextInputProps = ComponentProps<typeof Input>;
+type TextFieldVariant = ComponentProps<typeof TextField>['variant'];
 
 const INITIAL_RECEIVER_DATA: Client = {
   id: 0,
@@ -176,14 +177,16 @@ const InvoiceForm = ({
     label,
     isInvalid,
     errorMessage,
+    variant = 'secondary',
     inputProps
   }: {
     label: string;
     isInvalid: boolean;
     errorMessage?: string;
+    variant?: TextFieldVariant;
     inputProps: TextInputProps;
   }) => (
-    <TextField className="w-full" variant="secondary" isInvalid={isInvalid}>
+    <TextField className="w-full" variant={variant} isInvalid={isInvalid}>
       <Label>{label}</Label>
       <Input {...inputProps} />
       <FieldError>{errorMessage}</FieldError>
@@ -215,9 +218,12 @@ const InvoiceForm = ({
     <div className="col-span-4 flex w-full flex-col gap-4">
       <h4>{t('headings.sender_receiver_data')}</h4>
       <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
-        <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
+        <Card
+          variant="secondary"
+          className="flex w-full flex-col gap-4 border p-4 pb-6"
+        >
           <div className="flex min-h-8 items-center justify-between">
-            <p className="text-muted text-sm">{t('headings.from')}</p>
+            <p className="text-muted section-eyebrow">{t('headings.from')}</p>
           </div>
           <Controller
             name="sender.businessType"
@@ -225,7 +231,7 @@ const InvoiceForm = ({
             render={({ field }) => (
               <RadioGroup
                 aria-label={t('a11y.sender_business_type_label')}
-                variant="secondary"
+                variant="primary"
                 orientation="horizontal"
                 {...field}
               >
@@ -237,6 +243,7 @@ const InvoiceForm = ({
             label: t('labels.sender_name'),
             isInvalid: !!errors.sender?.name,
             errorMessage: errors.sender?.name?.message,
+            variant: 'primary',
             inputProps: {
               'aria-label': t('a11y.sender_name_label'),
               placeholder: t('placeholders.sender_name'),
@@ -250,6 +257,7 @@ const InvoiceForm = ({
             ),
             isInvalid: !!errors.sender?.businessNumber,
             errorMessage: errors.sender?.businessNumber?.message,
+            variant: 'primary',
             inputProps: {
               'aria-label': t(
                 `a11y.sender_business_number_label_${isSenderBusiness ? 'business' : 'individual'}`
@@ -264,6 +272,7 @@ const InvoiceForm = ({
               label: t('labels.sender_vat_number'),
               isInvalid: !!errors.sender?.vatNumber,
               errorMessage: errors.sender?.vatNumber?.message,
+              variant: 'primary',
               inputProps: {
                 'aria-label': t('a11y.sender_vat_number_label'),
                 placeholder: t('placeholders.sender_vat_number'),
@@ -275,6 +284,7 @@ const InvoiceForm = ({
             label: t('labels.sender_address'),
             isInvalid: !!errors.sender?.address,
             errorMessage: errors.sender?.address?.message,
+            variant: 'primary',
             inputProps: {
               'aria-label': t('a11y.sender_address_label'),
               placeholder: t('placeholders.sender_address'),
@@ -286,6 +296,7 @@ const InvoiceForm = ({
             label: t('labels.sender_email'),
             isInvalid: !!errors.sender?.email,
             errorMessage: errors.sender?.email?.message,
+            variant: 'primary',
             inputProps: {
               'aria-label': t('a11y.sender_email_label'),
               placeholder: t('placeholders.sender_email'),
@@ -294,13 +305,16 @@ const InvoiceForm = ({
             }
           })}
         </Card>
-        <Card className="flex w-full flex-col gap-4 border p-4 pb-6">
+        <Card
+          variant="secondary"
+          className="flex w-full flex-col gap-4 border p-4 pb-6"
+        >
           <div className="flex items-center justify-between">
-            <p className="text-muted text-sm">{t('headings.to')}</p>
+            <p className="text-muted section-eyebrow">{t('headings.to')}</p>
             <Button
               size="sm"
               variant="secondary"
-              className="min-w-unit-10 w-unit-26 h-unit-8 cursor-pointer"
+              className="bg-background-tertiary min-w-unit-10 w-unit-26 h-unit-8 cursor-pointer"
               onPress={handleOpenReceiverModal}
             >
               <UserGroupIcon className="h-4 w-4" />
@@ -313,7 +327,7 @@ const InvoiceForm = ({
             render={({ field }) => (
               <RadioGroup
                 aria-label={t('a11y.receiver_business_type_label')}
-                variant="secondary"
+                variant="primary"
                 orientation="horizontal"
                 {...field}
               >
@@ -329,6 +343,7 @@ const InvoiceForm = ({
                 label: t('labels.receiver_name'),
                 isInvalid: !!errors.receiver?.name,
                 errorMessage: errors.receiver?.name?.message,
+                variant: 'primary',
                 inputProps: {
                   ...field,
                   'aria-label': t('a11y.receiver_name_label'),
@@ -349,6 +364,7 @@ const InvoiceForm = ({
                 ),
                 isInvalid: !!errors.receiver?.businessNumber,
                 errorMessage: errors.receiver?.businessNumber?.message,
+                variant: 'primary',
                 inputProps: {
                   ...field,
                   'aria-label': t(
@@ -369,6 +385,7 @@ const InvoiceForm = ({
                   label: t('labels.receiver_vat_number'),
                   isInvalid: !!errors.receiver?.vatNumber,
                   errorMessage: errors.receiver?.vatNumber?.message,
+                  variant: 'primary',
                   inputProps: {
                     ...field,
                     value: field.value || '',
@@ -388,6 +405,7 @@ const InvoiceForm = ({
                 label: t('labels.receiver_address'),
                 isInvalid: !!errors.receiver?.address,
                 errorMessage: errors.receiver?.address?.message,
+                variant: 'primary',
                 inputProps: {
                   ...field,
                   'aria-label': t('a11y.receiver_address_label'),
@@ -405,6 +423,7 @@ const InvoiceForm = ({
                 label: t('labels.receiver_email'),
                 isInvalid: !!errors.receiver?.email,
                 errorMessage: errors.receiver?.email?.message,
+                variant: 'primary',
                 inputProps: {
                   ...field,
                   'aria-label': t('a11y.receiver_email_label'),
@@ -438,7 +457,7 @@ const InvoiceForm = ({
         <Button
           size="sm"
           variant="secondary"
-          className="min-w-unit-10 w-unit-26 h-unit-8 max-w-min cursor-pointer"
+          className="h-unit-9 min-w-unit-10 sm:h-unit-8 sm:w-unit-26 w-full cursor-pointer sm:max-w-min"
           onPress={() => setIsBankingInformationModalOpen(true)}
         >
           <BuildingLibraryIcon className="min-h-4 min-w-4" />
@@ -522,13 +541,18 @@ const InvoiceForm = ({
 
   const renderActions = () => (
     <div className="col-span-4 flex w-full items-center justify-between gap-5">
-      <div className="flex w-full flex-col justify-end gap-1 sm:flex-row">
-        <Button variant="danger-soft" onPress={redirectToInvoicesPage}>
+      <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+        <Button
+          variant="danger-soft"
+          className="w-full sm:w-auto"
+          onPress={redirectToInvoicesPage}
+        >
           {t('buttons.cancel')}
         </Button>
         <Button
           isDisabled={!methods.formState.isDirty || isSubmitting}
           type="submit"
+          className="w-full sm:w-auto"
         >
           {t('buttons.save')}
         </Button>
@@ -548,7 +572,7 @@ const InvoiceForm = ({
   return (
     <>
       <FormProvider {...methods}>
-        <Card className="border bg-transparent p-4 sm:p-8">
+        <Card className="border p-4 sm:p-8">
           <form
             aria-label={t('a11y.form_label')}
             className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"

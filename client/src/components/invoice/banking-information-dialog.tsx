@@ -59,31 +59,37 @@ const BankingInformationDialog = ({
       return <p className="text-muted">{t('modals.no_bank_accounts')}</p>;
     }
 
-    return bankingInformationEntries?.map((bankingInformation) => (
-      <div
-        key={bankingInformation.id}
-        onClick={() => onBankAccountSelect(bankingInformation)}
-      >
-        <Card className="hover:bg-muted/5 justify-center border hover:cursor-pointer">
-          <CardContent className="flex min-h-[70px] min-w-72 flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="item-center border-default-200 bg-muted/5 flex rounded-md border p-2">
-                <BuildingLibraryIcon className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-default-foreground truncate pb-0.5 text-sm font-bold uppercase">
-                  {bankingInformation.name}
-                </p>
-                <div className="text-muted flex gap-2 text-xs">
-                  <span>{bankingInformation.code}</span>
-                  <span>{bankingInformation.accountNumber}</span>
+    return (
+      <div className="flex max-h-[60vh] flex-col gap-3 overflow-y-auto pr-1">
+        {bankingInformationEntries?.map((bankingInformation) => (
+          <div
+            key={bankingInformation.id}
+            onClick={() => onBankAccountSelect(bankingInformation)}
+          >
+            <Card className="hover:bg-muted/5 justify-center border hover:cursor-pointer">
+              <CardContent className="flex min-h-[70px] w-full flex-row items-center justify-between gap-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="item-center border-default-200 bg-muted/5 flex shrink-0 rounded-md border p-2">
+                    <BuildingLibraryIcon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-default-foreground truncate pb-0.5 text-sm font-bold uppercase">
+                      {bankingInformation.name}
+                    </p>
+                    <div className="text-muted flex min-w-0 flex-wrap gap-x-2 gap-y-0.5 text-xs">
+                      <span>{bankingInformation.code}</span>
+                      <span className="break-all">
+                        {bankingInformation.accountNumber}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </div>
+        ))}
       </div>
-    ));
+    );
   };
 
   return (
@@ -105,7 +111,10 @@ const BankingInformationDialog = ({
             <Modal.Body>{renderBody()}</Modal.Body>
             {!isAddingBankAccount && (
               <Modal.Footer>
-                <Button onPress={() => setIsAddingBankAccount(true)}>
+                <Button
+                  className="w-full sm:w-auto"
+                  onPress={() => setIsAddingBankAccount(true)}
+                >
                   <PlusCircleIcon className="h-5 w-5" />
                   {t('buttons.add_new')}
                 </Button>

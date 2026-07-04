@@ -6,10 +6,13 @@ export type InvoiceTotals = {
   totalAmount: string;
 };
 
-type InvoiceTotalService = Pick<
-  InvoiceServiceBody,
-  'amount' | 'quantity' | 'vatRate'
->;
+type InvoiceTotalService = Omit<
+  Pick<InvoiceServiceBody, 'amount' | 'quantity' | 'vatRate'>,
+  'amount' | 'vatRate'
+> & {
+  amount: number | string;
+  vatRate?: number | string | null;
+};
 
 const toMoney = (amountInCents: number) => (amountInCents / 100).toFixed(2);
 

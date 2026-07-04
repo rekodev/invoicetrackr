@@ -38,7 +38,11 @@ export default function EmptyState({
       {actionHref && actionLabel ? (
         <Link
           href={actionHref}
-          className={buttonVariants({ variant: 'secondary', size: 'sm' })}
+          className={buttonVariants({
+            variant: 'secondary',
+            size: 'sm',
+            className: 'w-full justify-center sm:w-auto'
+          })}
         >
           {actionLabel}
         </Link>

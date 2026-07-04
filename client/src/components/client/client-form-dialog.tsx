@@ -212,14 +212,19 @@ const ClientFormDialog = ({
               </Modal.Body>
               <Modal.Footer>
                 <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
-                  <div className="flex w-full justify-end gap-1">
-                    <Button variant="danger-soft" onPress={onClose}>
+                  <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+                    <Button
+                      variant="danger-soft"
+                      className="w-full sm:w-auto"
+                      onPress={onClose}
+                    >
                       {t('cancel')}
                     </Button>
                     <Button
                       data-testid="client-form-dialog-submit-button"
                       isDisabled={isSubmitting || !isDirty}
                       type="submit"
+                      className="w-full sm:w-auto"
                     >
                       {isEditMode ? t('submit_edit') : t('submit_add')}
                     </Button>

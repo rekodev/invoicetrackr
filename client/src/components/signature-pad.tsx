@@ -153,7 +153,7 @@ const SignaturePad = ({
           }
           isDisabled={isReadOnly}
           className={cn(
-            'relative flex h-auto min-h-44 w-full max-w-none items-center justify-center overflow-hidden border p-6 text-base transition sm:min-h-52 sm:max-w-sm',
+            'relative flex aspect-[4/3] h-auto w-full max-w-56 items-center justify-center overflow-hidden border p-6 text-base transition',
             {
               'border-danger-soft': isInvalid,
               'hover:border-secondary hover:bg-secondary/5 cursor-pointer':
@@ -189,7 +189,12 @@ const SignaturePad = ({
           </div>
         </Button>
         {profileSignature && isChipVisible && (
-          <Button size="sm" variant="secondary" onPress={setProfileSignature}>
+          <Button
+            size="sm"
+            variant="secondary"
+            className="min-h-10 w-full rounded-full sm:min-h-0 sm:w-max sm:px-2.5 sm:py-1 sm:text-xs"
+            onPress={setProfileSignature}
+          >
             <CheckCircleIcon className="mr-0.5 h-4 w-4" />
             {t('use_profile_signature')}
           </Button>
@@ -246,11 +251,14 @@ const SignaturePad = ({
               <Modal.Footer>
                 <Button
                   variant="danger"
+                  className="w-full sm:w-auto"
                   onPress={() => signatureRef.current?.clear()}
                 >
                   {t('clear')}
                 </Button>
-                <Button onPress={saveSignature}>{t('save')}</Button>
+                <Button className="w-full sm:w-auto" onPress={saveSignature}>
+                  {t('save')}
+                </Button>
               </Modal.Footer>
             </Modal.Dialog>
           </Modal.Container>

@@ -66,7 +66,7 @@ const ClientSectionTopContent = ({
       <DropdownTrigger
         className={buttonVariants({
           variant: 'tertiary',
-          className: 'hidden items-center justify-center sm:flex'
+          className: 'flex w-full items-center justify-center sm:w-auto'
         })}
       >
         <span>{t('type_filter')}</span>
@@ -104,7 +104,7 @@ const ClientSectionTopContent = ({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <div className="flex items-end justify-between gap-3">
+        <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-end">
           <div className="flex w-full items-center gap-2 sm:max-w-[44%]">
             <MagnifyingGlassIcon className="h-4 w-4" />
             <Input
@@ -116,18 +116,16 @@ const ClientSectionTopContent = ({
             />
             {searchTerm && <CloseButton aria-label="Clear" onPress={onClear} />}
           </div>
-          <div className="flex gap-3">
+          <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:gap-3">
             {renderTypeFilterSelect()}
-            <Button onPress={handleAddNewClient}>
+            <Button className="w-full sm:w-auto" onPress={handleAddNewClient}>
               {t('add_new')}
               <PlusIcon className="h-4 w-4" />
             </Button>
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="section-eyebrow text-muted">
-            {totalClientsText}
-          </span>
+          <span className="section-eyebrow text-muted">{totalClientsText}</span>
         </div>
       </div>
 

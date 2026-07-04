@@ -96,11 +96,19 @@ const EditBankingInformationDialog = ({
         </Modal.Body>
         <Modal.Footer>
           <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
-            <div className="flex w-full justify-end gap-1">
-              <Button variant="danger-soft" onPress={onClose}>
+            <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+              <Button
+                variant="danger-soft"
+                className="w-full sm:w-auto"
+                onPress={onClose}
+              >
                 {t('actions.cancel')}
               </Button>
-              <Button isPending={isPending} onPress={handleSubmit}>
+              <Button
+                isPending={isPending}
+                className="w-full sm:w-auto"
+                onPress={handleSubmit}
+              >
                 {t('actions.save')}
               </Button>
             </div>

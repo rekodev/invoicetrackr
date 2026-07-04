@@ -46,11 +46,20 @@ const DeleteBankAccountDialog = ({
   const renderModalFooter = () => (
     <Modal.Footer>
       <div className="flex w-full items-center justify-between">
-        <div className="flex w-full justify-end gap-1">
-          <Button variant="outline" onPress={onClose}>
+        <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+          <Button
+            className="w-full sm:w-auto"
+            variant="outline"
+            onPress={onClose}
+          >
             {t('cancel_button')}
           </Button>
-          <Button variant="danger" isPending={isPending} onPress={handleSubmit}>
+          <Button
+            variant="danger"
+            isPending={isPending}
+            className="w-full sm:w-auto"
+            onPress={handleSubmit}
+          >
             {t('confirm_button')}
           </Button>
         </div>
