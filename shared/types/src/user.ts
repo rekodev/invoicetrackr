@@ -10,6 +10,11 @@ import {
   stripeSubscriptionStatusSchema
 } from './common';
 
+const multipartBooleanSchema = z.preprocess(
+  (value) => (value === 'true' ? true : value === 'false' ? false : value),
+  z.boolean()
+);
+
 export const userBodySchema = z.object({
   id: z.number().optional(),
   type: invoicePartyTypeSchema,
@@ -29,7 +34,7 @@ export const userBodySchema = z.object({
   preferredInvoiceLanguage: z.nullish(
     z.string().min(1, 'validation.user.preferredInvoiceLanguage')
   ),
-  isVatPayer: z.boolean().default(false),
+  isVatPayer: multipartBooleanSchema.default(false),
   defaultInvoiceVatMode: z
     .enum(['no_vat', 'standard_21', 'zero', 'manual'], {
       message: 'validation.user.defaultInvoiceVatMode'

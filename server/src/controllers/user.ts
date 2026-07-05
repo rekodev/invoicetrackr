@@ -271,6 +271,7 @@ export const updateUser = async (
       | 'businessNumber'
       | 'vatNumber'
       | 'address'
+      | 'isVatPayer'
       | 'signature'
     > & { file: MultipartFile };
   }>,
@@ -285,6 +286,7 @@ export const updateUser = async (
     businessNumber,
     vatNumber,
     address,
+    isVatPayer,
     signature
   } = req.body;
   const i18n = await useI18n(req);
@@ -324,6 +326,7 @@ export const updateUser = async (
       businessType,
       businessNumber,
       vatNumber,
+      isVatPayer,
       address
     },
     signatureUrl || '',

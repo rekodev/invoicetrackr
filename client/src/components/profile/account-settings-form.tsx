@@ -13,18 +13,8 @@ import {
   Select,
   Separator,
   TextField,
-  Tooltip,
   toast
 } from '@heroui/react';
-import {
-  CalendarDaysIcon,
-  CurrencyDollarIcon,
-  DocumentArrowUpIcon,
-  HashtagIcon,
-  InformationCircleIcon,
-  LanguageIcon,
-  ReceiptPercentIcon
-} from '@heroicons/react/24/outline';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import type { DefaultInvoiceVatMode } from '@invoicetrackr/types';
 import { User } from 'next-auth';
@@ -44,7 +34,6 @@ type AccountSettingsFormModel = {
   language: string;
   currency: Currency;
   preferredInvoiceLanguage: string;
-  isVatPayer: boolean;
   defaultInvoiceVatMode: DefaultInvoiceVatMode;
   defaultInvoiceSeries: string;
   defaultPaymentTermsDays: 7 | 14 | 30;
@@ -53,11 +42,6 @@ type AccountSettingsFormModel = {
 type Props = {
   user: User;
 };
-
-const vatPayerOptions = [
-  { value: 'false', labelKey: 'invoice_defaults.vat_payer.no' },
-  { value: 'true', labelKey: 'invoice_defaults.vat_payer.yes' }
-] as const;
 
 const defaultInvoiceVatModeOptions = [
   'no_vat',
@@ -71,28 +55,27 @@ const paymentTermsOptions = [7, 14, 30] as const;
 const AccountSettingsForm = ({ user }: Props) => {
   const baseT = useTranslations();
   const t = useTranslations('profile.account_settings');
+  const isVatPayer = Boolean(user?.isVatPayer);
   const {
     handleSubmit,
     control,
     formState: { isDirty, errors, isSubmitting },
     setError,
-    reset,
-    watch,
-    setValue
+    reset
   } = useForm<AccountSettingsFormModel>({
     defaultValues: {
       language: user?.language,
       currency: user?.currency,
       preferredInvoiceLanguage: user?.preferredInvoiceLanguage || user.language,
-      isVatPayer: user?.isVatPayer || false,
-      defaultInvoiceVatMode: user?.defaultInvoiceVatMode || 'no_vat',
+      defaultInvoiceVatMode: isVatPayer
+        ? user?.defaultInvoiceVatMode || 'no_vat'
+        : 'no_vat',
       defaultInvoiceSeries: user?.defaultInvoiceSeries || 'SF',
       defaultPaymentTermsDays: user?.defaultPaymentTermsDays || 30
     }
   });
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
-  const isVatPayer = watch('isVatPayer');
 
   const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) => {
     if (!user?.id) return;
@@ -102,10 +85,8 @@ const AccountSettingsForm = ({ user }: Props) => {
       language: data.language,
       currency: data.currency,
       preferredInvoiceLanguage: data.preferredInvoiceLanguage,
-      isVatPayer: data.isVatPayer,
-      defaultInvoiceVatMode: data.isVatPayer
-        ? data.defaultInvoiceVatMode
-        : 'no_vat',
+      isVatPayer,
+      defaultInvoiceVatMode: isVatPayer ? data.defaultInvoiceVatMode : 'no_vat',
       defaultInvoiceSeries: data.defaultInvoiceSeries.trim().toUpperCase(),
       defaultPaymentTermsDays: data.defaultPaymentTermsDays
     });
@@ -126,31 +107,30 @@ const AccountSettingsForm = ({ user }: Props) => {
 
     reset({
       ...data,
-      defaultInvoiceVatMode: data.isVatPayer
-        ? data.defaultInvoiceVatMode
-        : 'no_vat',
+      defaultInvoiceVatMode: isVatPayer ? data.defaultInvoiceVatMode : 'no_vat',
       defaultInvoiceSeries: data.defaultInvoiceSeries.trim().toUpperCase()
     });
   };
 
   const renderCardBodyAndFooter = () => (
     <>
-      <CardContent className="grid grid-cols-1 gap-4 p-6 lg:w-1/2">
+      <CardContent className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
+        <div className="flex flex-col gap-1 md:col-span-2">
+          <h3 className="text-lg font-medium">{t('general.title')}</h3>
+          <p className="text-muted text-sm">{t('general.description')}</p>
+        </div>
         <Controller
           control={control}
           name="language"
           render={({ field }) => (
             <Select
+              className="w-full"
               variant="secondary"
               value={field.value}
               onChange={field.onChange}
               isInvalid={!!errors.language}
             >
-              <Label>
-                <div className="flex items-center gap-1">
-                  <LanguageIcon className="h-5 w-5" /> {t('language')}
-                </div>
-              </Label>
+              <Label>{t('language')}</Label>
               <Select.Trigger>
                 <Select.Value />
                 <Select.Indicator />
@@ -175,75 +155,16 @@ const AccountSettingsForm = ({ user }: Props) => {
         />
         <Controller
           control={control}
-          name="preferredInvoiceLanguage"
-          render={({ field }) => (
-            <Select
-              variant="secondary"
-              value={field.value}
-              onChange={field.onChange}
-              isInvalid={!!errors.preferredInvoiceLanguage}
-            >
-              <Label>
-                <div className="flex items-center gap-1">
-                  <DocumentArrowUpIcon className="h-5 w-5" />
-                  {t('preferred_invoice_language')}
-                  <Tooltip delay={0}>
-                    <Tooltip.Trigger>
-                      <Button
-                        type="button"
-                        variant="tertiary"
-                        size="sm"
-                        isIconOnly
-                        className="z-50 size-5 min-w-5 p-0"
-                      >
-                        <InformationCircleIcon className="text-muted h-4 w-4" />
-                      </Button>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content className="max-w-xs">
-                      {t('preferred_invoice_language_tooltip')}
-                    </Tooltip.Content>
-                  </Tooltip>
-                </div>
-              </Label>
-              <Select.Trigger>
-                <Select.Value />
-                <Select.Indicator />
-              </Select.Trigger>
-              <Select.Popover>
-                <ListBox>
-                  {availableLanguages.map((language) => (
-                    <ListBoxItem
-                      key={language.code}
-                      id={language.code}
-                      textValue={baseT(language.nameTranslationKey)}
-                    >
-                      {baseT(language.nameTranslationKey)}
-                      <ListBoxItem.Indicator />
-                    </ListBoxItem>
-                  ))}
-                </ListBox>
-              </Select.Popover>
-              <FieldError>
-                {errors.preferredInvoiceLanguage?.message}
-              </FieldError>
-            </Select>
-          )}
-        />
-        <Controller
-          control={control}
           name="currency"
           render={({ field }) => (
             <Select
+              className="w-full"
               variant="secondary"
               value={field.value}
               onChange={field.onChange}
               isInvalid={!!errors.currency}
             >
-              <Label>
-                <div className="flex items-center gap-1">
-                  <CurrencyDollarIcon className="h-5 w-5" /> {t('currency')}
-                </div>
-              </Label>
+              <Label>{t('currency')}</Label>
               <Select.Trigger>
                 <Select.Value />
                 <Select.Indicator />
@@ -268,8 +189,8 @@ const AccountSettingsForm = ({ user }: Props) => {
         />
       </CardContent>
       <Separator />
-      <CardContent className="grid grid-cols-1 gap-4 p-6 lg:w-1/2">
-        <div className="flex flex-col gap-1">
+      <CardContent className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
+        <div className="flex flex-col gap-1 md:col-span-2">
           <h3 className="text-lg font-medium">{t('invoice_defaults.title')}</h3>
           <p className="text-muted text-sm">
             {t('invoice_defaults.description')}
@@ -277,48 +198,40 @@ const AccountSettingsForm = ({ user }: Props) => {
         </div>
         <Controller
           control={control}
-          name="isVatPayer"
+          name="preferredInvoiceLanguage"
           render={({ field }) => (
             <Select
+              className="w-full"
               variant="secondary"
-              value={String(field.value)}
-              onChange={(key) => {
-                const nextValue = String(key) === 'true';
-
-                field.onChange(nextValue);
-                if (!nextValue) {
-                  setValue('defaultInvoiceVatMode', 'no_vat', {
-                    shouldDirty: true
-                  });
-                }
-              }}
-              isInvalid={!!errors.isVatPayer}
+              value={field.value}
+              onChange={field.onChange}
+              isInvalid={!!errors.preferredInvoiceLanguage}
             >
-              <Label>
-                <div className="flex items-center gap-1">
-                  <ReceiptPercentIcon className="h-5 w-5" />
-                  {t('invoice_defaults.is_vat_payer')}
-                </div>
-              </Label>
+              <Label>{t('preferred_invoice_language')}</Label>
               <Select.Trigger>
                 <Select.Value />
                 <Select.Indicator />
               </Select.Trigger>
               <Select.Popover>
                 <ListBox>
-                  {vatPayerOptions.map((option) => (
+                  {availableLanguages.map((language) => (
                     <ListBoxItem
-                      key={option.value}
-                      id={option.value}
-                      textValue={t(option.labelKey)}
+                      key={language.code}
+                      id={language.code}
+                      textValue={baseT(language.nameTranslationKey)}
                     >
-                      {t(option.labelKey)}
+                      {baseT(language.nameTranslationKey)}
                       <ListBoxItem.Indicator />
                     </ListBoxItem>
                   ))}
                 </ListBox>
               </Select.Popover>
-              <FieldError>{errors.isVatPayer?.message}</FieldError>
+              <p className="text-muted text-xs">
+                {t('preferred_invoice_language_tooltip')}
+              </p>
+              <FieldError>
+                {errors.preferredInvoiceLanguage?.message}
+              </FieldError>
             </Select>
           )}
         />
@@ -327,18 +240,14 @@ const AccountSettingsForm = ({ user }: Props) => {
           name="defaultInvoiceVatMode"
           render={({ field }) => (
             <Select
+              className="w-full"
               variant="secondary"
               value={isVatPayer ? field.value : 'no_vat'}
               onChange={field.onChange}
               isDisabled={!isVatPayer}
               isInvalid={!!errors.defaultInvoiceVatMode}
             >
-              <Label>
-                <div className="flex items-center gap-1">
-                  <ReceiptPercentIcon className="h-5 w-5" />
-                  {t('invoice_defaults.default_vat_mode')}
-                </div>
-              </Label>
+              <Label>{t('invoice_defaults.default_vat_mode')}</Label>
               <Select.Trigger>
                 <Select.Value />
                 <Select.Indicator />
@@ -358,6 +267,11 @@ const AccountSettingsForm = ({ user }: Props) => {
                 </ListBox>
               </Select.Popover>
               <FieldError>{errors.defaultInvoiceVatMode?.message}</FieldError>
+              {!isVatPayer && (
+                <p className="text-muted text-xs">
+                  {t('invoice_defaults.vat_locked_note')}
+                </p>
+              )}
             </Select>
           )}
         />
@@ -366,15 +280,11 @@ const AccountSettingsForm = ({ user }: Props) => {
           name="defaultInvoiceSeries"
           render={({ field }) => (
             <TextField
+              className="w-full"
               variant="secondary"
               isInvalid={!!errors.defaultInvoiceSeries}
             >
-              <Label>
-                <div className="flex items-center gap-1">
-                  <HashtagIcon className="h-5 w-5" />
-                  {t('invoice_defaults.default_series')}
-                </div>
-              </Label>
+              <Label>{t('invoice_defaults.default_series')}</Label>
               <Input
                 {...field}
                 value={field.value || ''}
@@ -393,6 +303,7 @@ const AccountSettingsForm = ({ user }: Props) => {
           name="defaultPaymentTermsDays"
           render={({ field }) => (
             <Select
+              className="w-full"
               variant="secondary"
               value={String(field.value)}
               onChange={(key) => {
@@ -404,12 +315,7 @@ const AccountSettingsForm = ({ user }: Props) => {
               }}
               isInvalid={!!errors.defaultPaymentTermsDays}
             >
-              <Label>
-                <div className="flex items-center gap-1">
-                  <CalendarDaysIcon className="h-5 w-5" />
-                  {t('invoice_defaults.payment_terms')}
-                </div>
-              </Label>
+              <Label>{t('invoice_defaults.payment_terms')}</Label>
               <Select.Trigger>
                 <Select.Value />
                 <Select.Indicator />

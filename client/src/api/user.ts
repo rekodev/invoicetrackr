@@ -71,6 +71,7 @@ export const updateUser = async (
     | 'businessType'
     | 'businessNumber'
     | 'vatNumber'
+    | 'isVatPayer'
     | 'address'
     | 'type'
   > & { signature: string | File | undefined }

@@ -58,6 +58,14 @@ export async function updateUserAction({
     };
   }
 
+  await updateSessionAction({
+    newSession: {
+      isVatPayer: user.isVatPayer,
+      vatNumber: user.vatNumber,
+      ...(user.isVatPayer ? {} : { defaultInvoiceVatMode: 'no_vat' })
+    }
+  });
+
   revalidatePath(PERSONAL_INFORMATION_PAGE);
   return { ok: true, message: response.data.message };
 }

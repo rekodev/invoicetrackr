@@ -193,12 +193,21 @@ export const updateUserInDb = async (
     | 'businessNumber'
     | 'vatNumber'
     | 'address'
+    | 'isVatPayer'
   >,
   signature: string,
   shouldResetEmailVerification = false
 ): Promise<{ id: number } | undefined> => {
-  const { name, address, businessNumber, businessType, email, vatNumber } =
-    user;
+  const {
+    name,
+    address,
+    businessNumber,
+    businessType,
+    email,
+    vatNumber,
+    isVatPayer
+  } = user;
+  const normalizedIsVatPayer = Boolean(isVatPayer);
 
   const users = await db
     .update(usersTable)
@@ -207,6 +216,8 @@ export const updateUserInDb = async (
       businessType,
       businessNumber,
       vatNumber,
+      isVatPayer: normalizedIsVatPayer,
+      ...(normalizedIsVatPayer ? {} : { defaultInvoiceVatMode: 'no_vat' }),
       address,
       email,
       ...(shouldResetEmailVerification ? { emailVerifiedAt: null } : {}),

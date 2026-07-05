@@ -236,7 +236,8 @@ export const authConfig = {
           subscriptionCancelAt: session.user.subscriptionCancelAt,
           analyticsConsentStatus: session.user.analyticsConsentStatus,
           analyticsConsentUpdatedAt: session.user.analyticsConsentUpdatedAt,
-          selectedBankAccountId: session.user.selectedBankAccountId
+          selectedBankAccountId: session.user.selectedBankAccountId,
+          vatNumber: session.user.vatNumber
         };
       }
 
@@ -281,6 +282,7 @@ export const authConfig = {
         token.analyticsConsentUpdatedAt as string | null;
       session.user.selectedBankAccountId =
         token.selectedBankAccountId as number;
+      session.user.vatNumber = token.vatNumber as string | null | undefined;
 
       return session;
     }
