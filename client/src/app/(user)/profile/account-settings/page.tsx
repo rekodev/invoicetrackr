@@ -16,7 +16,7 @@ const AccountSettingsPage = async () => {
 
   return (
     <AccountSettingsForm
-      key={`${session.user.language}-${session.user.currency}`}
+      key={`${session.user.language}-${session.user.currency}-${session.user.isVatPayer}`}
       user={{
         ...session.user,
         ...billing

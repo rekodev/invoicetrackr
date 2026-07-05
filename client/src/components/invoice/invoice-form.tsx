@@ -30,7 +30,11 @@ import type {
   InvoiceBody,
   User
 } from '@invoicetrackr/types';
-import { formatDate, getDateDifferenceInDays } from '@/lib/utils/date';
+import {
+  addDaysToDate,
+  formatDate,
+  getDateDifferenceInDays
+} from '@/lib/utils/date';
 import { Currency } from '@/lib/types/currency';
 import { getNextInvoiceNumberAction } from '@/lib/actions/invoice';
 import { statusOptions } from '@/lib/constants/table';
@@ -68,6 +72,13 @@ const INITIAL_RECEIVER_DATA: Client = {
 
 const paymentModeOptions = ['auto', 'online', 'manual', 'disabled'] as const;
 
+const getDefaultVatRate = (user: User) => {
+  if (!user.isVatPayer) return 0;
+  if (user.defaultInvoiceVatMode === 'standard_21') return 21;
+
+  return 0;
+};
+
 const InvoiceForm = ({
   user,
   currency,
@@ -76,27 +87,34 @@ const InvoiceForm = ({
   bankingInformationEntries
 }: Props) => {
   const t = useTranslations('components.invoice_form');
+  const today = formatDate(new Date().toISOString());
+  const defaultPaymentTermsDays = user.defaultPaymentTermsDays || 30;
+  const defaultVatRate = getDefaultVatRate(user);
   const methods = useForm<InvoiceBody>({
     defaultValues: invoiceData
       ? {
           ...invoiceData,
-          date: invoiceData.date
-            ? formatDate(invoiceData.date)
-            : formatDate(new Date().toISOString()),
+          date: invoiceData.date ? formatDate(invoiceData.date) : today,
           dueDate: invoiceData.dueDate ? formatDate(invoiceData.dueDate) : ''
         }
       : {
           sender: user,
           receiver: INITIAL_RECEIVER_DATA,
           services: [
-            { amount: 0, quantity: 0, description: '', unit: '', vatRate: 0 }
+            {
+              amount: 0,
+              quantity: 0,
+              description: '',
+              unit: '',
+              vatRate: defaultVatRate
+            }
           ],
           bankingInformation: { name: '', code: '', accountNumber: '' },
           status: 'pending',
           paymentMode: 'auto',
           manualPaymentReference: '',
-          date: formatDate(new Date().toISOString()),
-          dueDate: ''
+          date: today,
+          dueDate: addDaysToDate(today, defaultPaymentTermsDays)
         }
   });
   const {
@@ -132,6 +150,8 @@ const InvoiceForm = ({
   const isSenderBusiness = watch('sender.businessType') === 'business';
   const paymentMode = watch('paymentMode') || 'auto';
   const currentDate = watch('date');
+  const senderVatNumber = watch('sender.vatNumber');
+  const shouldShowSenderVatNumber = user.isVatPayer || !!senderVatNumber;
 
   const handleOpenReceiverModal = () => {
     setIsReceiverModalOpen(true);
@@ -281,7 +301,7 @@ const InvoiceForm = ({
               ...register('sender.businessNumber')
             }
           })}
-          {isSenderBusiness &&
+          {shouldShowSenderVatNumber &&
             renderTextField({
               label: t('labels.sender_vat_number'),
               isInvalid: !!errors.sender?.vatNumber,
@@ -458,6 +478,7 @@ const InvoiceForm = ({
       <InvoiceServicesTable
         currency={currency}
         invoiceServices={invoiceData?.services}
+        defaultVatRate={defaultVatRate}
         isInvalid={!!errors.services}
         errorMessage={errors.services?.message}
       />

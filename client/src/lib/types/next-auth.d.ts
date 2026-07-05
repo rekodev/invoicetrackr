@@ -1,6 +1,7 @@
 import type {
   AnalyticsConsentStatus,
   BillingInterval,
+  DefaultInvoiceVatMode,
   StripeSubscriptionStatus
 } from '@invoicetrackr/types';
 import { DefaultSession } from 'next-auth';
@@ -17,6 +18,10 @@ declare module 'next-auth' {
     email: string;
     language: string;
     preferredInvoiceLanguage: string;
+    isVatPayer: boolean;
+    defaultInvoiceVatMode: DefaultInvoiceVatMode;
+    defaultInvoiceSeries: string;
+    defaultPaymentTermsDays: 7 | 14 | 30;
     currency: Currency;
     type: string;
     businessType: string;

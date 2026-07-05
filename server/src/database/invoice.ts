@@ -106,17 +106,13 @@ const getInvoiceSeriesForNextNumber = async (
 ) => {
   if (requestedSeries) return normalizeInvoiceSeries(requestedSeries);
 
-  const latestInvoices = await query
-    .select({ invoiceId: invoicesTable.invoiceId })
-    .from(invoicesTable)
-    .where(eq(invoicesTable.userId, userId))
-    .orderBy(desc(invoicesTable.id))
+  const users = await query
+    .select({ defaultInvoiceSeries: usersTable.defaultInvoiceSeries })
+    .from(usersTable)
+    .where(eq(usersTable.id, userId))
     .limit(1);
-  const latestInvoiceSeries = latestInvoices.at(0)?.invoiceId
-    ? parseInvoiceNumber(latestInvoices[0].invoiceId)?.series
-    : null;
 
-  return latestInvoiceSeries || DEFAULT_INVOICE_SERIES;
+  return normalizeInvoiceSeries(users.at(0)?.defaultInvoiceSeries);
 };
 
 export const getNextInvoiceNumberFromDb = async (

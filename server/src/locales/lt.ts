@@ -176,7 +176,9 @@ export default {
       email: 'Tinkamas el. pašto adresas yra privalomas',
       currency: 'Valiuta yra privaloma',
       language: 'Kalba yra privaloma',
-      preferredInvoiceLanguage: 'Pageidaujama sąskaitos kalba yra privaloma'
+      preferredInvoiceLanguage: 'Pageidaujama sąskaitos kalba yra privaloma',
+      defaultInvoiceVatMode: 'Numatytasis PVM taikymas yra privalomas',
+      vatNumberRequired: 'PVM mokėtojo kodas yra privalomas PVM mokėtojams'
     },
     contact: {
       email: 'Neteisingas el. pašto adresas',

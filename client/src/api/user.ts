@@ -1,4 +1,5 @@
 import {
+  type AccountSettingsBody,
   type AnalyticsConsentStatus,
   CreateNewPasswordResponse,
   DeleteUserAccountResponse,
@@ -70,6 +71,7 @@ export const updateUser = async (
     | 'businessType'
     | 'businessNumber'
     | 'vatNumber'
+    | 'isVatPayer'
     | 'address'
     | 'type'
   > & { signature: string | File | undefined }
@@ -113,15 +115,31 @@ export const updateUserAccountSettings = async (
   {
     language,
     currency,
-    preferredInvoiceLanguage
-  }: { language: string; currency: string; preferredInvoiceLanguage?: string }
+    preferredInvoiceLanguage,
+    isVatPayer,
+    defaultInvoiceVatMode,
+    defaultInvoiceSeries,
+    defaultPaymentTermsDays
+  }: {
+    language: AccountSettingsBody['language'];
+    currency: AccountSettingsBody['currency'];
+    preferredInvoiceLanguage?: AccountSettingsBody['preferredInvoiceLanguage'];
+    isVatPayer: AccountSettingsBody['isVatPayer'];
+    defaultInvoiceVatMode: AccountSettingsBody['defaultInvoiceVatMode'];
+    defaultInvoiceSeries: AccountSettingsBody['defaultInvoiceSeries'];
+    defaultPaymentTermsDays: AccountSettingsBody['defaultPaymentTermsDays'];
+  }
 ) =>
   await api.put<UpdateUserAccountSettingsResponse>(
     `/api/users/${userId}/account-settings`,
     {
       language,
       currency,
-      preferredInvoiceLanguage
+      preferredInvoiceLanguage,
+      isVatPayer,
+      defaultInvoiceVatMode,
+      defaultInvoiceSeries,
+      defaultPaymentTermsDays
     }
   );
 

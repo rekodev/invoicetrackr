@@ -15,9 +15,14 @@ import {
 import {
   ACCOUNT_SETTINGS_PAGE,
   CHANGE_PASSWORD_PAGE,
-  PERSONAL_INFORMATION_PAGE
+  PERSONAL_INFORMATION_PAGE,
+  PROFILE_PAGE
 } from '../constants/pages';
-import { User, VerifyEmailResponse } from '@invoicetrackr/types';
+import {
+  type AccountSettingsBody,
+  User,
+  VerifyEmailResponse
+} from '@invoicetrackr/types';
 import { ActionResponseModel } from '../types/action';
 import { Currency } from '../types/currency';
 import { isResponseError } from '../utils/error';
@@ -54,7 +59,17 @@ export async function updateUserAction({
     };
   }
 
+  await updateSessionAction({
+    newSession: {
+      isVatPayer: user.isVatPayer,
+      vatNumber: user.isVatPayer ? user.vatNumber : null,
+      ...(user.isVatPayer ? {} : { defaultInvoiceVatMode: 'no_vat' })
+    }
+  });
+
   revalidatePath(PERSONAL_INFORMATION_PAGE);
+  revalidatePath(ACCOUNT_SETTINGS_PAGE);
+  revalidatePath(PROFILE_PAGE, 'layout');
   return { ok: true, message: response.data.message };
 }
 
@@ -62,17 +77,33 @@ export async function updateUserAccountSettingsAction({
   userId,
   language,
   currency,
-  preferredInvoiceLanguage
+  preferredInvoiceLanguage,
+  isVatPayer,
+  defaultInvoiceVatMode,
+  defaultInvoiceSeries,
+  defaultPaymentTermsDays
 }: {
   userId: number;
-  language: string;
-  currency: string;
-  preferredInvoiceLanguage?: string;
+  language: AccountSettingsBody['language'];
+  currency: AccountSettingsBody['currency'];
+  preferredInvoiceLanguage?: AccountSettingsBody['preferredInvoiceLanguage'];
+  isVatPayer: AccountSettingsBody['isVatPayer'];
+  defaultInvoiceVatMode: AccountSettingsBody['defaultInvoiceVatMode'];
+  defaultInvoiceSeries: AccountSettingsBody['defaultInvoiceSeries'];
+  defaultPaymentTermsDays: AccountSettingsBody['defaultPaymentTermsDays'];
 }) {
+  const normalizedDefaultInvoiceVatMode = isVatPayer
+    ? defaultInvoiceVatMode
+    : 'no_vat';
+
   const response = await updateUserAccountSettings(userId, {
     language,
     currency,
-    preferredInvoiceLanguage
+    preferredInvoiceLanguage,
+    isVatPayer,
+    defaultInvoiceVatMode: normalizedDefaultInvoiceVatMode,
+    defaultInvoiceSeries,
+    defaultPaymentTermsDays
   });
 
   if (isResponseError(response)) {
@@ -87,7 +118,11 @@ export async function updateUserAccountSettingsAction({
     newSession: {
       language,
       preferredInvoiceLanguage,
-      currency: currency as Currency
+      currency: currency as Currency,
+      isVatPayer,
+      defaultInvoiceVatMode: normalizedDefaultInvoiceVatMode,
+      defaultInvoiceSeries,
+      defaultPaymentTermsDays
     }
   });
 

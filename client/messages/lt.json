@@ -867,6 +867,9 @@
                 "business_type_placeholder": "Pasirinkite verslo tipą",
                 "business_number": "Įmonės kodas / IV pažymos Nr.",
                 "business_number_placeholder": "Įveskite savo įmonės kodą arba IV pažymos Nr.",
+                "is_vat_payer": "PVM mokėtojas",
+                "is_vat_payer_option": "Esu PVM mokėtojas",
+                "is_vat_payer_description": "Pažymėkite, jei esate registruotas PVM mokėtojas.",
                 "vat_number": "PVM mokėtojo kodas",
                 "vat_number_placeholder": "Įveskite PVM mokėtojo kodą",
                 "address": "Adresas",
@@ -893,6 +896,26 @@
             "language": "Kalba",
             "preferred_invoice_language": "Pageidaujama Sąskaitos Kalba",
             "preferred_invoice_language_tooltip": "Tai numatytoji sąskaitų eksporto ir el. laiškų kalba. Galite keisti kiekvienai sąskaitai atskirai.",
+            "general": {
+                "title": "Bendra",
+                "description": "Jūsų paskyros kalbos ir regiono nustatymai."
+            },
+            "invoice_defaults": {
+                "title": "Sąskaitų numatytieji nustatymai",
+                "description": "Naudojama kuriant naujas išsaugotas sąskaitas. Esamos sąskaitos išlaiko savo reikšmes.",
+                "default_vat_mode": "Numatytasis PVM taikymas",
+                "default_series": "Numatytoji sąskaitos serija",
+                "payment_terms": "Numatytasis apmokėjimo terminas",
+                "payment_terms_days": "{days} d.",
+                "vat_locked_note": "Jei norite rinktis PVM nustatymus, pažymėkite save kaip PVM mokėtoją",
+                "personal_information_link": "asmeninės informacijos formoje",
+                "vat_modes": {
+                    "no_vat": "Be PVM",
+                    "standard_21": "Standartinis 21 %",
+                    "zero": "0 %",
+                    "manual": "Rankiniu būdu eilutėse"
+                }
+            },
             "available_languages": {
                 "en": "Anglų",
                 "lt": "Lietuvių"
@@ -1425,7 +1448,7 @@
             "select_client": "Pasirinkti klientą",
             "due_date_preselection_chips": {
                 "seven_days": "7d",
-                "fifteen_days": "15d",
+                "fourteen_days": "14d",
                 "thirty_days": "30d",
                 "custom": "Pasirinktinis"
             }

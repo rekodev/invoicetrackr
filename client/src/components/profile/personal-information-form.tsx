@@ -4,6 +4,7 @@ import {
   Alert,
   Button,
   Card,
+  Checkbox,
   FieldError,
   Input,
   Label,
@@ -59,6 +60,7 @@ const PersonalInformationForm = ({
     formState: { isDirty, isSubmitting, errors },
     reset,
     setError,
+    setValue,
     watch
   } = useForm<User>({
     defaultValues
@@ -79,7 +81,8 @@ const PersonalInformationForm = ({
       )
     : null;
 
-  const businessType = watch('businessType');
+  const isVatPayer = watch('isVatPayer');
+  const vatNumber = watch('vatNumber');
 
   useEffect(() => {
     if (defaultValues) reset(defaultValues);
@@ -283,7 +286,41 @@ const PersonalInformationForm = ({
             placeholder: t('business_number_placeholder')
           })}
 
-          {businessType === 'business' && (
+          <Controller
+            control={control}
+            name="isVatPayer"
+            render={({ field }) => (
+              <div className="flex flex-col gap-1">
+                <Label>{t('is_vat_payer')}</Label>
+                <Checkbox
+                  variant="secondary"
+                  isSelected={Boolean(field.value)}
+                  onChange={(isSelected) => {
+                    field.onChange(isSelected);
+
+                    if (!isSelected) {
+                      setValue('vatNumber', null, {
+                        shouldDirty: true,
+                        shouldValidate: true
+                      });
+                    }
+                  }}
+                >
+                  <Checkbox.Control>
+                    <Checkbox.Indicator />
+                  </Checkbox.Control>
+                  <Checkbox.Content>
+                    <Label>{t('is_vat_payer_option')}</Label>
+                  </Checkbox.Content>
+                </Checkbox>
+                <p className="text-muted pl-7 text-xs">
+                  {t('is_vat_payer_description')}
+                </p>
+              </div>
+            )}
+          />
+
+          {(isVatPayer || vatNumber) && (
             <Controller
               control={control}
               name="vatNumber"
@@ -293,12 +330,12 @@ const PersonalInformationForm = ({
                   isInvalid={Boolean(errors.vatNumber)}
                   className="w-full"
                 >
-                  <Label>VAT Number</Label>
+                  <Label>{t('vat_number')}</Label>
 
                   <Input
                     name={field.name}
                     value={String(field.value ?? '')}
-                    placeholder="Enter VAT number"
+                    placeholder={t('vat_number_placeholder')}
                     onBlur={field.onBlur}
                     onChange={field.onChange}
                   />
@@ -331,7 +368,9 @@ const PersonalInformationForm = ({
           <Button
             isDisabled={isSubmitting || (!isDirty && !Boolean(formSignature))}
             type="submit"
-            className={cn(isOnboardingCard ? 'w-full' : 'w-full sm:w-auto sm:self-end')}
+            className={cn(
+              isOnboardingCard ? 'w-full' : 'w-full sm:w-auto sm:self-end'
+            )}
           >
             {t('save_changes')}
           </Button>

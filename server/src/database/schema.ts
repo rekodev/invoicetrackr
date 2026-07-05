@@ -353,6 +353,20 @@ export const usersTable = pgTable(
     preferredInvoiceLanguage: varchar('preferred_invoice_language', {
       length: 255
     }),
+    isVatPayer: boolean('is_vat_payer').default(false).notNull(),
+    defaultInvoiceVatMode: varchar('default_invoice_vat_mode', {
+      length: 20
+    })
+      .default('no_vat')
+      .notNull(),
+    defaultInvoiceSeries: varchar('default_invoice_series', {
+      length: 8
+    })
+      .default('SF')
+      .notNull(),
+    defaultPaymentTermsDays: integer('default_payment_terms_days')
+      .default(30)
+      .notNull(),
     subscriptionStatus: varchar('subscription_status', { length: 50 }),
     onboardingCompletedAt: timestamp('onboarding_completed_at', {
       withTimezone: true,
@@ -398,6 +412,18 @@ export const usersTable = pgTable(
       foreignColumns: [bankingInformationTable.id],
       name: 'fk_selected_bank_account'
     }).onDelete('cascade'),
+    check(
+      'users_default_invoice_vat_mode_check',
+      sql`${table.defaultInvoiceVatMode} IN ('no_vat', 'standard_21', 'zero', 'manual')`
+    ),
+    check(
+      'users_default_payment_terms_days_check',
+      sql`${table.defaultPaymentTermsDays} IN (7, 14, 30)`
+    ),
+    check(
+      'users_default_invoice_series_check',
+      sql`${table.defaultInvoiceSeries} ~ '^[A-Z]{2,8}$'`
+    ),
     unique('users_email_key').on(table.email)
   ]
 );

@@ -44,6 +44,11 @@ const user: User = {
   type: 'sender',
   selectedBankAccountId: 1,
   language: 'en',
+  preferredInvoiceLanguage: 'en',
+  isVatPayer: false,
+  defaultInvoiceVatMode: 'no_vat',
+  defaultInvoiceSeries: 'SF',
+  defaultPaymentTermsDays: 30,
   currency: 'eur',
   businessType: 'business',
   profilePictureUrl: ''

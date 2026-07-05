@@ -22,6 +22,10 @@ export const userFactory = Factory.define<
   currency: 'USD',
   language: 'en',
   preferredInvoiceLanguage: 'en',
+  isVatPayer: false,
+  defaultInvoiceVatMode: 'no_vat',
+  defaultInvoiceSeries: 'SF',
+  defaultPaymentTermsDays: 30,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   stripeCustomerId: `cus_${sequence}`,
@@ -33,6 +37,8 @@ export const userFactory = Factory.define<
   subscriptionGraceEndsAt: null,
   subscriptionCurrentPeriodEndsAt: null,
   subscriptionCancelAt: null,
+  analyticsConsentStatus: null,
+  analyticsConsentUpdatedAt: null,
   paymentSuccessPending: false
 }));
 

@@ -1,4 +1,8 @@
-import { AnalyticsConsentStatus, UserBody } from '@invoicetrackr/types';
+import {
+  AnalyticsConsentStatus,
+  UserBody,
+  UserProfileUpdateBody
+} from '@invoicetrackr/types';
 import { and, eq } from 'drizzle-orm';
 
 import {
@@ -38,6 +42,10 @@ export const getUserFromDb = async (
       currency: usersTable.currency,
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
+      isVatPayer: usersTable.isVatPayer,
+      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
+      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
+      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
       stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
       subscriptionStatus: usersTable.subscriptionStatus,
@@ -90,6 +98,10 @@ export const getUserByEmailFromDb = async (
       currency: usersTable.currency,
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
+      isVatPayer: usersTable.isVatPayer,
+      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
+      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
+      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       password: usersTable.password,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
       stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
@@ -176,21 +188,23 @@ export type UserUpdateResult = Omit<
 >;
 
 export const updateUserInDb = async (
-  user: Pick<
-    UserBody,
-    | 'id'
-    | 'email'
-    | 'name'
-    | 'businessType'
-    | 'businessNumber'
-    | 'vatNumber'
-    | 'address'
-  >,
+  user: UserProfileUpdateBody & { id: number },
   signature: string,
   shouldResetEmailVerification = false
 ): Promise<{ id: number } | undefined> => {
-  const { name, address, businessNumber, businessType, email, vatNumber } =
-    user;
+  const {
+    name,
+    address,
+    businessNumber,
+    businessType,
+    email,
+    vatNumber,
+    isVatPayer
+  } = user;
+  const normalizedIsVatPayer = Boolean(isVatPayer);
+  const normalizedVatNumber = normalizedIsVatPayer
+    ? vatNumber?.trim() || null
+    : null;
 
   const users = await db
     .update(usersTable)
@@ -198,7 +212,9 @@ export const updateUserInDb = async (
       name,
       businessType,
       businessNumber,
-      vatNumber,
+      vatNumber: normalizedVatNumber,
+      isVatPayer: normalizedIsVatPayer,
+      ...(normalizedIsVatPayer ? {} : { defaultInvoiceVatMode: 'no_vat' }),
       address,
       email,
       ...(shouldResetEmailVerification ? { emailVerifiedAt: null } : {}),
@@ -279,6 +295,10 @@ export const updateUserProfilePictureInDb = async (
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
+      isVatPayer: usersTable.isVatPayer,
+      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
+      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
+      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       currency: usersTable.currency,
       subscriptionStatus: usersTable.subscriptionStatus,
       analyticsConsentStatus: usersTable.analyticsConsentStatus,
@@ -292,11 +312,19 @@ export const updateUserAccountSettingsInDb = async (
   userId: number,
   language: string,
   currency: string,
-  preferredInvoiceLanguage?: string
+  preferredInvoiceLanguage?: string,
+  isVatPayer = false,
+  defaultInvoiceVatMode: UserBody['defaultInvoiceVatMode'] = 'no_vat',
+  defaultInvoiceSeries = 'SF',
+  defaultPaymentTermsDays: UserBody['defaultPaymentTermsDays'] = 30
 ): Promise<UserUpdateResult | undefined> => {
   const updateData: Partial<typeof usersTable.$inferInsert> = {
     language,
-    currency
+    currency,
+    isVatPayer,
+    defaultInvoiceVatMode: isVatPayer ? defaultInvoiceVatMode : 'no_vat',
+    defaultInvoiceSeries,
+    defaultPaymentTermsDays
   };
 
   if (preferredInvoiceLanguage) {
@@ -321,6 +349,10 @@ export const updateUserAccountSettingsInDb = async (
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
+      isVatPayer: usersTable.isVatPayer,
+      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
+      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
+      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       currency: usersTable.currency,
       subscriptionStatus: usersTable.subscriptionStatus,
       analyticsConsentStatus: usersTable.analyticsConsentStatus,

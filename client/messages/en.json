@@ -866,6 +866,9 @@
                 "business_type_placeholder": "Select business type",
                 "business_number": "Company code / Sole proprietorship certificate No.",
                 "business_number_placeholder": "Company code / Sole proprietorship certificate No.",
+                "is_vat_payer": "VAT payer",
+                "is_vat_payer_option": "Registered as a VAT payer",
+                "is_vat_payer_description": "Enable this if you are registered as a VAT payer.",
                 "vat_number": "VAT Number",
                 "vat_number_placeholder": "Enter VAT number",
                 "address": "Address",
@@ -892,6 +895,26 @@
             "language": "Language",
             "preferred_invoice_language": "Preferred Invoice Language",
             "preferred_invoice_language_tooltip": "This is the default language for invoice exports and emails. You can change it per invoice.",
+            "general": {
+                "title": "General",
+                "description": "Language and regional preferences for your account."
+            },
+            "invoice_defaults": {
+                "title": "Invoice defaults",
+                "description": "Used when creating new saved invoices. Existing invoices keep their saved values.",
+                "default_vat_mode": "Default VAT behavior",
+                "default_series": "Default invoice series",
+                "payment_terms": "Default payment terms",
+                "payment_terms_days": "{days} days",
+                "vat_locked_note": "To choose VAT defaults, mark yourself as a VAT payer in",
+                "personal_information_link": "Personal Information",
+                "vat_modes": {
+                    "no_vat": "No VAT",
+                    "standard_21": "Standard 21%",
+                    "zero": "0%",
+                    "manual": "Manual per line"
+                }
+            },
             "available_languages": {
                 "en": "English",
                 "lt": "Lithuanian"
@@ -1404,7 +1427,7 @@
                 "description": "Build a real invoice, preview the PDF, and download it for free. When you are ready to run the full workflow, start a 7-day trial to save, send, track, and reuse everything.",
                 "benefits": [
                     "Professional English or Lithuanian PDF output",
-                    "VAT/PVM-ready line items and totals",
+                    "VAT-ready line items and totals",
                     "No account required for one-off PDF downloads"
                 ],
                 "upgrade_title": "Need more than a PDF?",
@@ -1424,7 +1447,7 @@
             "select_client": "Select Client",
             "due_date_preselection_chips": {
                 "seven_days": "7d",
-                "fifteen_days": "15d",
+                "fourteen_days": "14d",
                 "thirty_days": "30d",
                 "custom": "Custom"
             }
