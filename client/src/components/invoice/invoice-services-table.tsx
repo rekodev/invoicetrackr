@@ -36,6 +36,7 @@ type Props = {
   isInvalid?: boolean;
   errorMessage?: string;
   currency: Currency;
+  defaultVatRate?: number;
 };
 
 type ServiceInputProps = ComponentProps<typeof Input>;
@@ -44,7 +45,8 @@ const InvoiceServicesTable = ({
   invoiceServices,
   isInvalid,
   errorMessage,
-  currency
+  currency,
+  defaultVatRate = 0
 }: Props) => {
   const t = useTranslations('components.invoice_services_table');
   const {
@@ -153,7 +155,7 @@ const InvoiceServicesTable = ({
       description: '',
       quantity: 0,
       unit: '',
-      vatRate: 0
+      vatRate: defaultVatRate
     });
 
     // Clear errors if there are no services
@@ -200,7 +202,7 @@ const InvoiceServicesTable = ({
         <PlusIcon className="h-5 w-5" />
         {t('add_service')}
       </Button>
-      <div className="grid w-full grid-cols-[1fr_auto] gap-x-6 gap-y-1 pr-0 text-sm sm:min-w-64 sm:w-auto sm:self-end sm:pr-3">
+      <div className="grid w-full grid-cols-[1fr_auto] gap-x-6 gap-y-1 pr-0 text-sm sm:w-auto sm:min-w-64 sm:self-end sm:pr-3">
         <p className="text-muted">{t('subtotal')}:</p>
         <p className="text-right">
           {getCurrencySymbol(currency)}

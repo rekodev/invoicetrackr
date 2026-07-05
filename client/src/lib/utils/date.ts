@@ -21,3 +21,11 @@ export const getDateDifferenceInDays = (date1: string, date2: string) => {
   const diffMs = d2.getTime() - d1.getTime();
   return diffMs / (1000 * 60 * 60 * 24);
 };
+
+export const addDaysToDate = (date: string, days: number) => {
+  const [year, month, day] = date.split('-').map(Number);
+  const nextDate = new Date(Date.UTC(year, month - 1, day));
+  nextDate.setUTCDate(nextDate.getUTCDate() + days);
+
+  return formatDate(nextDate.toISOString());
+};

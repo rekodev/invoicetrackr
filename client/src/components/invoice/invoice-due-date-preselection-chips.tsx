@@ -7,7 +7,7 @@ import { Chip } from '@heroui/react';
 
 const DUE_DATE_PRESELECTIONS = [
   { label: 'seven_days', value: '7' },
-  { label: 'fifteen_days', value: '15' },
+  { label: 'fourteen_days', value: '14' },
   { label: 'thirty_days', value: '30' },
   { label: 'custom', value: 'custom' }
 ];

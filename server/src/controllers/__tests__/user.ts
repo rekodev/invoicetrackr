@@ -535,4 +535,52 @@ describe('User Controller', () => {
       await app.close();
     });
   });
+
+  describe('PUT /api/:userId/account-settings', () => {
+    it('should update user account settings with invoice defaults', async () => {
+      vi.mocked(userDb.updateUserAccountSettingsInDb).mockResolvedValue(
+        mockUser
+      );
+
+      const { updateUserAccountSettings } = userController;
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.put(
+          '/api/:userId/account-settings',
+          {
+            preHandler: mockAuthMiddleware
+          },
+          updateUserAccountSettings
+        );
+      });
+
+      const response = await app.inject({
+        method: 'PUT',
+        url: `/api/${testUserId}/account-settings`,
+        payload: {
+          language: 'lt',
+          currency: 'eur',
+          preferredInvoiceLanguage: 'lt',
+          isVatPayer: true,
+          defaultInvoiceVatMode: 'standard_21',
+          defaultInvoiceSeries: 'MB',
+          defaultPaymentTermsDays: 14
+        }
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(userDb.updateUserAccountSettingsInDb).toHaveBeenCalledWith(
+        testUserId,
+        'lt',
+        'eur',
+        'lt',
+        true,
+        'standard_21',
+        'MB',
+        14
+      );
+
+      await app.close();
+    });
+  });
 });

@@ -1,5 +1,9 @@
+import {
+  type AccountSettingsBody,
+  OAuthUserBody,
+  UserBody
+} from '@invoicetrackr/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { OAuthUserBody, UserBody } from '@invoicetrackr/types';
 import { ResetPasswordEmail, VerifyEmailEmail } from '@invoicetrackr/emails';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { MultipartFile } from '@fastify/multipart';
@@ -149,9 +153,7 @@ export const postUser = async (
     : languageHeader;
   const language = requestedLanguage?.startsWith('lt') ? 'lt' : 'en';
   const analyticsConsentStatus =
-    req.cookies?.[ANALYTICS_CONSENT_COOKIE] === 'accepted'
-      ? 'accepted'
-      : null;
+    req.cookies?.[ANALYTICS_CONSENT_COOKIE] === 'accepted' ? 'accepted' : null;
 
   if (!email) throw new BadRequestError(i18n.t('validation.user.email'));
 
@@ -205,9 +207,7 @@ export const postOAuthUser = async (
     : languageHeader;
   const language = requestedLanguage?.startsWith('lt') ? 'lt' : 'en';
   const analyticsConsentStatus =
-    req.cookies?.[ANALYTICS_CONSENT_COOKIE] === 'accepted'
-      ? 'accepted'
-      : null;
+    req.cookies?.[ANALYTICS_CONSENT_COOKIE] === 'accepted' ? 'accepted' : null;
 
   if (provider !== 'google' || !emailVerified) {
     throw new UnauthorizedError(i18n.t('error.user.oauthEmailNotVerified'));
@@ -471,23 +471,31 @@ export const updateUserProfilePicture = async (
 export const updateUserAccountSettings = async (
   req: FastifyRequest<{
     Params: { userId: string };
-    Body: {
-      currency: string;
-      language: string;
-      preferredInvoiceLanguage?: string;
-    };
+    Body: AccountSettingsBody;
   }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
-  const { currency, language, preferredInvoiceLanguage } = req.body;
+  const {
+    currency,
+    language,
+    preferredInvoiceLanguage,
+    isVatPayer,
+    defaultInvoiceVatMode,
+    defaultInvoiceSeries,
+    defaultPaymentTermsDays
+  } = req.body;
   const i18n = await useI18n(req);
 
   const updatedUser = await updateUserAccountSettingsInDb(
     userId,
     language,
     currency,
-    preferredInvoiceLanguage
+    preferredInvoiceLanguage,
+    isVatPayer,
+    defaultInvoiceVatMode,
+    defaultInvoiceSeries,
+    defaultPaymentTermsDays
   );
 
   if (!updatedUser)

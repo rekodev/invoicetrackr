@@ -66,7 +66,13 @@ export default function LanguageSwitcher({ user }: Props) {
       await updateUserAccountSettingsAction({
         userId: Number(user.id),
         language: selectedLanguage,
-        currency: user.currency
+        currency: user.currency,
+        preferredInvoiceLanguage:
+          user.preferredInvoiceLanguage || selectedLanguage,
+        isVatPayer: user.isVatPayer,
+        defaultInvoiceVatMode: user.defaultInvoiceVatMode || 'no_vat',
+        defaultInvoiceSeries: user.defaultInvoiceSeries || 'SF',
+        defaultPaymentTermsDays: user.defaultPaymentTermsDays || 30
       });
     }
   };

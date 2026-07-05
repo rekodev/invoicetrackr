@@ -893,6 +893,25 @@
             "language": "Kalba",
             "preferred_invoice_language": "Pageidaujama Sąskaitos Kalba",
             "preferred_invoice_language_tooltip": "Tai numatytoji sąskaitų eksporto ir el. laiškų kalba. Galite keisti kiekvienai sąskaitai atskirai.",
+            "invoice_defaults": {
+                "title": "Sąskaitų numatytieji nustatymai",
+                "description": "Naudojama kuriant naujas išsaugotas sąskaitas. Esamos sąskaitos išlaiko savo reikšmes.",
+                "is_vat_payer": "PVM mokėtojas",
+                "default_vat_mode": "Numatytasis PVM taikymas",
+                "default_series": "Numatytoji sąskaitos serija",
+                "payment_terms": "Numatytasis apmokėjimo terminas",
+                "payment_terms_days": "{days} d.",
+                "vat_payer": {
+                    "yes": "Taip",
+                    "no": "Ne"
+                },
+                "vat_modes": {
+                    "no_vat": "Be PVM",
+                    "standard_21": "Standartinis 21 %",
+                    "zero": "0 %",
+                    "manual": "Rankiniu būdu eilutėse"
+                }
+            },
             "available_languages": {
                 "en": "Anglų",
                 "lt": "Lietuvių"
@@ -1425,7 +1444,7 @@
             "select_client": "Pasirinkti klientą",
             "due_date_preselection_chips": {
                 "seven_days": "7d",
-                "fifteen_days": "15d",
+                "fourteen_days": "14d",
                 "thirty_days": "30d",
                 "custom": "Pasirinktinis"
             }

@@ -6,21 +6,27 @@ import {
   CardContent,
   CardFooter,
   FieldError,
+  Input,
   Label,
   ListBox,
   ListBoxItem,
   Select,
   Separator,
+  TextField,
   Tooltip,
   toast
 } from '@heroui/react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import {
+  CalendarDaysIcon,
   CurrencyDollarIcon,
   DocumentArrowUpIcon,
+  HashtagIcon,
   InformationCircleIcon,
-  LanguageIcon
+  LanguageIcon,
+  ReceiptPercentIcon
 } from '@heroicons/react/24/outline';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import type { DefaultInvoiceVatMode } from '@invoicetrackr/types';
 import { User } from 'next-auth';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -38,11 +44,29 @@ type AccountSettingsFormModel = {
   language: string;
   currency: Currency;
   preferredInvoiceLanguage: string;
+  isVatPayer: boolean;
+  defaultInvoiceVatMode: DefaultInvoiceVatMode;
+  defaultInvoiceSeries: string;
+  defaultPaymentTermsDays: 7 | 14 | 30;
 };
 
 type Props = {
   user: User;
 };
+
+const vatPayerOptions = [
+  { value: 'false', labelKey: 'invoice_defaults.vat_payer.no' },
+  { value: 'true', labelKey: 'invoice_defaults.vat_payer.yes' }
+] as const;
+
+const defaultInvoiceVatModeOptions = [
+  'no_vat',
+  'standard_21',
+  'zero',
+  'manual'
+] as const;
+
+const paymentTermsOptions = [7, 14, 30] as const;
 
 const AccountSettingsForm = ({ user }: Props) => {
   const baseT = useTranslations();
@@ -52,16 +76,23 @@ const AccountSettingsForm = ({ user }: Props) => {
     control,
     formState: { isDirty, errors, isSubmitting },
     setError,
-    reset
+    reset,
+    watch,
+    setValue
   } = useForm<AccountSettingsFormModel>({
     defaultValues: {
       language: user?.language,
       currency: user?.currency,
-      preferredInvoiceLanguage: user?.preferredInvoiceLanguage || user.language
+      preferredInvoiceLanguage: user?.preferredInvoiceLanguage || user.language,
+      isVatPayer: user?.isVatPayer || false,
+      defaultInvoiceVatMode: user?.defaultInvoiceVatMode || 'no_vat',
+      defaultInvoiceSeries: user?.defaultInvoiceSeries || 'SF',
+      defaultPaymentTermsDays: user?.defaultPaymentTermsDays || 30
     }
   });
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
+  const isVatPayer = watch('isVatPayer');
 
   const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) => {
     if (!user?.id) return;
@@ -70,7 +101,13 @@ const AccountSettingsForm = ({ user }: Props) => {
       userId: Number(user.id),
       language: data.language,
       currency: data.currency,
-      preferredInvoiceLanguage: data.preferredInvoiceLanguage
+      preferredInvoiceLanguage: data.preferredInvoiceLanguage,
+      isVatPayer: data.isVatPayer,
+      defaultInvoiceVatMode: data.isVatPayer
+        ? data.defaultInvoiceVatMode
+        : 'no_vat',
+      defaultInvoiceSeries: data.defaultInvoiceSeries.trim().toUpperCase(),
+      defaultPaymentTermsDays: data.defaultPaymentTermsDays
     });
 
     toast(response.message, {
@@ -87,7 +124,13 @@ const AccountSettingsForm = ({ user }: Props) => {
       return;
     }
 
-    reset(data);
+    reset({
+      ...data,
+      defaultInvoiceVatMode: data.isVatPayer
+        ? data.defaultInvoiceVatMode
+        : 'no_vat',
+      defaultInvoiceSeries: data.defaultInvoiceSeries.trim().toUpperCase()
+    });
   };
 
   const renderCardBodyAndFooter = () => (
@@ -220,6 +263,174 @@ const AccountSettingsForm = ({ user }: Props) => {
                 </ListBox>
               </Select.Popover>
               <FieldError>{errors.currency?.message}</FieldError>
+            </Select>
+          )}
+        />
+      </CardContent>
+      <Separator />
+      <CardContent className="grid grid-cols-1 gap-4 p-6 lg:w-1/2">
+        <div className="flex flex-col gap-1">
+          <h3 className="text-lg font-medium">{t('invoice_defaults.title')}</h3>
+          <p className="text-muted text-sm">
+            {t('invoice_defaults.description')}
+          </p>
+        </div>
+        <Controller
+          control={control}
+          name="isVatPayer"
+          render={({ field }) => (
+            <Select
+              variant="secondary"
+              value={String(field.value)}
+              onChange={(key) => {
+                const nextValue = String(key) === 'true';
+
+                field.onChange(nextValue);
+                if (!nextValue) {
+                  setValue('defaultInvoiceVatMode', 'no_vat', {
+                    shouldDirty: true
+                  });
+                }
+              }}
+              isInvalid={!!errors.isVatPayer}
+            >
+              <Label>
+                <div className="flex items-center gap-1">
+                  <ReceiptPercentIcon className="h-5 w-5" />
+                  {t('invoice_defaults.is_vat_payer')}
+                </div>
+              </Label>
+              <Select.Trigger>
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {vatPayerOptions.map((option) => (
+                    <ListBoxItem
+                      key={option.value}
+                      id={option.value}
+                      textValue={t(option.labelKey)}
+                    >
+                      {t(option.labelKey)}
+                      <ListBoxItem.Indicator />
+                    </ListBoxItem>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+              <FieldError>{errors.isVatPayer?.message}</FieldError>
+            </Select>
+          )}
+        />
+        <Controller
+          control={control}
+          name="defaultInvoiceVatMode"
+          render={({ field }) => (
+            <Select
+              variant="secondary"
+              value={isVatPayer ? field.value : 'no_vat'}
+              onChange={field.onChange}
+              isDisabled={!isVatPayer}
+              isInvalid={!!errors.defaultInvoiceVatMode}
+            >
+              <Label>
+                <div className="flex items-center gap-1">
+                  <ReceiptPercentIcon className="h-5 w-5" />
+                  {t('invoice_defaults.default_vat_mode')}
+                </div>
+              </Label>
+              <Select.Trigger>
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {defaultInvoiceVatModeOptions.map((option) => (
+                    <ListBoxItem
+                      key={option}
+                      id={option}
+                      textValue={t(`invoice_defaults.vat_modes.${option}`)}
+                    >
+                      {t(`invoice_defaults.vat_modes.${option}`)}
+                      <ListBoxItem.Indicator />
+                    </ListBoxItem>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+              <FieldError>{errors.defaultInvoiceVatMode?.message}</FieldError>
+            </Select>
+          )}
+        />
+        <Controller
+          control={control}
+          name="defaultInvoiceSeries"
+          render={({ field }) => (
+            <TextField
+              variant="secondary"
+              isInvalid={!!errors.defaultInvoiceSeries}
+            >
+              <Label>
+                <div className="flex items-center gap-1">
+                  <HashtagIcon className="h-5 w-5" />
+                  {t('invoice_defaults.default_series')}
+                </div>
+              </Label>
+              <Input
+                {...field}
+                value={field.value || ''}
+                onChange={(event) =>
+                  field.onChange(event.target.value.toUpperCase())
+                }
+                maxLength={8}
+                placeholder="SF"
+              />
+              <FieldError>{errors.defaultInvoiceSeries?.message}</FieldError>
+            </TextField>
+          )}
+        />
+        <Controller
+          control={control}
+          name="defaultPaymentTermsDays"
+          render={({ field }) => (
+            <Select
+              variant="secondary"
+              value={String(field.value)}
+              onChange={(key) => {
+                const selectedDays = Number(
+                  key
+                ) as AccountSettingsFormModel['defaultPaymentTermsDays'];
+
+                field.onChange(selectedDays);
+              }}
+              isInvalid={!!errors.defaultPaymentTermsDays}
+            >
+              <Label>
+                <div className="flex items-center gap-1">
+                  <CalendarDaysIcon className="h-5 w-5" />
+                  {t('invoice_defaults.payment_terms')}
+                </div>
+              </Label>
+              <Select.Trigger>
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {paymentTermsOptions.map((days) => (
+                    <ListBoxItem
+                      key={String(days)}
+                      id={String(days)}
+                      textValue={t('invoice_defaults.payment_terms_days', {
+                        days
+                      })}
+                    >
+                      {t('invoice_defaults.payment_terms_days', { days })}
+                      <ListBoxItem.Indicator />
+                    </ListBoxItem>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+              <FieldError>{errors.defaultPaymentTermsDays?.message}</FieldError>
             </Select>
           )}
         />

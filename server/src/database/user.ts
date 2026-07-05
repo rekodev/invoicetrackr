@@ -38,6 +38,10 @@ export const getUserFromDb = async (
       currency: usersTable.currency,
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
+      isVatPayer: usersTable.isVatPayer,
+      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
+      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
+      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
       stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
       subscriptionStatus: usersTable.subscriptionStatus,
@@ -90,6 +94,10 @@ export const getUserByEmailFromDb = async (
       currency: usersTable.currency,
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
+      isVatPayer: usersTable.isVatPayer,
+      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
+      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
+      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       password: usersTable.password,
       stripeCustomerId: stripeAccountsTable.stripeCustomerId,
       stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
@@ -279,6 +287,10 @@ export const updateUserProfilePictureInDb = async (
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
+      isVatPayer: usersTable.isVatPayer,
+      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
+      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
+      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       currency: usersTable.currency,
       subscriptionStatus: usersTable.subscriptionStatus,
       analyticsConsentStatus: usersTable.analyticsConsentStatus,
@@ -292,11 +304,19 @@ export const updateUserAccountSettingsInDb = async (
   userId: number,
   language: string,
   currency: string,
-  preferredInvoiceLanguage?: string
+  preferredInvoiceLanguage?: string,
+  isVatPayer = false,
+  defaultInvoiceVatMode: UserBody['defaultInvoiceVatMode'] = 'no_vat',
+  defaultInvoiceSeries = 'SF',
+  defaultPaymentTermsDays: UserBody['defaultPaymentTermsDays'] = 30
 ): Promise<UserUpdateResult | undefined> => {
   const updateData: Partial<typeof usersTable.$inferInsert> = {
     language,
-    currency
+    currency,
+    isVatPayer,
+    defaultInvoiceVatMode: isVatPayer ? defaultInvoiceVatMode : 'no_vat',
+    defaultInvoiceSeries,
+    defaultPaymentTermsDays
   };
 
   if (preferredInvoiceLanguage) {
@@ -321,6 +341,10 @@ export const updateUserAccountSettingsInDb = async (
       profilePictureUrl: usersTable.profilePictureUrl,
       language: usersTable.language,
       preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
+      isVatPayer: usersTable.isVatPayer,
+      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
+      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
+      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       currency: usersTable.currency,
       subscriptionStatus: usersTable.subscriptionStatus,
       analyticsConsentStatus: usersTable.analyticsConsentStatus,

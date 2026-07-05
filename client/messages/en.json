@@ -892,6 +892,25 @@
             "language": "Language",
             "preferred_invoice_language": "Preferred Invoice Language",
             "preferred_invoice_language_tooltip": "This is the default language for invoice exports and emails. You can change it per invoice.",
+            "invoice_defaults": {
+                "title": "Invoice defaults",
+                "description": "Used when creating new saved invoices. Existing invoices keep their saved values.",
+                "is_vat_payer": "VAT/PVM payer",
+                "default_vat_mode": "Default VAT behavior",
+                "default_series": "Default invoice series",
+                "payment_terms": "Default payment terms",
+                "payment_terms_days": "{days} days",
+                "vat_payer": {
+                    "yes": "Yes",
+                    "no": "No"
+                },
+                "vat_modes": {
+                    "no_vat": "No VAT",
+                    "standard_21": "Standard 21%",
+                    "zero": "0%",
+                    "manual": "Manual per line"
+                }
+            },
             "available_languages": {
                 "en": "English",
                 "lt": "Lithuanian"
@@ -1424,7 +1443,7 @@
             "select_client": "Select Client",
             "due_date_preselection_chips": {
                 "seven_days": "7d",
-                "fifteen_days": "15d",
+                "fourteen_days": "14d",
                 "thirty_days": "30d",
                 "custom": "Custom"
             }

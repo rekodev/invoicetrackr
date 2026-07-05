@@ -204,6 +204,20 @@
       "when": 1782828060000,
       "tag": "0029_rek_82_invoice_corrections",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1783090800000,
+      "tag": "0030_rek_84_invoice_payment_controls",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1783198800000,
+      "tag": "0031_rek_56_invoice_defaults",
+      "breakpoints": true
     }
   ]
 }

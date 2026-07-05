@@ -39,6 +39,10 @@ const setUserTokenFields = (token: JWT, user: TokenUser) => {
   token.language = user.language;
   token.emailVerifiedAt = user.emailVerifiedAt;
   token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
+  token.isVatPayer = user.isVatPayer;
+  token.defaultInvoiceVatMode = user.defaultInvoiceVatMode;
+  token.defaultInvoiceSeries = user.defaultInvoiceSeries;
+  token.defaultPaymentTermsDays = user.defaultPaymentTermsDays;
   token.currency = user.currency;
   token.hasPaymentMethod = user.hasPaymentMethod;
   token.isOnboarded = isOnboarded;
@@ -216,6 +220,10 @@ export const authConfig = {
           emailVerifiedAt: session.user.emailVerifiedAt,
           language: session.user.language,
           preferredInvoiceLanguage: session.user.preferredInvoiceLanguage,
+          isVatPayer: session.user.isVatPayer,
+          defaultInvoiceVatMode: session.user.defaultInvoiceVatMode,
+          defaultInvoiceSeries: session.user.defaultInvoiceSeries,
+          defaultPaymentTermsDays: session.user.defaultPaymentTermsDays,
           currency: session.user.currency,
           hasPaymentMethod: session.user.hasPaymentMethod,
           subscriptionStatus: session.user.subscriptionStatus,
@@ -240,6 +248,15 @@ export const authConfig = {
       session.user.emailVerifiedAt = token.emailVerifiedAt as string | null;
       session.user.preferredInvoiceLanguage =
         token.preferredInvoiceLanguage as string;
+      session.user.isVatPayer = Boolean(token.isVatPayer);
+      session.user.defaultInvoiceVatMode =
+        (token.defaultInvoiceVatMode as AuthUser['defaultInvoiceVatMode']) ||
+        'no_vat';
+      session.user.defaultInvoiceSeries =
+        (token.defaultInvoiceSeries as string) || 'SF';
+      session.user.defaultPaymentTermsDays =
+        (token.defaultPaymentTermsDays as AuthUser['defaultPaymentTermsDays']) ||
+        30;
       session.user.currency = token.currency as Currency;
       session.user.hasPaymentMethod = Boolean(token.hasPaymentMethod);
       session.user.isOnboarded = Boolean(token.isOnboarded);

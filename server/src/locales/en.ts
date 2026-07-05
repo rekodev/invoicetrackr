@@ -172,7 +172,8 @@ export default {
       email: 'Valid email is required',
       currency: 'Currency is required',
       language: 'Language is required',
-      preferredInvoiceLanguage: 'Preferred invoice language is required'
+      preferredInvoiceLanguage: 'Preferred invoice language is required',
+      defaultInvoiceVatMode: 'Default VAT behavior is required'
     },
     contact: {
       email: 'Invalid email',

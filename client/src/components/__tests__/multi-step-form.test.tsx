@@ -59,6 +59,11 @@ describe('<MultiStepForm />', () => {
     stripeCustomerId: 'cus_12345',
     selectedBankAccountId: 1,
     language: 'en',
+    preferredInvoiceLanguage: 'en',
+    isVatPayer: false,
+    defaultInvoiceVatMode: 'no_vat',
+    defaultInvoiceSeries: 'SF',
+    defaultPaymentTermsDays: 30,
     currency: 'usd',
     businessType: 'business',
     profilePictureUrl: ''

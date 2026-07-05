@@ -1,5 +1,6 @@
 import z from 'zod/v4';
 import {
+  invoiceNumberSeriesSchema,
   invoicePartyBusinessTypeSchema,
   invoicePartyTypeSchema
 } from './invoice';
@@ -28,6 +29,16 @@ export const userBodySchema = z.object({
   preferredInvoiceLanguage: z.nullish(
     z.string().min(1, 'validation.user.preferredInvoiceLanguage')
   ),
+  isVatPayer: z.boolean().default(false),
+  defaultInvoiceVatMode: z
+    .enum(['no_vat', 'standard_21', 'zero', 'manual'], {
+      message: 'validation.user.defaultInvoiceVatMode'
+    })
+    .default('no_vat'),
+  defaultInvoiceSeries: invoiceNumberSeriesSchema.default('SF'),
+  defaultPaymentTermsDays: z
+    .union([z.literal(7), z.literal(14), z.literal(30)])
+    .default(30),
   stripeCustomerId: z.string().nullish(),
   stripeSubscriptionId: z.string().nullish(),
   subscriptionStatus: stripeSubscriptionStatusSchema.nullish(),
@@ -64,9 +75,27 @@ export const oauthUserBodySchema = z.object({
   emailVerified: z.boolean()
 });
 
+export const accountSettingsBodySchema = userBodySchema
+  .pick({
+    currency: true,
+    language: true,
+    preferredInvoiceLanguage: true,
+    isVatPayer: true,
+    defaultInvoiceVatMode: true,
+    defaultInvoiceSeries: true,
+    defaultPaymentTermsDays: true
+  })
+  .extend({
+    preferredInvoiceLanguage: z.string().max(2).min(2).optional(),
+    currency: z.string().max(3).min(3),
+    language: z.string().max(2).min(2)
+  });
+
 // Types
 export type UserBody = z.infer<typeof userBodySchema>;
 export type User = UserBody;
+export type AccountSettingsBody = z.infer<typeof accountSettingsBodySchema>;
+export type DefaultInvoiceVatMode = UserBody['defaultInvoiceVatMode'];
 export type UserWithPassword = UserBody;
 export type ResetPasswordTokenGet = z.infer<typeof resetPasswordTokenGetSchema>;
 export type ResetPasswordToken = ResetPasswordTokenGet;
