@@ -40,7 +40,9 @@ import {
   getPublicInvoiceSigning,
   postInvoice,
   regenerateInvoiceSigning,
+  regeneratePublicInvoice,
   revokeInvoiceSigning,
+  revokePublicInvoice,
   sendInvoiceEmail,
   signPublicInvoice,
   updateInvoice,
@@ -190,6 +192,27 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
   preValidation: preValidateFileAndFields,
   handler: sendInvoiceEmail
 };
+
+export const revokePublicInvoiceOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    response: {
+      200: messageResponseSchema
+    }
+  },
+  preHandler: paidAccess,
+  handler: revokePublicInvoice
+};
+
+export const regeneratePublicInvoiceOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      response: {
+        200: messageResponseSchema
+      }
+    },
+    preHandler: paidAccess,
+    handler: regeneratePublicInvoice
+  };
 
 export const revokeInvoiceSigningOptions: RouteShorthandOptionsWithHandler = {
   schema: {

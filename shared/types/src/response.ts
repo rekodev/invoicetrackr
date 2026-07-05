@@ -321,6 +321,10 @@ export type GetLatestInvoicesResponse = z.infer<
 export type UpdateInvoiceStatusResponse = MessageResponse;
 export type DeleteInvoiceResponse = MessageResponse;
 export type SendInvoiceEmailResponse = MessageResponse;
+export type RevokePublicInvoiceLinkResponse = MessageResponse;
+export type RegeneratePublicInvoiceLinkResponse = MessageResponse;
+export type RevokeInvoiceSigningLinkResponse = MessageResponse;
+export type RegenerateInvoiceSigningLinkResponse = MessageResponse;
 
 // Aliases
 export type AddInvoiceResponse = PostInvoiceResponse;

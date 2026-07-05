@@ -4,19 +4,22 @@ import * as clientDb from '../../database/client';
 import * as invoiceController from '../invoice';
 import * as invoiceDb from '../../database/invoice';
 import * as paymentDb from '../../database/payment';
+import * as userDb from '../../database/user';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import {
   invoiceFactory,
   invoiceFromDbFactory
 } from '../../test/factories/invoice';
+import { mockResendSend, mockUseI18n } from '../../test/setup';
 import { clientFactory } from '../../test/factories/client';
 import en from '../../locales/en';
 import lt from '../../locales/lt';
-import { mockUseI18n } from '../../test/setup';
+import { userFactory } from '../../test/factories/user';
 
 vi.mock('../../database/invoice');
 vi.mock('../../database/payment');
 vi.mock('../../database/client');
+vi.mock('../../database/user');
 vi.mock('cloudinary');
 
 describe('Invoice Controller', () => {
@@ -548,7 +551,142 @@ describe('Invoice Controller', () => {
     });
   });
 
+  describe('POST /api/:userId/invoices/:id/send-email', () => {
+    it('regenerates a revoked public link before resending invoice email', async () => {
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
+        invoiceFromDbFactory.build({
+          id: 1,
+          publicInvoiceToken: 'old-token',
+          publicInvoiceRevokedAt: new Date().toISOString()
+        })
+      );
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(
+        userFactory.build({
+          id: testUserId,
+          email: 'sender@example.com',
+          currency: 'EUR'
+        })
+      );
+      vi.mocked(invoiceDb.regeneratePublicInvoiceFromDb).mockResolvedValue({
+        id: 1,
+        publicInvoiceToken: 'fresh-token'
+      });
+      vi.mocked(invoiceDb.markPublicInvoiceSentInDb).mockResolvedValue({
+        id: 1
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/invoices/:id/send-email',
+          {
+            preHandler: mockAuthMiddleware
+          },
+          invoiceController.sendInvoiceEmail
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/invoices/1/send-email`,
+        payload: {
+          recipientEmail: 'receiver@example.com',
+          subject: 'Invoice INV001',
+          includePublicLink: true,
+          requestSignature: false
+        }
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(invoiceDb.regeneratePublicInvoiceFromDb).toHaveBeenCalledWith({
+        userId: testUserId,
+        id: 1,
+        token: expect.any(String),
+        expiresAt: expect.any(String)
+      });
+      expect(invoiceDb.preparePublicInvoiceFromDb).not.toHaveBeenCalled();
+      expect(invoiceDb.markPublicInvoiceSentInDb).toHaveBeenCalledWith({
+        userId: testUserId,
+        id: 1,
+        requestSignature: false
+      });
+      expect(mockResendSend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: 'receiver@example.com',
+          replyTo: 'sender@example.com',
+          subject: 'Invoice INV001'
+        })
+      );
+
+      await app.close();
+    });
+  });
+
   describe('GET /api/invoices/public/:token', () => {
+    it('rejects an expired public invoice link', async () => {
+      vi.mocked(invoiceDb.getPublicInvoiceFromDb).mockResolvedValue({
+        invoice: invoiceFromDbFactory.build({
+          publicInvoiceToken: 'public-token',
+          publicInvoiceExpiresAt: new Date(Date.now() - 1000).toISOString()
+        }),
+        userId: testUserId,
+        currency: 'EUR',
+        language: 'en',
+        preferredInvoiceLanguage: null
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.get(
+          '/api/invoices/public/:token',
+          invoiceController.getPublicInvoice
+        );
+      });
+
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/invoices/public/public-token'
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(JSON.parse(response.body).message).toBe(
+        'This invoice link has expired. Ask the sender for a fresh link.'
+      );
+
+      await app.close();
+    });
+
+    it('rejects a revoked public invoice link', async () => {
+      vi.mocked(invoiceDb.getPublicInvoiceFromDb).mockResolvedValue({
+        invoice: invoiceFromDbFactory.build({
+          publicInvoiceToken: 'public-token',
+          publicInvoiceExpiresAt: new Date(Date.now() + 1000).toISOString(),
+          publicInvoiceRevokedAt: new Date().toISOString()
+        }),
+        userId: testUserId,
+        currency: 'EUR',
+        language: 'en',
+        preferredInvoiceLanguage: null
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.get(
+          '/api/invoices/public/:token',
+          invoiceController.getPublicInvoice
+        );
+      });
+
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/invoices/public/public-token'
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(JSON.parse(response.body).message).toBe(
+        'This invoice link has been revoked. Ask the sender for a fresh link.'
+      );
+
+      await app.close();
+    });
+
     it('returns public invoice with bank-transfer fallback when Connect is not ready', async () => {
       const invoice = invoiceFromDbFactory.build({
         publicInvoiceToken: 'public-token',
@@ -644,6 +782,92 @@ describe('Invoice Controller', () => {
       expect(body.publicInvoice.payment.available).toBe(false);
       expect(body.publicInvoice.payment.configuredMode).toBe('disabled');
       expect(body.publicInvoice.payment.resolvedMode).toBe('disabled');
+
+      await app.close();
+    });
+  });
+
+  describe('POST /api/:userId/invoices/:id/public-link/revoke', () => {
+    it('revokes an existing public invoice link', async () => {
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
+        invoiceFromDbFactory.build({
+          id: 1,
+          lifecycleStatus: 'issued',
+          publicInvoiceToken: 'public-token'
+        })
+      );
+      vi.mocked(invoiceDb.revokePublicInvoiceFromDb).mockResolvedValue({
+        id: 1
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/invoices/:id/public-link/revoke',
+          {
+            preHandler: mockAuthMiddleware
+          },
+          invoiceController.revokePublicInvoice
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/invoices/1/public-link/revoke`
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(JSON.parse(response.body).message).toBe(
+        'Public invoice link revoked'
+      );
+      expect(invoiceDb.revokePublicInvoiceFromDb).toHaveBeenCalledWith({
+        userId: testUserId,
+        id: 1
+      });
+
+      await app.close();
+    });
+  });
+
+  describe('POST /api/:userId/invoices/:id/public-link/regenerate', () => {
+    it('generates a fresh public invoice link and clears old state', async () => {
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
+        invoiceFromDbFactory.build({
+          id: 1,
+          lifecycleStatus: 'issued',
+          publicInvoiceToken: 'old-token',
+          publicInvoiceRevokedAt: new Date().toISOString()
+        })
+      );
+      vi.mocked(invoiceDb.regeneratePublicInvoiceFromDb).mockResolvedValue({
+        id: 1,
+        publicInvoiceToken: 'fresh-token'
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/invoices/:id/public-link/regenerate',
+          {
+            preHandler: mockAuthMiddleware
+          },
+          invoiceController.regeneratePublicInvoice
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/invoices/1/public-link/regenerate`
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(JSON.parse(response.body).message).toBe(
+        'Fresh public invoice link generated'
+      );
+      expect(invoiceDb.regeneratePublicInvoiceFromDb).toHaveBeenCalledWith({
+        userId: testUserId,
+        id: 1,
+        token: expect.any(String),
+        expiresAt: expect.any(String)
+      });
 
       await app.close();
     });

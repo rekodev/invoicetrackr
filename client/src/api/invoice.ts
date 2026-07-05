@@ -12,6 +12,10 @@ import type {
   GetNextInvoiceNumberResponse,
   GetPublicInvoiceResponse,
   GetPublicInvoiceSigningResponse,
+  RegenerateInvoiceSigningLinkResponse,
+  RegeneratePublicInvoiceLinkResponse,
+  RevokeInvoiceSigningLinkResponse,
+  RevokePublicInvoiceLinkResponse,
   SendInvoiceEmailResponse,
   SignInvoiceResponse,
   UpdateInvoiceResponse,
@@ -183,7 +187,7 @@ export const revokeInvoiceSigningLink = async (
   userId: number,
   invoiceId: number
 ) =>
-  await api.post<SendInvoiceEmailResponse>(
+  await api.post<RevokeInvoiceSigningLinkResponse>(
     `/api/${userId}/invoices/${invoiceId}/signing-link/revoke`
   );
 
@@ -196,9 +200,25 @@ export const regenerateInvoiceSigningLink = async ({
   invoiceId: number;
   recipientEmail: string;
 }) =>
-  await api.post<SendInvoiceEmailResponse>(
+  await api.post<RegenerateInvoiceSigningLinkResponse>(
     `/api/${userId}/invoices/${invoiceId}/signing-link/regenerate`,
     { recipientEmail }
+  );
+
+export const revokePublicInvoiceLink = async (
+  userId: number,
+  invoiceId: number
+) =>
+  await api.post<RevokePublicInvoiceLinkResponse>(
+    `/api/${userId}/invoices/${invoiceId}/public-link/revoke`
+  );
+
+export const regeneratePublicInvoiceLink = async (
+  userId: number,
+  invoiceId: number
+) =>
+  await api.post<RegeneratePublicInvoiceLinkResponse>(
+    `/api/${userId}/invoices/${invoiceId}/public-link/regenerate`
   );
 
 export const sendInvoiceEmail = async ({
