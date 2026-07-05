@@ -125,6 +125,10 @@ export const invoicesTable = pgTable(
       withTimezone: true,
       mode: 'string'
     }),
+    paymentMode: varchar('payment_mode', { length: 50 })
+      .default('auto')
+      .notNull(),
+    manualPaymentReference: text('manual_payment_reference'),
     issuedAt: timestamp('issued_at', {
       withTimezone: true,
       mode: 'string'
@@ -175,6 +179,10 @@ export const invoicesTable = pgTable(
     check(
       'invoices_document_type_check',
       sql`(document_type)::text = ANY ((ARRAY['invoice'::character varying, 'corrected_invoice'::character varying, 'credit_note'::character varying])::text[])`
+    ),
+    check(
+      'invoices_payment_mode_check',
+      sql`(payment_mode)::text = ANY ((ARRAY['auto'::character varying, 'online'::character varying, 'manual'::character varying, 'disabled'::character varying])::text[])`
     ),
     unique('invoices_user_invoice_id_key').on(table.userId, table.invoiceId),
     unique('invoices_recipient_signing_token_key').on(

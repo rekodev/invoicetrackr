@@ -590,7 +590,103 @@ describe('Invoice Controller', () => {
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.publicInvoice.payment.available).toBe(false);
+      expect(body.publicInvoice.payment.configuredMode).toBe('auto');
+      expect(body.publicInvoice.payment.resolvedMode).toBe('manual');
+      expect(body.publicInvoice.payment.manualReference).toBe('INV001');
       expect(body.publicInvoice.signing.requested).toBe(false);
+
+      await app.close();
+    });
+
+    it('returns disabled payment state when invoice payment is disabled', async () => {
+      vi.mocked(invoiceDb.getPublicInvoiceFromDb).mockResolvedValue({
+        invoice: invoiceFromDbFactory.build({
+          publicInvoiceToken: 'public-token',
+          publicInvoiceExpiresAt: new Date(Date.now() + 1000).toISOString(),
+          paymentMode: 'disabled'
+        }),
+        userId: testUserId,
+        currency: 'EUR',
+        language: 'en',
+        preferredInvoiceLanguage: null
+      });
+      vi.mocked(paymentDb.getStripeMerchantAccountFromDb).mockResolvedValue(
+        undefined
+      );
+      vi.mocked(paymentDb.toMerchantPaymentStatus).mockReturnValue({
+        provider: 'stripe_connect',
+        connectedAccountId: null,
+        chargesEnabled: false,
+        payoutsEnabled: false,
+        detailsSubmitted: false,
+        onboardingCompletedAt: null,
+        ready: false
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.get(
+          '/api/invoices/public/:token',
+          invoiceController.getPublicInvoice
+        );
+      });
+
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/invoices/public/public-token'
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.publicInvoice.payment.available).toBe(false);
+      expect(body.publicInvoice.payment.configuredMode).toBe('disabled');
+      expect(body.publicInvoice.payment.resolvedMode).toBe('disabled');
+
+      await app.close();
+    });
+  });
+
+  describe('POST /api/invoices/public/:token/pay', () => {
+    it('rejects checkout creation when invoice resolves to manual payment', async () => {
+      vi.mocked(invoiceDb.getPublicInvoiceFromDb).mockResolvedValue({
+        invoice: invoiceFromDbFactory.build({
+          publicInvoiceToken: 'public-token',
+          publicInvoiceExpiresAt: new Date(Date.now() + 1000).toISOString(),
+          paymentMode: 'manual'
+        }),
+        userId: testUserId,
+        currency: 'EUR',
+        language: 'en',
+        preferredInvoiceLanguage: null
+      });
+      vi.mocked(paymentDb.getStripeMerchantAccountFromDb).mockResolvedValue(
+        undefined
+      );
+      vi.mocked(paymentDb.toMerchantPaymentStatus).mockReturnValue({
+        provider: 'stripe_connect',
+        connectedAccountId: 'acct_123',
+        chargesEnabled: true,
+        payoutsEnabled: true,
+        detailsSubmitted: true,
+        onboardingCompletedAt: new Date().toISOString(),
+        ready: true
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/invoices/public/:token/pay',
+          invoiceController.createPublicInvoicePayment
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/invoices/public/public-token/pay'
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(JSON.parse(response.body).message).toBe(
+        'The sender is not accepting online payments for this invoice.'
+      );
 
       await app.close();
     });

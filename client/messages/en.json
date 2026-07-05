@@ -735,11 +735,15 @@
         "payment_action_paid_title": "Payment received",
         "payment_action_paid_subtitle": "No further payment is needed for this invoice.",
         "payment_action_online": "The sender accepts online card payments through Stripe.",
-        "payment_action_bank": "Online payment is not enabled. Use the bank details shown in the invoice summary.",
+        "payment_action_bank": "Pay by bank transfer using the details below.",
+        "payment_failed": "The previous online payment did not complete. You can try again.",
+        "payment_cancelled": "Payment was cancelled. You can try again or use the payment details provided by the sender.",
         "pay_invoice": "Pay invoice",
+        "amount_due": "Amount due",
         "bank": "Bank",
         "bank_code": "Bank code",
         "account_number": "Account number",
+        "payment_reference": "Reference",
         "method_title": "Signing method",
         "draw_signature": "Regular signature",
         "electronic_signature": "Electronic signature",
@@ -1291,6 +1295,8 @@
                 "date_label": "Date",
                 "due_date_label": "Due Date",
                 "status_label": "Status",
+                "payment_mode_label": "Payment mode",
+                "manual_payment_reference_label": "Manual payment reference",
                 "static_actions_label": "Static Actions"
             },
             "labels": {
@@ -1314,7 +1320,9 @@
                 "invoice_id": "Invoice ID",
                 "date": "Date",
                 "due_date": "Due Date",
-                "status": "Status"
+                "status": "Status",
+                "payment_mode": "Payment mode",
+                "manual_payment_reference": "Manual payment reference"
             },
             "placeholders": {
                 "bank_name": "e.g., Swedbank",
@@ -1331,7 +1339,20 @@
                 "receiver_business_number": "e.g., 305000000",
                 "receiver_vat_number": "e.g., LT100000000000",
                 "receiver_address": "e.g., Konstitucijos pr. 7, Vilnius",
-                "receiver_email": "e.g., billing@client.com"
+                "receiver_email": "e.g., billing@client.com",
+                "manual_payment_reference": "Defaults to the invoice number"
+            },
+            "payment_settings": {
+                "title": "Payment settings",
+                "description": "Choose how this invoice link asks the recipient to pay.",
+                "reference_note": "Auto uses Stripe when your Connect account is ready, otherwise bank transfer. The reference defaults to the invoice number when left blank.",
+                "disabled_note": "Payment instructions are hidden on the public invoice page.",
+                "modes": {
+                    "auto": "Auto",
+                    "online": "Online payment",
+                    "manual": "Bank transfer",
+                    "disabled": "No payment block"
+                }
             },
             "headings": {
                 "sender_receiver_data": "Sender and Receiver Data",

@@ -25,6 +25,19 @@ export const invoiceCorrectionTypeSchema = z.enum([
   'credit_note'
 ]);
 
+export const invoicePaymentModeSchema = z.enum(
+  ['auto', 'online', 'manual', 'disabled'],
+  {
+    message: 'validation.invoice.paymentMode'
+  }
+);
+
+export const publicInvoiceResolvedPaymentModeSchema = z.enum([
+  'online',
+  'manual',
+  'disabled'
+]);
+
 export const invoicePartyBusinessTypeSchema = z.enum(
   ['business', 'individual'],
   {
@@ -147,6 +160,8 @@ export const invoiceBodySchema = z
     paymentIntentId: z.string().nullish(),
     paymentCompletedAt: z.string().nullish(),
     paymentFailedAt: z.string().nullish(),
+    paymentMode: invoicePaymentModeSchema.default('auto'),
+    manualPaymentReference: z.string().trim().max(255).nullish(),
     services: z
       .array(invoiceServiceBodySchema)
       .min(1, 'validation.invoice.services.required')
@@ -170,12 +185,15 @@ export const publicInvoiceSigningSchema = z.object({
 });
 
 export const publicInvoicePaymentSchema = z.object({
+  configuredMode: invoicePaymentModeSchema,
+  resolvedMode: publicInvoiceResolvedPaymentModeSchema,
   provider: z.literal('stripe_connect').nullish(),
   available: z.boolean(),
   checkoutSessionId: z.string().nullish(),
   paymentIntentId: z.string().nullish(),
   completedAt: z.string().nullish(),
-  failedAt: z.string().nullish()
+  failedAt: z.string().nullish(),
+  manualReference: z.string().nullish()
 });
 
 export const publicInvoiceSchema = z.object({
@@ -232,8 +250,10 @@ export type InvoiceLifecycleStatus = z.infer<
   typeof invoiceLifecycleStatusSchema
 >;
 export type InvoiceDocumentType = z.infer<typeof invoiceDocumentTypeSchema>;
-export type InvoiceCorrectionType = z.infer<
-  typeof invoiceCorrectionTypeSchema
+export type InvoiceCorrectionType = z.infer<typeof invoiceCorrectionTypeSchema>;
+export type InvoicePaymentMode = z.infer<typeof invoicePaymentModeSchema>;
+export type PublicInvoiceResolvedPaymentMode = z.infer<
+  typeof publicInvoiceResolvedPaymentModeSchema
 >;
 export type InvoicePartyBusinessType = z.infer<
   typeof invoicePartyBusinessTypeSchema

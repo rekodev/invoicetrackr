@@ -65,6 +65,9 @@ export default async function PublicInvoicePage({
     );
 
   return (
-    <PublicInvoicePageContent publicInvoice={response.data.publicInvoice} />
+    <PublicInvoicePageContent
+      publicInvoice={response.data.publicInvoice}
+      paymentStatus={payment}
+    />
   );
 }
