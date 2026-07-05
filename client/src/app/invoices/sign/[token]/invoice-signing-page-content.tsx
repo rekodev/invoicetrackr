@@ -91,10 +91,11 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
         />
         <InvoiceSigningPanel
           invoice={invoice}
+          currency={currency}
           isPaid={Boolean(
             invoice.status === 'paid' || invoice.paymentCompletedAt
           )}
-          isPaymentAvailable={false}
+          isPaymentCancelled={false}
           isPaymentPending={false}
           isPending={isPending}
           isSigningRequested
@@ -102,6 +103,16 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
           onPay={() => undefined}
           onSign={handleSign}
           onSignatureChange={setSignature}
+          payment={{
+            configuredMode: 'disabled',
+            resolvedMode: 'disabled',
+            available: false,
+            checkoutSessionId: null,
+            paymentIntentId: null,
+            completedAt: invoice.paymentCompletedAt,
+            failedAt: invoice.paymentFailedAt,
+            manualReference: null
+          }}
           pdfDocument={pdfDocument}
           signature={signature}
         />

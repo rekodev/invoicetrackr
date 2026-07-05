@@ -14,13 +14,15 @@ import {
   PencilSquareIcon,
   ShieldCheckIcon
 } from '@heroicons/react/24/outline';
-import type { InvoiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody, PublicInvoicePayment } from '@invoicetrackr/types';
 import type { JSX } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
+import type { Currency } from '@/lib/types/currency';
 import IconContainer from '@/components/ui/icon-container';
 import SignaturePad from '@/components/signature-pad';
+import { getCurrencySymbol } from '@/lib/utils/currency';
 
 const PDFDownloadLink = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
@@ -36,9 +38,10 @@ const PDFDownloadLink = dynamic(
 );
 
 type Props = {
+  currency: Currency;
   invoice: InvoiceBody;
   isPaid: boolean;
-  isPaymentAvailable: boolean;
+  isPaymentCancelled: boolean;
   isPaymentPending: boolean;
   isPending: boolean;
   isSigningRequested: boolean;
@@ -46,14 +49,16 @@ type Props = {
   onPay: () => void;
   onSign: () => void;
   onSignatureChange: (_signature: File | string) => void;
+  payment: PublicInvoicePayment;
   pdfDocument: JSX.Element | null;
   signature?: File | string;
 };
 
 export default function InvoiceSigningPanel({
+  currency,
   invoice,
   isPaid,
-  isPaymentAvailable,
+  isPaymentCancelled,
   isPaymentPending,
   isPending,
   isSigningRequested,
@@ -61,10 +66,19 @@ export default function InvoiceSigningPanel({
   onPay,
   onSign,
   onSignatureChange,
+  payment,
   pdfDocument,
   signature
 }: Props) {
   const t = useTranslations('invoice_signing');
+  const currencySymbol = getCurrencySymbol(currency);
+  const shouldShowPaymentSection =
+    isPaid || payment.resolvedMode !== 'disabled';
+  const paymentIssueMessage = isPaymentCancelled
+    ? t('payment_cancelled')
+    : payment.failedAt
+      ? t('payment_failed')
+      : null;
 
   return (
     <Card className="h-full border shadow-sm">
@@ -86,48 +100,79 @@ export default function InvoiceSigningPanel({
 
         <Separator />
 
-        <section className="flex flex-col gap-3">
-          <div className="flex items-start gap-3">
-            <IconContainer
-              variant={isPaid ? 'success' : 'secondary'}
-              className="rounded-lg"
-            >
-              {isPaid ? (
-                <CheckCircleIcon className="h-5 w-5" />
-              ) : (
-                <CreditCardIcon className="h-5 w-5" />
-              )}
-            </IconContainer>
-            <div className="min-w-0">
-              <h3 className="text-sm font-semibold">
-                {isPaid
-                  ? t('payment_action_paid_title')
-                  : t('payment_action_title')}
-              </h3>
-              <p className="text-muted mt-1 text-sm leading-5">
-                {isPaymentAvailable
-                  ? t('payment_action_online')
-                  : isPaid
+        {shouldShowPaymentSection && (
+          <section className="flex flex-col gap-3">
+            <div className="flex items-start gap-3">
+              <IconContainer
+                variant={isPaid ? 'success' : 'secondary'}
+                className="rounded-lg"
+              >
+                {isPaid ? (
+                  <CheckCircleIcon className="h-5 w-5" />
+                ) : (
+                  <CreditCardIcon className="h-5 w-5" />
+                )}
+              </IconContainer>
+              <div className="min-w-0">
+                <h3 className="text-sm font-semibold">
+                  {isPaid
+                    ? t('payment_action_paid_title')
+                    : t('payment_action_title')}
+                </h3>
+                <p className="text-muted mt-1 text-sm leading-5">
+                  {isPaid
                     ? t('payment_action_paid_subtitle')
-                    : t('payment_action_bank')}
-              </p>
+                    : payment.resolvedMode === 'online'
+                      ? t('payment_action_online')
+                      : t('payment_action_bank')}
+                </p>
+              </div>
             </div>
-          </div>
-          {isPaymentAvailable && (
-            <Button
-              className="w-full"
-              isPending={isPaymentPending}
-              onPress={onPay}
-            >
-              {t('pay_invoice')}
-            </Button>
-          )}
-        </section>
+
+            {paymentIssueMessage && !isPaid && (
+              <p className="text-danger text-sm leading-5">
+                {paymentIssueMessage}
+              </p>
+            )}
+
+            {payment.resolvedMode === 'online' && !isPaid && (
+              <Button
+                className="w-full"
+                isPending={isPaymentPending}
+                onPress={onPay}
+              >
+                {t('pay_invoice')}
+              </Button>
+            )}
+
+            {payment.resolvedMode === 'manual' && !isPaid && (
+              <div className="bg-default-100 grid gap-x-4 gap-y-1 rounded-lg p-4 text-sm sm:grid-cols-[auto_1fr]">
+                <p className="text-muted">{t('amount_due')}</p>
+                <p className="font-medium">
+                  {currencySymbol}
+                  {invoice.totalAmount}
+                </p>
+                <p className="text-muted">{t('due_date')}</p>
+                <p>{invoice.dueDate}</p>
+                <p className="text-muted">{t('bank')}</p>
+                <p>{invoice.bankingInformation.name}</p>
+                <p className="text-muted">{t('bank_code')}</p>
+                <p>{invoice.bankingInformation.code}</p>
+                <p className="text-muted">{t('account_number')}</p>
+                <p className="break-all">
+                  {invoice.bankingInformation.accountNumber}
+                </p>
+                <p className="text-muted">{t('payment_reference')}</p>
+                <p className="break-all">{payment.manualReference}</p>
+              </div>
+            )}
+          </section>
+        )}
+
+        {shouldShowPaymentSection && isSigningRequested && <Separator />}
 
         {isSigningRequested && (
           <>
-            <Separator />
-
             {isSigned ? (
               <section className="flex flex-col gap-3">
                 <div className="flex items-start gap-3">

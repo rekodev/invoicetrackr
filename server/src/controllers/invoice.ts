@@ -2,6 +2,7 @@ import type {
   CreateInvoiceCorrectionBody,
   IncomeJournalQuery,
   InvoiceBody,
+  InvoicePaymentMode,
   PublicInvoice
 } from '@invoicetrackr/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
@@ -159,6 +160,42 @@ const isInvoicePayable = (invoice: InvoiceBody) =>
   !invoice.publicInvoiceRevokedAt &&
   !isPublicInvoiceLinkExpired(invoice.publicInvoiceExpiresAt);
 
+const getManualPaymentReference = (invoice: InvoiceBody) =>
+  invoice.manualPaymentReference?.trim() ||
+  invoice.invoiceId ||
+  String(invoice.id || '');
+
+const resolvePublicInvoicePayment = ({
+  invoice,
+  merchantPaymentReady,
+  token
+}: {
+  invoice: InvoiceBody;
+  merchantPaymentReady: boolean;
+  token: string;
+}) => {
+  const configuredMode = (invoice.paymentMode || 'auto') as InvoicePaymentMode;
+  const canShowPayment =
+    token === invoice.publicInvoiceToken && isInvoicePayable(invoice);
+  const canPayOnline = canShowPayment && merchantPaymentReady;
+  const resolvedMode =
+    !canShowPayment || configuredMode === 'disabled'
+      ? 'disabled'
+      : configuredMode === 'manual'
+        ? 'manual'
+        : canPayOnline
+          ? 'online'
+          : 'manual';
+
+  return {
+    configuredMode,
+    resolvedMode,
+    available: resolvedMode === 'online',
+    provider: resolvedMode === 'online' ? 'stripe_connect' : null,
+    manualReference: getManualPaymentReference(invoice)
+  } as const;
+};
+
 const toInvoiceBody = (invoice: InvoiceFromDb): InvoiceBody => {
   if (
     !invoice.sender ||
@@ -213,6 +250,11 @@ const buildPublicInvoicePayload = async ({
     !signingSigned &&
     !invoice.recipientSigningRevokedAt &&
     !isSigningLinkExpired(invoice.recipientSigningExpiresAt);
+  const payment = resolvePublicInvoicePayment({
+    invoice,
+    merchantPaymentReady: merchantPayment.ready,
+    token
+  });
 
   return {
     token,
@@ -221,15 +263,15 @@ const buildPublicInvoicePayload = async ({
     language: publicInvoice.language,
     preferredInvoiceLanguage: publicInvoice.preferredInvoiceLanguage,
     payment: {
-      provider: merchantPayment.ready ? 'stripe_connect' : null,
-      available:
-        merchantPayment.ready &&
-        token === invoice.publicInvoiceToken &&
-        isInvoicePayable(invoice),
+      configuredMode: payment.configuredMode,
+      resolvedMode: payment.resolvedMode,
+      provider: payment.provider,
+      available: payment.available,
       checkoutSessionId: invoice.paymentCheckoutSessionId,
       paymentIntentId: invoice.paymentIntentId,
       completedAt: invoice.paymentCompletedAt,
-      failedAt: invoice.paymentFailedAt
+      failedAt: invoice.paymentFailedAt,
+      manualReference: payment.manualReference
     },
     signing: {
       requested: signingRequested,
@@ -902,8 +944,17 @@ export const createPublicInvoicePayment = async (
     publicInvoice.userId
   );
   const merchantPayment = toMerchantPaymentStatus(merchantAccount);
+  const payment = resolvePublicInvoicePayment({
+    invoice,
+    merchantPaymentReady: merchantPayment.ready,
+    token: req.params.token
+  });
 
-  if (!merchantPayment.ready || !merchantPayment.connectedAccountId)
+  if (
+    payment.resolvedMode !== 'online' ||
+    !merchantPayment.ready ||
+    !merchantPayment.connectedAccountId
+  )
     throw new BadRequestError(i18n.t('error.invoice.onlinePaymentUnavailable'));
 
   const amount = Math.round(Number(invoice.totalAmount) * 100);

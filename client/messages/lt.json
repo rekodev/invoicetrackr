@@ -736,11 +736,15 @@
         "payment_action_paid_title": "Mokėjimas gautas",
         "payment_action_paid_subtitle": "Papildomai apmokėti šios sąskaitos nereikia.",
         "payment_action_online": "Siuntėjas priima kortelių mokėjimus per Stripe.",
-        "payment_action_bank": "Internetinis mokėjimas neįjungtas. Naudokite sąskaitos santraukoje nurodytus banko rekvizitus.",
+        "payment_action_bank": "Apmokėkite bankiniu pavedimu pagal žemiau pateiktus rekvizitus.",
+        "payment_failed": "Ankstesnis internetinis mokėjimas nebuvo užbaigtas. Galite bandyti dar kartą.",
+        "payment_cancelled": "Mokėjimas buvo atšauktas. Galite bandyti dar kartą arba naudoti siuntėjo pateiktus mokėjimo duomenis.",
         "pay_invoice": "Apmokėti sąskaitą",
+        "amount_due": "Mokėtina suma",
         "bank": "Bankas",
         "bank_code": "Banko kodas",
         "account_number": "Sąskaitos numeris",
+        "payment_reference": "Paskirtis",
         "method_title": "Pasirašymo būdas",
         "draw_signature": "Paprastas parašas",
         "electronic_signature": "Elektroninis parašas",
@@ -1292,6 +1296,8 @@
                 "date_label": "Data",
                 "due_date_label": "Mokėjimo terminas",
                 "status_label": "Būsena",
+                "payment_mode_label": "Mokėjimo būdas",
+                "manual_payment_reference_label": "Rankinio mokėjimo paskirtis",
                 "static_actions_label": "Statiniai veiksmai"
             },
             "labels": {
@@ -1315,7 +1321,9 @@
                 "invoice_id": "Sąskaitos faktūros ID",
                 "date": "Data",
                 "due_date": "Mokėjimo terminas",
-                "status": "Būsena"
+                "status": "Būsena",
+                "payment_mode": "Mokėjimo būdas",
+                "manual_payment_reference": "Mokėjimo paskirtis"
             },
             "placeholders": {
                 "bank_name": "pvz., Swedbank",
@@ -1332,7 +1340,20 @@
                 "receiver_business_number": "pvz., 305000000",
                 "receiver_vat_number": "pvz., LT100000000000",
                 "receiver_address": "pvz., Konstitucijos pr. 7, Vilnius",
-                "receiver_email": "pvz., saskaitos@klientas.lt"
+                "receiver_email": "pvz., saskaitos@klientas.lt",
+                "manual_payment_reference": "Pagal nutylėjimą naudojamas sąskaitos numeris"
+            },
+            "payment_settings": {
+                "title": "Mokėjimo nustatymai",
+                "description": "Pasirinkite, kaip viešoje sąskaitos nuorodoje gavėjas bus prašomas apmokėti sąskaitą.",
+                "reference_note": "Automatinis režimas naudoja Stripe, kai Connect paskyra paruošta, kitu atveju rodo bankinį pavedimą. Tuščia paskirtis pakeičiama sąskaitos numeriu.",
+                "disabled_note": "Mokėjimo instrukcijos viešame sąskaitos puslapyje nerodomos.",
+                "modes": {
+                    "auto": "Automatiškai",
+                    "online": "Internetinis mokėjimas",
+                    "manual": "Bankinis pavedimas",
+                    "disabled": "Nerodyti mokėjimo bloko"
+                }
             },
             "headings": {
                 "sender_receiver_data": "Siuntėjo ir gavėjo duomenys",
