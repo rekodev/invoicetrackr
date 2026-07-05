@@ -224,9 +224,13 @@ export const getInvoicesFromDb = async (
       lifecycleStatus: invoicesTable.lifecycleStatus,
       documentType: invoicesTable.documentType,
       originalInvoiceId: invoicesTable.originalInvoiceId,
-      originalInvoiceNumber: sql<string | null>`(SELECT original_invoice.invoice_id FROM invoices original_invoice WHERE original_invoice.id = ${invoicesTable.originalInvoiceId})`,
+      originalInvoiceNumber: sql<
+        string | null
+      >`(SELECT original_invoice.invoice_id FROM invoices original_invoice WHERE original_invoice.id = ${invoicesTable.originalInvoiceId})`,
       correctedByInvoiceId: invoicesTable.correctedByInvoiceId,
-      correctedByInvoiceNumber: sql<string | null>`(SELECT corrected_by_invoice.invoice_id FROM invoices corrected_by_invoice WHERE corrected_by_invoice.id = ${invoicesTable.correctedByInvoiceId})`,
+      correctedByInvoiceNumber: sql<
+        string | null
+      >`(SELECT corrected_by_invoice.invoice_id FROM invoices corrected_by_invoice WHERE corrected_by_invoice.id = ${invoicesTable.correctedByInvoiceId})`,
       correctionReason: invoicesTable.correctionReason,
       dueDate: invoicesTable.dueDate,
       senderSignature: invoicesTable.senderSignature,
@@ -251,6 +255,8 @@ export const getInvoicesFromDb = async (
       paymentIntentId: invoicesTable.paymentIntentId,
       paymentCompletedAt: invoicesTable.paymentCompletedAt,
       paymentFailedAt: invoicesTable.paymentFailedAt,
+      paymentMode: invoicesTable.paymentMode,
+      manualPaymentReference: invoicesTable.manualPaymentReference,
       bankingInformation: {
         id: invoiceBankingInformationTable.id,
         code: invoiceBankingInformationTable.bankCode,
@@ -333,9 +339,13 @@ export const getInvoiceFromDb = async (
       lifecycleStatus: invoicesTable.lifecycleStatus,
       documentType: invoicesTable.documentType,
       originalInvoiceId: invoicesTable.originalInvoiceId,
-      originalInvoiceNumber: sql<string | null>`(SELECT original_invoice.invoice_id FROM invoices original_invoice WHERE original_invoice.id = ${invoicesTable.originalInvoiceId})`,
+      originalInvoiceNumber: sql<
+        string | null
+      >`(SELECT original_invoice.invoice_id FROM invoices original_invoice WHERE original_invoice.id = ${invoicesTable.originalInvoiceId})`,
       correctedByInvoiceId: invoicesTable.correctedByInvoiceId,
-      correctedByInvoiceNumber: sql<string | null>`(SELECT corrected_by_invoice.invoice_id FROM invoices corrected_by_invoice WHERE corrected_by_invoice.id = ${invoicesTable.correctedByInvoiceId})`,
+      correctedByInvoiceNumber: sql<
+        string | null
+      >`(SELECT corrected_by_invoice.invoice_id FROM invoices corrected_by_invoice WHERE corrected_by_invoice.id = ${invoicesTable.correctedByInvoiceId})`,
       correctionReason: invoicesTable.correctionReason,
       dueDate: invoicesTable.dueDate,
       senderSignature: invoicesTable.senderSignature,
@@ -360,6 +370,8 @@ export const getInvoiceFromDb = async (
       paymentIntentId: invoicesTable.paymentIntentId,
       paymentCompletedAt: invoicesTable.paymentCompletedAt,
       paymentFailedAt: invoicesTable.paymentFailedAt,
+      paymentMode: invoicesTable.paymentMode,
+      manualPaymentReference: invoicesTable.manualPaymentReference,
       bankingInformation: {
         id: invoiceBankingInformationTable.id,
         code: invoiceBankingInformationTable.bankCode,
@@ -464,7 +476,12 @@ export const insertInvoiceInDb = async (
         correctionReason: invoiceData.correctionReason || null,
         dueDate: invoiceData.dueDate,
         senderSignature: senderSignature,
-        receiverSignature: invoiceData.receiverSignature || null
+        receiverSignature: invoiceData.receiverSignature || null,
+        paymentMode: invoiceData.paymentMode || 'auto',
+        manualPaymentReference:
+          invoiceData.paymentMode === 'disabled'
+            ? null
+            : invoiceData.manualPaymentReference?.trim() || null
       })
       .returning({ id: invoicesTable.id });
 
@@ -591,6 +608,8 @@ export const updateInvoiceInDb = async (
         paymentIntentId: invoicesTable.paymentIntentId,
         paymentCompletedAt: invoicesTable.paymentCompletedAt,
         paymentFailedAt: invoicesTable.paymentFailedAt,
+        paymentMode: invoicesTable.paymentMode,
+        manualPaymentReference: invoicesTable.manualPaymentReference,
         recipientSignedAt: invoicesTable.recipientSignedAt
       })
       .from(invoicesTable)
@@ -611,6 +630,14 @@ export const updateInvoiceInDb = async (
           currentInvoiceData.voidedAt ||
           new Date().toISOString()
         : null;
+    const paymentMode =
+      invoiceData.paymentMode || currentInvoiceData.paymentMode || 'auto';
+    const manualPaymentReference =
+      paymentMode === 'disabled'
+        ? null
+        : invoiceData.manualPaymentReference === undefined
+          ? currentInvoiceData.manualPaymentReference
+          : invoiceData.manualPaymentReference?.trim() || null;
 
     // Update the existing sender record
     if (currentInvoiceData.senderId) {
@@ -722,7 +749,8 @@ export const updateInvoiceInDb = async (
         status: invoiceData.status,
         lifecycleStatus:
           invoiceData.lifecycleStatus || currentInvoiceData.lifecycleStatus,
-        documentType: invoiceData.documentType || currentInvoiceData.documentType,
+        documentType:
+          invoiceData.documentType || currentInvoiceData.documentType,
         originalInvoiceId:
           invoiceData.originalInvoiceId ?? currentInvoiceData.originalInvoiceId,
         correctedByInvoiceId:
@@ -785,7 +813,9 @@ export const updateInvoiceInDb = async (
           invoiceData.paymentCompletedAt ??
           currentInvoiceData.paymentCompletedAt,
         paymentFailedAt:
-          invoiceData.paymentFailedAt ?? currentInvoiceData.paymentFailedAt
+          invoiceData.paymentFailedAt ?? currentInvoiceData.paymentFailedAt,
+        paymentMode,
+        manualPaymentReference
       })
       .where(and(eq(invoicesTable.userId, userId), eq(invoicesTable.id, id)))
       .returning({ id: invoicesTable.id });
@@ -931,7 +961,9 @@ export async function createInvoiceCorrectionInDb({
         vatAmount: totals.vatAmount,
         totalAmount: totals.totalAmount,
         senderSignature: originalInvoice.senderSignature || '',
-        receiverSignature: null
+        receiverSignature: null,
+        paymentMode: originalInvoice.paymentMode || 'auto',
+        manualPaymentReference: originalInvoice.manualPaymentReference || null
       })
       .returning({ id: invoicesTable.id });
 

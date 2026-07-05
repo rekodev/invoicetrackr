@@ -110,6 +110,7 @@ export default {
         'Pabaigos data negali būti ankstesnė už pradžios datą',
       status: 'Tinkama būsena yra privaloma',
       documentType: 'Tinkamas sąskaitos dokumento tipas yra privalomas',
+      paymentMode: 'Tinkamas mokėjimo būdas yra privalomas',
       businessType: 'Reikalingas "Verslas" arba "Fizinis asmuo"',
       partyType: 'Tinkamas šalies tipas yra privalomas',
       totalAmount: 'Bendra suma yra privaloma',

@@ -2,6 +2,7 @@
 
 import {
   BuildingLibraryIcon,
+  CreditCardIcon,
   SparklesIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
@@ -51,7 +52,8 @@ type Props = {
 };
 
 type TextInputProps = ComponentProps<typeof Input>;
-type TextFieldVariant = ComponentProps<typeof TextField>['variant'];
+type TextFieldProps = ComponentProps<typeof TextField>;
+type TextFieldVariant = TextFieldProps['variant'];
 
 const INITIAL_RECEIVER_DATA: Client = {
   id: 0,
@@ -63,6 +65,8 @@ const INITIAL_RECEIVER_DATA: Client = {
   vatNumber: '',
   type: 'receiver'
 };
+
+const paymentModeOptions = ['auto', 'online', 'manual', 'disabled'] as const;
 
 const InvoiceForm = ({
   user,
@@ -89,6 +93,8 @@ const InvoiceForm = ({
           ],
           bankingInformation: { name: '', code: '', accountNumber: '' },
           status: 'pending',
+          paymentMode: 'auto',
+          manualPaymentReference: '',
           date: formatDate(new Date().toISOString()),
           dueDate: ''
         }
@@ -124,6 +130,7 @@ const InvoiceForm = ({
   // eslint-disable-next-line react-hooks/incompatible-library
   const isReceiverBusiness = watch('receiver.businessType') === 'business';
   const isSenderBusiness = watch('sender.businessType') === 'business';
+  const paymentMode = watch('paymentMode') || 'auto';
   const currentDate = watch('date');
 
   const handleOpenReceiverModal = () => {
@@ -176,17 +183,24 @@ const InvoiceForm = ({
   const renderTextField = ({
     label,
     isInvalid,
+    isDisabled = false,
     errorMessage,
     variant = 'secondary',
     inputProps
   }: {
     label: string;
     isInvalid: boolean;
+    isDisabled?: TextFieldProps['isDisabled'];
     errorMessage?: string;
     variant?: TextFieldVariant;
     inputProps: TextInputProps;
   }) => (
-    <TextField className="w-full" variant={variant} isInvalid={isInvalid}>
+    <TextField
+      className="w-full"
+      variant={variant}
+      isDisabled={isDisabled}
+      isInvalid={isInvalid}
+    >
       <Label>{label}</Label>
       <Input {...inputProps} />
       <FieldError>{errorMessage}</FieldError>
@@ -525,6 +539,89 @@ const InvoiceForm = ({
     </div>
   );
 
+  const renderPaymentSettings = () => (
+    <div className="col-span-4 flex flex-col gap-4">
+      <div>
+        <h4>{t('payment_settings.title')}</h4>
+        <p className="text-muted mt-1 text-sm">
+          {t('payment_settings.description')}
+        </p>
+      </div>
+      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+        <Controller
+          name="paymentMode"
+          control={control}
+          render={({ field }) => (
+            <Select
+              className="w-full"
+              aria-label={t('a11y.payment_mode_label')}
+              variant="secondary"
+              value={field.value || 'auto'}
+              onChange={(key) => {
+                const selectedPaymentMode = String(key || 'auto');
+
+                field.onChange(selectedPaymentMode);
+                if (selectedPaymentMode === 'disabled') {
+                  setValue('manualPaymentReference', '', {
+                    shouldDirty: true
+                  });
+                }
+              }}
+              isInvalid={!!errors.paymentMode}
+            >
+              <Label>{t('labels.payment_mode')}</Label>
+              <Select.Trigger>
+                <CreditCardIcon className="text-muted h-4 w-4" />
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {paymentModeOptions.map((option) => (
+                    <ListBoxItem
+                      key={option}
+                      id={option}
+                      textValue={t(`payment_settings.modes.${option}`)}
+                    >
+                      {t(`payment_settings.modes.${option}`)}
+                      <ListBoxItem.Indicator />
+                    </ListBoxItem>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+              <FieldError>{errors.paymentMode?.message}</FieldError>
+            </Select>
+          )}
+        />
+        <Controller
+          name="manualPaymentReference"
+          control={control}
+          render={({ field }) =>
+            renderTextField({
+              label: t('labels.manual_payment_reference'),
+              isInvalid: !!errors.manualPaymentReference,
+              errorMessage: errors.manualPaymentReference?.message,
+              isDisabled: paymentMode === 'disabled',
+              inputProps: {
+                ...field,
+                value: field.value || '',
+                'aria-label': t('a11y.manual_payment_reference_label'),
+                placeholder: t('placeholders.manual_payment_reference'),
+                type: 'text',
+                maxLength: 255
+              }
+            })
+          }
+        />
+      </div>
+      <p className="text-muted text-xs leading-5">
+        {paymentMode === 'disabled'
+          ? t('payment_settings.disabled_note')
+          : t('payment_settings.reference_note')}
+      </p>
+    </div>
+  );
+
   const renderInvoiceSignature = () => (
     <div className="col-span-4 flex flex-col gap-4 sm:col-span-1">
       <h4>{t('signature_heading')}</h4>
@@ -728,6 +825,7 @@ const InvoiceForm = ({
             {renderSenderAndReceiverFields()}
             {renderInvoiceServices()}
             {renderBankingInformation()}
+            {renderPaymentSettings()}
             {renderInvoiceSignature()}
             {renderActions()}
           </form>

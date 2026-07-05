@@ -18,9 +18,13 @@ import InvoiceSigningSummary from '@/components/invoice/signing/invoice-signing-
 
 type Props = {
   publicInvoice: PublicInvoice;
+  paymentStatus?: string;
 };
 
-export default function PublicInvoicePageContent({ publicInvoice }: Props) {
+export default function PublicInvoicePageContent({
+  publicInvoice,
+  paymentStatus
+}: Props) {
   const t = useTranslations('invoice_signing');
   const pdfTranslator = useTranslations('invoices.pdf');
   const [invoice, setInvoice] = useState<InvoiceBody>(publicInvoice.invoice);
@@ -110,13 +114,15 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
           <InvoiceSigningPanel
             invoice={invoice}
             isPaid={isPaid}
-            isPaymentAvailable={publicInvoice.payment.available}
+            isPaymentCancelled={paymentStatus === 'cancelled'}
             isPaymentPending={isPaymentPending}
             isPending={isSigningPending}
             isSigningRequested={publicInvoice.signing.requested}
             isSigned={isSigned}
             onPay={handlePay}
             onSign={handleSign}
+            payment={publicInvoice.payment}
+            currency={currency}
             onSignatureChange={setSignature}
             pdfDocument={pdfDocument}
             signature={signature}

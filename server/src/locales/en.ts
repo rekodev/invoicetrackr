@@ -106,6 +106,7 @@ export default {
       incomeJournalDateRange: 'End date must not be before start date',
       status: 'Valid status is required',
       documentType: 'Valid invoice document type is required',
+      paymentMode: 'Valid payment mode is required',
       businessType: '"Business" or "Individual" required',
       partyType: 'Valid party type is required',
       totalAmount: 'Total amount is required',
