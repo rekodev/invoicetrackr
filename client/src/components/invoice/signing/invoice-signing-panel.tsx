@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Alert,
   Button,
   Card,
   CardContent,
@@ -15,7 +16,7 @@ import {
   ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import type { InvoiceBody, PublicInvoicePayment } from '@invoicetrackr/types';
-import type { JSX } from 'react';
+import { type JSX, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 
@@ -74,6 +75,42 @@ export default function InvoiceSigningPanel({
   const currencySymbol = getCurrencySymbol(currency);
   const shouldShowPaymentSection =
     isPaid || payment.resolvedMode !== 'disabled';
+  const isVoided = (invoice.lifecycleStatus || 'draft') === 'voided';
+  const isCanceled = invoice.status === 'canceled';
+
+  const statusNotice = useMemo(() => {
+    if (isVoided) {
+      return {
+        status: 'danger' as const,
+        title: t('voided_invoice_title'),
+        description: t('voided_invoice_description')
+      };
+    }
+    if (isCanceled) {
+      return {
+        status: 'danger' as const,
+        title: t('canceled_invoice_title'),
+        description: t('canceled_invoice_description')
+      };
+    }
+    if (isPaid) {
+      return {
+        status: 'success' as const,
+        title: t('paid_invoice_title'),
+        description: t('paid_invoice_description')
+      };
+    }
+    if (isSigned) {
+      return {
+        status: 'success' as const,
+        title: t('signed_invoice_title'),
+        description: t('signed_invoice_description')
+      };
+    }
+
+    return null;
+  }, [t, isVoided, isCanceled, isPaid, isSigned]);
+
   const paymentIssueMessage = isPaymentCancelled
     ? t('payment_cancelled')
     : payment.failedAt
@@ -99,6 +136,16 @@ export default function InvoiceSigningPanel({
         </div>
 
         <Separator />
+
+        {statusNotice && (
+          <Alert className="border" status={statusNotice.status}>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>{statusNotice.title}</Alert.Title>
+              <Alert.Description>{statusNotice.description}</Alert.Description>
+            </Alert.Content>
+          </Alert>
+        )}
 
         {shouldShowPaymentSection && (
           <section className="flex flex-col gap-3">

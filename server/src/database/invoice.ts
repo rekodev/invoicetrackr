@@ -30,6 +30,35 @@ import { calculateInvoiceTotals } from '../utils/invoice';
 import { db } from './db';
 import { jsonAgg } from '../utils/json';
 
+type InsertInvoiceBankingInformation =
+  typeof invoiceBankingInformationTable.$inferInsert;
+
+const buildInvoiceBankingInformationInsert = ({
+  invoiceId,
+  bankingInformation
+}: {
+  invoiceId: number;
+  bankingInformation: {
+    name?: string | null;
+    accountNumber?: string | null;
+    code?: string | null;
+  };
+}): InsertInvoiceBankingInformation => {
+  if (
+    !bankingInformation.name ||
+    !bankingInformation.accountNumber ||
+    !bankingInformation.code
+  )
+    throw new Error('Invoice is missing required banking information');
+
+  return {
+    invoiceId,
+    accountName: bankingInformation.name,
+    accountNumber: bankingInformation.accountNumber,
+    bankCode: bankingInformation.code
+  };
+};
+
 const DEFAULT_INVOICE_SERIES = 'SF';
 const INVOICE_NUMBER_PADDING = 3;
 
@@ -524,14 +553,13 @@ export const insertInvoiceInDb = async (
       .returning({ id: invoiceReceiversTable.id });
 
     // Invoice banking information insert
+    const invoiceBankingInformation = buildInvoiceBankingInformationInsert({
+      invoiceId: insertedInvoiceId,
+      bankingInformation: invoiceData.bankingInformation
+    });
     const bankAccounts = await tx
       .insert(invoiceBankingInformationTable)
-      .values({
-        invoiceId: insertedInvoiceId,
-        accountName: invoiceData.bankingInformation.name,
-        accountNumber: invoiceData.bankingInformation.accountNumber,
-        bankCode: invoiceData.bankingInformation.code
-      })
+      .values(invoiceBankingInformation)
       .returning({ id: invoiceBankingInformationTable.id });
 
     // Invoice services insert
@@ -722,14 +750,13 @@ export const updateInvoiceInDb = async (
         );
     } else {
       // If no bankAccountId exists, create a new banking information record
+      const invoiceBankingInformation = buildInvoiceBankingInformationInsert({
+        invoiceId: id,
+        bankingInformation: invoiceData.bankingInformation
+      });
       const insertedBankInfo = await tx
         .insert(invoiceBankingInformationTable)
-        .values({
-          invoiceId: id,
-          accountName: invoiceData.bankingInformation.name,
-          accountNumber: invoiceData.bankingInformation.accountNumber,
-          bankCode: invoiceData.bankingInformation.code
-        })
+        .values(invoiceBankingInformation)
         .returning({ id: invoiceBankingInformationTable.id });
 
       currentInvoiceData.bankAccountId = insertedBankInfo[0].id;
@@ -999,14 +1026,13 @@ export async function createInvoiceCorrectionInDb({
       })
       .returning({ id: invoiceReceiversTable.id });
 
+    const invoiceBankingInformation = buildInvoiceBankingInformationInsert({
+      invoiceId: insertedInvoiceId,
+      bankingInformation: originalInvoice.bankingInformation
+    });
     const bankAccounts = await tx
       .insert(invoiceBankingInformationTable)
-      .values({
-        invoiceId: insertedInvoiceId,
-        accountName: originalInvoice.bankingInformation.name,
-        accountNumber: originalInvoice.bankingInformation.accountNumber,
-        bankCode: originalInvoice.bankingInformation.code
-      })
+      .values(invoiceBankingInformation)
       .returning({ id: invoiceBankingInformationTable.id });
 
     for (const service of originalInvoice.services) {
@@ -1143,6 +1169,22 @@ export async function revokeInvoiceSigningFromDb({
   return invoices.at(0);
 }
 
+export async function revokePublicInvoiceFromDb({
+  userId,
+  id
+}: {
+  userId: number;
+  id: number;
+}): Promise<{ id: number } | undefined> {
+  const invoices = await db
+    .update(invoicesTable)
+    .set({ publicInvoiceRevokedAt: new Date().toISOString() })
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .returning({ id: invoicesTable.id });
+
+  return invoices.at(0);
+}
+
 export async function regenerateInvoiceSigningFromDb({
   userId,
   id,
@@ -1170,6 +1212,34 @@ export async function regenerateInvoiceSigningFromDb({
     })
     .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
     .returning({ id: invoicesTable.id });
+
+  return invoices.at(0);
+}
+
+export async function regeneratePublicInvoiceFromDb({
+  userId,
+  id,
+  token,
+  expiresAt
+}: {
+  userId: number;
+  id: number;
+  token: string;
+  expiresAt: string;
+}): Promise<{ id: number; publicInvoiceToken: string | null } | undefined> {
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      publicInvoiceToken: token,
+      publicInvoiceExpiresAt: expiresAt,
+      publicInvoiceRevokedAt: null,
+      publicInvoiceSentAt: null
+    })
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .returning({
+      id: invoicesTable.id,
+      publicInvoiceToken: invoicesTable.publicInvoiceToken
+    });
 
   return invoices.at(0);
 }

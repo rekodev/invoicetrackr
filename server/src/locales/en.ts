@@ -204,6 +204,8 @@ export default {
       signed: 'Invoice signed successfully',
       signingLinkRevoked: 'Signing link revoked',
       signingLinkRegenerated: 'Fresh signing link generated',
+      publicLinkRevoked: 'Public invoice link revoked',
+      publicLinkRegenerated: 'Fresh public invoice link generated',
       correctionCreated: 'Correction draft created',
       creditNoteCreated: 'Credit note draft created'
     },
@@ -281,6 +283,8 @@ export default {
         'This invoice link has been revoked. Ask the sender for a fresh link.',
       publicLinkRequired:
         'Online payment requires the public invoice link. Ask the sender for a fresh invoice link.',
+      publicLinkRequiresIssued:
+        'Public invoice link controls are available after the invoice is issued.',
       notPayable: 'This invoice is not payable online.',
       onlinePaymentUnavailable:
         'The sender is not accepting online payments for this invoice.',

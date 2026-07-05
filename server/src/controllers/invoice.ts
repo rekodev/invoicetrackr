@@ -43,7 +43,9 @@ import {
   preparePublicInvoiceFromDb,
   recordInvoiceCheckoutSessionInDb,
   regenerateInvoiceSigningFromDb,
+  regeneratePublicInvoiceFromDb,
   revokeInvoiceSigningFromDb,
+  revokePublicInvoiceFromDb,
   signInvoiceByRecipientTokenInDb,
   updateInvoiceInDb,
   updateInvoiceStatusInDb
@@ -680,12 +682,25 @@ export const sendInvoiceEmail = async (
     invoice.recipientSigningToken || randomBytes(32).toString('hex');
 
   if (includePublicLink) {
-    const preparedPublicInvoice = await preparePublicInvoiceFromDb({
-      userId,
-      id,
-      token: publicInvoiceToken,
-      expiresAt: createPublicInvoiceExpiration()
-    });
+    const publicInvoiceExpiresAt = createPublicInvoiceExpiration();
+    const shouldRotatePublicLink = Boolean(
+      invoice.publicInvoiceToken &&
+        (invoice.publicInvoiceRevokedAt ||
+          isPublicInvoiceLinkExpired(invoice.publicInvoiceExpiresAt))
+    );
+    const preparedPublicInvoice = shouldRotatePublicLink
+      ? await regeneratePublicInvoiceFromDb({
+          userId,
+          id,
+          token: randomBytes(32).toString('hex'),
+          expiresAt: publicInvoiceExpiresAt
+        })
+      : await preparePublicInvoiceFromDb({
+          userId,
+          id,
+          token: publicInvoiceToken,
+          expiresAt: publicInvoiceExpiresAt
+        });
 
     if (!preparedPublicInvoice?.publicInvoiceToken)
       throw new BadRequestError(
@@ -819,6 +834,61 @@ export const sendInvoiceEmail = async (
   });
 
   reply.status(200).send({ message: i18n.t('success.invoice.emailSent') });
+};
+
+export const revokePublicInvoice = async (
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const userId = Number(req.params.userId);
+  const id = Number(req.params.id);
+  const invoice = await getInvoiceFromDb(userId, id);
+
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if ((invoice.lifecycleStatus || 'draft') !== 'issued')
+    throw new BadRequestError(i18n.t('error.invoice.publicLinkRequiresIssued'));
+  if (!invoice.publicInvoiceToken)
+    throw new BadRequestError(i18n.t('error.invoice.unableToCreatePublicLink'));
+
+  const revoked = await revokePublicInvoiceFromDb({
+    userId,
+    id
+  });
+
+  if (!revoked) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+
+  reply
+    .status(200)
+    .send({ message: i18n.t('success.invoice.publicLinkRevoked') });
+};
+
+export const regeneratePublicInvoice = async (
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const userId = Number(req.params.userId);
+  const id = Number(req.params.id);
+  const invoice = await getInvoiceFromDb(userId, id);
+
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if ((invoice.lifecycleStatus || 'draft') !== 'issued')
+    throw new BadRequestError(i18n.t('error.invoice.publicLinkRequiresIssued'));
+
+  const regenerated = await regeneratePublicInvoiceFromDb({
+    userId,
+    id,
+    token: randomBytes(32).toString('hex'),
+    expiresAt: createPublicInvoiceExpiration()
+  });
+
+  if (!regenerated?.publicInvoiceToken)
+    throw new BadRequestError(i18n.t('error.invoice.unableToCreatePublicLink'));
+
+  reply.status(200).send({
+    message: i18n.t('success.invoice.publicLinkRegenerated')
+  });
 };
 
 export const revokeInvoiceSigning = async (
@@ -1083,6 +1153,9 @@ export const signPublicInvoice = async (
   const signing = await getPublicInvoiceFromDb(req.params.token);
 
   if (!signing) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (req.params.token === signing.invoice.publicInvoiceToken) {
+    assertPublicInvoiceLinkAvailable(signing.invoice, i18n);
+  }
   assertSigningLinkAvailable(signing.invoice, i18n);
   if (!signing.invoice.recipientSigningToken)
     throw new BadRequestError(

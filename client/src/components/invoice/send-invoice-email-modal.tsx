@@ -13,16 +13,22 @@ import {
   TextField,
   toast
 } from '@heroui/react';
-import { JSX, useEffect, useState, useTransition } from 'react';
+import {
+  ClipboardDocumentIcon,
+  LinkIcon,
+  PaperAirplaneIcon
+} from '@heroicons/react/24/outline';
+import { JSX, useEffect, useMemo, useState, useTransition } from 'react';
 import { BlobProvider } from '@react-pdf/renderer';
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import {
   regenerateInvoiceSigningLink,
+  regeneratePublicInvoiceLink,
   revokeInvoiceSigningLink,
+  revokePublicInvoiceLink,
   sendInvoiceEmail
 } from '@/api/invoice';
 import { Currency } from '@/lib/types/currency';
@@ -74,6 +80,7 @@ export default function SendInvoiceEmailModal({
   const defaultRequestSignature = Boolean(
     invoice.recipientSigningRequestedAt && !invoice.recipientSignedAt
   );
+  const isIssued = (invoice.lifecycleStatus || 'draft') === 'issued';
 
   const {
     register,
@@ -105,6 +112,25 @@ export default function SendInvoiceEmailModal({
           invoice.recipientSigningEmail.toLowerCase() !==
             recipientEmail.toLowerCase()))
   );
+  const publicLinkExpiresAt = invoice.publicInvoiceExpiresAt
+    ? new Date(invoice.publicInvoiceExpiresAt)
+    : null;
+  const isPublicLinkExpired = Boolean(
+    publicLinkExpiresAt && publicLinkExpiresAt.getTime() <= Date.now()
+  );
+
+  const publicLinkStatus = useMemo(() => {
+    if (!invoice.publicInvoiceToken) return 'missing';
+    if (invoice.publicInvoiceRevokedAt) return 'revoked';
+    if (isPublicLinkExpired) return 'expired';
+
+    return 'active';
+  }, [invoice, isPublicLinkExpired]);
+
+  const publicInvoiceLink =
+    typeof window !== 'undefined' && invoice.publicInvoiceToken
+      ? `${window.location.origin}/invoices/public/${invoice.publicInvoiceToken}`
+      : '';
 
   const handleCloseSendDialog = () => {
     onClose();
@@ -187,6 +213,30 @@ export default function SendInvoiceEmailModal({
       }
     });
 
+  const handlePublicLinkAction = (action: 'revoke' | 'regenerate') =>
+    startTransition(async () => {
+      const response =
+        action === 'revoke'
+          ? await revokePublicInvoiceLink(userId, Number(invoice.id))
+          : await regeneratePublicInvoiceLink(userId, Number(invoice.id));
+
+      toast(response.data.message, {
+        variant: isResponseError(response) ? 'danger' : 'success'
+      });
+
+      if (!isResponseError(response)) {
+        handleCloseSendDialog();
+        router.refresh();
+      }
+    });
+
+  const handleCopyPublicLink = async () => {
+    if (!publicInvoiceLink) return;
+
+    await navigator.clipboard.writeText(publicInvoiceLink);
+    toast(t('public_link_copied'), { variant: 'success' });
+  };
+
   return (
     <Modal>
       <Modal.Backdrop
@@ -262,6 +312,95 @@ export default function SendInvoiceEmailModal({
                         </Alert.Description>
                       </Alert.Content>
                     </Alert>
+                    {isIssued && (
+                      <Card className="border">
+                        <Card.Header className="pb-0">
+                          <Card.Title className="flex items-center gap-2">
+                            <LinkIcon className="h-4 w-4" />
+                            {t('public_link_management')}
+                          </Card.Title>
+                        </Card.Header>
+                        <Card.Content className="flex flex-col gap-3 pt-3">
+                          <div className="flex flex-col gap-1 text-sm">
+                            <div className="flex items-center justify-between gap-3">
+                              <span className="text-muted">
+                                {t('public_link_status_label')}
+                              </span>
+                              <span
+                                className={
+                                  publicLinkStatus === 'active'
+                                    ? 'text-success font-medium'
+                                    : publicLinkStatus === 'missing'
+                                      ? 'text-muted font-medium'
+                                      : 'text-danger font-medium'
+                                }
+                              >
+                                {t(`public_link_status.${publicLinkStatus}`)}
+                              </span>
+                            </div>
+                            {publicLinkExpiresAt &&
+                              publicLinkStatus !== 'revoked' && (
+                                <p className="text-muted">
+                                  {t('public_link_expires', {
+                                    date: publicLinkExpiresAt.toLocaleDateString()
+                                  })}
+                                </p>
+                              )}
+                            {publicLinkStatus === 'revoked' && (
+                              <p className="text-danger">
+                                {t('public_link_revoked_note')}
+                              </p>
+                            )}
+                            {publicLinkStatus === 'expired' && (
+                              <p className="text-warning">
+                                {t('public_link_expired_note')}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+                            {publicLinkStatus === 'active' && (
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                isDisabled={isPending}
+                                className="w-full sm:w-auto"
+                                onPress={handleCopyPublicLink}
+                              >
+                                <ClipboardDocumentIcon className="h-4 w-4" />
+                                {t('copy_public_link')}
+                              </Button>
+                            )}
+                            {invoice.publicInvoiceToken &&
+                              publicLinkStatus === 'active' && (
+                                <Button
+                                  size="sm"
+                                  variant="danger-soft"
+                                  isDisabled={isPending}
+                                  className="w-full sm:w-auto"
+                                  onPress={() =>
+                                    handlePublicLinkAction('revoke')
+                                  }
+                                >
+                                  {t('revoke_public_link')}
+                                </Button>
+                              )}
+                            <Button
+                              size="sm"
+                              variant="tertiary"
+                              isDisabled={isPending}
+                              className="w-full sm:w-auto"
+                              onPress={() =>
+                                handlePublicLinkAction('regenerate')
+                              }
+                            >
+                              {publicLinkStatus === 'missing'
+                                ? t('generate_public_link')
+                                : t('regenerate_public_link')}
+                            </Button>
+                          </div>
+                        </Card.Content>
+                      </Card>
+                    )}
                     <Checkbox
                       id="include-public-link"
                       variant="secondary"
@@ -350,9 +489,7 @@ export default function SendInvoiceEmailModal({
                           {invoice.totalAmount}
                         </p>
                         <p className="flex items-center justify-between text-sm">
-                          <span className="text-muted text">
-                            {t('date')}:
-                          </span>
+                          <span className="text-muted text">{t('date')}:</span>
                           {invoice.date}
                         </p>
                       </Card.Content>

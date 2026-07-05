@@ -210,6 +210,8 @@ export default {
       signed: 'Sąskaita faktūra pasirašyta sėkmingai',
       signingLinkRevoked: 'Pasirašymo nuoroda atšaukta',
       signingLinkRegenerated: 'Sugeneruota nauja pasirašymo nuoroda',
+      publicLinkRevoked: 'Vieša sąskaitos nuoroda atšaukta',
+      publicLinkRegenerated: 'Sugeneruota nauja vieša sąskaitos nuoroda',
       correctionCreated: 'Sukurtas tikslinimo juodraštis',
       creditNoteCreated: 'Sukurtas kreditinės sąskaitos juodraštis'
     },
@@ -288,6 +290,8 @@ export default {
         'Ši sąskaitos nuoroda buvo atšaukta. Paprašykite siuntėjo naujos nuorodos.',
       publicLinkRequired:
         'Apmokėjimui internetu reikia viešos sąskaitos nuorodos. Paprašykite siuntėjo naujos sąskaitos nuorodos.',
+      publicLinkRequiresIssued:
+        'Viešos sąskaitos nuorodos valdymas galimas tik išrašius sąskaitą.',
       notPayable: 'Šios sąskaitos negalima apmokėti internetu.',
       onlinePaymentUnavailable:
         'Siuntėjas nepriima internetinių mokėjimų už šią sąskaitą.',
