@@ -60,6 +60,7 @@ const PersonalInformationForm = ({
     formState: { isDirty, isSubmitting, errors },
     reset,
     setError,
+    setValue,
     watch
   } = useForm<User>({
     defaultValues
@@ -290,16 +291,26 @@ const PersonalInformationForm = ({
             name="isVatPayer"
             render={({ field }) => (
               <div className="flex flex-col gap-1">
+                <Label>{t('is_vat_payer')}</Label>
                 <Checkbox
                   variant="secondary"
                   isSelected={Boolean(field.value)}
-                  onChange={field.onChange}
+                  onChange={(isSelected) => {
+                    field.onChange(isSelected);
+
+                    if (!isSelected) {
+                      setValue('vatNumber', null, {
+                        shouldDirty: true,
+                        shouldValidate: true
+                      });
+                    }
+                  }}
                 >
                   <Checkbox.Control>
                     <Checkbox.Indicator />
                   </Checkbox.Control>
                   <Checkbox.Content>
-                    <Label>{t('is_vat_payer')}</Label>
+                    <Label>{t('is_vat_payer_option')}</Label>
                   </Checkbox.Content>
                 </Checkbox>
                 <p className="text-muted pl-7 text-xs">

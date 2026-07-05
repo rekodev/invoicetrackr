@@ -11,6 +11,7 @@ import {
   registerUserResponseSchema,
   updateUserResponseSchema,
   userBodySchema,
+  userProfileUpdateBodySchema,
   verifyEmailTokenResponseSchema
 } from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
@@ -98,22 +99,7 @@ export const postOAuthUserOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: userBodySchema
-      .pick({
-        name: true,
-        businessType: true,
-        businessNumber: true,
-        vatNumber: true,
-        address: true,
-        email: true,
-        signature: true
-      })
-      .extend({
-        name: z.string().min(1, 'validation.user.name'),
-        businessNumber: z.string().min(1, 'validation.user.businessNumber'),
-        address: z.string().min(1, 'validation.user.address'),
-        file: z.any().nullish()
-      }),
+    body: userProfileUpdateBodySchema,
     response: {
       200: updateUserResponseSchema
     }

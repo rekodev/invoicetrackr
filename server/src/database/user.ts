@@ -1,4 +1,8 @@
-import { AnalyticsConsentStatus, UserBody } from '@invoicetrackr/types';
+import {
+  AnalyticsConsentStatus,
+  UserBody,
+  UserProfileUpdateBody
+} from '@invoicetrackr/types';
 import { and, eq } from 'drizzle-orm';
 
 import {
@@ -184,17 +188,7 @@ export type UserUpdateResult = Omit<
 >;
 
 export const updateUserInDb = async (
-  user: Pick<
-    UserBody,
-    | 'id'
-    | 'email'
-    | 'name'
-    | 'businessType'
-    | 'businessNumber'
-    | 'vatNumber'
-    | 'address'
-    | 'isVatPayer'
-  >,
+  user: UserProfileUpdateBody & { id: number },
   signature: string,
   shouldResetEmailVerification = false
 ): Promise<{ id: number } | undefined> => {
@@ -208,6 +202,9 @@ export const updateUserInDb = async (
     isVatPayer
   } = user;
   const normalizedIsVatPayer = Boolean(isVatPayer);
+  const normalizedVatNumber = normalizedIsVatPayer
+    ? vatNumber?.trim() || null
+    : null;
 
   const users = await db
     .update(usersTable)
@@ -215,7 +212,7 @@ export const updateUserInDb = async (
       name,
       businessType,
       businessNumber,
-      vatNumber,
+      vatNumber: normalizedVatNumber,
       isVatPayer: normalizedIsVatPayer,
       ...(normalizedIsVatPayer ? {} : { defaultInvoiceVatMode: 'no_vat' }),
       address,

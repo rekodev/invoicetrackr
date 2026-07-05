@@ -17,6 +17,7 @@ import {
 } from '@heroui/react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import type { DefaultInvoiceVatMode } from '@invoicetrackr/types';
+import Link from 'next/link';
 import { User } from 'next-auth';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -26,6 +27,7 @@ import {
   availableLanguages
 } from '@/lib/constants/profile';
 import { Currency } from '@/lib/types/currency';
+import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 
 import DeleteAccountModal from './delete-account-modal';
@@ -269,7 +271,14 @@ const AccountSettingsForm = ({ user }: Props) => {
               <FieldError>{errors.defaultInvoiceVatMode?.message}</FieldError>
               {!isVatPayer && (
                 <p className="text-muted text-xs">
-                  {t('invoice_defaults.vat_locked_note')}
+                  {t('invoice_defaults.vat_locked_note')}{' '}
+                  <Link
+                    href={PERSONAL_INFORMATION_PAGE}
+                    className="text-foreground underline underline-offset-2"
+                  >
+                    {t('invoice_defaults.personal_information_link')}
+                  </Link>
+                  .
                 </p>
               )}
             </Select>

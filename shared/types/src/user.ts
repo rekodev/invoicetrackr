@@ -15,7 +15,7 @@ const multipartBooleanSchema = z.preprocess(
   z.boolean()
 );
 
-export const userBodySchema = z.object({
+const userBodyBaseSchema = z.object({
   id: z.number().optional(),
   type: invoicePartyTypeSchema,
   name: z.string(),
@@ -57,6 +57,36 @@ export const userBodySchema = z.object({
   analyticsConsentUpdatedAt: z.string().nullish()
 });
 
+export const userBodySchema = userBodyBaseSchema;
+
+export const userProfileUpdateBodySchema = userBodyBaseSchema
+  .pick({
+    name: true,
+    businessType: true,
+    businessNumber: true,
+    vatNumber: true,
+    address: true,
+    email: true,
+    signature: true,
+    isVatPayer: true
+  })
+  .extend({
+    name: z.string().min(1, 'validation.user.name'),
+    businessNumber: z.string().min(1, 'validation.user.businessNumber'),
+    address: z.string().min(1, 'validation.user.address'),
+    email: z.email('validation.user.email'),
+    file: z.any().nullish()
+  })
+  .superRefine((data, ctx) => {
+    if (data.isVatPayer && !data.vatNumber?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'validation.user.vatNumberRequired',
+        path: ['vatNumber']
+      });
+    }
+  });
+
 // Reset Password Token Schema
 export const resetPasswordTokenGetSchema = z.object({
   id: z.number(),
@@ -80,7 +110,7 @@ export const oauthUserBodySchema = z.object({
   emailVerified: z.boolean()
 });
 
-export const accountSettingsBodySchema = userBodySchema
+export const accountSettingsBodySchema = userBodyBaseSchema
   .pick({
     currency: true,
     language: true,
@@ -99,6 +129,7 @@ export const accountSettingsBodySchema = userBodySchema
 // Types
 export type UserBody = z.infer<typeof userBodySchema>;
 export type User = UserBody;
+export type UserProfileUpdateBody = z.infer<typeof userProfileUpdateBodySchema>;
 export type AccountSettingsBody = z.infer<typeof accountSettingsBodySchema>;
 export type DefaultInvoiceVatMode = UserBody['defaultInvoiceVatMode'];
 export type UserWithPassword = UserBody;

@@ -866,8 +866,9 @@
                 "business_type_placeholder": "Select business type",
                 "business_number": "Company code / Sole proprietorship certificate No.",
                 "business_number_placeholder": "Company code / Sole proprietorship certificate No.",
-                "is_vat_payer": "VAT/PVM payer",
-                "is_vat_payer_description": "Enable this if you are registered as a VAT/PVM payer.",
+                "is_vat_payer": "VAT payer",
+                "is_vat_payer_option": "Registered as a VAT payer",
+                "is_vat_payer_description": "Enable this if you are registered as a VAT payer.",
                 "vat_number": "VAT Number",
                 "vat_number_placeholder": "Enter VAT number",
                 "address": "Address",
@@ -905,7 +906,8 @@
                 "default_series": "Default invoice series",
                 "payment_terms": "Default payment terms",
                 "payment_terms_days": "{days} days",
-                "vat_locked_note": "To choose VAT defaults, mark yourself as a VAT/PVM payer in Personal Information.",
+                "vat_locked_note": "To choose VAT defaults, mark yourself as a VAT payer in",
+                "personal_information_link": "Personal Information",
                 "vat_modes": {
                     "no_vat": "No VAT",
                     "standard_21": "Standard 21%",
@@ -1425,7 +1427,7 @@
                 "description": "Build a real invoice, preview the PDF, and download it for free. When you are ready to run the full workflow, start a 7-day trial to save, send, track, and reuse everything.",
                 "benefits": [
                     "Professional English or Lithuanian PDF output",
-                    "VAT/PVM-ready line items and totals",
+                    "VAT-ready line items and totals",
                     "No account required for one-off PDF downloads"
                 ],
                 "upgrade_title": "Need more than a PDF?",

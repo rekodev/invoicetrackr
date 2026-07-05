@@ -868,6 +868,7 @@
                 "business_number": "Įmonės kodas / IV pažymos Nr.",
                 "business_number_placeholder": "Įveskite savo įmonės kodą arba IV pažymos Nr.",
                 "is_vat_payer": "PVM mokėtojas",
+                "is_vat_payer_option": "Esu PVM mokėtojas",
                 "is_vat_payer_description": "Pažymėkite, jei esate registruotas PVM mokėtojas.",
                 "vat_number": "PVM mokėtojo kodas",
                 "vat_number_placeholder": "Įveskite PVM mokėtojo kodą",
@@ -906,7 +907,8 @@
                 "default_series": "Numatytoji sąskaitos serija",
                 "payment_terms": "Numatytasis apmokėjimo terminas",
                 "payment_terms_days": "{days} d.",
-                "vat_locked_note": "Jei norite rinktis PVM nustatymus, pažymėkite save kaip PVM mokėtoją asmeninės informacijos formoje.",
+                "vat_locked_note": "Jei norite rinktis PVM nustatymus, pažymėkite save kaip PVM mokėtoją",
+                "personal_information_link": "asmeninės informacijos formoje",
                 "vat_modes": {
                     "no_vat": "Be PVM",
                     "standard_21": "Standartinis 21 %",

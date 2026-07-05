@@ -15,7 +15,8 @@ import {
 import {
   ACCOUNT_SETTINGS_PAGE,
   CHANGE_PASSWORD_PAGE,
-  PERSONAL_INFORMATION_PAGE
+  PERSONAL_INFORMATION_PAGE,
+  PROFILE_PAGE
 } from '../constants/pages';
 import {
   type AccountSettingsBody,
@@ -61,12 +62,14 @@ export async function updateUserAction({
   await updateSessionAction({
     newSession: {
       isVatPayer: user.isVatPayer,
-      vatNumber: user.vatNumber,
+      vatNumber: user.isVatPayer ? user.vatNumber : null,
       ...(user.isVatPayer ? {} : { defaultInvoiceVatMode: 'no_vat' })
     }
   });
 
   revalidatePath(PERSONAL_INFORMATION_PAGE);
+  revalidatePath(ACCOUNT_SETTINGS_PAGE);
+  revalidatePath(PROFILE_PAGE, 'layout');
   return { ok: true, message: response.data.message };
 }
 
