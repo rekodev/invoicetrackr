@@ -62,11 +62,10 @@ export default function LanguageSwitcher({ user }: Props) {
     setCurrentLanguage(new Set([selectedLanguage || 'en']));
     await setLocaleCookieAction(selectedLanguage || 'en');
 
-    if (user?.id && user?.currency) {
+    if (user?.id) {
       await updateUserAccountSettingsAction({
         userId: Number(user.id),
         language: selectedLanguage,
-        currency: user.currency,
         preferredInvoiceLanguage:
           user.preferredInvoiceLanguage || selectedLanguage,
         isVatPayer: user.isVatPayer,

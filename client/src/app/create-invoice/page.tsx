@@ -6,6 +6,7 @@ import {
   getSoftwareApplicationJsonLd,
   getWebsiteJsonLd
 } from '@/lib/seo/structured-data';
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import FreeInvoiceForm from '@/components/invoice/free-invoice-form';
 import JsonLd from '@/components/seo/json-ld';
 import { getPageMetadata } from '@/lib/seo/metadata';
@@ -24,7 +25,7 @@ export default async function CreateInvoicePage() {
   const seoT = await getTranslations('seo.home');
   const featureList = seoT.raw('features') as string[];
 
-  const currency = 'eur';
+  const currency = DEFAULT_CURRENCY;
 
   return (
     <>

@@ -133,10 +133,10 @@ InvoiceEmail.PreviewProps = {
     attachmentTitle: 'Invoice attached',
     attachmentMessage:
       'The complete invoice document is attached to this email as a PDF file.',
-    signingTitle: 'Review and sign invoice',
+    signingTitle: 'Review and acknowledge invoice',
     signingMessage:
-      'Open the secure invoice link to review the document, add your signature, and download the signed PDF.',
-    signingButton: 'Review and sign',
+      'Open the invoice link to review the document, add a drawn acknowledgement, and download the PDF.',
+    signingButton: 'Review and acknowledge',
     publicInvoiceTitle: 'View invoice',
     publicInvoiceMessage:
       'Open the secure invoice page to review the PDF and bank-transfer payment details.',

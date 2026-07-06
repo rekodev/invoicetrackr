@@ -46,6 +46,18 @@ export default function PDFDocument({
   const vatAmount = invoiceData.vatAmount || invoiceTotals.vatAmount;
   const grandTotalAmount = totalAmount || invoiceTotals.totalAmount;
   const shouldShowVatTotal = Number(vatAmount) > 0;
+  const shouldShowVatDetails =
+    shouldShowVatTotal ||
+    services.some(
+      (service) =>
+        Number(service.vatRate ?? 0) > 0 || Boolean(service.vatExemptionReason)
+    );
+  const descriptionColumnStyle = shouldShowVatDetails
+    ? pdfStyles.tableCol2
+    : { ...pdfStyles.tableCol2, width: '43%' };
+  const lineTotalColumnStyle = shouldShowVatDetails
+    ? pdfStyles.tableCol7
+    : { ...pdfStyles.tableCol7, width: '25%' };
 
   const splitId = splitInvoiceId(invoiceId);
   const series = splitId[0];
@@ -134,7 +146,7 @@ export default function PDFDocument({
       <View style={[pdfStyles.tableCol, pdfStyles.tableCol1]}>
         <Text style={pdfStyles.tableCell}>{index + 1}</Text>
       </View>
-      <View style={[pdfStyles.tableCol, pdfStyles.tableCol2]}>
+      <View style={[pdfStyles.tableCol, descriptionColumnStyle]}>
         <Text style={pdfStyles.tableCell}>{description}</Text>
         {vatExemptionReason && (
           <Text style={pdfStyles.tableCell}>
@@ -153,10 +165,12 @@ export default function PDFDocument({
           {(Number(amount) || 0).toFixed(2)} {currency.toUpperCase()}
         </Text>
       </View>
-      <View style={[pdfStyles.tableCol, pdfStyles.tableCol6]}>
-        <Text style={pdfStyles.tableCell}>{Number(vatRate ?? 0)}%</Text>
-      </View>
-      <View style={[pdfStyles.tableCol, pdfStyles.tableCol7]}>
+      {shouldShowVatDetails && (
+        <View style={[pdfStyles.tableCol, pdfStyles.tableCol6]}>
+          <Text style={pdfStyles.tableCell}>{Number(vatRate ?? 0)}%</Text>
+        </View>
+      )}
+      <View style={[pdfStyles.tableCol, lineTotalColumnStyle]}>
         <Text style={pdfStyles.tableCell}>
           {(
             Number(amount) *
@@ -198,7 +212,7 @@ export default function PDFDocument({
           <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol1]}>
             <Text style={pdfStyles.tableCellHeader}>{t('position_label')}</Text>
           </View>
-          <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol2]}>
+          <View style={[pdfStyles.tableColHeader, descriptionColumnStyle]}>
             <Text style={pdfStyles.tableCellHeader}>
               {t('description_label')}
             </Text>
@@ -212,10 +226,14 @@ export default function PDFDocument({
           <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol5]}>
             <Text style={pdfStyles.tableCellHeader}>{t('amount_label')}</Text>
           </View>
-          <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol6]}>
-            <Text style={pdfStyles.tableCellHeader}>{t('vat_rate_label')}</Text>
-          </View>
-          <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol7]}>
+          {shouldShowVatDetails && (
+            <View style={[pdfStyles.tableColHeader, pdfStyles.tableCol6]}>
+              <Text style={pdfStyles.tableCellHeader}>
+                {t('vat_rate_label')}
+              </Text>
+            </View>
+          )}
+          <View style={[pdfStyles.tableColHeader, lineTotalColumnStyle]}>
             <Text style={pdfStyles.tableCellHeader}>
               {t('line_total_label')}
             </Text>

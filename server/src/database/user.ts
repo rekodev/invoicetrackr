@@ -1,5 +1,6 @@
 import {
   AnalyticsConsentStatus,
+  DEFAULT_CURRENCY,
   UserBody,
   UserProfileUpdateBody
 } from '@invoicetrackr/types';
@@ -106,7 +107,7 @@ export const registerUser = async ({
       email,
       password,
       emailVerifiedAt,
-      currency: 'eur',
+      currency: DEFAULT_CURRENCY,
       language,
       type: 'sender',
       businessType: 'individual',
@@ -258,7 +259,7 @@ export const updateUserProfilePictureInDb = async (
 export const updateUserAccountSettingsInDb = async (
   userId: number,
   language: string,
-  currency: string,
+  _currency: string,
   preferredInvoiceLanguage?: string,
   isVatPayer = false,
   defaultInvoiceVatMode: UserBody['defaultInvoiceVatMode'] = 'no_vat',
@@ -267,7 +268,7 @@ export const updateUserAccountSettingsInDb = async (
 ): Promise<UserUpdateResult | undefined> => {
   const updateData: Partial<typeof usersTable.$inferInsert> = {
     language,
-    currency,
+    currency: DEFAULT_CURRENCY,
     isVatPayer,
     defaultInvoiceVatMode: isVatPayer ? defaultInvoiceVatMode : 'no_vat',
     defaultInvoiceSeries,
@@ -363,15 +364,6 @@ export const invalidateTokenInDb = async (userId: number, token: string) => {
     .returning({ id: passwordResetTokensTable.id });
 
   return updatedToken?.id;
-};
-
-export const getUserCurrencyFromDb = async (userId: number) => {
-  const [user] = await db
-    .select({ currency: usersTable.currency })
-    .from(usersTable)
-    .where(eq(usersTable.id, userId));
-
-  return user?.currency as 'eur' | 'usd';
 };
 
 export const verifyUserEmailInDb = async (

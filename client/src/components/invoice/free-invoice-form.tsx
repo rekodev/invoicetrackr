@@ -50,7 +50,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     defaultValues: {
       sender: {
         name: '',
-        businessType: 'business' as const,
+        businessType: 'individual' as const,
         businessNumber: '',
         vatNumber: '',
         address: '',
@@ -91,7 +91,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     !senderSignature || typeof senderSignature === 'string'
       ? ''
       : URL.createObjectURL(senderSignature);
-  const trialSignupUrl = `${SIGN_UP_PAGE}?trial=true&source=free-invoice`;
+  const signupUrl = `${SIGN_UP_PAGE}?source=free-invoice`;
 
   const handleSignatureChange = (signature: string | File) => {
     setSenderSignature(signature);
@@ -99,7 +99,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     clearErrors('senderSignature');
   };
 
-  const handleTrialSignupClick = (source: string) => {
+  const handleSignupClick = (source: string) => {
     captureAnalyticsEvent(analyticsEvents.freeInvoiceSignUpClicked, {
       source,
       line_count: getValues('services').length
@@ -151,29 +151,16 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             }
           })}
           {renderTextField({
-            label: t('labels.sender_business_number_business'),
+            label: t('labels.sender_business_number_individual'),
             isInvalid: !!errors.sender?.businessNumber,
             errorMessage: errors.sender?.businessNumber?.message,
             variant: 'primary',
             inputProps: {
-              'aria-label': t('a11y.sender_business_number_label_business'),
+              'aria-label': t('a11y.sender_business_number_label_individual'),
               placeholder: t('placeholders.sender_business_number'),
               type: 'text',
               maxLength: 20,
               ...register('sender.businessNumber')
-            }
-          })}
-          {renderTextField({
-            label: t('labels.sender_vat_number'),
-            isInvalid: !!errors.sender?.vatNumber,
-            errorMessage: errors.sender?.vatNumber?.message,
-            variant: 'primary',
-            inputProps: {
-              'aria-label': t('a11y.sender_vat_number_label'),
-              placeholder: t('placeholders.sender_vat_number'),
-              type: 'text',
-              maxLength: 20,
-              ...register('sender.vatNumber')
             }
           })}
           {renderTextField({
@@ -237,19 +224,6 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
             }
           })}
           {renderTextField({
-            label: t('labels.receiver_vat_number'),
-            isInvalid: !!errors.receiver?.vatNumber,
-            errorMessage: errors.receiver?.vatNumber?.message,
-            variant: 'primary',
-            inputProps: {
-              'aria-label': t('a11y.receiver_vat_number_label'),
-              placeholder: t('placeholders.receiver_vat_number'),
-              type: 'text',
-              maxLength: 20,
-              ...register('receiver.vatNumber')
-            }
-          })}
-          {renderTextField({
             label: t('labels.receiver_address'),
             isInvalid: !!errors.receiver?.address,
             errorMessage: errors.receiver?.address?.message,
@@ -285,6 +259,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
       <h4>{t('services_heading')}</h4>
       <InvoiceServicesTable
         currency={currency}
+        isVatEnabled={false}
         isInvalid={!!errors.services}
         errorMessage={errors.services?.message}
       />
@@ -366,20 +341,20 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
           {t('buttons.preview')}
         </Button>
         <Link
-          href={trialSignupUrl}
-          onClick={() => handleTrialSignupClick('form_actions')}
+          href={signupUrl}
+          onClick={() => handleSignupClick('form_actions')}
           className={buttonVariants({
             className: 'w-full justify-center gap-2 sm:w-auto'
           })}
         >
           <PaperAirplaneIcon className="h-5 w-5" />
-          {t('free_invoice.start_trial_cta')}
+          {t('free_invoice.signup_cta')}
         </Link>
       </div>
     </div>
   );
 
-  const renderTrialPrompt = () => (
+  const renderSignupPrompt = () => (
     <div className="border-default-200 bg-content1/70 flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
         <p className="text-sm font-semibold">
@@ -390,8 +365,8 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
         </p>
       </div>
       <Link
-        href={trialSignupUrl}
-        onClick={() => handleTrialSignupClick('preview_modal')}
+        href={signupUrl}
+        onClick={() => handleSignupClick('preview_modal')}
         className={buttonVariants({
           size: 'sm',
           className: 'shrink-0 gap-2'
@@ -472,8 +447,8 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
               </Card.Header>
               <Card.Footer className="p-0">
                 <Link
-                  href={trialSignupUrl}
-                  onClick={() => handleTrialSignupClick('intro_panel')}
+                  href={signupUrl}
+                  onClick={() => handleSignupClick('intro_panel')}
                   className={buttonVariants({
                     variant: 'secondary',
                     className: 'mt-4 w-full justify-between'
@@ -546,7 +521,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
         invoiceLanguage={language}
         isOpen={isInvoiceModalOpen}
         onOpenChange={setIsInvoiceModalOpen}
-        conversionContent={renderTrialPrompt()}
+        conversionContent={renderSignupPrompt()}
       />
     </>
   );

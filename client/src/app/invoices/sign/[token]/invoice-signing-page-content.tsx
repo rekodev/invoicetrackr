@@ -1,11 +1,14 @@
 'use client';
 
-import type { InvoiceBody, PublicInvoiceSigning } from '@invoicetrackr/types';
+import {
+  DEFAULT_CURRENCY,
+  type InvoiceBody,
+  type PublicInvoiceSigning
+} from '@invoicetrackr/types';
 import { toast, useOverlayState } from '@heroui/react';
 import { useMemo, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 
-import type { Currency } from '@/lib/types/currency';
 import InvoiceModal from '@/components/invoice/invoice-modal';
 import { isResponseError } from '@/lib/utils/error';
 import { signPublicInvoice } from '@/api/invoice';
@@ -39,7 +42,7 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
   const isSigned = Boolean(
     invoice.receiverSignature || invoice.recipientSignedAt
   );
-  const currency = signing.currency as Currency;
+  const currency = DEFAULT_CURRENCY;
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
     currency,
     defaultTranslator: pdfTranslator,

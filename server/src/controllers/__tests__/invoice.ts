@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 
 import * as clientDb from '../../database/client';
 import * as invoiceController from '../invoice';
@@ -102,7 +103,7 @@ describe('Invoice Controller', () => {
           subtotalAmount: '100.00',
           vatAmount: '21.00',
           totalAmount: '121.00',
-          currency: 'eur'
+          currency: DEFAULT_CURRENCY
         }
       ]);
 
@@ -527,7 +528,7 @@ describe('Invoice Controller', () => {
         userFactory.build({
           id: testUserId,
           email: 'sender@example.com',
-          currency: 'EUR'
+          currency: DEFAULT_CURRENCY
         })
       );
       vi.mocked(invoiceDb.regeneratePublicInvoiceFromDb).mockResolvedValue({

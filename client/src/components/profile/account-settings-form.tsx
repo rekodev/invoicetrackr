@@ -22,19 +22,14 @@ import { User } from 'next-auth';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import {
-  availableCurrencies,
-  availableLanguages
-} from '@/lib/constants/profile';
-import { Currency } from '@/lib/types/currency';
 import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
+import { availableLanguages } from '@/lib/constants/profile';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 
 import DeleteAccountModal from './delete-account-modal';
 
 type AccountSettingsFormModel = {
   language: string;
-  currency: Currency;
   preferredInvoiceLanguage: string;
   defaultInvoiceVatMode: DefaultInvoiceVatMode;
   defaultInvoiceSeries: string;
@@ -67,7 +62,6 @@ const AccountSettingsForm = ({ user }: Props) => {
   } = useForm<AccountSettingsFormModel>({
     defaultValues: {
       language: user?.language,
-      currency: user?.currency,
       preferredInvoiceLanguage: user?.preferredInvoiceLanguage || user.language,
       defaultInvoiceVatMode: isVatPayer
         ? user?.defaultInvoiceVatMode || 'no_vat'
@@ -85,7 +79,6 @@ const AccountSettingsForm = ({ user }: Props) => {
     const response = await updateUserAccountSettingsAction({
       userId: Number(user.id),
       language: data.language,
-      currency: data.currency,
       preferredInvoiceLanguage: data.preferredInvoiceLanguage,
       isVatPayer,
       defaultInvoiceVatMode: isVatPayer ? data.defaultInvoiceVatMode : 'no_vat',
@@ -152,40 +145,6 @@ const AccountSettingsForm = ({ user }: Props) => {
                 </ListBox>
               </Select.Popover>
               <FieldError>{errors.language?.message}</FieldError>
-            </Select>
-          )}
-        />
-        <Controller
-          control={control}
-          name="currency"
-          render={({ field }) => (
-            <Select
-              className="w-full"
-              variant="secondary"
-              value={field.value}
-              onChange={field.onChange}
-              isInvalid={!!errors.currency}
-            >
-              <Label>{t('currency')}</Label>
-              <Select.Trigger>
-                <Select.Value />
-                <Select.Indicator />
-              </Select.Trigger>
-              <Select.Popover>
-                <ListBox>
-                  {availableCurrencies.map((currency) => (
-                    <ListBoxItem
-                      key={currency.code}
-                      id={currency.code}
-                      textValue={baseT(currency.nameTranslationKey)}
-                    >
-                      {`${baseT(currency.nameTranslationKey)} (${currency.symbol})`}
-                      <ListBoxItem.Indicator />
-                    </ListBoxItem>
-                  ))}
-                </ListBox>
-              </Select.Popover>
-              <FieldError>{errors.currency?.message}</FieldError>
             </Select>
           )}
         />

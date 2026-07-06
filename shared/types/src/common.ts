@@ -1,5 +1,11 @@
 import z from 'zod/v4';
 
+export const currencySchema = z.enum(['eur']);
+
+export type Currency = z.infer<typeof currencySchema>;
+
+export const DEFAULT_CURRENCY: Currency = 'eur';
+
 export const passwordSchema = z
   .string()
   .min(8, 'validation.password.tooShort')

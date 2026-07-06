@@ -4,7 +4,12 @@ import {
   invoicePartyBusinessTypeSchema,
   invoicePartyTypeSchema
 } from './invoice';
-import { analyticsConsentStatusSchema, passwordSchema } from './common';
+import {
+  analyticsConsentStatusSchema,
+  currencySchema,
+  DEFAULT_CURRENCY,
+  passwordSchema
+} from './common';
 
 const multipartBooleanSchema = z.preprocess(
   (value) => (value === 'true' ? true : value === 'false' ? false : value),
@@ -25,7 +30,7 @@ const userBodyBaseSchema = z.object({
   selectedBankAccountId: z.number().nullish(),
   password: passwordSchema.optional(),
   profilePictureUrl: z.string(),
-  currency: z.string().min(1, 'validation.user.currency'),
+  currency: currencySchema.default(DEFAULT_CURRENCY),
   language: z.string().min(1, 'validation.user.language'),
   preferredInvoiceLanguage: z.nullish(
     z.string().min(1, 'validation.user.preferredInvoiceLanguage')
@@ -110,7 +115,7 @@ export const accountSettingsBodySchema = userBodyBaseSchema
   })
   .extend({
     preferredInvoiceLanguage: z.string().max(2).min(2).optional(),
-    currency: z.string().max(3).min(3),
+    currency: currencySchema,
     language: z.string().max(2).min(2)
   });
 

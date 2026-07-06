@@ -8,8 +8,6 @@ import {
   FieldError,
   Input,
   Label,
-  ListBox,
-  Select,
   Separator,
   TextField,
   cn,
@@ -28,9 +26,7 @@ import {
   resendVerificationEmailAction,
   updateUserAction
 } from '@/lib/actions/user';
-import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { User } from '@invoicetrackr/types';
-import { capitalize } from '@/lib/utils';
 
 import AuthCardHeader from '../auth/auth-card-header';
 import SignaturePad from '../signature-pad';
@@ -90,9 +86,13 @@ const PersonalInformationForm = ({
 
   const onSubmit: SubmitHandler<User> = async (data) => {
     if (!defaultValues?.id) return;
+    const profileData = {
+      ...data,
+      businessType: 'individual' as const
+    };
 
     const response = await updateUserAction({
-      user: data,
+      user: profileData,
       signature: formSignature || defaultValues.signature
     });
 
@@ -110,7 +110,7 @@ const PersonalInformationForm = ({
       return;
     }
 
-    reset(data);
+    reset(profileData);
     await onSuccess?.();
   };
 
@@ -239,47 +239,6 @@ const PersonalInformationForm = ({
             placeholder: t('name_placeholder')
           })}
 
-          <Controller
-            control={control}
-            name="businessType"
-            render={({ field }) => (
-              <Select
-                className="w-full"
-                placeholder={t('business_type_placeholder')}
-                variant="secondary"
-                isInvalid={Boolean(errors.businessType)}
-                value={field.value}
-                onChange={field.onChange}
-              >
-                <Label>{t('business_type')}</Label>
-
-                <Select.Trigger>
-                  <Select.Value />
-                  <Select.Indicator />
-                </Select.Trigger>
-
-                <Select.Popover>
-                  <ListBox>
-                    {CLIENT_BUSINESS_TYPES.map((type) => {
-                      const label = capitalize(type);
-
-                      return (
-                        <ListBox.Item key={type} id={type} textValue={label}>
-                          {label}
-                          <ListBox.ItemIndicator />
-                        </ListBox.Item>
-                      );
-                    })}
-                  </ListBox>
-                </Select.Popover>
-
-                {errors.businessType?.message ? (
-                  <FieldError>{errors.businessType.message}</FieldError>
-                ) : null}
-              </Select>
-            )}
-          />
-
           {renderTextField({
             name: 'businessNumber',
             label: t('business_number'),
@@ -355,7 +314,7 @@ const PersonalInformationForm = ({
           })}
 
           <div className="mt-[-0.25rem] flex flex-col gap-2">
-            <label className="self-start text-sm">Signature</label>
+            <label className="self-start text-sm">{t('signature')}</label>
 
             <SignaturePad
               signature={formSignature || defaultValues?.signature}

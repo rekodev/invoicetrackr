@@ -1,6 +1,7 @@
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import mockRouter from 'next-router-mock';
 
 import InvoiceTable from '../invoice-table';
@@ -42,7 +43,7 @@ describe('<InvoiceTable/>', () => {
     mockRouter.push('/invoices');
     props = {
       userId: 1,
-      currency: 'eur',
+      currency: DEFAULT_CURRENCY,
       invoices: [
         {
           id: 1,

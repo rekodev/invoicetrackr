@@ -37,6 +37,7 @@ type Props = {
   errorMessage?: string;
   currency: Currency;
   defaultVatRate?: number;
+  isVatEnabled?: boolean;
 };
 
 type ServiceInputProps = ComponentProps<typeof Input>;
@@ -46,7 +47,8 @@ const InvoiceServicesTable = ({
   isInvalid,
   errorMessage,
   currency,
-  defaultVatRate = 0
+  defaultVatRate = 0,
+  isVatEnabled = false
 }: Props) => {
   const t = useTranslations('components.invoice_services_table');
   const {
@@ -61,17 +63,20 @@ const InvoiceServicesTable = ({
   });
   const servicesTableRef = useRef<HTMLDivElement>(null);
 
-  const INVOICE_SERVICE_COLUMNS = [
-    { name: t('column_number'), uid: 'no' },
-    { name: t('column_description'), uid: 'description' },
-    { name: t('column_unit'), uid: 'unit' },
-    { name: t('column_quantity'), uid: 'quantity' },
-    { name: t('column_amount'), uid: 'amount' },
-    { name: t('column_vat_rate'), uid: 'vatRate' },
-    { name: t('column_vat_exemption_reason'), uid: 'vatExemptionReason' },
-    { name: t('column_line_total'), uid: 'lineTotal' },
-    { name: t('column_actions'), uid: 'actions' }
-  ];
+  const INVOICE_SERVICE_COLUMNS = useMemo(
+    () => [
+      { name: t('column_number'), uid: 'no' },
+      { name: t('column_description'), uid: 'description' },
+      { name: t('column_unit'), uid: 'unit' },
+      { name: t('column_quantity'), uid: 'quantity' },
+      { name: t('column_amount'), uid: 'amount' },
+      { name: t('column_vat_rate'), uid: 'vatRate' },
+      { name: t('column_vat_exemption_reason'), uid: 'vatExemptionReason' },
+      { name: t('column_line_total'), uid: 'lineTotal' },
+      { name: t('column_actions'), uid: 'actions' }
+    ],
+    [t]
+  );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const services =
@@ -83,6 +88,22 @@ const InvoiceServicesTable = ({
   const invoiceTotals = useMemo(
     () => calculateInvoiceTotals(services),
     [services]
+  );
+  const shouldShowVatDetails =
+    isVatEnabled ||
+    services.some(
+      (service) =>
+        Number(service?.vatRate ?? 0) > 0 ||
+        Boolean(service?.vatExemptionReason)
+    );
+  const visibleColumns = useMemo(
+    () =>
+      INVOICE_SERVICE_COLUMNS.filter(
+        (column) =>
+          shouldShowVatDetails ||
+          !['vatRate', 'vatExemptionReason'].includes(column.uid)
+      ),
+    [INVOICE_SERVICE_COLUMNS, shouldShowVatDetails]
   );
 
   const lineTotals = useMemo(
@@ -208,11 +229,15 @@ const InvoiceServicesTable = ({
           {getCurrencySymbol(currency)}
           {invoiceTotals.subtotalAmount}
         </p>
-        <p className="text-muted">{t('vat_total')}:</p>
-        <p className="text-right">
-          {getCurrencySymbol(currency)}
-          {invoiceTotals.vatAmount}
-        </p>
+        {shouldShowVatDetails && (
+          <>
+            <p className="text-muted">{t('vat_total')}:</p>
+            <p className="text-right">
+              {getCurrencySymbol(currency)}
+              {invoiceTotals.vatAmount}
+            </p>
+          </>
+        )}
         <p className="font-medium">{t('grand_total')}:</p>
         <p className="text-right font-medium">
           {getCurrencySymbol(currency)}
@@ -343,7 +368,7 @@ const InvoiceServicesTable = ({
         <TableScrollContainer>
           <TableContent aria-label={t('a11y.table_label')}>
             <TableHeader>
-              {INVOICE_SERVICE_COLUMNS.map((column) => (
+              {visibleColumns.map((column) => (
                 <TableColumn
                   key={column.uid}
                   id={column.uid}
@@ -356,7 +381,7 @@ const InvoiceServicesTable = ({
             <TableBody>
               {fields.map((field, index) => (
                 <TableRow key={field.id} id={`service-${index}`}>
-                  {INVOICE_SERVICE_COLUMNS.map((column) => (
+                  {visibleColumns.map((column) => (
                     <TableCell key={column.uid}>
                       {renderCell(column.uid, index)}
                     </TableCell>

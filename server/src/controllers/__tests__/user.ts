@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import bcrypt from 'bcryptjs';
 
 import * as emailVerificationDb from '../../database/email-verification';
@@ -539,7 +540,7 @@ describe('User Controller', () => {
         url: `/api/${testUserId}/account-settings`,
         payload: {
           language: 'lt',
-          currency: 'eur',
+          currency: DEFAULT_CURRENCY,
           preferredInvoiceLanguage: 'lt',
           isVatPayer: true,
           defaultInvoiceVatMode: 'standard_21',

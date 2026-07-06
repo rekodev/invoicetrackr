@@ -81,6 +81,14 @@ const getDefaultVatRate = (user: User) => {
   return 0;
 };
 
+const hasVatDetails = (services?: InvoiceBody['services']) =>
+  Boolean(
+    services?.some(
+      (service) =>
+        Number(service.vatRate ?? 0) > 0 || Boolean(service.vatExemptionReason)
+    )
+  );
+
 const InvoiceForm = ({
   user,
   currency,
@@ -92,6 +100,7 @@ const InvoiceForm = ({
   const today = formatDate(new Date().toISOString());
   const defaultPaymentTermsDays = user.defaultPaymentTermsDays || 30;
   const defaultVatRate = getDefaultVatRate(user);
+  const isVatEnabled = user.isVatPayer || hasVatDetails(invoiceData?.services);
   const methods = useForm<InvoiceBody>({
     defaultValues: invoiceData
       ? {
@@ -154,7 +163,7 @@ const InvoiceForm = ({
   const paymentMode = watch('paymentMode') || 'manual';
   const currentDate = watch('date');
   const senderVatNumber = watch('sender.vatNumber');
-  const shouldShowSenderVatNumber = user.isVatPayer || !!senderVatNumber;
+  const shouldShowSenderVatNumber = isVatEnabled || !!senderVatNumber;
 
   const handleOpenReceiverModal = () => {
     setIsReceiverModalOpen(true);
@@ -168,7 +177,7 @@ const InvoiceForm = ({
     setValue('receiver.businessType', receiver.businessType);
     setValue('receiver.name', receiver.name);
     setValue('receiver.businessNumber', receiver.businessNumber);
-    setValue('receiver.vatNumber', receiver.vatNumber);
+    setValue('receiver.vatNumber', isVatEnabled ? receiver.vatNumber : '');
     setValue('receiver.address', receiver.address);
     setValue('receiver.email', receiver.email);
     clearErrors('receiver');
@@ -413,7 +422,7 @@ const InvoiceForm = ({
               })
             }
           />
-          {isReceiverBusiness && (
+          {isVatEnabled && isReceiverBusiness && (
             <Controller
               name="receiver.vatNumber"
               control={control}
@@ -482,6 +491,7 @@ const InvoiceForm = ({
         currency={currency}
         invoiceServices={invoiceData?.services}
         defaultVatRate={defaultVatRate}
+        isVatEnabled={isVatEnabled}
         isInvalid={!!errors.services}
         errorMessage={errors.services?.message}
       />

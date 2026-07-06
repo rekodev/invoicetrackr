@@ -1,16 +1,17 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
-import type {
-  IncomeJournalQuery,
-  InvoiceBody,
-  PublicInvoice
+import {
+  DEFAULT_CURRENCY,
+  type IncomeJournalQuery,
+  type InvoiceBody,
+  type PublicInvoice,
+  invoiceBodySchema
 } from '@invoicetrackr/types';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   InvoiceEmail,
   InvoiceSignedNotificationEmail
 } from '@invoicetrackr/emails';
 import { MultipartFile } from '@fastify/multipart';
 import { v2 as cloudinary } from 'cloudinary';
-import { invoiceBodySchema } from '@invoicetrackr/types';
 import { randomBytes } from 'crypto';
 import { useI18n } from 'fastify-i18n';
 
@@ -268,7 +269,8 @@ export const getIncomeJournal = async (
   const { from, to } = req.query;
   const i18n = await useI18n(req);
   const rows = await getIncomeJournalRowsFromDb({ userId, from, to });
-  const currency = rows.at(0)?.currency?.toUpperCase() || 'EUR';
+  const currency =
+    rows.at(0)?.currency?.toUpperCase() || DEFAULT_CURRENCY.toUpperCase();
   const headers = [
     i18n.t('emails.incomeJournal.paymentDate'),
     i18n.t('emails.incomeJournal.invoiceDate'),

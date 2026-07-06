@@ -1,7 +1,7 @@
 import { ComponentProps, JSX } from 'react';
+import { DEFAULT_CURRENCY, User } from '@invoicetrackr/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { User } from '@invoicetrackr/types';
 import { withIntl } from '@/test/with-intl';
 
 import MultiStepForm from '../multi-step-form';
@@ -46,8 +46,8 @@ describe('<MultiStepForm />', () => {
     defaultInvoiceVatMode: 'no_vat',
     defaultInvoiceSeries: 'SF',
     defaultPaymentTermsDays: 30,
-    currency: 'usd',
-    businessType: 'business',
+    currency: DEFAULT_CURRENCY,
+    businessType: 'individual',
     profilePictureUrl: ''
   };
 

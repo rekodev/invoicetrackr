@@ -19,11 +19,11 @@ import {
 } from '../constants/pages';
 import {
   type AccountSettingsBody,
+  DEFAULT_CURRENCY,
   User,
   VerifyEmailResponse
 } from '@invoicetrackr/types';
 import { ActionResponseModel } from '../types/action';
-import { Currency } from '../types/currency';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 import { updateSessionAction } from '../actions';
@@ -77,7 +77,6 @@ export async function updateUserAction({
 export async function updateUserAccountSettingsAction({
   userId,
   language,
-  currency,
   preferredInvoiceLanguage,
   isVatPayer,
   defaultInvoiceVatMode,
@@ -86,7 +85,6 @@ export async function updateUserAccountSettingsAction({
 }: {
   userId: number;
   language: AccountSettingsBody['language'];
-  currency: AccountSettingsBody['currency'];
   preferredInvoiceLanguage?: AccountSettingsBody['preferredInvoiceLanguage'];
   isVatPayer: AccountSettingsBody['isVatPayer'];
   defaultInvoiceVatMode: AccountSettingsBody['defaultInvoiceVatMode'];
@@ -99,7 +97,7 @@ export async function updateUserAccountSettingsAction({
 
   const response = await updateUserAccountSettings(userId, {
     language,
-    currency,
+    currency: DEFAULT_CURRENCY,
     preferredInvoiceLanguage,
     isVatPayer,
     defaultInvoiceVatMode: normalizedDefaultInvoiceVatMode,
@@ -119,7 +117,7 @@ export async function updateUserAccountSettingsAction({
     newSession: {
       language,
       preferredInvoiceLanguage,
-      currency: currency as Currency,
+      currency: DEFAULT_CURRENCY,
       isVatPayer,
       defaultInvoiceVatMode: normalizedDefaultInvoiceVatMode,
       defaultInvoiceSeries,

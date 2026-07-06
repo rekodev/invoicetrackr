@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import { Factory } from 'fishery';
 
 import type { getUserByEmailFromDb, getUserFromDb } from '../../database/user';
@@ -20,7 +21,7 @@ export const userFactory = Factory.define<UserFromDb>(({ sequence }) => ({
   signature: `signature${sequence}.png`,
   selectedBankAccountId: null,
   profilePictureUrl: `profile${sequence}.png`,
-  currency: 'USD',
+  currency: DEFAULT_CURRENCY,
   language: 'en',
   preferredInvoiceLanguage: 'en',
   isVatPayer: false,
@@ -48,7 +49,7 @@ export const userWithPasswordFactory = Factory.define<UserWithPasswordFromDb>(
     signature: `signature${sequence}.png`,
     selectedBankAccountId: null,
     profilePictureUrl: `profile${sequence}.png`,
-    currency: 'USD',
+    currency: DEFAULT_CURRENCY,
     language: 'en',
     preferredInvoiceLanguage: 'en',
     isVatPayer: false,

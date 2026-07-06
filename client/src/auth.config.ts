@@ -2,7 +2,10 @@ import type { JWT } from 'next-auth/jwt';
 
 import type { User as AuthUser, NextAuthConfig } from 'next-auth';
 
-import { type User as InvoiceTrackrUser } from '@invoicetrackr/types';
+import {
+  DEFAULT_CURRENCY,
+  type User as InvoiceTrackrUser
+} from '@invoicetrackr/types';
 
 import { type GoogleProfile } from 'next-auth/providers/google';
 
@@ -19,8 +22,6 @@ import {
   VERIFY_EMAIL_PAGE
 } from './lib/constants/pages';
 
-import { Currency } from './lib/types/currency';
-
 const getServerBaseUrl = () => `http://localhost:${process.env.SERVER_PORT}`;
 
 type TokenUser = InvoiceTrackrUser | AuthUser;
@@ -36,7 +37,7 @@ const setUserTokenFields = (token: JWT, user: TokenUser) => {
   token.defaultInvoiceVatMode = user.defaultInvoiceVatMode;
   token.defaultInvoiceSeries = user.defaultInvoiceSeries;
   token.defaultPaymentTermsDays = user.defaultPaymentTermsDays;
-  token.currency = user.currency;
+  token.currency = DEFAULT_CURRENCY;
   token.isOnboarded = isOnboarded;
   token.onboardingCompletedAt = user.onboardingCompletedAt;
   token.analyticsConsentStatus = user.analyticsConsentStatus;
@@ -168,7 +169,7 @@ export const authConfig = {
           defaultInvoiceVatMode: session.user.defaultInvoiceVatMode,
           defaultInvoiceSeries: session.user.defaultInvoiceSeries,
           defaultPaymentTermsDays: session.user.defaultPaymentTermsDays,
-          currency: session.user.currency,
+          currency: DEFAULT_CURRENCY,
           onboardingCompletedAt: session.user.onboardingCompletedAt,
           analyticsConsentStatus: session.user.analyticsConsentStatus,
           analyticsConsentUpdatedAt: session.user.analyticsConsentUpdatedAt,
@@ -194,7 +195,7 @@ export const authConfig = {
       session.user.defaultPaymentTermsDays =
         (token.defaultPaymentTermsDays as AuthUser['defaultPaymentTermsDays']) ||
         30;
-      session.user.currency = token.currency as Currency;
+      session.user.currency = DEFAULT_CURRENCY;
       session.user.isOnboarded = Boolean(token.isOnboarded);
       session.user.onboardingCompletedAt = token.onboardingCompletedAt as
         | string

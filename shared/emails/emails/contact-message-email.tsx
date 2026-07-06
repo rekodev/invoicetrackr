@@ -46,7 +46,7 @@ const ContactMessageEmail = ({ email, message }: ContactMessageEmailProps) => {
 ContactMessageEmail.PreviewProps = {
   email: 'john.doe@example.com',
   message:
-    'Hi! I have a question about the premium features. Can you help me understand the differences between the free and paid plans?\n\nThanks!'
+    'Hi! I have a question about using InvoiceTrackr for individual activity invoices. Can you help me understand the current MVP features?\n\nThanks!'
 };
 
 export default ContactMessageEmail;

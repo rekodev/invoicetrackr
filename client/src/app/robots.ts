@@ -2,7 +2,6 @@ import type { MetadataRoute } from 'next';
 
 import {
   CLIENTS_PAGE,
-  CONTRACTS_PAGE,
   DASHBOARD_PAGE,
   INVOICES_PAGE,
   ONBOARDING_PAGE,
@@ -19,7 +18,6 @@ export default function robots(): MetadataRoute.Robots {
       disallow: [
         '/api/',
         CLIENTS_PAGE,
-        CONTRACTS_PAGE,
         DASHBOARD_PAGE,
         `${INVOICES_PAGE}/`,
         ONBOARDING_PAGE,

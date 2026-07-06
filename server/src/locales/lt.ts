@@ -42,20 +42,20 @@ export default {
       attachmentTitle: 'Sąskaita prisegta',
       attachmentMessage:
         'Pilnas sąskaitos faktūros dokumentas pridėtas prie šio el. laiško kaip PDF failas.',
-      signingTitle: 'Peržiūrėkite ir pasirašykite sąskaitą',
+      signingTitle: 'Peržiūrėkite ir patvirtinkite sąskaitą',
       signingMessage:
-        'Atidarykite saugią sąskaitos nuorodą, peržiūrėkite dokumentą, pridėkite parašą ir atsisiųskite pasirašytą PDF.',
-      signingButton: 'Peržiūrėti ir pasirašyti',
+        'Atidarykite sąskaitos nuorodą, peržiūrėkite dokumentą, pridėkite pieštą patvirtinimą ir atsisiųskite PDF.',
+      signingButton: 'Peržiūrėti ir patvirtinti',
       publicInvoiceTitle: 'Peržiūrėti sąskaitą',
       publicInvoiceMessage:
         'Atidarykite saugų sąskaitos puslapį, peržiūrėkite PDF ir bankinio pavedimo mokėjimo informaciją.',
       publicInvoiceButton: 'Peržiūrėti sąskaitą',
       signedNotification: {
         recipient: 'Gavėjas',
-        subject: 'Sąskaita %{invoiceId} buvo pasirašyta',
-        message: '%{receiverName} pasirašė sąskaitą %{invoiceId}.',
-        review: 'Pasirašytą sąskaitą galite peržiūrėti čia:',
-        reviewButton: 'Peržiūrėti pasirašytą sąskaitą'
+        subject: 'Sąskaita %{invoiceId} buvo patvirtinta',
+        message: '%{receiverName} patvirtino sąskaitą %{invoiceId}.',
+        review: 'Patvirtintą sąskaitą galite peržiūrėti čia:',
+        reviewButton: 'Peržiūrėti patvirtintą sąskaitą'
       },
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
       copyright: 'InvoiceTrackr. Visos teisės saugomos.'
@@ -194,9 +194,9 @@ export default {
       deleted: 'Sąskaita faktūra ištrinta sėkmingai',
       statusUpdated: 'Sąskaitos faktūros būsena atnaujinta sėkmingai',
       emailSent: 'El. laiškas išsiųstas sėkmingai',
-      signed: 'Sąskaita faktūra pasirašyta sėkmingai',
-      signingLinkRevoked: 'Pasirašymo nuoroda atšaukta',
-      signingLinkRegenerated: 'Sugeneruota nauja pasirašymo nuoroda',
+      signed: 'Sąskaitos faktūros patvirtinimas užregistruotas sėkmingai',
+      signingLinkRevoked: 'Patvirtinimo nuoroda atšaukta',
+      signingLinkRegenerated: 'Sugeneruota nauja patvirtinimo nuoroda',
       publicLinkRevoked: 'Vieša sąskaitos nuoroda atšaukta',
       publicLinkRegenerated: 'Sugeneruota nauja vieša sąskaitos nuoroda'
     },
@@ -257,9 +257,9 @@ export default {
       unableToSendEmail: 'Nepavyko išsiųsti el. laiško',
       unableToCreatePublicLink: 'Nepavyko sukurti viešos sąskaitos nuorodos',
       unableToCreateSigningLink:
-        'Nepavyko sukurti sąskaitos pasirašymo nuorodos',
+        'Nepavyko sukurti sąskaitos patvirtinimo nuorodos',
       unableToRegenerateSigningLink:
-        'Nepavyko atnaujinti sąskaitos pasirašymo nuorodos',
+        'Nepavyko atnaujinti sąskaitos patvirtinimo nuorodos',
       signingLinkExpired:
         'Šios sąskaitos nuorodos galiojimas baigėsi. Paprašykite siuntėjo naujos nuorodos.',
       signingLinkRevoked:
@@ -270,7 +270,7 @@ export default {
         'Ši sąskaitos nuoroda buvo atšaukta. Paprašykite siuntėjo naujos nuorodos.',
       publicLinkRequiresIssued:
         'Viešos sąskaitos nuorodos valdymas galimas tik išrašius sąskaitą.',
-      alreadySigned: 'Sąskaita faktūra jau pasirašyta',
+      alreadySigned: 'Sąskaita faktūra jau patvirtinta',
       voidedImmutable:
         'Anuliuotų sąskaitų būsenos negalima keisti iš lentelės pasirinkimo.',
       issuedImmutable:

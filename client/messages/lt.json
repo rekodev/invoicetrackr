@@ -12,7 +12,6 @@
             "dashboard": "Skydelis",
             "invoices": "Sąskaitos faktūros",
             "clients": "Klientai",
-            "contracts": "Kontraktai",
             "my_profile": "Mano profilis",
             "log_out": "Atsijungti",
             "signed_in_as": "Prisijungęs vartotojas",
@@ -26,7 +25,6 @@
             "create_invoice": "Sukurti sąskaitą faktūrą",
             "mobile_menu": "Atidaryti meniu",
             "features": "Privalumai",
-            "pricing": "Kainos",
             "faq": "DUK"
         }
     },
@@ -35,7 +33,6 @@
         "banking_information": "Bankinė informacija",
         "change_password": "Pakeisti slaptažodį",
         "clients": "Klientai",
-        "contracts": "Kontraktai",
         "create_invoice": "Sukurti sąskaitą faktūrą",
         "create_new_password": "Sukurti naują slaptažodį",
         "dashboard": "Skydelis",
@@ -93,7 +90,6 @@
                 "eyebrow": "Darbo erdvė",
                 "dashboard": "Suvestinė",
                 "invoices": "Sąskaitos",
-                "contracts": "Sutartys",
                 "clients": "Klientai",
                 "soon": "Netrukus"
             },
@@ -167,11 +163,6 @@
                 "clients": {
                     "title": "Klientai tvarkingai vienoje vietoje.",
                     "body": "Kliento pavadinimas, adresas, el. paštas, mokėjimo terminas ir neprivalomi registracijos duomenys pakartotiniam naudojimui."
-                },
-                "contracts": {
-                    "badge": "Netrukus",
-                    "title": "Sutartys suplanuotos, bet dar neišleistos.",
-                    "body": "Sutartys atsiras tada, kai sąskaitų, klientų, mokėjimų ir eksportavimo eiga bus tvirta."
                 }
             },
             "invoice_table": {
@@ -234,10 +225,6 @@
                     }
                 }
             },
-            "contract_preview": {
-                "status": "Netrukus",
-                "description": "Sutarčių puslapis suplanuotas kaip vieta saugoti susitarimus, susieti sąskaitas ir matyti ilgesnių klientų darbų pinigų eigą."
-            },
             "capabilities": {
                 "payments": {
                     "badge": "MVP",
@@ -262,49 +249,17 @@
                 }
             }
         },
-        "pricing": {
-            "eyebrow": "MVP prieiga",
-            "title": "Pirma fokusas, tada kaina.",
-            "subtitle": "Nemokamas generatorius veikia dabar. Prisijungusi MVP dalis formuojama Lietuvos freelanceriams prieš užrakinant galutinę kainodarą.",
-            "free": {
-                "title": "Nemokamas generatorius",
-                "tagline": "Sukurkite vienkartinę sąskaitą ir atsisiųskite PDF. Be paskyros.",
-                "features": {
-                    "single": "Kurkite po vieną sąskaitą",
-                    "download": "Atsisiųskite PDF formatu",
-                    "languages": "Angliškas arba lietuviškas sąskaitos dokumentas",
-                    "no_account": "Be išsaugojimo, siuntimo ar apmokėjimo nuorodos"
-                },
-                "cta": "Sugeneruoti sąskaitą"
-            },
-            "premium": {
-                "badge": "MVP",
-                "title": "Freelancerio darbo vieta",
-                "tagline": "Privati eiga išsaugotoms sąskaitoms, klientams, mokėjimams, išlaidoms ir metiniam pasiruošimui.",
-                "price": "MVP",
-                "suffix": "/metus",
-                "alt": "Galutinė kaina bus sprendžiama patvirtinus fokusuotą MVP.",
-                "features": {
-                    "saved": "Neribotos išsaugotos sąskaitos ir klientai",
-                    "email": "Siuntimas el. paštu ir priminimai",
-                    "links": "Galutinių sąskaitų nuorodos klientams",
-                    "payments": "Rankinis bankinių pavedimų sekimas",
-                    "export": "Pajamų žurnalo ir buhalterio eksportai"
-                },
-                "cta": "Sukurti paskyrą"
-            }
-        },
         "faq": {
             "eyebrow": "DUK",
             "title": "Trumpi atsakymai.",
             "items": {
                 "free": {
-                    "question": "Ar yra nemokamas planas?",
+                    "question": "Ar galiu sugeneruoti sąskaitą be paskyros?",
                     "answer": "Galite nemokamai sugeneruoti sąskaitą ir atsisiųsti PDF be paskyros. Prisijungusi programos dalis skirta išsaugotai freelancerio eigai: klientams, sąskaitoms, priminimams, mokėjimams, išlaidoms ir eksportams."
                 },
                 "export": {
                     "question": "Ar galiu eksportuoti duomenis?",
-                    "answer": "Taip. Sąskaitų žurnalą į CSV galite eksportuoti kada tik norite."
+                    "answer": "Taip. Pajamų žurnalą į CSV galite eksportuoti kada tik norite."
                 },
                 "payments": {
                     "question": "Kaip veikia mokėjimai?",
@@ -622,13 +577,13 @@
         }
     },
     "invoice_signing": {
-        "eyebrow": "Saugus sąskaitos pasirašymas",
+        "eyebrow": "Kliento patvirtinimas",
         "title": "Gauta sąskaita iš",
-        "subtitle": "Peržiūrėkite sąskaitą {invoiceId}, pasirašykite, jei viskas teisinga, ir atsisiųskite pasirašytą PDF savo įrašams.",
-        "signed_status": "Pasirašyta",
+        "subtitle": "Peržiūrėkite sąskaitą {invoiceId}, pridėkite ranka pieštą patvirtinimą, jei viskas teisinga, ir atsisiųskite PDF savo įrašams.",
+        "signed_status": "Patvirtinta",
         "loading_pdf": "Įkeliamas PDF...",
-        "panel_title": "Užbaigti šią sąskaitą",
-        "panel_description": "Peržiūrėkite šalis, bankinio pavedimo duomenis ir pasirašymo prašymą.",
+        "panel_title": "Patvirtinti šią sąskaitą",
+        "panel_description": "Peržiūrėkite šalis, bankinio pavedimo duomenis ir patvirtinimo prašymą.",
         "receiver": "Gavėjas",
         "sender": "Siuntėjas",
         "summary_title": "Sąskaitos santrauka",
@@ -657,23 +612,21 @@
         "canceled_invoice_description": "Ši sąskaita pažymėta kaip atšaukta ir čia jos apmokėti nereikia.",
         "paid_invoice_title": "Sąskaita apmokėta",
         "paid_invoice_description": "Šios sąskaitos apmokėjimas jau užregistruotas.",
-        "signed_invoice_title": "Sąskaita pasirašyta",
-        "signed_invoice_description": "Gavėjo parašas jau užregistruotas.",
+        "signed_invoice_title": "Sąskaita patvirtinta",
+        "signed_invoice_description": "Gavėjo patvirtinimas jau užregistruotas.",
         "pay_invoice": "Apmokėti sąskaitą",
         "amount_due": "Mokėtina suma",
         "bank": "Bankas",
         "bank_code": "Banko kodas",
         "account_number": "Sąskaitos numeris",
         "payment_reference": "Paskirtis",
-        "method_title": "Pasirašymo būdas",
-        "draw_signature": "Paprastas parašas",
-        "electronic_signature": "Elektroninis parašas",
-        "coming_soon": "Netrukus",
-        "signature_required": "Pridėkite parašą prieš pasirašydami.",
-        "signature_received_title": "Parašas gautas",
-        "signature_received_subtitle": "Ši sąskaita jau pasirašyta.",
-        "sign_button": "Pasirašyti sąskaitą",
-        "already_signed": "Sąskaita pasirašyta",
+        "method_title": "Patvirtinimo būdas",
+        "draw_signature": "Pieštas parašas",
+        "signature_required": "Pridėkite pieštą parašą prieš patvirtindami.",
+        "signature_received_title": "Patvirtinimas gautas",
+        "signature_received_subtitle": "Ši sąskaita jau patvirtinta.",
+        "sign_button": "Patvirtinti sąskaitą",
+        "already_signed": "Sąskaita patvirtinta",
         "download_pdf": "Atsisiųsti PDF",
         "link_unavailable": "Sąskaitos nuoroda nepasiekiama"
     },
@@ -769,13 +722,13 @@
                 "email_placeholder": "Įveskite savo el. pašto adresą",
                 "name": "Vardas",
                 "name_placeholder": "Įveskite savo vardą",
-                "business_type": "Verslo tipas",
-                "business_type_placeholder": "Pasirinkite verslo tipą",
-                "business_number": "Įmonės kodas / IV pažymos Nr.",
-                "business_number_placeholder": "Įveskite savo įmonės kodą arba IV pažymos Nr.",
+                "business_type": "Veiklos tipas",
+                "business_type_placeholder": "Individuali veikla pagal pažymą",
+                "business_number": "Individualios veiklos pažymos Nr.",
+                "business_number_placeholder": "Įveskite individualios veiklos pažymos numerį",
                 "is_vat_payer": "PVM mokėtojas",
                 "is_vat_payer_option": "Esu PVM mokėtojas",
-                "is_vat_payer_description": "Pažymėkite, jei esate registruotas PVM mokėtojas.",
+                "is_vat_payer_description": "Dirbant pagal individualios veiklos pažymą galima būti PVM mokėtoju. Pažymėkite tik jei esate registruotas PVM mokėtoju VMI.",
                 "vat_number": "PVM mokėtojo kodas",
                 "vat_number_placeholder": "Įveskite PVM mokėtojo kodą",
                 "address": "Adresas",
@@ -798,7 +751,6 @@
                 "form_label": "Paskyros nustatymų forma"
             },
             "title": "Paskyros Nustatymai",
-            "currency": "Valiuta",
             "language": "Kalba",
             "preferred_invoice_language": "Pageidaujama Sąskaitos Kalba",
             "preferred_invoice_language_tooltip": "Tai numatytoji sąskaitų eksporto ir el. laiškų kalba. Galite keisti kiekvienai sąskaitai atskirai.",
@@ -825,10 +777,6 @@
             "available_languages": {
                 "en": "Anglų",
                 "lt": "Lietuvių"
-            },
-            "available_currencies": {
-                "usd": "JAV Doleris",
-                "eur": "Euras"
             },
             "delete_account": {
                 "action": "Ištrinti paskyrą",
@@ -948,10 +896,6 @@
             "profile": "Eiti į profilį"
         }
     },
-    "under_construction": {
-        "title": "Kuriama",
-        "description": "Šis puslapis vis dar kuriamas ir bus prieinamas netrukus. Dėkojame už kantrybę."
-    },
     "components": {
         "password_input": {
             "toggle_visibility": "Perjungti slaptažodžio matomumą"
@@ -992,13 +936,13 @@
             "client": "Klientas",
             "amount": "Suma",
             "date": "Data",
-            "public_link_note": "Šiame laiške gali būti saugus sąskaitos puslapis su PDF ir bankinio pavedimo rekvizitais.",
-            "signing_link_note": "Šiame laiške bus saugi pasirašymo nuoroda gavėjui.",
+            "public_link_note": "Šiame laiške gali būti sąskaitos puslapis su PDF ir bankinio pavedimo rekvizitais.",
+            "signing_link_note": "Šiame laiške bus kliento patvirtinimo nuoroda.",
             "email_verification_required": "Patvirtinkite paskyros el. paštą prieš siųsdami sąskaitas klientams.",
             "include_public_link": "Įtraukti viešą sąskaitos puslapį",
-            "request_signature": "Prašyti gavėjo parašo",
-            "signature_requires_public_link": "Gavėjo pasirašymui reikia viešo sąskaitos puslapio.",
-            "active_signing_recipient": "Aktyvi pasirašymo nuoroda išsiųsta adresu {email}.",
+            "request_signature": "Prašyti kliento patvirtinimo",
+            "signature_requires_public_link": "Kliento patvirtinimui reikia viešo sąskaitos puslapio.",
+            "active_signing_recipient": "Aktyvi patvirtinimo nuoroda išsiųsta adresu {email}.",
             "signing_link_expires": "Nuoroda galioja iki {date}.",
             "signing_link_revoked": "Ši nuoroda buvo atšaukta.",
             "replacement_link_note": "Siunčiant ankstesnė nuoroda bus panaikinta ir sukurta nauja.",
@@ -1172,11 +1116,11 @@
                     "Vienkartiniam PDF atsisiuntimui paskyros nereikia"
                 ],
                 "upgrade_title": "Reikia daugiau nei PDF?",
-                "upgrade_description": "Sukurkite paskyrą, kad galėtumėte išsaugoti sąskaitas, naudoti klientus ir banko sąskaitas pakartotinai, siųsti saugias nuorodas ir sekti apmokėjimą.",
+                "upgrade_description": "Sukurkite paskyrą, kad galėtumėte išsaugoti sąskaitas, naudoti klientus ir banko sąskaitas pakartotinai, siųsti sąskaitų nuorodas ir sekti apmokėjimą.",
                 "upgrade_cta": "Sukurti paskyrą",
                 "actions_title": "Peržiūrėkite sąskaitą prieš atsisiųsdami.",
                 "actions_description": "PDF atsisiuntimas lieka nemokamas. Paskyros funkcijos skirtos išsaugojimui, siuntimui, istorijai, priminimams ir mokėjimų sekimui.",
-                "start_trial_cta": "Išsaugoti ir siųsti iš paskyros",
+                "signup_cta": "Išsaugoti ir siųsti iš paskyros",
                 "modal_cta_title": "Norite išsaugoti, siųsti ir sekti sąskaitas?",
                 "modal_cta_description": "Susikurkite paskyrą, kad valdytumėte realius klientų procesus, o ne atsisiųstumėte po vieną PDF.",
                 "modal_cta_button": "Sukurti paskyrą"
@@ -1214,8 +1158,8 @@
                         "registration": "Individualios veiklos pažymos numerį",
                         "address": "Verslo adresą",
                         "profile": "Profilio nuotrauką (neprivaloma)",
-                        "signature": "Skaitmeninį parašą (neprivaloma)",
-                        "preferences": "Kalbos ir valiutos nuostatas"
+                        "signature": "Vizualų parašą (neprivaloma)",
+                        "preferences": "Kalbos nuostatas"
                     }
                 },
                 "financial_info": {
@@ -1244,7 +1188,7 @@
                 },
                 "analytics_data": {
                     "heading": "2.5 Analitikos duomenys",
-                    "intro": "Gavę jūsų sutikimą, naudojame PostHog, kad suprastume paleidimo piltuvėlius ir pagrindinį produkto naudojimą, pvz., puslapių peržiūras, kainodaros peržiūras, registracijos žingsnius, sąskaitų kūrimą, PDF atsisiuntimus, siuntimą el. paštu, klientų kūrimą ir banko sąskaitos pridėjimą. Analitikos įvykių savybėse nesiunčiame sąskaitų numerių, sąskaitų teksto, klientų duomenų, banko sąskaitų duomenų, el. pašto adresų, adresų ar sąskaitų sumų."
+                    "intro": "Gavę jūsų sutikimą, naudojame PostHog, kad suprastume paleidimo piltuvėlius ir pagrindinį produkto naudojimą, pvz., puslapių peržiūras, registracijos žingsnius, sąskaitų kūrimą, PDF atsisiuntimus, siuntimą el. paštu, klientų kūrimą ir banko sąskaitos pridėjimą. Analitikos įvykių savybėse nesiunčiame sąskaitų numerių, sąskaitų teksto, klientų duomenų, banko sąskaitų duomenų, el. pašto adresų, adresų ar sąskaitų sumų."
                 }
             },
             "how_we_use": {
@@ -1375,8 +1319,7 @@
                     "creation": "Sąskaitų faktūrų kūrimas, redagavimas ir valdymas",
                     "tracking": "Sąskaitų faktūrų būsenos sekimas (apmokėta, laukiama, atšaukta)",
                     "clients": "Klientų informacijos valdymas",
-                    "dashboard": "Finansinė suvestinė su pajamų analize ir diagramomis",
-                    "contracts": "Sutarčių kūrimas ir valdymas (neįtraukta į MVP)",
+                    "dashboard": "Finansinė suvestinė su pajamų ir sąskaitų santraukomis",
                     "pdf": "PDF sąskaitų faktūrų generavimas ir eksportavimas",
                     "email": "Sąskaitų faktūrų pristatymas el. paštu",
                     "multi": "Lietuviškų ir angliškų sąskaitų dokumentus",

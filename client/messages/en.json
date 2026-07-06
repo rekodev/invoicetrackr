@@ -12,7 +12,6 @@
             "dashboard": "Dashboard",
             "invoices": "Invoices",
             "clients": "Clients",
-            "contracts": "Contracts",
             "my_profile": "My Profile",
             "log_out": "Log Out",
             "signed_in_as": "Signed in as",
@@ -26,7 +25,6 @@
             "create_invoice": "Create Invoice",
             "mobile_menu": "Open menu",
             "features": "Features",
-            "pricing": "Pricing",
             "faq": "FAQ"
         }
     },
@@ -35,7 +33,6 @@
         "banking_information": "Banking Information",
         "change_password": "Change Password",
         "clients": "Clients",
-        "contracts": "Contracts",
         "create_invoice": "Create Invoice",
         "create_new_password": "Create New Password",
         "dashboard": "Dashboard",
@@ -93,7 +90,6 @@
                 "eyebrow": "Workspace",
                 "dashboard": "Dashboard",
                 "invoices": "Invoices",
-                "contracts": "Contracts",
                 "clients": "Clients",
                 "soon": "Soon"
             },
@@ -157,7 +153,7 @@
             "items": {
                 "invoices": {
                     "eyebrow": "Invoices",
-                    "title": "The table that runs your billing.",
+                    "title": "The table that runs your invoicing.",
                     "body": "Search, filter, export the income journal, and open each invoice for preview, sending, editing, or status updates."
                 },
                 "dashboard": {
@@ -167,11 +163,6 @@
                 "clients": {
                     "title": "Clients in one tidy place.",
                     "body": "Client names, addresses, email, payment terms, and optional registration details ready to reuse on every invoice."
-                },
-                "contracts": {
-                    "badge": "Soon",
-                    "title": "Contracts are planned, not shipped.",
-                    "body": "Contracts will come after the core invoice, client, payment and export workflows are solid."
                 }
             },
             "invoice_table": {
@@ -234,10 +225,6 @@
                     }
                 }
             },
-            "contract_preview": {
-                "status": "Coming soon",
-                "description": "The contracts page is planned as a place to keep agreements, attach related invoices, and follow the money trail for longer client work."
-            },
             "capabilities": {
                 "payments": {
                     "badge": "MVP",
@@ -262,49 +249,17 @@
                 }
             }
         },
-        "pricing": {
-            "eyebrow": "MVP access",
-            "title": "Focused before priced.",
-            "subtitle": "Use the free generator today. The logged-in MVP is being shaped around Lithuanian freelancers before final pricing is locked.",
-            "free": {
-                "title": "Free generator",
-                "tagline": "Make a one-off invoice and download the PDF. No account.",
-                "features": {
-                    "single": "Create one invoice at a time",
-                    "download": "Download as PDF",
-                    "languages": "English or Lithuanian invoice output",
-                    "no_account": "No save, send, or payment link"
-                },
-                "cta": "Generate an invoice"
-            },
-            "premium": {
-                "badge": "MVP",
-                "title": "Freelancer workspace",
-                "tagline": "The private workflow for saved invoices, clients, payments, expenses, and annual prep.",
-                "price": "MVP",
-                "suffix": "/year",
-                "alt": "Final pricing will be decided after the focused MVP is validated.",
-                "features": {
-                    "saved": "Unlimited saved invoices and clients",
-                    "email": "Send by email and remind clients",
-                    "links": "Finalized invoice links for client viewing",
-                    "payments": "Manual bank-transfer payment tracking",
-                    "export": "Income-journal and accountant exports"
-                },
-                "cta": "Create account"
-            }
-        },
         "faq": {
             "eyebrow": "FAQ",
             "title": "Straight answers.",
             "items": {
                 "free": {
-                    "question": "Is there a free plan?",
+                    "question": "Can I generate an invoice without an account?",
                     "answer": "You can generate an invoice and download the PDF for free without an account. The logged-in app is for saved freelancer workflows: clients, invoices, reminders, payments, expenses, and exports."
                 },
                 "export": {
                     "question": "Can I export my data?",
-                    "answer": "Yes. Export your invoice ledger to CSV whenever you want."
+                    "answer": "Yes. Export your income journal to CSV whenever you want."
                 },
                 "payments": {
                     "question": "How do payments work?",
@@ -622,13 +577,13 @@
         }
     },
     "invoice_signing": {
-        "eyebrow": "Secure invoice signing",
+        "eyebrow": "Client acknowledgement",
         "title": "Invoice received from",
-        "subtitle": "Review invoice {invoiceId}, sign if everything looks correct, and download the signed PDF for your records.",
-        "signed_status": "Signed",
+        "subtitle": "Review invoice {invoiceId}, add a handwritten acknowledgement if everything looks correct, and download the PDF for your records.",
+        "signed_status": "Acknowledged",
         "loading_pdf": "Loading PDF...",
-        "panel_title": "Complete this invoice",
-        "panel_description": "Review the parties, bank-transfer details, and signature request.",
+        "panel_title": "Confirm this invoice",
+        "panel_description": "Review the parties, bank-transfer details, and acknowledgement request.",
         "receiver": "Recipient",
         "sender": "Sender",
         "summary_title": "Invoice summary",
@@ -657,23 +612,21 @@
         "canceled_invoice_description": "This invoice is marked as canceled and no payment is due here.",
         "paid_invoice_title": "Invoice paid",
         "paid_invoice_description": "Payment has been recorded for this invoice.",
-        "signed_invoice_title": "Invoice signed",
-        "signed_invoice_description": "The recipient signature has already been recorded.",
+        "signed_invoice_title": "Invoice acknowledged",
+        "signed_invoice_description": "The recipient acknowledgement has already been recorded.",
         "pay_invoice": "Pay invoice",
         "amount_due": "Amount due",
         "bank": "Bank",
         "bank_code": "Bank code",
         "account_number": "Account number",
         "payment_reference": "Reference",
-        "method_title": "Signing method",
-        "draw_signature": "Regular signature",
-        "electronic_signature": "Electronic signature",
-        "coming_soon": "Coming soon",
-        "signature_required": "Add a signature before signing.",
-        "signature_received_title": "Signature received",
-        "signature_received_subtitle": "This invoice has already been signed.",
-        "sign_button": "Sign invoice",
-        "already_signed": "Invoice signed",
+        "method_title": "Acknowledgement method",
+        "draw_signature": "Drawn signature",
+        "signature_required": "Add a drawn signature before confirming.",
+        "signature_received_title": "Acknowledgement received",
+        "signature_received_subtitle": "This invoice has already been acknowledged.",
+        "sign_button": "Confirm invoice",
+        "already_signed": "Invoice acknowledged",
         "download_pdf": "Download PDF",
         "link_unavailable": "Invoice link unavailable"
     },
@@ -769,13 +722,13 @@
                 "email_placeholder": "Enter your email address",
                 "name": "Name",
                 "name_placeholder": "Enter your name",
-                "business_type": "Business Type",
-                "business_type_placeholder": "Select business type",
-                "business_number": "Company code / Sole proprietorship certificate No.",
-                "business_number_placeholder": "Company code / Sole proprietorship certificate No.",
+                "business_type": "Activity type",
+                "business_type_placeholder": "Individual activity by certificate",
+                "business_number": "Individual activity certificate No.",
+                "business_number_placeholder": "Enter individual activity certificate number",
                 "is_vat_payer": "VAT payer",
                 "is_vat_payer_option": "Registered as a VAT payer",
-                "is_vat_payer_description": "Enable this if you are registered as a VAT payer.",
+                "is_vat_payer_description": "Individual activity freelancers can be VAT payers. Enable only if you are registered with VMI as a VAT payer.",
                 "vat_number": "VAT Number",
                 "vat_number_placeholder": "Enter VAT number",
                 "address": "Address",
@@ -798,7 +751,6 @@
                 "form_label": "Account Settings Form"
             },
             "title": "Account Settings",
-            "currency": "Currency",
             "language": "Language",
             "preferred_invoice_language": "Preferred Invoice Language",
             "preferred_invoice_language_tooltip": "This is the default language for invoice exports and emails. You can change it per invoice.",
@@ -825,10 +777,6 @@
             "available_languages": {
                 "en": "English",
                 "lt": "Lithuanian"
-            },
-            "available_currencies": {
-                "usd": "United States Dollar",
-                "eur": "Euro"
             },
             "delete_account": {
                 "action": "Delete Account",
@@ -948,10 +896,6 @@
             "profile": "Go to profile"
         }
     },
-    "under_construction": {
-        "title": "Under Construction",
-        "description": "This page is still in development and is going to be available soon. Thank you for your patience."
-    },
     "components": {
         "password_input": {
             "toggle_visibility": "Toggle password visibility"
@@ -992,13 +936,13 @@
             "client": "Client",
             "amount": "Amount",
             "date": "Date",
-            "public_link_note": "This email can include a secure invoice page with the PDF and bank-transfer details.",
-            "signing_link_note": "This email will include a secure signing link for the recipient.",
+            "public_link_note": "This email can include an invoice page with the PDF and bank-transfer details.",
+            "signing_link_note": "This email will include a client acknowledgement link.",
             "email_verification_required": "Verify your account email before sending invoices to clients.",
             "include_public_link": "Include public invoice page",
-            "request_signature": "Request recipient signature",
-            "signature_requires_public_link": "Recipient signing requires the public invoice page.",
-            "active_signing_recipient": "Active signing link sent to {email}.",
+            "request_signature": "Request client acknowledgement",
+            "signature_requires_public_link": "Client acknowledgement requires the public invoice page.",
+            "active_signing_recipient": "Active acknowledgement link sent to {email}.",
             "signing_link_expires": "Link expires on {date}.",
             "signing_link_revoked": "This link has been revoked.",
             "replacement_link_note": "Sending will invalidate the previous link and create a fresh one.",
@@ -1172,11 +1116,11 @@
                     "No account required for one-off PDF downloads"
                 ],
                 "upgrade_title": "Need more than a PDF?",
-                "upgrade_description": "Create an account to save invoices, reuse clients and bank accounts, send secure links, and track payment status.",
+                "upgrade_description": "Create an account to save invoices, reuse clients and bank accounts, send invoice links, and track payment status.",
                 "upgrade_cta": "Create account",
                 "actions_title": "Preview the invoice before downloading.",
                 "actions_description": "The PDF download stays free. Account features are for saving, sending, history, reminders, and payment tracking.",
-                "start_trial_cta": "Save and send from an account",
+                "signup_cta": "Save and send from an account",
                 "modal_cta_title": "Want to save, send, and track invoices?",
                 "modal_cta_description": "Create an account to manage real client workflows instead of downloading one PDF at a time.",
                 "modal_cta_button": "Create account"
@@ -1214,8 +1158,8 @@
                         "registration": "Individual activity certificate number",
                         "address": "Business address",
                         "profile": "Profile picture (optional)",
-                        "signature": "Digital signature (optional)",
-                        "preferences": "Language and currency preferences"
+                        "signature": "Visual signature (optional)",
+                        "preferences": "Language preferences"
                     }
                 },
                 "financial_info": {
@@ -1244,7 +1188,7 @@
                 },
                 "analytics_data": {
                     "heading": "2.5 Analytics Data",
-                    "intro": "With your consent, we use PostHog to understand launch funnels and basic product usage, such as page views, pricing views, sign-up steps, invoice creation, PDF downloads, email sending, client creation, and bank-account setup. We do not send invoice numbers, invoice text, client details, bank account details, email addresses, addresses, or invoice amounts as analytics event properties."
+                    "intro": "With your consent, we use PostHog to understand launch funnels and basic product usage, such as page views, sign-up steps, invoice creation, PDF downloads, email sending, client creation, and bank-account setup. We do not send invoice numbers, invoice text, client details, bank account details, email addresses, addresses, or invoice amounts as analytics event properties."
                 }
             },
             "how_we_use": {
@@ -1375,8 +1319,7 @@
                     "creation": "Invoice creation, editing, and management",
                     "tracking": "Invoice status tracking (paid, pending, canceled)",
                     "clients": "Client information management",
-                    "dashboard": "Financial dashboard with income analytics and charts",
-                    "contracts": "Contract creation and management (not included in the MVP)",
+                    "dashboard": "Financial dashboard with income and invoice summaries",
                     "pdf": "PDF invoice generation and export",
                     "email": "Email invoice delivery",
                     "multi": "Lithuanian and English invoice output",

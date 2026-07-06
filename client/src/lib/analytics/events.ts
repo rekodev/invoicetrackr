@@ -1,6 +1,5 @@
 export const analyticsEvents = {
   landingPageViewed: 'landing_page_viewed',
-  pricingViewed: 'pricing_viewed',
   freeInvoiceGeneratorOpened: 'free_invoice_generator_opened',
   freeInvoiceSignUpClicked: 'free_invoice_sign_up_clicked',
   signUpStarted: 'sign_up_started',

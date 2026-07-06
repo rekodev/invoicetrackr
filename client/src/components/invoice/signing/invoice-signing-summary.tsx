@@ -36,6 +36,12 @@ export default function InvoiceSigningSummary({
     invoice.subtotalAmount || calculatedTotals.subtotalAmount;
   const vatAmount = invoice.vatAmount || calculatedTotals.vatAmount;
   const totalAmount = invoice.totalAmount || calculatedTotals.totalAmount;
+  const shouldShowVatDetails =
+    Number(vatAmount) > 0 ||
+    invoice.services.some(
+      (service) =>
+        Number(service.vatRate ?? 0) > 0 || Boolean(service.vatExemptionReason)
+    );
 
   return (
     <Card className="h-full border shadow-sm">
@@ -93,7 +99,11 @@ export default function InvoiceSigningSummary({
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[620px] text-left text-sm">
+          <table
+            className={`w-full text-left text-sm ${
+              shouldShowVatDetails ? 'min-w-[620px]' : 'min-w-[540px]'
+            }`}
+          >
             <thead className="border-default-200 border-y">
               <tr className="text-muted">
                 <th className="px-2 py-3 font-medium">{t('description')}</th>
@@ -104,7 +114,11 @@ export default function InvoiceSigningSummary({
                 <th className="px-2 py-3 text-right font-medium">
                   {t('amount')}
                 </th>
-                <th className="px-2 py-3 text-right font-medium">{t('vat')}</th>
+                {shouldShowVatDetails && (
+                  <th className="px-2 py-3 text-right font-medium">
+                    {t('vat')}
+                  </th>
+                )}
                 <th className="px-2 py-3 text-right font-medium">
                   {t('line_total')}
                 </th>
@@ -129,9 +143,11 @@ export default function InvoiceSigningSummary({
                       {currencySymbol}
                       {Number(service.amount).toFixed(2)}
                     </td>
-                    <td className="px-2 py-3 text-right">
-                      {Number(service.vatRate ?? 0)}%
-                    </td>
+                    {shouldShowVatDetails && (
+                      <td className="px-2 py-3 text-right">
+                        {Number(service.vatRate ?? 0)}%
+                      </td>
+                    )}
                     <td className="px-2 py-3 text-right font-medium">
                       {currencySymbol}
                       {lineTotal.toFixed(2)}
@@ -150,7 +166,7 @@ export default function InvoiceSigningSummary({
               {currencySymbol}
               {subtotalAmount}
             </p>
-            {Number(vatAmount) > 0 && (
+            {shouldShowVatDetails && (
               <>
                 <p className="text-muted">{t('vat_total')}</p>
                 <p className="text-right">

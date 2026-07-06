@@ -1,1 +1,1 @@
-export type Currency = 'eur' | 'usd';
+export type { Currency } from '@invoicetrackr/types';

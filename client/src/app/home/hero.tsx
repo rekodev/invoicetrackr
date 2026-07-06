@@ -13,7 +13,7 @@ export default function Hero() {
   return (
     <section className="mx-auto max-w-7xl px-6 pb-20 pt-20 text-center md:pb-24 md:pt-28">
       <Link
-        href="#pricing"
+        href="#features"
         className={buttonVariants({
           variant: 'outline',
           size: 'sm',

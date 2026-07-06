@@ -54,10 +54,10 @@ const InvoiceSignedNotificationEmail = ({
 };
 
 InvoiceSignedNotificationEmail.PreviewProps = {
-  subject: 'Invoice INV-001 was signed',
-  message: 'Acme Studio signed invoice INV-001.',
-  reviewMessage: 'You can review the signed invoice here:',
-  buttonText: 'View signed invoice',
+  subject: 'Invoice INV-001 was acknowledged',
+  message: 'Acme Studio acknowledged invoice INV-001.',
+  reviewMessage: 'You can review the acknowledged invoice here:',
+  buttonText: 'View acknowledged invoice',
   invoiceUrl: `${emailAppUrl}/invoices/public/example-token`,
   footer: 'This email was sent by InvoiceTrackr',
   copyright: '© 2026 InvoiceTrackr. All rights reserved.'

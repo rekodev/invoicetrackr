@@ -1,11 +1,13 @@
+import {
+  DEFAULT_CURRENCY,
+  type User as InvoiceTrackrUser
+} from '@invoicetrackr/types';
 import Google, { type GoogleProfile } from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
-import type { User as InvoiceTrackrUser } from '@invoicetrackr/types';
 import NextAuth from 'next-auth';
 import type { User } from 'next-auth';
 import { z } from 'zod';
 
-import { Currency } from './lib/types/currency';
 import { authConfig } from './auth.config';
 import { isResponseError } from './lib/utils/error';
 import { loginUser } from './api/user';
@@ -25,7 +27,7 @@ const mapUserToSessionUser = (user: InvoiceTrackrUser): User => {
     defaultInvoiceVatMode: user.defaultInvoiceVatMode,
     defaultInvoiceSeries: user.defaultInvoiceSeries,
     defaultPaymentTermsDays: user.defaultPaymentTermsDays,
-    currency: user.currency as Currency,
+    currency: DEFAULT_CURRENCY,
     type: user.type,
     businessType: user.businessType,
     businessNumber: user.businessNumber,

@@ -6,14 +6,12 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Chip,
   Separator
 } from '@heroui/react';
 import {
   BanknotesIcon,
   CheckCircleIcon,
-  PencilSquareIcon,
-  ShieldCheckIcon
+  PencilSquareIcon
 } from '@heroicons/react/24/outline';
 import type { InvoiceBody, PublicInvoicePayment } from '@invoicetrackr/types';
 import { type JSX, useMemo } from 'react';
@@ -224,17 +222,6 @@ export default function InvoiceSigningPanel({
                     >
                       <PencilSquareIcon className="h-5 w-5" />
                       {t('draw_signature')}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      isDisabled
-                      className="h-auto justify-between px-3 py-3"
-                    >
-                      <ShieldCheckIcon className="h-5 w-5" />
-                      {t('electronic_signature')}
-                      <Chip size="sm" variant="soft">
-                        {t('coming_soon')}
-                      </Chip>
                     </Button>
                   </div>
                 </div>

@@ -40,20 +40,20 @@ export default {
       attachmentTitle: 'Invoice Attached',
       attachmentMessage:
         'The complete invoice document is attached to this email as a PDF file.',
-      signingTitle: 'Review and sign invoice',
+      signingTitle: 'Review and acknowledge invoice',
       signingMessage:
-        'Open the secure invoice link to review the document, add your signature, and download the signed PDF.',
-      signingButton: 'Review and sign',
+        'Open the invoice link to review the document, add a drawn acknowledgement, and download the PDF.',
+      signingButton: 'Review and acknowledge',
       publicInvoiceTitle: 'View invoice',
       publicInvoiceMessage:
         'Open the secure invoice page to review the PDF and bank-transfer payment details.',
       publicInvoiceButton: 'View invoice',
       signedNotification: {
         recipient: 'The recipient',
-        subject: 'Invoice %{invoiceId} was signed',
-        message: '%{receiverName} signed invoice %{invoiceId}.',
-        review: 'You can review the signed invoice here:',
-        reviewButton: 'View signed invoice'
+        subject: 'Invoice %{invoiceId} was acknowledged',
+        message: '%{receiverName} acknowledged invoice %{invoiceId}.',
+        review: 'You can review the acknowledged invoice here:',
+        reviewButton: 'View acknowledged invoice'
       },
       footer: 'This email was sent by InvoiceTrackr',
       copyright: 'InvoiceTrackr. All rights reserved.'
@@ -189,9 +189,9 @@ export default {
       deleted: 'Invoice deleted successfully',
       statusUpdated: 'Invoice status updated successfully',
       emailSent: 'Email sent successfully',
-      signed: 'Invoice signed successfully',
-      signingLinkRevoked: 'Signing link revoked',
-      signingLinkRegenerated: 'Fresh signing link generated',
+      signed: 'Invoice acknowledgement recorded successfully',
+      signingLinkRevoked: 'Acknowledgement link revoked',
+      signingLinkRegenerated: 'Fresh acknowledgement link generated',
       publicLinkRevoked: 'Public invoice link revoked',
       publicLinkRegenerated: 'Fresh public invoice link generated'
     },
@@ -251,9 +251,10 @@ export default {
       unableToRetrieveData: 'Unable to retrieve invoice data',
       unableToSendEmail: 'Unable to send email',
       unableToCreatePublicLink: 'Unable to create public invoice link',
-      unableToCreateSigningLink: 'Unable to create invoice signing link',
+      unableToCreateSigningLink:
+        'Unable to create invoice acknowledgement link',
       unableToRegenerateSigningLink:
-        'Unable to regenerate invoice signing link',
+        'Unable to regenerate invoice acknowledgement link',
       signingLinkExpired:
         'This invoice link has expired. Ask the sender for a fresh link.',
       signingLinkRevoked:
@@ -264,7 +265,7 @@ export default {
         'This invoice link has been revoked. Ask the sender for a fresh link.',
       publicLinkRequiresIssued:
         'Public invoice link controls are available after the invoice is issued.',
-      alreadySigned: 'Invoice is already signed',
+      alreadySigned: 'Invoice is already acknowledged',
       voidedImmutable:
         'Voided invoices cannot be changed from the status dropdown.',
       issuedImmutable:
