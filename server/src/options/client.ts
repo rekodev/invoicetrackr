@@ -16,9 +16,8 @@ import {
   updateClient
 } from '../controllers/client';
 import { authMiddleware } from '../middleware/auth';
-import { requirePaidEntitlement } from '../middleware/entitlement';
 
-const paidAccess = [authMiddleware, requirePaidEntitlement];
+const authenticatedAccess = [authMiddleware];
 
 export const getClientsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -26,7 +25,7 @@ export const getClientsOptions: RouteShorthandOptionsWithHandler = {
       200: getClientsResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: getClients
 };
 
@@ -36,7 +35,7 @@ export const getClientOptions: RouteShorthandOptionsWithHandler = {
       200: getClientResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: getClient
 };
 
@@ -47,7 +46,7 @@ export const postClientOptions: RouteShorthandOptionsWithHandler = {
       201: postClientResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: postClient
 };
 
@@ -58,7 +57,7 @@ export const updateClientOptions: RouteShorthandOptionsWithHandler = {
       200: updateClientResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: updateClient
 };
 
@@ -68,6 +67,6 @@ export const deleteClientOptions: RouteShorthandOptionsWithHandler = {
       200: messageResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: deleteClient
 };

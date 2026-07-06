@@ -139,7 +139,7 @@ InvoiceEmail.PreviewProps = {
     signingButton: 'Review and sign',
     publicInvoiceTitle: 'View invoice',
     publicInvoiceMessage:
-      'Open the secure invoice page to review the PDF, see payment details, and pay online if the sender accepts card payments.',
+      'Open the secure invoice page to review the PDF and bank-transfer payment details.',
     publicInvoiceButton: 'View invoice',
     footer: 'This email was sent by InvoiceTrackr',
     copyright: 'InvoiceTrackr. All rights reserved.'

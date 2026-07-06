@@ -2,21 +2,11 @@
 
 import { useTranslations } from 'next-intl';
 
-import {
-  SUBSCRIPTION_AMOUNT,
-  SUBSCRIPTION_ANNUAL_AMOUNT,
-  formatSubscriptionPrice
-} from '@/lib/constants/subscription';
-
 const LAST_UPDATED = '06/27/2026';
 const CONTACT_EMAIL = 'support@invoicetrackr.app';
 
 export default function TermsOfServicePageContent() {
   const t = useTranslations('terms_of_service');
-  const priceValues = {
-    monthlyPrice: formatSubscriptionPrice(SUBSCRIPTION_AMOUNT),
-    annualPrice: formatSubscriptionPrice(SUBSCRIPTION_ANNUAL_AMOUNT)
-  };
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-8">
@@ -47,12 +37,9 @@ export default function TermsOfServicePageContent() {
             <li>{t('sections.description.items.tracking')}</li>
             <li>{t('sections.description.items.clients')}</li>
             <li>{t('sections.description.items.dashboard')}</li>
-            <li>{t('sections.description.items.contracts')}</li>
             <li>{t('sections.description.items.pdf')}</li>
             <li>{t('sections.description.items.email')}</li>
-            <li>{t('sections.description.items.multi')}</li>
             <li>{t('sections.description.items.banking')}</li>
-            <li>{t('sections.description.items.signature')}</li>
           </ul>
         </section>
 
@@ -88,40 +75,6 @@ export default function TermsOfServicePageContent() {
           </h3>
           <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
             {t('sections.account_registration.eligibility.content')}
-          </p>
-        </section>
-
-        <section>
-          <h2 className="mb-4 text-2xl font-semibold">
-            {t('sections.subscription.heading')}
-          </h2>
-
-          <h3 className="mb-3 text-xl font-medium">
-            {t('sections.subscription.free.heading')}
-          </h3>
-          <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
-            {t('sections.subscription.free.content')}
-          </p>
-
-          <h3 className="mb-3 text-xl font-medium">
-            {t('sections.subscription.premium.heading')}
-          </h3>
-          <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
-            {t('sections.subscription.premium.content', priceValues)}
-          </p>
-
-          <h3 className="mb-3 text-xl font-medium">
-            {t('sections.subscription.payment.heading')}
-          </h3>
-          <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
-            {t('sections.subscription.payment.content')}
-          </p>
-
-          <h3 className="mb-3 text-xl font-medium">
-            {t('sections.subscription.cancellation.heading')}
-          </h3>
-          <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
-            {t('sections.subscription.cancellation.content')}
           </p>
         </section>
 
@@ -207,9 +160,6 @@ export default function TermsOfServicePageContent() {
             {t('sections.third_party.intro')}
           </p>
           <ul className="mb-4 ml-6 list-disc space-y-2 text-gray-700 dark:text-gray-300">
-            <li>
-              <strong>Stripe:</strong> {t('sections.third_party.stripe')}
-            </li>
             <li>
               <strong>Cloudinary:</strong>{' '}
               {t('sections.third_party.cloudinary')}

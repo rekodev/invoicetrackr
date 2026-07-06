@@ -9,20 +9,11 @@ import {
   InsertUser,
   SelectUser,
   passwordResetTokensTable,
-  stripeAccountsTable,
   usersTable
 } from './schema';
 import { db } from './db';
 
-export const getUserFromDb = async (
-  id: number
-): Promise<
-  | (Omit<SelectUser, 'password'> & {
-      stripeCustomerId: string | null;
-      stripeSubscriptionId: string | null;
-    })
-  | undefined
-> => {
+export const getUserFromDb = async (id: number) => {
   const users = await db
     .select({
       id: usersTable.id,
@@ -46,39 +37,17 @@ export const getUserFromDb = async (
       defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
       defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
       defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
-      stripeCustomerId: stripeAccountsTable.stripeCustomerId,
-      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
-      subscriptionStatus: usersTable.subscriptionStatus,
       onboardingCompletedAt: usersTable.onboardingCompletedAt,
-      trialStartedAt: usersTable.trialStartedAt,
-      trialEndsAt: usersTable.trialEndsAt,
-      subscriptionGraceEndsAt: usersTable.subscriptionGraceEndsAt,
-      subscriptionCurrentPeriodEndsAt:
-        usersTable.subscriptionCurrentPeriodEndsAt,
-      subscriptionCancelAt: usersTable.subscriptionCancelAt,
-      paymentSuccessPending: usersTable.paymentSuccessPending,
       analyticsConsentStatus: usersTable.analyticsConsentStatus,
       analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
     })
     .from(usersTable)
-    .leftJoin(
-      stripeAccountsTable,
-      eq(stripeAccountsTable.userId, usersTable.id)
-    )
     .where(eq(usersTable.id, id));
 
   return users.at(0);
 };
 
-export const getUserByEmailFromDb = async (
-  email: string
-): Promise<
-  | (SelectUser & {
-      stripeCustomerId: string | null;
-      stripeSubscriptionId: string | null;
-    })
-  | undefined
-> => {
+export const getUserByEmailFromDb = async (email: string) => {
   const users = await db
     .select({
       id: usersTable.id,
@@ -103,25 +72,11 @@ export const getUserByEmailFromDb = async (
       defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
       defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       password: usersTable.password,
-      stripeCustomerId: stripeAccountsTable.stripeCustomerId,
-      stripeSubscriptionId: stripeAccountsTable.stripeSubscriptionId,
-      subscriptionStatus: usersTable.subscriptionStatus,
       onboardingCompletedAt: usersTable.onboardingCompletedAt,
-      trialStartedAt: usersTable.trialStartedAt,
-      trialEndsAt: usersTable.trialEndsAt,
-      subscriptionGraceEndsAt: usersTable.subscriptionGraceEndsAt,
-      subscriptionCurrentPeriodEndsAt:
-        usersTable.subscriptionCurrentPeriodEndsAt,
-      subscriptionCancelAt: usersTable.subscriptionCancelAt,
-      paymentSuccessPending: usersTable.paymentSuccessPending,
       analyticsConsentStatus: usersTable.analyticsConsentStatus,
       analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
     })
     .from(usersTable)
-    .leftJoin(
-      stripeAccountsTable,
-      eq(stripeAccountsTable.userId, usersTable.id)
-    )
     .where(eq(usersTable.email, email));
 
   return users.at(0);
@@ -175,16 +130,9 @@ export type UserUpdateResult = Omit<
   SelectUser,
   | 'createdAt'
   | 'updatedAt'
-  | 'stripeCustomerId'
-  | 'stripeSubscriptionId'
   | 'selectedBankAccountId'
   | 'password'
   | 'onboardingCompletedAt'
-  | 'trialStartedAt'
-  | 'trialEndsAt'
-  | 'subscriptionGraceEndsAt'
-  | 'subscriptionCurrentPeriodEndsAt'
-  | 'subscriptionCancelAt'
 >;
 
 export const updateUserInDb = async (
@@ -300,7 +248,6 @@ export const updateUserProfilePictureInDb = async (
       defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
       defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       currency: usersTable.currency,
-      subscriptionStatus: usersTable.subscriptionStatus,
       analyticsConsentStatus: usersTable.analyticsConsentStatus,
       analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
     });
@@ -354,7 +301,6 @@ export const updateUserAccountSettingsInDb = async (
       defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
       defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
       currency: usersTable.currency,
-      subscriptionStatus: usersTable.subscriptionStatus,
       analyticsConsentStatus: usersTable.analyticsConsentStatus,
       analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
     });

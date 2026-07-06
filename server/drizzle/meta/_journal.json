@@ -218,6 +218,20 @@
       "when": 1783198800000,
       "tag": "0031_rek_56_invoice_defaults",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1783296000000,
+      "tag": "0032_remove_stripe_payment_surface",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1783299600000,
+      "tag": "0033_remove_invoice_corrections",
+      "breakpoints": true
     }
   ]
 }

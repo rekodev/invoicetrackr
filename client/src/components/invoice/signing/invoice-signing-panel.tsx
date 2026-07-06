@@ -10,8 +10,8 @@ import {
   Separator
 } from '@heroui/react';
 import {
+  BanknotesIcon,
   CheckCircleIcon,
-  CreditCardIcon,
   PencilSquareIcon,
   ShieldCheckIcon
 } from '@heroicons/react/24/outline';
@@ -42,12 +42,9 @@ type Props = {
   currency: Currency;
   invoice: InvoiceBody;
   isPaid: boolean;
-  isPaymentCancelled: boolean;
-  isPaymentPending: boolean;
   isPending: boolean;
   isSigningRequested: boolean;
   isSigned: boolean;
-  onPay: () => void;
   onSign: () => void;
   onSignatureChange: (_signature: File | string) => void;
   payment: PublicInvoicePayment;
@@ -59,12 +56,9 @@ export default function InvoiceSigningPanel({
   currency,
   invoice,
   isPaid,
-  isPaymentCancelled,
-  isPaymentPending,
   isPending,
   isSigningRequested,
   isSigned,
-  onPay,
   onSign,
   onSignatureChange,
   payment,
@@ -111,12 +105,6 @@ export default function InvoiceSigningPanel({
     return null;
   }, [t, isVoided, isCanceled, isPaid, isSigned]);
 
-  const paymentIssueMessage = isPaymentCancelled
-    ? t('payment_cancelled')
-    : payment.failedAt
-      ? t('payment_failed')
-      : null;
-
   return (
     <Card className="h-full border shadow-sm">
       <CardHeader className="flex flex-col items-start gap-1 px-5 py-4 sm:px-6">
@@ -157,7 +145,7 @@ export default function InvoiceSigningPanel({
                 {isPaid ? (
                   <CheckCircleIcon className="h-5 w-5" />
                 ) : (
-                  <CreditCardIcon className="h-5 w-5" />
+                  <BanknotesIcon className="h-5 w-5" />
                 )}
               </IconContainer>
               <div className="min-w-0">
@@ -169,28 +157,10 @@ export default function InvoiceSigningPanel({
                 <p className="text-muted mt-1 text-sm leading-5">
                   {isPaid
                     ? t('payment_action_paid_subtitle')
-                    : payment.resolvedMode === 'online'
-                      ? t('payment_action_online')
-                      : t('payment_action_bank')}
+                    : t('payment_action_bank')}
                 </p>
               </div>
             </div>
-
-            {paymentIssueMessage && !isPaid && (
-              <p className="text-danger text-sm leading-5">
-                {paymentIssueMessage}
-              </p>
-            )}
-
-            {payment.resolvedMode === 'online' && !isPaid && (
-              <Button
-                className="w-full"
-                isPending={isPaymentPending}
-                onPress={onPay}
-              >
-                {t('pay_invoice')}
-              </Button>
-            )}
 
             {payment.resolvedMode === 'manual' && !isPaid && (
               <div className="bg-default-100 grid gap-x-4 gap-y-1 rounded-lg p-4 text-sm sm:grid-cols-[auto_1fr]">

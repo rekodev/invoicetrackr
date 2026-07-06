@@ -169,10 +169,6 @@ export default function PrivacyPolicyPageContent() {
           </p>
           <ul className="mb-4 ml-6 list-disc space-y-2 text-gray-700 dark:text-gray-300">
             <li>
-              <strong>Stripe:</strong>{' '}
-              {t('sections.how_we_share.service_providers.items.stripe')}
-            </li>
-            <li>
               <strong>Cloudinary:</strong>{' '}
               {t('sections.how_we_share.service_providers.items.cloudinary')}
             </li>

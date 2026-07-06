@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as clientDb from '../../database/client';
 import * as invoiceController from '../invoice';
 import * as invoiceDb from '../../database/invoice';
-import * as paymentDb from '../../database/payment';
 import * as userDb from '../../database/user';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import {
@@ -17,7 +16,6 @@ import lt from '../../locales/lt';
 import { userFactory } from '../../test/factories/user';
 
 vi.mock('../../database/invoice');
-vi.mock('../../database/payment');
 vi.mock('../../database/client');
 vi.mock('../../database/user');
 vi.mock('cloudinary');
@@ -382,41 +380,6 @@ describe('Invoice Controller', () => {
       await app.close();
     });
 
-    it('should reject status updates for invoices paid through Stripe', async () => {
-      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
-        invoiceFromDbFactory.build({
-          id: mockInvoice.id,
-          status: 'paid',
-          paymentProvider: 'stripe_connect',
-          paymentCompletedAt: new Date().toISOString()
-        })
-      );
-
-      const { updateInvoiceStatus } = invoiceController;
-
-      const app = await createTestApp((fastifyApp) => {
-        fastifyApp.put(
-          '/api/:userId/invoices/:id/status',
-          {
-            preHandler: mockAuthMiddleware
-          },
-          updateInvoiceStatus
-        );
-      });
-
-      const response = await app.inject({
-        method: 'PUT',
-        url: `/api/${testUserId}/invoices/${mockInvoice.id}/status`,
-        payload: {
-          status: 'pending'
-        }
-      });
-
-      expect(response.statusCode).toBe(400);
-      expect(invoiceDb.updateInvoiceStatusInDb).not.toHaveBeenCalled();
-
-      await app.close();
-    });
   });
 
   describe('DELETE /api/:userId/invoices/:id', () => {
@@ -687,7 +650,7 @@ describe('Invoice Controller', () => {
       await app.close();
     });
 
-    it('returns public invoice with bank-transfer fallback when Connect is not ready', async () => {
+    it('returns public invoice with bank-transfer payment details', async () => {
       const invoice = invoiceFromDbFactory.build({
         publicInvoiceToken: 'public-token',
         publicInvoiceExpiresAt: new Date(Date.now() + 1000).toISOString(),
@@ -701,18 +664,6 @@ describe('Invoice Controller', () => {
         currency: 'EUR',
         language: 'en',
         preferredInvoiceLanguage: null
-      });
-      vi.mocked(paymentDb.getStripeMerchantAccountFromDb).mockResolvedValue(
-        undefined
-      );
-      vi.mocked(paymentDb.toMerchantPaymentStatus).mockReturnValue({
-        provider: 'stripe_connect',
-        connectedAccountId: null,
-        chargesEnabled: false,
-        payoutsEnabled: false,
-        detailsSubmitted: false,
-        onboardingCompletedAt: null,
-        ready: false
       });
 
       const app = await createTestApp((fastifyApp) => {
@@ -730,7 +681,7 @@ describe('Invoice Controller', () => {
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.publicInvoice.payment.available).toBe(false);
-      expect(body.publicInvoice.payment.configuredMode).toBe('auto');
+      expect(body.publicInvoice.payment.configuredMode).toBe('manual');
       expect(body.publicInvoice.payment.resolvedMode).toBe('manual');
       expect(body.publicInvoice.payment.manualReference).toBe(
         invoice.invoiceId
@@ -751,18 +702,6 @@ describe('Invoice Controller', () => {
         currency: 'EUR',
         language: 'en',
         preferredInvoiceLanguage: null
-      });
-      vi.mocked(paymentDb.getStripeMerchantAccountFromDb).mockResolvedValue(
-        undefined
-      );
-      vi.mocked(paymentDb.toMerchantPaymentStatus).mockReturnValue({
-        provider: 'stripe_connect',
-        connectedAccountId: null,
-        chargesEnabled: false,
-        payoutsEnabled: false,
-        detailsSubmitted: false,
-        onboardingCompletedAt: null,
-        ready: false
       });
 
       const app = await createTestApp((fastifyApp) => {
@@ -873,50 +812,4 @@ describe('Invoice Controller', () => {
     });
   });
 
-  describe('POST /api/invoices/public/:token/pay', () => {
-    it('rejects checkout creation when invoice resolves to manual payment', async () => {
-      vi.mocked(invoiceDb.getPublicInvoiceFromDb).mockResolvedValue({
-        invoice: invoiceFromDbFactory.build({
-          publicInvoiceToken: 'public-token',
-          publicInvoiceExpiresAt: new Date(Date.now() + 1000).toISOString(),
-          paymentMode: 'manual'
-        }),
-        userId: testUserId,
-        currency: 'EUR',
-        language: 'en',
-        preferredInvoiceLanguage: null
-      });
-      vi.mocked(paymentDb.getStripeMerchantAccountFromDb).mockResolvedValue(
-        undefined
-      );
-      vi.mocked(paymentDb.toMerchantPaymentStatus).mockReturnValue({
-        provider: 'stripe_connect',
-        connectedAccountId: 'acct_123',
-        chargesEnabled: true,
-        payoutsEnabled: true,
-        detailsSubmitted: true,
-        onboardingCompletedAt: new Date().toISOString(),
-        ready: true
-      });
-
-      const app = await createTestApp((fastifyApp) => {
-        fastifyApp.post(
-          '/api/invoices/public/:token/pay',
-          invoiceController.createPublicInvoicePayment
-        );
-      });
-
-      const response = await app.inject({
-        method: 'POST',
-        url: '/api/invoices/public/public-token/pay'
-      });
-
-      expect(response.statusCode).toBe(400);
-      expect(JSON.parse(response.body).message).toBe(
-        'The sender is not accepting online payments for this invoice.'
-      );
-
-      await app.close();
-    });
-  });
 });

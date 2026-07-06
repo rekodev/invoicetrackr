@@ -1,8 +1,5 @@
 import type {
   AddInvoiceResponse,
-  ConfirmPublicInvoicePaymentResponse,
-  CreateInvoiceCorrectionResponse,
-  CreatePublicInvoicePaymentResponse,
   DeleteInvoiceResponse,
   GetInvoiceResponse,
   GetInvoicesResponse,
@@ -22,7 +19,6 @@ import type {
   UpdateInvoiceStatusResponse
 } from '@invoicetrackr/types';
 import type { InvoiceBody } from '@invoicetrackr/types';
-import type { InvoiceCorrectionType } from '@invoicetrackr/types';
 
 import api from './api-instance';
 import { buildFormData } from '@/lib/utils/multipart';
@@ -35,23 +31,6 @@ export const getPublicInvoiceSigning = async (token: string) =>
 
 export const getPublicInvoice = async (token: string) =>
   await api.get<GetPublicInvoiceResponse>(`/api/invoices/public/${token}`);
-
-export const createPublicInvoicePayment = async (token: string) =>
-  await api.post<CreatePublicInvoicePaymentResponse>(
-    `/api/invoices/public/${token}/pay`
-  );
-
-export const confirmPublicInvoicePayment = async ({
-  token,
-  sessionId
-}: {
-  token: string;
-  sessionId: string;
-}) =>
-  await api.post<ConfirmPublicInvoicePaymentResponse>(
-    `/api/invoices/public/${token}/pay/confirm`,
-    { sessionId }
-  );
 
 export const getInvoices = async (userId: number) =>
   await api.get<GetInvoicesResponse>(`/api/${userId}/invoices`);
@@ -144,22 +123,6 @@ export const updateInvoiceStatus = async ({
   api.put<UpdateInvoiceStatusResponse>(
     `/api/${userId}/invoices/${invoiceId}/status`,
     { status: newStatus }
-  );
-
-export const createInvoiceCorrection = async ({
-  userId,
-  invoiceId,
-  type,
-  reason
-}: {
-  userId: number;
-  invoiceId: number;
-  type: InvoiceCorrectionType;
-  reason?: string;
-}) =>
-  await api.post<CreateInvoiceCorrectionResponse>(
-    `/api/${userId}/invoices/${invoiceId}/corrections`,
-    { type, reason }
   );
 
 export const deleteInvoice = async (userId: number, invoiceId: number) =>

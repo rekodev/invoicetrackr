@@ -13,27 +13,14 @@ export const invoiceLifecycleStatusSchema = z.enum(
   }
 );
 
-export const invoiceDocumentTypeSchema = z.enum(
-  ['invoice', 'corrected_invoice', 'credit_note'],
-  {
-    message: 'validation.invoice.documentType'
-  }
-);
-
-export const invoiceCorrectionTypeSchema = z.enum([
-  'corrected_invoice',
-  'credit_note'
-]);
-
 export const invoicePaymentModeSchema = z.enum(
-  ['auto', 'online', 'manual', 'disabled'],
+  ['manual', 'disabled'],
   {
     message: 'validation.invoice.paymentMode'
   }
 );
 
 export const publicInvoiceResolvedPaymentModeSchema = z.enum([
-  'online',
   'manual',
   'disabled'
 ]);
@@ -134,12 +121,6 @@ export const invoiceBodySchema = z
     totalAmount: z.string({ message: 'validation.invoice.totalAmount' }),
     status: invoiceStatusSchema,
     lifecycleStatus: invoiceLifecycleStatusSchema.optional(),
-    documentType: invoiceDocumentTypeSchema.optional(),
-    originalInvoiceId: z.coerce.number().nullish(),
-    originalInvoiceNumber: z.string().nullish(),
-    correctedByInvoiceId: z.coerce.number().nullish(),
-    correctedByInvoiceNumber: z.string().nullish(),
-    correctionReason: z.string().trim().max(500).nullish(),
     issuedAt: z.string().nullish(),
     paidAt: z.string().nullish(),
     voidedAt: z.string().nullish(),
@@ -155,12 +136,7 @@ export const invoiceBodySchema = z
     publicInvoiceSentAt: z.string().nullish(),
     publicInvoiceExpiresAt: z.string().nullish(),
     publicInvoiceRevokedAt: z.string().nullish(),
-    paymentProvider: z.string().nullish(),
-    paymentCheckoutSessionId: z.string().nullish(),
-    paymentIntentId: z.string().nullish(),
-    paymentCompletedAt: z.string().nullish(),
-    paymentFailedAt: z.string().nullish(),
-    paymentMode: invoicePaymentModeSchema.default('auto'),
+    paymentMode: invoicePaymentModeSchema.default('manual'),
     manualPaymentReference: z.string().trim().max(255).nullish(),
     services: z
       .array(invoiceServiceBodySchema)
@@ -187,12 +163,8 @@ export const publicInvoiceSigningSchema = z.object({
 export const publicInvoicePaymentSchema = z.object({
   configuredMode: invoicePaymentModeSchema,
   resolvedMode: publicInvoiceResolvedPaymentModeSchema,
-  provider: z.literal('stripe_connect').nullish(),
+  provider: z.null(),
   available: z.boolean(),
-  checkoutSessionId: z.string().nullish(),
-  paymentIntentId: z.string().nullish(),
-  completedAt: z.string().nullish(),
-  failedAt: z.string().nullish(),
   manualReference: z.string().nullish()
 });
 
@@ -228,11 +200,6 @@ export const sendInvoiceEmailBodySchema = z.object({
   file: z.any().nullish()
 });
 
-export const createInvoiceCorrectionBodySchema = z.object({
-  type: invoiceCorrectionTypeSchema,
-  reason: z.string().trim().max(500).optional()
-});
-
 export const incomeJournalQuerySchema = z
   .object({
     from: z.iso.date(),
@@ -249,8 +216,6 @@ export type InvoiceNumberSeries = z.infer<typeof invoiceNumberSeriesSchema>;
 export type InvoiceLifecycleStatus = z.infer<
   typeof invoiceLifecycleStatusSchema
 >;
-export type InvoiceDocumentType = z.infer<typeof invoiceDocumentTypeSchema>;
-export type InvoiceCorrectionType = z.infer<typeof invoiceCorrectionTypeSchema>;
 export type InvoicePaymentMode = z.infer<typeof invoicePaymentModeSchema>;
 export type PublicInvoiceResolvedPaymentMode = z.infer<
   typeof publicInvoiceResolvedPaymentModeSchema
@@ -272,7 +237,4 @@ export type InvoiceBody = z.infer<typeof invoiceBodySchema>;
 export type PublicInvoiceSigning = z.infer<typeof publicInvoiceSigningSchema>;
 export type PublicInvoice = z.infer<typeof publicInvoiceSchema>;
 export type PublicInvoicePayment = z.infer<typeof publicInvoicePaymentSchema>;
-export type CreateInvoiceCorrectionBody = z.infer<
-  typeof createInvoiceCorrectionBodySchema
->;
 export type IncomeJournalQuery = z.infer<typeof incomeJournalQuerySchema>;

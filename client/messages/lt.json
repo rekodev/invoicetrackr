@@ -46,15 +46,11 @@
         "login": "Prisijungti",
         "new": "Naujas",
         "onboarding": "Įvedimas",
-        "payment_success": "Mokėjimas sėkmingas",
         "personal_information": "Asmeninė informacija",
         "privacy_policy": "Privatumo politika",
         "profile": "Profilis",
-        "renew_subscription": "Atnaujinti prenumeratą",
         "sign_up": "Registruotis",
-        "terms_of_service": "Paslaugų teikimo sąlygos",
-        "billing": "Atsiskaitymai",
-        "invoice_payments": "Sąskaitų apkmokėjimai"
+        "terms_of_service": "Paslaugų teikimo sąlygos"
     },
     "general_error": "Ajajai! Kažkas negerai...",
     "cookie_consent": {
@@ -81,85 +77,16 @@
         "description": "Susidūrėme su netikėta klaida. Pabandykite atnaujinti puslapį arba susisiekite su palaikymu, jei problema išlieka.",
         "try_again": "Bandyti dar kartą"
     },
-    "renew_subscription": {
-        "title": "Prenumerata neaktyvi",
-        "description": "Prenumeruokite dabar, kad naudotumėtės sklandžia sąskaitų išrašymo patirtimi."
-    },
-    "payment_success": {
-        "payment": {
-            "badge": "Prenumerata aktyvi",
-            "headline": "Jūs jau viduje.",
-            "headline_accent": "Pradėkite sąskaitas.",
-            "description": "Jūsų InvoiceTrackr prenumerata aktyvi ir suteikia pilną prieigą. Sukurkite tikrą sąskaitą faktūrą, pridėkite klientus ir tvarkykite atsiskaitymus be trinties.",
-            "summary": {
-                "title": "Premium planas",
-                "status": "Aktyvu",
-                "primary_label": "Prieiga",
-                "primary_value": "Pilna prieiga",
-                "secondary_label": "Planas",
-                "secondary_value": "Pro planas",
-                "link": "Tvarkyti prenumeratą"
-            }
-        },
-        "trial": {
-            "badge": "Bandymas aktyvus",
-            "headline": "Jūs jau viduje.",
-            "headline_accent": "Išnaudokite laiką.",
-            "description": "Jūsų 7 dienų Pro bandymas aktyvus su pilna prieiga ir be mokėjimo kortelės. Sukurkite tikrą sąskaitą, išsiųskite ją ir nuspręskite, ar InvoiceTrackr tinka jūsų darbo eigai.",
-            "summary": {
-                "title": "Pro bandymas",
-                "status": "1 diena / 7",
-                "primary_label": "Baigiasi",
-                "primary_value": "Po 7 dienų",
-                "secondary_label": "Po bandymo",
-                "secondary_value": "Pro planas",
-                "link": "Atnaujinti anksčiau ir užfiksuoti kainą"
-            }
-        },
-        "actions": {
-            "create_invoice": "Sukurti pirmą sąskaitą faktūrą",
-            "dashboard": "Eiti į skydelį"
-        },
-        "confirmation": {
-            "status_label": "Patvirtinimas"
-        },
-        "security": {
-            "title": "Mokėjimas apdorotas saugiai",
-            "description": "Stripe apdorojo mokėjimą, o jūsų InvoiceTrackr prieiga atnaujinta paskyroje."
-        },
-        "support": {
-            "title": "Reikia pagalbos?",
-            "description": "Jei kažkas atrodo netiksliai, patikrinkite paskyros nustatymus arba susisiekite su pagalba naudodami paskyros el. paštą."
-        },
-        "quick_start": {
-            "title": "Greita pradžia",
-            "subtitle": "3 verta išbandyti"
-        },
-        "quick_actions": {
-            "invoice": {
-                "title": "Sukurti pirmą sąskaitą faktūrą",
-                "description": "Sugeneruokite tvarkingą PDF greičiau nei per minutę."
-            },
-            "client": {
-                "title": "Pridėti klientą",
-                "description": "Išsaugokite duomenis vieną kartą ir naudokite kiekvienoje sąskaitoje."
-            },
-            "contract": {
-                "title": "Paruošti sutartį",
-                "description": "Pasiruoškite daugkartinius sutarties duomenis savo darbo eigai."
-            }
-        }
-    },
     "home": {
         "hero": {
             "badge_label": "Nauja",
-            "badge_text": "Stripe Connect mokėjimai jau veikia",
+            "badge_text": "Skirta individualiai veiklai",
             "title": "Sąskaitos klientams.",
-            "title_accent": "Apmokėjimas greičiau.",
-            "subtitle": "Išrašykite sąskaitas, valdykite klientus ir priimkite mokėjimus vienoje aiškioje darbo vietoje.",
+            "title_accent": "Aišku, kiek atsidėti.",
+            "subtitle": "Siaura finansų darbo vieta Lietuvos freelanceriams, dirbantiems pagal individualios veiklos pažymą: sąskaitos, klientai, bankinių pavedimų sekimas ir pajamų žurnalo eksportas.",
             "cta_primary": "Sukurti nemokamą sąskaitą",
-            "cta_secondary": "Pradėti Premium",
-            "note": "Sugeneruokite sąskaitą be registracijos · 7 dienų Premium bandomasis laikotarpis"
+            "cta_secondary": "Sukurti paskyrą",
+            "note": "Lietuvos individualiai veiklai · ne MB ar UAB apskaita"
         },
         "preview": {
             "sidebar": {
@@ -226,7 +153,7 @@
             "eyebrow": "Produktas",
             "title": "Nedidelis įrankių rinkinys",
             "title_accent": "kuris veikia kartu.",
-            "subtitle": "Suvestinė, sąskaitos, klientai ir mokėjimai veikia vienoje sąskaitų išrašymo eigoje nuo juodraščio iki apmokėjimo.",
+            "subtitle": "Sąskaitos, klientai, bankiniai pavedimai, priminimai ir eksportai sudėti į eigą, kuri tinka solo freelanceriui.",
             "items": {
                 "invoices": {
                     "eyebrow": "Sąskaitos",
@@ -239,7 +166,7 @@
                 },
                 "clients": {
                     "title": "Klientai tvarkingai vienoje vietoje.",
-                    "body": "Įmonės arba fizinio asmens duomenys, PVM kodai ir adresai paruošti naudoti kiekvienoje sąskaitoje."
+                    "body": "Kliento pavadinimas, adresas, el. paštas, mokėjimo terminas ir neprivalomi registracijos duomenys pakartotiniam naudojimui."
                 },
                 "contracts": {
                     "badge": "Netrukus",
@@ -313,13 +240,13 @@
             },
             "capabilities": {
                 "payments": {
-                    "badge": "Nauja",
-                    "title": "Stripe Connect mokėjimai.",
-                    "body": "Prijunkite savo Stripe paskyrą; sąskaitų nuorodos priima korteles ir automatiškai pažymi kaip apmokėtas."
+                    "badge": "MVP",
+                    "title": "Rankinis bankinių pavedimų sekimas.",
+                    "body": "Užregistruokite pilną ar dalinį apmokėjimą tada, kai pinigai realiai ateina į sąskaitą."
                 },
                 "links": {
-                    "title": "Pasirašymo ir apmokėjimo nuorodos.",
-                    "body": "Siųskite unikalią nuorodą. Klientas pasirašo, apmoka arba padaro abu veiksmus be paskyros."
+                    "title": "Sąskaitos nuorodos be kliento paskyros.",
+                    "body": "Pasidalinkite galutine sąskaita ir mokėjimo instrukcijomis neatskleisdami savo darbo vietos."
                 },
                 "email": {
                     "title": "Siuntimas el. paštu ir priminimai.",
@@ -327,18 +254,18 @@
                 },
                 "language": {
                     "title": "Anglų ir lietuvių kalba vienu paspaudimu.",
-                    "body": "Pakeiskite sąskaitos kalbą neperrašydami duomenų. Vėliau galima pridėti daugiau kalbų."
+                    "body": "Išrašykite lietuviškus ar angliškus dokumentus iš tų pačių kliento ir profilio duomenų."
                 },
                 "export": {
-                    "title": "Eksportas į CSV bet kada.",
-                    "body": "Jūsų duomenys priklauso jums. Atsisiųskite sąskaitų žurnalą į skaičiuoklę kada tik reikia."
+                    "title": "Pajamų žurnalo eksportai.",
+                    "body": "Atsisiųskite įrašus, kurių reikia pajamų žurnalui ar perdavimui buhalteriui."
                 }
             }
         },
         "pricing": {
-            "eyebrow": "Kainodara",
-            "title": "Aišku ir paprasta.",
-            "subtitle": "Pradėkite nemokamai. Pereikite prie Premium, kai reikia daugiau.",
+            "eyebrow": "MVP prieiga",
+            "title": "Pirma fokusas, tada kaina.",
+            "subtitle": "Nemokamas generatorius veikia dabar. Prisijungusi MVP dalis formuojama Lietuvos freelanceriams prieš užrakinant galutinę kainodarą.",
             "free": {
                 "title": "Nemokamas generatorius",
                 "tagline": "Sukurkite vienkartinę sąskaitą ir atsisiųskite PDF. Be paskyros.",
@@ -351,19 +278,20 @@
                 "cta": "Sugeneruoti sąskaitą"
             },
             "premium": {
-                "badge": "Rekomenduojama",
-                "title": "Premium",
-                "tagline": "Pilna programa: išsaugokite, siųskite, sekite ir gaukite apmokėjimą.",
+                "badge": "MVP",
+                "title": "Freelancerio darbo vieta",
+                "tagline": "Privati eiga išsaugotoms sąskaitoms, klientams, mokėjimams, išlaidoms ir metiniam pasiruošimui.",
+                "price": "MVP",
                 "suffix": "/metus",
-                "alt": "arba {monthlyPrice} / mėn.",
+                "alt": "Galutinė kaina bus sprendžiama patvirtinus fokusuotą MVP.",
                 "features": {
                     "saved": "Neribotos išsaugotos sąskaitos ir klientai",
                     "email": "Siuntimas el. paštu ir priminimai",
-                    "links": "Pasirašymo ir apmokėjimo nuorodos klientams",
-                    "payments": "Stripe Connect mokėjimai",
-                    "export": "CSV sąskaitų žurnalo eksportas"
+                    "links": "Galutinių sąskaitų nuorodos klientams",
+                    "payments": "Rankinis bankinių pavedimų sekimas",
+                    "export": "Pajamų žurnalo ir buhalterio eksportai"
                 },
-                "cta": "Pradėti 7 dienų bandymą"
+                "cta": "Sukurti paskyrą"
             }
         },
         "faq": {
@@ -372,7 +300,7 @@
             "items": {
                 "free": {
                     "question": "Ar yra nemokamas planas?",
-                    "answer": "Galite nemokamai sugeneruoti sąskaitą ir atsisiųsti PDF be paskyros. Išsaugojimas, siuntimas, priminimai, apmokėjimo nuorodos ir visa programa yra Premium plane."
+                    "answer": "Galite nemokamai sugeneruoti sąskaitą ir atsisiųsti PDF be paskyros. Prisijungusi programos dalis skirta išsaugotai freelancerio eigai: klientams, sąskaitoms, priminimams, mokėjimams, išlaidoms ir eksportams."
                 },
                 "export": {
                     "question": "Ar galiu eksportuoti duomenis?",
@@ -380,7 +308,7 @@
                 },
                 "payments": {
                     "question": "Kaip veikia mokėjimai?",
-                    "answer": "Prijunkite savo Stripe paskyrą ir sąskaitų nuorodos galės priimti kortelių mokėjimus. Apmokėtas sąskaitas galima žymėti automatiškai arba rankiniu būdu."
+                    "answer": "MVP daro prielaidą, kad klientai moka bankiniu pavedimu. Pilnus ar dalinius apmokėjimus įvedate rankiniu būdu, o sąskaitos būsena atsinaujina pagal tuos įrašus."
                 },
                 "languages": {
                     "question": "Kokios kalbos palaikomos?",
@@ -391,13 +319,13 @@
         "cta": {
             "badge": "Nemokamas sąskaitos generatorius · be registracijos",
             "title": "Pasiruošę išsiųsti geresnę sąskaitą?",
-            "subtitle": "Sugeneruokite vieną nemokamai arba pradėkite Premium bandymą, kad galėtumėte išsaugoti, siųsti ir gauti apmokėjimą.",
-            "primary": "Pradėti 7 dienų bandymą",
+            "subtitle": "Sugeneruokite vieną nemokamai arba susikurkite paskyrą individualios veiklos eigai.",
+            "primary": "Sukurti paskyrą",
             "secondary": "Sugeneruoti nemokamą sąskaitą"
         }
     },
     "footer": {
-        "tagline": "Paprastas, galingas sąskaitų išrašymas laisviems samdomiems ir mažam verslui.",
+        "tagline": "Sąskaitos ir finansų sekimas Lietuvos individualios veiklos freelanceriams.",
         "support": "Pagalba",
         "legal": "Teisiniai",
         "privacy_policy": "Privatumo Politika",
@@ -406,23 +334,22 @@
     },
     "seo": {
         "home": {
-            "title": "Sąskaitų faktūrų programa Lietuvai",
-            "description": "InvoiceTrackr padeda kurti sąskaitas faktūras, valdyti klientus, priimti mokėjimus ir eksportuoti pajamų žurnalą Lietuvos freelanceriams ir mažam verslui.",
+            "title": "Sąskaitų faktūrų programa Lietuvos freelanceriams",
+            "description": "Kurkite sąskaitas, valdykite klientus, registruokite bankinius pavedimus, sekite išlaidas ir ruoškite pajamų žurnalo eksportus individualiai veiklai.",
             "keywords": [
                 "sąskaitų faktūrų programa",
-                "sąskaita faktūra",
-                "PVM sąskaita faktūra",
+                "individualios veiklos sąskaita",
                 "sąskaitų išrašymas",
                 "pajamų žurnalas",
-                "freelanceriai Lietuvoje",
-                "mažas verslas Lietuvoje"
+                "individuali veikla mokesčiai",
+                "freelanceriai Lietuvoje"
             ],
             "features": [
                 "Sąskaitų faktūrų kūrimas",
                 "Klientų valdymas",
-                "Stripe Connect mokėjimai",
+                "Rankinis apmokėjimų sekimas",
                 "Sąskaitų siuntimas el. paštu",
-                "CSV pajamų žurnalo eksportas"
+                "Pajamų žurnalo eksportas"
             ]
         },
         "createInvoice": {
@@ -449,12 +376,12 @@
         },
         "terms": {
             "title": "Naudojimosi sąlygos",
-            "description": "InvoiceTrackr naudojimosi sąlygos paskyroms, sąskaitų kūrimui, prenumeratai, mokėjimams ir atsakomybei.",
+            "description": "InvoiceTrackr naudojimosi sąlygos paskyrai, sąskaitų kūrimui, MVP prieigai, apmokėjimų įrašams ir atsakomybei.",
             "keywords": [
                 "InvoiceTrackr naudojimosi sąlygos",
                 "sąlygos",
-                "prenumerata",
-                "mokėjimai",
+                "MVP prieiga",
+                "sąskaitų įrašai",
                 "paskyros naudojimas"
             ]
         }
@@ -510,13 +437,8 @@
                 },
                 "personal": {
                     "short_name": "Profilis",
-                    "name": "Asmeninė informacija",
-                    "description": "Papasakokite apie save"
-                },
-                "trial": {
-                    "short_name": "Bandymas",
-                    "name": "Pradėti nemokamą bandymą",
-                    "description": "Naudokitės visomis funkcijomis 7 dienas"
+                    "name": "Freelancerio profilis",
+                    "description": "Įveskite duomenis, reikalingus individualios veiklos sąskaitoms"
                 }
             },
             "actions": {
@@ -653,12 +575,10 @@
                 "tooltip_view": "Išsami informacija",
                 "tooltip_edit": "Redaguoti sąskaitą faktūrą",
                 "tooltip_delete": "Ištrinti sąskaitą faktūrą",
-                "tooltip_create_correction": "Sukurti tikslinimo juodraštį",
-                "tooltip_create_credit_note": "Sukurti kreditinės sąskaitos juodraštį",
                 "tooltip_download": "Atsisiųsti",
                 "mark_as_paid": "Pažymėti kaip sumokėtą",
                 "mark_as_pending": "Pažymėti kaip laukiamą",
-                "status_locked": "Būsena užrakinta, nes sąskaita apmokėta internetu.",
+                "status_locked": "Šios sąskaitos būsenos keisti negalima.",
                 "public_link_copied": "Vieša sąskaitos nuoroda nukopijuota.",
                 "past_due": "{days}d vėluoja"
             }
@@ -666,11 +586,6 @@
         "pdf": {
             "individualTitle": "SĄSKAITA FAKTŪRA",
             "businessTitle": "PVM SĄSKAITA FAKTŪRA",
-            "correctedInvoiceTitle": "TIKSLINAMOJI SĄSKAITA FAKTŪRA",
-            "creditNoteTitle": "KREDITINĖ SĄSKAITA FAKTŪRA",
-            "original_invoice_label": "Tikslinama sąskaita:",
-            "corrected_by_invoice_label": "Patikslinta dokumentu:",
-            "correction_reason_label": "Tikslinimo priežastis:",
             "series_label": "Sąskaitos serija",
             "invoice_number_label": "Nr.",
             "provider_label": "Tiekėjas:",
@@ -713,7 +628,7 @@
         "signed_status": "Pasirašyta",
         "loading_pdf": "Įkeliamas PDF...",
         "panel_title": "Užbaigti šią sąskaitą",
-        "panel_description": "Peržiūrėkite šalis, apmokėkite internetu, jei galima, ir pasirašykite, jei prašoma.",
+        "panel_description": "Peržiūrėkite šalis, bankinio pavedimo duomenis ir pasirašymo prašymą.",
         "receiver": "Gavėjas",
         "sender": "Siuntėjas",
         "summary_title": "Sąskaitos santrauka",
@@ -735,10 +650,7 @@
         "payment_action_title": "Apmokėti sąskaitą",
         "payment_action_paid_title": "Mokėjimas gautas",
         "payment_action_paid_subtitle": "Papildomai apmokėti šios sąskaitos nereikia.",
-        "payment_action_online": "Siuntėjas priima kortelių mokėjimus per Stripe.",
         "payment_action_bank": "Apmokėkite bankiniu pavedimu pagal žemiau pateiktus rekvizitus.",
-        "payment_failed": "Ankstesnis internetinis mokėjimas nebuvo užbaigtas. Galite bandyti dar kartą.",
-        "payment_cancelled": "Mokėjimas buvo atšauktas. Galite bandyti dar kartą arba naudoti siuntėjo pateiktus mokėjimo duomenis.",
         "voided_invoice_title": "Sąskaita anuliuota",
         "voided_invoice_description": "Siuntėjas anuliavo šią sąskaitą. Atsisiųskite ją tik savo įrašams.",
         "canceled_invoice_title": "Sąskaita atšaukta",
@@ -845,12 +757,6 @@
             },
             "banking_information": {
                 "title": "Bankinė informacija"
-            },
-            "billing": {
-                "title": "Atsiskaitymai"
-            },
-            "invoice_payments": {
-                "title": "Sąskaitų apmokėjimai"
             }
         },
         "personal_information": {
@@ -933,122 +839,7 @@
                     "cancel_button": "Atšaukti"
                 }
             },
-            "save_changes": "Išsaugoti pakeitimus",
-            "subscription": {
-                "title": "Prenumeratos Būsena",
-                "badge": "Pro planas",
-                "plan_label": "Dabartinis planas",
-                "current_rate_label": "Dabartinė kaina",
-                "status_label": "Prieigos būsena",
-                "billing_label": "Mokėjimai",
-                "billing_title": "Stripe valdomi mokėjimai",
-                "billing_description": "Mokėjimo būdus ir prenumeratos pakeitimus saugiai tvarkykite per Stripe. Aktyvi kaina rodoma pagal Stripe duomenis.",
-                "billing_name_label": "Mokėtojo vardas",
-                "billing_email_label": "Mokėtojo el. paštas",
-                "billing_not_available": "Nėra duomenų",
-                "payment_method_label": "Mokėjimo būdas",
-                "access_note": "Premium funkcijos ir mokėjimų tęstinumas",
-                "description": {
-                    "active": "Jūsų paskyra turi prieigą prie mokamos darbo eigos.",
-                    "trial": "Jūsų bandomasis laikotarpis aktyvus. Pridėkite mokėjimo būdą, kad išlaikytumėte prieigą jam pasibaigus.",
-                    "trial_ready": "Jūsų bandomasis laikotarpis aktyvus, o mokėjimo būdas paruoštas jo pabaigai.",
-                    "inactive": "Atnaujinkite prenumeratą, kad atkurtumėte premium funkcijas."
-                },
-                "status": {
-                    "active": "Aktyvi",
-                    "trial": "Bandymas aktyvus",
-                    "inactive": "Neaktyvi"
-                },
-                "trial_ends": "Bandymas baigiasi {date}",
-                "plans": {
-                    "premium": "Premium",
-                    "trial": "Pro bandymas"
-                },
-                "plan": "{plan} Planas - {currency}{amount}/{interval}",
-                "interval": {
-                    "month": "mėnėsį",
-                    "year": "metus"
-                },
-                "rates": {
-                    "monthly": {
-                        "title": "Mėnesinis mokėjimas",
-                        "note": "Atnaujinama kas mėnesį per Stripe."
-                    },
-                    "annual": {
-                        "title": "Metinis mokėjimas",
-                        "note": "Atnaujinama kas metus per Stripe."
-                    },
-                    "custom": {
-                        "title": "Stripe mokėjimas"
-                    },
-                    "stripe_note": "Dabartinė aktyvi kaina iš Stripe.",
-                    "invoice_note": "Paskutinė Stripe nuskaityta suma.",
-                    "unavailable": {
-                        "title": "Tiksli kaina nepasiekiama",
-                        "amount": "—",
-                        "note": "Stripe negrąžino šios paskyros prenumeratos kainos.",
-                        "renews": "Stripe negrąžino prenumeratos kainos. Dabartinis mokėjimo laikotarpis baigiasi {date}."
-                    }
-                },
-                "payment_method": {
-                    "card": "{brand}, pabaiga {last4}",
-                    "saved": "Mokėjimo būdas išsaugotas Stripe",
-                    "missing": "Mokėjimo būdas nepridėtas",
-                    "expires": "Galioja iki {month}/{year}"
-                },
-                "action": {
-                    "add_payment_method": "Pridėti mokėjimo būdą",
-                    "manage": "Valdyti Prenumeratą",
-                    "renew": "Atnaujinti Prenumeratą"
-                },
-                "cancel_subscription_dialog": {
-                    "title": "Atšaukti Prenumeratą",
-                    "description": "Ar tikrai norite atšaukti savo prenumeratą? Jūs išlaikysite prieigą iki dabartinio prenumeratos laikotarpio pabaigos.",
-                    "confirm_button": "Taip, atšaukti prenumeratą",
-                    "cancel_button": "Atšaukti"
-                }
-            }
-        },
-        "merchant_payments": {
-            "eyebrow": "Gavėjo sąskaitų apmokėjimai",
-            "title": "Priimti sąskaitų apmokėjimus",
-            "description": "Prijunkite Stripe prekybininko paskyrą, kad gavėjai galėtų apmokėti tinkamas sąskaitas internetu. Jei tai neparuošta, vieši sąskaitų puslapiai rodys banko pavedimo rekvizitus.",
-            "description_ready": "Stripe Connect paruoštas. Tinkamos neapmokėtos viešos sąskaitos gali rodyti internetinio apmokėjimo veiksmą, o lėšos keliaus į jūsų prekybininko paskyrą.",
-            "action_start": "Nustatyti Stripe Connect",
-            "action_continue": "Tęsti Stripe nustatymą",
-            "action_update": "Atnaujinti Stripe Connect",
-            "status": {
-                "live": "Veikia",
-                "reviewing": "Tikrinama",
-                "action_needed": "Reikia veiksmo",
-                "not_connected": "Neprijungta"
-            },
-            "capabilities_title": "Paskyros galimybės",
-            "capabilities_ready_count": "{ready} iš {total} paruošta",
-            "requirements_title": "Stripe reikia daugiau informacijos",
-            "requirements_description": "Tęskite nustatymą Stripe, kad užbaigtumėte tapatybės ir išmokėjimų patvirtinimą prieš įjungiant sąskaitų apmokėjimą internetu.",
-            "verification_title": "Stripe tikrina jūsų paskyrą",
-            "verification_description": "Stripe šiuo metu turi reikalingus duomenis ir tikrina, ar galima įjungti mokėjimus bei išmokėjimus.",
-            "no_requirements": "Trūkstamų reikalavimų Stripe dar negrąžino. Paskyra vis dar gali būti tikrinama.",
-            "checks": {
-                "ready": "Paruošta",
-                "pending": "Laukiama",
-                "charges": {
-                    "title": "Kortelių mokėjimai",
-                    "ready_meta": "Internetinis apmokėjimas įjungtas",
-                    "pending_meta": "Laukiama Stripe patvirtinimo"
-                },
-                "details": {
-                    "title": "Verslo duomenys",
-                    "ready_meta": "Prekybininko profilis pateiktas",
-                    "pending_meta": "Užbaikite duomenis Stripe"
-                },
-                "payouts": {
-                    "title": "Išmokėjimai",
-                    "ready_meta": "Pervedimai į jūsų paskyrą įjungti",
-                    "pending_meta": "Laukiama išmokėjimų patvirtinimo"
-                }
-            }
+            "save_changes": "Išsaugoti pakeitimus"
         },
         "change_password": {
             "a11y": {
@@ -1179,57 +970,6 @@
             "description": "Prieš kurdami savo pirmąjį {title}, užpildykite savo asmeninę informaciją profilyje.",
             "go_to_profile": "Eiti į profilį"
         },
-        "payment_form": {
-            "title": "InvoiceTrackr Premium",
-            "badge": "Pro planas",
-            "headline": "Viskas, ko reikia, kad",
-            "headline_accent": "gautumėte apmokėjimą greičiau.",
-            "trial_description": "Pradėkite pilną 7 dienų bandomąjį laikotarpį be mokėjimo kortelės arba prenumeruokite dabar.",
-            "recovery_description": "Tvarkykite mokėjimo būdą arba atkurkite prieigą prie prenumeratos.",
-            "features": {
-                "invoices": "Neribotos sąskaitos faktūros ir klientai",
-                "clients": "Išsaugota darbo eiga klientams, istorijai ir eksportams",
-                "branding": "Profesionalūs PDF dokumentai su jūsų duomenimis",
-                "support": "Mokėjimų tęstinumas ir paskyros atkūrimas"
-            },
-            "intervals": {
-                "annual": {
-                    "title": "Metinis",
-                    "description": "{annualPrice}/metus",
-                    "badge": "Sutaupykite 18%"
-                },
-                "monthly": {
-                    "title": "Mėnesinis",
-                    "description": "{monthlyPrice}/mėn."
-                }
-            },
-            "prices": {
-                "annual": {
-                    "amount": "{annualPrice}",
-                    "interval": "/ metus",
-                    "note": "Atitinka {monthlyEquivalentPrice}/mėn. · atšaukti galima bet kada"
-                },
-                "monthly": {
-                    "amount": "{monthlyPrice}",
-                    "interval": "/ mėn.",
-                    "note": "Mokama kas mėnesį · atšaukti galima bet kada"
-                }
-            },
-            "checkout_note": "Saugus mokėjimas · prieiga iš karto",
-            "actions": {
-                "start_trial": "Pradėti nemokamą bandymą",
-                "manage": "Tvarkyti mokėjimus",
-                "resume": "Atnaujinti prenumeratą",
-                "subscribe": "Prenumeruoti"
-            },
-            "errors": {
-                "submit_failed": "Mokėjimo pateikti nepavyko. Bandykite dar kartą.",
-                "customer_failed": "Negalima sukurti kliento. Bandykite dar kartą.",
-                "subscription_failed": "Mokėjimo prenumeratos sukūrimas nepavyko. Bandykite dar kartą.",
-                "payment_failed": "Nepavyko apdoroti mokėjimo. Bandykite dar kartą.",
-                "general": "Įvyko klaida. Bandykite dar kartą."
-            }
-        },
         "contact_form": {
             "title": "Susisiekite su mumis",
             "email_label": "El. paštas",
@@ -1252,7 +992,7 @@
             "client": "Klientas",
             "amount": "Suma",
             "date": "Data",
-            "public_link_note": "Šiame laiške gali būti saugus sąskaitos puslapis su PDF, banko rekvizitais ir internetiniu mokėjimu, jei jis įjungtas.",
+            "public_link_note": "Šiame laiške gali būti saugus sąskaitos puslapis su PDF ir bankinio pavedimo rekvizitais.",
             "signing_link_note": "Šiame laiške bus saugi pasirašymo nuoroda gavėjui.",
             "email_verification_required": "Patvirtinkite paskyros el. paštą prieš siųsdami sąskaitas klientams.",
             "include_public_link": "Įtraukti viešą sąskaitos puslapį",
@@ -1392,12 +1132,12 @@
             },
             "payment_settings": {
                 "title": "Mokėjimo nustatymai",
-                "description": "Pasirinkite, kaip viešoje sąskaitos nuorodoje gavėjas bus prašomas apmokėti sąskaitą.",
-                "reference_note": "Automatinis režimas naudoja Stripe, kai Connect paskyra paruošta, kitu atveju rodo bankinį pavedimą. Tuščia paskirtis pakeičiama sąskaitos numeriu.",
+                "description": "Pasirinkite, ar sąskaitos nuorodoje rodyti bankinio pavedimo instrukcijas.",
+                "reference_note": "MVP numatytasis būdas yra bankinis pavedimas. Tuščia paskirtis pakeičiama sąskaitos numeriu.",
                 "disabled_note": "Mokėjimo instrukcijos viešame sąskaitos puslapyje nerodomos.",
                 "modes": {
-                    "auto": "Automatiškai",
-                    "online": "Internetinis mokėjimas",
+                    "auto": "Bankinis pavedimas",
+                    "online": "Internetinis mokėjimas (po MVP)",
                     "manual": "Bankinis pavedimas",
                     "disabled": "Nerodyti mokėjimo bloko"
                 }
@@ -1425,21 +1165,21 @@
             "free_invoice": {
                 "eyebrow": "Nemokamas sąskaitos generatorius",
                 "title": "Sukurkite tvarkingą PDF sąskaitą be registracijos",
-                "description": "Paruoškite tikrą sąskaitą, peržiūrėkite PDF ir atsisiųskite nemokamai. Kai reikės pilno darbo proceso, pradėkite 7 dienų bandymą, kad galėtumėte išsaugoti, siųsti, sekti ir naudoti duomenis pakartotinai.",
+                "description": "Paruoškite tikrą sąskaitą, peržiūrėkite PDF ir atsisiųskite nemokamai. Kai reikės pilnos freelancerio eigos, susikurkite paskyrą klientams, siuntimui, apmokėjimų sekimui ir eksportams.",
                 "benefits": [
                     "Profesionali lietuviška arba angliška PDF sąskaita",
-                    "PVM eilutės ir sumos paruoštos Lietuvos darbui",
+                    "Bankinio pavedimo duomenys ir pakartotinai naudojamos eilutės",
                     "Vienkartiniam PDF atsisiuntimui paskyros nereikia"
                 ],
                 "upgrade_title": "Reikia daugiau nei PDF?",
                 "upgrade_description": "Sukurkite paskyrą, kad galėtumėte išsaugoti sąskaitas, naudoti klientus ir banko sąskaitas pakartotinai, siųsti saugias nuorodas ir sekti apmokėjimą.",
-                "upgrade_cta": "Pradėti 7 dienų bandymą",
+                "upgrade_cta": "Sukurti paskyrą",
                 "actions_title": "Peržiūrėkite sąskaitą prieš atsisiųsdami.",
-                "actions_description": "PDF atsisiuntimas lieka nemokamas. Bandomasis laikotarpis skirtas išsaugojimui, siuntimui, istorijai, priminimams ir mokėjimų sekimui.",
-                "start_trial_cta": "Išsaugoti ir siųsti su bandymu",
+                "actions_description": "PDF atsisiuntimas lieka nemokamas. Paskyros funkcijos skirtos išsaugojimui, siuntimui, istorijai, priminimams ir mokėjimų sekimui.",
+                "start_trial_cta": "Išsaugoti ir siųsti iš paskyros",
                 "modal_cta_title": "Norite išsaugoti, siųsti ir sekti sąskaitas?",
-                "modal_cta_description": "Pradėkite 7 dienų bandymą, kad valdytumėte realius klientų procesus, o ne atsisiųstumėte po vieną PDF.",
-                "modal_cta_button": "Pradėti bandymą"
+                "modal_cta_description": "Susikurkite paskyrą, kad valdytumėte realius klientų procesus, o ne atsisiųstumėte po vieną PDF.",
+                "modal_cta_button": "Sukurti paskyrą"
             },
             "services_heading": "Paslaugos",
             "signature_heading": "Parašas",
@@ -1452,9 +1192,6 @@
                 "thirty_days": "30d",
                 "custom": "Pasirinktinis"
             }
-        },
-        "subscription_status_card": {
-            "title": "Prenumeratos būsena"
         }
     },
     "privacy_policy": {
@@ -1473,8 +1210,8 @@
                     "items": {
                         "name": "Vardą ir verslo informaciją",
                         "email": "El. pašto adresą",
-                        "business_type": "Verslo tipą (individualus ar verslo subjektas)",
-                        "registration": "Verslo registracijos numerį",
+                        "business_type": "Individualios veiklos profilio duomenis",
+                        "registration": "Individualios veiklos pažymos numerį",
                         "address": "Verslo adresą",
                         "profile": "Profilio nuotrauką (neprivaloma)",
                         "signature": "Skaitmeninį parašą (neprivaloma)",
@@ -1492,7 +1229,7 @@
                 },
                 "payment_info": {
                     "heading": "2.3 Mokėjimo informacija",
-                    "content": "Mokėjimų apdorojimą atlieka Stripe, trečiosios šalies mokėjimo procesorius. Mes nesaugome jūsų kredito kortelės informacijos. Mes tik saugome jūsų Stripe kliento ID ir prenumeratos ID paskyros valdymo tikslais."
+                    "content": "InvoiceTrackr leidžia įrašyti sąskaitų apmokėjimo būseną ir jūsų pačių įvestus bankinio pavedimo duomenis. MVP neapdoroja klientų mokėjimų ir nesaugo klientų mokėjimo priemonių duomenų."
                 },
                 "usage_info": {
                     "heading": "2.4 Naudojimo informacija",
@@ -1507,7 +1244,7 @@
                 },
                 "analytics_data": {
                     "heading": "2.5 Analitikos duomenys",
-                    "intro": "Gavę jūsų sutikimą, naudojame PostHog, kad suprastume paleidimo piltuvėlius ir pagrindinį produkto naudojimą, pvz., puslapių peržiūras, kainodaros peržiūras, registracijos žingsnius, sąskaitų kūrimą, PDF atsisiuntimus, siuntimą el. paštu, klientų kūrimą, banko sąskaitos pridėjimą ir prenumeratos įvykius. Analitikos įvykių savybėse nesiunčiame sąskaitų numerių, sąskaitų teksto, klientų duomenų, banko sąskaitų duomenų, mokėjimo kortelių duomenų, el. pašto adresų, adresų, Stripe identifikatorių ar sąskaitų sumų."
+                    "intro": "Gavę jūsų sutikimą, naudojame PostHog, kad suprastume paleidimo piltuvėlius ir pagrindinį produkto naudojimą, pvz., puslapių peržiūras, kainodaros peržiūras, registracijos žingsnius, sąskaitų kūrimą, PDF atsisiuntimus, siuntimą el. paštu, klientų kūrimą ir banko sąskaitos pridėjimą. Analitikos įvykių savybėse nesiunčiame sąskaitų numerių, sąskaitų teksto, klientų duomenų, banko sąskaitų duomenų, el. pašto adresų, adresų ar sąskaitų sumų."
                 }
             },
             "how_we_use": {
@@ -1516,8 +1253,8 @@
                 "items": {
                     "provide": "Teikti, valdyti ir palaikyti mūsų sąskaitų faktūrų sekimo paslaugą",
                     "create": "Kurti ir valdyti jūsų paskyrą",
-                    "process": "Apdoroti jūsų operacijas ir valdyti prenumeratas",
-                    "generate": "Generuoti, saugoti ir eksportuoti sąskaitas faktūras ir sutartis",
+                    "process": "Valdyti paskyros prieigą ir apmokėjimų įrašus",
+                    "generate": "Generuoti, saugoti ir eksportuoti sąskaitas faktūras ir freelancerio finansų įrašus",
                     "send": "Siųsti su sąskaitomis faktūromis susijusius el. laiškus jūsų klientams",
                     "display": "Rodyti jūsų pajamų valdymo skydelį ir finansinę analitiką",
                     "support": "Teikti klientų palaikymą ir atsakyti į jūsų užklausas",
@@ -1535,7 +1272,6 @@
                     "heading": "4.1 Paslaugų teikėjai",
                     "intro": "Dalinamės informacija su trečiųjų šalių paslaugų teikėjais, kurie teikia paslaugas mūsų vardu:",
                     "items": {
-                        "stripe": "Mokėjimų apdorojimas prenumeratos valdymui",
                         "cloudinary": "Vaizdų talpinimas profilio nuotraukoms ir kitai medijai",
                         "analytics": "Sutikimu pagrįsta produkto analitika per PostHog",
                         "email": "El. pašto paslaugų teikėjai"
@@ -1634,18 +1370,18 @@
             },
             "description": {
                 "heading": "2. Paslaugos aprašymas",
-                "intro": "InvoiceTrackr yra internetinė sąskaitų faktūrų generavimo, sekimo ir valdymo platforma, skirta laisviems samdiniams ir mažoms įmonėms. Mūsų Paslauga suteikia:",
+                "intro": "InvoiceTrackr yra internetinė sąskaitų faktūrų generavimo, sekimo ir finansinio pasiruošimo platforma Lietuvos freelanceriams, dirbantiems pagal individualios veiklos pažymą. Mūsų Paslauga suteikia:",
                 "items": {
                     "creation": "Sąskaitų faktūrų kūrimas, redagavimas ir valdymas",
                     "tracking": "Sąskaitų faktūrų būsenos sekimas (apmokėta, laukiama, atšaukta)",
                     "clients": "Klientų informacijos valdymas",
                     "dashboard": "Finansinė suvestinė su pajamų analize ir diagramomis",
-                    "contracts": "Sutarčių kūrimas ir valdymas (premium funkcija)",
+                    "contracts": "Sutarčių kūrimas ir valdymas (neįtraukta į MVP)",
                     "pdf": "PDF sąskaitų faktūrų generavimas ir eksportavimas",
                     "email": "Sąskaitų faktūrų pristatymas el. paštu",
-                    "multi": "Kelių valiutų ir kalbų palaikymas",
+                    "multi": "Lietuviškų ir angliškų sąskaitų dokumentus",
                     "banking": "Banko informacijos saugojimas sąskaitų faktūrų tikslais",
-                    "signature": "Skaitmeninio parašo funkcionalumas"
+                    "signature": "Neprivalomą vizualų parašą sugeneruotuose dokumentuose"
                 }
             },
             "account_registration": {
@@ -1664,25 +1400,6 @@
                 "eligibility": {
                     "heading": "3.2 Paskyros tinkamumas",
                     "content": "Turite būti bent 18 metų amžiaus, kad galėtumėte sukurti paskyrą ir naudotis Paslauga. Kurdami paskyrą pareiškiate ir užtikrinat, kad atitinkate šį amžiaus reikalavimą."
-                }
-            },
-            "subscription": {
-                "heading": "4. Prenumeratos planai",
-                "free": {
-                    "heading": "4.1 Nemokamas planas",
-                    "content": "Mūsų nemokamas planas leidžia kurti neribotą kiekį sąskaitų faktūrų, naudoti pagrindinius šablonus, eksportuoti į PDF ir pridėti savo parašą."
-                },
-                "premium": {
-                    "heading": "4.2 Premium planas",
-                    "content": "Mūsų premium planas ({monthlyPrice}/mėn. arba {annualPrice}/metus) apima visas nemokamas funkcijas ir galimybę išsaugoti bei redaguoti sąskaitas faktūras, saugoti klientų informaciją, kurti ir valdyti sutartis, pasirinkti valiutą ir kalbos nuostatas bei siųsti sąskaitas faktūras tiesiogiai klientams el. paštu."
-                },
-                "payment": {
-                    "heading": "4.3 Mokėjimo sąlygos",
-                    "content": "Premium prenumeratos apmokestinamos kas mėnesį arba kas metus iš anksto pagal pasirinktą planą. Mokėjimų apdorojimą saugiai atlieka Stripe, trečiosios šalies mokėjimų procesorius. Prenumeruodami premium planą, įgaliojate mus reguliariai nuskaityti mokesčius iš jūsų mokėjimo būdo."
-                },
-                "cancellation": {
-                    "heading": "4.4 Atšaukimas ir grąžinimai",
-                    "content": "Galite atšaukti savo prenumeratą bet kuriuo metu per savo paskyros nustatymus. Atšaukimai įsigalios dabartinio atsiskaitymo laikotarpio pabaigoje. Negrąžiname pinigų už dalinius mėnesio ar nepanaudotas funkcijas."
                 }
             },
             "user_content": {
@@ -1736,7 +1453,6 @@
             "third_party": {
                 "heading": "8. Trečiųjų šalių paslaugos",
                 "intro": "Paslauga integruojasi arba remiasi trečiųjų šalių paslaugomis, įskaitant:",
-                "stripe": "Mokėjimų apdorojimas",
                 "cloudinary": "Vaizdų saugojimas ir valdymas",
                 "analytics": "Sutikimu pagrįsta produkto analitika ir paleidimo piltuvėlio matavimas",
                 "disclaimer": "Jūsų naudojimasis šiomis trečiųjų šalių paslaugomis yra jų atitinkamų paslaugų teikimo sąlygų ir privatumo politikų objektas. Mes nesame atsakingi už šių trečiųjų šalių paslaugų prieinamumą, funkcionalumą ar praktiką."

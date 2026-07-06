@@ -2,10 +2,7 @@ import type { JWT } from 'next-auth/jwt';
 
 import type { User as AuthUser, NextAuthConfig } from 'next-auth';
 
-import {
-  type User as InvoiceTrackrUser,
-  StripeSubscriptionStatus
-} from '@invoicetrackr/types';
+import { type User as InvoiceTrackrUser } from '@invoicetrackr/types';
 
 import { type GoogleProfile } from 'next-auth/providers/google';
 
@@ -16,9 +13,7 @@ import {
   HOME_PAGE,
   LOGIN_PAGE,
   ONBOARDING_PAGE,
-  PAYMENT_SUCCESS_PAGE,
   PRIVACY_POLICY_PAGE,
-  RENEW_SUBSCRIPTION_PAGE,
   SIGN_UP_PAGE,
   TERMS_OF_SERVICE_PAGE,
   VERIFY_EMAIL_PAGE
@@ -28,9 +23,7 @@ import { Currency } from './lib/types/currency';
 
 const getServerBaseUrl = () => `http://localhost:${process.env.SERVER_PORT}`;
 
-type TokenUser = (InvoiceTrackrUser | AuthUser) & {
-  hasPaymentMethod?: boolean;
-};
+type TokenUser = InvoiceTrackrUser | AuthUser;
 
 const setUserTokenFields = (token: JWT, user: TokenUser) => {
   const isOnboarded = !!user.onboardingCompletedAt;
@@ -44,15 +37,8 @@ const setUserTokenFields = (token: JWT, user: TokenUser) => {
   token.defaultInvoiceSeries = user.defaultInvoiceSeries;
   token.defaultPaymentTermsDays = user.defaultPaymentTermsDays;
   token.currency = user.currency;
-  token.hasPaymentMethod = user.hasPaymentMethod;
   token.isOnboarded = isOnboarded;
-  token.subscriptionStatus = user.subscriptionStatus;
   token.onboardingCompletedAt = user.onboardingCompletedAt;
-  token.trialStartedAt = user.trialStartedAt;
-  token.trialEndsAt = user.trialEndsAt;
-  token.subscriptionGraceEndsAt = user.subscriptionGraceEndsAt;
-  token.subscriptionCurrentPeriodEndsAt = user.subscriptionCurrentPeriodEndsAt;
-  token.subscriptionCancelAt = user.subscriptionCancelAt;
   token.analyticsConsentStatus = user.analyticsConsentStatus;
   token.analyticsConsentUpdatedAt = user.analyticsConsentUpdatedAt;
   token.selectedBankAccountId = user.selectedBankAccountId;
@@ -126,61 +112,19 @@ export const authConfig = {
         isPublicInvoiceSigningPage;
 
       const isOnboarded = !!auth?.user?.isOnboarded;
-      const hasGraceAccess =
-        auth?.user?.subscriptionStatus === 'past_due' &&
-        !!auth.user.subscriptionGraceEndsAt &&
-        new Date(auth.user.subscriptionGraceEndsAt) > new Date();
-      const isSubscriptionActive =
-        auth?.user?.subscriptionStatus === 'active' ||
-        auth?.user?.subscriptionStatus === 'trialing' ||
-        hasGraceAccess;
-      const hasStartedBilling =
-        !!auth?.user?.trialStartedAt || !!auth?.user?.subscriptionStatus;
       const isOnboardingPage = path.startsWith(ONBOARDING_PAGE);
-      const isPaymentSuccessPage = path.startsWith(PAYMENT_SUCCESS_PAGE);
-      const isPaymentSuccessConfirmPage = path.startsWith(
-        `${PAYMENT_SUCCESS_PAGE}/confirm`
-      );
-      const isConfirmedPaymentSuccessPage =
-        path === PAYMENT_SUCCESS_PAGE &&
-        nextUrl.searchParams.get('confirmed') === 'true' &&
-        (nextUrl.searchParams.get('trial') === 'true' ||
-          nextUrl.searchParams.get('checkout') === 'true');
-      const isRenewPage = path.startsWith(RENEW_SUBSCRIPTION_PAGE);
 
       if (!pathIsPublic) {
         if (!isLoggedIn) return Response.redirect(new URL(LOGIN_PAGE, nextUrl));
 
-        if (
-          isPaymentSuccessPage &&
-          !isPaymentSuccessConfirmPage &&
-          !isConfirmedPaymentSuccessPage
-        ) {
-          return Response.redirect(new URL(DASHBOARD_PAGE, nextUrl));
-        }
-
         // Not onboarded → allow onboarding page, redirect elsewhere
         if (!isOnboarded) {
-          return isOnboardingPage || isPaymentSuccessConfirmPage
+          return isOnboardingPage
             ? true
             : Response.redirect(new URL(ONBOARDING_PAGE, nextUrl));
         }
 
-        // Onboarded but subscription inactive → redirect unless already on renew page
-        if (!isSubscriptionActive) {
-          if (!hasStartedBilling) {
-            return isOnboardingPage || isPaymentSuccessPage
-              ? true
-              : Response.redirect(new URL(ONBOARDING_PAGE, nextUrl));
-          }
-
-          return isRenewPage || isPaymentSuccessPage
-            ? true
-            : Response.redirect(new URL(RENEW_SUBSCRIPTION_PAGE, nextUrl));
-        }
-
-        // Onboarded + active sub → redirect away from onboarding
-        if (isOnboardingPage || isRenewPage) {
+        if (isOnboardingPage) {
           return Response.redirect(new URL(DASHBOARD_PAGE, nextUrl));
         }
 
@@ -225,15 +169,7 @@ export const authConfig = {
           defaultInvoiceSeries: session.user.defaultInvoiceSeries,
           defaultPaymentTermsDays: session.user.defaultPaymentTermsDays,
           currency: session.user.currency,
-          hasPaymentMethod: session.user.hasPaymentMethod,
-          subscriptionStatus: session.user.subscriptionStatus,
           onboardingCompletedAt: session.user.onboardingCompletedAt,
-          trialStartedAt: session.user.trialStartedAt,
-          trialEndsAt: session.user.trialEndsAt,
-          subscriptionGraceEndsAt: session.user.subscriptionGraceEndsAt,
-          subscriptionCurrentPeriodEndsAt:
-            session.user.subscriptionCurrentPeriodEndsAt,
-          subscriptionCancelAt: session.user.subscriptionCancelAt,
           analyticsConsentStatus: session.user.analyticsConsentStatus,
           analyticsConsentUpdatedAt: session.user.analyticsConsentUpdatedAt,
           selectedBankAccountId: session.user.selectedBankAccountId,
@@ -259,21 +195,8 @@ export const authConfig = {
         (token.defaultPaymentTermsDays as AuthUser['defaultPaymentTermsDays']) ||
         30;
       session.user.currency = token.currency as Currency;
-      session.user.hasPaymentMethod = Boolean(token.hasPaymentMethod);
       session.user.isOnboarded = Boolean(token.isOnboarded);
-      session.user.subscriptionStatus =
-        token.subscriptionStatus as StripeSubscriptionStatus | null;
       session.user.onboardingCompletedAt = token.onboardingCompletedAt as
-        | string
-        | null;
-      session.user.trialStartedAt = token.trialStartedAt as string | null;
-      session.user.trialEndsAt = token.trialEndsAt as string | null;
-      session.user.subscriptionGraceEndsAt = token.subscriptionGraceEndsAt as
-        | string
-        | null;
-      session.user.subscriptionCurrentPeriodEndsAt =
-        token.subscriptionCurrentPeriodEndsAt as string | null;
-      session.user.subscriptionCancelAt = token.subscriptionCancelAt as
         | string
         | null;
       session.user.analyticsConsentStatus =

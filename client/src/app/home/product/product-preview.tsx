@@ -2,7 +2,6 @@ import { Card, Chip, cn } from '@heroui/react';
 import {
   ChartBarIcon,
   DocumentTextIcon,
-  PencilSquareIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
 import DashboardPagePreview from '../dashboard-page-preview';
@@ -14,8 +13,7 @@ export default function ProductPreview() {
   const navItems = [
     { icon: ChartBarIcon, key: 'dashboard', active: true, disabled: false },
     { icon: DocumentTextIcon, key: 'invoices', active: false, disabled: false },
-    { icon: UserGroupIcon, key: 'clients', active: false, disabled: false },
-    { icon: PencilSquareIcon, key: 'contracts', active: false, disabled: true }
+    { icon: UserGroupIcon, key: 'clients', active: false, disabled: false }
   ] as const;
 
   return (

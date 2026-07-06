@@ -44,10 +44,8 @@ import {
 import { ANALYTICS_CONSENT_COOKIE } from '../analytics/constants';
 import { analyticsEvents } from '../analytics/events';
 import { captureAnalyticsEventForUser } from '../analytics/posthog';
-import { getStripeCustomerIdFromDb } from '../database/payment';
 import { resend } from '../config/resend';
 import { saveResetTokenToDb } from '../database/password-reset';
-import { stripe } from '../config/stripe';
 
 const EMAIL_VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const EMAIL_VERIFICATION_RESEND_COOLDOWN_MS = 15 * 60 * 1000;
@@ -351,9 +349,6 @@ export const deleteUser = async (
 ) => {
   const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
-
-  const stripeCustomerId = await getStripeCustomerIdFromDb(userId);
-  if (stripeCustomerId) await stripe.customers.del(stripeCustomerId);
 
   const deletedUserId = await deleteUserFromDb(userId);
 

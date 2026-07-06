@@ -2,11 +2,6 @@ import { Card, Chip, Link, buttonVariants, cn } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
 import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
-import {
-  SUBSCRIPTION_AMOUNT,
-  SUBSCRIPTION_ANNUAL_AMOUNT,
-  formatSubscriptionPrice
-} from '@/lib/constants/subscription';
 import { CheckIcon } from '@heroicons/react/24/outline';
 
 import { PRICING_PLANS } from './constants';
@@ -25,8 +20,6 @@ export default function PriceCard({
   reveal?: boolean;
 }) {
   const t = useTranslations(`home.pricing.${plan}`);
-  const monthlyPrice = formatSubscriptionPrice(SUBSCRIPTION_AMOUNT);
-  const annualPrice = formatSubscriptionPrice(SUBSCRIPTION_ANNUAL_AMOUNT);
   const featureKeys =
     plan === 'free'
       ? (['single', 'download', 'languages', 'no_account'] as const)
@@ -59,16 +52,11 @@ export default function PriceCard({
       <Card.Content className="p-0">
         <div className="mt-6 flex items-baseline gap-1">
           <span className="text-5xl font-medium tracking-tight">
-            {plan === 'free' ? `${currencySymbol}0` : annualPrice}
+            {plan === 'free' ? `${currencySymbol}0` : t('price')}
           </span>
-          {plan === 'premium' && (
-            <span className="text-muted text-sm">{t('suffix')}</span>
-          )}
         </div>
         {plan === 'premium' && (
-          <div className="text-muted mt-1 text-[11px]">
-            {t('alt', { monthlyPrice })}
-          </div>
+          <div className="text-muted mt-1 text-[11px]">{t('alt')}</div>
         )}
 
         <ul className="mt-7 space-y-2.5">

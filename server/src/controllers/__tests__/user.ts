@@ -2,7 +2,6 @@ import { describe, expect, it, vi } from 'vitest';
 import bcrypt from 'bcryptjs';
 
 import * as emailVerificationDb from '../../database/email-verification';
-import * as paymentDb from '../../database/payment';
 import * as userController from '../user';
 import * as userDb from '../../database/user';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
@@ -11,22 +10,10 @@ import {
   userWithPasswordFactory
 } from '../../test/factories/user';
 import { mockResendSend } from '../../test/setup';
-import { stripe } from '../../config/stripe';
 
 vi.mock('../../database/user');
 vi.mock('../../database/email-verification');
-vi.mock('../../database/payment');
 vi.mock('bcryptjs');
-vi.mock('../../config/stripe', () => ({
-  stripe: {
-    customers: {
-      del: vi.fn().mockResolvedValue({})
-    },
-    subscriptions: {
-      retrieve: vi.fn().mockResolvedValue({ status: 'active' })
-    }
-  }
-}));
 
 describe('User Controller', () => {
   const testUserId = 1;
@@ -466,10 +453,6 @@ describe('User Controller', () => {
 
   describe('DELETE /api/:userId', () => {
     it('should delete user', async () => {
-      vi.mocked(paymentDb.getStripeCustomerIdFromDb).mockResolvedValue(
-        'cus_test123'
-      );
-      vi.mocked(stripe.customers.del).mockResolvedValue({} as never);
       vi.mocked(userDb.deleteUserFromDb).mockResolvedValue({ id: testUserId });
 
       const { deleteUser } = userController;
@@ -492,10 +475,7 @@ describe('User Controller', () => {
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.message).toBeDefined();
-      expect(paymentDb.getStripeCustomerIdFromDb).toHaveBeenCalledWith(
-        testUserId
-      );
-      expect(stripe.customers.del).toHaveBeenCalledWith('cus_test123');
+      expect(userDb.deleteUserFromDb).toHaveBeenCalledWith(testUserId);
 
       await app.close();
     });

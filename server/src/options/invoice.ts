@@ -1,8 +1,4 @@
 import {
-  confirmPublicInvoicePaymentResponseSchema,
-  createInvoiceCorrectionBodySchema,
-  createInvoiceCorrectionResponseSchema,
-  createPublicInvoicePaymentResponseSchema,
   getInvoiceResponseSchema,
   getInvoicesResponseSchema,
   getInvoicesRevenueResponseSchema,
@@ -25,9 +21,6 @@ import z from 'zod/v4';
 
 import { authMiddleware, requireVerifiedEmail } from '../middleware/auth';
 import {
-  confirmPublicInvoicePayment,
-  createInvoiceCorrection,
-  createPublicInvoicePayment,
   deleteInvoice,
   getIncomeJournal,
   getInvoice,
@@ -49,9 +42,8 @@ import {
   updateInvoiceStatus
 } from '../controllers/invoice';
 import { preValidateFileAndFields } from '../utils/multipart';
-import { requirePaidEntitlement } from '../middleware/entitlement';
 
-const paidAccess = [authMiddleware, requirePaidEntitlement];
+const authenticatedAccess = [authMiddleware];
 
 export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -59,7 +51,7 @@ export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
       200: getInvoicesResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: getInvoices
 };
 
@@ -67,7 +59,7 @@ export const getIncomeJournalOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     querystring: incomeJournalQuerySchema
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: getIncomeJournal
 };
 
@@ -77,7 +69,7 @@ export const getInvoiceOptions: RouteShorthandOptionsWithHandler = {
       200: getInvoiceResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: getInvoice
 };
 
@@ -90,7 +82,7 @@ export const getNextInvoiceNumberOptions: RouteShorthandOptionsWithHandler = {
       200: getNextInvoiceNumberResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: getNextInvoiceNumber
 };
 
@@ -101,7 +93,7 @@ export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
       201: postInvoiceResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   preValidation: preValidateFileAndFields,
   handler: postInvoice
 };
@@ -113,7 +105,7 @@ export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
       200: updateInvoiceResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   preValidation: preValidateFileAndFields,
   handler: updateInvoice
 };
@@ -125,21 +117,9 @@ export const updateInvoiceStatusOptions: RouteShorthandOptionsWithHandler = {
       200: messageResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: updateInvoiceStatus
 };
-
-export const createInvoiceCorrectionOptions: RouteShorthandOptionsWithHandler =
-  {
-    schema: {
-      body: createInvoiceCorrectionBodySchema,
-      response: {
-        201: createInvoiceCorrectionResponseSchema
-      }
-    },
-    preHandler: paidAccess,
-    handler: createInvoiceCorrection
-  };
 
 export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -147,7 +127,7 @@ export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {
       200: messageResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: deleteInvoice
 };
 
@@ -157,7 +137,7 @@ export const getInvoicesTotalAmountOptions: RouteShorthandOptionsWithHandler = {
       200: getInvoicesTotalAmountResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: getInvoicesTotalAmount
 };
 
@@ -167,7 +147,7 @@ export const getInvoicesRevenueOptions: RouteShorthandOptionsWithHandler = {
       200: getInvoicesRevenueResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: getInvoicesRevenue
 };
 
@@ -177,7 +157,7 @@ export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
       200: getLatestInvoicesResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: getLatestInvoices
 };
 
@@ -188,7 +168,7 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
     },
     body: sendInvoiceEmailBodySchema
   },
-  preHandler: [...paidAccess, requireVerifiedEmail],
+  preHandler: [...authenticatedAccess, requireVerifiedEmail],
   preValidation: preValidateFileAndFields,
   handler: sendInvoiceEmail
 };
@@ -199,7 +179,7 @@ export const revokePublicInvoiceOptions: RouteShorthandOptionsWithHandler = {
       200: messageResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: revokePublicInvoice
 };
 
@@ -210,7 +190,7 @@ export const regeneratePublicInvoiceOptions: RouteShorthandOptionsWithHandler =
         200: messageResponseSchema
       }
     },
-    preHandler: paidAccess,
+    preHandler: authenticatedAccess,
     handler: regeneratePublicInvoice
   };
 
@@ -220,7 +200,7 @@ export const revokeInvoiceSigningOptions: RouteShorthandOptionsWithHandler = {
       200: messageResponseSchema
     }
   },
-  preHandler: paidAccess,
+  preHandler: authenticatedAccess,
   handler: revokeInvoiceSigning
 };
 
@@ -234,7 +214,7 @@ export const regenerateInvoiceSigningOptions: RouteShorthandOptionsWithHandler =
         200: messageResponseSchema
       }
     },
-    preHandler: paidAccess,
+    preHandler: authenticatedAccess,
     handler: regenerateInvoiceSigning
   };
 
@@ -256,29 +236,6 @@ export const getPublicInvoiceOptions: RouteShorthandOptionsWithHandler = {
   },
   handler: getPublicInvoice
 };
-
-export const createPublicInvoicePaymentOptions: RouteShorthandOptionsWithHandler =
-  {
-    schema: {
-      response: {
-        200: createPublicInvoicePaymentResponseSchema
-      }
-    },
-    handler: createPublicInvoicePayment
-  };
-
-export const confirmPublicInvoicePaymentOptions: RouteShorthandOptionsWithHandler =
-  {
-    schema: {
-      body: z.object({
-        sessionId: z.string().min(1)
-      }),
-      response: {
-        200: confirmPublicInvoicePaymentResponseSchema
-      }
-    },
-    handler: confirmPublicInvoicePayment
-  };
 
 export const signPublicInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {

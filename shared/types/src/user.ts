@@ -4,11 +4,7 @@ import {
   invoicePartyBusinessTypeSchema,
   invoicePartyTypeSchema
 } from './invoice';
-import {
-  analyticsConsentStatusSchema,
-  passwordSchema,
-  stripeSubscriptionStatusSchema
-} from './common';
+import { analyticsConsentStatusSchema, passwordSchema } from './common';
 
 const multipartBooleanSchema = z.preprocess(
   (value) => (value === 'true' ? true : value === 'false' ? false : value),
@@ -44,15 +40,7 @@ const userBodyBaseSchema = z.object({
   defaultPaymentTermsDays: z
     .union([z.literal(7), z.literal(14), z.literal(30)])
     .default(30),
-  stripeCustomerId: z.string().nullish(),
-  stripeSubscriptionId: z.string().nullish(),
-  subscriptionStatus: stripeSubscriptionStatusSchema.nullish(),
   onboardingCompletedAt: z.string().nullish(),
-  trialStartedAt: z.string().nullish(),
-  trialEndsAt: z.string().nullish(),
-  subscriptionGraceEndsAt: z.string().nullish(),
-  subscriptionCurrentPeriodEndsAt: z.string().nullish(),
-  subscriptionCancelAt: z.string().nullish(),
   analyticsConsentStatus: analyticsConsentStatusSchema.nullish(),
   analyticsConsentUpdatedAt: z.string().nullish()
 });

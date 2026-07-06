@@ -4,10 +4,6 @@ import {
   userBodySchema,
   verifyEmailResponseSchema
 } from './user';
-import {
-  billingIntervalSchema,
-  stripeSubscriptionStatusSchema
-} from './common';
 import { bankAccountBodySchema } from './bank-account';
 import { clientBodySchema } from './client';
 import {
@@ -101,23 +97,12 @@ export const getPublicInvoiceResponseSchema = z.object({
   publicInvoice: publicInvoiceSchema
 });
 
-export const createPublicInvoicePaymentResponseSchema = z.object({
-  url: z.string()
-});
-
-export const confirmPublicInvoicePaymentResponseSchema = messageResponseSchema;
-
 export const postInvoiceResponseSchema = z.object({
   invoice: invoiceBodySchema,
   message: z.string()
 });
 
 export const updateInvoiceResponseSchema = z.object({
-  invoice: invoiceBodySchema,
-  message: z.string()
-});
-
-export const createInvoiceCorrectionResponseSchema = z.object({
   invoice: invoiceBodySchema,
   message: z.string()
 });
@@ -164,78 +149,6 @@ export const getLatestInvoicesResponseSchema = z.object({
 
 // Contact response schema
 export const postContactResponseSchema = messageResponseSchema;
-
-// Billing response schemas
-export const billingStatusSchema = z.object({
-  subscriptionStatus: stripeSubscriptionStatusSchema.nullish(),
-  onboardingCompletedAt: z.string().nullish(),
-  trialStartedAt: z.string().nullish(),
-  trialEndsAt: z.string().nullish(),
-  subscriptionGraceEndsAt: z.string().nullish(),
-  subscriptionCurrentPeriodEndsAt: z.string().nullish(),
-  subscriptionCancelAt: z.string().nullish(),
-  billingInterval: billingIntervalSchema.nullish().optional(),
-  billingRate: z
-    .object({
-      amount: z.number().nullish(),
-      currency: z.string().nullish(),
-      interval: z.string().nullish(),
-      intervalCount: z.number().nullish()
-    })
-    .optional(),
-  paymentSuccessPending: z.boolean(),
-  hasPaymentMethod: z.boolean().optional(),
-  billingDetails: z
-    .object({
-      name: z.string().nullish(),
-      email: z.string().nullish(),
-      cardBrand: z.string().nullish(),
-      cardLast4: z.string().nullish(),
-      cardExpMonth: z.number().nullish(),
-      cardExpYear: z.number().nullish()
-    })
-    .optional(),
-  hasPaidAccess: z.boolean()
-});
-
-export const billingStatusResponseSchema = z.object({
-  billing: billingStatusSchema
-});
-
-export const consumePaymentSuccessResponseSchema = z.object({
-  canShowPaymentSuccess: z.boolean(),
-  billing: billingStatusSchema.nullish()
-});
-
-export const billingUrlResponseSchema = z.object({
-  url: z.string()
-});
-
-export const merchantPaymentStatusSchema = z.object({
-  provider: z.literal('stripe_connect'),
-  connectedAccountId: z.string().nullish(),
-  chargesEnabled: z.boolean(),
-  payoutsEnabled: z.boolean(),
-  detailsSubmitted: z.boolean(),
-  onboardingCompletedAt: z.string().nullish(),
-  requirements: z
-    .object({
-      disabledReason: z.string().nullish(),
-      currentlyDue: z.array(z.string()),
-      pastDue: z.array(z.string()),
-      pendingVerification: z.array(z.string())
-    })
-    .optional(),
-  ready: z.boolean()
-});
-
-export const merchantPaymentStatusResponseSchema = z.object({
-  merchantPayment: merchantPaymentStatusSchema
-});
-
-export const billingIntervalRequestSchema = z.object({
-  interval: billingIntervalSchema.optional()
-});
 
 // Types
 export type MessageResponse = z.infer<typeof messageResponseSchema>;
@@ -294,17 +207,8 @@ export type GetPublicInvoiceSigningResponse = z.infer<
 export type GetPublicInvoiceResponse = z.infer<
   typeof getPublicInvoiceResponseSchema
 >;
-export type CreatePublicInvoicePaymentResponse = z.infer<
-  typeof createPublicInvoicePaymentResponseSchema
->;
-export type ConfirmPublicInvoicePaymentResponse = z.infer<
-  typeof confirmPublicInvoicePaymentResponseSchema
->;
 export type PostInvoiceResponse = z.infer<typeof postInvoiceResponseSchema>;
 export type UpdateInvoiceResponse = z.infer<typeof updateInvoiceResponseSchema>;
-export type CreateInvoiceCorrectionResponse = z.infer<
-  typeof createInvoiceCorrectionResponseSchema
->;
 export type SignInvoiceResponse = z.infer<typeof signInvoiceResponseSchema>;
 export type GetNextInvoiceNumberResponse = z.infer<
   typeof getNextInvoiceNumberResponseSchema
@@ -330,17 +234,3 @@ export type RegenerateInvoiceSigningLinkResponse = MessageResponse;
 export type AddInvoiceResponse = PostInvoiceResponse;
 
 export type PostContactResponse = z.infer<typeof postContactResponseSchema>;
-
-export type BillingStatus = z.infer<typeof billingStatusSchema>;
-export type BillingStatusResponse = z.infer<typeof billingStatusResponseSchema>;
-export type ConsumePaymentSuccessResponse = z.infer<
-  typeof consumePaymentSuccessResponseSchema
->;
-export type BillingUrlResponse = z.infer<typeof billingUrlResponseSchema>;
-export type MerchantPaymentStatus = z.infer<typeof merchantPaymentStatusSchema>;
-export type MerchantPaymentStatusResponse = z.infer<
-  typeof merchantPaymentStatusResponseSchema
->;
-export type BillingIntervalRequest = z.infer<
-  typeof billingIntervalRequestSchema
->;

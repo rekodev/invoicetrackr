@@ -1,11 +1,9 @@
+import { FastifyReply, FastifyRequest } from 'fastify';
 import type {
-  CreateInvoiceCorrectionBody,
   IncomeJournalQuery,
   InvoiceBody,
-  InvoicePaymentMode,
   PublicInvoice
 } from '@invoicetrackr/types';
-import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   InvoiceEmail,
   InvoiceSignedNotificationEmail
@@ -19,12 +17,10 @@ import { useI18n } from 'fastify-i18n';
 import {
   AlreadyExistsError,
   BadRequestError,
-  InternalServerError,
   NotFoundError
 } from '../utils/error';
 import {
   type InvoiceFromDb,
-  createInvoiceCorrectionInDb,
   deleteInvoiceFromDb,
   findInvoiceByInvoiceId,
   getIncomeJournalRowsFromDb,
@@ -37,11 +33,9 @@ import {
   getPublicInvoiceFromDb,
   getPublicInvoiceSigningFromDb,
   insertInvoiceInDb,
-  markInvoicePaidByCheckoutSessionInDb,
   markPublicInvoiceSentInDb,
   prepareInvoiceSigningFromDb,
   preparePublicInvoiceFromDb,
-  recordInvoiceCheckoutSessionInDb,
   regenerateInvoiceSigningFromDb,
   regeneratePublicInvoiceFromDb,
   revokeInvoiceSigningFromDb,
@@ -51,10 +45,6 @@ import {
   updateInvoiceStatusInDb
 } from '../database/invoice';
 import { appEmailFrom, getAppUrl } from '../config/app';
-import {
-  getStripeMerchantAccountFromDb,
-  toMerchantPaymentStatus
-} from '../database/payment';
 import { analyticsEvents } from '../analytics/events';
 import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import en from '../locales/en';
@@ -62,7 +52,6 @@ import { getClientsFromDb } from '../database/client';
 import { getUserFromDb } from '../database/user';
 import lt from '../locales/lt';
 import { resend } from '../config/resend';
-import { stripe } from '../config/stripe';
 
 const locales = { en, lt };
 
@@ -145,19 +134,8 @@ const assertPublicInvoiceLinkAvailable = (
     throw new BadRequestError(i18n.t('error.invoice.publicLinkExpired'));
 };
 
-const getPaymentIntentId = (
-  paymentIntent:
-    | string
-    | {
-        id?: string;
-      }
-    | null
-    | undefined
-) => (typeof paymentIntent === 'string' ? paymentIntent : paymentIntent?.id);
-
 const isInvoicePayable = (invoice: InvoiceBody) =>
   invoice.status === 'pending' &&
-  (invoice.documentType || 'invoice') !== 'credit_note' &&
   (invoice.lifecycleStatus || 'draft') !== 'voided' &&
   !invoice.publicInvoiceRevokedAt &&
   !isPublicInvoiceLinkExpired(invoice.publicInvoiceExpiresAt);
@@ -169,31 +147,26 @@ const getManualPaymentReference = (invoice: InvoiceBody) =>
 
 const resolvePublicInvoicePayment = ({
   invoice,
-  merchantPaymentReady,
   token
 }: {
   invoice: InvoiceBody;
-  merchantPaymentReady: boolean;
   token: string;
 }) => {
-  const configuredMode = (invoice.paymentMode || 'auto') as InvoicePaymentMode;
+  const configuredMode = invoice.paymentMode || 'manual';
   const canShowPayment =
     token === invoice.publicInvoiceToken && isInvoicePayable(invoice);
-  const canPayOnline = canShowPayment && merchantPaymentReady;
   const resolvedMode =
     !canShowPayment || configuredMode === 'disabled'
       ? 'disabled'
       : configuredMode === 'manual'
         ? 'manual'
-        : canPayOnline
-          ? 'online'
-          : 'manual';
+        : 'disabled';
 
   return {
     configuredMode,
     resolvedMode,
-    available: resolvedMode === 'online',
-    provider: resolvedMode === 'online' ? 'stripe_connect' : null,
+    available: false,
+    provider: null,
     manualReference: getManualPaymentReference(invoice)
   } as const;
 };
@@ -234,10 +207,6 @@ const buildPublicInvoicePayload = async ({
   if (!publicInvoice) throw new Error('Public invoice not found');
 
   const invoice = toInvoiceBody(publicInvoice.invoice);
-  const merchantAccount = await getStripeMerchantAccountFromDb(
-    publicInvoice.userId
-  );
-  const merchantPayment = toMerchantPaymentStatus(merchantAccount);
   const isSigningToken = token === invoice.recipientSigningToken;
   const signingRequested = Boolean(
     (invoice.recipientSigningRequestedAt &&
@@ -254,7 +223,6 @@ const buildPublicInvoicePayload = async ({
     !isSigningLinkExpired(invoice.recipientSigningExpiresAt);
   const payment = resolvePublicInvoicePayment({
     invoice,
-    merchantPaymentReady: merchantPayment.ready,
     token
   });
 
@@ -269,10 +237,6 @@ const buildPublicInvoicePayload = async ({
       resolvedMode: payment.resolvedMode,
       provider: payment.provider,
       available: payment.available,
-      checkoutSessionId: invoice.paymentCheckoutSessionId,
-      paymentIntentId: invoice.paymentIntentId,
-      completedAt: invoice.paymentCompletedAt,
-      failedAt: invoice.paymentFailedAt,
       manualReference: payment.manualReference
     },
     signing: {
@@ -423,8 +387,7 @@ export const postInvoice = async (
       line_count: insertedInvoice.services?.length,
       has_custom_vat: insertedInvoice.services?.some(
         ({ vatRate }) => vatRate !== undefined && vatRate !== null
-      ),
-      payment_provider: insertedInvoice.paymentProvider || null
+      )
     }
   });
 
@@ -510,52 +473,12 @@ export async function updateInvoiceStatus(
   if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
   if ((foundInvoice.lifecycleStatus || 'draft') === 'voided')
     throw new BadRequestError(i18n.t('error.invoice.voidedImmutable'));
-  if (
-    foundInvoice.status === 'paid' &&
-    foundInvoice.paymentProvider === 'stripe_connect' &&
-    foundInvoice.paymentCompletedAt
-  )
-    throw new BadRequestError(i18n.t('error.invoice.paidIssuedImmutable'));
-
   const updatedInvoice = await updateInvoiceStatusInDb(userId, id, status);
 
   if (!updatedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToUpdateStatus'));
 
   reply.status(200).send({ message: i18n.t('success.invoice.statusUpdated') });
-}
-
-export async function createInvoiceCorrection(
-  req: FastifyRequest<{
-    Params: { userId: string; id: string };
-    Body: CreateInvoiceCorrectionBody;
-  }>,
-  reply: FastifyReply
-) {
-  const id = Number(req.params.id);
-  const userId = Number(req.params.userId);
-  const { type, reason } = req.body;
-  const i18n = await useI18n(req);
-
-  const createdInvoice = await createInvoiceCorrectionInDb({
-    userId,
-    id,
-    type,
-    reason
-  });
-
-  if (createdInvoice === undefined)
-    throw new NotFoundError(i18n.t('error.invoice.notFound'));
-  if (!createdInvoice)
-    throw new BadRequestError(i18n.t('error.invoice.unableToCreateCorrection'));
-
-  reply.status(201).send({
-    invoice: createdInvoice,
-    message:
-      type === 'credit_note'
-        ? i18n.t('success.invoice.creditNoteCreated')
-        : i18n.t('success.invoice.correctionCreated')
-  });
 }
 
 export const deleteInvoice = async (
@@ -991,150 +914,6 @@ export const getPublicInvoice = async (
       publicInvoice
     })
   });
-};
-
-export const createPublicInvoicePayment = async (
-  req: FastifyRequest<{ Params: { token: string } }>,
-  reply: FastifyReply
-) => {
-  const i18n = await useI18n(req);
-  const publicInvoice = await getPublicInvoiceFromDb(req.params.token);
-
-  if (!publicInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
-  if (req.params.token !== publicInvoice.invoice.publicInvoiceToken)
-    throw new BadRequestError(i18n.t('error.invoice.publicLinkRequired'));
-
-  assertPublicInvoiceLinkAvailable(publicInvoice.invoice, i18n);
-  const invoice = toInvoiceBody(publicInvoice.invoice);
-
-  if (!isInvoicePayable(invoice))
-    throw new BadRequestError(i18n.t('error.invoice.notPayable'));
-
-  const merchantAccount = await getStripeMerchantAccountFromDb(
-    publicInvoice.userId
-  );
-  const merchantPayment = toMerchantPaymentStatus(merchantAccount);
-  const payment = resolvePublicInvoicePayment({
-    invoice,
-    merchantPaymentReady: merchantPayment.ready,
-    token: req.params.token
-  });
-
-  if (
-    payment.resolvedMode !== 'online' ||
-    !merchantPayment.ready ||
-    !merchantPayment.connectedAccountId
-  )
-    throw new BadRequestError(i18n.t('error.invoice.onlinePaymentUnavailable'));
-
-  const amount = Math.round(Number(invoice.totalAmount) * 100);
-
-  if (!Number.isFinite(amount) || amount <= 0)
-    throw new BadRequestError(i18n.t('error.invoice.notPayable'));
-
-  const invoiceNumber = invoice.invoiceId || String(invoice.id);
-  const session = await stripe.checkout.sessions.create(
-    {
-      mode: 'payment',
-      line_items: [
-        {
-          price_data: {
-            currency: publicInvoice.currency.toLowerCase(),
-            product_data: {
-              name: `Invoice ${invoiceNumber}`,
-              description: invoice.sender.name
-            },
-            unit_amount: amount
-          },
-          quantity: 1
-        }
-      ],
-      payment_intent_data: {
-        metadata: {
-          type: 'invoice_payment',
-          invoiceId: String(invoice.id || ''),
-          userId: String(publicInvoice.userId),
-          publicInvoiceToken: req.params.token
-        }
-      },
-      metadata: {
-        type: 'invoice_payment',
-        invoiceId: String(invoice.id || ''),
-        userId: String(publicInvoice.userId),
-        publicInvoiceToken: req.params.token
-      },
-      success_url: getAppUrl(
-        `/invoices/public/${req.params.token}?payment=success&session_id={CHECKOUT_SESSION_ID}`
-      ),
-      cancel_url: getAppUrl(
-        `/invoices/public/${req.params.token}?payment=cancelled`
-      )
-    },
-    { stripeAccount: merchantPayment.connectedAccountId }
-  );
-
-  await recordInvoiceCheckoutSessionInDb({
-    token: req.params.token,
-    checkoutSessionId: session.id,
-    paymentIntentId: getPaymentIntentId(session.payment_intent)
-  });
-
-  if (!session.url)
-    throw new InternalServerError('Stripe Checkout URL was not returned');
-
-  reply.status(200).send({ url: session.url });
-};
-
-export const confirmPublicInvoicePayment = async (
-  req: FastifyRequest<{
-    Params: { token: string };
-    Body: { sessionId: string };
-  }>,
-  reply: FastifyReply
-) => {
-  const i18n = await useI18n(req);
-  const publicInvoice = await getPublicInvoiceFromDb(req.params.token);
-
-  if (!publicInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
-  if (req.params.token !== publicInvoice.invoice.publicInvoiceToken)
-    throw new BadRequestError(i18n.t('error.invoice.publicLinkRequired'));
-
-  const merchantAccount = await getStripeMerchantAccountFromDb(
-    publicInvoice.userId
-  );
-  const merchantPayment = toMerchantPaymentStatus(merchantAccount);
-
-  if (!merchantPayment.connectedAccountId)
-    throw new BadRequestError(i18n.t('error.invoice.onlinePaymentUnavailable'));
-
-  const session = await stripe.checkout.sessions.retrieve(
-    req.body.sessionId,
-    {},
-    { stripeAccount: merchantPayment.connectedAccountId }
-  );
-
-  if (
-    session.metadata?.type !== 'invoice_payment' ||
-    session.metadata.publicInvoiceToken !== req.params.token
-  )
-    throw new BadRequestError(i18n.t('error.invoice.notPayable'));
-
-  if (session.payment_status !== 'paid')
-    throw new BadRequestError(i18n.t('error.invoice.notPayable'));
-
-  await markInvoicePaidByCheckoutSessionInDb({
-    checkoutSessionId: session.id,
-    paymentIntentId: getPaymentIntentId(session.payment_intent),
-    invoiceId: session.metadata.invoiceId
-      ? Number(session.metadata.invoiceId)
-      : undefined,
-    userId: session.metadata.userId
-      ? Number(session.metadata.userId)
-      : undefined,
-    publicInvoiceToken: session.metadata.publicInvoiceToken
-  });
-
-  reply.status(200).send({ message: i18n.t('success.invoice.update') });
 };
 
 export const signPublicInvoice = async (

@@ -2,14 +2,12 @@
 
 import {
   addInvoice,
-  createInvoiceCorrection,
   deleteInvoice,
   getNextInvoiceNumber,
   updateInvoice,
   updateInvoiceStatus
 } from '@/api/invoice';
 import type { InvoiceBody } from '@invoicetrackr/types';
-import type { InvoiceCorrectionType } from '@invoicetrackr/types';
 import { revalidatePath } from 'next/cache';
 
 import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '../constants/pages';
@@ -108,41 +106,6 @@ export const updateInvoiceStatusAction = async ({
   revalidatePath(INVOICES_PAGE);
 
   return { ok: true, message: response.data.message };
-};
-
-export const createInvoiceCorrectionAction = async ({
-  userId,
-  invoiceId,
-  type,
-  reason
-}: {
-  userId: number;
-  invoiceId: number;
-  type: InvoiceCorrectionType;
-  reason?: string;
-}): Promise<ActionResponseModel & { createdInvoiceId?: number }> => {
-  const response = await createInvoiceCorrection({
-    userId,
-    invoiceId,
-    type,
-    reason
-  });
-
-  if (isResponseError(response)) {
-    return {
-      ok: false,
-      message: response.data.message,
-      validationErrors: mapValidationErrors(response.data.errors)
-    };
-  }
-
-  revalidatePath(INVOICES_PAGE);
-
-  return {
-    ok: true,
-    message: response.data.message,
-    createdInvoiceId: response.data.invoice.id
-  };
 };
 
 export const deleteInvoiceAction = async ({

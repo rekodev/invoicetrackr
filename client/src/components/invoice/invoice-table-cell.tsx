@@ -13,7 +13,6 @@ import {
 } from '@heroui/react';
 import {
   ChevronDownIcon,
-  DocumentDuplicateIcon,
   DocumentTextIcon,
   ExclamationCircleIcon,
   EyeIcon,
@@ -24,25 +23,19 @@ import {
 } from '@heroicons/react/24/outline';
 import type { JSX, Key } from 'react';
 import { useEffect, useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import type {
   InvoiceBody,
-  InvoiceCorrectionType,
   InvoiceLifecycleStatus,
   InvoiceStatus
 } from '@invoicetrackr/types';
-import {
-  createInvoiceCorrectionAction,
-  updateInvoiceStatusAction
-} from '@/lib/actions/invoice';
 import { Currency } from '@/lib/types/currency';
-import { EDIT_INVOICE_PAGE } from '@/lib/constants/pages';
 import { formatDate } from '@/lib/utils/date';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import { statusOptions } from '@/lib/constants/table';
+import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
 
 const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
   {
@@ -82,7 +75,6 @@ const InvoiceTableCell = ({
   onEdit,
   onDelete
 }: Props) => {
-  const router = useRouter();
   const tCell = useTranslations('invoices.cell.actions');
   const tForm = useTranslations('components.invoice_form');
   const tTable = useTranslations('invoices.table');
@@ -91,15 +83,6 @@ const InvoiceTableCell = ({
 
   const { isPastDue, daysPastDue } = getInvoiceDueStatus(invoice);
   const isDraft = (invoice.lifecycleStatus || 'draft') === 'draft';
-  const isIssued = (invoice.lifecycleStatus || 'draft') === 'issued';
-  const isOriginalInvoice = (invoice.documentType || 'invoice') === 'invoice';
-  const canCreateRelatedDocument =
-    isIssued && isOriginalInvoice && !invoice.correctedByInvoiceId;
-  const canCreateCorrection =
-    canCreateRelatedDocument && invoice.status !== 'paid';
-  const isStripePaid = Boolean(
-    invoice.paymentProvider === 'stripe_connect' && invoice.paymentCompletedAt
-  );
 
   const handleViewIconClick = () => onView(invoice);
   const handleEditInvoiceClick = () => onEdit(invoice);
@@ -115,7 +98,6 @@ const InvoiceTableCell = ({
   const handleChangeStatus = (
     status: 'paid' | 'pending' | 'canceled' | undefined
   ) => {
-    if (isStripePaid) return;
     if (!status || status === invoice.status) return;
 
     startTransition(async () => {
@@ -146,30 +128,8 @@ const InvoiceTableCell = ({
   );
 
   const handleMarkAsPaidClick = () => {
-    if (isStripePaid) return;
-
     setIsPaid(!isPaid);
     handleChangeStatus(isPaid ? 'pending' : 'paid');
-  };
-
-  const handleCreateCorrectionClick = (type: InvoiceCorrectionType) => {
-    if (!invoice.id) return;
-
-    startTransition(async () => {
-      const response = await createInvoiceCorrectionAction({
-        userId,
-        invoiceId: Number(invoice.id),
-        type
-      });
-
-      toast(response.message, {
-        variant: response.ok ? 'success' : 'danger'
-      });
-
-      if (response.ok && response.createdInvoiceId) {
-        router.push(EDIT_INVOICE_PAGE(response.createdInvoiceId));
-      }
-    });
   };
 
   const cellValue =
@@ -238,74 +198,57 @@ const InvoiceTableCell = ({
       return (
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            {isStripePaid ? (
-              renderTooltip(
-                tCell('status_locked'),
+            <Dropdown>
+              <DropdownTrigger
+                isDisabled={isPending}
+                className="h-auto min-w-0 cursor-pointer bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-50 [&[aria-expanded=true]_svg]:rotate-180"
+              >
                 <Chip
                   className="capitalize"
                   color={statusColorMap[invoice.status as InvoiceStatus]}
                   variant="soft"
                 >
                   {cellValue as string}
+                  <ChevronDownIcon className="ml-0.5 h-3 w-3 transition-transform" />
                 </Chip>
-              )
-            ) : (
-              <Dropdown>
-                <DropdownTrigger
-                  isDisabled={isPending}
-                  className="h-auto min-w-0 cursor-pointer bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-50 [&[aria-expanded=true]_svg]:rotate-180"
+              </DropdownTrigger>
+              <DropdownPopover>
+                <DropdownMenu
+                  aria-label={tForm('a11y.static_actions_label')}
+                  selectionMode="single"
+                  items={statusOptions}
+                  selectedKeys={[cellValue] as any}
+                  onSelectionChange={(key) =>
+                    handleChangeStatus(
+                      Array.from(key)[0] as
+                        | 'paid'
+                        | 'pending'
+                        | 'canceled'
+                        | undefined
+                    )
+                  }
                 >
-                  <Chip
-                    className="capitalize"
-                    color={statusColorMap[invoice.status as InvoiceStatus]}
-                    variant="soft"
-                  >
-                    {cellValue as string}
-                    <ChevronDownIcon className="ml-0.5 h-3 w-3 transition-transform" />
-                  </Chip>
-                </DropdownTrigger>
-                <DropdownPopover>
-                  <DropdownMenu
-                    aria-label={tForm('a11y.static_actions_label')}
-                    selectionMode="single"
-                    items={statusOptions}
-                    selectedKeys={[cellValue] as any}
-                    onSelectionChange={(key) =>
-                      handleChangeStatus(
-                        Array.from(key)[0] as
-                          | 'paid'
-                          | 'pending'
-                          | 'canceled'
-                          | undefined
-                      )
-                    }
-                  >
-                    {(item) => (
-                      <DropdownItem
-                        key={item.uid}
-                        id={item.uid}
-                        textValue={item.name}
-                      >
-                        {item.name}
-                        <Dropdown.ItemIndicator />
-                      </DropdownItem>
-                    )}
-                  </DropdownMenu>
-                </DropdownPopover>
-              </Dropdown>
-            )}
+                  {(item) => (
+                    <DropdownItem
+                      key={item.uid}
+                      id={item.uid}
+                      textValue={item.name}
+                    >
+                      {item.name}
+                      <Dropdown.ItemIndicator />
+                    </DropdownItem>
+                  )}
+                </DropdownMenu>
+              </DropdownPopover>
+            </Dropdown>
 
             {renderTooltip(
-              isStripePaid
-                ? tCell('status_locked')
-                : isPaid
-                  ? tCell('mark_as_pending')
-                  : tCell('mark_as_paid'),
+              isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid'),
               <Checkbox
                 className="mr-0.5 max-w-5 p-0"
                 isSelected={isPaid}
                 onChange={handleMarkAsPaidClick}
-                isDisabled={isPending || isStripePaid}
+                isDisabled={isPending}
               />
             )}
           </div>
@@ -358,32 +301,6 @@ const InvoiceTableCell = ({
               <EyeIcon className="h-5 w-5" />
             </button>
           )}
-          {canCreateCorrection &&
-            renderTooltip(
-              tCell('tooltip_create_correction'),
-              <button
-                type="button"
-                aria-label={tCell('tooltip_create_correction')}
-                onClick={() => handleCreateCorrectionClick('corrected_invoice')}
-                disabled={isPending}
-                className="text-muted cursor-pointer text-lg active:opacity-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <DocumentDuplicateIcon className="h-5 w-5" />
-              </button>
-            )}
-          {canCreateRelatedDocument &&
-            renderTooltip(
-              tCell('tooltip_create_credit_note'),
-              <button
-                type="button"
-                aria-label={tCell('tooltip_create_credit_note')}
-                onClick={() => handleCreateCorrectionClick('credit_note')}
-                disabled={isPending}
-                className="text-muted cursor-pointer text-lg active:opacity-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <DocumentTextIcon className="h-5 w-5" />
-              </button>
-            )}
           {isDraft && (
             <>
               {renderTooltip(

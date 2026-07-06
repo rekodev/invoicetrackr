@@ -10,8 +10,6 @@ import { useTranslations } from 'next-intl';
 import {
   HOME_PAGE,
   ONBOARDING_PAGE,
-  PAYMENT_SUCCESS_PAGE,
-  RENEW_SUBSCRIPTION_PAGE,
   VERIFY_EMAIL_PAGE
 } from '@/lib/constants/pages';
 
@@ -49,9 +47,7 @@ const Breadcrumbs = () => {
 
   if (
     !pathname ||
-    pathname.startsWith(PAYMENT_SUCCESS_PAGE) ||
     pathname.startsWith(ONBOARDING_PAGE) ||
-    pathname.startsWith(RENEW_SUBSCRIPTION_PAGE) ||
     pathname.startsWith(VERIFY_EMAIL_PAGE)
   )
     return null;

@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache';
 
 import {
   changeUserPassword,
-  getUser,
   resendVerificationEmail,
   updateUser,
   updateUserAccountSettings,
@@ -61,6 +60,8 @@ export async function updateUserAction({
 
   await updateSessionAction({
     newSession: {
+      isOnboarded: true,
+      onboardingCompletedAt: new Date().toISOString(),
       isVatPayer: user.isVatPayer,
       vatNumber: user.isVatPayer ? user.vatNumber : null,
       ...(user.isVatPayer ? {} : { defaultInvoiceVatMode: 'no_vat' })
@@ -227,39 +228,4 @@ export async function verifyEmailTokenAction({
     status: response.data.status,
     emailVerifiedAt: response.data.emailVerifiedAt
   };
-}
-
-/**
- * Syncs the user's subscription status from the database to the session
- * Call this in layouts or pages where subscription status is critical
- */
-export async function syncSubscriptionStatusAction(userId: string) {
-  try {
-    const response = await getUser(Number(userId));
-
-    if (isResponseError(response)) {
-      console.error('Failed to fetch user for sync:', response);
-      return null;
-    }
-
-    const user = response.data.user;
-
-    await updateSessionAction({
-      newSession: {
-        isOnboarded: !!user.onboardingCompletedAt,
-        subscriptionStatus: user.subscriptionStatus,
-        onboardingCompletedAt: user.onboardingCompletedAt,
-        trialStartedAt: user.trialStartedAt,
-        trialEndsAt: user.trialEndsAt,
-        subscriptionGraceEndsAt: user.subscriptionGraceEndsAt,
-        subscriptionCurrentPeriodEndsAt: user.subscriptionCurrentPeriodEndsAt,
-        subscriptionCancelAt: user.subscriptionCancelAt
-      }
-    });
-
-    return user.subscriptionStatus;
-  } catch (error) {
-    console.error('Error syncing subscription status:', error);
-    return null;
-  }
 }

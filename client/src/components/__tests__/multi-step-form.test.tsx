@@ -2,7 +2,6 @@ import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { User } from '@invoicetrackr/types';
-import userEvent from '@testing-library/user-event';
 import { withIntl } from '@/test/with-intl';
 
 import MultiStepForm from '../multi-step-form';
@@ -29,21 +28,6 @@ vi.mock('@/lib/actions', () => ({
   updateSessionAction: vi.fn()
 }));
 
-vi.mock('../payment-form', () => ({
-  default: ({
-    user,
-    onTrialStarted
-  }: {
-    user?: User;
-    onTrialStarted?: () => void | Promise<void>;
-  }) => (
-    <div data-testid="payment-form">
-      Payment Form for {user?.email}
-      <button onClick={() => onTrialStarted?.()}>Start mocked trial</button>
-    </div>
-  )
-}));
-
 describe('<MultiStepForm />', () => {
   let props: ComponentProps<typeof MultiStepForm>;
   const renderHelper = (component: JSX.Element) => render(withIntl(component));
@@ -55,8 +39,6 @@ describe('<MultiStepForm />', () => {
     businessNumber: '123456789',
     address: 'Test Address',
     type: 'sender',
-    stripeSubscriptionId: 'sub_12345',
-    stripeCustomerId: 'cus_12345',
     selectedBankAccountId: 1,
     language: 'en',
     preferredInvoiceLanguage: 'en',
@@ -99,25 +81,15 @@ describe('<MultiStepForm />', () => {
     renderHelper(<MultiStepForm existingUserData={userWithoutPersonalInfo} />);
 
     expect(
-      screen.getByRole('heading', { name: 'Personal Information' })
+      screen.getByRole('heading', { name: 'Freelancer Profile' })
     ).toBeDefined();
   });
 
-  it('renders trial step when user has completed personal info', () => {
+  it('keeps completed users on the freelancer profile step when rendered directly', () => {
     renderHelper(<MultiStepForm {...props} existingUserData={existingUser} />);
 
-    expect(screen.findByTestId('payment-form')).toBeDefined();
-  });
-
-  it('navigates to trial success without refreshing onboarding', async () => {
-    renderHelper(<MultiStepForm {...props} />);
-
-    await userEvent.click(screen.getByText('Start mocked trial'));
-
-    expect(mockRouterPush).toHaveBeenCalledWith(
-      '/payment-success/confirm?trial=true'
-    );
-    expect(mockRouterReplace).not.toHaveBeenCalled();
-    expect(mockRouterRefresh).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole('heading', { name: 'Freelancer Profile' })
+    ).toBeDefined();
   });
 });

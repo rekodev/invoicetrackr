@@ -2,7 +2,6 @@
 
 import {
   BuildingLibraryIcon,
-  CreditCardIcon,
   SparklesIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
@@ -70,7 +69,10 @@ const INITIAL_RECEIVER_DATA: Client = {
   type: 'receiver'
 };
 
-const paymentModeOptions = ['auto', 'online', 'manual', 'disabled'] as const;
+const paymentModeOptions = ['manual', 'disabled'] as const;
+
+const getMvpPaymentMode = (paymentMode?: InvoiceBody['paymentMode']) =>
+  paymentMode === 'disabled' ? 'disabled' : 'manual';
 
 const getDefaultVatRate = (user: User) => {
   if (!user.isVatPayer) return 0;
@@ -94,6 +96,7 @@ const InvoiceForm = ({
     defaultValues: invoiceData
       ? {
           ...invoiceData,
+          paymentMode: getMvpPaymentMode(invoiceData.paymentMode),
           date: invoiceData.date ? formatDate(invoiceData.date) : today,
           dueDate: invoiceData.dueDate ? formatDate(invoiceData.dueDate) : ''
         }
@@ -111,7 +114,7 @@ const InvoiceForm = ({
           ],
           bankingInformation: { name: '', code: '', accountNumber: '' },
           status: 'pending',
-          paymentMode: 'auto',
+          paymentMode: 'manual',
           manualPaymentReference: '',
           date: today,
           dueDate: addDaysToDate(today, defaultPaymentTermsDays)
@@ -148,7 +151,7 @@ const InvoiceForm = ({
   // eslint-disable-next-line react-hooks/incompatible-library
   const isReceiverBusiness = watch('receiver.businessType') === 'business';
   const isSenderBusiness = watch('sender.businessType') === 'business';
-  const paymentMode = watch('paymentMode') || 'auto';
+  const paymentMode = watch('paymentMode') || 'manual';
   const currentDate = watch('date');
   const senderVatNumber = watch('sender.vatNumber');
   const shouldShowSenderVatNumber = user.isVatPayer || !!senderVatNumber;
@@ -577,9 +580,11 @@ const InvoiceForm = ({
               className="w-full"
               aria-label={t('a11y.payment_mode_label')}
               variant="secondary"
-              value={field.value || 'auto'}
+              value={getMvpPaymentMode(field.value)}
               onChange={(key) => {
-                const selectedPaymentMode = String(key || 'auto');
+                const selectedPaymentMode = getMvpPaymentMode(
+                  String(key || 'manual') as InvoiceBody['paymentMode']
+                );
 
                 field.onChange(selectedPaymentMode);
                 if (selectedPaymentMode === 'disabled') {
@@ -592,7 +597,7 @@ const InvoiceForm = ({
             >
               <Label>{t('labels.payment_mode')}</Label>
               <Select.Trigger>
-                <CreditCardIcon className="text-muted h-4 w-4" />
+                <BuildingLibraryIcon className="text-muted h-4 w-4" />
                 <Select.Value />
                 <Select.Indicator />
               </Select.Trigger>

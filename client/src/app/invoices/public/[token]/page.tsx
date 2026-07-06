@@ -1,17 +1,12 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
-import { confirmPublicInvoicePayment, getPublicInvoice } from '@/api/invoice';
 import PublicInvoicePageContent from '@/components/invoice/public-invoice-page-content';
 import { getNoIndexMetadata } from '@/lib/seo/metadata';
+import { getPublicInvoice } from '@/api/invoice';
 import { isResponseError } from '@/lib/utils/error';
 
 type Params = Promise<{ token: string }>;
-type SearchParams = Promise<{
-  payment?: string;
-  session_id?: string;
-}>;
-
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('invoice_signing');
 
@@ -24,35 +19,14 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function PublicInvoicePage({
-  params,
-  searchParams
+  params
 }: {
   params: Params;
-  searchParams: SearchParams;
 }) {
   const { token } = await params;
-  const { payment, session_id: sessionId } = await searchParams;
   const t = await getTranslations('invoice_signing');
 
-  if (payment === 'success' && sessionId) {
-    await confirmPublicInvoicePayment({ token, sessionId });
-  }
-
-  let response = await getPublicInvoice(token);
-
-  if (
-    payment === 'success' &&
-    !sessionId &&
-    !isResponseError(response) &&
-    response.data.publicInvoice.payment.checkoutSessionId &&
-    !response.data.publicInvoice.payment.completedAt
-  ) {
-    await confirmPublicInvoicePayment({
-      token,
-      sessionId: response.data.publicInvoice.payment.checkoutSessionId
-    });
-    response = await getPublicInvoice(token);
-  }
+  const response = await getPublicInvoice(token);
 
   if (isResponseError(response))
     return (
@@ -65,9 +39,6 @@ export default async function PublicInvoicePage({
     );
 
   return (
-    <PublicInvoicePageContent
-      publicInvoice={response.data.publicInvoice}
-      paymentStatus={payment}
-    />
+    <PublicInvoicePageContent publicInvoice={response.data.publicInvoice} />
   );
 }
