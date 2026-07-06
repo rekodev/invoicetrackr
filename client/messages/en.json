@@ -46,15 +46,11 @@
         "login": "Log In",
         "new": "New",
         "onboarding": "Onboarding",
-        "payment_success": "Payment Success",
         "personal_information": "Personal Information",
         "privacy_policy": "Privacy Policy",
         "profile": "Profile",
-        "renew_subscription": "Renew Subscription",
         "sign_up": "Sign Up",
-        "terms_of_service": "Terms of Service",
-        "billing": "Billing",
-        "invoice_payments": "Invoice Payments"
+        "terms_of_service": "Terms of Service"
     },
     "general_error": "Uh oh! Something went wrong...",
     "cookie_consent": {
@@ -81,85 +77,16 @@
         "description": "We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.",
         "try_again": "Try again"
     },
-    "renew_subscription": {
-        "title": "Your Subscription is Inactive",
-        "description": "Subscribe now to gain access to all premium features and continue enjoying seamless invoicing."
-    },
-    "payment_success": {
-        "payment": {
-            "badge": "Subscription active",
-            "headline": "You're in.",
-            "headline_accent": "Start invoicing.",
-            "description": "Your InvoiceTrackr subscription is active with full access. Create a real invoice, add your clients, and keep your billing workflow moving.",
-            "summary": {
-                "title": "Premium plan",
-                "status": "Active",
-                "primary_label": "Access",
-                "primary_value": "Full access",
-                "secondary_label": "Plan",
-                "secondary_value": "Pro plan",
-                "link": "Manage subscription"
-            }
-        },
-        "trial": {
-            "badge": "Trial active",
-            "headline": "You're in.",
-            "headline_accent": "Make it count.",
-            "description": "Your 7-day Pro trial is live with full access and no card on file. Build a real invoice, send it, and decide if InvoiceTrackr earns a spot in your workflow.",
-            "summary": {
-                "title": "Pro trial",
-                "status": "Day 1 / 7",
-                "primary_label": "Ends",
-                "primary_value": "In 7 days",
-                "secondary_label": "After trial",
-                "secondary_value": "Pro plan",
-                "link": "Upgrade early and lock in the price"
-            }
-        },
-        "actions": {
-            "create_invoice": "Create your first invoice",
-            "dashboard": "Go to Dashboard"
-        },
-        "confirmation": {
-            "status_label": "Confirmation"
-        },
-        "security": {
-            "title": "Payment handled securely",
-            "description": "Stripe processed the checkout and your InvoiceTrackr access has been updated on your account."
-        },
-        "support": {
-            "title": "Need help?",
-            "description": "If anything looks off, check your account settings or contact support with the email on your account."
-        },
-        "quick_start": {
-            "title": "Quick start",
-            "subtitle": "3 things worth trying"
-        },
-        "quick_actions": {
-            "invoice": {
-                "title": "Create your first invoice",
-                "description": "Generate a polished PDF in under a minute."
-            },
-            "client": {
-                "title": "Add a client",
-                "description": "Save details once, reuse them on every invoice."
-            },
-            "contract": {
-                "title": "Draft a contract",
-                "description": "Prepare reusable agreement details for your workflow."
-            }
-        }
-    },
     "home": {
         "hero": {
             "badge_label": "New",
-            "badge_text": "Stripe Connect payments are live",
+            "badge_text": "Built for individuali veikla",
             "title": "Invoice clients.",
-            "title_accent": "Get paid faster.",
-            "subtitle": "The simplest way to send invoices, manage clients, and collect payments with a polished document your clients will actually enjoy opening.",
+            "title_accent": "Know what to set aside.",
+            "subtitle": "A focused finance workspace for Lithuanian freelancers operating under individuali veikla pagal pažymą: invoices, clients, bank-transfer payment tracking, and income-journal exports.",
             "cta_primary": "Create a free invoice",
-            "cta_secondary": "Start Premium",
-            "note": "Generate a free invoice without signing up · 7-day Premium trial"
+            "cta_secondary": "Create account",
+            "note": "For Lithuanian individual activity freelancers · not MB/UAB accounting"
         },
         "preview": {
             "sidebar": {
@@ -226,7 +153,7 @@
             "eyebrow": "The product",
             "title": "A small set of tools",
             "title_accent": "that actually fit together.",
-            "subtitle": "Your dashboard, invoices, clients and payments follow the same billing workflow from first draft to paid invoice.",
+            "subtitle": "Invoices, clients, bank-transfer payments, reminders, and exports follow the workflow a solo freelancer actually uses.",
             "items": {
                 "invoices": {
                     "eyebrow": "Invoices",
@@ -239,7 +166,7 @@
                 },
                 "clients": {
                     "title": "Clients in one tidy place.",
-                    "body": "Company or individual details, VAT IDs and addresses ready to drop into any invoice."
+                    "body": "Client names, addresses, email, payment terms, and optional registration details ready to reuse on every invoice."
                 },
                 "contracts": {
                     "badge": "Soon",
@@ -313,13 +240,13 @@
             },
             "capabilities": {
                 "payments": {
-                    "badge": "New",
-                    "title": "Stripe Connect payments.",
-                    "body": "Connect your Stripe account; invoice links accept cards and auto-mark as paid."
+                    "badge": "MVP",
+                    "title": "Manual bank-transfer tracking.",
+                    "body": "Record full or partial payments when money lands, without pretending the invoice was paid on issue date."
                 },
                 "links": {
-                    "title": "Sign and pay links.",
-                    "body": "Send a unique URL. Your client signs, pays, or both without an account."
+                    "title": "Invoice links without client accounts.",
+                    "body": "Share the finalized invoice and payment instructions while keeping your own workflow private."
                 },
                 "email": {
                     "title": "Email delivery and reminders.",
@@ -327,18 +254,18 @@
                 },
                 "language": {
                     "title": "English and Lithuanian, one click.",
-                    "body": "Switch the invoice language without re-typing anything. More languages can come later."
+                    "body": "Issue Lithuanian or English documents from the same reusable client and profile data."
                 },
                 "export": {
-                    "title": "Export to CSV anytime.",
-                    "body": "Your data is yours. Pull the invoice ledger into a spreadsheet whenever you want."
+                    "title": "Income-journal exports.",
+                    "body": "Pull the records you need for pajamų žurnalas review and accountant handoff."
                 }
             }
         },
         "pricing": {
-            "eyebrow": "Pricing",
-            "title": "Honest, simple.",
-            "subtitle": "Start free. Upgrade when you outgrow it.",
+            "eyebrow": "MVP access",
+            "title": "Focused before priced.",
+            "subtitle": "Use the free generator today. The logged-in MVP is being shaped around Lithuanian freelancers before final pricing is locked.",
             "free": {
                 "title": "Free generator",
                 "tagline": "Make a one-off invoice and download the PDF. No account.",
@@ -351,19 +278,20 @@
                 "cta": "Generate an invoice"
             },
             "premium": {
-                "badge": "Recommended",
-                "title": "Premium",
-                "tagline": "The full app: save, send, track, get paid.",
+                "badge": "MVP",
+                "title": "Freelancer workspace",
+                "tagline": "The private workflow for saved invoices, clients, payments, expenses, and annual prep.",
+                "price": "MVP",
                 "suffix": "/year",
-                "alt": "or {monthlyPrice} / month",
+                "alt": "Final pricing will be decided after the focused MVP is validated.",
                 "features": {
                     "saved": "Unlimited saved invoices and clients",
                     "email": "Send by email and remind clients",
-                    "links": "Sign and pay links for clients",
-                    "payments": "Stripe Connect payments",
-                    "export": "CSV export of your invoice ledger"
+                    "links": "Finalized invoice links for client viewing",
+                    "payments": "Manual bank-transfer payment tracking",
+                    "export": "Income-journal and accountant exports"
                 },
-                "cta": "Start 7-day trial"
+                "cta": "Create account"
             }
         },
         "faq": {
@@ -372,7 +300,7 @@
             "items": {
                 "free": {
                     "question": "Is there a free plan?",
-                    "answer": "You can generate an invoice and download the PDF for free without an account. Saving, sending, reminders, payment links and the rest of the app live on Premium."
+                    "answer": "You can generate an invoice and download the PDF for free without an account. The logged-in app is for saved freelancer workflows: clients, invoices, reminders, payments, expenses, and exports."
                 },
                 "export": {
                     "question": "Can I export my data?",
@@ -380,7 +308,7 @@
                 },
                 "payments": {
                     "question": "How do payments work?",
-                    "answer": "Connect your Stripe account and invoice links can accept card payments. Paid invoices can be marked automatically or manually."
+                    "answer": "The MVP assumes clients pay by bank transfer. You record full or partial payments manually, and the invoice status updates from those records."
                 },
                 "languages": {
                     "question": "Which languages are supported?",
@@ -391,13 +319,13 @@
         "cta": {
             "badge": "Free invoice generator · no sign-up",
             "title": "Ready to send a better invoice?",
-            "subtitle": "Generate one for free, or start a Premium trial to save, send and get paid.",
-            "primary": "Start 7-day trial",
+            "subtitle": "Generate one for free, or create an account to build the saved individual-activity workflow.",
+            "primary": "Create account",
             "secondary": "Generate a free invoice"
         }
     },
     "footer": {
-        "tagline": "Simple, powerful invoicing for freelancers and small businesses.",
+        "tagline": "Focused invoicing and finance tracking for Lithuanian individual-activity freelancers.",
         "support": "Support",
         "legal": "Legal",
         "privacy_policy": "Privacy Policy",
@@ -407,26 +335,26 @@
     "seo": {
         "home": {
             "title": "Invoice software for Lithuanian freelancers",
-            "description": "Create polished invoices, manage clients, collect payments, export your invoice ledger, and issue documents in Lithuanian or English.",
+            "description": "Create invoices, manage clients, record bank-transfer payments, track expenses, and prepare income-journal exports for Lithuanian individual-activity work.",
             "keywords": [
                 "invoice software Lithuania",
-                "invoice generator",
-                "Lithuanian invoice",
-                "VAT invoice",
-                "freelancer invoicing",
-                "small business invoicing"
+                "individuali veikla invoice",
+                "Lithuanian freelancer invoice",
+                "pajamų žurnalas",
+                "freelancer tax Lithuania",
+                "invoice generator Lithuania"
             ],
             "features": [
                 "Invoice creation",
                 "Client management",
-                "Stripe Connect payments",
+                "Manual payment tracking",
                 "Invoice email sending",
-                "CSV invoice ledger export"
+                "Income journal export"
             ]
         },
         "createInvoice": {
             "title": "Free invoice generator for PDF invoices",
-            "description": "Create a free invoice online, choose English or Lithuanian output, add line items and a signature, then download a polished PDF.",
+            "description": "Create a free invoice online, choose English or Lithuanian output, add line items and bank-transfer details, then download a polished PDF.",
             "keywords": [
                 "free invoice generator",
                 "PDF invoice generator",
@@ -448,12 +376,12 @@
         },
         "terms": {
             "title": "Terms of Service",
-            "description": "InvoiceTrackr terms for account usage, invoice creation, subscriptions, payments, and service responsibilities.",
+            "description": "InvoiceTrackr terms for account usage, invoice creation, MVP access, payment records, and service responsibilities.",
             "keywords": [
                 "InvoiceTrackr terms of service",
                 "terms",
-                "subscription",
-                "payments",
+                "MVP access",
+                "invoice records",
                 "account usage"
             ]
         }
@@ -509,13 +437,8 @@
                 },
                 "personal": {
                     "short_name": "Profile",
-                    "name": "Personal Information",
-                    "description": "Tell us about yourself"
-                },
-                "trial": {
-                    "short_name": "Trial",
-                    "name": "Start Free Trial",
-                    "description": "Unlock the full product for 7 days"
+                    "name": "Freelancer Profile",
+                    "description": "Add the details needed for individual activity invoices"
                 }
             },
             "actions": {
@@ -657,7 +580,7 @@
                 "tooltip_download": "Download",
                 "mark_as_paid": "Mark as Paid",
                 "mark_as_pending": "Mark as Pending",
-                "status_locked": "Status is locked because this invoice was paid online.",
+                "status_locked": "Status updates are not available for this invoice.",
                 "public_link_copied": "Public invoice link copied.",
                 "past_due": "{days}d past due"
             }
@@ -712,7 +635,7 @@
         "signed_status": "Signed",
         "loading_pdf": "Loading PDF...",
         "panel_title": "Complete this invoice",
-        "panel_description": "Review the parties, pay online if available, and sign when requested.",
+        "panel_description": "Review the parties, bank-transfer details, and signature request.",
         "receiver": "Recipient",
         "sender": "Sender",
         "summary_title": "Invoice summary",
@@ -734,10 +657,7 @@
         "payment_action_title": "Pay this invoice",
         "payment_action_paid_title": "Payment received",
         "payment_action_paid_subtitle": "No further payment is needed for this invoice.",
-        "payment_action_online": "The sender accepts online card payments through Stripe.",
         "payment_action_bank": "Pay by bank transfer using the details below.",
-        "payment_failed": "The previous online payment did not complete. You can try again.",
-        "payment_cancelled": "Payment was cancelled. You can try again or use the payment details provided by the sender.",
         "voided_invoice_title": "Invoice voided",
         "voided_invoice_description": "The sender has voided this invoice. Download it only for your records.",
         "canceled_invoice_title": "Invoice canceled",
@@ -844,12 +764,6 @@
             },
             "banking_information": {
                 "title": "Banking Information"
-            },
-            "billing": {
-                "title": "Billing"
-            },
-            "invoice_payments": {
-                "title": "Invoice Payments"
             }
         },
         "personal_information": {
@@ -932,122 +846,7 @@
                     "cancel_button": "Cancel"
                 }
             },
-            "save_changes": "Save Changes",
-            "subscription": {
-                "title": "Subscription Status",
-                "badge": "Pro plan",
-                "plan_label": "Current plan",
-                "current_rate_label": "Current rate",
-                "status_label": "Access status",
-                "billing_label": "Billing",
-                "billing_title": "Stripe-managed billing",
-                "billing_description": "Manage payment methods and subscription changes securely in Stripe. The active rate is shown from Stripe data.",
-                "billing_name_label": "Billing name",
-                "billing_email_label": "Billing email",
-                "billing_not_available": "Not available",
-                "payment_method_label": "Payment method",
-                "access_note": "Premium features and billing continuity",
-                "description": {
-                    "active": "Your account has access to the paid workflow.",
-                    "trial": "Your trial is active. Add a payment method to keep access after it ends.",
-                    "trial_ready": "Your trial is active and a payment method is ready for when it ends.",
-                    "inactive": "Renew to restore premium invoicing features."
-                },
-                "status": {
-                    "active": "Active",
-                    "trial": "Trial active",
-                    "inactive": "Inactive"
-                },
-                "trial_ends": "Trial ends {date}",
-                "plans": {
-                    "premium": "Premium",
-                    "trial": "Pro trial"
-                },
-                "plan": "{plan} Plan - {currency}{amount}/{interval}",
-                "interval": {
-                    "month": "month",
-                    "year": "year"
-                },
-                "rates": {
-                    "monthly": {
-                        "title": "Monthly billing",
-                        "note": "Renews monthly through Stripe."
-                    },
-                    "annual": {
-                        "title": "Annual billing",
-                        "note": "Renews yearly through Stripe."
-                    },
-                    "custom": {
-                        "title": "Stripe billing"
-                    },
-                    "stripe_note": "Current active rate from Stripe.",
-                    "invoice_note": "Latest billed amount from Stripe.",
-                    "unavailable": {
-                        "title": "Exact rate unavailable",
-                        "amount": "—",
-                        "note": "Stripe did not return a subscription price for this account.",
-                        "renews": "Stripe did not return a subscription price. Current billing period ends {date}."
-                    }
-                },
-                "payment_method": {
-                    "card": "{brand} ending in {last4}",
-                    "saved": "Payment method saved in Stripe",
-                    "missing": "No payment method on file",
-                    "expires": "Expires {month}/{year}"
-                },
-                "action": {
-                    "add_payment_method": "Add Payment Method",
-                    "manage": "Manage Subscription",
-                    "renew": "Renew Subscription"
-                },
-                "cancel_subscription_dialog": {
-                    "title": "Cancel Subscription",
-                    "description": "Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing cycle.",
-                    "confirm_button": "Yes, cancel my subscription",
-                    "cancel_button": "Keep Subscription"
-                }
-            }
-        },
-        "merchant_payments": {
-            "eyebrow": "Invoice recipient payments",
-            "title": "Accept invoice payments",
-            "description": "Connect a Stripe merchant account so recipients can pay eligible invoices online. If this is not ready, public invoice pages will show bank-transfer details instead.",
-            "description_ready": "Stripe Connect is ready. Eligible unpaid public invoices can show an online payment action that routes funds to your merchant account.",
-            "action_start": "Set up Stripe Connect",
-            "action_continue": "Continue Stripe setup",
-            "action_update": "Update Stripe Connect",
-            "status": {
-                "live": "Live",
-                "reviewing": "Reviewing",
-                "action_needed": "Action needed",
-                "not_connected": "Not connected"
-            },
-            "capabilities_title": "Account capabilities",
-            "capabilities_ready_count": "{ready} of {total} ready",
-            "requirements_title": "Stripe needs more information",
-            "requirements_description": "Continue setup in Stripe to finish identity and payout verification before online invoice payments can be enabled.",
-            "verification_title": "Stripe is reviewing your account",
-            "verification_description": "Stripe has the details it needs for now and is checking whether payments and payouts can be enabled.",
-            "no_requirements": "No missing requirements reported yet. Stripe may still be reviewing the account.",
-            "checks": {
-                "ready": "Ready",
-                "pending": "Pending",
-                "charges": {
-                    "title": "Card payments",
-                    "ready_meta": "Online checkout enabled",
-                    "pending_meta": "Waiting for Stripe approval"
-                },
-                "details": {
-                    "title": "Business details",
-                    "ready_meta": "Merchant profile submitted",
-                    "pending_meta": "Complete details in Stripe"
-                },
-                "payouts": {
-                    "title": "Payouts",
-                    "ready_meta": "Transfers to your account enabled",
-                    "pending_meta": "Waiting for payout verification"
-                }
-            }
+            "save_changes": "Save Changes"
         },
         "change_password": {
             "a11y": {
@@ -1178,57 +977,6 @@
             "description": "Before you can create your first {title}, please complete your personal information in your profile.",
             "go_to_profile": "Go to Profile"
         },
-        "payment_form": {
-            "title": "InvoiceTrackr Premium",
-            "badge": "Pro plan",
-            "headline": "Everything you need to",
-            "headline_accent": "get paid faster.",
-            "trial_description": "Start your full 7-day trial with no payment card, or subscribe now if you are ready.",
-            "recovery_description": "Manage your payment method or restore access to your subscription.",
-            "features": {
-                "invoices": "Unlimited invoices and clients",
-                "clients": "Saved workflow for clients, history, and exports",
-                "branding": "Professional PDF output with your details",
-                "support": "Billing continuity and account recovery"
-            },
-            "intervals": {
-                "annual": {
-                    "title": "Annual",
-                    "description": "{annualPrice}/year",
-                    "badge": "Save 18%"
-                },
-                "monthly": {
-                    "title": "Monthly",
-                    "description": "{monthlyPrice}/month"
-                }
-            },
-            "prices": {
-                "annual": {
-                    "amount": "{annualPrice}",
-                    "interval": "/ year",
-                    "note": "Equivalent to {monthlyEquivalentPrice}/month · cancel anytime"
-                },
-                "monthly": {
-                    "amount": "{monthlyPrice}",
-                    "interval": "/ month",
-                    "note": "Billed monthly · cancel anytime"
-                }
-            },
-            "checkout_note": "Secure checkout · instant access",
-            "actions": {
-                "start_trial": "Start Free Trial",
-                "manage": "Manage Billing",
-                "resume": "Resume Subscription",
-                "subscribe": "Subscribe"
-            },
-            "errors": {
-                "submit_failed": "Payment submission failed. Please check your payment details and try again.",
-                "customer_failed": "Unable to process customer information. Please try again.",
-                "subscription_failed": "Unable to create subscription. Please try again.",
-                "payment_failed": "Payment processing failed. Please try again or use a different payment method.",
-                "general": "An unexpected error occurred. Please try again."
-            }
-        },
         "contact_form": {
             "title": "Contact Us",
             "email_label": "Email",
@@ -1251,7 +999,7 @@
             "client": "Client",
             "amount": "Amount",
             "date": "Date",
-            "public_link_note": "This email can include a secure invoice page with the PDF, bank details, and online payment if enabled.",
+            "public_link_note": "This email can include a secure invoice page with the PDF and bank-transfer details.",
             "signing_link_note": "This email will include a secure signing link for the recipient.",
             "email_verification_required": "Verify your account email before sending invoices to clients.",
             "include_public_link": "Include public invoice page",
@@ -1391,12 +1139,12 @@
             },
             "payment_settings": {
                 "title": "Payment settings",
-                "description": "Choose how this invoice link asks the recipient to pay.",
-                "reference_note": "Auto uses Stripe when your Connect account is ready, otherwise bank transfer. The reference defaults to the invoice number when left blank.",
+                "description": "Choose whether this invoice link shows bank-transfer instructions.",
+                "reference_note": "Manual bank transfer is the MVP default. The reference defaults to the invoice number when left blank.",
                 "disabled_note": "Payment instructions are hidden on the public invoice page.",
                 "modes": {
-                    "auto": "Auto",
-                    "online": "Online payment",
+                    "auto": "Bank transfer",
+                    "online": "Online payment (post-MVP)",
                     "manual": "Bank transfer",
                     "disabled": "No payment block"
                 }
@@ -1424,21 +1172,21 @@
             "free_invoice": {
                 "eyebrow": "Free invoice generator",
                 "title": "Create a polished PDF invoice without signing up",
-                "description": "Build a real invoice, preview the PDF, and download it for free. When you are ready to run the full workflow, start a 7-day trial to save, send, track, and reuse everything.",
+                "description": "Build a real invoice, preview the PDF, and download it for free. When you need the full freelancer workflow, create an account to save clients, send invoices, record payments, and prepare exports.",
                 "benefits": [
                     "Professional English or Lithuanian PDF output",
-                    "VAT-ready line items and totals",
+                    "Bank-transfer details and reusable line items",
                     "No account required for one-off PDF downloads"
                 ],
                 "upgrade_title": "Need more than a PDF?",
                 "upgrade_description": "Create an account to save invoices, reuse clients and bank accounts, send secure links, and track payment status.",
-                "upgrade_cta": "Start 7-day trial",
+                "upgrade_cta": "Create account",
                 "actions_title": "Preview the invoice before downloading.",
-                "actions_description": "The PDF download stays free. Trial features are for saving, sending, history, reminders, and payment tracking.",
-                "start_trial_cta": "Save and send with trial",
+                "actions_description": "The PDF download stays free. Account features are for saving, sending, history, reminders, and payment tracking.",
+                "start_trial_cta": "Save and send from an account",
                 "modal_cta_title": "Want to save, send, and track invoices?",
-                "modal_cta_description": "Start a 7-day trial to manage real client workflows instead of downloading one PDF at a time.",
-                "modal_cta_button": "Start trial"
+                "modal_cta_description": "Create an account to manage real client workflows instead of downloading one PDF at a time.",
+                "modal_cta_button": "Create account"
             },
             "services_heading": "Services",
             "signature_heading": "Signature",
@@ -1451,9 +1199,6 @@
                 "thirty_days": "30d",
                 "custom": "Custom"
             }
-        },
-        "subscription_status_card": {
-            "title": "Subscription Status"
         }
     },
     "privacy_policy": {
@@ -1472,8 +1217,8 @@
                     "items": {
                         "name": "Name and business information",
                         "email": "Email address",
-                        "business_type": "Business type (individual or business entity)",
-                        "registration": "Business registration number",
+                        "business_type": "Individual activity profile details",
+                        "registration": "Individual activity certificate number",
                         "address": "Business address",
                         "profile": "Profile picture (optional)",
                         "signature": "Digital signature (optional)",
@@ -1491,7 +1236,7 @@
                 },
                 "payment_info": {
                     "heading": "2.3 Payment Information",
-                    "content": "Payment processing is handled by Stripe, a third-party payment processor. We do not store your credit card information. We only retain your Stripe customer ID and subscription ID for account management purposes."
+                    "content": "InvoiceTrackr lets you record invoice payment status and bank-transfer details you enter yourself. The MVP does not process client payments or store payment card data."
                 },
                 "usage_info": {
                     "heading": "2.4 Usage Information",
@@ -1506,7 +1251,7 @@
                 },
                 "analytics_data": {
                     "heading": "2.5 Analytics Data",
-                    "intro": "With your consent, we use PostHog to understand launch funnels and basic product usage, such as page views, pricing views, sign-up steps, invoice creation, PDF downloads, email sending, client creation, bank-account setup, and billing lifecycle events. We do not send invoice numbers, invoice text, client details, bank account details, payment card details, email addresses, addresses, Stripe identifiers, or invoice amounts as analytics event properties."
+                    "intro": "With your consent, we use PostHog to understand launch funnels and basic product usage, such as page views, pricing views, sign-up steps, invoice creation, PDF downloads, email sending, client creation, and bank-account setup. We do not send invoice numbers, invoice text, client details, bank account details, email addresses, addresses, or invoice amounts as analytics event properties."
                 }
             },
             "how_we_use": {
@@ -1515,8 +1260,8 @@
                 "items": {
                     "provide": "To provide, operate, and maintain our invoice tracking service",
                     "create": "To create and manage your account",
-                    "process": "To process your transactions and manage subscriptions",
-                    "generate": "To generate, store, and export invoices and contracts",
+                    "process": "To manage account access and payment records",
+                    "generate": "To generate, store, and export invoices and freelancer finance records",
                     "send": "To send invoice-related emails to your clients",
                     "display": "To display your income dashboard and financial analytics",
                     "support": "To provide customer support and respond to your inquiries",
@@ -1534,7 +1279,6 @@
                     "heading": "4.1 Service Providers",
                     "intro": "We share information with third-party service providers who perform services on our behalf:",
                     "items": {
-                        "stripe": "Payment processing for subscription management",
                         "cloudinary": "Image hosting for profile pictures and other media",
                         "analytics": "Consent-based product analytics through PostHog",
                         "email": "Email service providers"
@@ -1633,18 +1377,18 @@
             },
             "description": {
                 "heading": "2. Description of Service",
-                "intro": "InvoiceTrackr is an online invoice generation, tracking, and management platform designed for freelancers and small businesses. Our Service provides:",
+                "intro": "InvoiceTrackr is an online invoice generation, tracking, and finance-preparation platform designed for Lithuanian freelancers operating under individuali veikla pagal pažymą. Our Service provides:",
                 "items": {
                     "creation": "Invoice creation, editing, and management",
                     "tracking": "Invoice status tracking (paid, pending, canceled)",
                     "clients": "Client information management",
                     "dashboard": "Financial dashboard with income analytics and charts",
-                    "contracts": "Contract creation and management (premium feature)",
+                    "contracts": "Contract creation and management (not included in the MVP)",
                     "pdf": "PDF invoice generation and export",
                     "email": "Email invoice delivery",
-                    "multi": "Multi-currency and multi-language support",
+                    "multi": "Lithuanian and English invoice output",
                     "banking": "Banking information storage for invoicing purposes",
-                    "signature": "Digital signature functionality"
+                    "signature": "Optional visual signature on generated documents"
                 }
             },
             "account_registration": {
@@ -1663,25 +1407,6 @@
                 "eligibility": {
                     "heading": "3.2 Account Eligibility",
                     "content": "You must be at least 18 years old to create an account and use the Service. By creating an account, you represent and warrant that you meet this age requirement."
-                }
-            },
-            "subscription": {
-                "heading": "4. Subscription Plans",
-                "free": {
-                    "heading": "4.1 Free Plan",
-                    "content": "Our free plan allows you to create unlimited invoices, use basic invoice templates, export to PDF, and add your signature."
-                },
-                "premium": {
-                    "heading": "4.2 Premium Plan",
-                    "content": "Our premium plan ({monthlyPrice}/month or {annualPrice}/year) includes all free features plus the ability to save and edit invoices, store client information, create and manage contracts, choose currency and language preferences, and email invoices directly to clients."
-                },
-                "payment": {
-                    "heading": "4.3 Payment Terms",
-                    "content": "Premium subscriptions are billed monthly or annually in advance based on the plan you select. Payment processing is handled securely by Stripe, a third-party payment processor. By subscribing to a premium plan, you authorize us to charge your payment method on a recurring basis."
-                },
-                "cancellation": {
-                    "heading": "4.4 Cancellation and Refunds",
-                    "content": "You may cancel your subscription at any time through your account settings. Cancellations will take effect at the end of your current billing period. We do not provide refunds for partial months of service or unused features."
                 }
             },
             "user_content": {
@@ -1735,7 +1460,6 @@
             "third_party": {
                 "heading": "8. Third-Party Services",
                 "intro": "The Service integrates with or relies on third-party services, including:",
-                "stripe": "Payment processing",
                 "cloudinary": "Image hosting and management",
                 "analytics": "Consent-based product analytics and launch funnel measurement",
                 "disclaimer": "Your use of these third-party services is subject to their respective terms of service and privacy policies. We are not responsible for the availability, functionality, or practices of these third-party services."

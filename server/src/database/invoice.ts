@@ -275,11 +275,6 @@ export const getInvoicesFromDb = async (
       publicInvoiceSentAt: invoicesTable.publicInvoiceSentAt,
       publicInvoiceExpiresAt: invoicesTable.publicInvoiceExpiresAt,
       publicInvoiceRevokedAt: invoicesTable.publicInvoiceRevokedAt,
-      paymentProvider: invoicesTable.paymentProvider,
-      paymentCheckoutSessionId: invoicesTable.paymentCheckoutSessionId,
-      paymentIntentId: invoicesTable.paymentIntentId,
-      paymentCompletedAt: invoicesTable.paymentCompletedAt,
-      paymentFailedAt: invoicesTable.paymentFailedAt,
       paymentMode: invoicesTable.paymentMode,
       manualPaymentReference: invoicesTable.manualPaymentReference,
       bankingInformation: {
@@ -390,11 +385,6 @@ export const getInvoiceFromDb = async (
       publicInvoiceSentAt: invoicesTable.publicInvoiceSentAt,
       publicInvoiceExpiresAt: invoicesTable.publicInvoiceExpiresAt,
       publicInvoiceRevokedAt: invoicesTable.publicInvoiceRevokedAt,
-      paymentProvider: invoicesTable.paymentProvider,
-      paymentCheckoutSessionId: invoicesTable.paymentCheckoutSessionId,
-      paymentIntentId: invoicesTable.paymentIntentId,
-      paymentCompletedAt: invoicesTable.paymentCompletedAt,
-      paymentFailedAt: invoicesTable.paymentFailedAt,
       paymentMode: invoicesTable.paymentMode,
       manualPaymentReference: invoicesTable.manualPaymentReference,
       bankingInformation: {
@@ -502,7 +492,7 @@ export const insertInvoiceInDb = async (
         dueDate: invoiceData.dueDate,
         senderSignature: senderSignature,
         receiverSignature: invoiceData.receiverSignature || null,
-        paymentMode: invoiceData.paymentMode || 'auto',
+        paymentMode: invoiceData.paymentMode || 'manual',
         manualPaymentReference:
           invoiceData.paymentMode === 'disabled'
             ? null
@@ -627,11 +617,6 @@ export const updateInvoiceInDb = async (
         publicInvoiceSentAt: invoicesTable.publicInvoiceSentAt,
         publicInvoiceExpiresAt: invoicesTable.publicInvoiceExpiresAt,
         publicInvoiceRevokedAt: invoicesTable.publicInvoiceRevokedAt,
-        paymentProvider: invoicesTable.paymentProvider,
-        paymentCheckoutSessionId: invoicesTable.paymentCheckoutSessionId,
-        paymentIntentId: invoicesTable.paymentIntentId,
-        paymentCompletedAt: invoicesTable.paymentCompletedAt,
-        paymentFailedAt: invoicesTable.paymentFailedAt,
         paymentMode: invoicesTable.paymentMode,
         manualPaymentReference: invoicesTable.manualPaymentReference,
         recipientSignedAt: invoicesTable.recipientSignedAt
@@ -655,7 +640,7 @@ export const updateInvoiceInDb = async (
           new Date().toISOString()
         : null;
     const paymentMode =
-      invoiceData.paymentMode || currentInvoiceData.paymentMode || 'auto';
+      invoiceData.paymentMode || currentInvoiceData.paymentMode || 'manual';
     const manualPaymentReference =
       paymentMode === 'disabled'
         ? null
@@ -825,18 +810,6 @@ export const updateInvoiceInDb = async (
         publicInvoiceRevokedAt:
           invoiceData.publicInvoiceRevokedAt ??
           currentInvoiceData.publicInvoiceRevokedAt,
-        paymentProvider:
-          invoiceData.paymentProvider ?? currentInvoiceData.paymentProvider,
-        paymentCheckoutSessionId:
-          invoiceData.paymentCheckoutSessionId ??
-          currentInvoiceData.paymentCheckoutSessionId,
-        paymentIntentId:
-          invoiceData.paymentIntentId ?? currentInvoiceData.paymentIntentId,
-        paymentCompletedAt:
-          invoiceData.paymentCompletedAt ??
-          currentInvoiceData.paymentCompletedAt,
-        paymentFailedAt:
-          invoiceData.paymentFailedAt ?? currentInvoiceData.paymentFailedAt,
         paymentMode,
         manualPaymentReference
       })
@@ -985,7 +958,7 @@ export async function createInvoiceCorrectionInDb({
         totalAmount: totals.totalAmount,
         senderSignature: originalInvoice.senderSignature || '',
         receiverSignature: null,
-        paymentMode: originalInvoice.paymentMode || 'auto',
+        paymentMode: originalInvoice.paymentMode || 'manual',
         manualPaymentReference: originalInvoice.manualPaymentReference || null
       })
       .returning({ id: invoicesTable.id });
@@ -1349,102 +1322,6 @@ export async function getPublicInvoiceFromDb(
     language: row.language,
     preferredInvoiceLanguage: row.preferredInvoiceLanguage
   };
-}
-
-export async function recordInvoiceCheckoutSessionInDb({
-  token,
-  checkoutSessionId,
-  paymentIntentId
-}: {
-  token: string;
-  checkoutSessionId: string;
-  paymentIntentId?: string | null;
-}): Promise<{ id: number } | undefined> {
-  const invoices = await db
-    .update(invoicesTable)
-    .set({
-      paymentProvider: 'stripe_connect',
-      paymentCheckoutSessionId: checkoutSessionId,
-      paymentIntentId: paymentIntentId || null,
-      paymentFailedAt: null
-    })
-    .where(eq(invoicesTable.publicInvoiceToken, token))
-    .returning({ id: invoicesTable.id });
-
-  return invoices.at(0);
-}
-
-export async function markInvoicePaidByCheckoutSessionInDb({
-  checkoutSessionId,
-  paymentIntentId,
-  invoiceId,
-  userId,
-  publicInvoiceToken
-}: {
-  checkoutSessionId: string;
-  paymentIntentId?: string | null;
-  invoiceId?: number;
-  userId?: number;
-  publicInvoiceToken?: string | null;
-}): Promise<{ id: number; userId: number } | undefined> {
-  const now = new Date().toISOString();
-  const fallbackCondition =
-    invoiceId && userId
-      ? and(eq(invoicesTable.id, invoiceId), eq(invoicesTable.userId, userId))
-      : publicInvoiceToken
-        ? eq(invoicesTable.publicInvoiceToken, publicInvoiceToken)
-        : undefined;
-  const invoices = await db
-    .update(invoicesTable)
-    .set({
-      status: 'paid',
-      paidAt: sql<string>`COALESCE(${invoicesTable.paidAt}, ${now})`,
-      paymentProvider: 'stripe_connect',
-      paymentCheckoutSessionId: checkoutSessionId,
-      ...(paymentIntentId ? { paymentIntentId } : {}),
-      paymentCompletedAt: sql<string>`COALESCE(${invoicesTable.paymentCompletedAt}, ${now})`,
-      paymentFailedAt: null
-    })
-    .where(
-      fallbackCondition
-        ? or(
-            eq(invoicesTable.paymentCheckoutSessionId, checkoutSessionId),
-            fallbackCondition
-          )
-        : eq(invoicesTable.paymentCheckoutSessionId, checkoutSessionId)
-    )
-    .returning({
-      id: invoicesTable.id,
-      userId: invoicesTable.userId
-    });
-
-  return invoices.at(0);
-}
-
-export async function markInvoicePaymentFailedByIntentInDb({
-  paymentIntentId,
-  publicInvoiceToken
-}: {
-  paymentIntentId?: string;
-  publicInvoiceToken?: string | null;
-}): Promise<{ id: number } | undefined> {
-  if (!paymentIntentId && !publicInvoiceToken) return undefined;
-
-  const invoices = await db
-    .update(invoicesTable)
-    .set({
-      paymentProvider: 'stripe_connect',
-      ...(paymentIntentId ? { paymentIntentId } : {}),
-      paymentFailedAt: new Date().toISOString()
-    })
-    .where(
-      paymentIntentId
-        ? eq(invoicesTable.paymentIntentId, paymentIntentId)
-        : eq(invoicesTable.publicInvoiceToken, publicInvoiceToken!)
-    )
-    .returning({ id: invoicesTable.id });
-
-  return invoices.at(0);
 }
 
 export async function signInvoiceByRecipientTokenInDb({

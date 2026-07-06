@@ -114,19 +114,8 @@ export const invoicesTable = pgTable(
       withTimezone: true,
       mode: 'string'
     }),
-    paymentProvider: varchar('payment_provider', { length: 50 }),
-    paymentCheckoutSessionId: text('payment_checkout_session_id'),
-    paymentIntentId: text('payment_intent_id'),
-    paymentCompletedAt: timestamp('payment_completed_at', {
-      withTimezone: true,
-      mode: 'string'
-    }),
-    paymentFailedAt: timestamp('payment_failed_at', {
-      withTimezone: true,
-      mode: 'string'
-    }),
     paymentMode: varchar('payment_mode', { length: 50 })
-      .default('auto')
+      .default('manual')
       .notNull(),
     manualPaymentReference: text('manual_payment_reference'),
     issuedAt: timestamp('issued_at', {
@@ -182,16 +171,13 @@ export const invoicesTable = pgTable(
     ),
     check(
       'invoices_payment_mode_check',
-      sql`(payment_mode)::text = ANY ((ARRAY['auto'::character varying, 'online'::character varying, 'manual'::character varying, 'disabled'::character varying])::text[])`
+      sql`(payment_mode)::text = ANY ((ARRAY['manual'::character varying, 'disabled'::character varying])::text[])`
     ),
     unique('invoices_user_invoice_id_key').on(table.userId, table.invoiceId),
     unique('invoices_recipient_signing_token_key').on(
       table.recipientSigningToken
     ),
     unique('invoices_public_invoice_token_key').on(table.publicInvoiceToken),
-    unique('invoices_payment_checkout_session_id_key').on(
-      table.paymentCheckoutSessionId
-    ),
     index('invoices_paid_income_journal_idx')
       .on(table.userId, table.paidAt)
       .where(sql`status = 'paid'`)
@@ -367,31 +353,7 @@ export const usersTable = pgTable(
     defaultPaymentTermsDays: integer('default_payment_terms_days')
       .default(30)
       .notNull(),
-    subscriptionStatus: varchar('subscription_status', { length: 50 }),
     onboardingCompletedAt: timestamp('onboarding_completed_at', {
-      withTimezone: true,
-      mode: 'string'
-    }),
-    trialStartedAt: timestamp('trial_started_at', {
-      withTimezone: true,
-      mode: 'string'
-    }),
-    trialEndsAt: timestamp('trial_ends_at', {
-      withTimezone: true,
-      mode: 'string'
-    }),
-    subscriptionGraceEndsAt: timestamp('subscription_grace_ends_at', {
-      withTimezone: true,
-      mode: 'string'
-    }),
-    subscriptionCurrentPeriodEndsAt: timestamp(
-      'subscription_current_period_ends_at',
-      {
-        withTimezone: true,
-        mode: 'string'
-      }
-    ),
-    subscriptionCancelAt: timestamp('subscription_cancel_at', {
       withTimezone: true,
       mode: 'string'
     }),
@@ -401,10 +363,7 @@ export const usersTable = pgTable(
     analyticsConsentUpdatedAt: timestamp('analytics_consent_updated_at', {
       withTimezone: true,
       mode: 'string'
-    }),
-    paymentSuccessPending: boolean('payment_success_pending')
-      .default(false)
-      .notNull()
+    })
   },
   (table) => [
     foreignKey({
@@ -488,52 +447,6 @@ export const emailVerificationTokensTable = pgTable(
     }).default(sql`CURRENT_TIMESTAMP`)
   }
 );
-
-export const stripeAccountsTable = pgTable('stripe_accounts', {
-  id: serial('id').primaryKey(),
-  userId: integer('user_id')
-    .notNull()
-    .unique()
-    .references(() => usersTable.id, { onDelete: 'cascade' }),
-  stripeCustomerId: text('stripe_customer_id').notNull().unique(),
-  stripeSubscriptionId: text('stripe_subscription_id').unique()
-});
-
-export const stripeMerchantAccountsTable = pgTable('stripe_merchant_accounts', {
-  id: serial('id').primaryKey(),
-  userId: integer('user_id')
-    .notNull()
-    .unique()
-    .references(() => usersTable.id, { onDelete: 'cascade' }),
-  stripeConnectedAccountId: text('stripe_connected_account_id')
-    .notNull()
-    .unique(),
-  chargesEnabled: boolean('charges_enabled').default(false).notNull(),
-  payoutsEnabled: boolean('payouts_enabled').default(false).notNull(),
-  detailsSubmitted: boolean('details_submitted').default(false).notNull(),
-  onboardingCompletedAt: timestamp('onboarding_completed_at', {
-    withTimezone: true,
-    mode: 'string'
-  }),
-  createdAt: timestamp('created_at', {
-    withTimezone: true,
-    mode: 'string'
-  }).default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp('updated_at', {
-    withTimezone: true,
-    mode: 'string'
-  }).default(sql`CURRENT_TIMESTAMP`)
-});
-
-export const stripeWebhookEventsTable = pgTable('stripe_webhook_events', {
-  id: serial('id').primaryKey(),
-  stripeEventId: text('stripe_event_id').notNull().unique(),
-  type: text('type').notNull(),
-  processedAt: timestamp('processed_at', {
-    withTimezone: true,
-    mode: 'string'
-  }).default(sql`CURRENT_TIMESTAMP`)
-});
 
 export type InsertInvoice = typeof invoicesTable.$inferInsert;
 export type SelectInvoice = typeof invoicesTable.$inferSelect;

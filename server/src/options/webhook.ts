@@ -1,15 +1,7 @@
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
-import {
-  handleResendWebhook,
-  handleStripeWebhook
-} from '../controllers/webhook';
-
-export const stripeWebhookOptions: RouteShorthandOptionsWithHandler = {
-  handler: handleStripeWebhook,
-  config: { rawBody: true }
-};
+import { handleResendWebhook } from '../controllers/webhook';
 
 export const resendWebhookOptions: RouteShorthandOptionsWithHandler = {
   schema: {

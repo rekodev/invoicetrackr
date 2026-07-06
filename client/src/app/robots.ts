@@ -6,9 +6,7 @@ import {
   DASHBOARD_PAGE,
   INVOICES_PAGE,
   ONBOARDING_PAGE,
-  PAYMENT_SUCCESS_PAGE,
   PROFILE_PAGE,
-  RENEW_SUBSCRIPTION_PAGE,
   VERIFY_EMAIL_PAGE
 } from '@/lib/constants/pages';
 import { appBaseUrl } from '@/lib/config/app';
@@ -25,9 +23,7 @@ export default function robots(): MetadataRoute.Robots {
         DASHBOARD_PAGE,
         `${INVOICES_PAGE}/`,
         ONBOARDING_PAGE,
-        PAYMENT_SUCCESS_PAGE,
         `${PROFILE_PAGE}/`,
-        RENEW_SUBSCRIPTION_PAGE,
         VERIFY_EMAIL_PAGE
       ]
     },

@@ -48,7 +48,7 @@ export default {
       signingButton: 'Peržiūrėti ir pasirašyti',
       publicInvoiceTitle: 'Peržiūrėti sąskaitą',
       publicInvoiceMessage:
-        'Atidarykite saugų sąskaitos puslapį, peržiūrėkite PDF, mokėjimo informaciją ir apmokėkite internetu, jei siuntėjas priima kortelių mokėjimus.',
+        'Atidarykite saugų sąskaitos puslapį, peržiūrėkite PDF ir bankinio pavedimo mokėjimo informaciją.',
       publicInvoiceButton: 'Peržiūrėti sąskaitą',
       signedNotification: {
         recipient: 'Gavėjas',
@@ -59,20 +59,6 @@ export default {
       },
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
       copyright: 'InvoiceTrackr. Visos teisės saugomos.'
-    },
-    billing: {
-      buttonText: 'Tvarkyti mokėjimą',
-      fallback:
-        'Arba nukopijuokite ir įklijuokite šią mokėjimo nuorodą į naršyklę:',
-      note: 'Atnaujinti mokėjimo duomenys padeda be pertraukų naudotis sąskaitų išrašymo procesu.',
-      trialEnding: {
-        subject: 'Jūsų bandomasis laikotarpis netrukus baigsis',
-        text: 'Jūsų 7 dienų bandomasis laikotarpis netrukus baigsis. Pridėkite mokėjimo būdą paskyros nustatymuose, kad galėtumėte toliau naudotis InvoiceTrackr.'
-      },
-      paymentFailed: {
-        subject: 'Nepavyko apdoroti InvoiceTrackr mokėjimo',
-        text: 'Nepavyko apdoroti prenumeratos mokėjimo. Turite 3 dienas atnaujinti mokėjimo būdą paskyros nustatymuose.'
-      }
     },
     incomeJournal: {
       filename: 'pajamu-zurnalas',
@@ -229,9 +215,6 @@ export default {
       updated: 'Banko sąskaita atnaujinta sėkmingai',
       deleted: 'Banko sąskaita ištrinta sėkmingai'
     },
-    payment: {
-      subscriptionCanceled: 'Prenumerata atšaukta sėkmingai'
-    },
     contact: {
       messageSent: 'Žinutė išsiųsta sėkmingai'
     }
@@ -290,16 +273,9 @@ export default {
         'Šios sąskaitos nuorodos galiojimas baigėsi. Paprašykite siuntėjo naujos nuorodos.',
       publicLinkRevoked:
         'Ši sąskaitos nuoroda buvo atšaukta. Paprašykite siuntėjo naujos nuorodos.',
-      publicLinkRequired:
-        'Apmokėjimui internetu reikia viešos sąskaitos nuorodos. Paprašykite siuntėjo naujos sąskaitos nuorodos.',
       publicLinkRequiresIssued:
         'Viešos sąskaitos nuorodos valdymas galimas tik išrašius sąskaitą.',
-      notPayable: 'Šios sąskaitos negalima apmokėti internetu.',
-      onlinePaymentUnavailable:
-        'Siuntėjas nepriima internetinių mokėjimų už šią sąskaitą.',
       alreadySigned: 'Sąskaita faktūra jau pasirašyta',
-      paidIssuedImmutable:
-        'Ši sąskaita apmokėta per Stripe, todėl jos būsenos rankiniu būdu keisti negalima.',
       voidedImmutable:
         'Anuliuotų sąskaitų būsenos negalima keisti iš lentelės pasirinkimo.',
       issuedImmutable:
@@ -320,14 +296,6 @@ export default {
       unableToUpdate: 'Nepavyko atnaujinti banko sąskaitos',
       unableToDelete: 'Nepavyko ištrinti banko sąskaitos',
       cannotDeleteSelected: 'Negalima ištrinti pasirinktos banko sąskaitos'
-    },
-    payment: {
-      customerNotFound: 'Klientas nerastas',
-      unableToCreateCustomer: 'Nepavyko sukurti kliento',
-      subscriptionNotFound: 'Prenumerata nerasta',
-      subscriptionAlreadyActive: 'Prenumerata jau aktyvi',
-      unableToCreateSubscription: 'Nepavyko sukurti prenumeratos',
-      unableToCancel: 'Nepavyko atšaukti prenumeratos'
     },
     contact: {
       unableToSendMessage: 'Nepavyko išsiųsti žinutės'

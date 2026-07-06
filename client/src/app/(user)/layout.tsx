@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 
 import Breadcrumbs from '@/components/layout/breadcrumbs';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
-import SubscriptionSync from '@/components/subscription-sync';
 import { auth } from '@/auth';
 
 import '../globals.css';
@@ -33,7 +32,6 @@ export default async function UserLayout({
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col p-6">
       <Breadcrumbs />
-      <SubscriptionSync userId={session.user.id} />
       <Suspense fallback={<Loading />}>{children}</Suspense>
     </main>
   );

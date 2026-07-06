@@ -97,9 +97,6 @@ const InvoiceTableCell = ({
     isIssued && isOriginalInvoice && !invoice.correctedByInvoiceId;
   const canCreateCorrection =
     canCreateRelatedDocument && invoice.status !== 'paid';
-  const isStripePaid = Boolean(
-    invoice.paymentProvider === 'stripe_connect' && invoice.paymentCompletedAt
-  );
 
   const handleViewIconClick = () => onView(invoice);
   const handleEditInvoiceClick = () => onEdit(invoice);
@@ -115,7 +112,6 @@ const InvoiceTableCell = ({
   const handleChangeStatus = (
     status: 'paid' | 'pending' | 'canceled' | undefined
   ) => {
-    if (isStripePaid) return;
     if (!status || status === invoice.status) return;
 
     startTransition(async () => {
@@ -146,8 +142,6 @@ const InvoiceTableCell = ({
   );
 
   const handleMarkAsPaidClick = () => {
-    if (isStripePaid) return;
-
     setIsPaid(!isPaid);
     handleChangeStatus(isPaid ? 'pending' : 'paid');
   };
@@ -238,74 +232,57 @@ const InvoiceTableCell = ({
       return (
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            {isStripePaid ? (
-              renderTooltip(
-                tCell('status_locked'),
+            <Dropdown>
+              <DropdownTrigger
+                isDisabled={isPending}
+                className="h-auto min-w-0 cursor-pointer bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-50 [&[aria-expanded=true]_svg]:rotate-180"
+              >
                 <Chip
                   className="capitalize"
                   color={statusColorMap[invoice.status as InvoiceStatus]}
                   variant="soft"
                 >
                   {cellValue as string}
+                  <ChevronDownIcon className="ml-0.5 h-3 w-3 transition-transform" />
                 </Chip>
-              )
-            ) : (
-              <Dropdown>
-                <DropdownTrigger
-                  isDisabled={isPending}
-                  className="h-auto min-w-0 cursor-pointer bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-50 [&[aria-expanded=true]_svg]:rotate-180"
+              </DropdownTrigger>
+              <DropdownPopover>
+                <DropdownMenu
+                  aria-label={tForm('a11y.static_actions_label')}
+                  selectionMode="single"
+                  items={statusOptions}
+                  selectedKeys={[cellValue] as any}
+                  onSelectionChange={(key) =>
+                    handleChangeStatus(
+                      Array.from(key)[0] as
+                        | 'paid'
+                        | 'pending'
+                        | 'canceled'
+                        | undefined
+                    )
+                  }
                 >
-                  <Chip
-                    className="capitalize"
-                    color={statusColorMap[invoice.status as InvoiceStatus]}
-                    variant="soft"
-                  >
-                    {cellValue as string}
-                    <ChevronDownIcon className="ml-0.5 h-3 w-3 transition-transform" />
-                  </Chip>
-                </DropdownTrigger>
-                <DropdownPopover>
-                  <DropdownMenu
-                    aria-label={tForm('a11y.static_actions_label')}
-                    selectionMode="single"
-                    items={statusOptions}
-                    selectedKeys={[cellValue] as any}
-                    onSelectionChange={(key) =>
-                      handleChangeStatus(
-                        Array.from(key)[0] as
-                          | 'paid'
-                          | 'pending'
-                          | 'canceled'
-                          | undefined
-                      )
-                    }
-                  >
-                    {(item) => (
-                      <DropdownItem
-                        key={item.uid}
-                        id={item.uid}
-                        textValue={item.name}
-                      >
-                        {item.name}
-                        <Dropdown.ItemIndicator />
-                      </DropdownItem>
-                    )}
-                  </DropdownMenu>
-                </DropdownPopover>
-              </Dropdown>
-            )}
+                  {(item) => (
+                    <DropdownItem
+                      key={item.uid}
+                      id={item.uid}
+                      textValue={item.name}
+                    >
+                      {item.name}
+                      <Dropdown.ItemIndicator />
+                    </DropdownItem>
+                  )}
+                </DropdownMenu>
+              </DropdownPopover>
+            </Dropdown>
 
             {renderTooltip(
-              isStripePaid
-                ? tCell('status_locked')
-                : isPaid
-                  ? tCell('mark_as_pending')
-                  : tCell('mark_as_paid'),
+              isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid'),
               <Checkbox
                 className="mr-0.5 max-w-5 p-0"
                 isSelected={isPaid}
                 onChange={handleMarkAsPaidClick}
-                isDisabled={isPending || isStripePaid}
+                isDisabled={isPending}
               />
             )}
           </div>

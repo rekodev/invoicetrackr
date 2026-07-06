@@ -1,8 +1,6 @@
 import {
-  BanknotesIcon,
   BuildingLibraryIcon,
   Cog6ToothIcon,
-  CreditCardIcon,
   LockClosedIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
@@ -10,9 +8,7 @@ import {
 import {
   ACCOUNT_SETTINGS_PAGE,
   BANKING_INFORMATION_PAGE,
-  BILLING_PAGE,
   CHANGE_PASSWORD_PAGE,
-  INVOICE_PAYMENTS_PAGE,
   PERSONAL_INFORMATION_PAGE
 } from './pages';
 
@@ -40,18 +36,6 @@ export const profileMenuTabs = [
     name: 'account_settings.title',
     icon: <Cog6ToothIcon className="h-4 w-4" />,
     href: ACCOUNT_SETTINGS_PAGE
-  },
-  {
-    key: 'billing',
-    name: 'billing.title',
-    icon: <CreditCardIcon className="h-4 w-4" />,
-    href: BILLING_PAGE
-  },
-  {
-    key: 'invoice-payments',
-    name: 'invoice_payments.title',
-    icon: <BanknotesIcon className="h-4 w-4" />,
-    href: INVOICE_PAYMENTS_PAGE
   }
 ];
 

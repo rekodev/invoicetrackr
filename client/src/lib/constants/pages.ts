@@ -17,14 +17,9 @@ export const PERSONAL_INFORMATION_PAGE = '/profile/personal-information';
 export const BANKING_INFORMATION_PAGE = '/profile/banking-information';
 export const ADD_NEW_BANK_ACCOUNT_PAGE = '/profile/banking-information/new';
 export const ONBOARDING_PAGE = '/onboarding';
-export const PAYMENT_SUCCESS_PAGE = '/payment-success';
-export const PAYMENT_SUCCESS_CONFIRM_PAGE = '/payment-success/confirm';
-export const RENEW_SUBSCRIPTION_PAGE = '/renew-subscription';
 
 export const CHANGE_PASSWORD_PAGE = '/profile/change-password';
 export const ACCOUNT_SETTINGS_PAGE = '/profile/account-settings';
-export const BILLING_PAGE = '/profile/billing';
-export const INVOICE_PAYMENTS_PAGE = '/profile/invoice-payments';
 
 export const PRIVACY_POLICY_PAGE = '/privacy-policy';
 export const TERMS_OF_SERVICE_PAGE = '/terms-of-service';

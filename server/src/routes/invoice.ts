@@ -5,9 +5,7 @@ import {
 } from 'fastify';
 
 import {
-  confirmPublicInvoicePaymentOptions,
   createInvoiceCorrectionOptions,
-  createPublicInvoicePaymentOptions,
   deleteInvoiceOptions,
   getIncomeJournalOptions,
   getInvoiceOptions,
@@ -94,16 +92,6 @@ const invoiceRoutes = (
   fastify.post('/api/invoices/sign/:token', signPublicInvoiceOptions);
 
   fastify.get('/api/invoices/public/:token', getPublicInvoiceOptions);
-
-  fastify.post(
-    '/api/invoices/public/:token/pay',
-    createPublicInvoicePaymentOptions
-  );
-
-  fastify.post(
-    '/api/invoices/public/:token/pay/confirm',
-    confirmPublicInvoicePaymentOptions
-  );
 
   done();
 };

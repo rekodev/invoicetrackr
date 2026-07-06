@@ -1,7 +1,3 @@
-import {
-  SUBSCRIPTION_AMOUNT,
-  SUBSCRIPTION_CURRENCY
-} from '@/lib/constants/subscription';
 import { appBaseUrl } from '@/lib/config/app';
 
 import { SeoLocale, getAbsoluteUrl, siteName } from './site';
@@ -47,11 +43,6 @@ export const getSoftwareApplicationJsonLd = ({
   operatingSystem: 'Web',
   url: appBaseUrl,
   inLanguage: locale === 'lt' ? ['lt-LT', 'en'] : ['en', 'lt-LT'],
-  offers: {
-    '@type': 'Offer',
-    priceCurrency: SUBSCRIPTION_CURRENCY,
-    price: String(SUBSCRIPTION_AMOUNT)
-  },
   featureList
 });
 

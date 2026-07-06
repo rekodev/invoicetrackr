@@ -18,7 +18,6 @@ import { useTranslations } from 'next-intl';
 
 import {
   CLIENTS_PAGE,
-  CONTRACTS_PAGE,
   DASHBOARD_PAGE,
   HOME_PAGE,
   INVOICES_PAGE,
@@ -35,7 +34,6 @@ import AppBrand from '../app-brand';
 const navbarItems = [
   { name: 'Dashboard', href: DASHBOARD_PAGE },
   { name: 'Invoices', href: INVOICES_PAGE },
-  { name: 'Contracts', href: CONTRACTS_PAGE },
   { name: 'Clients', href: CLIENTS_PAGE }
 ];
 

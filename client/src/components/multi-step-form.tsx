@@ -7,10 +7,9 @@ import { User } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { PAYMENT_SUCCESS_CONFIRM_PAGE } from '@/lib/constants/pages';
+import { DASHBOARD_PAGE } from '@/lib/constants/pages';
 import { isUserPersonalInformationSetUp } from '@/lib/utils/user';
 
-import PaymentForm from './payment-form';
 import PersonalInformationForm from './profile/personal-information-form';
 import SignUpForm from './auth/sign-up-form';
 
@@ -34,17 +33,11 @@ export default function MultiStepForm({ existingUserData }: Props) {
       shortName: t('steps.personal.short_name'),
       name: t('steps.personal.name'),
       description: t('steps.personal.description')
-    },
-    {
-      id: 'trial',
-      shortName: t('steps.trial.short_name'),
-      name: t('steps.trial.name'),
-      description: t('steps.trial.description')
     }
   ];
   const initialCurrentStep = useMemo(() => {
     if (!existingUserData) return 0;
-    if (isUserPersonalInformationSetUp(existingUserData)) return 2;
+    if (isUserPersonalInformationSetUp(existingUserData)) return 1;
 
     return 1;
   }, [existingUserData]);
@@ -61,7 +54,8 @@ export default function MultiStepForm({ existingUserData }: Props) {
       return;
     }
 
-    goToStep(2);
+    router.refresh();
+    router.push(DASHBOARD_PAGE);
   };
 
   const renderStepHeader = () => (
@@ -81,19 +75,6 @@ export default function MultiStepForm({ existingUserData }: Props) {
             headerContent={renderStepHeader()}
             hideEmailVerificationBanner
             onSuccess={completePersonalInformation}
-          />
-        );
-      case 2:
-        return (
-          <PaymentForm
-            cardHeaderTitle={steps[2].name}
-            cardHeaderDescription={steps[2].description}
-            headerContent={renderStepHeader()}
-            isOnboardingCard
-            user={existingUserData}
-            onTrialStarted={() => {
-              router.push(`${PAYMENT_SUCCESS_CONFIRM_PAGE}?trial=true`);
-            }}
           />
         );
       default:

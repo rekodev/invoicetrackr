@@ -46,7 +46,7 @@ export default {
       signingButton: 'Review and sign',
       publicInvoiceTitle: 'View invoice',
       publicInvoiceMessage:
-        'Open the secure invoice page to review the PDF, see payment details, and pay online if the sender accepts card payments.',
+        'Open the secure invoice page to review the PDF and bank-transfer payment details.',
       publicInvoiceButton: 'View invoice',
       signedNotification: {
         recipient: 'The recipient',
@@ -57,19 +57,6 @@ export default {
       },
       footer: 'This email was sent by InvoiceTrackr',
       copyright: 'InvoiceTrackr. All rights reserved.'
-    },
-    billing: {
-      buttonText: 'Manage billing',
-      fallback: 'Or copy and paste this billing link into your browser:',
-      note: 'Keeping your billing details current keeps your invoice workflow available without interruption.',
-      trialEnding: {
-        subject: 'Your InvoiceTrackr trial is ending soon',
-        text: 'Your 7-day trial is ending soon. Add a payment method in your account settings to keep using InvoiceTrackr.'
-      },
-      paymentFailed: {
-        subject: 'Your InvoiceTrackr payment failed',
-        text: 'We could not process your subscription payment. You have 3 days to update your payment method in your account settings.'
-      }
     },
     incomeJournal: {
       filename: 'income-journal',
@@ -223,9 +210,6 @@ export default {
       updated: 'Bank account updated successfully',
       deleted: 'Bank account deleted successfully'
     },
-    payment: {
-      subscriptionCanceled: 'Subscription canceled successfully'
-    },
     contact: {
       messageSent: 'Message sent successfully'
     }
@@ -283,16 +267,9 @@ export default {
         'This invoice link has expired. Ask the sender for a fresh link.',
       publicLinkRevoked:
         'This invoice link has been revoked. Ask the sender for a fresh link.',
-      publicLinkRequired:
-        'Online payment requires the public invoice link. Ask the sender for a fresh invoice link.',
       publicLinkRequiresIssued:
         'Public invoice link controls are available after the invoice is issued.',
-      notPayable: 'This invoice is not payable online.',
-      onlinePaymentUnavailable:
-        'The sender is not accepting online payments for this invoice.',
       alreadySigned: 'Invoice is already signed',
-      paidIssuedImmutable:
-        'This invoice was paid through Stripe, so its status cannot be changed manually.',
       voidedImmutable:
         'Voided invoices cannot be changed from the status dropdown.',
       issuedImmutable:
@@ -312,14 +289,6 @@ export default {
       unableToUpdate: 'Unable to update bank account',
       unableToDelete: 'Unable to delete bank account',
       cannotDeleteSelected: 'Cannot delete selected bank account'
-    },
-    payment: {
-      customerNotFound: 'Customer not found',
-      unableToCreateCustomer: 'Unable to create customer',
-      subscriptionNotFound: 'Subscription not found',
-      subscriptionAlreadyActive: 'Subscription already active',
-      unableToCreateSubscription: 'Unable to create subscription',
-      unableToCancel: 'Unable to cancel subscription'
     },
     contact: {
       unableToSendMessage: 'Failed to send message'

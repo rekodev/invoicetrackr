@@ -1,18 +1,16 @@
 import {
   ArrowDownTrayIcon,
+  BanknotesIcon,
   ChartBarIcon,
-  CreditCardIcon,
   EnvelopeIcon,
   GlobeAltIcon,
   LinkIcon,
-  PencilSquareIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
 import CompactDashboardPreview from '../compact-dashboard-preview';
 import { useTranslations } from 'next-intl';
 
 import ClientsPagePreview from '../clients-page-preview';
-import ContractsSoonPreview from '../contracts-soon-preview';
 import { IconComponent } from '../tile/types';
 import { InvoicesPagePreview } from '../invoices-page-preview';
 import SectionHeading from '../section-heading';
@@ -20,14 +18,13 @@ import Tile from '../tile/tile';
 import TileBody from '../tile/tile-body';
 
 const productTiles: Array<{
-  key: 'invoices' | 'dashboard' | 'clients' | 'contracts';
+  key: 'invoices' | 'dashboard' | 'clients';
   icon?: IconComponent;
   className?: string;
 }> = [
   { key: 'invoices', className: 'md:col-span-6' },
   { key: 'dashboard', icon: ChartBarIcon, className: 'md:col-span-6' },
-  { key: 'clients', icon: UserGroupIcon, className: 'md:col-span-3' },
-  { key: 'contracts', icon: PencilSquareIcon, className: 'md:col-span-3' }
+  { key: 'clients', icon: UserGroupIcon, className: 'md:col-span-6' }
 ];
 
 const capabilityTiles: Array<{
@@ -35,7 +32,7 @@ const capabilityTiles: Array<{
   icon: IconComponent;
   className?: string;
 }> = [
-  { key: 'payments', icon: CreditCardIcon },
+  { key: 'payments', icon: BanknotesIcon },
   { key: 'links', icon: LinkIcon },
   { key: 'email', icon: EnvelopeIcon },
   { key: 'language', icon: GlobeAltIcon },
@@ -73,14 +70,10 @@ export default function ProductSection() {
               }
               title={t(`items.${key}.title`)}
               body={t(`items.${key}.body`)}
-              badge={
-                key === 'contracts' ? t('items.contracts.badge') : undefined
-              }
             />
             {key === 'invoices' && <InvoicesPagePreview />}
             {key === 'dashboard' && <CompactDashboardPreview />}
             {key === 'clients' && <ClientsPagePreview />}
-            {key === 'contracts' && <ContractsSoonPreview />}
           </Tile>
         ))}
       </div>
@@ -98,12 +91,6 @@ export default function ProductSection() {
               icon={icon}
               title={t(`capabilities.${key}.title`)}
               body={t(`capabilities.${key}.body`)}
-              badge={
-                key === 'payments'
-                  ? t('capabilities.payments.badge')
-                  : undefined
-              }
-              badgeColor={key === 'payments' ? 'success' : undefined}
             />
             {key === 'language' && (
               <div className="mt-5 flex flex-wrap gap-1.5">

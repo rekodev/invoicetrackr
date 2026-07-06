@@ -32,15 +32,7 @@ const mapUserToSessionUser = (user: InvoiceTrackrUser): User => {
     vatNumber: user.vatNumber,
     selectedBankAccountId: user.selectedBankAccountId || 0,
     address: user.address,
-    stripeCustomerId: user.stripeCustomerId,
-    stripeSubscriptionId: user.stripeSubscriptionId,
-    subscriptionStatus: user.subscriptionStatus,
     onboardingCompletedAt: user.onboardingCompletedAt,
-    trialStartedAt: user.trialStartedAt,
-    trialEndsAt: user.trialEndsAt,
-    subscriptionGraceEndsAt: user.subscriptionGraceEndsAt,
-    subscriptionCurrentPeriodEndsAt: user.subscriptionCurrentPeriodEndsAt,
-    subscriptionCancelAt: user.subscriptionCancelAt,
     analyticsConsentStatus: user.analyticsConsentStatus,
     analyticsConsentUpdatedAt: user.analyticsConsentUpdatedAt
   };

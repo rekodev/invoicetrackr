@@ -26,14 +26,13 @@ export const invoiceCorrectionTypeSchema = z.enum([
 ]);
 
 export const invoicePaymentModeSchema = z.enum(
-  ['auto', 'online', 'manual', 'disabled'],
+  ['manual', 'disabled'],
   {
     message: 'validation.invoice.paymentMode'
   }
 );
 
 export const publicInvoiceResolvedPaymentModeSchema = z.enum([
-  'online',
   'manual',
   'disabled'
 ]);
@@ -155,12 +154,7 @@ export const invoiceBodySchema = z
     publicInvoiceSentAt: z.string().nullish(),
     publicInvoiceExpiresAt: z.string().nullish(),
     publicInvoiceRevokedAt: z.string().nullish(),
-    paymentProvider: z.string().nullish(),
-    paymentCheckoutSessionId: z.string().nullish(),
-    paymentIntentId: z.string().nullish(),
-    paymentCompletedAt: z.string().nullish(),
-    paymentFailedAt: z.string().nullish(),
-    paymentMode: invoicePaymentModeSchema.default('auto'),
+    paymentMode: invoicePaymentModeSchema.default('manual'),
     manualPaymentReference: z.string().trim().max(255).nullish(),
     services: z
       .array(invoiceServiceBodySchema)
@@ -187,12 +181,8 @@ export const publicInvoiceSigningSchema = z.object({
 export const publicInvoicePaymentSchema = z.object({
   configuredMode: invoicePaymentModeSchema,
   resolvedMode: publicInvoiceResolvedPaymentModeSchema,
-  provider: z.literal('stripe_connect').nullish(),
+  provider: z.null(),
   available: z.boolean(),
-  checkoutSessionId: z.string().nullish(),
-  paymentIntentId: z.string().nullish(),
-  completedAt: z.string().nullish(),
-  failedAt: z.string().nullish(),
   manualReference: z.string().nullish()
 });
 

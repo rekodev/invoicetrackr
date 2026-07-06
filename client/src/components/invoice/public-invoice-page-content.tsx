@@ -6,10 +6,10 @@ import { toast } from '@heroui/react';
 import { useOverlayState } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
-import { createPublicInvoicePayment, signPublicInvoice } from '@/api/invoice';
 import type { Currency } from '@/lib/types/currency';
 import InvoiceModal from '@/components/invoice/invoice-modal';
 import { isResponseError } from '@/lib/utils/error';
+import { signPublicInvoice } from '@/api/invoice';
 import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
 
 import InvoiceSigningHeader from '@/components/invoice/signing/invoice-signing-header';
@@ -18,13 +18,9 @@ import InvoiceSigningSummary from '@/components/invoice/signing/invoice-signing-
 
 type Props = {
   publicInvoice: PublicInvoice;
-  paymentStatus?: string;
 };
 
-export default function PublicInvoicePageContent({
-  publicInvoice,
-  paymentStatus
-}: Props) {
+export default function PublicInvoicePageContent({ publicInvoice }: Props) {
   const t = useTranslations('invoice_signing');
   const pdfTranslator = useTranslations('invoices.pdf');
   const [invoice, setInvoice] = useState<InvoiceBody>(publicInvoice.invoice);
@@ -32,7 +28,6 @@ export default function PublicInvoicePageContent({
     publicInvoice.invoice.receiverSignature || undefined
   );
   const [isSigningPending, startSigningTransition] = useTransition();
-  const [isPaymentPending, startPaymentTransition] = useTransition();
   const {
     isOpen: isPdfModalOpen,
     open: openPdfModal,
@@ -45,11 +40,7 @@ export default function PublicInvoicePageContent({
   const isSigned = Boolean(
     invoice.receiverSignature || invoice.recipientSignedAt
   );
-  const isPaid = Boolean(
-    invoice.status === 'paid' ||
-      invoice.paymentCompletedAt ||
-      publicInvoice.payment.completedAt
-  );
+  const isPaid = Boolean(invoice.status === 'paid');
   const currency = publicInvoice.currency as Currency;
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
     currency,
@@ -62,19 +53,6 @@ export default function PublicInvoicePageContent({
         ? signature
         : invoice.receiverSignature || ''
   });
-
-  const handlePay = () => {
-    startPaymentTransition(async () => {
-      const response = await createPublicInvoicePayment(publicInvoice.token);
-
-      if (isResponseError(response)) {
-        toast(response.data.message, { variant: 'danger' });
-        return;
-      }
-
-      window.location.assign(response.data.url);
-    });
-  };
 
   const handleSign = () => {
     if (!signature || typeof signature === 'string') {
@@ -114,12 +92,9 @@ export default function PublicInvoicePageContent({
           <InvoiceSigningPanel
             invoice={invoice}
             isPaid={isPaid}
-            isPaymentCancelled={paymentStatus === 'cancelled'}
-            isPaymentPending={isPaymentPending}
             isPending={isSigningPending}
             isSigningRequested={publicInvoice.signing.requested}
             isSigned={isSigned}
-            onPay={handlePay}
             onSign={handleSign}
             payment={publicInvoice.payment}
             currency={currency}
