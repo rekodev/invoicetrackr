@@ -1,6 +1,4 @@
 import {
-  createInvoiceCorrectionBodySchema,
-  createInvoiceCorrectionResponseSchema,
   getInvoiceResponseSchema,
   getInvoicesResponseSchema,
   getInvoicesRevenueResponseSchema,
@@ -23,7 +21,6 @@ import z from 'zod/v4';
 
 import { authMiddleware, requireVerifiedEmail } from '../middleware/auth';
 import {
-  createInvoiceCorrection,
   deleteInvoice,
   getIncomeJournal,
   getInvoice,
@@ -123,18 +120,6 @@ export const updateInvoiceStatusOptions: RouteShorthandOptionsWithHandler = {
   preHandler: authenticatedAccess,
   handler: updateInvoiceStatus
 };
-
-export const createInvoiceCorrectionOptions: RouteShorthandOptionsWithHandler =
-  {
-    schema: {
-      body: createInvoiceCorrectionBodySchema,
-      response: {
-        201: createInvoiceCorrectionResponseSchema
-      }
-    },
-    preHandler: authenticatedAccess,
-    handler: createInvoiceCorrection
-  };
 
 export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {

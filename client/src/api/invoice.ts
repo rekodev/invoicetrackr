@@ -1,6 +1,5 @@
 import type {
   AddInvoiceResponse,
-  CreateInvoiceCorrectionResponse,
   DeleteInvoiceResponse,
   GetInvoiceResponse,
   GetInvoicesResponse,
@@ -20,7 +19,6 @@ import type {
   UpdateInvoiceStatusResponse
 } from '@invoicetrackr/types';
 import type { InvoiceBody } from '@invoicetrackr/types';
-import type { InvoiceCorrectionType } from '@invoicetrackr/types';
 
 import api from './api-instance';
 import { buildFormData } from '@/lib/utils/multipart';
@@ -125,22 +123,6 @@ export const updateInvoiceStatus = async ({
   api.put<UpdateInvoiceStatusResponse>(
     `/api/${userId}/invoices/${invoiceId}/status`,
     { status: newStatus }
-  );
-
-export const createInvoiceCorrection = async ({
-  userId,
-  invoiceId,
-  type,
-  reason
-}: {
-  userId: number;
-  invoiceId: number;
-  type: InvoiceCorrectionType;
-  reason?: string;
-}) =>
-  await api.post<CreateInvoiceCorrectionResponse>(
-    `/api/${userId}/invoices/${invoiceId}/corrections`,
-    { type, reason }
   );
 
 export const deleteInvoice = async (userId: number, invoiceId: number) =>

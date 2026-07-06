@@ -61,35 +61,15 @@ export default function PDFDocument({
   const renderHeader = () => (
     <>
       <Text style={pdfStyles.title}>
-        {invoiceData.documentType === 'credit_note'
-          ? t('creditNoteTitle')
-          : invoiceData.documentType === 'corrected_invoice'
-            ? t('correctedInvoiceTitle')
-            : invoiceData?.sender?.vatNumber
-              ? t('businessTitle')
-              : t('individualTitle')}{' '}
+        {invoiceData?.sender?.vatNumber
+          ? t('businessTitle')
+          : t('individualTitle')}{' '}
       </Text>
       <Text style={pdfStyles.subtitle}>
         {t('series_label')} <Text style={pdfStyles.boldText}>{series}</Text>{' '}
         {t('invoice_number_label')}&nbsp;
         <Text style={pdfStyles.boldText}>{number}</Text>
       </Text>
-      {invoiceData.originalInvoiceNumber && (
-        <Text style={pdfStyles.detailItem}>
-          {t('original_invoice_label')} {invoiceData.originalInvoiceNumber}
-        </Text>
-      )}
-      {invoiceData.correctedByInvoiceNumber && (
-        <Text style={pdfStyles.detailItem}>
-          {t('corrected_by_invoice_label')}{' '}
-          {invoiceData.correctedByInvoiceNumber}
-        </Text>
-      )}
-      {invoiceData.correctionReason && (
-        <Text style={pdfStyles.detailItem}>
-          {t('correction_reason_label')} {invoiceData.correctionReason}
-        </Text>
-      )}
     </>
   );
 

@@ -30,6 +30,7 @@ The MVP should not sell or foreground MB, UAB, verslo liudijimas, payroll, emplo
 - Stripe Checkout, Stripe Connect, Stripe webhook handling, subscription entitlement middleware, and Stripe payment database helpers have been removed.
 - Stripe account, webhook, subscription, trial, invoice checkout, and payment intent columns/tables are removed by migration.
 - Shared API types and tests were narrowed to manual payment mode.
+- Issued-invoice correction and credit-note draft creation has been removed from the MVP surface and schema.
 
 ## Remaining cleanup targets
 
@@ -45,12 +46,6 @@ Current code still contains post-MVP signing/contract surfaces:
 - signing fields and handlers in invoice server code
 
 Recommended next action: remove signing from invoice send/detail flows, keep visual signature only if needed for generated PDFs, and move true e-signatures to post-MVP.
-
-### Correction and credit-note workflow
-
-Current invoice code still contains issued-document correction concepts that may be too complex for the freelancer MVP unless they are reviewed as legally correct flows.
-
-Recommended next action: keep immutable issued invoice snapshots, but hide or remove user-facing correction and credit-note workflows. The MVP fallback can be "cancel and duplicate as a new draft" until a proper accountant-reviewed correction flow is designed.
 
 ### VAT/PVM default invoice workflow
 

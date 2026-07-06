@@ -59,12 +59,6 @@ export const invoicesTable = pgTable(
     lifecycleStatus: varchar('lifecycle_status', { length: 50 })
       .default('draft')
       .notNull(),
-    documentType: varchar('document_type', { length: 50 })
-      .default('invoice')
-      .notNull(),
-    originalInvoiceId: integer('original_invoice_id'),
-    correctedByInvoiceId: integer('corrected_by_invoice_id'),
-    correctionReason: text('correction_reason'),
     dueDate: date('due_date').notNull(),
     invoiceId: varchar('invoice_id').notNull(),
     id: serial().primaryKey().notNull(),
@@ -147,16 +141,6 @@ export const invoicesTable = pgTable(
       foreignColumns: [invoiceBankingInformationTable.id],
       name: 'fk_invoices_invoice_banking_information'
     }).onDelete('cascade'),
-    foreignKey({
-      columns: [table.originalInvoiceId],
-      foreignColumns: [table.id],
-      name: 'fk_invoices_original_invoice_id'
-    }).onDelete('set null'),
-    foreignKey({
-      columns: [table.correctedByInvoiceId],
-      foreignColumns: [table.id],
-      name: 'fk_invoices_corrected_by_invoice_id'
-    }).onDelete('set null'),
     check(
       'invoices_status_check',
       sql`(status)::text = ANY ((ARRAY['paid'::character varying, 'pending'::character varying, 'canceled'::character varying])::text[])`
@@ -164,10 +148,6 @@ export const invoicesTable = pgTable(
     check(
       'invoices_lifecycle_status_check',
       sql`(lifecycle_status)::text = ANY ((ARRAY['draft'::character varying, 'issued'::character varying, 'voided'::character varying])::text[])`
-    ),
-    check(
-      'invoices_document_type_check',
-      sql`(document_type)::text = ANY ((ARRAY['invoice'::character varying, 'corrected_invoice'::character varying, 'credit_note'::character varying])::text[])`
     ),
     check(
       'invoices_payment_mode_check',

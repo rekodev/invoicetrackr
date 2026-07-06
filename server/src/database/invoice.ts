@@ -1,6 +1,5 @@
 import type {
   InvoiceBody,
-  InvoiceCorrectionType,
   PublicInvoiceSigning
 } from '@invoicetrackr/types';
 import {
@@ -247,16 +246,6 @@ export const getInvoicesFromDb = async (
       totalAmount: invoicesTable.totalAmount,
       status: invoicesTable.status,
       lifecycleStatus: invoicesTable.lifecycleStatus,
-      documentType: invoicesTable.documentType,
-      originalInvoiceId: invoicesTable.originalInvoiceId,
-      originalInvoiceNumber: sql<
-        string | null
-      >`(SELECT original_invoice.invoice_id FROM invoices original_invoice WHERE original_invoice.id = ${invoicesTable.originalInvoiceId})`,
-      correctedByInvoiceId: invoicesTable.correctedByInvoiceId,
-      correctedByInvoiceNumber: sql<
-        string | null
-      >`(SELECT corrected_by_invoice.invoice_id FROM invoices corrected_by_invoice WHERE corrected_by_invoice.id = ${invoicesTable.correctedByInvoiceId})`,
-      correctionReason: invoicesTable.correctionReason,
       dueDate: invoicesTable.dueDate,
       senderSignature: invoicesTable.senderSignature,
       receiverSignature: invoicesTable.receiverSignature,
@@ -357,16 +346,6 @@ export const getInvoiceFromDb = async (
       totalAmount: invoicesTable.totalAmount,
       status: invoicesTable.status,
       lifecycleStatus: invoicesTable.lifecycleStatus,
-      documentType: invoicesTable.documentType,
-      originalInvoiceId: invoicesTable.originalInvoiceId,
-      originalInvoiceNumber: sql<
-        string | null
-      >`(SELECT original_invoice.invoice_id FROM invoices original_invoice WHERE original_invoice.id = ${invoicesTable.originalInvoiceId})`,
-      correctedByInvoiceId: invoicesTable.correctedByInvoiceId,
-      correctedByInvoiceNumber: sql<
-        string | null
-      >`(SELECT corrected_by_invoice.invoice_id FROM invoices corrected_by_invoice WHERE corrected_by_invoice.id = ${invoicesTable.correctedByInvoiceId})`,
-      correctionReason: invoicesTable.correctionReason,
       dueDate: invoicesTable.dueDate,
       senderSignature: invoicesTable.senderSignature,
       receiverSignature: invoicesTable.receiverSignature,
@@ -485,10 +464,6 @@ export const insertInvoiceInDb = async (
         lifecycleStatus:
           invoiceData.lifecycleStatus ||
           (invoiceData.status === 'canceled' ? 'voided' : 'draft'),
-        documentType: invoiceData.documentType || 'invoice',
-        originalInvoiceId: invoiceData.originalInvoiceId || null,
-        correctedByInvoiceId: invoiceData.correctedByInvoiceId || null,
-        correctionReason: invoiceData.correctionReason || null,
         dueDate: invoiceData.dueDate,
         senderSignature: senderSignature,
         receiverSignature: invoiceData.receiverSignature || null,
@@ -598,10 +573,6 @@ export const updateInvoiceInDb = async (
         receiverId: invoicesTable.receiverId,
         bankAccountId: invoicesTable.bankAccountId,
         lifecycleStatus: invoicesTable.lifecycleStatus,
-        documentType: invoicesTable.documentType,
-        originalInvoiceId: invoicesTable.originalInvoiceId,
-        correctedByInvoiceId: invoicesTable.correctedByInvoiceId,
-        correctionReason: invoicesTable.correctionReason,
         issuedAt: invoicesTable.issuedAt,
         paidAt: invoicesTable.paidAt,
         voidedAt: invoicesTable.voidedAt,
@@ -757,15 +728,6 @@ export const updateInvoiceInDb = async (
         status: invoiceData.status,
         lifecycleStatus:
           invoiceData.lifecycleStatus || currentInvoiceData.lifecycleStatus,
-        documentType:
-          invoiceData.documentType || currentInvoiceData.documentType,
-        originalInvoiceId:
-          invoiceData.originalInvoiceId ?? currentInvoiceData.originalInvoiceId,
-        correctedByInvoiceId:
-          invoiceData.correctedByInvoiceId ??
-          currentInvoiceData.correctedByInvoiceId,
-        correctionReason:
-          invoiceData.correctionReason ?? currentInvoiceData.correctionReason,
         subtotalAmount: totals.subtotalAmount,
         vatAmount: totals.vatAmount,
         totalAmount: totals.totalAmount,
@@ -903,154 +865,6 @@ export async function updateInvoiceStatusInDb(
     .returning({ id: invoicesTable.id });
 
   return invoices.at(0);
-}
-
-export async function createInvoiceCorrectionInDb({
-  userId,
-  id,
-  type,
-  reason
-}: {
-  userId: number;
-  id: number;
-  type: InvoiceCorrectionType;
-  reason?: string;
-}): Promise<InvoiceFromDb | null | undefined> {
-  const createdInvoice = await db.transaction(async (tx) => {
-    const originalInvoice = await getInvoiceFromDb(userId, id, tx);
-
-    if (!originalInvoice) return undefined;
-    if ((originalInvoice.lifecycleStatus || 'draft') !== 'issued') return null;
-    if (originalInvoice.correctedByInvoiceId) return null;
-    if (type === 'corrected_invoice' && originalInvoice.status === 'paid')
-      return null;
-    if (
-      !originalInvoice.sender ||
-      !originalInvoice.receiver ||
-      !originalInvoice.bankingInformation ||
-      !originalInvoice.services?.length
-    )
-      return null;
-
-    const invoiceId = await reserveNextInvoiceNumber(
-      tx,
-      userId,
-      parseInvoiceNumber(originalInvoice.invoiceId || '')?.series
-    );
-    const totals = calculateInvoiceTotals(originalInvoice.services);
-    const trimmedReason = reason?.trim() || null;
-    const now = new Date().toISOString();
-
-    const invoices = await tx
-      .insert(invoicesTable)
-      .values({
-        userId,
-        invoiceId,
-        date: originalInvoice.date,
-        dueDate: originalInvoice.dueDate,
-        status: 'pending',
-        lifecycleStatus: 'draft',
-        documentType: type,
-        originalInvoiceId: originalInvoice.id,
-        correctionReason: trimmedReason,
-        subtotalAmount: totals.subtotalAmount,
-        vatAmount: totals.vatAmount,
-        totalAmount: totals.totalAmount,
-        senderSignature: originalInvoice.senderSignature || '',
-        receiverSignature: null,
-        paymentMode: originalInvoice.paymentMode || 'manual',
-        manualPaymentReference: originalInvoice.manualPaymentReference || null
-      })
-      .returning({ id: invoicesTable.id });
-
-    const insertedInvoiceId = invoices.at(0)?.id;
-
-    if (!insertedInvoiceId) throw new Error('Failed to insert correction');
-
-    const senders = await tx
-      .insert(invoiceSendersTable)
-      .values({
-        invoiceId: insertedInvoiceId,
-        name: originalInvoice.sender.name,
-        email: originalInvoice.sender.email || '',
-        address: originalInvoice.sender.address,
-        type: originalInvoice.sender.type,
-        businessType: originalInvoice.sender.businessType,
-        businessNumber: originalInvoice.sender.businessNumber,
-        vatNumber: originalInvoice.sender.vatNumber || null
-      })
-      .returning({ id: invoiceSendersTable.id });
-
-    const receivers = await tx
-      .insert(invoiceReceiversTable)
-      .values({
-        invoiceId: insertedInvoiceId,
-        name: originalInvoice.receiver.name,
-        email: originalInvoice.receiver.email || '',
-        address: originalInvoice.receiver.address,
-        type: originalInvoice.receiver.type,
-        businessType: originalInvoice.receiver.businessType,
-        businessNumber: originalInvoice.receiver.businessNumber,
-        vatNumber: originalInvoice.receiver.vatNumber || null
-      })
-      .returning({ id: invoiceReceiversTable.id });
-
-    const invoiceBankingInformation = buildInvoiceBankingInformationInsert({
-      invoiceId: insertedInvoiceId,
-      bankingInformation: originalInvoice.bankingInformation
-    });
-    const bankAccounts = await tx
-      .insert(invoiceBankingInformationTable)
-      .values(invoiceBankingInformation)
-      .returning({ id: invoiceBankingInformationTable.id });
-
-    for (const service of originalInvoice.services) {
-      await tx.insert(invoiceServicesTable).values({
-        invoiceId: insertedInvoiceId,
-        description: service.description,
-        unit: service.unit,
-        quantity: service.quantity,
-        amount: String(service.amount),
-        vatRate: String(service.vatRate || 0),
-        vatExemptionReason: service.vatExemptionReason || null
-      });
-    }
-
-    await tx
-      .update(invoicesTable)
-      .set({
-        senderId: senders.at(0)?.id,
-        receiverId: receivers.at(0)?.id,
-        bankAccountId: bankAccounts.at(0)?.id
-      })
-      .where(eq(invoicesTable.id, insertedInvoiceId));
-
-    const shouldVoidOriginal = originalInvoice.status !== 'paid';
-
-    await tx
-      .update(invoicesTable)
-      .set({
-        correctedByInvoiceId: insertedInvoiceId,
-        correctionReason: trimmedReason,
-        ...(shouldVoidOriginal
-          ? {
-              status: 'canceled',
-              lifecycleStatus: 'voided',
-              voidedAt: now,
-              publicInvoiceRevokedAt: sql<string>`COALESCE(${invoicesTable.publicInvoiceRevokedAt}, CURRENT_TIMESTAMP)`,
-              recipientSigningRevokedAt: sql<string>`COALESCE(${invoicesTable.recipientSigningRevokedAt}, CURRENT_TIMESTAMP)`
-            }
-          : {
-              publicInvoiceRevokedAt: sql<string>`COALESCE(${invoicesTable.publicInvoiceRevokedAt}, CURRENT_TIMESTAMP)`,
-              recipientSigningRevokedAt: sql<string>`COALESCE(${invoicesTable.recipientSigningRevokedAt}, CURRENT_TIMESTAMP)`
-            })
-      })
-      .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)));
-
-    return getInvoiceFromDb(userId, insertedInvoiceId, tx);
-  });
-
-  return createdInvoice;
 }
 
 export async function prepareInvoiceSigningFromDb({
@@ -1403,7 +1217,6 @@ export const getInvoicesRevenueFromDb = async (userId: number) => {
       and(
         eq(invoicesTable.userId, userId),
         eq(invoicesTable.status, 'paid'),
-        sql`${invoicesTable.documentType} <> 'credit_note'`,
         sql`${invoicesTable.lifecycleStatus} <> 'voided'`,
         gte(invoicesTable.date, sql`NOW() - INTERVAL '1 year'`)
       )
@@ -1476,7 +1289,6 @@ export const getIncomeJournalRowsFromDb = async ({
       and(
         eq(invoicesTable.userId, userId),
         eq(invoicesTable.status, 'paid'),
-        sql`${invoicesTable.documentType} <> 'credit_note'`,
         sql`${invoicesTable.lifecycleStatus} <> 'voided'`,
         gte(effectivePaidAt, `${from}T00:00:00.000Z`),
         lte(effectivePaidAt, `${to}T23:59:59.999Z`)

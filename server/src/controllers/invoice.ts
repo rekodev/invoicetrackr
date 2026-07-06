@@ -1,10 +1,9 @@
+import { FastifyReply, FastifyRequest } from 'fastify';
 import type {
-  CreateInvoiceCorrectionBody,
   IncomeJournalQuery,
   InvoiceBody,
   PublicInvoice
 } from '@invoicetrackr/types';
-import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   InvoiceEmail,
   InvoiceSignedNotificationEmail
@@ -22,7 +21,6 @@ import {
 } from '../utils/error';
 import {
   type InvoiceFromDb,
-  createInvoiceCorrectionInDb,
   deleteInvoiceFromDb,
   findInvoiceByInvoiceId,
   getIncomeJournalRowsFromDb,
@@ -138,7 +136,6 @@ const assertPublicInvoiceLinkAvailable = (
 
 const isInvoicePayable = (invoice: InvoiceBody) =>
   invoice.status === 'pending' &&
-  (invoice.documentType || 'invoice') !== 'credit_note' &&
   (invoice.lifecycleStatus || 'draft') !== 'voided' &&
   !invoice.publicInvoiceRevokedAt &&
   !isPublicInvoiceLinkExpired(invoice.publicInvoiceExpiresAt);
@@ -482,39 +479,6 @@ export async function updateInvoiceStatus(
     throw new BadRequestError(i18n.t('error.invoice.unableToUpdateStatus'));
 
   reply.status(200).send({ message: i18n.t('success.invoice.statusUpdated') });
-}
-
-export async function createInvoiceCorrection(
-  req: FastifyRequest<{
-    Params: { userId: string; id: string };
-    Body: CreateInvoiceCorrectionBody;
-  }>,
-  reply: FastifyReply
-) {
-  const id = Number(req.params.id);
-  const userId = Number(req.params.userId);
-  const { type, reason } = req.body;
-  const i18n = await useI18n(req);
-
-  const createdInvoice = await createInvoiceCorrectionInDb({
-    userId,
-    id,
-    type,
-    reason
-  });
-
-  if (createdInvoice === undefined)
-    throw new NotFoundError(i18n.t('error.invoice.notFound'));
-  if (!createdInvoice)
-    throw new BadRequestError(i18n.t('error.invoice.unableToCreateCorrection'));
-
-  reply.status(201).send({
-    invoice: createdInvoice,
-    message:
-      type === 'credit_note'
-        ? i18n.t('success.invoice.creditNoteCreated')
-        : i18n.t('success.invoice.correctionCreated')
-  });
 }
 
 export const deleteInvoice = async (

@@ -95,7 +95,6 @@ export default {
       incomeJournalDateRange:
         'Pabaigos data negali būti ankstesnė už pradžios datą',
       status: 'Tinkama būsena yra privaloma',
-      documentType: 'Tinkamas sąskaitos dokumento tipas yra privalomas',
       paymentMode: 'Tinkamas mokėjimo būdas yra privalomas',
       businessType: 'Reikalingas "Verslas" arba "Fizinis asmuo"',
       partyType: 'Tinkamas šalies tipas yra privalomas',
@@ -199,9 +198,7 @@ export default {
       signingLinkRevoked: 'Pasirašymo nuoroda atšaukta',
       signingLinkRegenerated: 'Sugeneruota nauja pasirašymo nuoroda',
       publicLinkRevoked: 'Vieša sąskaitos nuoroda atšaukta',
-      publicLinkRegenerated: 'Sugeneruota nauja vieša sąskaitos nuoroda',
-      correctionCreated: 'Sukurtas tikslinimo juodraštis',
-      creditNoteCreated: 'Sukurtas kreditinės sąskaitos juodraštis'
+      publicLinkRegenerated: 'Sugeneruota nauja vieša sąskaitos nuoroda'
     },
     client: {
       created: 'Klientas pridėtas sėkmingai',
@@ -261,8 +258,6 @@ export default {
       unableToCreatePublicLink: 'Nepavyko sukurti viešos sąskaitos nuorodos',
       unableToCreateSigningLink:
         'Nepavyko sukurti sąskaitos pasirašymo nuorodos',
-      unableToCreateCorrection:
-        'Nepavyko sukurti šios sąskaitos tikslinimo',
       unableToRegenerateSigningLink:
         'Nepavyko atnaujinti sąskaitos pasirašymo nuorodos',
       signingLinkExpired:

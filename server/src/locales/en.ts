@@ -92,7 +92,6 @@ export default {
       dueDateAfterDate: 'Due date must be after invoice date',
       incomeJournalDateRange: 'End date must not be before start date',
       status: 'Valid status is required',
-      documentType: 'Valid invoice document type is required',
       paymentMode: 'Valid payment mode is required',
       businessType: '"Business" or "Individual" required',
       partyType: 'Valid party type is required',
@@ -194,9 +193,7 @@ export default {
       signingLinkRevoked: 'Signing link revoked',
       signingLinkRegenerated: 'Fresh signing link generated',
       publicLinkRevoked: 'Public invoice link revoked',
-      publicLinkRegenerated: 'Fresh public invoice link generated',
-      correctionCreated: 'Correction draft created',
-      creditNoteCreated: 'Credit note draft created'
+      publicLinkRegenerated: 'Fresh public invoice link generated'
     },
     client: {
       created: 'Client added successfully',
@@ -255,8 +252,6 @@ export default {
       unableToSendEmail: 'Unable to send email',
       unableToCreatePublicLink: 'Unable to create public invoice link',
       unableToCreateSigningLink: 'Unable to create invoice signing link',
-      unableToCreateCorrection:
-        'Unable to create a correction for this invoice',
       unableToRegenerateSigningLink:
         'Unable to regenerate invoice signing link',
       signingLinkExpired:
