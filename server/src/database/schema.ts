@@ -5,12 +5,14 @@ import {
   foreignKey,
   index,
   integer,
+  jsonb,
   numeric,
   pgTable,
   serial,
   text,
   timestamp,
   unique,
+  uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
@@ -385,6 +387,156 @@ export const bankingInformationTable = pgTable(
   ]
 );
 
+export const expensesTable = pgTable(
+  'expenses',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id').notNull(),
+    expenseDate: date('expense_date').notNull(),
+    paymentDate: date('payment_date'),
+    supplier: varchar({ length: 255 }).notNull(),
+    documentNumber: varchar('document_number', { length: 255 }),
+    description: text().notNull(),
+    category: varchar({ length: 100 }).notNull(),
+    currency: varchar({ length: 3 }).default('eur').notNull(),
+    totalAmount: numeric('total_amount', {
+      precision: 10,
+      scale: 2
+    }).notNull(),
+    eurAmount: numeric('eur_amount', {
+      precision: 10,
+      scale: 2
+    }).notNull(),
+    vatAmount: numeric('vat_amount', {
+      precision: 10,
+      scale: 2
+    }),
+    businessUsePercentage: numeric('business_use_percentage', {
+      precision: 5,
+      scale: 2
+    })
+      .default('100')
+      .notNull(),
+    deductibleAmount: numeric('deductible_amount', {
+      precision: 10,
+      scale: 2
+    }).notNull(),
+    paymentMethod: varchar('payment_method', { length: 50 }),
+    notes: text(),
+    deletedAt: timestamp('deleted_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    createdAt: timestamp('created_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp('updated_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).default(sql`CURRENT_TIMESTAMP`)
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [usersTable.id],
+      name: 'fk_expenses_user_id'
+    }).onDelete('cascade'),
+    index('expenses_user_date_idx').on(table.userId, table.expenseDate),
+    check(
+      'expenses_business_use_percentage_check',
+      sql`${table.businessUsePercentage} >= 0 AND ${table.businessUsePercentage} <= 100`
+    ),
+    check('expenses_total_amount_check', sql`${table.totalAmount} >= 0`),
+    check('expenses_eur_amount_check', sql`${table.eurAmount} >= 0`),
+    check(
+      'expenses_deductible_amount_check',
+      sql`${table.deductibleAmount} >= 0`
+    )
+  ]
+);
+
+export const expenseAttachmentsTable = pgTable(
+  'expense_attachments',
+  {
+    id: serial().primaryKey().notNull(),
+    expenseId: integer('expense_id').notNull(),
+    storageProvider: varchar('storage_provider', { length: 50 })
+      .default('cloudinary')
+      .notNull(),
+    storageKey: varchar('storage_key', { length: 255 }).notNull(),
+    secureUrl: text('secure_url').notNull(),
+    resourceType: varchar('resource_type', { length: 50 })
+      .default('auto')
+      .notNull(),
+    originalFileName: text('original_file_name').notNull(),
+    sanitizedFileName: text('sanitized_file_name').notNull(),
+    mimeType: varchar('mime_type', { length: 100 }).notNull(),
+    fileSize: integer('file_size').notNull(),
+    checksum: varchar({ length: 64 }).notNull(),
+    malwareScanStatus: varchar('malware_scan_status', { length: 50 })
+      .default('not_configured')
+      .notNull(),
+    deletedAt: timestamp('deleted_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    uploadedAt: timestamp('uploaded_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp('updated_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).default(sql`CURRENT_TIMESTAMP`)
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.expenseId],
+      foreignColumns: [expensesTable.id],
+      name: 'fk_expense_attachments_expense_id'
+    }).onDelete('cascade'),
+    index('expense_attachments_expense_id_idx').on(table.expenseId),
+    uniqueIndex('expense_attachments_checksum_expense_key')
+      .on(table.expenseId, table.checksum)
+      .where(sql`${table.deletedAt} IS NULL`)
+  ]
+);
+
+export const expenseAttachmentEventsTable = pgTable(
+  'expense_attachment_events',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id').notNull(),
+    expenseId: integer('expense_id').notNull(),
+    attachmentId: integer('attachment_id'),
+    action: varchar({ length: 50 }).notNull(),
+    previousValue: jsonb('previous_value'),
+    newValue: jsonb('new_value'),
+    createdAt: timestamp('created_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).default(sql`CURRENT_TIMESTAMP`)
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [usersTable.id],
+      name: 'fk_expense_attachment_events_user_id'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.expenseId],
+      foreignColumns: [expensesTable.id],
+      name: 'fk_expense_attachment_events_expense_id'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.attachmentId],
+      foreignColumns: [expenseAttachmentsTable.id],
+      name: 'fk_expense_attachment_events_attachment_id'
+    }).onDelete('set null')
+  ]
+);
+
 export const passwordResetTokensTable = pgTable('password_reset_tokens', {
   id: serial().primaryKey().notNull(),
   userId: integer('user_id')
@@ -449,3 +601,16 @@ export type SelectUser = typeof usersTable.$inferSelect;
 
 export type InsertClient = typeof clientsTable.$inferInsert;
 export type SelectClient = typeof clientsTable.$inferSelect;
+
+export type InsertExpense = typeof expensesTable.$inferInsert;
+export type SelectExpense = typeof expensesTable.$inferSelect;
+
+export type InsertExpenseAttachment =
+  typeof expenseAttachmentsTable.$inferInsert;
+export type SelectExpenseAttachment =
+  typeof expenseAttachmentsTable.$inferSelect;
+
+export type InsertExpenseAttachmentEvent =
+  typeof expenseAttachmentEventsTable.$inferInsert;
+export type SelectExpenseAttachmentEvent =
+  typeof expenseAttachmentEventsTable.$inferSelect;

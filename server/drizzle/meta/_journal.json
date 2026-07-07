@@ -232,6 +232,13 @@
       "when": 1783299600000,
       "tag": "0033_remove_invoice_corrections",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1783305600000,
+      "tag": "0034_rek_115_expense_document_uploads",
+      "breakpoints": true
     }
   ]
 }

@@ -212,6 +212,11 @@ export default {
       updated: 'Banko sąskaita atnaujinta sėkmingai',
       deleted: 'Banko sąskaita ištrinta sėkmingai'
     },
+    expenseAttachment: {
+      uploaded: 'Išlaidų dokumentas įkeltas sėkmingai',
+      replaced: 'Išlaidų dokumentas pakeistas sėkmingai',
+      removed: 'Išlaidų dokumentas pašalintas sėkmingai'
+    },
     contact: {
       messageSent: 'Žinutė išsiųsta sėkmingai'
     }
@@ -282,6 +287,15 @@ export default {
       unableToCreate: 'Nepavyko pridėti kliento',
       unableToUpdate: 'Nepavyko atnaujinti kliento',
       unableToDelete: 'Nepavyko ištrinti kliento'
+    },
+    expense: {
+      notFound: 'Išlaidų įrašas nerastas'
+    },
+    expenseAttachment: {
+      notFound: 'Išlaidų dokumentas nerastas',
+      unableToUpload: 'Nepavyko įkelti išlaidų dokumento',
+      invalidType: 'Įkelkite PDF, JPEG arba PNG dokumentą',
+      tooLarge: 'Išlaidų dokumentas turi būti ne didesnis nei 10 MB'
     },
     bankAccount: {
       notFound: 'Banko sąskaita nerasta',

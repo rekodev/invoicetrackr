@@ -77,10 +77,10 @@
     "home": {
         "hero": {
             "badge_label": "Nauja",
-            "badge_text": "Skirta individualiai veiklai",
+            "badge_text": "Įkelkite išlaidų dokumentus",
             "title": "Sąskaitos klientams.",
             "title_accent": "Aišku, kiek atsidėti.",
-            "subtitle": "Siaura finansų darbo vieta Lietuvos freelanceriams, dirbantiems pagal individualios veiklos pažymą: sąskaitos, klientai, bankinių pavedimų sekimas ir pajamų žurnalo eksportas.",
+            "subtitle": "Finansų valdymo įrankis Lietuvos specialistams, dirbantiems pagal individualios veiklos pažymą: sąskaitoms, klientams, bankiniams pavedimams ir pajamų žurnalo eksportui vienoje vietoje.",
             "cta_primary": "Sukurti nemokamą sąskaitą",
             "cta_secondary": "Sukurti paskyrą",
             "note": "Lietuvos individualiai veiklai · ne MB ar UAB apskaita"
