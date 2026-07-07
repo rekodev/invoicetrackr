@@ -16,6 +16,7 @@ import clientRoutes from './routes/client';
 import { cloudinaryConfig } from './config/cloudinary';
 import contactRoutes from './routes/contact';
 import { errorHandler } from './utils/error';
+import expenseRoutes from './routes/expense';
 import { getPgVersion } from './database/db';
 import i18n from './plugins/i18n';
 import invoiceRoutes from './routes/invoice';
@@ -82,6 +83,7 @@ server.setSerializerCompiler(serializerCompiler);
 // Register Routes
 server.register(webhookRoutes);
 server.register(invoiceRoutes);
+server.register(expenseRoutes);
 server.register(clientRoutes);
 server.register(userRoutes);
 server.register(bankingInformationRoutes);

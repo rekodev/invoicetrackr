@@ -207,6 +207,11 @@ export default {
       updated: 'Bank account updated successfully',
       deleted: 'Bank account deleted successfully'
     },
+    expenseAttachment: {
+      uploaded: 'Expense document uploaded successfully',
+      replaced: 'Expense document replaced successfully',
+      removed: 'Expense document removed successfully'
+    },
     contact: {
       messageSent: 'Message sent successfully'
     }
@@ -277,6 +282,15 @@ export default {
       unableToCreate: 'Unable to add client',
       unableToUpdate: 'Unable to update client',
       unableToDelete: 'Unable to delete client'
+    },
+    expense: {
+      notFound: 'Expense not found'
+    },
+    expenseAttachment: {
+      notFound: 'Expense document not found',
+      unableToUpload: 'Unable to upload expense document',
+      invalidType: 'Upload a PDF, JPEG, or PNG document',
+      tooLarge: 'Expense document must be 10 MB or smaller'
     },
     bankAccount: {
       notFound: 'Bank account not found',
