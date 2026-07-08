@@ -1,12 +1,78 @@
 import {
+  DeleteExpenseResponse,
+  ExpenseInput,
   GetExpenseAttachmentResponse,
   GetExpenseAttachmentsResponse,
+  GetExpenseResponse,
+  GetExpensesResponse,
   MessageResponse,
   PostExpenseAttachmentResponse,
-  UpdateExpenseAttachmentResponse
+  PostExpenseResponse,
+  UpdateExpenseAttachmentResponse,
+  UpdateExpenseResponse
 } from '@invoicetrackr/types';
 
 import api from './api-instance';
+
+export const getExpenses = async (userId: number) =>
+  await api.get<GetExpensesResponse>(`/api/${userId}/expenses`);
+
+export const getExpense = async ({
+  userId,
+  expenseId
+}: {
+  userId: number;
+  expenseId: number;
+}) => await api.get<GetExpenseResponse>(`/api/${userId}/expenses/${expenseId}`);
+
+export const addExpense = async ({
+  userId,
+  expense
+}: {
+  userId: number;
+  expense: Omit<
+    ExpenseInput,
+    | 'id'
+    | 'deductibleAmount'
+    | 'attachmentCount'
+    | 'deletedAt'
+    | 'createdAt'
+    | 'updatedAt'
+  >;
+}) => await api.post<PostExpenseResponse>(`/api/${userId}/expenses`, expense);
+
+export const updateExpense = async ({
+  userId,
+  expenseId,
+  expense
+}: {
+  userId: number;
+  expenseId: number;
+  expense: Omit<
+    ExpenseInput,
+    | 'id'
+    | 'deductibleAmount'
+    | 'attachmentCount'
+    | 'deletedAt'
+    | 'createdAt'
+    | 'updatedAt'
+  >;
+}) =>
+  await api.put<UpdateExpenseResponse>(
+    `/api/${userId}/expenses/${expenseId}`,
+    expense
+  );
+
+export const deleteExpense = async ({
+  userId,
+  expenseId
+}: {
+  userId: number;
+  expenseId: number;
+}) =>
+  await api.delete<DeleteExpenseResponse>(
+    `/api/${userId}/expenses/${expenseId}`
+  );
 
 export const getExpenseAttachments = async (
   userId: number,

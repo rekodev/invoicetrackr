@@ -3,6 +3,7 @@ import type { MetadataRoute } from 'next';
 import {
   CLIENTS_PAGE,
   DASHBOARD_PAGE,
+  EXPENSES_PAGE,
   INVOICES_PAGE,
   ONBOARDING_PAGE,
   PROFILE_PAGE,
@@ -19,6 +20,8 @@ export default function robots(): MetadataRoute.Robots {
         '/api/',
         CLIENTS_PAGE,
         DASHBOARD_PAGE,
+        EXPENSES_PAGE,
+        `${EXPENSES_PAGE}/`,
         `${INVOICES_PAGE}/`,
         ONBOARDING_PAGE,
         `${PROFILE_PAGE}/`,

@@ -11,7 +11,7 @@ import {
   publicInvoiceSchema,
   publicInvoiceSigningSchema
 } from './invoice';
-import { expenseAttachmentSchema } from './expense';
+import { expenseAttachmentSchema, expenseBodySchema } from './expense';
 
 // Common response schemas
 export const messageResponseSchema = z.object({
@@ -107,6 +107,21 @@ export const updateInvoiceResponseSchema = z.object({
   invoice: invoiceBodySchema,
   message: z.string()
 });
+
+export const getExpensesResponseSchema = z.object({
+  expenses: z.array(expenseBodySchema)
+});
+
+export const getExpenseResponseSchema = z.object({
+  expense: expenseBodySchema
+});
+
+export const postExpenseResponseSchema = z.object({
+  expense: expenseBodySchema,
+  message: z.string()
+});
+
+export const updateExpenseResponseSchema = postExpenseResponseSchema;
 
 export const getExpenseAttachmentsResponseSchema = z.object({
   attachments: z.array(expenseAttachmentSchema)
@@ -212,6 +227,12 @@ export type GetClientResponse = z.infer<typeof getClientResponseSchema>;
 export type PostClientResponse = z.infer<typeof postClientResponseSchema>;
 export type UpdateClientResponse = z.infer<typeof updateClientResponseSchema>;
 export type DeleteClientResponse = MessageResponse;
+
+export type GetExpensesResponse = z.infer<typeof getExpensesResponseSchema>;
+export type GetExpenseResponse = z.infer<typeof getExpenseResponseSchema>;
+export type PostExpenseResponse = z.infer<typeof postExpenseResponseSchema>;
+export type UpdateExpenseResponse = z.infer<typeof updateExpenseResponseSchema>;
+export type DeleteExpenseResponse = MessageResponse;
 
 export type GetExpenseAttachmentsResponse = z.infer<
   typeof getExpenseAttachmentsResponseSchema

@@ -19,6 +19,7 @@ import { useTranslations } from 'next-intl';
 import {
   CLIENTS_PAGE,
   DASHBOARD_PAGE,
+  EXPENSES_PAGE,
   HOME_PAGE,
   INVOICES_PAGE,
   PERSONAL_INFORMATION_PAGE
@@ -34,6 +35,7 @@ import AppBrand from '../app-brand';
 const navbarItems = [
   { name: 'Dashboard', href: DASHBOARD_PAGE },
   { name: 'Invoices', href: INVOICES_PAGE },
+  { name: 'Expenses', href: EXPENSES_PAGE },
   { name: 'Clients', href: CLIENTS_PAGE }
 ];
 
@@ -78,7 +80,7 @@ export default function UserHeader({ user }: Props) {
                   'text-accent': isActive
                 })}
               >
-                {item.name}
+                {t(item.name.toLowerCase())}
               </DropdownItem>
             );
           })}

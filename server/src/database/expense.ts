@@ -1,11 +1,13 @@
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, count, desc, eq, isNull } from 'drizzle-orm';
 
 import {
+  InsertExpense,
   InsertExpenseAttachment,
   SelectExpense,
   SelectExpenseAttachment,
   expenseAttachmentEventsTable,
   expenseAttachmentsTable,
+  expenseEventsTable,
   expensesTable
 } from './schema';
 import { db } from './db';
@@ -45,6 +47,167 @@ export const getExpenseFromDb = async (
     );
 
   return expenses.at(0);
+};
+
+export const getExpensesFromDb = async (
+  userId: number
+): Promise<Array<SelectExpense>> => {
+  const expenses = await db
+    .select()
+    .from(expensesTable)
+    .where(
+      and(eq(expensesTable.userId, userId), isNull(expensesTable.deletedAt))
+    )
+    .orderBy(desc(expensesTable.expenseDate), desc(expensesTable.id));
+
+  return expenses;
+};
+
+export const getExpenseAttachmentCountsFromDb = async (
+  userId: number
+): Promise<Record<number, number>> => {
+  const attachmentCounts = await db
+    .select({
+      expenseId: expenseAttachmentsTable.expenseId,
+      count: count(expenseAttachmentsTable.id)
+    })
+    .from(expenseAttachmentsTable)
+    .innerJoin(
+      expensesTable,
+      eq(expenseAttachmentsTable.expenseId, expensesTable.id)
+    )
+    .where(
+      and(
+        eq(expensesTable.userId, userId),
+        isNull(expensesTable.deletedAt),
+        isNull(expenseAttachmentsTable.deletedAt)
+      )
+    )
+    .groupBy(expenseAttachmentsTable.expenseId);
+
+  return Object.fromEntries(
+    attachmentCounts.map((item) => [item.expenseId, Number(item.count)])
+  );
+};
+
+export const insertExpenseInDb = async (
+  expense: InsertExpense
+): Promise<SelectExpense | undefined> => {
+  return await db.transaction(async (tx) => {
+    const expenses = await tx.insert(expensesTable).values(expense).returning();
+    const insertedExpense = expenses.at(0);
+
+    if (!insertedExpense) return;
+
+    await tx.insert(expenseEventsTable).values({
+      userId: insertedExpense.userId,
+      expenseId: insertedExpense.id,
+      action: 'created',
+      newValue: insertedExpense
+    });
+
+    return insertedExpense;
+  });
+};
+
+export const updateExpenseInDb = async ({
+  userId,
+  expenseId,
+  expense
+}: {
+  userId: number;
+  expenseId: number;
+  expense: Partial<InsertExpense>;
+}): Promise<SelectExpense | undefined> => {
+  return await db.transaction(async (tx) => {
+    const previousExpenses = await tx
+      .select()
+      .from(expensesTable)
+      .where(
+        and(
+          eq(expensesTable.userId, userId),
+          eq(expensesTable.id, expenseId),
+          isNull(expensesTable.deletedAt)
+        )
+      );
+    const previousExpense = previousExpenses.at(0);
+
+    if (!previousExpense) return;
+
+    const updatedExpenses = await tx
+      .update(expensesTable)
+      .set({ ...expense, updatedAt: new Date().toISOString() })
+      .where(
+        and(
+          eq(expensesTable.userId, userId),
+          eq(expensesTable.id, expenseId),
+          isNull(expensesTable.deletedAt)
+        )
+      )
+      .returning();
+    const updatedExpense = updatedExpenses.at(0);
+
+    if (!updatedExpense) return;
+
+    await tx.insert(expenseEventsTable).values({
+      userId,
+      expenseId,
+      action: 'updated',
+      previousValue: previousExpense,
+      newValue: updatedExpense
+    });
+
+    return updatedExpense;
+  });
+};
+
+export const deleteExpenseFromDb = async (
+  userId: number,
+  expenseId: number
+): Promise<SelectExpense | undefined> => {
+  return await db.transaction(async (tx) => {
+    const previousExpenses = await tx
+      .select()
+      .from(expensesTable)
+      .where(
+        and(
+          eq(expensesTable.userId, userId),
+          eq(expensesTable.id, expenseId),
+          isNull(expensesTable.deletedAt)
+        )
+      );
+    const previousExpense = previousExpenses.at(0);
+
+    if (!previousExpense) return;
+
+    const deletedExpenses = await tx
+      .update(expensesTable)
+      .set({
+        deletedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      })
+      .where(
+        and(
+          eq(expensesTable.userId, userId),
+          eq(expensesTable.id, expenseId),
+          isNull(expensesTable.deletedAt)
+        )
+      )
+      .returning();
+    const deletedExpense = deletedExpenses.at(0);
+
+    if (!deletedExpense) return;
+
+    await tx.insert(expenseEventsTable).values({
+      userId,
+      expenseId,
+      action: 'deleted',
+      previousValue: previousExpense,
+      newValue: deletedExpense
+    });
+
+    return deletedExpense;
+  });
 };
 
 export const getExpenseAttachmentsFromDb = async (

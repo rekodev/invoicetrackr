@@ -149,6 +149,16 @@ export default {
       address: 'Adresas yra privalomas',
       email: 'Turi būti tinkamas el. pašto adresas'
     },
+    expense: {
+      expenseDate: 'Reikalinga tinkama išlaidų data',
+      paymentDate: 'Reikalinga tinkama apmokėjimo data',
+      supplier: 'Tiekėjas yra privalomas',
+      description: 'Aprašymas yra privalomas',
+      amount:
+        'Suma turi būti lygi nuliui arba didesnė, ne daugiau kaip su dviem skaitmenimis po kablelio',
+      businessUsePercentage:
+        'Veikloje naudojama dalis turi būti nuo 0 iki 100, ne daugiau kaip su dviem skaitmenimis po kablelio'
+    },
     bankAccount: {
       name: 'Banko pavadinimas yra privalomas',
       code: 'Banko kodas yra privalomas',
@@ -204,6 +214,11 @@ export default {
       created: 'Klientas pridėtas sėkmingai',
       updated: 'Klientas atnaujintas sėkmingai',
       deleted: 'Klientas ištrintas sėkmingai'
+    },
+    expense: {
+      created: 'Išlaidų įrašas pridėtas sėkmingai',
+      updated: 'Išlaidų įrašas atnaujintas sėkmingai',
+      deleted: 'Išlaidų įrašas ištrintas sėkmingai'
     },
     bankAccount: {
       created: 'Banko sąskaita pridėta sėkmingai',
@@ -289,7 +304,10 @@ export default {
       unableToDelete: 'Nepavyko ištrinti kliento'
     },
     expense: {
-      notFound: 'Išlaidų įrašas nerastas'
+      notFound: 'Išlaidų įrašas nerastas',
+      unableToCreate: 'Nepavyko pridėti išlaidų įrašo',
+      unableToUpdate: 'Nepavyko atnaujinti išlaidų įrašo',
+      unableToDelete: 'Nepavyko ištrinti išlaidų įrašo'
     },
     expenseAttachment: {
       notFound: 'Išlaidų dokumentas nerastas',

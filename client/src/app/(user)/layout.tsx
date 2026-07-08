@@ -30,7 +30,7 @@ export default async function UserLayout({
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col p-6">
+    <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col p-6 pb-12">
       <Breadcrumbs />
       <Suspense fallback={<Loading />}>{children}</Suspense>
     </main>

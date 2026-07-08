@@ -6,10 +6,15 @@ import {
 
 import {
   deleteExpenseAttachmentOptions,
+  deleteExpenseOptions,
   getExpenseAttachmentOptions,
   getExpenseAttachmentsOptions,
+  getExpenseOptions,
+  getExpensesOptions,
   postExpenseAttachmentOptions,
-  replaceExpenseAttachmentOptions
+  postExpenseOptions,
+  replaceExpenseAttachmentOptions,
+  updateExpenseOptions
 } from '../options/expense';
 
 const expenseRoutes = (
@@ -17,6 +22,16 @@ const expenseRoutes = (
   _options: FastifyPluginOptions,
   done: DoneFuncWithErrOrRes
 ) => {
+  fastify.get('/api/:userId/expenses', getExpensesOptions);
+
+  fastify.get('/api/:userId/expenses/:expenseId', getExpenseOptions);
+
+  fastify.post('/api/:userId/expenses', postExpenseOptions);
+
+  fastify.put('/api/:userId/expenses/:expenseId', updateExpenseOptions);
+
+  fastify.delete('/api/:userId/expenses/:expenseId', deleteExpenseOptions);
+
   fastify.get(
     '/api/:userId/expenses/:expenseId/attachments',
     getExpenseAttachmentsOptions
