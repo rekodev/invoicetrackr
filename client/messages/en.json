@@ -11,6 +11,7 @@
         "user": {
             "dashboard": "Dashboard",
             "invoices": "Invoices",
+            "expenses": "Expenses",
             "clients": "Clients",
             "my_profile": "My Profile",
             "log_out": "Log Out",
@@ -40,6 +41,7 @@
         "forgot_password": "Forgot Password",
         "home": "Home",
         "invoices": "Invoices",
+        "expenses": "Expenses",
         "login": "Log In",
         "new": "New",
         "onboarding": "Onboarding",
@@ -574,6 +576,132 @@
                 "close": "Close"
             },
             "past_due_alert": "Invoice is {days}d past due. Due date was {dueDate}."
+        }
+    },
+    "expenses": {
+        "top_content": {
+            "search_placeholder": "Search supplier or description...",
+            "clear_search": "Clear search",
+            "add_new": "Add expense",
+            "total_singular": "Total 1 expense",
+            "total_plural": "Total {count} expenses"
+        },
+        "summary": {
+            "total_label": "Total expenses · {year}",
+            "deductible_label": "Deductible amount",
+            "missing_documents_label": "Missing documents"
+        },
+        "table": {
+            "a11y": {
+                "table_label": "Expense table with filters, pagination and sorting"
+            },
+            "columns": {
+                "date": "DATE",
+                "supplier": "SUPPLIER",
+                "description": "DESCRIPTION",
+                "category": "CATEGORY",
+                "total": "TOTAL",
+                "deductible": "DEDUCTIBLE",
+                "method": "METHOD",
+                "documents": "DOCS",
+                "actions": "ACTIONS"
+            },
+            "rows_per_page": "Rows per page:"
+        },
+        "filters": {
+            "from": "From date",
+            "to": "To date",
+            "category": "Category",
+            "payment_method": "Payment method",
+            "all_categories": "All categories",
+            "all_payment_methods": "All methods",
+            "has_attachment": "Has document",
+            "clear": "Clear filters",
+            "clear_short": "Clear",
+            "clear_count": "Clear ({count})",
+            "clear_all": "Clear all",
+            "remove_filter": "Remove {filter} filter"
+        },
+        "categories": {
+            "software": "Software",
+            "equipment": "Equipment",
+            "telecommunications": "Telecommunications",
+            "office": "Office",
+            "travel": "Travel",
+            "transport": "Transport",
+            "professional_services": "Professional services",
+            "marketing": "Marketing",
+            "education": "Education",
+            "bank_fees": "Bank fees",
+            "insurance": "Insurance",
+            "other": "Other"
+        },
+        "payment_methods": {
+            "bank_transfer": "Bank transfer",
+            "card": "Card",
+            "cash": "Cash",
+            "other": "Other",
+            "not_set": "Not set"
+        },
+        "documents": {
+            "attached": "{count} attached",
+            "missing": "Missing"
+        },
+        "actions": {
+            "edit": "Edit expense",
+            "delete": "Delete expense"
+        },
+        "empty_state": {
+            "title": "You have no expenses yet",
+            "description": "Add business expenses and attach supporting documents as you go.",
+            "no_results_title": "No expenses match your filters",
+            "no_results_description": "Try changing the search term, date range, category, or payment method."
+        },
+        "bottom_content": {
+            "previous": "Previous",
+            "next": "Next"
+        },
+        "delete_modal": {
+            "title": "Delete expense",
+            "description": "Delete expense from {supplier} on {date}? It will be removed from the active list, but an audit record may remain in account history.",
+            "confirm": "Delete",
+            "cancel": "Cancel"
+        },
+        "form_dialog": {
+            "title_add": "Add expense",
+            "title_edit": "Edit expense",
+            "description": "Amounts are stored in EUR. The deductible amount is calculated from total amount and business-use percentage.",
+            "currency_fixed": "EUR – Euro",
+            "fields": {
+                "expense_date": "Expense date",
+                "payment_date": "Payment date",
+                "supplier": "Supplier",
+                "document_number": "Document number",
+                "category": "Category",
+                "description": "Description",
+                "total_amount": "Total amount",
+                "vat_amount": "VAT / PVM amount",
+                "business_use_percentage": "Business-use %",
+                "deductible_amount": "Deductible amount",
+                "payment_method": "Payment method",
+                "currency": "Currency",
+                "attachment": "Receipt / document",
+                "notes": "Notes"
+            },
+            "placeholders": {
+                "supplier": "e.g. UAB Telia",
+                "document_number": "Invoice or receipt number",
+                "description": "What was this expense for?",
+                "notes": "Internal notes"
+            },
+            "upload": {
+                "dropzone_title": "Drag files here or click to browse",
+                "hint": "Supports JPEG, PNG, and PDF up to 10 MB.",
+                "select_file": "Select file"
+            },
+            "cancel": "Cancel",
+            "submit_add": "Add expense",
+            "submit_edit": "Save changes"
         }
     },
     "invoice_signing": {

@@ -146,6 +146,15 @@ export default {
       address: 'Address is required',
       email: 'Must be a valid email address'
     },
+    expense: {
+      expenseDate: 'Valid expense date is required',
+      paymentDate: 'Valid payment date is required',
+      supplier: 'Supplier is required',
+      description: 'Description is required',
+      amount: 'Amount must be zero or greater with up to two decimal places',
+      businessUsePercentage:
+        'Business-use percentage must be between 0 and 100 with up to two decimal places'
+    },
     bankAccount: {
       name: 'Bank name is required',
       code: 'Bank code is required',
@@ -199,6 +208,11 @@ export default {
       created: 'Client added successfully',
       updated: 'Client updated successfully',
       deleted: 'Client deleted successfully'
+    },
+    expense: {
+      created: 'Expense added successfully',
+      updated: 'Expense updated successfully',
+      deleted: 'Expense deleted successfully'
     },
     bankAccount: {
       created: 'Bank account added successfully',
@@ -284,7 +298,10 @@ export default {
       unableToDelete: 'Unable to delete client'
     },
     expense: {
-      notFound: 'Expense not found'
+      notFound: 'Expense not found',
+      unableToCreate: 'Unable to add expense',
+      unableToUpdate: 'Unable to update expense',
+      unableToDelete: 'Unable to delete expense'
     },
     expenseAttachment: {
       notFound: 'Expense document not found',

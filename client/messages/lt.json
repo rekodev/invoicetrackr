@@ -11,6 +11,7 @@
         "user": {
             "dashboard": "Skydelis",
             "invoices": "Sąskaitos faktūros",
+            "expenses": "Išlaidos",
             "clients": "Klientai",
             "my_profile": "Mano profilis",
             "log_out": "Atsijungti",
@@ -40,6 +41,7 @@
         "forgot_password": "Pamiršote slaptažodį",
         "home": "Pradžia",
         "invoices": "Sąskaitos faktūros",
+        "expenses": "Išlaidos",
         "login": "Prisijungti",
         "new": "Naujas",
         "onboarding": "Įvedimas",
@@ -574,6 +576,132 @@
                 "close": "Uždaryti"
             },
             "past_due_alert": "Saskaita faktūra vėluoja {days}d. Apmokėjimo terminas buvo {dueDate}."
+        }
+    },
+    "expenses": {
+        "top_content": {
+            "search_placeholder": "Ieškoti tiekėjo arba aprašymo...",
+            "clear_search": "Išvalyti paiešką",
+            "add_new": "Pridėti išlaidą",
+            "total_singular": "Iš viso 1 išlaida",
+            "total_plural": "Iš viso {count} išlaidų"
+        },
+        "summary": {
+            "total_label": "Išlaidos · {year}",
+            "deductible_label": "Leidžiami atskaitymai",
+            "missing_documents_label": "Trūksta dokumentų"
+        },
+        "table": {
+            "a11y": {
+                "table_label": "Išlaidų lentelė su filtrais, puslapiavimu ir rikiavimu"
+            },
+            "columns": {
+                "date": "DATA",
+                "supplier": "TIEKĖJAS",
+                "description": "APRAŠYMAS",
+                "category": "KATEGORIJA",
+                "total": "SUMA",
+                "deductible": "ATSKAITYMAI",
+                "method": "BŪDAS",
+                "documents": "DOK.",
+                "actions": "VEIKSMAI"
+            },
+            "rows_per_page": "Eilučių puslapyje:"
+        },
+        "filters": {
+            "from": "Data nuo",
+            "to": "Data iki",
+            "category": "Kategorija",
+            "payment_method": "Apmokėjimo būdas",
+            "all_categories": "Visos kategorijos",
+            "all_payment_methods": "Visi būdai",
+            "has_attachment": "Turi dokumentą",
+            "clear": "Išvalyti filtrus",
+            "clear_short": "Išvalyti",
+            "clear_count": "Išvalyti ({count})",
+            "clear_all": "Išvalyti visus",
+            "remove_filter": "Pašalinti filtrą {filter}"
+        },
+        "categories": {
+            "software": "Programinė įranga",
+            "equipment": "Įranga",
+            "telecommunications": "Ryšio paslaugos",
+            "office": "Biuras",
+            "travel": "Kelionės",
+            "transport": "Transportas",
+            "professional_services": "Profesinės paslaugos",
+            "marketing": "Rinkodara",
+            "education": "Mokymai",
+            "bank_fees": "Banko mokesčiai",
+            "insurance": "Draudimas",
+            "other": "Kita"
+        },
+        "payment_methods": {
+            "bank_transfer": "Bankinis pavedimas",
+            "card": "Kortelė",
+            "cash": "Grynieji",
+            "other": "Kita",
+            "not_set": "Nenurodyta"
+        },
+        "documents": {
+            "attached": "Pridėta: {count}",
+            "missing": "Trūksta"
+        },
+        "actions": {
+            "edit": "Redaguoti išlaidą",
+            "delete": "Ištrinti išlaidą"
+        },
+        "empty_state": {
+            "title": "Išlaidų dar nėra",
+            "description": "Pridėkite veiklos išlaidas ir jų dokumentus, kai tik jas patiriate.",
+            "no_results_title": "Išlaidų pagal filtrus nerasta",
+            "no_results_description": "Pakeiskite paiešką, datų intervalą, kategoriją arba apmokėjimo būdą."
+        },
+        "bottom_content": {
+            "previous": "Ankstesnis",
+            "next": "Kitas"
+        },
+        "delete_modal": {
+            "title": "Ištrinti išlaidą",
+            "description": "Ištrinti {supplier} išlaidą, kurios data {date}? Ji bus pašalinta iš aktyvaus sąrašo, bet audito įrašas gali likti paskyros istorijoje.",
+            "confirm": "Ištrinti",
+            "cancel": "Atšaukti"
+        },
+        "form_dialog": {
+            "title_add": "Pridėti išlaidą",
+            "title_edit": "Redaguoti išlaidą",
+            "description": "Sumos saugomos eurais. Leidžiamų atskaitymų suma skaičiuojama pagal bendrą sumą ir veikloje naudojamą dalį.",
+            "currency_fixed": "EUR – euras",
+            "fields": {
+                "expense_date": "Išlaidų data",
+                "payment_date": "Apmokėjimo data",
+                "supplier": "Tiekėjas",
+                "document_number": "Dokumento numeris",
+                "category": "Kategorija",
+                "description": "Aprašymas",
+                "total_amount": "Bendra suma",
+                "vat_amount": "PVM suma",
+                "business_use_percentage": "Veikloje naudojama dalis %",
+                "deductible_amount": "Leidžiami atskaitymai",
+                "payment_method": "Apmokėjimo būdas",
+                "currency": "Valiuta",
+                "attachment": "Kvitas / dokumentas",
+                "notes": "Pastabos"
+            },
+            "placeholders": {
+                "supplier": "pvz., UAB Telia",
+                "document_number": "Sąskaitos arba kvito numeris",
+                "description": "Kam skirta ši išlaida?",
+                "notes": "Vidinės pastabos"
+            },
+            "upload": {
+                "dropzone_title": "Vilkite failus čia arba spustelėkite pasirinkti",
+                "hint": "Palaikomi JPEG, PNG ir PDF failai iki 10 MB.",
+                "select_file": "Pasirinkti failą"
+            },
+            "cancel": "Atšaukti",
+            "submit_add": "Pridėti išlaidą",
+            "submit_edit": "Išsaugoti"
         }
     },
     "invoice_signing": {

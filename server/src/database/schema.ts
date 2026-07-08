@@ -537,6 +537,34 @@ export const expenseAttachmentEventsTable = pgTable(
   ]
 );
 
+export const expenseEventsTable = pgTable(
+  'expense_events',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id').notNull(),
+    expenseId: integer('expense_id').notNull(),
+    action: varchar({ length: 50 }).notNull(),
+    previousValue: jsonb('previous_value'),
+    newValue: jsonb('new_value'),
+    createdAt: timestamp('created_at', {
+      withTimezone: true,
+      mode: 'string'
+    }).default(sql`CURRENT_TIMESTAMP`)
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [usersTable.id],
+      name: 'fk_expense_events_user_id'
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.expenseId],
+      foreignColumns: [expensesTable.id],
+      name: 'fk_expense_events_expense_id'
+    }).onDelete('cascade')
+  ]
+);
+
 export const passwordResetTokensTable = pgTable('password_reset_tokens', {
   id: serial().primaryKey().notNull(),
   userId: integer('user_id')
@@ -614,3 +642,6 @@ export type InsertExpenseAttachmentEvent =
   typeof expenseAttachmentEventsTable.$inferInsert;
 export type SelectExpenseAttachmentEvent =
   typeof expenseAttachmentEventsTable.$inferSelect;
+
+export type InsertExpenseEvent = typeof expenseEventsTable.$inferInsert;
+export type SelectExpenseEvent = typeof expenseEventsTable.$inferSelect;
