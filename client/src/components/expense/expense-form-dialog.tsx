@@ -2,7 +2,6 @@
 
 import {
   Button,
-  Card,
   FieldError,
   Input,
   Label,
@@ -12,21 +11,12 @@ import {
   Select,
   TextArea,
   TextField,
-  cn,
   toast
 } from '@heroui/react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import type { ExpenseBody, ExpenseInput } from '@invoicetrackr/types';
-import {
-  type HTMLAttributes,
-  type DragEvent as ReactDragEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import { type HTMLAttributes, useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 
 import {
   EXPENSE_CATEGORIES,
@@ -37,6 +27,7 @@ import {
   updateExpenseAction,
   uploadExpenseAttachmentAction
 } from '@/lib/actions/expense';
+import FileDropzone from '@/components/ui/file-dropzone';
 
 type Props = {
   userId: number;
@@ -102,8 +93,6 @@ const ExpenseFormDialog = ({
   const locale = useLocale();
   const isEditMode = mode === 'edit';
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isDraggingAttachment, setIsDraggingAttachment] = useState(false);
-  const attachmentInputRef = useRef<HTMLInputElement>(null);
 
   const {
     control,
@@ -133,16 +122,7 @@ const ExpenseFormDialog = ({
 
     reset(getInitialExpenseData(expenseData));
     setSelectedFile(null);
-    setIsDraggingAttachment(false);
   }, [expenseData, isEditMode, isOpen, reset]);
-
-  const handleAttachmentDrop = (event: ReactDragEvent<HTMLElement>): void => {
-    event.preventDefault();
-    setIsDraggingAttachment(false);
-
-    const file = event.dataTransfer.files?.[0];
-    if (file) setSelectedFile(file);
-  };
 
   const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
     const response =
@@ -226,46 +206,6 @@ const ExpenseFormDialog = ({
     );
   };
 
-  const attachmentUpload = (
-    <div className="flex flex-col gap-2 sm:col-span-2">
-      <Label>{t('fields.attachment')}</Label>
-      <Card
-        className={cn(
-          'border-foreground/25 flex min-h-56 items-center justify-center border border-dashed shadow-none',
-          isDraggingAttachment && 'border-default-foreground bg-default-100'
-        )}
-        variant="secondary"
-        onDragEnter={() => setIsDraggingAttachment(true)}
-        onDragLeave={() => setIsDraggingAttachment(false)}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={handleAttachmentDrop}
-      >
-        <Card.Content className="flex w-full flex-col items-center justify-center p-4 text-center">
-          <CloudArrowUpIcon className="text-muted h-10 w-10" />
-          <span className="text-foreground mt-2 block w-full max-w-full truncate text-sm font-semibold">
-            {selectedFile?.name ?? t('upload.dropzone_title')}
-          </span>
-          <span className="text-muted mt-2 text-xs">{t('upload.hint')}</span>
-          <Button
-            type="button"
-            variant="secondary"
-            className="border-surface-foreground/15 mt-2 rounded-full border"
-            onPress={() => attachmentInputRef.current?.click()}
-          >
-            {t('upload.select_file')}
-          </Button>
-        </Card.Content>
-      </Card>
-      <input
-        ref={attachmentInputRef}
-        className="hidden"
-        type="file"
-        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
-        onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
-      />
-    </div>
-  );
-
   if (isEditMode && !expenseData) return null;
 
   return (
@@ -291,7 +231,16 @@ const ExpenseFormDialog = ({
                 className="grid grid-cols-1 gap-4 sm:grid-cols-2"
                 onSubmit={handleSubmit(onSubmit)}
               >
-                {attachmentUpload}
+                <FileDropzone
+                  className="sm:col-span-2"
+                  label={t('fields.attachment')}
+                  title={t('upload.dropzone_title')}
+                  hint={t('upload.hint')}
+                  actionLabel={t('upload.select_file')}
+                  selectedFile={selectedFile}
+                  accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                  onFileChange={setSelectedFile}
+                />
                 {renderTextField({
                   name: 'expenseDate',
                   label: t('fields.expense_date'),
