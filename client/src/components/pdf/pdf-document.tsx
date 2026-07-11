@@ -52,9 +52,7 @@ export default function PDFDocument({
       (service) =>
         Number(service.vatRate ?? 0) > 0 || Boolean(service.vatExemptionReason)
     );
-  const descriptionColumnStyle = shouldShowVatDetails
-    ? pdfStyles.tableCol2
-    : { ...pdfStyles.tableCol2, width: '43%' };
+  const descriptionColumnStyle = pdfStyles.tableCol2;
   const lineTotalColumnStyle = shouldShowVatDetails
     ? pdfStyles.tableCol7
     : { ...pdfStyles.tableCol7, width: '25%' };

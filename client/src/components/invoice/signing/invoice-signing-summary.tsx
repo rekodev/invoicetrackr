@@ -185,22 +185,24 @@ export default function InvoiceSigningSummary({
           </div>
         </div>
 
-        <div className="bg-default-100 mt-auto flex gap-3 rounded-lg p-4">
-          <BanknotesIcon className="text-muted h-5 w-5 shrink-0" />
-          <div className="min-w-0 text-sm">
-            <p className="font-medium">{t('payment_details')}</p>
-            <div className="mt-3 grid gap-x-6 gap-y-1 sm:grid-cols-[auto_1fr]">
-              <p className="text-muted">{t('bank')}</p>
-              <p>{invoice.bankingInformation.name}</p>
-              <p className="text-muted">{t('bank_code')}</p>
-              <p>{invoice.bankingInformation.code}</p>
-              <p className="text-muted">{t('account_number')}</p>
-              <p className="break-all">
-                {invoice.bankingInformation.accountNumber}
-              </p>
+        {invoice.bankingInformation && (
+          <div className="bg-default-100 mt-auto flex gap-3 rounded-lg p-4">
+            <BanknotesIcon className="text-muted h-5 w-5 shrink-0" />
+            <div className="min-w-0 text-sm">
+              <p className="font-medium">{t('payment_details')}</p>
+              <div className="mt-3 grid gap-x-6 gap-y-1 sm:grid-cols-[auto_1fr]">
+                <p className="text-muted">{t('bank')}</p>
+                <p>{invoice.bankingInformation.name}</p>
+                <p className="text-muted">{t('bank_code')}</p>
+                <p>{invoice.bankingInformation.code}</p>
+                <p className="text-muted">{t('account_number')}</p>
+                <p className="break-all">
+                  {invoice.bankingInformation.accountNumber}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

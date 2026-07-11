@@ -144,6 +144,12 @@ export const signInvoiceResponseSchema = z.object({
   message: z.string()
 });
 
+export const regeneratePublicInvoiceLinkResponseSchema = z.object({
+  publicInvoiceToken: z.string(),
+  publicInvoiceExpiresAt: z.string().nullish(),
+  message: z.string()
+});
+
 export const getNextInvoiceNumberResponseSchema = z.object({
   invoiceId: z.string(),
   series: z.string(),
@@ -278,7 +284,9 @@ export type UpdateInvoiceStatusResponse = MessageResponse;
 export type DeleteInvoiceResponse = MessageResponse;
 export type SendInvoiceEmailResponse = MessageResponse;
 export type RevokePublicInvoiceLinkResponse = MessageResponse;
-export type RegeneratePublicInvoiceLinkResponse = MessageResponse;
+export type RegeneratePublicInvoiceLinkResponse = z.infer<
+  typeof regeneratePublicInvoiceLinkResponseSchema
+>;
 export type RevokeInvoiceSigningLinkResponse = MessageResponse;
 export type RegenerateInvoiceSigningLinkResponse = MessageResponse;
 

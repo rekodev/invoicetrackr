@@ -67,6 +67,10 @@ export default function InvoiceSigningPanel({
   const currencySymbol = getCurrencySymbol(currency);
   const shouldShowPaymentSection =
     isPaid || payment.resolvedMode !== 'disabled';
+  const shouldShowManualPaymentDetails =
+    payment.resolvedMode === 'manual' &&
+    Boolean(invoice.bankingInformation) &&
+    !isPaid;
   const isVoided = (invoice.lifecycleStatus || 'draft') === 'voided';
   const isCanceled = invoice.status === 'canceled';
 
@@ -160,7 +164,7 @@ export default function InvoiceSigningPanel({
               </div>
             </div>
 
-            {payment.resolvedMode === 'manual' && !isPaid && (
+            {shouldShowManualPaymentDetails && invoice.bankingInformation && (
               <div className="bg-default-100 grid gap-x-4 gap-y-1 rounded-lg p-4 text-sm sm:grid-cols-[auto_1fr]">
                 <p className="text-muted">{t('amount_due')}</p>
                 <p className="font-medium">

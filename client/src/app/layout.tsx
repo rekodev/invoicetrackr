@@ -56,7 +56,7 @@ export default async function RootLayout({
     : null;
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={inter.className} suppressHydrationWarning>
         <Providers messages={messages}>
           <Suspense fallback={null}>

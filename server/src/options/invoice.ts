@@ -12,6 +12,7 @@ import {
   invoiceNumberSeriesSchema,
   messageResponseSchema,
   postInvoiceResponseSchema,
+  regeneratePublicInvoiceLinkResponseSchema,
   sendInvoiceEmailBodySchema,
   signInvoiceResponseSchema,
   updateInvoiceResponseSchema
@@ -187,7 +188,7 @@ export const regeneratePublicInvoiceOptions: RouteShorthandOptionsWithHandler =
   {
     schema: {
       response: {
-        200: messageResponseSchema
+        200: regeneratePublicInvoiceLinkResponseSchema
       }
     },
     preHandler: authenticatedAccess,

@@ -533,7 +533,8 @@ describe('Invoice Controller', () => {
       );
       vi.mocked(invoiceDb.regeneratePublicInvoiceFromDb).mockResolvedValue({
         id: 1,
-        publicInvoiceToken: 'fresh-token'
+        publicInvoiceToken: 'fresh-token',
+        publicInvoiceExpiresAt: new Date(Date.now() + 1000).toISOString()
       });
       vi.mocked(invoiceDb.markPublicInvoiceSentInDb).mockResolvedValue({
         id: 1
@@ -780,7 +781,8 @@ describe('Invoice Controller', () => {
       );
       vi.mocked(invoiceDb.regeneratePublicInvoiceFromDb).mockResolvedValue({
         id: 1,
-        publicInvoiceToken: 'fresh-token'
+        publicInvoiceToken: 'fresh-token',
+        publicInvoiceExpiresAt: new Date(Date.now() + 1000).toISOString()
       });
 
       const app = await createTestApp((fastifyApp) => {
@@ -799,9 +801,11 @@ describe('Invoice Controller', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(JSON.parse(response.body).message).toBe(
-        'Fresh public invoice link generated'
-      );
+      expect(JSON.parse(response.body)).toEqual({
+        publicInvoiceToken: 'fresh-token',
+        publicInvoiceExpiresAt: expect.any(String),
+        message: 'Fresh public invoice link generated'
+      });
       expect(invoiceDb.regeneratePublicInvoiceFromDb).toHaveBeenCalledWith({
         userId: testUserId,
         id: 1,

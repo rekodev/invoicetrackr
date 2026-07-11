@@ -103,7 +103,7 @@ export default function ContactFormDialog() {
                   <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="ghost"
                       isDisabled={isPending}
                       className="w-full sm:w-auto"
                       onPress={handleClose}

@@ -2,6 +2,7 @@
 
 import {
   BuildingLibraryIcon,
+  InformationCircleIcon,
   SparklesIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
@@ -16,7 +17,8 @@ import {
   Radio,
   RadioGroup,
   Select,
-  TextField
+  TextField,
+  Tooltip
 } from '@heroui/react';
 import { type ComponentProps, useRef, useState, useTransition } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
@@ -101,6 +103,21 @@ const InvoiceForm = ({
   const defaultPaymentTermsDays = user.defaultPaymentTermsDays || 30;
   const defaultVatRate = getDefaultVatRate(user);
   const isVatEnabled = user.isVatPayer || hasVatDetails(invoiceData?.services);
+  const defaultSenderSignature =
+    invoiceData?.senderSignature || user.signature || undefined;
+  const emptyBankingInformation = {
+    name: '',
+    code: '',
+    accountNumber: ''
+  };
+  const selectedBankAccount =
+    bankingInformationEntries.find(
+      (bankAccount) => bankAccount.id === user.selectedBankAccountId
+    ) || bankingInformationEntries.at(0);
+  const defaultBankingInformation =
+    invoiceData?.bankingInformation ||
+    selectedBankAccount ||
+    emptyBankingInformation;
   const methods = useForm<InvoiceBody>({
     defaultValues: invoiceData
       ? {
@@ -110,7 +127,11 @@ const InvoiceForm = ({
           dueDate: invoiceData.dueDate ? formatDate(invoiceData.dueDate) : ''
         }
       : {
-          sender: user,
+          sender: {
+            ...user,
+            type: 'sender',
+            vatNumber: user.vatNumber || ''
+          },
           receiver: INITIAL_RECEIVER_DATA,
           services: [
             {
@@ -121,16 +142,16 @@ const InvoiceForm = ({
               vatRate: defaultVatRate
             }
           ],
-          bankingInformation: { name: '', code: '', accountNumber: '' },
+          bankingInformation: defaultBankingInformation,
           status: 'pending',
           paymentMode: 'manual',
           manualPaymentReference: '',
           date: today,
-          dueDate: addDaysToDate(today, defaultPaymentTermsDays)
+          dueDate: addDaysToDate(today, defaultPaymentTermsDays),
+          senderSignature: defaultSenderSignature || ''
         }
   });
   const {
-    register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
@@ -145,7 +166,7 @@ const InvoiceForm = ({
     useState(false);
   const [senderSignature, setSenderSignature] = useState<
     string | File | undefined
-  >(invoiceData?.senderSignature);
+  >(defaultSenderSignature);
   const [isNextInvoiceNumberPending, startNextInvoiceNumberTransition] =
     useTransition();
 
@@ -192,6 +213,18 @@ const InvoiceForm = ({
     setIsBankingInformationModalOpen(false);
   };
 
+  const applyDefaultBankAccount = () => {
+    if (!selectedBankAccount) return;
+
+    setValue('bankingInformation.name', selectedBankAccount.name);
+    setValue('bankingInformation.code', selectedBankAccount.code);
+    setValue(
+      'bankingInformation.accountNumber',
+      selectedBankAccount.accountNumber
+    );
+    clearErrors('bankingInformation');
+  };
+
   const handleSignatureChange = (signature: string | File) => {
     setSenderSignature(signature);
     setValue('senderSignature', signature, { shouldDirty: true });
@@ -217,6 +250,7 @@ const InvoiceForm = ({
     isInvalid,
     isDisabled = false,
     errorMessage,
+    tooltip,
     variant = 'secondary',
     inputProps
   }: {
@@ -224,6 +258,7 @@ const InvoiceForm = ({
     isInvalid: boolean;
     isDisabled?: TextFieldProps['isDisabled'];
     errorMessage?: string;
+    tooltip?: string;
     variant?: TextFieldVariant;
     inputProps: TextInputProps;
   }) => (
@@ -233,7 +268,23 @@ const InvoiceForm = ({
       isDisabled={isDisabled}
       isInvalid={isInvalid}
     >
-      <Label>{label}</Label>
+      <div className="flex items-center gap-1">
+        <Label>{label}</Label>
+        {tooltip && (
+          <Tooltip delay={0}>
+            <Tooltip.Trigger>
+              <button
+                type="button"
+                aria-label={tooltip}
+                className="text-muted hover:text-foreground cursor-pointer"
+              >
+                <InformationCircleIcon className="h-4 w-4" />
+              </button>
+            </Tooltip.Trigger>
+            <Tooltip.Content>{tooltip}</Tooltip.Content>
+          </Tooltip>
+        )}
+      </div>
       <Input {...inputProps} />
       <FieldError>{errorMessage}</FieldError>
     </TextField>
@@ -285,71 +336,107 @@ const InvoiceForm = ({
               </RadioGroup>
             )}
           />
-          {renderTextField({
-            label: t('labels.sender_name'),
-            isInvalid: !!errors.sender?.name,
-            errorMessage: errors.sender?.name?.message,
-            variant: 'primary',
-            inputProps: {
-              'aria-label': t('a11y.sender_name_label'),
-              placeholder: t('placeholders.sender_name'),
-              maxLength: 20,
-              ...register('sender.name')
+          <Controller
+            name="sender.name"
+            control={control}
+            render={({ field }) =>
+              renderTextField({
+                label: t('labels.sender_name'),
+                isInvalid: !!errors.sender?.name,
+                errorMessage: errors.sender?.name?.message,
+                variant: 'primary',
+                inputProps: {
+                  ...field,
+                  value: field.value || '',
+                  'aria-label': t('a11y.sender_name_label'),
+                  placeholder: t('placeholders.sender_name'),
+                  maxLength: 20
+                }
+              })
             }
-          })}
-          {renderTextField({
-            label: t(
-              `labels.sender_business_number_${isSenderBusiness ? 'business' : 'individual'}`
-            ),
-            isInvalid: !!errors.sender?.businessNumber,
-            errorMessage: errors.sender?.businessNumber?.message,
-            variant: 'primary',
-            inputProps: {
-              'aria-label': t(
-                `a11y.sender_business_number_label_${isSenderBusiness ? 'business' : 'individual'}`
-              ),
-              placeholder: t('placeholders.sender_business_number'),
-              maxLength: 20,
-              ...register('sender.businessNumber')
+          />
+          <Controller
+            name="sender.businessNumber"
+            control={control}
+            render={({ field }) =>
+              renderTextField({
+                label: t(
+                  `labels.sender_business_number_${isSenderBusiness ? 'business' : 'individual'}`
+                ),
+                isInvalid: !!errors.sender?.businessNumber,
+                errorMessage: errors.sender?.businessNumber?.message,
+                variant: 'primary',
+                inputProps: {
+                  ...field,
+                  value: field.value || '',
+                  'aria-label': t(
+                    `a11y.sender_business_number_label_${isSenderBusiness ? 'business' : 'individual'}`
+                  ),
+                  placeholder: t('placeholders.sender_business_number'),
+                  maxLength: 20
+                }
+              })
             }
-          })}
-          {shouldShowSenderVatNumber &&
-            renderTextField({
-              label: t('labels.sender_vat_number'),
-              isInvalid: !!errors.sender?.vatNumber,
-              errorMessage: errors.sender?.vatNumber?.message,
-              variant: 'primary',
-              inputProps: {
-                'aria-label': t('a11y.sender_vat_number_label'),
-                placeholder: t('placeholders.sender_vat_number'),
-                maxLength: 20,
-                ...register('sender.vatNumber')
+          />
+          {shouldShowSenderVatNumber && (
+            <Controller
+              name="sender.vatNumber"
+              control={control}
+              render={({ field }) =>
+                renderTextField({
+                  label: t('labels.sender_vat_number'),
+                  isInvalid: !!errors.sender?.vatNumber,
+                  errorMessage: errors.sender?.vatNumber?.message,
+                  variant: 'primary',
+                  inputProps: {
+                    ...field,
+                    value: field.value || '',
+                    'aria-label': t('a11y.sender_vat_number_label'),
+                    placeholder: t('placeholders.sender_vat_number'),
+                    maxLength: 20
+                  }
+                })
               }
-            })}
-          {renderTextField({
-            label: t('labels.sender_address'),
-            isInvalid: !!errors.sender?.address,
-            errorMessage: errors.sender?.address?.message,
-            variant: 'primary',
-            inputProps: {
-              'aria-label': t('a11y.sender_address_label'),
-              placeholder: t('placeholders.sender_address'),
-              maxLength: 20,
-              ...register('sender.address')
+            />
+          )}
+          <Controller
+            name="sender.address"
+            control={control}
+            render={({ field }) =>
+              renderTextField({
+                label: t('labels.sender_address'),
+                isInvalid: !!errors.sender?.address,
+                errorMessage: errors.sender?.address?.message,
+                variant: 'primary',
+                inputProps: {
+                  ...field,
+                  value: field.value || '',
+                  'aria-label': t('a11y.sender_address_label'),
+                  placeholder: t('placeholders.sender_address'),
+                  maxLength: 20
+                }
+              })
             }
-          })}
-          {renderTextField({
-            label: t('labels.sender_email'),
-            isInvalid: !!errors.sender?.email,
-            errorMessage: errors.sender?.email?.message,
-            variant: 'primary',
-            inputProps: {
-              'aria-label': t('a11y.sender_email_label'),
-              placeholder: t('placeholders.sender_email'),
-              maxLength: 20,
-              ...register('sender.email')
+          />
+          <Controller
+            name="sender.email"
+            control={control}
+            render={({ field }) =>
+              renderTextField({
+                label: t('labels.sender_email'),
+                isInvalid: !!errors.sender?.email,
+                errorMessage: errors.sender?.email?.message,
+                variant: 'primary',
+                inputProps: {
+                  ...field,
+                  value: field.value || '',
+                  'aria-label': t('a11y.sender_email_label'),
+                  placeholder: t('placeholders.sender_email'),
+                  maxLength: 20
+                }
+              })
             }
-          })}
+          />
         </Card>
         <Card
           variant="secondary"
@@ -498,14 +585,79 @@ const InvoiceForm = ({
     </div>
   );
 
-  const renderBankingInformation = () => (
-    <div className="col-span-4 flex flex-col gap-4">
+  const renderBankingInformationFields = () => (
+    <>
+      <Controller
+        name="bankingInformation.name"
+        control={control}
+        render={({ field }) =>
+          renderTextField({
+            label: t('labels.bank_name'),
+            isInvalid: !!errors.bankingInformation?.name,
+            errorMessage: errors.bankingInformation?.name?.message,
+            inputProps: {
+              ...field,
+              value: field.value || '',
+              'aria-label': t('a11y.bank_name_label'),
+              type: 'text',
+              placeholder: t('placeholders.bank_name'),
+              maxLength: 20
+            }
+          })
+        }
+      />
+
+      <Controller
+        name="bankingInformation.code"
+        control={control}
+        render={({ field }) =>
+          renderTextField({
+            label: t('labels.bank_code'),
+            isInvalid: !!errors.bankingInformation?.code,
+            errorMessage: errors.bankingInformation?.code?.message,
+            inputProps: {
+              ...field,
+              value: field.value || '',
+              'aria-label': t('a11y.bank_code_label'),
+              type: 'text',
+              maxLength: 20,
+              placeholder: t('placeholders.bank_code')
+            }
+          })
+        }
+      />
+
+      <Controller
+        name="bankingInformation.accountNumber"
+        control={control}
+        render={({ field }) =>
+          renderTextField({
+            label: t('labels.bank_account_number'),
+            isInvalid: !!errors.bankingInformation?.accountNumber,
+            errorMessage: errors.bankingInformation?.accountNumber?.message,
+            inputProps: {
+              ...field,
+              value: field.value || '',
+              'aria-label': t('a11y.bank_account_number_label'),
+              placeholder: t('placeholders.bank_account_number'),
+              type: 'text',
+              maxLength: 20
+            }
+          })
+        }
+      />
+    </>
+  );
+
+  const renderPaymentSettings = () => (
+    <div className="col-span-4 flex flex-col gap-3">
       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
-        <h4>{t('banking_details')}</h4>
+        <h4>{t('payment_settings.title')}</h4>
         <Button
           size="sm"
           variant="secondary"
-          className="h-unit-9 min-w-unit-10 sm:h-unit-8 sm:w-unit-26 w-full cursor-pointer sm:max-w-min"
+          className="h-unit-9 min-w-unit-10 sm:h-unit-8 sm:w-unit-26 w-full sm:max-w-min"
+          isDisabled={paymentMode === 'disabled'}
           onPress={() => setIsBankingInformationModalOpen(true)}
         >
           <BuildingLibraryIcon className="min-h-4 min-w-4" />
@@ -513,75 +665,6 @@ const InvoiceForm = ({
         </Button>
       </div>
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
-        <Controller
-          name="bankingInformation.name"
-          control={control}
-          render={({ field }) =>
-            renderTextField({
-              label: t('labels.bank_name'),
-              isInvalid: !!errors.bankingInformation?.name,
-              errorMessage: errors.bankingInformation?.name?.message,
-              inputProps: {
-                ...field,
-                'aria-label': t('a11y.bank_name_label'),
-                type: 'text',
-                placeholder: t('placeholders.bank_name'),
-                maxLength: 20
-              }
-            })
-          }
-        />
-
-        <Controller
-          name="bankingInformation.code"
-          control={control}
-          render={({ field }) =>
-            renderTextField({
-              label: t('labels.bank_code'),
-              isInvalid: !!errors.bankingInformation?.code,
-              errorMessage: errors.bankingInformation?.code?.message,
-              inputProps: {
-                ...field,
-                'aria-label': t('a11y.bank_code_label'),
-                type: 'text',
-                maxLength: 20,
-                placeholder: t('placeholders.bank_code')
-              }
-            })
-          }
-        />
-
-        <Controller
-          name="bankingInformation.accountNumber"
-          control={control}
-          render={({ field }) =>
-            renderTextField({
-              label: t('labels.bank_account_number'),
-              isInvalid: !!errors.bankingInformation?.accountNumber,
-              errorMessage: errors.bankingInformation?.accountNumber?.message,
-              inputProps: {
-                ...field,
-                'aria-label': t('a11y.bank_account_number_label'),
-                placeholder: t('placeholders.bank_account_number'),
-                type: 'text',
-                maxLength: 20
-              }
-            })
-          }
-        />
-      </div>
-    </div>
-  );
-
-  const renderPaymentSettings = () => (
-    <div className="col-span-4 flex flex-col gap-4">
-      <div>
-        <h4>{t('payment_settings.title')}</h4>
-        <p className="text-muted mt-1 text-sm">
-          {t('payment_settings.description')}
-        </p>
-      </div>
-      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
         <Controller
           name="paymentMode"
           control={control}
@@ -601,13 +684,15 @@ const InvoiceForm = ({
                   setValue('manualPaymentReference', '', {
                     shouldDirty: true
                   });
+                  clearErrors(['manualPaymentReference', 'bankingInformation']);
+                } else {
+                  applyDefaultBankAccount();
                 }
               }}
               isInvalid={!!errors.paymentMode}
             >
               <Label>{t('labels.payment_mode')}</Label>
               <Select.Trigger>
-                <BuildingLibraryIcon className="text-muted h-4 w-4" />
                 <Select.Value />
                 <Select.Indicator />
               </Select.Trigger>
@@ -626,35 +711,38 @@ const InvoiceForm = ({
                 </ListBox>
               </Select.Popover>
               <FieldError>{errors.paymentMode?.message}</FieldError>
+              {paymentMode === 'disabled' && (
+                <p className="text-muted text-xs leading-5">
+                  {t('payment_settings.disabled_note')}
+                </p>
+              )}
             </Select>
           )}
         />
-        <Controller
-          name="manualPaymentReference"
-          control={control}
-          render={({ field }) =>
-            renderTextField({
-              label: t('labels.manual_payment_reference'),
-              isInvalid: !!errors.manualPaymentReference,
-              errorMessage: errors.manualPaymentReference?.message,
-              isDisabled: paymentMode === 'disabled',
-              inputProps: {
-                ...field,
-                value: field.value || '',
-                'aria-label': t('a11y.manual_payment_reference_label'),
-                placeholder: t('placeholders.manual_payment_reference'),
-                type: 'text',
-                maxLength: 255
-              }
-            })
-          }
-        />
+        {paymentMode === 'manual' && (
+          <Controller
+            name="manualPaymentReference"
+            control={control}
+            render={({ field }) =>
+              renderTextField({
+                label: t('labels.manual_payment_reference'),
+                isInvalid: !!errors.manualPaymentReference,
+                errorMessage: errors.manualPaymentReference?.message,
+                tooltip: t('payment_settings.reference_note'),
+                inputProps: {
+                  ...field,
+                  value: field.value || '',
+                  'aria-label': t('a11y.manual_payment_reference_label'),
+                  placeholder: t('placeholders.manual_payment_reference'),
+                  type: 'text',
+                  maxLength: 255
+                }
+              })
+            }
+          />
+        )}
+        {paymentMode === 'manual' && renderBankingInformationFields()}
       </div>
-      <p className="text-muted text-xs leading-5">
-        {paymentMode === 'disabled'
-          ? t('payment_settings.disabled_note')
-          : t('payment_settings.reference_note')}
-      </p>
     </div>
   );
 
@@ -676,7 +764,7 @@ const InvoiceForm = ({
     <div className="col-span-4 flex w-full items-center justify-between gap-5">
       <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
         <Button
-          variant="danger-soft"
+          variant="ghost"
           className="w-full sm:w-auto"
           onPress={redirectToInvoicesPage}
         >
@@ -792,16 +880,23 @@ const InvoiceForm = ({
                     </Select>
                   )}
                 />
-                {renderTextField({
-                  label: t('labels.date'),
-                  isInvalid: !!errors.date,
-                  errorMessage: errors.date?.message,
-                  inputProps: {
-                    'aria-label': t('a11y.date_label'),
-                    ...register('date'),
-                    type: 'date'
+                <Controller
+                  name="date"
+                  control={control}
+                  render={({ field }) =>
+                    renderTextField({
+                      label: t('labels.date'),
+                      isInvalid: !!errors.date,
+                      errorMessage: errors.date?.message,
+                      inputProps: {
+                        ...field,
+                        value: field.value || today,
+                        'aria-label': t('a11y.date_label'),
+                        type: 'date'
+                      }
+                    })
                   }
-                })}
+                />
                 <div className="relative w-full">
                   <Controller
                     name="dueDate"
@@ -860,7 +955,6 @@ const InvoiceForm = ({
             </div>
             {renderSenderAndReceiverFields()}
             {renderInvoiceServices()}
-            {renderBankingInformation()}
             {renderPaymentSettings()}
             {renderInvoiceSignature()}
             {renderActions()}
