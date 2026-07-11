@@ -299,7 +299,6 @@ const InvoiceModal = ({
                 <div className="text-muted flex min-w-0 items-center gap-2 text-xs">
                   {renderFooterStatus()}
                 </div>
-                {conversionContent}
               </div>
               <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
                 {pdfDocument ? (
@@ -317,16 +316,13 @@ const InvoiceModal = ({
                         onPress={() => {
                           if (cookieConsent !== 'accepted') return;
 
-                          captureAnalyticsEvent(
-                            analyticsEvents.pdfDownloaded,
-                            {
-                              source: invoiceData.id
-                                ? 'saved_invoice'
-                                : 'free_invoice',
-                              invoice_status: invoiceData.status,
-                              line_count: invoiceData.services.length
-                            }
-                          );
+                          captureAnalyticsEvent(analyticsEvents.pdfDownloaded, {
+                            source: invoiceData.id
+                              ? 'saved_invoice'
+                              : 'free_invoice',
+                            invoice_status: invoiceData.status,
+                            line_count: invoiceData.services.length
+                          });
                         }}
                       >
                         <ArrowDownTrayIcon className="h-5 w-5 dark:text-white" />
@@ -346,12 +342,13 @@ const InvoiceModal = ({
                 )}
                 <Button
                   size="sm"
-                  variant="secondary"
+                  variant="ghost"
                   className="w-full sm:w-auto"
                   onPress={() => onOpenChange(false)}
                 >
                   {t('buttons.close')}
                 </Button>
+                {conversionContent}
               </div>
             </footer>
           </Modal.Dialog>

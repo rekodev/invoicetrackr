@@ -156,8 +156,15 @@ const resolvePublicInvoicePayment = ({
   const configuredMode = invoice.paymentMode || 'manual';
   const canShowPayment =
     token === invoice.publicInvoiceToken && isInvoicePayable(invoice);
+  const hasManualPaymentDetails = Boolean(
+    invoice.bankingInformation?.name &&
+      invoice.bankingInformation.code &&
+      invoice.bankingInformation.accountNumber
+  );
   const resolvedMode =
-    !canShowPayment || configuredMode === 'disabled'
+    !canShowPayment ||
+    configuredMode === 'disabled' ||
+    !hasManualPaymentDetails
       ? 'disabled'
       : configuredMode === 'manual'
         ? 'manual'
@@ -173,19 +180,16 @@ const resolvePublicInvoicePayment = ({
 };
 
 const toInvoiceBody = (invoice: InvoiceFromDb): InvoiceBody => {
-  if (
-    !invoice.sender ||
-    !invoice.receiver ||
-    !invoice.bankingInformation ||
-    !invoice.services?.length
-  )
+  if (!invoice.sender || !invoice.receiver || !invoice.services?.length)
     throw new Error('Invoice is missing required public response data');
 
   return invoiceBodySchema.parse({
     ...invoice,
     sender: invoice.sender,
     receiver: invoice.receiver,
-    bankingInformation: invoice.bankingInformation,
+    bankingInformation: invoice.bankingInformation?.name
+      ? invoice.bankingInformation
+      : undefined,
     services: invoice.services.map((service) => ({
       ...service,
       amount: Number(service.amount),
@@ -812,6 +816,8 @@ export const regeneratePublicInvoice = async (
     throw new BadRequestError(i18n.t('error.invoice.unableToCreatePublicLink'));
 
   reply.status(200).send({
+    publicInvoiceToken: regenerated.publicInvoiceToken,
+    publicInvoiceExpiresAt: regenerated.publicInvoiceExpiresAt,
     message: i18n.t('success.invoice.publicLinkRegenerated')
   });
 };

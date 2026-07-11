@@ -72,45 +72,41 @@ const Footer = () => {
     <footer className="flex flex-col items-center justify-center">
       {shouldShowFullFooter && (
         <div className="border-t-1 w-full gap-4 py-10 md:flex-row md:gap-8 md:py-12">
-          <div className="m-auto flex w-full max-w-7xl flex-col items-center justify-between gap-8 px-6 text-center sm:flex-row sm:items-start sm:text-start">
-            <div className="flex flex-col gap-6">
+          <div className="m-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 text-center sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-start sm:text-start">
+            <div className="flex min-w-0 flex-col gap-6">
               <AppBrand
                 className="mx-auto sm:mx-0"
                 wordmarkClassName="text-inherit"
               />
-              <p className="text-muted-foreground text-sm">{t('tagline')}</p>
+              <p className="text-muted text-sm">{t('tagline')}</p>
             </div>
-            <div className="grid gap-8 sm:grid-cols-2 md:ml-auto">
-              <div className="grid gap-3 text-sm">
-                <div className="text-muted font-medium">{t('support')}</div>
-                <ContactFormDialog />
-              </div>
+            <div className="grid gap-3 text-sm">
+              <div className="text-muted font-medium">{t('support')}</div>
+              <ContactFormDialog />
             </div>
-            <div className="grid gap-8 sm:grid-cols-2 md:ml-auto">
-              <div className="grid gap-3 text-sm">
-                <div className="text-muted font-medium">{t('legal')}</div>
-                <nav className="grid gap-2">
-                  <Link
-                    href={PRIVACY_POLICY_PAGE}
-                    className="text-foreground mx-auto text-sm hover:underline sm:mx-0"
-                  >
-                    {t('privacy_policy')}
-                  </Link>
-                  <Link
-                    href={TERMS_OF_SERVICE_PAGE}
-                    className="text-foreground text-sm hover:underline"
-                  >
-                    {t('terms_of_service')}
-                  </Link>
-                </nav>
-              </div>
+            <div className="grid gap-3 text-sm">
+              <div className="text-muted font-medium">{t('legal')}</div>
+              <nav className="grid gap-2">
+                <Link
+                  href={PRIVACY_POLICY_PAGE}
+                  className="text-foreground mx-auto whitespace-nowrap text-sm hover:underline sm:mx-0"
+                >
+                  {t('privacy_policy')}
+                </Link>
+                <Link
+                  href={TERMS_OF_SERVICE_PAGE}
+                  className="text-foreground mx-auto whitespace-nowrap text-sm hover:underline sm:mx-0"
+                >
+                  {t('terms_of_service')}
+                </Link>
+              </nav>
             </div>
           </div>
         </div>
       )}
       <div className="border-t-1 flex w-full flex-col gap-4 py-6 md:flex-row md:items-center">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-6">
-          <div className="text-muted-foreground text-center text-xs">
+          <div className="text-muted text-center text-xs">
             {t('copyright', { year: new Date().getFullYear() })}
           </div>
         </div>

@@ -13,17 +13,37 @@ export const invoiceLifecycleStatusSchema = z.enum(
   }
 );
 
-export const invoicePaymentModeSchema = z.enum(
-  ['manual', 'disabled'],
-  {
-    message: 'validation.invoice.paymentMode'
-  }
-);
+export const invoicePaymentModeSchema = z.enum(['manual', 'disabled'], {
+  message: 'validation.invoice.paymentMode'
+});
 
 export const publicInvoiceResolvedPaymentModeSchema = z.enum([
   'manual',
   'disabled'
 ]);
+
+const hasBankingInformation = (
+  bankingInformation?: z.infer<typeof bankAccountBodySchema> | null
+) =>
+  Boolean(
+    bankingInformation?.name?.trim() &&
+      bankingInformation.code?.trim() &&
+      bankingInformation.accountNumber?.trim()
+  );
+
+const optionalBankAccountBodySchema = z.preprocess((value) => {
+  if (typeof value !== 'object' || value === null) return value;
+
+  const bankAccount = value as Partial<z.infer<typeof bankAccountBodySchema>>;
+  if (
+    !bankAccount.name?.trim() &&
+    !bankAccount.code?.trim() &&
+    !bankAccount.accountNumber?.trim()
+  )
+    return undefined;
+
+  return value;
+}, bankAccountBodySchema.nullish());
 
 export const invoicePartyBusinessTypeSchema = z.enum(
   ['business', 'individual'],
@@ -142,7 +162,7 @@ export const invoiceBodySchema = z
       .array(invoiceServiceBodySchema)
       .min(1, 'validation.invoice.services.required')
       .max(100),
-    bankingInformation: bankAccountBodySchema
+    bankingInformation: optionalBankAccountBodySchema
   })
   .refine(
     (data) => new Date(data.dueDate).getTime() >= new Date(data.date).getTime(),
@@ -150,7 +170,19 @@ export const invoiceBodySchema = z
       message: 'validation.invoice.dueDateAfterDate',
       path: ['dueDate']
     }
-  );
+  )
+  .superRefine((data, ctx) => {
+    if (
+      data.paymentMode !== 'disabled' &&
+      !hasBankingInformation(data.bankingInformation)
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'validation.invoice.bankingInformation.required',
+        path: ['bankingInformation']
+      });
+    }
+  });
 
 export const publicInvoiceSigningSchema = z.object({
   token: z.string(),

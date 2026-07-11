@@ -139,6 +139,7 @@ const InvoiceTableTopContent = ({
                     className="capitalize"
                   >
                     {capitalize(status.name)}
+                    <Dropdown.ItemIndicator />
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -171,6 +172,7 @@ const InvoiceTableTopContent = ({
                     className="capitalize"
                   >
                     {capitalize(column.name)}
+                    <Dropdown.ItemIndicator />
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -191,9 +193,7 @@ const InvoiceTableTopContent = ({
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <span className="section-eyebrow text-muted">
-          {totalInvoicesText}
-        </span>
+        <span className="section-eyebrow text-muted">{totalInvoicesText}</span>
         <label className="section-eyebrow text-muted flex items-center">
           {t('table.rows_per_page')}
           <select

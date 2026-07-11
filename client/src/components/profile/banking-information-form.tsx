@@ -176,7 +176,7 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     return (
       <RadioGroup
         className="w-full"
-        variant="secondary"
+        variant="primary"
         value={String(selectedBankAccountId)}
         onChange={setSelectedBankAccountId}
       >

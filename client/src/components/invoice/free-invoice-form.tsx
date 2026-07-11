@@ -14,7 +14,6 @@ import {
 } from '@heroui/react';
 import {
   ArrowRightIcon,
-  CheckCircleIcon,
   EyeIcon,
   PaperAirplaneIcon
 } from '@heroicons/react/24/outline';
@@ -323,13 +322,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
   );
 
   const renderSubmissionMessageAndActions = () => (
-    <div className="col-span-4 flex w-full flex-col gap-4 border-t pt-6 lg:flex-row lg:items-center lg:justify-between">
-      <div className="max-w-2xl">
-        <p className="text-sm font-medium">{t('free_invoice.actions_title')}</p>
-        <p className="text-muted mt-1 text-sm">
-          {t('free_invoice.actions_description')}
-        </p>
-      </div>
+    <div className="col-span-4 flex w-full justify-end">
       <div className="flex w-full flex-col justify-end gap-2 sm:flex-row lg:w-auto">
         <Button
           type="button"
@@ -355,49 +348,50 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
   );
 
   const renderSignupPrompt = () => (
-    <div className="border-default-200 bg-content1/70 flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="min-w-0">
-        <p className="text-sm font-semibold">
-          {t('free_invoice.modal_cta_title')}
-        </p>
-        <p className="text-muted mt-1 text-sm">
-          {t('free_invoice.modal_cta_description')}
-        </p>
-      </div>
-      <Link
-        href={signupUrl}
-        onClick={() => handleSignupClick('preview_modal')}
-        className={buttonVariants({
-          size: 'sm',
-          className: 'shrink-0 gap-2'
-        })}
-      >
-        {t('free_invoice.modal_cta_button')}
-        <ArrowRightIcon className="h-4 w-4" />
-      </Link>
-    </div>
+    <Link
+      href={signupUrl}
+      onClick={() => handleSignupClick('preview_modal')}
+      className={buttonVariants({
+        size: 'sm',
+        className: 'w-full justify-center gap-2 sm:w-auto'
+      })}
+    >
+      {t('free_invoice.modal_cta_button')}
+      <ArrowRightIcon className="h-4 w-4" />
+    </Link>
   );
 
-  const renderBenefits = () => {
-    const benefits = t.raw('free_invoice.benefits') as Array<string>;
-
-    return (
-      <div className="grid gap-3 md:grid-cols-3">
-        {benefits.map((benefit) => (
-          <Alert key={benefit} status="default" className="border px-3 py-1.5">
-            <Alert.Indicator>
-              <CheckCircleIcon className="text-accent h-5 w-5" />
-            </Alert.Indicator>
-            <Alert.Content className="flex-row">
-              <Alert.Title className="text-muted self-center font-normal">
-                {benefit}
-              </Alert.Title>
-            </Alert.Content>
-          </Alert>
-        ))}
-      </div>
-    );
-  };
+  const renderUpgradeAlert = () => (
+    <Alert status="accent" className="border">
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Title>{t('free_invoice.upgrade_title')}</Alert.Title>
+        <Alert.Description>
+          {t('free_invoice.upgrade_description')}
+        </Alert.Description>
+        <Link
+          href={signupUrl}
+          onClick={() => handleSignupClick('intro_panel')}
+          className={buttonVariants({
+            size: 'sm',
+            className: 'mt-2 sm:hidden'
+          })}
+        >
+          {t('free_invoice.upgrade_cta')}
+        </Link>
+      </Alert.Content>
+      <Link
+        href={signupUrl}
+        onClick={() => handleSignupClick('intro_panel')}
+        className={buttonVariants({
+          size: 'sm',
+          className: 'hidden sm:flex'
+        })}
+      >
+        {t('free_invoice.upgrade_cta')}
+      </Link>
+    </Alert>
+  );
 
   const getInvoicePreviewData = () => {
     const invoiceTotals = calculateInvoiceTotals(getValues('services'));
@@ -424,7 +418,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     <>
       <FormProvider {...methods}>
         <div className="mx-auto w-full max-w-7xl px-6 py-8 sm:py-10 md:py-12 lg:py-14">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] lg:items-end">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,520px)] lg:items-end">
             <div className="flex max-w-3xl flex-col gap-3">
               <Chip color="accent" variant="soft" className="w-max">
                 {t('free_invoice.eyebrow')}
@@ -436,31 +430,8 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
                 {t('free_invoice.description')}
               </p>
             </div>
-            <Card className="parent border p-4">
-              <Card.Header className="flex flex-col items-start gap-1 p-0">
-                <Card.Title className="text-sm font-semibold">
-                  {t('free_invoice.upgrade_title')}
-                </Card.Title>
-                <Card.Description>
-                  {t('free_invoice.upgrade_description')}
-                </Card.Description>
-              </Card.Header>
-              <Card.Footer className="p-0">
-                <Link
-                  href={signupUrl}
-                  onClick={() => handleSignupClick('intro_panel')}
-                  className={buttonVariants({
-                    variant: 'secondary',
-                    className: 'mt-4 w-full justify-between'
-                  })}
-                >
-                  {t('free_invoice.upgrade_cta')}
-                  <ArrowRightIcon className="h-4 w-4" />
-                </Link>
-              </Card.Footer>
-            </Card>
+            {renderUpgradeAlert()}
           </div>
-          <div className="mt-6">{renderBenefits()}</div>
           <Card className="mt-8 border p-4 sm:p-8">
             <form
               aria-label={t('a11y.form_label')}

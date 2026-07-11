@@ -37,14 +37,14 @@ const buildInvoiceBankingInformationInsert = ({
   bankingInformation
 }: {
   invoiceId: number;
-  bankingInformation: {
+  bankingInformation?: {
     name?: string | null;
     accountNumber?: string | null;
     code?: string | null;
-  };
+  } | null;
 }): InsertInvoiceBankingInformation => {
   if (
-    !bankingInformation.name ||
+    !bankingInformation?.name ||
     !bankingInformation.accountNumber ||
     !bankingInformation.code
   )
@@ -58,6 +58,15 @@ const buildInvoiceBankingInformationInsert = ({
   };
 };
 
+const hasInvoiceBankingInformation = (
+  bankingInformation?: InvoiceBody['bankingInformation'] | null
+): bankingInformation is NonNullable<InvoiceBody['bankingInformation']> =>
+  Boolean(
+    bankingInformation?.name?.trim() &&
+      bankingInformation.code?.trim() &&
+      bankingInformation.accountNumber?.trim()
+  );
+
 const DEFAULT_INVOICE_SERIES = 'SF';
 const INVOICE_NUMBER_PADDING = 3;
 
@@ -65,16 +74,22 @@ export type InvoiceFromDb = Omit<
   InvoiceBody,
   'sender' | 'receiver' | 'services' | 'bankingInformation'
 > & {
-  bankingInformation: Omit<
-    typeof bankingInformationTable.$inferSelect,
-    'userId'
-  > | null;
+  bankingInformation:
+    | Omit<typeof bankingInformationTable.$inferSelect, 'userId'>
+    | null;
   sender: Omit<typeof invoiceSendersTable.$inferSelect, 'invoiceId'> | null;
   receiver: Omit<typeof invoiceReceiversTable.$inferSelect, 'invoiceId'> | null;
   services: Array<
     Omit<typeof invoiceServicesTable.$inferSelect, 'invoiceId'>
   > | null;
 };
+
+const normalizeInvoiceFromDb = (invoice: InvoiceFromDb): InvoiceFromDb => ({
+  ...invoice,
+  bankingInformation: invoice.bankingInformation?.id
+    ? invoice.bankingInformation
+    : null
+});
 
 const normalizeInvoiceSeries = (series?: string | null) =>
   (series || DEFAULT_INVOICE_SERIES).trim().toUpperCase();
@@ -328,7 +343,7 @@ export const getInvoicesFromDb = async (
     )
     .orderBy(desc(invoicesTable.id));
 
-  return invoices;
+  return invoices.map(normalizeInvoiceFromDb);
 };
 
 export const getInvoiceFromDb = async (
@@ -427,7 +442,9 @@ export const getInvoiceFromDb = async (
       invoiceBankingInformationTable.id
     );
 
-  return invoices.at(0);
+  const invoice = invoices.at(0);
+
+  return invoice ? normalizeInvoiceFromDb(invoice) : undefined;
 };
 
 export const insertInvoiceInDb = async (
@@ -513,15 +530,21 @@ export const insertInvoiceInDb = async (
       })
       .returning({ id: invoiceReceiversTable.id });
 
-    // Invoice banking information insert
-    const invoiceBankingInformation = buildInvoiceBankingInformationInsert({
-      invoiceId: insertedInvoiceId,
-      bankingInformation: invoiceData.bankingInformation
-    });
-    const bankAccounts = await tx
-      .insert(invoiceBankingInformationTable)
-      .values(invoiceBankingInformation)
-      .returning({ id: invoiceBankingInformationTable.id });
+    const paymentMode = invoiceData.paymentMode || 'manual';
+    let bankAccountId: number | null = null;
+
+    if (paymentMode !== 'disabled') {
+      const invoiceBankingInformation = buildInvoiceBankingInformationInsert({
+        invoiceId: insertedInvoiceId,
+        bankingInformation: invoiceData.bankingInformation
+      });
+      const bankAccounts = await tx
+        .insert(invoiceBankingInformationTable)
+        .values(invoiceBankingInformation)
+        .returning({ id: invoiceBankingInformationTable.id });
+
+      bankAccountId = bankAccounts.at(0)?.id || null;
+    }
 
     // Invoice services insert
     for (const service of invoiceData.services) {
@@ -541,7 +564,7 @@ export const insertInvoiceInDb = async (
       .set({
         senderId: senders.at(0)?.id,
         receiverId: receivers.at(0)?.id,
-        bankAccountId: bankAccounts.at(0)?.id
+        bankAccountId
       })
       .where(eq(invoicesTable.id, Number(insertedInvoiceId)));
 
@@ -685,33 +708,35 @@ export const updateInvoiceInDb = async (
       currentInvoiceData.receiverId = insertedReceiver[0].id;
     }
 
-    // Update the existing banking information record
-    if (currentInvoiceData.bankAccountId) {
-      await tx
-        .update(invoiceBankingInformationTable)
-        .set({
-          accountName: invoiceData.bankingInformation.name,
-          accountNumber: invoiceData.bankingInformation.accountNumber,
-          bankCode: invoiceData.bankingInformation.code
-        })
-        .where(
-          eq(
-            invoiceBankingInformationTable.id,
-            currentInvoiceData.bankAccountId
-          )
-        );
-    } else {
-      // If no bankAccountId exists, create a new banking information record
-      const invoiceBankingInformation = buildInvoiceBankingInformationInsert({
-        invoiceId: id,
-        bankingInformation: invoiceData.bankingInformation
-      });
-      const insertedBankInfo = await tx
-        .insert(invoiceBankingInformationTable)
-        .values(invoiceBankingInformation)
-        .returning({ id: invoiceBankingInformationTable.id });
+    if (paymentMode === 'disabled') {
+      currentInvoiceData.bankAccountId = null;
+    } else if (hasInvoiceBankingInformation(invoiceData.bankingInformation)) {
+      if (currentInvoiceData.bankAccountId) {
+        await tx
+          .update(invoiceBankingInformationTable)
+          .set({
+            accountName: invoiceData.bankingInformation.name,
+            accountNumber: invoiceData.bankingInformation.accountNumber,
+            bankCode: invoiceData.bankingInformation.code
+          })
+          .where(
+            eq(
+              invoiceBankingInformationTable.id,
+              currentInvoiceData.bankAccountId
+            )
+          );
+      } else {
+        const invoiceBankingInformation = buildInvoiceBankingInformationInsert({
+          invoiceId: id,
+          bankingInformation: invoiceData.bankingInformation
+        });
+        const insertedBankInfo = await tx
+          .insert(invoiceBankingInformationTable)
+          .values(invoiceBankingInformation)
+          .returning({ id: invoiceBankingInformationTable.id });
 
-      currentInvoiceData.bankAccountId = insertedBankInfo[0].id;
+        currentInvoiceData.bankAccountId = insertedBankInfo[0].id;
+      }
     }
 
     // Update the main invoice record
@@ -1009,7 +1034,14 @@ export async function regeneratePublicInvoiceFromDb({
   id: number;
   token: string;
   expiresAt: string;
-}): Promise<{ id: number; publicInvoiceToken: string | null } | undefined> {
+}): Promise<
+  | {
+      id: number;
+      publicInvoiceToken: string | null;
+      publicInvoiceExpiresAt: string | null;
+    }
+  | undefined
+> {
   const invoices = await db
     .update(invoicesTable)
     .set({
@@ -1021,7 +1053,8 @@ export async function regeneratePublicInvoiceFromDb({
     .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
     .returning({
       id: invoicesTable.id,
-      publicInvoiceToken: invoicesTable.publicInvoiceToken
+      publicInvoiceToken: invoicesTable.publicInvoiceToken,
+      publicInvoiceExpiresAt: invoicesTable.publicInvoiceExpiresAt
     });
 
   return invoices.at(0);

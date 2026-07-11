@@ -32,6 +32,7 @@ const useInvoiceFormSubmissionHandler = ({
     if (!user?.id) return;
 
     const invoiceTotals = calculateInvoiceTotals(data.services);
+    const paymentMode = data.paymentMode || 'manual';
 
     const fullData: typeof data = {
       ...data,
@@ -39,7 +40,10 @@ const useInvoiceFormSubmissionHandler = ({
       subtotalAmount: invoiceTotals.subtotalAmount,
       vatAmount: invoiceTotals.vatAmount,
       totalAmount: invoiceTotals.totalAmount,
-      bankingInformation: bankingInformation || data.bankingInformation
+      bankingInformation:
+        paymentMode === 'disabled'
+          ? undefined
+          : bankingInformation || data.bankingInformation
     };
 
     const response = invoiceData

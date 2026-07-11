@@ -391,7 +391,7 @@ const ExpenseFormDialog = ({
             <Modal.Footer>
               <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   className="w-full sm:w-auto"
                   onPress={onClose}
                 >
