@@ -1,16 +1,16 @@
-import { getLocale, getTranslations } from 'next-intl/server';
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
+import { getLocale, getTranslations } from 'next-intl/server';
 
-import {
-  getSoftwareApplicationJsonLd,
-  getWebsiteJsonLd
-} from '@/lib/seo/structured-data';
-import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import FreeInvoiceForm from '@/components/invoice/free-invoice-form';
 import JsonLd from '@/components/seo/json-ld';
 import { getPageMetadata } from '@/lib/seo/metadata';
 import { getSeoLocale } from '@/lib/seo/site';
+import {
+  getSoftwareApplicationJsonLd,
+  getWebsiteJsonLd
+} from '@/lib/seo/structured-data';
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = getSeoLocale(await getLocale());

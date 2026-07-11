@@ -1,6 +1,6 @@
-import ExpenseTable from '@/components/expense/expense-table';
-import { auth } from '@/auth';
 import { getExpenses } from '@/api/expense';
+import { auth } from '@/auth';
+import ExpenseTable from '@/components/expense/expense-table';
 import { isResponseError } from '@/lib/utils/error';
 
 export default async function ExpensesPageContent() {

@@ -1,9 +1,10 @@
+import { render, screen } from '@testing-library/react';
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+
+import { withIntl } from '@/test/with-intl';
 
 import DashboardCard from '../dashboard-card';
-import { withIntl } from '@/test/with-intl';
 
 describe('<DashboardCard />', () => {
   let props: ComponentProps<typeof DashboardCard>;

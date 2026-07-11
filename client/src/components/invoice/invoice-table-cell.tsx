@@ -1,17 +1,6 @@
 'use client';
 
 import {
-  Checkbox,
-  Chip,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownPopover,
-  DropdownTrigger,
-  Tooltip,
-  toast
-} from '@heroui/react';
-import {
   ChevronDownIcon,
   DocumentTextIcon,
   ExclamationCircleIcon,
@@ -21,21 +10,31 @@ import {
   PencilSquareIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
-import type { JSX, Key } from 'react';
-import { useEffect, useState, useTransition } from 'react';
-import { useTranslations } from 'next-intl';
-
+import {
+  Checkbox,
+  Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownPopover,
+  DropdownTrigger,
+  toast,
+  Tooltip} from '@heroui/react';
 import type {
   InvoiceBody,
   InvoiceLifecycleStatus,
   InvoiceStatus
 } from '@invoicetrackr/types';
-import { Currency } from '@/lib/types/currency';
-import { formatDate } from '@/lib/utils/date';
-import { getCurrencySymbol } from '@/lib/utils/currency';
-import { getInvoiceDueStatus } from '@/lib/utils/invoice';
-import { statusOptions } from '@/lib/constants/table';
+import { useTranslations } from 'next-intl';
+import type { JSX, Key } from 'react';
+import { useEffect, useState, useTransition } from 'react';
+
 import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
+import { statusOptions } from '@/lib/constants/table';
+import { Currency } from '@/lib/types/currency';
+import { getCurrencySymbol } from '@/lib/utils/currency';
+import { formatDate } from '@/lib/utils/date';
+import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 
 const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
   {

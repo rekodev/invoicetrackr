@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
-import { VERIFY_EMAIL_PAGE } from '@/lib/constants/pages';
-import VerifyEmailResultCard from '@/components/auth/verify-email-result-card';
 import { auth } from '@/auth';
+import VerifyEmailResultCard from '@/components/auth/verify-email-result-card';
+import { VERIFY_EMAIL_PAGE } from '@/lib/constants/pages';
 import { getNoIndexMetadata } from '@/lib/seo/metadata';
 
 export async function generateMetadata(): Promise<Metadata> {

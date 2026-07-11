@@ -1,9 +1,10 @@
-import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { JSX } from 'react';
+import { describe, expect, it } from 'vitest';
+
+import { withIntl } from '@/test/with-intl';
 
 import ViewAllInvoicesButton from '../view-all-invoices-button';
-import { withIntl } from '@/test/with-intl';
 
 describe('<ViewAllInvoicesButton />', () => {
   const renderHelper = (component: JSX.Element) => render(withIntl(component));

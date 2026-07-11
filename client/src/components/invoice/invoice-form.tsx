@@ -20,33 +20,33 @@ import {
   TextField,
   Tooltip
 } from '@heroui/react';
-import { type ComponentProps, useRef, useState, useTransition } from 'react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
 import type { Client } from '@invoicetrackr/types';
-import { useTranslations } from 'next-intl';
-
 import type {
   BankAccountBody,
   ClientBody,
   InvoiceBody,
   User
 } from '@invoicetrackr/types';
+import { useTranslations } from 'next-intl';
+import { type ComponentProps, useRef, useState, useTransition } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+
+import { getNextInvoiceNumberAction } from '@/lib/actions/invoice';
+import { statusOptions } from '@/lib/constants/table';
+import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
+import { Currency } from '@/lib/types/currency';
 import {
   addDaysToDate,
   formatDate,
   getDateDifferenceInDays
 } from '@/lib/utils/date';
-import { Currency } from '@/lib/types/currency';
-import { getNextInvoiceNumberAction } from '@/lib/actions/invoice';
-import { statusOptions } from '@/lib/constants/table';
-import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
 
-import BankingInformationDialog from './banking-information-dialog';
+import SignaturePad from '../signature-pad';
 import CompleteProfile from '../ui/complete-profile';
+import BankingInformationDialog from './banking-information-dialog';
 import InvoiceDueDatePreselectionChips from './invoice-due-date-preselection-chips';
 import InvoiceFormReceiverModal from './invoice-form-receiver-modal';
 import InvoiceServicesTable from './invoice-services-table';
-import SignaturePad from '../signature-pad';
 
 type Props = {
   user: User;
@@ -129,6 +129,7 @@ const InvoiceForm = ({
       : {
           sender: {
             ...user,
+            email: user.invoiceEmail || user.email,
             type: 'sender',
             vatNumber: user.vatNumber || ''
           },

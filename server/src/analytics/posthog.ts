@@ -1,7 +1,7 @@
 import { PostHog } from 'posthog-node';
 
-import type { AnalyticsEvent, AnalyticsProperties } from './events';
 import { getUserFromDb } from '../database/user';
+import type { AnalyticsEvent, AnalyticsProperties } from './events';
 
 let posthog: PostHog | undefined;
 

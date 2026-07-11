@@ -15,14 +15,14 @@ import {
   Link,
   TextField
 } from '@heroui/react';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 
-import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
-import { authenticateAction, signInWithGoogleAction } from '@/lib/actions';
 import AuthCardHeader from '@/components/auth/auth-card-header';
+import { authenticateAction, signInWithGoogleAction } from '@/lib/actions';
+import { FORGOT_PASSWORD_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
 
 type LoginFormModel = {
   email: string;

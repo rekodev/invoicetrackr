@@ -1,7 +1,8 @@
-import { ComponentProps, JSX } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { ComponentProps, JSX } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { withIntl } from '@/test/with-intl';
 
 import ClientFormDialog from '../client-form-dialog';

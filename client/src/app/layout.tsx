@@ -1,26 +1,26 @@
-import { ReactNode, Suspense } from 'react';
-import { getLocale, getMessages } from 'next-intl/server';
-import { Inter } from 'next/font/google';
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-
 import './globals.css';
 
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import { cookies } from 'next/headers';
+import { getLocale, getMessages } from 'next-intl/server';
+import { ReactNode, Suspense } from 'react';
+
+import { auth } from '@/auth';
+import Footer from '@/components/layout/footer';
+import Header from '@/components/layout/header';
+import AnalyticsProvider from '@/components/providers/analytics-provider';
 import {
   ANALYTICS_CONSENT_COOKIE,
   analyticsConsentStatuses
 } from '@/lib/analytics/constants';
-import AnalyticsProvider from '@/components/providers/analytics-provider';
-import Footer from '@/components/layout/footer';
-import Header from '@/components/layout/header';
 import { appBaseUrl } from '@/lib/config/app';
-import { auth } from '@/auth';
 import { getPageMetadata } from '@/lib/seo/metadata';
 import { getSeoLocale } from '@/lib/seo/site';
 
 import CookieConsent from '../components/cookie-consent';
-import Loading from './loading';
 import { Providers } from '../components/providers/providers';
+import Loading from './loading';
 import RouteAmbientBackground from './route-ambient-background';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -67,10 +67,10 @@ export default async function RootLayout({
             >
               <RouteAmbientBackground />
               <Header />
-              <main className="mx-auto flex w-full flex-grow flex-col">
+              <div className="mx-auto flex w-full flex-grow flex-col">
                 <Suspense fallback={<Loading />}>{children}</Suspense>
-              </main>
-              <Footer />
+              </div>
+              {!session?.user ? <Footer /> : null}
               <CookieConsent />
             </AnalyticsProvider>
           </Suspense>

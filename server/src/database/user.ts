@@ -4,45 +4,50 @@ import {
   UserBody,
   UserProfileUpdateBody
 } from '@invoicetrackr/types';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 
+import { db } from './db';
 import {
+  businessProfilesTable,
   InsertUser,
-  SelectUser,
   passwordResetTokensTable,
   usersTable
 } from './schema';
-import { db } from './db';
+
+const userSelection = {
+  id: usersTable.id,
+  name: businessProfilesTable.legalName,
+  type: sql<'sender'>`'sender'`,
+  businessType: sql<'individual'>`'individual'`,
+  businessNumber: businessProfilesTable.activityCertificateNumber,
+  vatNumber: businessProfilesTable.vatNumber,
+  selectedBankAccountId: businessProfilesTable.selectedBankAccountId,
+  address: businessProfilesTable.address,
+  email: usersTable.email,
+  invoiceEmail: businessProfilesTable.invoiceEmail,
+  phone: businessProfilesTable.phone,
+  emailVerifiedAt: usersTable.emailVerifiedAt,
+  createdAt: usersTable.createdAt,
+  updatedAt: businessProfilesTable.updatedAt,
+  signature: businessProfilesTable.signatureUrl,
+  profilePictureUrl: businessProfilesTable.logoUrl,
+  currency: businessProfilesTable.currency,
+  language: usersTable.language,
+  preferredInvoiceLanguage: businessProfilesTable.preferredInvoiceLanguage,
+  isVatPayer: businessProfilesTable.isVatPayer,
+  defaultInvoiceVatMode: businessProfilesTable.defaultInvoiceVatMode,
+  defaultInvoiceSeries: businessProfilesTable.defaultInvoiceSeries,
+  defaultPaymentTermsDays: businessProfilesTable.defaultPaymentTermsDays,
+  onboardingCompletedAt: businessProfilesTable.onboardingCompletedAt,
+  analyticsConsentStatus: usersTable.analyticsConsentStatus,
+  analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
+};
 
 export const getUserFromDb = async (id: number) => {
   const users = await db
-    .select({
-      id: usersTable.id,
-      name: usersTable.name,
-      type: usersTable.type,
-      businessType: usersTable.businessType,
-      businessNumber: usersTable.businessNumber,
-      vatNumber: usersTable.vatNumber,
-      selectedBankAccountId: usersTable.selectedBankAccountId,
-      address: usersTable.address,
-      email: usersTable.email,
-      emailVerifiedAt: usersTable.emailVerifiedAt,
-      createdAt: usersTable.createdAt,
-      updatedAt: usersTable.updatedAt,
-      signature: usersTable.signature,
-      profilePictureUrl: usersTable.profilePictureUrl,
-      currency: usersTable.currency,
-      language: usersTable.language,
-      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
-      isVatPayer: usersTable.isVatPayer,
-      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
-      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
-      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
-      onboardingCompletedAt: usersTable.onboardingCompletedAt,
-      analyticsConsentStatus: usersTable.analyticsConsentStatus,
-      analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
-    })
+    .select(userSelection)
     .from(usersTable)
+    .innerJoin(businessProfilesTable, eq(businessProfilesTable.userId, usersTable.id))
     .where(eq(usersTable.id, id));
 
   return users.at(0);
@@ -50,34 +55,9 @@ export const getUserFromDb = async (id: number) => {
 
 export const getUserByEmailFromDb = async (email: string) => {
   const users = await db
-    .select({
-      id: usersTable.id,
-      name: usersTable.name,
-      type: usersTable.type,
-      businessType: usersTable.businessType,
-      businessNumber: usersTable.businessNumber,
-      vatNumber: usersTable.vatNumber,
-      selectedBankAccountId: usersTable.selectedBankAccountId,
-      address: usersTable.address,
-      email: usersTable.email,
-      emailVerifiedAt: usersTable.emailVerifiedAt,
-      createdAt: usersTable.createdAt,
-      updatedAt: usersTable.updatedAt,
-      signature: usersTable.signature,
-      profilePictureUrl: usersTable.profilePictureUrl,
-      currency: usersTable.currency,
-      language: usersTable.language,
-      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
-      isVatPayer: usersTable.isVatPayer,
-      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
-      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
-      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
-      password: usersTable.password,
-      onboardingCompletedAt: usersTable.onboardingCompletedAt,
-      analyticsConsentStatus: usersTable.analyticsConsentStatus,
-      analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
-    })
+    .select({ ...userSelection, password: usersTable.password })
     .from(usersTable)
+    .innerJoin(businessProfilesTable, eq(businessProfilesTable.userId, usersTable.id))
     .where(eq(usersTable.email, email));
 
   return users.at(0);
@@ -91,62 +71,51 @@ export const registerUser = async ({
   profilePictureUrl = '',
   emailVerifiedAt = null,
   analyticsConsentStatus = null
-}: Pick<InsertUser, 'email' | 'password' | 'language'> &
-  Partial<
-    Pick<
-      InsertUser,
-      | 'name'
-      | 'profilePictureUrl'
-      | 'emailVerifiedAt'
-      | 'analyticsConsentStatus'
-    >
-  >): Promise<{ id: number; email: string } | undefined> => {
-  const users = await db
-    .insert(usersTable)
-    .values({
-      email,
-      password,
-      emailVerifiedAt,
-      currency: DEFAULT_CURRENCY,
-      language,
-      type: 'sender',
-      businessType: 'individual',
-      businessNumber: '',
-      vatNumber: null,
-      name,
-      address: '',
-      signature: '',
-      profilePictureUrl,
-      analyticsConsentStatus,
-      analyticsConsentUpdatedAt: analyticsConsentStatus
-        ? new Date().toISOString()
-        : null
-    })
-    .returning({ id: usersTable.id, email: usersTable.email });
+}: Pick<InsertUser, 'email' | 'password' | 'language'> & {
+  name?: string;
+  profilePictureUrl?: string;
+  emailVerifiedAt?: string | null;
+  analyticsConsentStatus?: InsertUser['analyticsConsentStatus'];
+}): Promise<{ id: number; email: string } | undefined> => {
+  return db.transaction(async (tx) => {
+    const [user] = await tx
+      .insert(usersTable)
+      .values({
+        email,
+        password,
+        emailVerifiedAt,
+        language,
+        analyticsConsentStatus,
+        analyticsConsentUpdatedAt: analyticsConsentStatus ? new Date().toISOString() : null
+      })
+      .returning({ id: usersTable.id, email: usersTable.email });
 
-  return users.at(0);
+    if (!user) return undefined;
+
+    await tx.insert(businessProfilesTable).values({
+      userId: user.id,
+      legalName: name,
+      invoiceEmail: email,
+      logoUrl: profilePictureUrl,
+      currency: DEFAULT_CURRENCY
+    });
+
+    return user;
+  });
 };
 
-export type UserUpdateResult = Omit<
-  SelectUser,
-  | 'createdAt'
-  | 'updatedAt'
-  | 'selectedBankAccountId'
-  | 'password'
-  | 'onboardingCompletedAt'
->;
+export type UserUpdateResult = NonNullable<Awaited<ReturnType<typeof getUserFromDb>>>;
 
 export const updateUserInDb = async (
   user: UserProfileUpdateBody & { id: number },
-  signature: string,
-  shouldResetEmailVerification = false
+  signature: string
 ): Promise<{ id: number } | undefined> => {
   const {
     name,
     address,
     businessNumber,
-    businessType,
-    email,
+    phone,
+    invoiceEmail,
     vatNumber,
     isVatPayer
   } = user;
@@ -155,25 +124,25 @@ export const updateUserInDb = async (
     ? vatNumber?.trim() || null
     : null;
 
-  const users = await db
-    .update(usersTable)
+  const profiles = await db
+    .update(businessProfilesTable)
     .set({
-      name,
-      businessType,
-      businessNumber,
+      legalName: name,
+      activityCertificateNumber: businessNumber,
       vatNumber: normalizedVatNumber,
       isVatPayer: normalizedIsVatPayer,
       ...(normalizedIsVatPayer ? {} : { defaultInvoiceVatMode: 'no_vat' }),
       address,
-      email,
-      ...(shouldResetEmailVerification ? { emailVerifiedAt: null } : {}),
-      signature,
-      onboardingCompletedAt: new Date().toISOString()
+      invoiceEmail: invoiceEmail || user.email,
+      phone,
+      signatureUrl: signature,
+      onboardingCompletedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     })
-    .where(eq(usersTable.id, Number(user.id)))
-    .returning({ id: usersTable.id });
+    .where(eq(businessProfilesTable.userId, Number(user.id)))
+    .returning({ id: businessProfilesTable.userId });
 
-  return users.at(0);
+  return profiles.at(0);
 };
 
 export const updateUserSelectedBankAccountInDb = async (
@@ -181,10 +150,10 @@ export const updateUserSelectedBankAccountInDb = async (
   selectedBankAccountId: number
 ): Promise<{ id: number } | undefined> => {
   const users = await db
-    .update(usersTable)
-    .set({ selectedBankAccountId })
-    .where(eq(usersTable.id, userId))
-    .returning({ id: usersTable.id });
+    .update(businessProfilesTable)
+    .set({ selectedBankAccountId, updatedAt: new Date().toISOString() })
+    .where(eq(businessProfilesTable.userId, userId))
+    .returning({ id: businessProfilesTable.userId });
 
   return users.at(0);
 };
@@ -226,34 +195,8 @@ export const updateUserProfilePictureInDb = async (
   userId: number,
   url: string
 ): Promise<UserUpdateResult | undefined> => {
-  const users = await db
-    .update(usersTable)
-    .set({ profilePictureUrl: url })
-    .where(eq(usersTable.id, userId))
-    .returning({
-      id: usersTable.id,
-      name: usersTable.name,
-      type: usersTable.type,
-      businessType: usersTable.businessType,
-      businessNumber: usersTable.businessNumber,
-      vatNumber: usersTable.vatNumber,
-      address: usersTable.address,
-      email: usersTable.email,
-      emailVerifiedAt: usersTable.emailVerifiedAt,
-      signature: usersTable.signature,
-      profilePictureUrl: usersTable.profilePictureUrl,
-      language: usersTable.language,
-      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
-      isVatPayer: usersTable.isVatPayer,
-      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
-      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
-      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
-      currency: usersTable.currency,
-      analyticsConsentStatus: usersTable.analyticsConsentStatus,
-      analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
-    });
-
-  return users.at(0);
+  await db.update(businessProfilesTable).set({ logoUrl: url, updatedAt: new Date().toISOString() }).where(eq(businessProfilesTable.userId, userId));
+  return getUserFromDb(userId);
 };
 
 export const updateUserAccountSettingsInDb = async (
@@ -266,47 +209,28 @@ export const updateUserAccountSettingsInDb = async (
   defaultInvoiceSeries = 'SF',
   defaultPaymentTermsDays: UserBody['defaultPaymentTermsDays'] = 30
 ): Promise<UserUpdateResult | undefined> => {
-  const updateData: Partial<typeof usersTable.$inferInsert> = {
-    language,
+  const updateData: Partial<typeof businessProfilesTable.$inferInsert> = {
     currency: DEFAULT_CURRENCY,
     isVatPayer,
     defaultInvoiceVatMode: isVatPayer ? defaultInvoiceVatMode : 'no_vat',
     defaultInvoiceSeries,
-    defaultPaymentTermsDays
+    defaultPaymentTermsDays,
+    updatedAt: new Date().toISOString()
   };
 
   if (preferredInvoiceLanguage) {
     updateData.preferredInvoiceLanguage = preferredInvoiceLanguage;
   }
 
-  const users = await db
-    .update(usersTable)
-    .set(updateData)
-    .where(eq(usersTable.id, userId))
-    .returning({
-      id: usersTable.id,
-      name: usersTable.name,
-      type: usersTable.type,
-      businessType: usersTable.businessType,
-      businessNumber: usersTable.businessNumber,
-      vatNumber: usersTable.vatNumber,
-      address: usersTable.address,
-      email: usersTable.email,
-      emailVerifiedAt: usersTable.emailVerifiedAt,
-      signature: usersTable.signature,
-      profilePictureUrl: usersTable.profilePictureUrl,
-      language: usersTable.language,
-      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage,
-      isVatPayer: usersTable.isVatPayer,
-      defaultInvoiceVatMode: usersTable.defaultInvoiceVatMode,
-      defaultInvoiceSeries: usersTable.defaultInvoiceSeries,
-      defaultPaymentTermsDays: usersTable.defaultPaymentTermsDays,
-      currency: usersTable.currency,
-      analyticsConsentStatus: usersTable.analyticsConsentStatus,
-      analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
-    });
+  await db.transaction(async (tx) => {
+    await tx.update(usersTable).set({ language }).where(eq(usersTable.id, userId));
+    await tx
+      .update(businessProfilesTable)
+      .set(updateData)
+      .where(eq(businessProfilesTable.userId, userId));
+  });
 
-  return users.at(0);
+  return getUserFromDb(userId);
 };
 
 export const deleteUserFromDb = async (

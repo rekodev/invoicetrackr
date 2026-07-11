@@ -1,12 +1,9 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { BankAccountBody } from '@invoicetrackr/types';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
-import {
-  AlreadyExistsError,
-  BadRequestError,
-  NotFoundError
-} from '../utils/error';
+import { analyticsEvents } from '../analytics/events';
+import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import {
   deleteBankAccountFromDb,
   findBankAccountByAccountNumber,
@@ -19,8 +16,12 @@ import {
   getUserFromDb,
   updateUserSelectedBankAccountInDb
 } from '../database/user';
-import { analyticsEvents } from '../analytics/events';
-import { captureAnalyticsEventForUser } from '../analytics/posthog';
+import { recordRequestAudit } from '../utils/audit';
+import {
+  AlreadyExistsError,
+  BadRequestError,
+  NotFoundError
+} from '../utils/error';
 
 export const getBankAccounts = async (
   req: FastifyRequest<{ Params: { userId: string } }>,
@@ -77,6 +78,8 @@ export const postBankAccount = async (
   if (!insertedBankAccount)
     throw new BadRequestError(i18n.t('error.bankAccount.unableToCreate'));
 
+  await recordRequestAudit({ req, userId, action: 'bank_account.created', entityType: 'bank_account', entityId: insertedBankAccount.id, newValue: insertedBankAccount });
+
   await captureAnalyticsEventForUser({
     userId,
     event: analyticsEvents.bankAccountAdded,
@@ -119,6 +122,8 @@ export const updateBankAccount = async (
   if (!bankAccount)
     throw new BadRequestError(i18n.t('error.bankAccount.unableToUpdate'));
 
+  await recordRequestAudit({ req, userId, action: 'bank_account.updated', entityType: 'bank_account', entityId: id, newValue: bankAccount });
+
   reply.status(200).send({
     bankAccount,
     message: i18n.t('success.bankAccount.updated')
@@ -141,6 +146,8 @@ export const deleteBankAccount = async (
 
   if (!bankAccount)
     throw new BadRequestError(i18n.t('error.bankAccount.unableToDelete'));
+
+  await recordRequestAudit({ req, userId, action: 'bank_account.deleted', entityType: 'bank_account', entityId: id });
 
   return reply.send({ message: i18n.t('success.bankAccount.deleted') });
 };

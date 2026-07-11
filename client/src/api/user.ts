@@ -16,8 +16,9 @@ import {
   VerifyEmailTokenResponse
 } from '@invoicetrackr/types';
 
-import api from './api-instance';
 import { buildFormData } from '@/lib/utils/multipart';
+
+import api from './api-instance';
 
 export const registerUser = async ({
   email,
@@ -67,6 +68,8 @@ export const updateUser = async (
   userData: Pick<
     User,
     | 'email'
+    | 'invoiceEmail'
+    | 'phone'
     | 'name'
     | 'businessType'
     | 'businessNumber'

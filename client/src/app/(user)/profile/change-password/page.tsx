@@ -1,5 +1,5 @@
-import ChangePasswordForm from '@/components/profile/change-password-form';
 import { auth } from '@/auth';
+import ChangePasswordForm from '@/components/profile/change-password-form';
 
 const ChangePasswordPage = async () => {
   const session = await auth();

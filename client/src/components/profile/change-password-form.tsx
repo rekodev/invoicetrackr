@@ -8,8 +8,8 @@ import {
   Separator,
   toast
 } from '@heroui/react';
-import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { changeUserPasswordAction } from '@/lib/actions/user';
 

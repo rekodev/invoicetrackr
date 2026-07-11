@@ -1,4 +1,4 @@
-import { Spinner, cn } from '@heroui/react';
+import { cn,Spinner } from '@heroui/react';
 
 type Props = {
   fullHeight?: boolean;

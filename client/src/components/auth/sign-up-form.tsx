@@ -1,5 +1,10 @@
 'use client';
 
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon
+} from '@heroicons/react/24/outline';
 import {
   Button,
   Card,
@@ -11,21 +16,16 @@ import {
   Link,
   TextField
 } from '@heroui/react';
-import type { ChangeEvent, ReactNode } from 'react';
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon
-} from '@heroicons/react/24/outline';
-import { type SubmitHandler, useForm } from 'react-hook-form';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import type { ChangeEvent, ReactNode } from 'react';
+import { useState } from 'react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 
-import { signInWithGoogleAction, signUpAction } from '@/lib/actions';
 import AuthCardHeader from '@/components/auth/auth-card-header';
-import { LOGIN_PAGE } from '@/lib/constants/pages';
-import { analyticsEvents } from '@/lib/analytics/events';
+import { signInWithGoogleAction, signUpAction } from '@/lib/actions';
 import { captureAnalyticsEvent } from '@/lib/analytics/client';
+import { analyticsEvents } from '@/lib/analytics/events';
+import { LOGIN_PAGE } from '@/lib/constants/pages';
 
 type SignUpFormModel = {
   email: string;

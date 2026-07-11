@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
+import { getUserResetPasswordToken } from '@/api/user';
 import CreateNewPasswordForm from '@/components/auth/create-new-password-form';
 import InvalidTokenCard from '@/components/auth/invalid-token-card';
 import { getNoIndexMetadata } from '@/lib/seo/metadata';
-import { getUserResetPasswordToken } from '@/api/user';
 import { isResponseError } from '@/lib/utils/error';
 
 export async function generateMetadata(): Promise<Metadata> {

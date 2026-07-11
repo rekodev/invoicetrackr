@@ -1,20 +1,20 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as clientDb from '../../database/client';
-import * as invoiceController from '../invoice';
 import * as invoiceDb from '../../database/invoice';
 import * as userDb from '../../database/user';
+import en from '../../locales/en';
+import lt from '../../locales/lt';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
+import { clientFactory } from '../../test/factories/client';
 import {
   invoiceFactory,
   invoiceFromDbFactory
 } from '../../test/factories/invoice';
-import { mockResendSend, mockUseI18n } from '../../test/setup';
-import { clientFactory } from '../../test/factories/client';
-import en from '../../locales/en';
-import lt from '../../locales/lt';
 import { userFactory } from '../../test/factories/user';
+import { mockResendSend, mockUseI18n } from '../../test/setup';
+import * as invoiceController from '../invoice';
 
 vi.mock('../../database/invoice');
 vi.mock('../../database/client');
@@ -528,6 +528,7 @@ describe('Invoice Controller', () => {
         userFactory.build({
           id: testUserId,
           email: 'sender@example.com',
+          invoiceEmail: 'billing@example.com',
           currency: DEFAULT_CURRENCY
         })
       );
@@ -577,7 +578,7 @@ describe('Invoice Controller', () => {
       expect(mockResendSend).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'receiver@example.com',
-          replyTo: 'sender@example.com',
+          replyTo: 'billing@example.com',
           subject: 'Invoice INV001'
         })
       );

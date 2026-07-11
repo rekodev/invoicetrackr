@@ -1,6 +1,7 @@
 import { Card, Chip } from '@heroui/react';
-import PreviewToolbar from './preview-toolbar';
 import { useTranslations } from 'next-intl';
+
+import PreviewToolbar from './preview-toolbar';
 
 export default function ClientsPagePreview() {
   const t = useTranslations('home.product.clients_preview');

@@ -5,10 +5,9 @@ import {
   PlusCircleIcon
 } from '@heroicons/react/24/outline';
 import { Button, Card, CardContent, Modal } from '@heroui/react';
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-
 import { BankAccountBody } from '@invoicetrackr/types';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 import BankAccountForm from '../profile/bank-account-form';
 

@@ -1,6 +1,6 @@
-import InvoiceTable from '@/components/invoice/invoice-table';
-import { auth } from '@/auth';
 import { getInvoices } from '@/api/invoice';
+import { auth } from '@/auth';
+import InvoiceTable from '@/components/invoice/invoice-table';
 import { isResponseError } from '@/lib/utils/error';
 
 export default async function InvoicesPageContent() {

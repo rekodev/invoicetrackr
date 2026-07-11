@@ -1,8 +1,8 @@
+import { BankAccountBody } from '@invoicetrackr/types';
 import { and, eq } from 'drizzle-orm';
 
-import { BankAccountBody } from '@invoicetrackr/types';
-import { bankingInformationTable } from './schema';
 import { db } from './db';
+import { bankingInformationTable } from './schema';
 
 export const findBankAccountByAccountNumber = async (
   userId: number,
@@ -86,7 +86,7 @@ export const updateBankAccountInDb = async (
 ) => {
   const bankAccounts = await db
     .update(bankingInformationTable)
-    .set({ name, code, accountNumber })
+    .set({ name, code, accountNumber, updatedAt: new Date().toISOString() })
     .where(
       and(
         eq(bankingInformationTable.id, bankAccountId),

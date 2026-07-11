@@ -1,5 +1,11 @@
 'use server';
 
+import {
+  type AccountSettingsBody,
+  DEFAULT_CURRENCY,
+  User,
+  VerifyEmailResponse
+} from '@invoicetrackr/types';
 import { revalidatePath } from 'next/cache';
 
 import {
@@ -11,22 +17,15 @@ import {
   verifyEmailToken
 } from '@/api/user';
 
+import { updateSessionAction } from '../actions';
 import {
   ACCOUNT_SETTINGS_PAGE,
   CHANGE_PASSWORD_PAGE,
-  PERSONAL_INFORMATION_PAGE,
-  PROFILE_PAGE
+  PERSONAL_INFORMATION_PAGE
 } from '../constants/pages';
-import {
-  type AccountSettingsBody,
-  DEFAULT_CURRENCY,
-  User,
-  VerifyEmailResponse
-} from '@invoicetrackr/types';
 import { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
-import { updateSessionAction } from '../actions';
 
 type VerifyEmailTokenActionResponse =
   | {
@@ -70,7 +69,6 @@ export async function updateUserAction({
 
   revalidatePath(PERSONAL_INFORMATION_PAGE);
   revalidatePath(ACCOUNT_SETTINGS_PAGE);
-  revalidatePath(PROFILE_PAGE, 'layout');
   return { ok: true, message: response.data.message };
 }
 
@@ -145,7 +143,7 @@ export async function updateUserProfilePictureAction({
     };
   }
 
-  revalidatePath('/profile', 'layout');
+  revalidatePath(PERSONAL_INFORMATION_PAGE);
   return { ok: true, message: response.data.message };
 }
 

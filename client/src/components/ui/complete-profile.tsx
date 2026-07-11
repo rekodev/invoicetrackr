@@ -1,13 +1,12 @@
+import { UserIcon } from '@heroicons/react/24/outline';
 import {
+  buttonVariants,
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-  Link,
-  buttonVariants
-} from '@heroui/react';
+  Link} from '@heroui/react';
 import NextLink from 'next/link';
-import { UserIcon } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
 
 import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';

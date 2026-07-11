@@ -1,32 +1,37 @@
 'use client';
 
 import {
+  CameraIcon,
+  CheckCircleIcon,
+  DocumentIcon,
+  ExclamationCircleIcon,
+  InformationCircleIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline';
+import {
   Alert,
+  Avatar,
   Button,
   Card,
   Checkbox,
+  cn,
   FieldError,
   Input,
   Label,
   Separator,
   TextField,
-  cn,
-  toast
-} from '@heroui/react';
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon
-} from '@heroicons/react/24/outline';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+  toast,
+  Tooltip} from '@heroui/react';
+import type { User } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 
 import {
   resendVerificationEmailAction,
-  updateUserAction
+  updateUserAction,
+  updateUserProfilePictureAction
 } from '@/lib/actions/user';
-import { User } from '@invoicetrackr/types';
 
 import AuthCardHeader from '../auth/auth-card-header';
 import SignaturePad from '../signature-pad';
@@ -38,6 +43,12 @@ type Props = {
   headerContent?: ReactNode;
   hideEmailVerificationBanner?: boolean;
   onSuccess?: () => void | Promise<void>;
+};
+
+const formatFileSize = (bytes: number) => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
 const PersonalInformationForm = ({
@@ -65,6 +76,10 @@ const PersonalInformationForm = ({
   const [formSignature, setFormSignature] = useState<
     File | string | undefined
   >();
+  const [profilePictureFile, setProfilePictureFile] = useState<File>();
+  const [profilePicturePreviewUrl, setProfilePicturePreviewUrl] =
+    useState<string>();
+  const profilePictureInputRef = useRef<HTMLInputElement>(null);
   const [isResendingVerificationEmail, setIsResendingVerificationEmail] =
     useState(false);
   const isOnboardingCard = Boolean(cardHeaderTitle && cardHeaderDescription);
@@ -76,13 +91,20 @@ const PersonalInformationForm = ({
         defaultValues?.language || 'en'
       )
     : null;
-
   const isVatPayer = watch('isVatPayer');
   const vatNumber = watch('vatNumber');
 
   useEffect(() => {
     if (defaultValues) reset(defaultValues);
   }, [defaultValues, reset]);
+
+  useEffect(
+    () => () => {
+      if (profilePicturePreviewUrl)
+        URL.revokeObjectURL(profilePicturePreviewUrl);
+    },
+    [profilePicturePreviewUrl]
+  );
 
   const onSubmit: SubmitHandler<User> = async (data) => {
     if (!defaultValues?.id) return;
@@ -96,9 +118,9 @@ const PersonalInformationForm = ({
       signature: formSignature || defaultValues.signature
     });
 
-    toast(response.message, { variant: response.ok ? 'success' : 'danger' });
-
     if (!response?.ok) {
+      toast(response.message, { variant: 'danger' });
+
       if (response.validationErrors) {
         Object.entries(response.validationErrors).forEach(([key, message]) => {
           setError(key as keyof User, {
@@ -109,6 +131,26 @@ const PersonalInformationForm = ({
 
       return;
     }
+
+    if (profilePictureFile) {
+      const formData = new FormData();
+      formData.append('profilePicture', profilePictureFile);
+      const pictureResponse = await updateUserProfilePictureAction({
+        userId: Number(defaultValues.id),
+        formData
+      });
+
+      if (!pictureResponse.ok) {
+        toast(pictureResponse.message, { variant: 'danger' });
+        return;
+      }
+
+      setProfilePictureFile(undefined);
+      if (profilePictureInputRef.current)
+        profilePictureInputRef.current.value = '';
+    }
+
+    toast(response.message, { variant: 'success' });
 
     reset(profileData);
     await onSuccess?.();
@@ -189,11 +231,15 @@ const PersonalInformationForm = ({
       </Alert.Indicator>
 
       <Alert.Content>
-        <Alert.Title>{t('email_verification.title')}</Alert.Title>
+        <Alert.Title>
+          {isEmailVerified
+            ? t('email_verification.confirmed')
+            : t('email_verification.title')}
+        </Alert.Title>
 
         <Alert.Description>
           {isEmailVerified
-            ? t('email_verification.verified_description')
+            ? t('email_verification.confirmed_description')
             : t('email_verification.unverified_description')}
         </Alert.Description>
       </Alert.Content>
@@ -216,6 +262,90 @@ const PersonalInformationForm = ({
     </Alert>
   );
 
+  const renderProfilePictureInput = () => (
+    <Card className="flex min-h-[88px] flex-col gap-4 border p-4 sm:flex-row sm:items-center sm:justify-between md:col-span-2">
+      <div className="flex min-w-0 items-center gap-3">
+        <Avatar size="lg">
+          <Avatar.Image
+            src={profilePicturePreviewUrl || defaultValues?.profilePictureUrl}
+            alt={defaultValues?.name || defaultValues?.email || 'User'}
+          />
+          <Avatar.Fallback>
+            {(defaultValues?.name || defaultValues?.email || 'U')
+              .slice(0, 2)
+              .toUpperCase()}
+          </Avatar.Fallback>
+        </Avatar>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold">
+            {defaultValues?.name || 'User'}
+          </p>
+          <p className="text-muted truncate text-sm">{defaultValues?.email}</p>
+        </div>
+      </div>
+      {profilePictureFile ? (
+        <Card
+          variant="secondary"
+          className="flex w-full flex-row items-center gap-3 border p-2 pl-4 sm:w-auto sm:min-w-64"
+        >
+          <DocumentIcon
+            className="text-muted size-5 shrink-0"
+            aria-hidden="true"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium">
+              {profilePictureFile.name}
+            </p>
+            <p className="text-muted text-xs">
+              {t('profile_picture_ready', {
+                size: formatFileSize(profilePictureFile.size)
+              })}
+            </p>
+          </div>
+          <Button
+            type="button"
+            isIconOnly
+            size="sm"
+            variant="ghost"
+            aria-label={t('a11y.dismiss_profile_picture')}
+            onPress={() => {
+              setProfilePictureFile(undefined);
+              setProfilePicturePreviewUrl(undefined);
+              if (profilePictureInputRef.current)
+                profilePictureInputRef.current.value = '';
+            }}
+          >
+            <XMarkIcon className="size-4" aria-hidden="true" />
+          </Button>
+        </Card>
+      ) : (
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full sm:w-auto"
+          onPress={() => profilePictureInputRef.current?.click()}
+        >
+          <CameraIcon className="size-4" aria-hidden="true" />
+          {t('upload_profile_picture')}
+        </Button>
+      )}
+      <input
+        ref={profilePictureInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        aria-label={t('a11y.profile_picture_input')}
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          setProfilePictureFile(file);
+          setProfilePicturePreviewUrl(
+            file ? URL.createObjectURL(file) : undefined
+          );
+        }}
+      />
+    </Card>
+  );
+
   const renderCardBodyAndFooter = () => {
     return (
       <>
@@ -226,11 +356,18 @@ const PersonalInformationForm = ({
           )}
         >
           {!hideEmailVerificationBanner && renderEmailVerificationBanner()}
+          {renderProfilePictureInput()}
           {renderTextField({
             name: 'email',
             label: t('email'),
             placeholder: t('email_placeholder'),
             isDisabled: true
+          })}
+
+          {renderTextField({
+            name: 'invoiceEmail',
+            label: t('invoice_email'),
+            placeholder: t('email_placeholder')
           })}
 
           {renderTextField({
@@ -245,12 +382,34 @@ const PersonalInformationForm = ({
             placeholder: t('business_number_placeholder')
           })}
 
+          {renderTextField({
+            name: 'phone',
+            label: t('phone'),
+            placeholder: t('phone_placeholder')
+          })}
+
           <Controller
             control={control}
             name="isVatPayer"
             render={({ field }) => (
               <div className="flex flex-col gap-1">
-                <Label>{t('is_vat_payer')}</Label>
+                <div className="flex items-center gap-1.5">
+                  <Label>{t('is_vat_payer')}</Label>
+                  <Tooltip delay={0}>
+                    <Tooltip.Trigger>
+                      <button
+                        type="button"
+                        aria-label={t('is_vat_payer_description')}
+                        className="text-muted hover:text-foreground focus-visible:ring-accent rounded-full outline-none focus-visible:ring-2"
+                      >
+                        <InformationCircleIcon className="size-4" />
+                      </button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      {t('is_vat_payer_description')}
+                    </Tooltip.Content>
+                  </Tooltip>
+                </div>
                 <Checkbox
                   variant="secondary"
                   isSelected={Boolean(field.value)}
@@ -272,9 +431,6 @@ const PersonalInformationForm = ({
                     <Label>{t('is_vat_payer_option')}</Label>
                   </Checkbox.Content>
                 </Checkbox>
-                <p className="text-muted pl-7 text-xs">
-                  {t('is_vat_payer_description')}
-                </p>
               </div>
             )}
           />
@@ -325,7 +481,10 @@ const PersonalInformationForm = ({
 
         <Card.Footer className="flex w-full flex-col px-6 py-4">
           <Button
-            isDisabled={isSubmitting || (!isDirty && !Boolean(formSignature))}
+            isDisabled={
+              isSubmitting ||
+              (!isDirty && !Boolean(formSignature) && !profilePictureFile)
+            }
             type="submit"
             className={cn(
               isOnboardingCard ? 'w-full' : 'w-full sm:w-auto sm:self-end'
@@ -346,20 +505,18 @@ const PersonalInformationForm = ({
       className="w-full"
     >
       <Card className="w-full border">
-        {isOnboardingCard ? (
-          <AuthCardHeader
-            title={cardHeaderTitle!}
-            description={cardHeaderDescription!}
-          >
-            {headerContent}
-          </AuthCardHeader>
-        ) : (
-          <Card.Header className="flex-col items-start gap-4 px-6 py-4">
-            <Card.Title className="text-2xl">{t('title')}</Card.Title>
-            {headerContent}
-          </Card.Header>
+        {isOnboardingCard && (
+          <>
+            <AuthCardHeader
+              title={cardHeaderTitle!}
+              description={cardHeaderDescription!}
+            >
+              {headerContent}
+            </AuthCardHeader>
+
+            <Separator />
+          </>
         )}
-        <Separator />
         {renderCardBodyAndFooter()}
       </Card>
     </form>

@@ -1,39 +1,39 @@
 'use client';
 
 import {
-  Button,
-  Card,
-  CardContent,
-  CardFooter,
-  Label,
-  Radio,
-  RadioGroup,
-  Separator,
-  cn,
-  toast,
-  useOverlayState
-} from '@heroui/react';
-import {
   LockClosedIcon,
   PencilSquareIcon,
   PlusIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
-import { useEffect, useState, useTransition } from 'react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
-import { User } from 'next-auth';
-import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-
-import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardFooter,
+  cn,
+  Label,
+  Radio,
+  RadioGroup,
+  Separator,
+  toast,
+  useOverlayState
+} from '@heroui/react';
 import { BankAccount } from '@invoicetrackr/types';
-import { isResponseError } from '@/lib/utils/error';
-import { updateSessionAction } from '@/lib/actions';
-import { updateUserSelectedBankAccount } from '@/api/user';
+import { useRouter } from 'next/navigation';
+import { User } from 'next-auth';
+import { useTranslations } from 'next-intl';
+import { useEffect, useState, useTransition } from 'react';
 
+import { updateUserSelectedBankAccount } from '@/api/user';
+import { updateSessionAction } from '@/lib/actions';
+import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
+import { isResponseError } from '@/lib/utils/error';
+
+import EmptyState from '../ui/empty-state';
 import DeleteBankAccountDialog from './delete-bank-account-dialog';
 import EditBankingInformationDialog from './edit-banking-information-dialog';
-import EmptyState from '../ui/empty-state';
 
 type Props = {
   user: User;

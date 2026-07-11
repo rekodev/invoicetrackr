@@ -1,9 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
-
 import { Chip } from '@heroui/react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useState } from 'react';
 
 const DUE_DATE_PRESELECTIONS = [
   { label: 'seven_days', value: '7' },

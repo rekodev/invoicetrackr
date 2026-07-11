@@ -1,6 +1,6 @@
-import { dirname, join, resolve } from 'path';
 import { config } from 'dotenv';
 import { existsSync } from 'fs';
+import { dirname, join, resolve } from 'path';
 
 type LoadEnvOptions = {
   nodeEnv?: string;

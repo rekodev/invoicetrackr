@@ -1,10 +1,10 @@
-import { describe, expect, it, vi } from 'vitest';
 import { ClientBody } from '@invoicetrackr/types';
+import { describe, expect, it, vi } from 'vitest';
 
-import * as clientController from '../client';
 import * as clientDb from '../../database/client';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import { clientFactory } from '../../test/factories/client';
+import * as clientController from '../client';
 
 vi.mock('../../database/client');
 

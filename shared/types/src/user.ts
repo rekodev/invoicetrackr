@@ -25,6 +25,8 @@ const userBodyBaseSchema = z.object({
   vatNumber: z.string().nullish(),
   address: z.string(),
   email: z.email('validation.user.email').optional().or(z.literal('')),
+  invoiceEmail: z.email('validation.user.email').optional().or(z.literal('')),
+  phone: z.string().max(50).nullish(),
   emailVerifiedAt: z.string().nullish(),
   signature: z.string().optional(),
   selectedBankAccountId: z.number().nullish(),
@@ -60,6 +62,8 @@ export const userProfileUpdateBodySchema = userBodyBaseSchema
     vatNumber: true,
     address: true,
     email: true,
+    invoiceEmail: true,
+    phone: true,
     signature: true,
     isVatPayer: true
   })
@@ -68,6 +72,7 @@ export const userProfileUpdateBodySchema = userBodyBaseSchema
     businessNumber: z.string().min(1, 'validation.user.businessNumber'),
     address: z.string().min(1, 'validation.user.address'),
     email: z.email('validation.user.email'),
+    invoiceEmail: z.email('validation.user.email'),
     file: z.any().nullish()
   })
   .superRefine((data, ctx) => {

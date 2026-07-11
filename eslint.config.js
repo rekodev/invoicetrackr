@@ -1,7 +1,11 @@
 import { defineConfig } from 'eslint/config';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 const baseConfig = defineConfig([
   {
+    plugins: {
+      'simple-import-sort': simpleImportSort
+    },
     languageOptions: {
       parserOptions: {
         ecmaVersion: 'latest',
@@ -18,16 +22,8 @@ const baseConfig = defineConfig([
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'prefer-const': 'error',
       'no-var': 'error',
-      'sort-imports': [
-        'error',
-        {
-          allowSeparatedGroups: true,
-          ignoreCase: false,
-          ignoreDeclarationSort: false,
-          ignoreMemberSort: false,
-          memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single']
-        }
-      ]
+      'simple-import-sort/exports': 'error',
+      'simple-import-sort/imports': 'error'
     }
   }
 ]);

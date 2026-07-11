@@ -2,12 +2,12 @@ import { DEFAULT_CURRENCY, ExpenseInput } from '@invoicetrackr/types';
 import { describe, expect, it, vi } from 'vitest';
 
 import * as expenseDb from '../../database/expense';
-import { createTestApp, mockAuthMiddleware } from '../../test/app';
+import { SelectExpense } from '../../database/schema';
 import {
   postExpenseOptions,
   updateExpenseOptions
 } from '../../options/expense';
-import { SelectExpense } from '../../database/schema';
+import { createTestApp, mockAuthMiddleware } from '../../test/app';
 
 vi.mock('../../database/expense');
 

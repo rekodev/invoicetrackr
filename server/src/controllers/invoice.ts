@@ -1,27 +1,26 @@
-import {
-  DEFAULT_CURRENCY,
-  type IncomeJournalQuery,
-  type InvoiceBody,
-  type PublicInvoice,
-  invoiceBodySchema
-} from '@invoicetrackr/types';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { MultipartFile } from '@fastify/multipart';
 import {
   InvoiceEmail,
   InvoiceSignedNotificationEmail
 } from '@invoicetrackr/emails';
-import { MultipartFile } from '@fastify/multipart';
+import {
+  DEFAULT_CURRENCY,
+  type IncomeJournalQuery,
+  type InvoiceBody,
+  invoiceBodySchema,
+  type PublicInvoice} from '@invoicetrackr/types';
 import { v2 as cloudinary } from 'cloudinary';
 import { randomBytes } from 'crypto';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
+import { analyticsEvents } from '../analytics/events';
+import { captureAnalyticsEventForUser } from '../analytics/posthog';
+import { appEmailFrom, getAppUrl } from '../config/app';
+import { resend } from '../config/resend';
+import { getClientsFromDb } from '../database/client';
+import { recordEmailDeliveryInDb } from '../database/email-delivery';
 import {
-  AlreadyExistsError,
-  BadRequestError,
-  NotFoundError
-} from '../utils/error';
-import {
-  type InvoiceFromDb,
   deleteInvoiceFromDb,
   findInvoiceByInvoiceId,
   getIncomeJournalRowsFromDb,
@@ -34,6 +33,7 @@ import {
   getPublicInvoiceFromDb,
   getPublicInvoiceSigningFromDb,
   insertInvoiceInDb,
+  type InvoiceFromDb,
   markPublicInvoiceSentInDb,
   prepareInvoiceSigningFromDb,
   preparePublicInvoiceFromDb,
@@ -45,14 +45,15 @@ import {
   updateInvoiceInDb,
   updateInvoiceStatusInDb
 } from '../database/invoice';
-import { appEmailFrom, getAppUrl } from '../config/app';
-import { analyticsEvents } from '../analytics/events';
-import { captureAnalyticsEventForUser } from '../analytics/posthog';
-import en from '../locales/en';
-import { getClientsFromDb } from '../database/client';
 import { getUserFromDb } from '../database/user';
+import en from '../locales/en';
 import lt from '../locales/lt';
-import { resend } from '../config/resend';
+import { recordRequestAudit } from '../utils/audit';
+import {
+  AlreadyExistsError,
+  BadRequestError,
+  NotFoundError
+} from '../utils/error';
 
 const locales = { en, lt };
 
@@ -303,6 +304,8 @@ export const getIncomeJournal = async (
       .join(',')
   );
 
+  await recordRequestAudit({ req, userId, action: 'report.income_journal_exported', entityType: 'report', entityId: `${from}:${to}`, newValue: { from, to, rowCount: rows.length } });
+
   reply
     .header('Content-Type', 'text/csv; charset=utf-8')
     .header(
@@ -385,6 +388,8 @@ export const postInvoice = async (
   if (!insertedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToCreate'));
 
+  await recordRequestAudit({ req, userId, action: 'invoice.created', entityType: 'invoice', entityId: insertedInvoice.id, newValue: insertedInvoice });
+
   await captureAnalyticsEventForUser({
     userId,
     event: analyticsEvents.invoiceCreated,
@@ -456,6 +461,8 @@ export const updateInvoice = async (
   if (!updatedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToUpdate'));
 
+  await recordRequestAudit({ req, userId, action: 'invoice.updated', entityType: 'invoice', entityId: id, previousValue: foundInvoice, newValue: updatedInvoice });
+
   reply.status(200).send({
     invoice: updatedInvoice,
     message: i18n.t('success.invoice.updated')
@@ -484,6 +491,8 @@ export async function updateInvoiceStatus(
   if (!updatedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToUpdateStatus'));
 
+  await recordRequestAudit({ req, userId, action: `invoice.status_${status}`, entityType: 'invoice', entityId: id, previousValue: { status: foundInvoice.status }, newValue: { status } });
+
   reply.status(200).send({ message: i18n.t('success.invoice.statusUpdated') });
 }
 
@@ -504,6 +513,8 @@ export const deleteInvoice = async (
 
   if (!deletedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToDelete'));
+
+  await recordRequestAudit({ req, userId, action: 'invoice.deleted', entityType: 'invoice', entityId: id, previousValue: invoice });
 
   reply.status(200).send({ message: i18n.t('success.invoice.deleted') });
 };
@@ -722,10 +733,10 @@ export const sendInvoiceEmail = async (
     isSigningAvailable: requestSignature && !invoice.recipientSignedAt
   });
 
-  const { error } = await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     to: recipientEmail,
     from: appEmailFrom,
-    replyTo: user.email,
+    replyTo: user.invoiceEmail || user.email,
     subject,
     react: htmlContent,
     attachments:
@@ -741,6 +752,8 @@ export const sendInvoiceEmail = async (
 
   if (error)
     throw new BadRequestError(i18n.t('error.invoice.unableToSendEmail'));
+
+  await recordEmailDeliveryInDb({ userId, invoiceId: id, providerMessageId: data?.id, kind: 'invoice', recipient: recipientEmail });
 
   await markPublicInvoiceSentInDb({ userId, id, requestSignature });
 
@@ -761,6 +774,8 @@ export const sendInvoiceEmail = async (
       has_attachment: Boolean(attachment)
     }
   });
+
+  await recordRequestAudit({ req, userId, action: 'invoice.email_sent', entityType: 'invoice', entityId: id, newValue: { recipientEmail, includePublicLink, requestSignature, hasAttachment: Boolean(attachment) } });
 
   reply.status(200).send({ message: i18n.t('success.invoice.emailSent') });
 };

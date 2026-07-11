@@ -1,8 +1,8 @@
 import { Card } from '@heroui/react';
 import { getTranslations } from 'next-intl/server';
 
-import { auth } from '@/auth';
 import { getInvoicesRevenue } from '@/api/invoice';
+import { auth } from '@/auth';
 import { isResponseError } from '@/lib/utils/error';
 
 import InvoiceDataBarChart from './invoice-data-bar-chart';

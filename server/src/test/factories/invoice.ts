@@ -5,6 +5,7 @@ import {
   InvoiceServiceBody
 } from '@invoicetrackr/types';
 import { Factory } from 'fishery';
+
 import { InvoiceFromDb } from '../../database/invoice';
 import { bankingInformationFactory } from './banking-information';
 

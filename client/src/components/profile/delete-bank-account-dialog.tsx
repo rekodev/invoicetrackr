@@ -4,8 +4,8 @@ import {
   toast
 } from '@heroui/react';
 import { BankAccount } from '@invoicetrackr/types';
-import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import { useTransition } from 'react';
 
 import { deleteBankingInformationAction } from '@/lib/actions/banking-information';
 

@@ -1,12 +1,12 @@
 'use client';
 
+import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
 import {
+  createContext,
   type Dispatch,
   type SetStateAction,
-  createContext,
   useContext
 } from 'react';
-import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
 
 type AnalyticsConsentContextValue = {
   consentStatus?: AnalyticsConsentStatus | null;

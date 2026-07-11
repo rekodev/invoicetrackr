@@ -1,8 +1,8 @@
 import { ArrowRightIcon, WrenchIcon } from '@heroicons/react/24/outline';
-import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
-import { Card, Chip, Link, buttonVariants } from '@heroui/react';
-
+import { buttonVariants,Card, Chip, Link } from '@heroui/react';
 import { useTranslations } from 'next-intl';
+
+import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
 
 export default function CTA() {
   const t = useTranslations('home.cta');

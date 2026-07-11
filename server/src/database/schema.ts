@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   boolean,
   check,
@@ -15,7 +16,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
 
 export const invoiceServicesTable = pgTable(
   'invoice_services',
@@ -125,7 +125,13 @@ export const invoicesTable = pgTable(
     voidedAt: timestamp('voided_at', {
       withTimezone: true,
       mode: 'string'
-    })
+    }),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
   },
   (table) => [
     foreignKey({
@@ -156,6 +162,7 @@ export const invoicesTable = pgTable(
       sql`(payment_mode)::text = ANY ((ARRAY['manual'::character varying, 'disabled'::character varying])::text[])`
     ),
     unique('invoices_user_invoice_id_key').on(table.userId, table.invoiceId),
+    unique('invoices_id_user_id_key').on(table.id, table.userId),
     unique('invoices_recipient_signing_token_key').on(
       table.recipientSigningToken
     ),
@@ -291,12 +298,6 @@ export const usersTable = pgTable(
   'users',
   {
     id: serial().primaryKey().notNull(),
-    name: varchar({ length: 255 }).notNull(),
-    type: varchar({ length: 50 }).notNull(),
-    businessType: varchar('business_type', { length: 50 }).notNull(),
-    businessNumber: varchar('business_number', { length: 255 }).notNull(),
-    vatNumber: varchar('vat_number', { length: 255 }),
-    address: text().notNull(),
     email: varchar({ length: 255 }).notNull(),
     emailVerifiedAt: timestamp('email_verified_at', {
       withTimezone: true,
@@ -311,15 +312,39 @@ export const usersTable = pgTable(
       mode: 'string'
     }).default(sql`CURRENT_TIMESTAMP`),
     password: varchar({ length: 255 }).notNull(),
-    signature: varchar({ length: 255 }).notNull(),
-    selectedBankAccountId: integer('selected_bank_account_id'),
-    profilePictureUrl: varchar('profile_picture_url', {
-      length: 255
-    }).notNull(),
-    currency: varchar({ length: 255 }).notNull(),
     language: varchar({ length: 255 }).notNull(),
-    preferredInvoiceLanguage: varchar('preferred_invoice_language', {
+    analyticsConsentStatus: varchar('analytics_consent_status', {
+      length: 20
+    }),
+    analyticsConsentUpdatedAt: timestamp('analytics_consent_updated_at', {
+      withTimezone: true,
+      mode: 'string'
+    })
+  },
+  (table) => [unique('users_email_key').on(table.email)]
+);
+
+export const businessProfilesTable = pgTable(
+  'business_profiles',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id').notNull(),
+    legalName: varchar('legal_name', { length: 255 }).default('').notNull(),
+    activityCertificateNumber: varchar('activity_certificate_number', {
       length: 255
+    })
+      .default('')
+      .notNull(),
+    address: text().default('').notNull(),
+    invoiceEmail: varchar('invoice_email', { length: 255 }).default('').notNull(),
+    phone: varchar({ length: 50 }),
+    vatNumber: varchar('vat_number', { length: 255 }),
+    signatureUrl: text('signature_url').default('').notNull(),
+    logoUrl: text('logo_url').default('').notNull(),
+    selectedBankAccountId: integer('selected_bank_account_id'),
+    currency: varchar({ length: 3 }).default('eur').notNull(),
+    preferredInvoiceLanguage: varchar('preferred_invoice_language', {
+      length: 2
     }),
     isVatPayer: boolean('is_vat_payer').default(false).notNull(),
     defaultInvoiceVatMode: varchar('default_invoice_vat_mode', {
@@ -327,9 +352,7 @@ export const usersTable = pgTable(
     })
       .default('no_vat')
       .notNull(),
-    defaultInvoiceSeries: varchar('default_invoice_series', {
-      length: 8
-    })
+    defaultInvoiceSeries: varchar('default_invoice_series', { length: 8 })
       .default('SF')
       .notNull(),
     defaultPaymentTermsDays: integer('default_payment_terms_days')
@@ -339,33 +362,79 @@ export const usersTable = pgTable(
       withTimezone: true,
       mode: 'string'
     }),
-    analyticsConsentStatus: varchar('analytics_consent_status', {
-      length: 20
-    }),
-    analyticsConsentUpdatedAt: timestamp('analytics_consent_updated_at', {
-      withTimezone: true,
-      mode: 'string'
-    })
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
   },
   (table) => [
+    foreignKey({ columns: [table.userId], foreignColumns: [usersTable.id] })
+      .onDelete('cascade'),
     foreignKey({
-      columns: [table.selectedBankAccountId],
-      foreignColumns: [bankingInformationTable.id],
-      name: 'fk_selected_bank_account'
-    }).onDelete('cascade'),
+      columns: [table.selectedBankAccountId, table.userId],
+      foreignColumns: [bankingInformationTable.id, bankingInformationTable.userId]
+    }).onDelete('restrict'),
+    unique('business_profiles_user_id_key').on(table.userId),
+    check('business_profiles_currency_check', sql`${table.currency} = 'eur'`),
     check(
-      'users_default_invoice_vat_mode_check',
+      'business_profiles_vat_mode_check',
       sql`${table.defaultInvoiceVatMode} IN ('no_vat', 'standard_21', 'zero', 'manual')`
     ),
     check(
-      'users_default_payment_terms_days_check',
+      'business_profiles_payment_terms_check',
       sql`${table.defaultPaymentTermsDays} IN (7, 14, 30)`
     ),
     check(
-      'users_default_invoice_series_check',
+      'business_profiles_invoice_series_check',
       sql`${table.defaultInvoiceSeries} ~ '^[A-Z]{2,8}$'`
-    ),
-    unique('users_email_key').on(table.email)
+    )
+  ]
+);
+
+export const taxProfilesTable = pgTable(
+  'tax_profiles',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id').notNull(),
+    taxYear: integer('tax_year').notNull(),
+    expenseMethod: varchar('expense_method', { length: 30 }).notNull(),
+    isVatRegistered: boolean('is_vat_registered').default(false).notNull(),
+    hasEmploymentPsdCoverage: boolean('has_employment_psd_coverage')
+      .default(false)
+      .notNull(),
+    monthlyPsdAmount: numeric('monthly_psd_amount', { precision: 12, scale: 2 })
+      .default('0')
+      .notNull(),
+    additionalPensionRate: numeric('additional_pension_rate', {
+      precision: 5,
+      scale: 2
+    })
+      .default('0')
+      .notNull(),
+    activityStartDate: date('activity_start_date'),
+    activityEndDate: date('activity_end_date'),
+    otherDeclaredIncome: numeric('other_declared_income', {
+      precision: 12,
+      scale: 2
+    })
+      .default('0')
+      .notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({ columns: [table.userId], foreignColumns: [usersTable.id] }).onDelete('cascade'),
+    unique('tax_profiles_user_year_key').on(table.userId, table.taxYear),
+    check('tax_profiles_year_check', sql`${table.taxYear} >= 2020`),
+    check('tax_profiles_expense_method_check', sql`${table.expenseMethod} IN ('actual', 'thirty_percent')`),
+    check('tax_profiles_monthly_psd_check', sql`${table.monthlyPsdAmount} >= 0`),
+    check('tax_profiles_other_income_check', sql`${table.otherDeclaredIncome} >= 0`)
   ]
 );
 
@@ -376,14 +445,21 @@ export const bankingInformationTable = pgTable(
     name: varchar({ length: 255 }),
     code: varchar({ length: 100 }),
     accountNumber: varchar('account_number', { length: 100 }),
-    userId: integer('user_id')
+    userId: integer('user_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
   },
   (table) => [
     foreignKey({
       columns: [table.userId],
       foreignColumns: [usersTable.id],
       name: 'banking_information_user_id_fkey'
-    }).onDelete('cascade')
+    }).onDelete('cascade'),
+    unique('banking_information_id_user_id_key').on(table.id, table.userId)
   ]
 );
 
@@ -503,65 +579,172 @@ export const expenseAttachmentsTable = pgTable(
   ]
 );
 
-export const expenseAttachmentEventsTable = pgTable(
-  'expense_attachment_events',
+export const paymentsTable = pgTable(
+  'payments',
   {
     id: serial().primaryKey().notNull(),
     userId: integer('user_id').notNull(),
-    expenseId: integer('expense_id').notNull(),
-    attachmentId: integer('attachment_id'),
-    action: varchar({ length: 50 }).notNull(),
-    previousValue: jsonb('previous_value'),
-    newValue: jsonb('new_value'),
-    createdAt: timestamp('created_at', {
-      withTimezone: true,
-      mode: 'string'
-    }).default(sql`CURRENT_TIMESTAMP`)
+    paymentDate: date('payment_date').notNull(),
+    amount: numeric({ precision: 12, scale: 2 }).notNull(),
+    currency: varchar({ length: 3 }).default('eur').notNull(),
+    eurAmount: numeric('eur_amount', { precision: 12, scale: 2 }).notNull(),
+    method: varchar({ length: 30 }).default('bank_transfer').notNull(),
+    bankReference: text('bank_reference'),
+    notes: text(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
   },
   (table) => [
-    foreignKey({
-      columns: [table.userId],
-      foreignColumns: [usersTable.id],
-      name: 'fk_expense_attachment_events_user_id'
-    }).onDelete('cascade'),
-    foreignKey({
-      columns: [table.expenseId],
-      foreignColumns: [expensesTable.id],
-      name: 'fk_expense_attachment_events_expense_id'
-    }).onDelete('cascade'),
-    foreignKey({
-      columns: [table.attachmentId],
-      foreignColumns: [expenseAttachmentsTable.id],
-      name: 'fk_expense_attachment_events_attachment_id'
-    }).onDelete('set null')
+    foreignKey({ columns: [table.userId], foreignColumns: [usersTable.id] }).onDelete('cascade'),
+    index('payments_user_date_idx').on(table.userId, table.paymentDate),
+    unique('payments_id_user_id_key').on(table.id, table.userId),
+    check('payments_amount_check', sql`${table.amount} > 0`),
+    check('payments_eur_amount_check', sql`${table.eurAmount} > 0`),
+    check('payments_method_check', sql`${table.method} IN ('bank_transfer', 'cash', 'other')`)
   ]
 );
 
-export const expenseEventsTable = pgTable(
-  'expense_events',
+export const paymentAllocationsTable = pgTable(
+  'payment_allocations',
   {
     id: serial().primaryKey().notNull(),
     userId: integer('user_id').notNull(),
-    expenseId: integer('expense_id').notNull(),
-    action: varchar({ length: 50 }).notNull(),
-    previousValue: jsonb('previous_value'),
-    newValue: jsonb('new_value'),
-    createdAt: timestamp('created_at', {
-      withTimezone: true,
-      mode: 'string'
-    }).default(sql`CURRENT_TIMESTAMP`)
+    paymentId: integer('payment_id').notNull(),
+    invoiceId: integer('invoice_id').notNull(),
+    amount: numeric({ precision: 12, scale: 2 }).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
   },
   (table) => [
-    foreignKey({
-      columns: [table.userId],
-      foreignColumns: [usersTable.id],
-      name: 'fk_expense_events_user_id'
-    }).onDelete('cascade'),
-    foreignKey({
-      columns: [table.expenseId],
-      foreignColumns: [expensesTable.id],
-      name: 'fk_expense_events_expense_id'
-    }).onDelete('cascade')
+    foreignKey({ columns: [table.userId], foreignColumns: [usersTable.id] }).onDelete('cascade'),
+    foreignKey({ columns: [table.paymentId, table.userId], foreignColumns: [paymentsTable.id, paymentsTable.userId] }).onDelete('cascade'),
+    foreignKey({ columns: [table.invoiceId, table.userId], foreignColumns: [invoicesTable.id, invoicesTable.userId] }).onDelete('restrict'),
+    unique('payment_allocations_payment_invoice_key').on(table.paymentId, table.invoiceId),
+    index('payment_allocations_user_invoice_idx').on(table.userId, table.invoiceId),
+    check('payment_allocations_amount_check', sql`${table.amount} > 0`)
+  ]
+);
+
+export const emailDeliveriesTable = pgTable(
+  'email_deliveries',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id').notNull(),
+    invoiceId: integer('invoice_id'),
+    provider: varchar({ length: 50 }).notNull(),
+    providerMessageId: varchar('provider_message_id', { length: 255 }),
+    kind: varchar({ length: 50 }).notNull(),
+    recipient: varchar({ length: 255 }).notNull(),
+    status: varchar({ length: 30 }).default('queued').notNull(),
+    sentAt: timestamp('sent_at', { withTimezone: true, mode: 'string' }),
+    deliveredAt: timestamp('delivered_at', { withTimezone: true, mode: 'string' }),
+    failedAt: timestamp('failed_at', { withTimezone: true, mode: 'string' }),
+    failureCode: varchar('failure_code', { length: 100 }),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({ columns: [table.userId], foreignColumns: [usersTable.id] }).onDelete('cascade'),
+    foreignKey({ columns: [table.invoiceId], foreignColumns: [invoicesTable.id] }).onDelete('set null'),
+    uniqueIndex('email_deliveries_provider_message_key').on(table.provider, table.providerMessageId),
+    index('email_deliveries_user_created_idx').on(table.userId, table.createdAt),
+    check('email_deliveries_status_check', sql`${table.status} IN ('queued', 'sent', 'delivered', 'failed', 'bounced')`)
+  ]
+);
+
+export const taxEstimatesTable = pgTable(
+  'tax_estimates',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id').notNull(),
+    taxProfileId: integer('tax_profile_id').notNull(),
+    taxYear: integer('tax_year').notNull(),
+    ruleVersion: varchar('rule_version', { length: 50 }).notNull(),
+    calculationVersion: integer('calculation_version').notNull(),
+    taxableProfit: numeric('taxable_profit', { precision: 12, scale: 2 }).notNull(),
+    gpmAmount: numeric('gpm_amount', { precision: 12, scale: 2 }).notNull(),
+    vsdAmount: numeric('vsd_amount', { precision: 12, scale: 2 }).notNull(),
+    psdAmount: numeric('psd_amount', { precision: 12, scale: 2 }).notNull(),
+    totalAmount: numeric('total_amount', { precision: 12, scale: 2 }).notNull(),
+    assumptions: jsonb().notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({ columns: [table.userId], foreignColumns: [usersTable.id] }).onDelete('cascade'),
+    foreignKey({ columns: [table.taxProfileId], foreignColumns: [taxProfilesTable.id] }).onDelete('restrict'),
+    unique('tax_estimates_user_year_version_key').on(table.userId, table.taxYear, table.calculationVersion),
+    index('tax_estimates_user_year_idx').on(table.userId, table.taxYear),
+    check('tax_estimates_taxable_profit_check', sql`${table.taxableProfit} >= 0`),
+    check('tax_estimates_gpm_check', sql`${table.gpmAmount} >= 0`),
+    check('tax_estimates_vsd_check', sql`${table.vsdAmount} >= 0`),
+    check('tax_estimates_psd_check', sql`${table.psdAmount} >= 0`),
+    check('tax_estimates_total_check', sql`${table.totalAmount} >= 0`)
+  ]
+);
+
+export const taxPaymentsTable = pgTable(
+  'tax_payments',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id').notNull(),
+    taxYear: integer('tax_year').notNull(),
+    taxType: varchar('tax_type', { length: 20 }).notNull(),
+    paymentDate: date('payment_date').notNull(),
+    amount: numeric({ precision: 12, scale: 2 }).notNull(),
+    notes: text(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({ columns: [table.userId], foreignColumns: [usersTable.id] }).onDelete('cascade'),
+    index('tax_payments_user_year_idx').on(table.userId, table.taxYear),
+    check('tax_payments_type_check', sql`${table.taxType} IN ('gpm', 'vsd', 'psd')`),
+    check('tax_payments_amount_check', sql`${table.amount} > 0`)
+  ]
+);
+
+export const auditEventsTable = pgTable(
+  'audit_events',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id'),
+    actorUserId: integer('actor_user_id'),
+    action: varchar({ length: 100 }).notNull(),
+    entityType: varchar('entity_type', { length: 50 }).notNull(),
+    entityId: varchar('entity_id', { length: 100 }),
+    previousValue: jsonb('previous_value'),
+    newValue: jsonb('new_value'),
+    requestId: varchar('request_id', { length: 100 }),
+    ipAddress: varchar('ip_address', { length: 64 }),
+    userAgent: text('user_agent'),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({ columns: [table.userId], foreignColumns: [usersTable.id] }).onDelete('set null'),
+    foreignKey({ columns: [table.actorUserId], foreignColumns: [usersTable.id] }).onDelete('set null'),
+    index('audit_events_user_created_idx').on(table.userId, table.createdAt),
+    index('audit_events_entity_idx').on(table.entityType, table.entityId)
   ]
 );
 
@@ -626,6 +809,9 @@ export type SelectInvoiceService = typeof invoiceServicesTable.$inferSelect;
 
 export type InsertUser = typeof usersTable.$inferInsert;
 export type SelectUser = typeof usersTable.$inferSelect;
+export type InsertBusinessProfile = typeof businessProfilesTable.$inferInsert;
+export type SelectBusinessProfile = typeof businessProfilesTable.$inferSelect;
+export type InsertAuditEvent = typeof auditEventsTable.$inferInsert;
 
 export type InsertClient = typeof clientsTable.$inferInsert;
 export type SelectClient = typeof clientsTable.$inferSelect;
@@ -637,11 +823,3 @@ export type InsertExpenseAttachment =
   typeof expenseAttachmentsTable.$inferInsert;
 export type SelectExpenseAttachment =
   typeof expenseAttachmentsTable.$inferSelect;
-
-export type InsertExpenseAttachmentEvent =
-  typeof expenseAttachmentEventsTable.$inferInsert;
-export type SelectExpenseAttachmentEvent =
-  typeof expenseAttachmentEventsTable.$inferSelect;
-
-export type InsertExpenseEvent = typeof expenseEventsTable.$inferInsert;
-export type SelectExpenseEvent = typeof expenseEventsTable.$inferSelect;

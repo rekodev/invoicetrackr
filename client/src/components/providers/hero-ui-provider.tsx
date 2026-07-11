@@ -1,8 +1,8 @@
 'use client';
 
 import { RouterProvider, ToastProvider } from '@heroui/react';
-import { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { ReactNode } from 'react';
 
 export function HeroUIProvider({ children }: { children: ReactNode }) {
   const router = useRouter();

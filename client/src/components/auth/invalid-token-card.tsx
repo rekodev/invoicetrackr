@@ -1,17 +1,16 @@
 'use client';
 
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
+  buttonVariants,
   Card,
   CardContent,
   CardFooter,
-  Link,
-  buttonVariants
-} from '@heroui/react';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
+  Link} from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
-import { FORGOT_PASSWORD_PAGE, LOGIN_PAGE } from '@/lib/constants/pages';
 import AuthCardHeader from '@/components/auth/auth-card-header';
+import { FORGOT_PASSWORD_PAGE, LOGIN_PAGE } from '@/lib/constants/pages';
 
 export default function InvalidTokenCard() {
   const t = useTranslations('create_new_password.invalid_token');

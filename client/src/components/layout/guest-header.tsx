@@ -1,17 +1,16 @@
 'use client';
 
+import { Bars3Icon } from '@heroicons/react/24/outline';
 import {
+  buttonVariants,
+  cn,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownPopover,
   DropdownTrigger,
   Link,
-  Separator,
-  buttonVariants,
-  cn
-} from '@heroui/react';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+  Separator} from '@heroui/react';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 

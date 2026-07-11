@@ -1,10 +1,11 @@
-import { ComponentProps, JSX } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { ComponentProps, JSX } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { withIntl } from '@/test/with-intl';
 
 import ClientSectionTopContent from '../client/client-section-top-content';
-import { withIntl } from '@/test/with-intl';
 
 const mockAddClientAction = vi.fn();
 const mockUpdateClientAction = vi.fn();

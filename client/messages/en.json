@@ -13,11 +13,21 @@
             "invoices": "Invoices",
             "expenses": "Expenses",
             "clients": "Clients",
+            "payments": "Payments",
+            "reports": "Reports",
+            "settings": "Settings",
+            "personal_information": "Freelancer profile",
+            "banking_information": "Bank accounts",
+            "account_settings": "Invoice defaults",
+            "change_password": "Password",
             "my_profile": "My Profile",
             "log_out": "Log Out",
             "signed_in_as": "Signed in as",
             "a11y": {
-                "profile_actions_label": "Profile Actions"
+                "profile_actions_label": "Profile Actions",
+                "primary_navigation": "Primary navigation",
+                "open_navigation": "Open navigation",
+                "close_navigation": "Close navigation"
             }
         },
         "guest": {
@@ -42,6 +52,8 @@
         "home": "Home",
         "invoices": "Invoices",
         "expenses": "Expenses",
+        "payments": "Payments",
+        "reports": "Reports",
         "login": "Log In",
         "new": "New",
         "onboarding": "Onboarding",
@@ -51,6 +63,8 @@
         "sign_up": "Sign Up",
         "terms_of_service": "Terms of Service"
     },
+    "payments": { "empty": { "heading": "Payments", "title": "No payments recorded yet", "description": "Bank-transfer payments will appear here once manual payment recording is available." } },
+    "reports": { "empty": { "heading": "Reports", "title": "Reports are being prepared", "description": "Income journals, tax estimates, annual summaries, and accountant exports will live here." } },
     "general_error": "Uh oh! Something went wrong...",
     "cookie_consent": {
         "message": "We use optional analytics cookies to understand product usage and improve InvoiceTrackr. Analytics starts only if you accept, as described in our",
@@ -822,32 +836,21 @@
         }
     },
     "profile": {
-        "user_nav_card": {
-            "a11y": {
-                "actions_label": "Actions",
-                "upload_profile_picture": "Upload profile picture"
-            },
-            "personal_information": {
-                "title": "Personal Information"
-            },
-            "account_settings": {
-                "title": "Account Settings"
-            },
-            "change_password": {
-                "title": "Change Password"
-            },
-            "banking_information": {
-                "title": "Banking Information"
-            }
-        },
         "personal_information": {
             "form": {
                 "a11y": {
-                    "form_label": "Personal Information Form"
+                    "form_label": "Personal Information Form",
+                    "profile_picture_input": "Choose profile picture",
+                    "dismiss_profile_picture": "Remove selected profile picture"
                 },
                 "title": "Personal Information",
+                "upload_profile_picture": "Upload image",
+                "profile_picture_ready": "{size} · Ready to upload",
                 "email": "Email",
+                "invoice_email": "Invoice email",
                 "email_placeholder": "Enter your email address",
+                "phone": "Phone (optional)",
+                "phone_placeholder": "Enter your phone number",
                 "name": "Name",
                 "name_placeholder": "Enter your name",
                 "business_type": "Activity type",
@@ -865,10 +868,9 @@
                 "save_changes": "Save Changes",
                 "email_verification": {
                     "title": "Email verification",
-                    "verified": "Verified",
-                    "unverified": "Not verified",
-                    "verified_description": "Your email is verified and can be used for invoice delivery.",
-                    "unverified_description": "Verify your email before sending invoices to clients.",
+                    "confirmed": "Email confirmed",
+                    "confirmed_description": "Your account email is verified.",
+                    "unverified_description": "Verify your account email to protect account access.",
                     "resend": "Send verification email",
                     "sent_at": "Verified {date}"
                 }

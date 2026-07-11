@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { buttonVariants } from '@heroui/react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { INVOICES_PAGE } from '@/lib/constants/pages';

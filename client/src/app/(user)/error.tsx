@@ -5,8 +5,8 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import { Button } from '@heroui/react';
-import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 
 export default function Error({
   error

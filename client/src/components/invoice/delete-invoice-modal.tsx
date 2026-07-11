@@ -1,7 +1,7 @@
 import { Button, Modal, toast } from '@heroui/react';
 import { InvoiceBody } from '@invoicetrackr/types';
-import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import { useTransition } from 'react';
 
 import { deleteInvoiceAction } from '@/lib/actions/invoice';
 

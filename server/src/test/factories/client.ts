@@ -1,4 +1,5 @@
 import { Factory } from 'fishery';
+
 import { SelectClient } from '../../database/schema';
 
 export const clientFactory = Factory.define<SelectClient>(({ sequence }) => ({

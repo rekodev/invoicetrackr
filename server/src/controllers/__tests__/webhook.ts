@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createTestApp } from '../../test/app';
-import { handleResendWebhook } from '../webhook';
 import { mockResendForward } from '../../test/setup';
+import { handleResendWebhook } from '../webhook';
 
 describe('Webhook Controller', () => {
   describe('POST /api/webhook/resend', () => {

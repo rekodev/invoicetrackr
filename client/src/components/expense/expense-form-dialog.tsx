@@ -13,21 +13,21 @@ import {
   TextField,
   toast
 } from '@heroui/react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import type { ExpenseBody, ExpenseInput } from '@invoicetrackr/types';
-import { type HTMLAttributes, useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { type HTMLAttributes, useEffect, useMemo, useState } from 'react';
+import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
 
-import {
-  EXPENSE_CATEGORIES,
-  EXPENSE_PAYMENT_METHODS
-} from '@/lib/constants/expense';
+import FileDropzone from '@/components/ui/file-dropzone';
 import {
   addExpenseAction,
   updateExpenseAction,
   uploadExpenseAttachmentAction
 } from '@/lib/actions/expense';
-import FileDropzone from '@/components/ui/file-dropzone';
+import {
+  EXPENSE_CATEGORIES,
+  EXPENSE_PAYMENT_METHODS
+} from '@/lib/constants/expense';
 
 type Props = {
   userId: number;
@@ -99,14 +99,20 @@ const ExpenseFormDialog = ({
     handleSubmit,
     formState: { isSubmitting, errors },
     setError,
-    reset,
-    watch
+    reset
   } = useForm<ExpenseFormData>({
     defaultValues: getInitialExpenseData(expenseData)
   });
 
-  const totalAmount = watch('totalAmount');
-  const businessUsePercentage = watch('businessUsePercentage');
+  const totalAmount = useWatch({ control, name: 'totalAmount' });
+  const businessUsePercentage = useWatch({
+    control,
+    name: 'businessUsePercentage'
+  });
+  const handleClose = () => {
+    setSelectedFile(null);
+    onClose();
+  };
   const deductiblePreview = useMemo(() => {
     const total = Number(totalAmount || 0);
     const percentage = Number(businessUsePercentage || 0);
@@ -121,7 +127,6 @@ const ExpenseFormDialog = ({
     if (isEditMode && !expenseData) return;
 
     reset(getInitialExpenseData(expenseData));
-    setSelectedFile(null);
   }, [expenseData, isEditMode, isOpen, reset]);
 
   const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
@@ -165,7 +170,7 @@ const ExpenseFormDialog = ({
     }
 
     toast(response.message || '', { variant: 'success' });
-    onClose();
+    handleClose();
   };
 
   const renderTextField = ({
@@ -212,7 +217,7 @@ const ExpenseFormDialog = ({
     <Modal>
       <Modal.Backdrop
         isOpen={isOpen}
-        onOpenChange={(open) => !open && onClose()}
+        onOpenChange={(open) => !open && handleClose()}
       >
         <Modal.Container scroll="outside" size="lg">
           <Modal.Dialog>
@@ -393,7 +398,7 @@ const ExpenseFormDialog = ({
                 <Button
                   variant="ghost"
                   className="w-full sm:w-auto"
-                  onPress={onClose}
+                  onPress={handleClose}
                 >
                   {t('cancel')}
                 </Button>

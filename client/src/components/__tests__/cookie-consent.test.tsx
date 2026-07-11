@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { JSX } from 'react';
 import userEvent from '@testing-library/user-event';
+import { JSX } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { withIntl } from '@/test/with-intl';
 

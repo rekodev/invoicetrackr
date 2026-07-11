@@ -2,8 +2,8 @@
 
 import { Button, Modal, toast } from '@heroui/react';
 import type { ExpenseBody } from '@invoicetrackr/types';
-import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import { useTransition } from 'react';
 
 import { deleteExpenseAction } from '@/lib/actions/expense';
 import { formatLocalizedDate } from '@/lib/utils/date';

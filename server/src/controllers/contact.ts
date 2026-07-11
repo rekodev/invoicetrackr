@@ -1,10 +1,10 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { ContactMessageEmail } from '@invoicetrackr/emails';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
-import { BadRequestError } from '../utils/error';
 import { appEmailFrom } from '../config/app';
 import { resend } from '../config/resend';
+import { BadRequestError } from '../utils/error';
 
 export const postContactMessage = async (
   req: FastifyRequest<{

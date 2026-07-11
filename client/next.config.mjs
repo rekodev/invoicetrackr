@@ -1,7 +1,6 @@
-import createNextIntlPlugin from 'next-intl/plugin';
-
-import { dirname, join } from 'path';
 import { existsSync } from 'fs';
+import createNextIntlPlugin from 'next-intl/plugin';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const withNextIntl = createNextIntlPlugin();

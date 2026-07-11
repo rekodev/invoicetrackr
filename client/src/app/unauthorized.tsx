@@ -1,8 +1,8 @@
 'use client';
 
 import { HomeIcon, ShieldExclamationIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
 import { buttonVariants } from '@heroui/react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { HOME_PAGE } from '@/lib/constants/pages';

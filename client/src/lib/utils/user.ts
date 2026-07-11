@@ -6,7 +6,7 @@ export function isUserPersonalInformationSetUp(user: Partial<User>) {
     user.businessType &&
     user.businessNumber &&
     user.address &&
-    user.email
+    user.invoiceEmail
   )
     return true;
 

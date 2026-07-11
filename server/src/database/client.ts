@@ -1,7 +1,7 @@
 import { and, desc, eq } from 'drizzle-orm';
 
-import { SelectClient, clientsTable } from './schema';
 import { db } from './db';
+import { clientsTable,SelectClient } from './schema';
 
 export const findClientByEmail = async (userId: number, email: string) => {
   if (!email) return;
