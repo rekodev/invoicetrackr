@@ -528,6 +528,7 @@ describe('Invoice Controller', () => {
         userFactory.build({
           id: testUserId,
           email: 'sender@example.com',
+          invoiceEmail: 'billing@example.com',
           currency: DEFAULT_CURRENCY
         })
       );
@@ -577,7 +578,7 @@ describe('Invoice Controller', () => {
       expect(mockResendSend).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'receiver@example.com',
-          replyTo: 'sender@example.com',
+          replyTo: 'billing@example.com',
           subject: 'Invoice INV001'
         })
       );
