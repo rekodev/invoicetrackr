@@ -1,30 +1,30 @@
+import fastifyCookie from '@fastify/cookie';
+import cors from '@fastify/cors';
+import fastifyMultipart from '@fastify/multipart';
+import fastifyRateLimit from '@fastify/rate-limit';
+import ajvErrors from 'ajv-errors';
+import { v2 as cloudinary } from 'cloudinary';
+import fastify from 'fastify';
+import { defineI18n } from 'fastify-i18n';
 import {
   serializerCompiler,
   validatorCompiler
 } from 'fastify-type-provider-zod';
-import ajvErrors from 'ajv-errors';
-import { v2 as cloudinary } from 'cloudinary';
-import cors from '@fastify/cors';
-import { defineI18n } from 'fastify-i18n';
-import fastify from 'fastify';
-import fastifyCookie from '@fastify/cookie';
-import fastifyMultipart from '@fastify/multipart';
-import fastifyRateLimit from '@fastify/rate-limit';
 
+import { cloudinaryConfig } from './config/cloudinary';
+import { loadEnv } from './config/env';
+import { getPgVersion } from './database/db';
+import { languageMiddleware } from './middleware/language';
+import i18n from './plugins/i18n';
 import bankingInformationRoutes from './routes/banking-information';
 import clientRoutes from './routes/client';
-import { cloudinaryConfig } from './config/cloudinary';
 import contactRoutes from './routes/contact';
-import { errorHandler } from './utils/error';
 import expenseRoutes from './routes/expense';
-import { getPgVersion } from './database/db';
-import i18n from './plugins/i18n';
 import invoiceRoutes from './routes/invoice';
-import { languageMiddleware } from './middleware/language';
-import { loadEnv } from './config/env';
-import { rateLimitPluginOptions } from './utils/rate-limit';
 import userRoutes from './routes/user';
 import webhookRoutes from './routes/webhook';
+import { errorHandler } from './utils/error';
+import { rateLimitPluginOptions } from './utils/rate-limit';
 
 loadEnv();
 cloudinary.config(cloudinaryConfig);

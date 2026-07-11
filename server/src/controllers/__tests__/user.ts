@@ -1,9 +1,8 @@
-import { describe, expect, it, vi } from 'vitest';
 import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import bcrypt from 'bcryptjs';
+import { describe, expect, it, vi } from 'vitest';
 
 import * as emailVerificationDb from '../../database/email-verification';
-import * as userController from '../user';
 import * as userDb from '../../database/user';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import {
@@ -11,6 +10,7 @@ import {
   userWithPasswordFactory
 } from '../../test/factories/user';
 import { mockResendSend } from '../../test/setup';
+import * as userController from '../user';
 
 vi.mock('../../database/user');
 vi.mock('../../database/email-verification');

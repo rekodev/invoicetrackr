@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 
 import {
@@ -22,7 +23,6 @@ import {
   TERMS_OF_SERVICE_PAGE,
   VERIFY_EMAIL_PAGE
 } from '@/lib/constants/pages';
-import { cn } from '@heroui/react';
 
 const AUTH_BACKGROUND_PATHS = [
   LOGIN_PAGE,

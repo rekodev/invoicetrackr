@@ -5,8 +5,8 @@ import axios, {
   Method
 } from 'axios';
 
-import { getGeneralErrorMessageAction } from '@/lib/actions/general-error';
 import { getRequestHeadersAction } from '@/lib/actions';
+import { getGeneralErrorMessageAction } from '@/lib/actions/general-error';
 
 export type ApiError = {
   code: string;

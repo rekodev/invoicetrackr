@@ -1,24 +1,23 @@
 'use client';
 
 import {
+  ChevronDownIcon,
+  MagnifyingGlassIcon,
+  PlusIcon
+} from '@heroicons/react/24/outline';
+import {
   Button,
+  buttonVariants,
   CloseButton,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownPopover,
   DropdownTrigger,
-  Input,
-  buttonVariants
-} from '@heroui/react';
-import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
-import {
-  ChevronDownIcon,
-  MagnifyingGlassIcon,
-  PlusIcon
-} from '@heroicons/react/24/outline';
+  Input} from '@heroui/react';
 import { ClientBody, InvoicePartyBusinessType } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
+import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 
 import ClientFormDialog from './client-form-dialog';
 

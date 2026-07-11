@@ -12,13 +12,13 @@ import {
   TextField,
   toast
 } from '@heroui/react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useEffect } from 'react';
+import { ClientBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { addClientAction, updateClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
-import { ClientBody } from '@invoicetrackr/types';
 
 const INITIAL_CLIENT_DATA: ClientFormData = {
   id: 0,

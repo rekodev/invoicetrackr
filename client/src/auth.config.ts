@@ -1,12 +1,9 @@
-import type { JWT } from 'next-auth/jwt';
-
-import type { User as AuthUser, NextAuthConfig } from 'next-auth';
-
 import {
   DEFAULT_CURRENCY,
   type User as InvoiceTrackrUser
 } from '@invoicetrackr/types';
-
+import type { NextAuthConfig,User as AuthUser } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
 import { type GoogleProfile } from 'next-auth/providers/google';
 
 import {

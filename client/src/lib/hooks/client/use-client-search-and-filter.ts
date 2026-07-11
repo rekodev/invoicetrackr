@@ -1,7 +1,6 @@
-import { ChangeEvent, useMemo, useState } from 'react';
-
 import { ClientBody } from '@invoicetrackr/types';
 import { InvoicePartyBusinessType } from '@invoicetrackr/types';
+import { ChangeEvent, useMemo, useState } from 'react';
 
 const INVOICE_PARTY_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
   'individual',

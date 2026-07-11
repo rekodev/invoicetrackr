@@ -1,17 +1,17 @@
 'use client';
 
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   Modal,
   toast
 } from '@heroui/react';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { useTransition } from 'react';
 import { useTranslations } from 'next-intl';
+import { useTransition } from 'react';
 
 import { deleteUserAccount } from '@/api/user';
-import { isResponseError } from '@/lib/utils/error';
 import { logOutAction } from '@/lib/actions';
+import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
   userId: number;

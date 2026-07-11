@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm/relations';
 
 import {
   bankingInformationTable,
+  businessProfilesTable,
   clientsTable,
   invoiceServicesTable,
   invoicesTable,
@@ -25,7 +26,7 @@ export const invoicesRelations = relations(invoicesTable, ({ one, many }) => ({
     references: [clientsTable.id]
   }),
   user: one(usersTable, {
-    fields: [invoicesTable.senderId],
+    fields: [invoicesTable.userId],
     references: [usersTable.id]
   }),
   bankingInformation: one(bankingInformationTable, {
@@ -45,23 +46,30 @@ export const clientsRelations = relations(clientsTable, ({ one, many }) => ({
 export const usersRelations = relations(usersTable, ({ one, many }) => ({
   invoices: many(invoicesTable),
   clients: many(clientsTable),
-  bankingInformation: one(bankingInformationTable, {
-    fields: [usersTable.selectedBankAccountId],
-    references: [bankingInformationTable.id],
-    relationName: 'users_selectedBankAccountId_bankingInformation_id'
-  }),
+  businessProfile: one(businessProfilesTable),
   bankingInformations: many(bankingInformationTable, {
     relationName: 'bankingInformation_userId_users_id'
   })
 }));
 
+export const businessProfilesRelations = relations(
+  businessProfilesTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [businessProfilesTable.userId],
+      references: [usersTable.id]
+    }),
+    selectedBankAccount: one(bankingInformationTable, {
+      fields: [businessProfilesTable.selectedBankAccountId],
+      references: [bankingInformationTable.id]
+    })
+  })
+);
+
 export const bankingInformationRelations = relations(
   bankingInformationTable,
   ({ one, many }) => ({
     invoices: many(invoicesTable),
-    users: many(usersTable, {
-      relationName: 'users_selectedBankAccountId_bankingInformation_id'
-    }),
     user: one(usersTable, {
       fields: [bankingInformationTable.userId],
       references: [usersTable.id],

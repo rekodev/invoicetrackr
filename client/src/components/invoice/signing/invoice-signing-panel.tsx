@@ -1,6 +1,11 @@
 'use client';
 
 import {
+  BanknotesIcon,
+  CheckCircleIcon,
+  PencilSquareIcon
+} from '@heroicons/react/24/outline';
+import {
   Alert,
   Button,
   Card,
@@ -8,19 +13,14 @@ import {
   CardHeader,
   Separator
 } from '@heroui/react';
-import {
-  BanknotesIcon,
-  CheckCircleIcon,
-  PencilSquareIcon
-} from '@heroicons/react/24/outline';
 import type { InvoiceBody, PublicInvoicePayment } from '@invoicetrackr/types';
-import { type JSX, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
+import { type JSX, useMemo } from 'react';
 
-import type { Currency } from '@/lib/types/currency';
-import IconContainer from '@/components/ui/icon-container';
 import SignaturePad from '@/components/signature-pad';
+import IconContainer from '@/components/ui/icon-container';
+import type { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
 const PDFDownloadLink = dynamic(

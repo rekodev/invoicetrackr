@@ -11,6 +11,7 @@
     "start": "next start",
     "tsc": "tsc --noEmit",
     "lint": "pnpm exec eslint .",
+    "lint:fix": "pnpm exec eslint . --fix",
     "test": "vitest",
     "test:run": "vitest run"
   },

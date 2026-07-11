@@ -1,6 +1,6 @@
 import { appBaseUrl } from '@/lib/config/app';
 
-import { SeoLocale, getAbsoluteUrl, siteName } from './site';
+import { getAbsoluteUrl, SeoLocale, siteName } from './site';
 
 type FaqItem = {
   question: string;

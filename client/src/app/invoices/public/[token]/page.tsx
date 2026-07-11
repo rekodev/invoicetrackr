@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
+import { getPublicInvoice } from '@/api/invoice';
 import PublicInvoicePageContent from '@/components/invoice/public-invoice-page-content';
 import { getNoIndexMetadata } from '@/lib/seo/metadata';
-import { getPublicInvoice } from '@/api/invoice';
 import { isResponseError } from '@/lib/utils/error';
 
 type Params = Promise<{ token: string }>;

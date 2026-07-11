@@ -1,6 +1,7 @@
 // @ts-nocheck
 'use client';
 
+import type { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
 import {
   Document,
   Image as PDFImage,
@@ -8,16 +9,15 @@ import {
   Text,
   View
 } from '@react-pdf/renderer';
-import type { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
 
 import {
   calculateInvoiceTotals,
   getDaysUntilDueDate,
   splitInvoiceId
 } from '@/lib/utils';
-import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
 import { amountToWords } from '@/lib/utils/amount-to-words';
 import { formatDate } from '@/lib/utils/date';
+import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
 
 registerPdfFont();
 

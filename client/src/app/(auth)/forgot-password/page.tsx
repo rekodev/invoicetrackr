@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
-import { FORGOT_PASSWORD_PAGE } from '@/lib/constants/pages';
 import ForgotPasswordForm from '@/components/auth/forgot-password-form';
+import { FORGOT_PASSWORD_PAGE } from '@/lib/constants/pages';
 import { getNoIndexMetadata } from '@/lib/seo/metadata';
 
 export async function generateMetadata(): Promise<Metadata> {

@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { JSX } from 'react';
-import { useTheme } from 'next-themes';
 import userEvent from '@testing-library/user-event';
+import { useTheme } from 'next-themes';
+import { JSX } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { withIntl } from '@/test/with-intl';
 
 import ThemeSwitcher from '../theme-switcher';

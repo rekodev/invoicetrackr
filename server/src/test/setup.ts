@@ -1,5 +1,5 @@
-import { beforeEach, vi } from 'vitest';
 import type { FastifyRequest } from 'fastify';
+import { beforeEach, vi } from 'vitest';
 
 // Reusable mocks for external services
 export const mockT = vi.fn((key: string) => key);

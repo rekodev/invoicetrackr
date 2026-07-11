@@ -1,5 +1,5 @@
-import { Card, Chip, buttonVariants } from '@heroui/react';
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
+import { buttonVariants,Card, Chip } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
 export default function LatestInvoicesPanelPreview() {

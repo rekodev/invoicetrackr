@@ -1,10 +1,10 @@
 'use client';
 
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
 import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
-import { CREATE_INVOICE_PAGE, HOME_PAGE } from '@/lib/constants/pages';
+import { updateAnalyticsConsentAction } from '@/lib/actions/analytics';
 import {
   captureAnalyticsEvent,
   identifyAnalyticsUser,
@@ -13,7 +13,7 @@ import {
 } from '@/lib/analytics/client';
 import { AnalyticsConsentContext } from '@/lib/analytics/consent-context';
 import { analyticsEvents } from '@/lib/analytics/events';
-import { updateAnalyticsConsentAction } from '@/lib/actions/analytics';
+import { CREATE_INVOICE_PAGE, HOME_PAGE } from '@/lib/constants/pages';
 
 type Props = {
   children: ReactNode;

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 
+import { appBaseUrl } from '@/lib/config/app';
 import {
   CLIENTS_PAGE,
   DASHBOARD_PAGE,
@@ -9,7 +10,6 @@ import {
   PROFILE_PAGE,
   VERIFY_EMAIL_PAGE
 } from '@/lib/constants/pages';
-import { appBaseUrl } from '@/lib/config/app';
 
 export default function robots(): MetadataRoute.Robots {
   return {

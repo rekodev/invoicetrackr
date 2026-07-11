@@ -2,15 +2,15 @@ import {
   DEFAULT_CURRENCY,
   type User as InvoiceTrackrUser
 } from '@invoicetrackr/types';
-import Google, { type GoogleProfile } from 'next-auth/providers/google';
-import Credentials from 'next-auth/providers/credentials';
-import NextAuth from 'next-auth';
 import type { User } from 'next-auth';
+import NextAuth from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import Google, { type GoogleProfile } from 'next-auth/providers/google';
 import { z } from 'zod';
 
+import { loginUser } from './api/user';
 import { authConfig } from './auth.config';
 import { isResponseError } from './lib/utils/error';
-import { loginUser } from './api/user';
 
 const mapUserToSessionUser = (user: InvoiceTrackrUser): User => {
   if (!user.email) throw new Error('User email is required');

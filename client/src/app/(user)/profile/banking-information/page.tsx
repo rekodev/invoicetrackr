@@ -1,6 +1,6 @@
-import BankingInformationForm from '@/components/profile/banking-information-form';
-import { auth } from '@/auth';
 import { getBankingInformationEntries } from '@/api/banking-information';
+import { auth } from '@/auth';
+import BankingInformationForm from '@/components/profile/banking-information-form';
 import { isResponseError } from '@/lib/utils/error';
 
 async function BankingInformationPage() {

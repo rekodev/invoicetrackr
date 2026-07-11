@@ -1,30 +1,29 @@
 'use client';
 
 import {
-  Alert,
-  Button,
-  ListBox,
-  ListBoxItem,
-  Modal,
-  Select,
-  Spinner,
-  cn
-} from '@heroui/react';
-import {
   ArrowDownTrayIcon,
   LanguageIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
-import { JSX, ReactNode, useState } from 'react';
+import {
+  Alert,
+  Button,
+  cn,
+  ListBox,
+  ListBoxItem,
+  Modal,
+  Select,
+  Spinner} from '@heroui/react';
+import type { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
+import { JSX, ReactNode, useState } from 'react';
 
-import type { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
-import { analyticsEvents } from '@/lib/analytics/events';
-import { availableLanguages } from '@/lib/constants/profile';
 import { captureAnalyticsEvent } from '@/lib/analytics/client';
-import { getInvoiceDueStatus } from '@/lib/utils/invoice';
+import { analyticsEvents } from '@/lib/analytics/events';
+import { availableLanguages } from '@/lib/constants/languages';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
+import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 
 import PdfViewerWrapper from '../pdf/pdf-viewer-wrapper';
 

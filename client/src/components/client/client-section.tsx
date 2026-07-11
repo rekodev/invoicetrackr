@@ -1,24 +1,23 @@
 'use client';
 
 import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownPopover,
-  DropdownTrigger,
-  buttonVariants
-} from '@heroui/react';
-import {
   EllipsisVerticalIcon,
   PencilIcon,
   PencilSquareIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-
+import {
+  Button,
+  buttonVariants,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownPopover,
+  DropdownTrigger} from '@heroui/react';
 import { ClientBody } from '@invoicetrackr/types';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+
 import EmptyState from '@/components/empty-state';
 import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 

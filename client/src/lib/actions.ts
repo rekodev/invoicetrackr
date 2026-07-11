@@ -1,9 +1,9 @@
 'use server';
 
-import { AuthError, User } from 'next-auth';
 import { cookies } from 'next/headers';
-import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
+import { AuthError, User } from 'next-auth';
+import { getTranslations } from 'next-intl/server';
 
 import {
   createNewUserPassword,
@@ -12,9 +12,9 @@ import {
 } from '@/api/user';
 import { auth } from '@/auth';
 
-import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
 import { signIn, signOut, unstable_update } from '../auth';
 import { ANALYTICS_CONSENT_COOKIE } from './analytics/constants';
+import { DASHBOARD_PAGE, ONBOARDING_PAGE } from './constants/pages';
 import { ActionResponseModel } from './types/action';
 import { isResponseError } from './utils/error';
 import { mapValidationErrors } from './utils/validation';

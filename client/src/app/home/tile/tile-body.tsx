@@ -1,4 +1,5 @@
 import { Chip } from '@heroui/react';
+
 import IconContainer from '@/components/ui/icon-container';
 
 import { IconComponent } from './types';

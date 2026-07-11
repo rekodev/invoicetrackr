@@ -1,11 +1,12 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import mockRouter from 'next-router-mock';
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import mockRouter from 'next-router-mock';
-import userEvent from '@testing-library/user-event';
+
+import { withIntl } from '@/test/with-intl';
 
 import LanguageSwitcher from '../language-switcher';
-import { withIntl } from '@/test/with-intl';
 
 vi.mock('next/navigation', () =>
   vi.importActual('next-router-mock/navigation')

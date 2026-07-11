@@ -1,8 +1,9 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { ClientBody } from '@invoicetrackr/types';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
-import { BadRequestError, NotFoundError } from '../utils/error';
+import { analyticsEvents } from '../analytics/events';
+import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import {
   deleteClientFromDb,
   findClientByEmail,
@@ -11,8 +12,8 @@ import {
   insertClientInDb,
   updateClientInDb
 } from '../database/client';
-import { analyticsEvents } from '../analytics/events';
-import { captureAnalyticsEventForUser } from '../analytics/posthog';
+import { recordRequestAudit } from '../utils/audit';
+import { BadRequestError, NotFoundError } from '../utils/error';
 
 export const getClients = async (
   req: FastifyRequest<{ Params: { userId: string } }>,
@@ -62,6 +63,8 @@ export const postClient = async (
   if (!insertedClient)
     throw new BadRequestError(i18n.t('error.client.unableToCreate'));
 
+  await recordRequestAudit({ req, userId, action: 'client.created', entityType: 'client', entityId: insertedClient.id, newValue: insertedClient });
+
   await captureAnalyticsEventForUser({
     userId,
     event: analyticsEvents.clientCreated,
@@ -95,6 +98,8 @@ export const updateClient = async (
   if (!updatedClient)
     throw new BadRequestError(i18n.t('error.client.unableToUpdate'));
 
+  await recordRequestAudit({ req, userId, action: 'client.updated', entityType: 'client', entityId: id, newValue: updatedClient });
+
   reply.status(200).send({
     message: i18n.t('success.client.updated'),
     client: updatedClient
@@ -113,6 +118,8 @@ export const deleteClient = async (
 
   if (!deletedClient)
     throw new BadRequestError(i18n.t('error.client.unableToDelete'));
+
+  await recordRequestAudit({ req, userId, action: 'client.deleted', entityType: 'client', entityId: id });
 
   reply.status(200).send({ message: i18n.t('success.client.deleted') });
 };

@@ -1,9 +1,10 @@
 'use client';
 
 import { ArrowRightIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
-import { Chip, Link, buttonVariants } from '@heroui/react';
+import { buttonVariants,Chip, Link } from '@heroui/react';
 import { useTranslations } from 'next-intl';
+
+import { CREATE_INVOICE_PAGE, SIGN_UP_PAGE } from '@/lib/constants/pages';
 
 import ProductPreview from './product/product-preview';
 

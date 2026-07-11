@@ -1,10 +1,10 @@
+import { appBaseUrl } from '@/lib/config/app';
 import {
   CREATE_INVOICE_PAGE,
   HOME_PAGE,
   PRIVACY_POLICY_PAGE,
   TERMS_OF_SERVICE_PAGE
 } from '@/lib/constants/pages';
-import { appBaseUrl } from '@/lib/config/app';
 
 export type SeoLocale = 'lt' | 'en';
 export type SeoPage = 'home' | 'createInvoice' | 'privacyPolicy' | 'terms';

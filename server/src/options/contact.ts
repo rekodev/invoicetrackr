@@ -1,5 +1,5 @@
-import { RouteShorthandOptionsWithHandler } from 'fastify';
 import { postContactResponseSchema } from '@invoicetrackr/types';
+import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
 import { postContactMessage } from '../controllers/contact';

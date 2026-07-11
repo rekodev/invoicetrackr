@@ -1,5 +1,8 @@
 'use server';
 
+import type { InvoiceBody } from '@invoicetrackr/types';
+import { revalidatePath } from 'next/cache';
+
 import {
   addInvoice,
   deleteInvoice,
@@ -7,8 +10,6 @@ import {
   updateInvoice,
   updateInvoiceStatus
 } from '@/api/invoice';
-import type { InvoiceBody } from '@invoicetrackr/types';
-import { revalidatePath } from 'next/cache';
 
 import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '../constants/pages';
 import type { ActionResponseModel } from '../types/action';

@@ -1,17 +1,17 @@
 'use client';
 
-import { Button, cn, toast } from '@heroui/react';
-import { Fragment, useMemo, useState } from 'react';
 import { CheckIcon } from '@heroicons/react/24/outline';
+import { Button, cn, toast } from '@heroui/react';
 import { User } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Fragment, useMemo, useState } from 'react';
 
 import { DASHBOARD_PAGE } from '@/lib/constants/pages';
 import { isUserPersonalInformationSetUp } from '@/lib/utils/user';
 
-import PersonalInformationForm from './profile/personal-information-form';
 import SignUpForm from './auth/sign-up-form';
+import PersonalInformationForm from './profile/personal-information-form';
 
 type Props = {
   existingUserData?: User;

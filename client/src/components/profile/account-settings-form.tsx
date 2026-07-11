@@ -15,16 +15,16 @@ import {
   TextField,
   toast
 } from '@heroui/react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import type { DefaultInvoiceVatMode } from '@invoicetrackr/types';
 import Link from 'next/link';
 import { User } from 'next-auth';
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
-import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
-import { availableLanguages } from '@/lib/constants/profile';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
+import { availableLanguages } from '@/lib/constants/languages';
+import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
 
 import DeleteAccountModal from './delete-account-modal';
 

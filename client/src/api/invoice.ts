@@ -20,8 +20,9 @@ import type {
 } from '@invoicetrackr/types';
 import type { InvoiceBody } from '@invoicetrackr/types';
 
-import api from './api-instance';
 import { buildFormData } from '@/lib/utils/multipart';
+
+import api from './api-instance';
 
 export const getInvoice = async (userId: number, invoiceId: number) =>
   await api.get<GetInvoiceResponse>(`/api/${userId}/invoices/${invoiceId}`);

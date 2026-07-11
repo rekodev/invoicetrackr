@@ -1,11 +1,12 @@
-import { Card, Chip, cn } from '@heroui/react';
 import {
   ChartBarIcon,
   DocumentTextIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
-import DashboardPagePreview from '../dashboard-page-preview';
+import { Card, Chip, cn } from '@heroui/react';
 import { useTranslations } from 'next-intl';
+
+import DashboardPagePreview from '../dashboard-page-preview';
 
 export default function ProductPreview() {
   const t = useTranslations('home.preview');

@@ -1,23 +1,28 @@
+import { MultipartFile } from '@fastify/multipart';
+import { ResetPasswordEmail, VerifyEmailEmail } from '@invoicetrackr/emails';
 import {
   type AccountSettingsBody,
   OAuthUserBody,
   UserBody,
   UserProfileUpdateBody
 } from '@invoicetrackr/types';
-import { FastifyReply, FastifyRequest } from 'fastify';
-import { ResetPasswordEmail, VerifyEmailEmail } from '@invoicetrackr/emails';
-import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
-import { MultipartFile } from '@fastify/multipart';
 import bcrypt from 'bcryptjs';
+import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
-import {
-  BadRequestError,
-  ForbiddenError,
-  NotFoundError,
-  UnauthorizedError
-} from '../utils/error';
+import { ANALYTICS_CONSENT_COOKIE } from '../analytics/constants';
+import { analyticsEvents } from '../analytics/events';
+import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import { appEmailFrom, getAppUrl } from '../config/app';
+import { resend } from '../config/resend';
+import {
+  getEmailVerificationTokenFromDb,
+  getLatestEmailVerificationTokenForUserFromDb,
+  markEmailVerificationTokenUsedInDb,
+  saveEmailVerificationTokenToDb
+} from '../database/email-verification';
+import { saveResetTokenToDb } from '../database/password-reset';
 import {
   changeUserPasswordInDb,
   deleteUserFromDb,
@@ -35,17 +40,12 @@ import {
   updateUserSelectedBankAccountInDb,
   verifyUserEmailInDb
 } from '../database/user';
+import { recordRequestAudit } from '../utils/audit';
 import {
-  getEmailVerificationTokenFromDb,
-  getLatestEmailVerificationTokenForUserFromDb,
-  markEmailVerificationTokenUsedInDb,
-  saveEmailVerificationTokenToDb
-} from '../database/email-verification';
-import { ANALYTICS_CONSENT_COOKIE } from '../analytics/constants';
-import { analyticsEvents } from '../analytics/events';
-import { captureAnalyticsEventForUser } from '../analytics/posthog';
-import { resend } from '../config/resend';
-import { saveResetTokenToDb } from '../database/password-reset';
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError
+} from '../utils/error';
 
 const EMAIL_VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const EMAIL_VERIFICATION_RESEND_COOLDOWN_MS = 15 * 60 * 1000;
@@ -132,6 +132,8 @@ export const loginUser = async (
   if (!isValidPassword)
     throw new UnauthorizedError(i18n.t('error.user.invalidCredentials'));
 
+  await recordRequestAudit({ req, userId: user.id, action: 'account.login_succeeded', entityType: 'account', entityId: user.id });
+
   reply.status(200).send({
     user,
     message: i18n.t('success.user.loggedIn')
@@ -189,6 +191,8 @@ export const postUser = async (
     properties: { method: 'email', language }
   });
 
+  await recordRequestAudit({ req, userId: createdUser.id, action: 'account.created', entityType: 'account', entityId: createdUser.id });
+
   return reply
     .status(201)
     .send({ email, message: i18n.t('success.user.created') });
@@ -223,6 +227,8 @@ export const postOAuthUser = async (
 
     if (!user) throw new BadRequestError(i18n.t('error.user.notFound'));
 
+    await recordRequestAudit({ req, userId: existingUser.id, action: 'account.oauth_login_succeeded', entityType: 'account', entityId: existingUser.id });
+
     return reply.status(200).send({
       user,
       message: i18n.t('success.user.oauthLinked')
@@ -253,6 +259,8 @@ export const postOAuthUser = async (
     properties: { method: 'google', language }
   });
 
+  await recordRequestAudit({ req, userId: createdUser.id, action: 'account.oauth_created', entityType: 'account', entityId: createdUser.id });
+
   return reply.status(201).send({
     user,
     message: i18n.t('success.user.oauthLinked')
@@ -270,6 +278,8 @@ export const updateUser = async (
   const file = req.body.file;
   const {
     email,
+    invoiceEmail,
+    phone,
     name,
     businessType,
     businessNumber,
@@ -300,16 +310,12 @@ export const updateUser = async (
   const signatureUrl = uploadedSignature?.url
     ? uploadedSignature.url.replace('http://', 'https://')
     : signature;
-  const shouldResetEmailVerification = foundUser.email !== email;
-
-  if (shouldResetEmailVerification && !foundUser.emailVerifiedAt) {
-    throw new ForbiddenError(i18n.t('error.user.emailVerificationRequired'));
-  }
-
   const updatedUser = await updateUserInDb(
     {
       id: userId,
       email,
+      invoiceEmail,
+      phone,
       name,
       businessType,
       businessNumber,
@@ -317,17 +323,13 @@ export const updateUser = async (
       isVatPayer,
       address
     },
-    signatureUrl || '',
-    shouldResetEmailVerification
+    signatureUrl || ''
   );
 
   if (!updatedUser)
     throw new BadRequestError(i18n.t('error.user.unableToUpdate'));
 
-  if (shouldResetEmailVerification) {
-    const verificationToken = await createEmailVerificationToken(userId);
-    await sendVerificationEmail({ email, token: verificationToken, i18n });
-  }
+  await recordRequestAudit({ req, userId, action: 'business_profile.updated', entityType: 'business_profile', entityId: userId, previousValue: foundUser, newValue: { name, invoiceEmail, phone, businessNumber, vatNumber, isVatPayer, address } });
 
   if (!foundUser.onboardingCompletedAt) {
     await captureAnalyticsEventForUser({
@@ -349,6 +351,8 @@ export const deleteUser = async (
 ) => {
   const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
+
+  await recordRequestAudit({ req, userId, action: 'account.deletion_requested', entityType: 'account', entityId: userId });
 
   const deletedUserId = await deleteUserFromDb(userId);
 
@@ -380,6 +384,8 @@ export const updateUserSelectedBankAccount = async (
     throw new BadRequestError(
       i18n.t('error.user.unableToUpdateSelectedBankAccount')
     );
+
+  await recordRequestAudit({ req, userId, action: 'business_profile.selected_bank_account_updated', entityType: 'business_profile', entityId: userId, newValue: { selectedBankAccountId } });
 
   reply.status(200).send({
     message: i18n.t('success.user.selectedBankAccountUpdated')
@@ -489,6 +495,8 @@ export const updateUserAccountSettings = async (
   if (!updatedUser)
     throw new BadRequestError('errors.user.accountSettings.update.badRequest');
 
+  await recordRequestAudit({ req, userId, action: 'business_profile.invoice_defaults_updated', entityType: 'business_profile', entityId: userId, newValue: req.body });
+
   reply
     .status(200)
     .send({ message: i18n.t('success.user.accountSettingsUpdated') });
@@ -530,6 +538,8 @@ export const changeUserPassword = async (
 
   if (!changedPassword)
     throw new BadRequestError(i18n.t('error.user.unableToChangePassword'));
+
+  await recordRequestAudit({ req, userId, action: 'account.password_changed', entityType: 'account', entityId: userId });
 
   reply.status(200).send({ message: i18n.t('success.user.passwordChanged') });
 };
@@ -581,6 +591,8 @@ export const resetUserPassword = async (
     throw new BadRequestError(i18n.t('error.user.unableToSendResetLink'));
   }
 
+  await recordRequestAudit({ req, userId: user.id, action: 'account.password_reset_requested', entityType: 'account', entityId: user.id });
+
   reply.status(200).send({ message: i18n.t('success.user.resetLinkSent') });
 };
 
@@ -624,6 +636,8 @@ export const verifyUserEmail = async (
     throw new BadRequestError(i18n.t('error.user.tokenInvalid'));
 
   await markEmailVerificationTokenUsedInDb(token);
+
+  await recordRequestAudit({ req, userId: tokenFromDb.userId, action: 'account.email_verified', entityType: 'account', entityId: tokenFromDb.userId });
 
   reply.status(200).send({
     status: 'verified',
@@ -728,6 +742,8 @@ export const createNewUserPassword = async (
     throw new BadRequestError(i18n.t('error.user.unableToChangePassword'));
 
   await invalidateTokenInDb(userId, token);
+
+  await recordRequestAudit({ req, userId, action: 'account.password_reset_completed', entityType: 'account', entityId: userId });
 
   reply.status(200).send({ message: i18n.t('success.user.passwordChanged') });
 };

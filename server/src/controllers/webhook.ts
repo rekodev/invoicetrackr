@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 
-import { BadRequestError, InternalServerError } from '../utils/error';
 import { resend } from '../config/resend';
+import { BadRequestError, InternalServerError } from '../utils/error';
 
 const DEFAULT_FORWARD_FROM_EMAIL = 'support@invoicetrackr.app';
 

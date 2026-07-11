@@ -1,5 +1,5 @@
-import { JSX, ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
+import { JSX, ReactNode } from 'react';
 
 import localeMessages from '../../messages/en.json';
 

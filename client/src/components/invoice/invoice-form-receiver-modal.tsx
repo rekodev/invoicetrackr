@@ -1,14 +1,13 @@
 'use client';
 
-import { Button, Modal } from '@heroui/react';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-
+import { Button, Modal } from '@heroui/react';
 import { ClientBody } from '@invoicetrackr/types';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
-import ClientCard from '../client-card';
 import ClientFormDialog from '../client/client-form-dialog';
+import ClientCard from '../client-card';
 
 type Props = {
   userId: number;

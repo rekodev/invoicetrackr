@@ -1,10 +1,10 @@
 import { FastifyRequest } from 'fastify';
-import { decode } from 'next-auth/jwt';
 import { useI18n } from 'fastify-i18n';
+import { decode } from 'next-auth/jwt';
 
-import { ForbiddenError, UnauthorizedError } from '../utils/error';
-import { getUserEmailVerificationStatusFromDb } from '../database/user';
 import { loadEnv } from '../config/env';
+import { getUserEmailVerificationStatusFromDb } from '../database/user';
+import { ForbiddenError, UnauthorizedError } from '../utils/error';
 
 loadEnv();
 

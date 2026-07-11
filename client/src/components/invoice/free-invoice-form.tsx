@@ -1,38 +1,37 @@
 'use client';
 
 import {
+  ArrowRightIcon,
+  EyeIcon,
+  PaperAirplaneIcon
+} from '@heroicons/react/24/outline';
+import {
   Alert,
   Button,
+  buttonVariants,
   Card,
   Chip,
   FieldError,
   Input,
   Label,
   Link,
-  TextField,
-  buttonVariants
-} from '@heroui/react';
-import {
-  ArrowRightIcon,
-  EyeIcon,
-  PaperAirplaneIcon
-} from '@heroicons/react/24/outline';
+  TextField} from '@heroui/react';
+import type { InvoiceBody } from '@invoicetrackr/types';
+import { useTranslations } from 'next-intl';
 import { type ComponentProps, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useTranslations } from 'next-intl';
 
-import { Currency } from '@/lib/types/currency';
-import type { InvoiceBody } from '@invoicetrackr/types';
-import { SIGN_UP_PAGE } from '@/lib/constants/pages';
-import { analyticsEvents } from '@/lib/analytics/events';
-import { calculateInvoiceTotals } from '@/lib/utils';
 import { captureAnalyticsEvent } from '@/lib/analytics/client';
+import { analyticsEvents } from '@/lib/analytics/events';
+import { SIGN_UP_PAGE } from '@/lib/constants/pages';
+import { Currency } from '@/lib/types/currency';
+import { calculateInvoiceTotals } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/date';
 
-import InvoiceModal from './invoice-modal';
-import InvoiceServicesTable from './invoice-services-table';
 import PDFDocument from '../pdf/pdf-document';
 import SignaturePad from '../signature-pad';
+import InvoiceModal from './invoice-modal';
+import InvoiceServicesTable from './invoice-services-table';
 
 type TextInputProps = ComponentProps<typeof Input>;
 type TextFieldVariant = ComponentProps<typeof TextField>['variant'];

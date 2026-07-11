@@ -15,8 +15,12 @@ import {
   sql
 } from 'drizzle-orm';
 
+import { calculateInvoiceTotals } from '../utils/invoice';
+import { jsonAgg } from '../utils/json';
+import { db } from './db';
 import {
   bankingInformationTable,
+  businessProfilesTable,
   invoiceBankingInformationTable,
   invoiceNumberSequencesTable,
   invoiceReceiversTable,
@@ -25,9 +29,6 @@ import {
   invoicesTable,
   usersTable
 } from './schema';
-import { calculateInvoiceTotals } from '../utils/invoice';
-import { db } from './db';
-import { jsonAgg } from '../utils/json';
 
 type InsertInvoiceBankingInformation =
   typeof invoiceBankingInformationTable.$inferInsert;
@@ -75,7 +76,10 @@ export type InvoiceFromDb = Omit<
   'sender' | 'receiver' | 'services' | 'bankingInformation'
 > & {
   bankingInformation:
-    | Omit<typeof bankingInformationTable.$inferSelect, 'userId'>
+    | Pick<
+        typeof bankingInformationTable.$inferSelect,
+        'id' | 'name' | 'code' | 'accountNumber'
+      >
     | null;
   sender: Omit<typeof invoiceSendersTable.$inferSelect, 'invoiceId'> | null;
   receiver: Omit<typeof invoiceReceiversTable.$inferSelect, 'invoiceId'> | null;
@@ -121,9 +125,9 @@ const getInvoiceSeriesForNextNumber = async (
   if (requestedSeries) return normalizeInvoiceSeries(requestedSeries);
 
   const users = await query
-    .select({ defaultInvoiceSeries: usersTable.defaultInvoiceSeries })
-    .from(usersTable)
-    .where(eq(usersTable.id, userId))
+    .select({ defaultInvoiceSeries: businessProfilesTable.defaultInvoiceSeries })
+    .from(businessProfilesTable)
+    .where(eq(businessProfilesTable.userId, userId))
     .limit(1);
 
   return normalizeInvoiceSeries(users.at(0)?.defaultInvoiceSeries);
@@ -798,7 +802,8 @@ export const updateInvoiceInDb = async (
           invoiceData.publicInvoiceRevokedAt ??
           currentInvoiceData.publicInvoiceRevokedAt,
         paymentMode,
-        manualPaymentReference
+        manualPaymentReference,
+        updatedAt: new Date().toISOString()
       })
       .where(and(eq(invoicesTable.userId, userId), eq(invoicesTable.id, id)))
       .returning({ id: invoicesTable.id });
@@ -885,7 +890,7 @@ export async function updateInvoiceStatusInDb(
 
   const invoices = await db
     .update(invoicesTable)
-    .set({ status, ...timestampUpdates })
+    .set({ status, ...timestampUpdates, updatedAt: new Date().toISOString() })
     .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
     .returning({ id: invoicesTable.id });
 
@@ -1109,12 +1114,13 @@ export async function getPublicInvoiceSigningFromDb(
     .select({
       id: invoicesTable.id,
       userId: invoicesTable.userId,
-      currency: usersTable.currency,
+      currency: businessProfilesTable.currency,
       language: usersTable.language,
-      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage
+      preferredInvoiceLanguage: businessProfilesTable.preferredInvoiceLanguage
     })
     .from(invoicesTable)
     .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
+    .innerJoin(businessProfilesTable, eq(invoicesTable.userId, businessProfilesTable.userId))
     .where(eq(invoicesTable.recipientSigningToken, token))
     .limit(1);
   const row = rows.at(0);
@@ -1141,12 +1147,13 @@ export async function getPublicInvoiceFromDb(
     .select({
       id: invoicesTable.id,
       userId: invoicesTable.userId,
-      currency: usersTable.currency,
+      currency: businessProfilesTable.currency,
       language: usersTable.language,
-      preferredInvoiceLanguage: usersTable.preferredInvoiceLanguage
+      preferredInvoiceLanguage: businessProfilesTable.preferredInvoiceLanguage
     })
     .from(invoicesTable)
     .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
+    .innerJoin(businessProfilesTable, eq(invoicesTable.userId, businessProfilesTable.userId))
     .where(
       or(
         eq(invoicesTable.publicInvoiceToken, token),
@@ -1306,7 +1313,7 @@ export const getIncomeJournalRowsFromDb = async ({
       subtotalAmount: invoicesTable.subtotalAmount,
       vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
-      currency: usersTable.currency
+      currency: businessProfilesTable.currency
     })
     .from(invoicesTable)
     .innerJoin(
@@ -1318,6 +1325,7 @@ export const getIncomeJournalRowsFromDb = async ({
       eq(invoiceServicesTable.invoiceId, invoicesTable.id)
     )
     .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
+    .innerJoin(businessProfilesTable, eq(invoicesTable.userId, businessProfilesTable.userId))
     .where(
       and(
         eq(invoicesTable.userId, userId),
@@ -1327,6 +1335,6 @@ export const getIncomeJournalRowsFromDb = async ({
         lte(effectivePaidAt, `${to}T23:59:59.999Z`)
       )
     )
-    .groupBy(invoicesTable.id, invoiceReceiversTable.id, usersTable.currency)
+    .groupBy(invoicesTable.id, invoiceReceiversTable.id, businessProfilesTable.currency)
     .orderBy(effectivePaidAt, invoicesTable.id);
 };

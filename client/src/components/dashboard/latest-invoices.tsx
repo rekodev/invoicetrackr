@@ -1,13 +1,13 @@
-import { Card, Chip, buttonVariants } from '@heroui/react';
-import { getLocale, getTranslations } from 'next-intl/server';
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
+import { buttonVariants,Card, Chip } from '@heroui/react';
 import Link from 'next/link';
+import { getLocale, getTranslations } from 'next-intl/server';
 
+import { getLatestInvoices } from '@/api/invoice';
+import EmptyState from '@/components/empty-state';
 import { ADD_NEW_INVOICE_PAGE, INVOICES_PAGE } from '@/lib/constants/pages';
 import { Currency } from '@/lib/types/currency';
-import EmptyState from '@/components/empty-state';
 import { getCurrencySymbol } from '@/lib/utils/currency';
-import { getLatestInvoices } from '@/api/invoice';
 import { isResponseError } from '@/lib/utils/error';
 
 type Props = {

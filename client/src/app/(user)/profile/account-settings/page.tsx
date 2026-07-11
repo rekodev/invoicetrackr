@@ -1,5 +1,5 @@
-import AccountSettingsForm from '@/components/profile/account-settings-form';
 import { auth } from '@/auth';
+import AccountSettingsForm from '@/components/profile/account-settings-form';
 
 const AccountSettingsPage = async () => {
   const session = await auth();

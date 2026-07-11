@@ -1,11 +1,11 @@
 'use client';
 
 import { Alert, Button, CloseButton, Link } from '@heroui/react';
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
-import { PRIVACY_POLICY_PAGE } from '@/lib/constants/pages';
 import { updateAnalyticsConsentAction } from '@/lib/actions/analytics';
+import { PRIVACY_POLICY_PAGE } from '@/lib/constants/pages';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 
 export default function CookieConsent() {

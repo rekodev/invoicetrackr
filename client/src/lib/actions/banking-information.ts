@@ -1,5 +1,6 @@
 'use server';
 
+import { BankAccountBody } from '@invoicetrackr/types';
 import { revalidatePath } from 'next/cache';
 
 import {
@@ -10,7 +11,6 @@ import {
 
 import { BANKING_INFORMATION_PAGE, ONBOARDING_PAGE } from '../constants/pages';
 import { ActionResponseModel } from '../types/action';
-import { BankAccountBody } from '@invoicetrackr/types';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 

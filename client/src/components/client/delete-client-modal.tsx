@@ -1,10 +1,10 @@
 'use client';
 
 import { Button, Modal, toast } from '@heroui/react';
-import { useTransition } from 'react';
-import { useTranslations } from 'next-intl';
-
 import { ClientBody } from '@invoicetrackr/types';
+import { useTranslations } from 'next-intl';
+import { useTransition } from 'react';
+
 import { deleteClientAction } from '@/lib/actions/client';
 
 type Props = {

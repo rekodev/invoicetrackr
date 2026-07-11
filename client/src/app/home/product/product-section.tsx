@@ -7,15 +7,15 @@ import {
   LinkIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
-import CompactDashboardPreview from '../compact-dashboard-preview';
 import { useTranslations } from 'next-intl';
 
 import ClientsPagePreview from '../clients-page-preview';
-import { IconComponent } from '../tile/types';
+import CompactDashboardPreview from '../compact-dashboard-preview';
 import { InvoicesPagePreview } from '../invoices-page-preview';
 import SectionHeading from '../section-heading';
 import Tile from '../tile/tile';
 import TileBody from '../tile/tile-body';
+import { IconComponent } from '../tile/types';
 
 const productTiles: Array<{
   key: 'invoices' | 'dashboard' | 'clients';

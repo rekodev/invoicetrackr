@@ -10,3 +10,4 @@ export * from './invoice';
 export * from './user';
 export * from './client';
 export * from './expense';
+export * from './finance';

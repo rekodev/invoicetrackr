@@ -1,15 +1,15 @@
-import { getLocale, getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 
+import JsonLd from '@/components/seo/json-ld';
+import { getPageMetadata } from '@/lib/seo/metadata';
+import { getSeoLocale } from '@/lib/seo/site';
 import {
   getFaqJsonLd,
   getOrganizationJsonLd,
   getSoftwareApplicationJsonLd,
   getWebsiteJsonLd
 } from '@/lib/seo/structured-data';
-import JsonLd from '@/components/seo/json-ld';
-import { getPageMetadata } from '@/lib/seo/metadata';
-import { getSeoLocale } from '@/lib/seo/site';
 
 import HomePageContent from './home/home-page-content';
 

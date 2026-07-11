@@ -1,23 +1,22 @@
 'use client';
 
+import { LanguageIcon } from '@heroicons/react/24/outline';
 import {
+  buttonVariants,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownPopover,
   DropdownTrigger,
-  Selection,
-  buttonVariants
-} from '@heroui/react';
+  Selection} from '@heroui/react';
 import { Language, User } from '@invoicetrackr/types';
-import { useEffect, useState } from 'react';
-import { LanguageIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 
 import { getLocaleCookieAction, setLocaleCookieAction } from '@/lib/actions';
-import { availableLanguages } from '@/lib/constants/profile';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
+import { availableLanguages } from '@/lib/constants/languages';
 
 type Props = {
   user?: User;

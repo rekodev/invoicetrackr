@@ -6,10 +6,10 @@ import {
   TextField,
   toast
 } from '@heroui/react';
-import { ChangeEvent, useState, useTransition } from 'react';
-import { useTranslations } from 'next-intl';
-
 import { BankAccount } from '@invoicetrackr/types';
+import { useTranslations } from 'next-intl';
+import { ChangeEvent, useState, useTransition } from 'react';
+
 import { updateBankingInformationAction } from '@/lib/actions/banking-information';
 
 type Props = {

@@ -1,23 +1,6 @@
 'use client';
 
 import {
-  Button,
-  Card,
-  Checkbox,
-  Chip,
-  CloseButton,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownPopover,
-  DropdownTrigger,
-  Input,
-  Table,
-  Tooltip,
-  buttonVariants,
-  cn
-} from '@heroui/react';
-import {
   CreditCardIcon,
   DocumentTextIcon,
   ExclamationCircleIcon,
@@ -30,16 +13,33 @@ import {
   TrashIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
-import { type Key, type ReactElement, useMemo, useState } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import {
+  Button,
+  buttonVariants,
+  Card,
+  Checkbox,
+  Chip,
+  CloseButton,
+  cn,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownPopover,
+  DropdownTrigger,
+  Input,
+  Table,
+  Tooltip
+} from '@heroui/react';
 import type { ExpenseBody } from '@invoicetrackr/types';
+import { useLocale, useTranslations } from 'next-intl';
+import { type Key, type ReactElement, useMemo, useState } from 'react';
 
+import EmptyState from '@/components/empty-state';
+import MetricCard from '@/components/ui/metric-card';
 import {
   EXPENSE_CATEGORIES,
   EXPENSE_PAYMENT_METHODS
 } from '@/lib/constants/expense';
-import EmptyState from '@/components/empty-state';
-import MetricCard from '@/components/ui/metric-card';
 import type { SortDescriptor } from '@/lib/types/table';
 import { formatLocalizedDate } from '@/lib/utils/date';
 

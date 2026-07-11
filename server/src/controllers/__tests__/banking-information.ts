@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import * as bankingController from '../banking-information';
 import * as bankingDb from '../../database/banking-information';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import { bankingInformationFactory } from '../../test/factories/banking-information';
+import * as bankingController from '../banking-information';
 
 vi.mock('../../database/banking-information');
 

@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
 import { cn } from '@heroui/react';
+import type { ReactNode } from 'react';
 
 import AppLogo from './app-logo';
 import AppWordmark from './app-wordmark';

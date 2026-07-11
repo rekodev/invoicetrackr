@@ -1,11 +1,11 @@
-import { Button, Chip, Modal, cn, useOverlayState } from '@heroui/react';
 import { CheckCircleIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
+import { Button, Chip, cn, Modal, useOverlayState } from '@heroui/react';
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
-import { useTranslations } from 'next-intl';
 
 import { base64ToFile, imageUrlToBase64 } from '@/lib/utils/base64';
-import Image from 'next/image';
 
 type Props = {
   signature?: File | string;

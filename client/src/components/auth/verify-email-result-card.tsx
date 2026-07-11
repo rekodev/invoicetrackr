@@ -1,18 +1,18 @@
 'use client';
 
-import { Card, Link, buttonVariants, cn } from '@heroui/react';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
   ShieldCheckIcon
 } from '@heroicons/react/24/outline';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import { buttonVariants, Card, cn,Link } from '@heroui/react';
 import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { ACCOUNT_SETTINGS_PAGE, DASHBOARD_PAGE } from '@/lib/constants/pages';
 import IconContainer from '@/components/ui/icon-container';
 import { verifyEmailTokenAction } from '@/lib/actions/user';
+import { ACCOUNT_SETTINGS_PAGE, DASHBOARD_PAGE } from '@/lib/constants/pages';
 
 type Props = {
   status: 'pending' | 'verified' | 'already_verified' | 'error';

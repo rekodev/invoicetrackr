@@ -20,7 +20,6 @@ import {
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
-import { authMiddleware, requireVerifiedEmail } from '../middleware/auth';
 import {
   deleteInvoice,
   getIncomeJournal,
@@ -42,6 +41,7 @@ import {
   updateInvoice,
   updateInvoiceStatus
 } from '../controllers/invoice';
+import { authMiddleware, requireVerifiedEmail } from '../middleware/auth';
 import { preValidateFileAndFields } from '../utils/multipart';
 
 const authenticatedAccess = [authMiddleware];

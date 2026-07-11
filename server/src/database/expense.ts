@@ -1,16 +1,15 @@
 import { and, count, desc, eq, isNull } from 'drizzle-orm';
 
+import { sanitizeAuditValue } from '../utils/audit-value';
+import { db } from './db';
 import {
+  auditEventsTable,
+  expenseAttachmentsTable,
+  expensesTable,
   InsertExpense,
   InsertExpenseAttachment,
   SelectExpense,
-  SelectExpenseAttachment,
-  expenseAttachmentEventsTable,
-  expenseAttachmentsTable,
-  expenseEventsTable,
-  expensesTable
-} from './schema';
-import { db } from './db';
+  SelectExpenseAttachment} from './schema';
 
 const activeAttachmentWhere = (
   userId: number,
@@ -99,11 +98,13 @@ export const insertExpenseInDb = async (
 
     if (!insertedExpense) return;
 
-    await tx.insert(expenseEventsTable).values({
+    await tx.insert(auditEventsTable).values({
       userId: insertedExpense.userId,
-      expenseId: insertedExpense.id,
-      action: 'created',
-      newValue: insertedExpense
+      actorUserId: insertedExpense.userId,
+      entityType: 'expense',
+      entityId: String(insertedExpense.id),
+      action: 'expense.created',
+      newValue: sanitizeAuditValue(insertedExpense)
     });
 
     return insertedExpense;
@@ -149,12 +150,14 @@ export const updateExpenseInDb = async ({
 
     if (!updatedExpense) return;
 
-    await tx.insert(expenseEventsTable).values({
+    await tx.insert(auditEventsTable).values({
       userId,
-      expenseId,
-      action: 'updated',
-      previousValue: previousExpense,
-      newValue: updatedExpense
+      actorUserId: userId,
+      entityType: 'expense',
+      entityId: String(expenseId),
+      action: 'expense.updated',
+      previousValue: sanitizeAuditValue(previousExpense),
+      newValue: sanitizeAuditValue(updatedExpense)
     });
 
     return updatedExpense;
@@ -198,12 +201,14 @@ export const deleteExpenseFromDb = async (
 
     if (!deletedExpense) return;
 
-    await tx.insert(expenseEventsTable).values({
+    await tx.insert(auditEventsTable).values({
       userId,
-      expenseId,
-      action: 'deleted',
-      previousValue: previousExpense,
-      newValue: deletedExpense
+      actorUserId: userId,
+      entityType: 'expense',
+      entityId: String(expenseId),
+      action: 'expense.deleted',
+      previousValue: sanitizeAuditValue(previousExpense),
+      newValue: sanitizeAuditValue(deletedExpense)
     });
 
     return deletedExpense;
@@ -400,12 +405,13 @@ export const insertExpenseAttachmentEventInDb = async ({
   previousValue?: unknown;
   newValue?: unknown;
 }) => {
-  await db.insert(expenseAttachmentEventsTable).values({
+  await db.insert(auditEventsTable).values({
     userId,
-    expenseId,
-    attachmentId,
-    action,
-    previousValue,
-    newValue
+    actorUserId: userId,
+    entityType: 'expense_attachment',
+    entityId: attachmentId ? String(attachmentId) : null,
+    action: `expense_attachment.${action}`,
+    previousValue: sanitizeAuditValue(previousValue),
+    newValue: sanitizeAuditValue({ expenseId, value: newValue })
   });
 };

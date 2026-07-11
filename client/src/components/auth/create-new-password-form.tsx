@@ -1,31 +1,30 @@
 'use client';
 
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon
+} from '@heroicons/react/24/outline';
 import {
   Button,
   Card,
   CardContent,
   CardFooter,
+  cn,
   FieldError,
   Input,
   Label,
   Link,
-  TextField,
-  cn
-} from '@heroui/react';
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon
-} from '@heroicons/react/24/outline';
-import { type SubmitHandler, useForm } from 'react-hook-form';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
+  TextField} from '@heroui/react';
+import { useTranslations } from 'next-intl';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 
-import { ActionResponseModel } from '@/lib/types/action';
 import AuthCardHeader from '@/components/auth/auth-card-header';
-import { LOGIN_PAGE } from '@/lib/constants/pages';
 import { createNewPasswordAction } from '@/lib/actions';
+import { LOGIN_PAGE } from '@/lib/constants/pages';
+import { ActionResponseModel } from '@/lib/types/action';
 
 type Props = {
   userId: number;

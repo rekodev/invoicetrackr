@@ -9,8 +9,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { Card, Chip, cn } from '@heroui/react';
 import { Client } from '@invoicetrackr/types';
-import { JSX } from 'react';
 import { useTranslations } from 'next-intl';
+import { JSX } from 'react';
 
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';

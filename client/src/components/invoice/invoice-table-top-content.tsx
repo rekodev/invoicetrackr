@@ -1,5 +1,12 @@
 import {
+  ChevronDownIcon,
+  DocumentArrowDownIcon,
+  MagnifyingGlassIcon,
+  PlusIcon
+} from '@heroicons/react/24/outline';
+import {
   Button,
+  buttonVariants,
   CloseButton,
   Dropdown,
   DropdownItem,
@@ -7,18 +14,11 @@ import {
   DropdownPopover,
   DropdownTrigger,
   Input,
-  buttonVariants,
   useOverlayState
 } from '@heroui/react';
-import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
-import {
-  ChevronDownIcon,
-  DocumentArrowDownIcon,
-  MagnifyingGlassIcon,
-  PlusIcon
-} from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 
 import { ADD_NEW_INVOICE_PAGE } from '@/lib/constants/pages';
 import { capitalize } from '@/lib/utils';

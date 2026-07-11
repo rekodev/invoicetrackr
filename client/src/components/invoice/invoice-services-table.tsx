@@ -1,5 +1,6 @@
 'use client';
 
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   Chip,
@@ -15,6 +16,8 @@ import {
   TableScrollContainer,
   TextField
 } from '@heroui/react';
+import type { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
+import { useTranslations } from 'next-intl';
 import {
   type ComponentProps,
   type Key,
@@ -22,10 +25,7 @@ import {
   useMemo,
   useRef
 } from 'react';
-import type { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
-import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import { useTranslations } from 'next-intl';
 
 import { Currency } from '@/lib/types/currency';
 import { calculateInvoiceTotals } from '@/lib/utils';

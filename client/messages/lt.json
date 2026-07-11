@@ -13,11 +13,21 @@
             "invoices": "Sąskaitos faktūros",
             "expenses": "Išlaidos",
             "clients": "Klientai",
+            "payments": "Mokėjimai",
+            "reports": "Ataskaitos",
+            "settings": "Nustatymai",
+            "personal_information": "Veiklos profilis",
+            "banking_information": "Banko sąskaitos",
+            "account_settings": "Sąskaitų nustatymai",
+            "change_password": "Slaptažodis",
             "my_profile": "Mano profilis",
             "log_out": "Atsijungti",
             "signed_in_as": "Prisijungęs vartotojas",
             "a11y": {
-                "profile_actions_label": "Profilio veiksmai"
+                "profile_actions_label": "Profilio veiksmai",
+                "primary_navigation": "Pagrindinė navigacija",
+                "open_navigation": "Atidaryti navigaciją",
+                "close_navigation": "Uždaryti navigaciją"
             }
         },
         "guest": {
@@ -42,6 +52,8 @@
         "home": "Pradžia",
         "invoices": "Sąskaitos faktūros",
         "expenses": "Išlaidos",
+        "payments": "Mokėjimai",
+        "reports": "Ataskaitos",
         "login": "Prisijungti",
         "new": "Naujas",
         "onboarding": "Įvedimas",
@@ -51,6 +63,8 @@
         "sign_up": "Registruotis",
         "terms_of_service": "Paslaugų teikimo sąlygos"
     },
+    "payments": { "empty": { "heading": "Mokėjimai", "title": "Mokėjimų dar nėra", "description": "Banko pavedimai bus rodomi čia, kai bus įdiegtas rankinis mokėjimų registravimas." } },
+    "reports": { "empty": { "heading": "Ataskaitos", "title": "Ataskaitos ruošiamos", "description": "Čia rasite pajamų žurnalus, mokesčių prognozes, metines suvestines ir eksportą buhalteriui." } },
     "general_error": "Ajajai! Kažkas negerai...",
     "cookie_consent": {
         "message": "Naudojame pasirenkamus analitikos slapukus, kad suprastume produkto naudojimą ir gerintume InvoiceTrackr. Analitika pradedama tik jums sutikus, kaip aprašyta mūsų",
@@ -822,32 +836,21 @@
         }
     },
     "profile": {
-        "user_nav_card": {
-            "a11y": {
-                "actions_label": "Veiksmai",
-                "upload_profile_picture": "Įkelti profilio nuotrauką"
-            },
-            "personal_information": {
-                "title": "Asmeninė informacija"
-            },
-            "account_settings": {
-                "title": "Paskyros nustatymai"
-            },
-            "change_password": {
-                "title": "Pakeisti slaptažodį"
-            },
-            "banking_information": {
-                "title": "Bankinė informacija"
-            }
-        },
         "personal_information": {
             "form": {
                 "a11y": {
-                    "form_label": "Asmeninės informacijos forma"
+                    "form_label": "Asmeninės informacijos forma",
+                    "profile_picture_input": "Pasirinkti profilio nuotrauką",
+                    "dismiss_profile_picture": "Pašalinti pasirinktą profilio nuotrauką"
                 },
                 "title": "Asmeninė informacija",
+                "upload_profile_picture": "Įkelti nuotrauką",
+                "profile_picture_ready": "{size} · Paruošta įkelti",
                 "email": "El. paštas",
+                "invoice_email": "Sąskaitų el. paštas",
                 "email_placeholder": "Įveskite savo el. pašto adresą",
+                "phone": "Telefonas (neprivaloma)",
+                "phone_placeholder": "Įveskite telefono numerį",
                 "name": "Vardas",
                 "name_placeholder": "Įveskite savo vardą",
                 "business_type": "Veiklos tipas",
@@ -865,10 +868,9 @@
                 "save_changes": "Išsaugoti pakeitimus",
                 "email_verification": {
                     "title": "El. pašto patvirtinimas",
-                    "verified": "Patvirtintas",
-                    "unverified": "Nepatvirtintas",
-                    "verified_description": "Jūsų el. paštas patvirtintas ir gali būti naudojamas sąskaitoms siųsti.",
-                    "unverified_description": "Patvirtinkite el. paštą prieš siųsdami sąskaitas klientams.",
+                    "confirmed": "El. paštas patvirtintas",
+                    "confirmed_description": "Jūsų paskyros el. paštas patvirtintas.",
+                    "unverified_description": "Patvirtinkite paskyros el. paštą, kad apsaugotumėte prieigą.",
                     "resend": "Siųsti patvirtinimo laišką",
                     "sent_at": "Patvirtinta {date}"
                 }

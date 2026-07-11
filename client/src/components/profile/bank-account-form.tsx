@@ -3,21 +3,21 @@
 import {
   Button,
   Card,
+  cn,
   FieldError,
   Input,
   Label,
   Separator,
   TextField,
-  cn,
   toast
 } from '@heroui/react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { BankAccountBody } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
-import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 import { addBankingInformationAction } from '@/lib/actions/banking-information';
+import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
 
 const INITIAL_BANK_ACCOUNT_DATA: BankAccountBody = {
   name: '',

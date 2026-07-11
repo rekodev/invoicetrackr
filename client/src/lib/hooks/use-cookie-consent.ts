@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
+import { useEffect, useState } from 'react';
 
+import { useAnalyticsConsent } from '../analytics/consent-context';
 import {
   ANALYTICS_CONSENT_COOKIE,
   analyticsConsentStatuses
 } from '../analytics/constants';
-import { useAnalyticsConsent } from '../analytics/consent-context';
 
 const getConsentCookie = () => {
   if (typeof document === 'undefined') return null;

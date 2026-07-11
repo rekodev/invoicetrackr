@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import * as contactController from '../contact';
-import { createTestApp } from '../../test/app';
 import { resend } from '../../config/resend';
+import { createTestApp } from '../../test/app';
+import * as contactController from '../contact';
 
 vi.mock('../../config/resend');
 

@@ -1,11 +1,12 @@
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
+import { render, screen } from '@testing-library/react';
+import mockRouter from 'next-router-mock';
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
-import mockRouter from 'next-router-mock';
+
+import { withIntl } from '@/test/with-intl';
 
 import InvoiceTable from '../invoice-table';
-import { withIntl } from '@/test/with-intl';
 
 const { mockUpdateInvoiceStatusAction } = vi.hoisted(() => ({
   mockUpdateInvoiceStatusAction: vi.fn()
