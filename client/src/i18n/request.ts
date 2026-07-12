@@ -1,24 +1,16 @@
 import { cookies, headers } from 'next/headers';
 import { getRequestConfig } from 'next-intl/server';
 
-export default getRequestConfig(async () => {
-  let locale = 'lt';
+import { resolveLocale } from './resolve-locale';
 
+export default getRequestConfig(async () => {
   const cookieStore = await cookies();
   const localeFromCookies = cookieStore.get('locale')?.value;
 
-  if (localeFromCookies) locale = localeFromCookies;
-  else {
-    const headersList = await headers();
-    const preferredLanguage = headersList
-      .get('accept-language')
-      ?.split(',')[0]
-      ?.split(';')[0]
-      ?.substring(0, 2)
-      ?.toLowerCase();
+  const headersList = await headers();
+  const acceptLanguage = headersList.get('accept-language');
 
-    if (preferredLanguage === 'en') locale = 'en';
-  }
+  const locale = resolveLocale(localeFromCookies, acceptLanguage);
 
   return {
     locale,
