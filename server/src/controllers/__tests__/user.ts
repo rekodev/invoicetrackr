@@ -9,7 +9,7 @@ import {
   userFactory,
   userWithPasswordFactory
 } from '../../test/factories/user';
-import { mockResendSend } from '../../test/setup';
+import { mockResendSend, mockUseI18n } from '../../test/setup';
 import * as userController from '../user';
 
 vi.mock('../../database/user');
@@ -477,6 +477,106 @@ describe('User Controller', () => {
       const body = JSON.parse(response.body);
       expect(body.message).toBeDefined();
       expect(userDb.deleteUserFromDb).toHaveBeenCalledWith(testUserId);
+
+      await app.close();
+    });
+  });
+
+  describe('POST /api/:userId/onboarding/complete', () => {
+    it('completes onboarding when required details and defaults are valid', async () => {
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue({
+        ...mockUser,
+        selectedBankAccountId: null,
+        onboardingCompletedAt: null
+      });
+      vi.mocked(userDb.completeUserOnboardingInDb).mockResolvedValue({
+        onboardingCompletedAt: '2026-07-13T10:00:00.000Z'
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/onboarding/complete',
+          { preHandler: mockAuthMiddleware },
+          userController.completeUserOnboarding
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/onboarding/complete`
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(JSON.parse(response.body).user.onboardingCompletedAt).toBe(
+        '2026-07-13T10:00:00.000Z'
+      );
+      expect(userDb.completeUserOnboardingInDb).toHaveBeenCalledWith(
+        testUserId
+      );
+
+      await app.close();
+    });
+
+    it('rejects an incomplete freelancer profile without recording completion', async () => {
+      mockUseI18n.mockResolvedValueOnce({
+        t: (key: string) =>
+          key === 'error.user.onboardingProfileIncomplete'
+            ? 'Add your legal name, individual activity certificate number, address, and invoice email before finishing setup.'
+            : key
+      } as never);
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue({
+        ...mockUser,
+        businessNumber: '',
+        onboardingCompletedAt: null
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/onboarding/complete',
+          { preHandler: mockAuthMiddleware },
+          userController.completeUserOnboarding
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/onboarding/complete`,
+        headers: { 'accept-language': 'en' }
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(JSON.parse(response.body).message).toContain(
+        'individual activity certificate number'
+      );
+      expect(userDb.completeUserOnboardingInDb).not.toHaveBeenCalled();
+
+      await app.close();
+    });
+
+    it('allows completion without a bank account', async () => {
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue({
+        ...mockUser,
+        selectedBankAccountId: null,
+        onboardingCompletedAt: null
+      });
+      vi.mocked(userDb.completeUserOnboardingInDb).mockResolvedValue({
+        onboardingCompletedAt: '2026-07-13T10:00:00.000Z'
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/onboarding/complete',
+          { preHandler: mockAuthMiddleware },
+          userController.completeUserOnboarding
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/onboarding/complete`
+      });
+
+      expect(response.statusCode).toBe(200);
 
       await app.close();
     });

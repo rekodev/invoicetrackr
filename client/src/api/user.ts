@@ -1,6 +1,7 @@
 import {
   type AccountSettingsBody,
   type AnalyticsConsentStatus,
+  CompleteOnboardingResponse,
   CreateNewPasswordResponse,
   DeleteUserAccountResponse,
   GetUserResetPasswordTokenResponse,
@@ -89,6 +90,11 @@ export const updateUser = async (
 
   return await api.put<UpdateUserResponse>(`/api/users/${id}`, userData);
 };
+
+export const completeUserOnboarding = async (userId: number) =>
+  await api.post<CompleteOnboardingResponse>(
+    `/api/users/${userId}/onboarding/complete`
+  );
 
 export const updateUserSelectedBankAccount = async (
   userId: number,

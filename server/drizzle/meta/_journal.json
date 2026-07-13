@@ -253,6 +253,13 @@
       "when": 1783738800000,
       "tag": "0036_rek_95_96_freelancer_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1783900800000,
+      "tag": "0037_rek_98_focused_onboarding",
+      "breakpoints": true
     }
   ]
 }

@@ -30,6 +30,7 @@ type Props = {
   userSelectedBankAccountId?: number | null;
   defaultValues?: BankAccountBody;
   onCancel?: () => void;
+  onSkip?: () => void;
   onSuccess?: (_bankAccount?: BankAccountBody) => void;
   isUserOnboarding?: boolean;
   shouldSelectOnCreate?: boolean;
@@ -43,6 +44,7 @@ export default function BankAccountForm({
   userSelectedBankAccountId,
   isUserOnboarding,
   onCancel,
+  onSkip,
   shouldSelectOnCreate,
   variant = 'card'
 }: Props) {
@@ -186,6 +188,16 @@ export default function BankAccountForm({
               {t('actions.cancel')}
             </Button>
           )}
+          {isUserOnboarding && onSkip ? (
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full sm:w-auto"
+              onPress={onSkip}
+            >
+              {t('actions.skip')}
+            </Button>
+          ) : null}
           <Button
             type="submit"
             isDisabled={!isDirty}

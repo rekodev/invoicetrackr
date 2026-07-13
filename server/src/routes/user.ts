@@ -6,6 +6,7 @@ import {
 
 import {
   changeUserPasswordOptions,
+  completeUserOnboardingOptions,
   createNewUserPasswordOptions,
   deleteUserOptions,
   getUserOptions,
@@ -37,6 +38,11 @@ const userRoutes = (
   fastify.post('/api/users/oauth/google', postOAuthUserOptions);
 
   fastify.put('/api/users/:userId', updateUserOptions);
+
+  fastify.post(
+    '/api/users/:userId/onboarding/complete',
+    completeUserOnboardingOptions
+  );
 
   fastify.delete('/api/users/:userId', deleteUserOptions);
 

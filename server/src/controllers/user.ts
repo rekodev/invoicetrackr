@@ -25,6 +25,7 @@ import {
 import { saveResetTokenToDb } from '../database/password-reset';
 import {
   changeUserPasswordInDb,
+  completeUserOnboardingInDb,
   deleteUserFromDb,
   getUserByEmailFromDb,
   getUserEmailVerificationStatusFromDb,
@@ -342,6 +343,52 @@ export const updateUser = async (
   reply.status(200).send({
     user: updatedUser,
     message: i18n.t('success.user.updated')
+  });
+};
+
+export const completeUserOnboarding = async (
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const i18n = await useI18n(req);
+  const user = await getUserFromDb(userId);
+
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
+
+  const hasRequiredFreelancerDetails = Boolean(
+    user.name.trim() &&
+      user.businessNumber.trim() &&
+      user.address.trim() &&
+      user.invoiceEmail?.trim()
+  );
+  const hasRequiredInvoiceDefaults = Boolean(
+    user.currency === 'eur' &&
+      /^[A-Z]{2,8}$/.test(user.defaultInvoiceSeries) &&
+      [7, 14, 30].includes(user.defaultPaymentTermsDays)
+  );
+
+  if (!hasRequiredFreelancerDetails)
+    throw new BadRequestError(i18n.t('error.user.onboardingProfileIncomplete'));
+  if (!hasRequiredInvoiceDefaults)
+    throw new BadRequestError(i18n.t('error.user.onboardingDefaultsIncomplete'));
+
+  const completedUser = await completeUserOnboardingInDb(userId);
+
+  if (!completedUser?.onboardingCompletedAt)
+    throw new BadRequestError(i18n.t('error.user.unableToCompleteOnboarding'));
+
+  if (!user.onboardingCompletedAt) {
+    await captureAnalyticsEventForUser({
+      userId,
+      event: analyticsEvents.onboardingStepCompleted,
+      properties: { step: 'completed' }
+    });
+  }
+
+  reply.status(200).send({
+    user: completedUser,
+    message: i18n.t('success.user.onboardingCompleted')
   });
 };
 

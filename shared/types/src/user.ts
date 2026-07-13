@@ -124,6 +124,10 @@ export const accountSettingsBodySchema = userBodyBaseSchema
     language: z.string().max(2).min(2)
   });
 
+export const onboardingCompletionSchema = z.object({
+  onboardingCompletedAt: z.string()
+});
+
 // Types
 export type UserBody = z.infer<typeof userBodySchema>;
 export type User = UserBody;
@@ -135,3 +139,4 @@ export type ResetPasswordTokenGet = z.infer<typeof resetPasswordTokenGetSchema>;
 export type ResetPasswordToken = ResetPasswordTokenGet;
 export type VerifyEmailResponse = z.infer<typeof verifyEmailResponseSchema>;
 export type OAuthUserBody = z.infer<typeof oauthUserBodySchema>;
+export type OnboardingCompletion = z.infer<typeof onboardingCompletionSchema>;
