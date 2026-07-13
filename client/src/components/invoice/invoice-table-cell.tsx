@@ -19,7 +19,8 @@ import {
   DropdownPopover,
   DropdownTrigger,
   toast,
-  Tooltip} from '@heroui/react';
+  Tooltip
+} from '@heroui/react';
 import type {
   InvoiceBody,
   InvoiceLifecycleStatus,
@@ -172,9 +173,7 @@ const InvoiceTableCell = ({
     case 'totalAmount':
       return (
         <p className="flex gap-0.5">
-          <span className="text-success-700">
-            {getCurrencySymbol(currency)}
-          </span>
+          <span className="text-success">{getCurrencySymbol(currency)}</span>
           {(Number(invoice.totalAmount) || 0).toFixed(2)}
         </p>
       );

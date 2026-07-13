@@ -91,9 +91,7 @@ const ClientCard = ({
         </div>
         {amount && currency && (
           <div className="flex gap-[1px] text-lg font-medium">
-            <span className="text-success-700">
-              {getCurrencySymbol(currency)}
-            </span>
+            <span className="text-success">{getCurrencySymbol(currency)}</span>
             {Number(amount).toFixed(2)}
           </div>
         )}
@@ -174,9 +172,7 @@ const ClientCard = ({
 
         {amount && currency && (
           <div className="mt-auto flex gap-[1px] self-end text-lg font-medium">
-            <span className="text-success-700">
-              {getCurrencySymbol(currency)}
-            </span>
+            <span className="text-success">{getCurrencySymbol(currency)}</span>
             {Number(amount).toFixed(2)}
           </div>
         )}

@@ -30,7 +30,7 @@ import { LOGIN_PAGE } from '@/lib/constants/pages';
 type SignUpFormModel = {
   email: string;
   password: string;
-  confirmPassword: string;
+  confirmedPassword: string;
 };
 
 const initialSubmissionMessage = {
@@ -57,7 +57,7 @@ export default function SignUpForm({ headerContent }: Props) {
     defaultValues: {
       email: '',
       password: '',
-      confirmPassword: ''
+      confirmedPassword: ''
     }
   });
   const [submissionMessage, setSubmissionMessage] =
@@ -77,7 +77,7 @@ export default function SignUpForm({ headerContent }: Props) {
     const formData = new FormData();
     formData.append('email', data.email);
     formData.append('password', data.password);
-    formData.append('confirm-password', data.confirmPassword);
+    formData.append('confirmedPassword', data.confirmedPassword);
 
     const response = await signUpAction(initialSubmissionMessage, formData);
     if (response?.ok === false) {
@@ -106,16 +106,16 @@ export default function SignUpForm({ headerContent }: Props) {
     if (!submissionMessage.ok) {
       return (
         <div className="mb-6 flex items-center gap-1">
-          <ExclamationCircleIcon className="text-danger-500 h-5 w-5" />
-          <p className="text-danger-500 text-sm">{submissionMessage.message}</p>
+          <ExclamationCircleIcon className="text-danger h-5 w-5" />
+          <p className="text-danger text-sm">{submissionMessage.message}</p>
         </div>
       );
     }
 
     return (
       <div className="mb-6 flex items-center gap-1">
-        <CheckCircleIcon className="text-success-500 h-5 w-5" />
-        <p className="text-success-500 text-sm">{submissionMessage.message}</p>
+        <CheckCircleIcon className="text-success h-5 w-5" />
+        <p className="text-success text-sm">{submissionMessage.message}</p>
       </div>
     );
   };
@@ -179,17 +179,20 @@ export default function SignUpForm({ headerContent }: Props) {
             />
             <FieldError>{errors.password?.message}</FieldError>
           </TextField>
-          <TextField variant="secondary" isInvalid={!!errors.confirmPassword}>
+          <TextField
+            variant="secondary"
+            isInvalid={!!errors.confirmedPassword}
+          >
             <Label>{t('confirm_password')}</Label>
             <Input
-              {...register('confirmPassword', {
-                onChange: () => clearFieldState('confirmPassword')
+              {...register('confirmedPassword', {
+                onChange: () => clearFieldState('confirmedPassword')
               })}
               id="confirm-password"
               type="password"
               placeholder={t('confirm_password_placeholder')}
             />
-            <FieldError>{errors.confirmPassword?.message}</FieldError>
+            <FieldError>{errors.confirmedPassword?.message}</FieldError>
           </TextField>
           <Button
             className="w-full justify-between"

@@ -52,7 +52,7 @@ describe('auth forms', () => {
       errors: {
         email: '',
         password: 'Password must contain at least one lowercase character',
-        confirmPassword: ''
+        confirmedPassword: ''
       }
     });
 
@@ -83,6 +83,27 @@ describe('auth forms', () => {
       )
     ).not.toBeInTheDocument();
     expect(screen.queryByText('Validation failed')).not.toBeInTheDocument();
+  });
+
+  it('renders server confirmation-password errors on the confirm password field', async () => {
+    mockSignUpAction.mockResolvedValue({
+      ok: false,
+      message: 'Validation failed',
+      errors: {
+        confirmedPassword: 'Passwords do not match.'
+      }
+    });
+
+    render(withIntl(<SignUpForm />));
+
+    await userEvent.type(screen.getByLabelText('Email'), 'user@example.com');
+    await userEvent.type(screen.getByLabelText('Password'), '12345678');
+    await userEvent.click(screen.getByRole('button', { name: /sign up/i }));
+
+    expect(
+      await screen.findByText('Passwords do not match.')
+    ).toBeInTheDocument();
+    expect(mockSignUpAction).toHaveBeenCalledTimes(1);
   });
 
   it('keeps login values and clears the stale error when a field changes', async () => {
