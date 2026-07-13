@@ -2,7 +2,7 @@ import {
   DEFAULT_CURRENCY,
   type User as InvoiceTrackrUser
 } from '@invoicetrackr/types';
-import type { NextAuthConfig,User as AuthUser } from 'next-auth';
+import type { NextAuthConfig, User as AuthUser } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import { type GoogleProfile } from 'next-auth/providers/google';
 
@@ -27,6 +27,8 @@ const setUserTokenFields = (token: JWT, user: TokenUser) => {
   const isOnboarded = !!user.onboardingCompletedAt;
 
   token.sub = String(user.id);
+  token.picture =
+    ('profilePictureUrl' in user ? user.profilePictureUrl : user.image) || null;
   token.language = user.language;
   token.emailVerifiedAt = user.emailVerifiedAt;
   token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
@@ -158,6 +160,7 @@ export const authConfig = {
         token = {
           ...token,
           sub: session.user.id,
+          picture: session.user.image,
           isOnboarded: session.user.isOnboarded,
           emailVerifiedAt: session.user.emailVerifiedAt,
           language: session.user.language,
@@ -179,6 +182,7 @@ export const authConfig = {
     },
     session({ session, token }) {
       session.user.id = token.sub!;
+      session.user.image = token.picture || null;
       session.user.language = token.language as string;
       session.user.emailVerifiedAt = token.emailVerifiedAt as string | null;
       session.user.preferredInvoiceLanguage =

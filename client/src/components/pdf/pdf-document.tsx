@@ -70,6 +70,9 @@ export default function PDFDocument({
 
   const renderHeader = () => (
     <>
+      {sender?.logoUrl ? (
+        <PDFImage src={sender.logoUrl} style={pdfStyles.businessLogo} />
+      ) : null}
       <Text style={pdfStyles.title}>
         {invoiceData?.sender?.vatNumber
           ? t('businessTitle')

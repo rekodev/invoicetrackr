@@ -158,7 +158,9 @@ export default {
     bankAccount: {
       name: 'Bank name is required',
       code: 'Bank code is required',
-      accountNumber: 'Bank account number is required'
+      codeFormat: 'Enter a valid 5-digit bank code or BIC/SWIFT code',
+      accountNumber: 'IBAN is required',
+      iban: 'Enter a valid IBAN'
     },
     user: {
       name: 'Name is required',
@@ -182,7 +184,8 @@ export default {
       created: 'User created successfully',
       updated: 'User information updated successfully',
       deleted: 'Account deleted successfully',
-      profilePictureUpdated: 'Profile picture updated successfully',
+      profilePictureUpdated: 'Business logo updated successfully',
+      profilePictureRemoved: 'Business logo removed successfully',
       accountSettingsUpdated: 'Account settings updated successfully',
       passwordChanged: 'Password changed successfully',
       resetLinkSent: 'Reset link has been sent to the entered email',
@@ -242,7 +245,10 @@ export default {
       unableToUpdate: 'Unable to update user information',
       unableToDelete:
         'Unable to delete account at this time. Please try again later',
-      unableToUpdateProfilePicture: 'Unable to update profile picture',
+      unableToUpdateProfilePicture: 'Unable to update business logo',
+      businessLogoRequired: 'Choose a business logo to upload',
+      businessLogoInvalidType: 'Use a JPEG, PNG, or WebP image',
+      businessLogoTooLarge: 'Business logo must be 5 MB or smaller',
       unableToUpdateAccountSettings: 'Unable to update account settings',
       unableToChangePassword: 'Unable to change password',
       unableToSendResetLink: 'Unable to send reset link. Please try again',

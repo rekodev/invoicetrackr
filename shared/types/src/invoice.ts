@@ -97,6 +97,7 @@ export const invoiceSenderBodySchema = z.object(
       .string()
       .min(1, 'validation.invoice.sender.businessNumber'),
     vatNumber: z.string().nullish(),
+    logoUrl: z.string().optional(),
     address: z.string().min(1, 'validation.invoice.sender.address'),
     email: z
       .email('validation.invoice.sender.email')

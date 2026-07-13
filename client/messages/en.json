@@ -854,13 +854,19 @@
         "personal_information": {
             "form": {
                 "a11y": {
-                    "form_label": "Personal Information Form",
-                    "profile_picture_input": "Choose profile picture",
-                    "dismiss_profile_picture": "Remove selected profile picture"
+                    "form_label": "Freelancer profile form",
+                    "business_logo": "Business logo preview",
+                    "business_logo_input": "Choose business logo",
+                    "dismiss_business_logo": "Remove selected business logo",
+                    "remove_business_logo": "Remove current business logo"
                 },
-                "title": "Personal Information",
-                "upload_profile_picture": "Upload image",
-                "profile_picture_ready": "{size} · Ready to upload",
+                "title": "Freelancer profile",
+                "description": "Business details used as defaults for future invoices.",
+                "business_logo": "Business logo",
+                "business_logo_description": "JPEG, PNG, or WebP up to 5 MB. Saved with future invoices.",
+                "upload_business_logo": "Upload logo",
+                "replace_business_logo": "Replace logo",
+                "business_logo_ready": "{size} · Ready to upload",
                 "email": "Email",
                 "invoice_email": "Invoice email",
                 "email_placeholder": "Enter your email address",
@@ -911,7 +917,7 @@
                 "payment_terms": "Default payment terms",
                 "payment_terms_days": "{days} days",
                 "vat_locked_note": "To choose VAT defaults, mark yourself as a VAT payer in",
-                "personal_information_link": "Personal Information",
+                "personal_information_link": "Freelancer profile",
                 "vat_modes": {
                     "no_vat": "No VAT",
                     "standard_21": "Standard 21%",
@@ -952,7 +958,8 @@
             "a11y": {
                 "form_label": "Banking Information Form"
             },
-            "title": "Banking Information",
+            "title": "Bank accounts",
+            "description": "Choose the default bank account for future invoices. Existing invoices keep their saved payment details.",
             "actions": {
                 "add": "Add New",
                 "save": "Save"
@@ -977,10 +984,10 @@
                 },
                 "bank_name": "Bank Name",
                 "bank_name_placeholder": "E.g., Swedbank",
-                "bank_code": "Bank Code",
-                "bank_code_placeholder": "E.g., 73000",
-                "bank_account_number": "Bank Account Number",
-                "bank_account_number_placeholder": "Enter bank account number",
+                "bank_code": "Bank code or BIC/SWIFT",
+                "bank_code_placeholder": "E.g., 73000 or HABALT22",
+                "bank_account_number": "IBAN",
+                "bank_account_number_placeholder": "E.g., LT121000011101001000",
                 "actions": {
                     "save": "Save",
                     "cancel": "Cancel",

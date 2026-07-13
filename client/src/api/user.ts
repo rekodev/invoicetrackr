@@ -12,6 +12,7 @@ import {
   ResendVerificationEmailResponse,
   ResetPasswordResponse,
   UpdateUserAccountSettingsResponse,
+  UpdateUserLogoResponse,
   UpdateUserResponse,
   User,
   VerifyEmailTokenResponse
@@ -111,12 +112,17 @@ export const updateUserProfilePicture = async (
   userId: number,
   formData: FormData
 ) =>
-  await api.put<UpdateUserResponse>(
+  await api.put<UpdateUserLogoResponse>(
     `/api/users/${userId}/profile-picture`,
     formData,
     {
       headers: { 'Content-Type': 'multipart/form-data' }
     }
+  );
+
+export const deleteUserProfilePicture = async (userId: number) =>
+  await api.delete<UpdateUserLogoResponse>(
+    `/api/users/${userId}/profile-picture`
   );
 
 export const updateUserAccountSettings = async (

@@ -42,6 +42,13 @@ export const pdfStyles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center'
   },
+  businessLogo: {
+    alignSelf: 'center',
+    height: 48,
+    marginBottom: 8,
+    objectFit: 'contain',
+    width: 120
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'stretch'

@@ -200,7 +200,12 @@ const BankingInformationForm = ({ user, bankAccounts }: Props) => {
     <>
       <Card className="w-full border">
         <Card.Header className="flex flex-col items-stretch justify-between gap-4 px-6 py-4 sm:flex-row sm:items-center">
-          <Card.Title className="text-2xl">{t('title')}</Card.Title>
+          <div>
+            <Card.Title className="text-2xl">{t('title')}</Card.Title>
+            <Card.Description className="mt-1">
+              {t('description')}
+            </Card.Description>
+          </div>
           <Button
             variant="secondary"
             className="w-full sm:w-auto"

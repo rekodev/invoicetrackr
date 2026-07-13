@@ -298,6 +298,7 @@ export const getInvoicesFromDb = async (
         businessType: invoiceSendersTable.businessType,
         businessNumber: invoiceSendersTable.businessNumber,
         vatNumber: invoiceSendersTable.vatNumber,
+        logoUrl: invoiceSendersTable.logoUrl,
         address: invoiceSendersTable.address,
         email: invoiceSendersTable.email
       },
@@ -398,6 +399,7 @@ export const getInvoiceFromDb = async (
         businessType: invoiceSendersTable.businessType,
         businessNumber: invoiceSendersTable.businessNumber,
         vatNumber: invoiceSendersTable.vatNumber,
+        logoUrl: invoiceSendersTable.logoUrl,
         address: invoiceSendersTable.address,
         email: invoiceSendersTable.email
       },
@@ -515,7 +517,8 @@ export const insertInvoiceInDb = async (
         type: invoiceData.sender.type,
         businessType: invoiceData.sender.businessType,
         businessNumber: invoiceData.sender.businessNumber,
-        vatNumber: invoiceData.sender.vatNumber || null
+        vatNumber: invoiceData.sender.vatNumber || null,
+        logoUrl: invoiceData.sender.logoUrl || ''
       })
       .returning({ id: invoiceSendersTable.id });
 
@@ -657,7 +660,8 @@ export const updateInvoiceInDb = async (
           type: invoiceData.sender.type,
           businessType: invoiceData.sender.businessType,
           businessNumber: invoiceData.sender.businessNumber,
-          vatNumber: invoiceData.sender.vatNumber || null
+          vatNumber: invoiceData.sender.vatNumber || null,
+          logoUrl: invoiceData.sender.logoUrl || ''
         })
         .where(eq(invoiceSendersTable.id, currentInvoiceData.senderId));
     } else {
@@ -672,7 +676,8 @@ export const updateInvoiceInDb = async (
           type: invoiceData.sender.type,
           businessType: invoiceData.sender.businessType,
           businessNumber: invoiceData.sender.businessNumber,
-          vatNumber: invoiceData.sender.vatNumber || null
+          vatNumber: invoiceData.sender.vatNumber || null,
+          logoUrl: invoiceData.sender.logoUrl || ''
         })
         .returning({ id: invoiceSendersTable.id });
 

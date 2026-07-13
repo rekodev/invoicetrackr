@@ -213,7 +213,8 @@ export const invoiceSendersTable = pgTable(
     type: varchar({ length: 50 }).notNull(),
     businessType: varchar('business_type', { length: 50 }).notNull(),
     businessNumber: varchar('business_number', { length: 255 }).notNull(),
-    vatNumber: varchar('vat_number', { length: 255 })
+    vatNumber: varchar('vat_number', { length: 255 }),
+    logoUrl: text('logo_url').default('').notNull()
   },
   (table) => [
     foreignKey({
@@ -341,6 +342,7 @@ export const businessProfilesTable = pgTable(
     vatNumber: varchar('vat_number', { length: 255 }),
     signatureUrl: text('signature_url').default('').notNull(),
     logoUrl: text('logo_url').default('').notNull(),
+    logoStorageKey: text('logo_storage_key'),
     selectedBankAccountId: integer('selected_bank_account_id'),
     currency: varchar({ length: 3 }).default('eur').notNull(),
     preferredInvoiceLanguage: varchar('preferred_invoice_language', {

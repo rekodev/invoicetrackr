@@ -1,5 +1,5 @@
 import {
-  bankAccountBodySchema,
+  bankAccountInputSchema,
   getBankAccountResponseSchema,
   getBankAccountsResponseSchema,
   messageResponseSchema,
@@ -41,7 +41,7 @@ export const getBankAccountOptions: RouteShorthandOptionsWithHandler = {
 
 export const postBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: bankAccountBodySchema,
+    body: bankAccountInputSchema,
     response: {
       201: postBankAccountResponseSchema
     }
@@ -52,7 +52,7 @@ export const postBankAccountOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateBankAccountOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: bankAccountBodySchema,
+    body: bankAccountInputSchema,
     response: {
       200: updateBankAccountResponseSchema
     }

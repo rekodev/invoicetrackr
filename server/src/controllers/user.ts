@@ -50,6 +50,12 @@ import {
 
 const EMAIL_VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const EMAIL_VERIFICATION_RESEND_COOLDOWN_MS = 15 * 60 * 1000;
+const BUSINESS_LOGO_MAX_BYTES = 5 * 1024 * 1024;
+const BUSINESS_LOGO_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp'
+]);
 
 const createEmailVerificationToken = async (userId: number) => {
   const token = crypto.randomUUID();
@@ -133,7 +139,13 @@ export const loginUser = async (
   if (!isValidPassword)
     throw new UnauthorizedError(i18n.t('error.user.invalidCredentials'));
 
-  await recordRequestAudit({ req, userId: user.id, action: 'account.login_succeeded', entityType: 'account', entityId: user.id });
+  await recordRequestAudit({
+    req,
+    userId: user.id,
+    action: 'account.login_succeeded',
+    entityType: 'account',
+    entityId: user.id
+  });
 
   reply.status(200).send({
     user,
@@ -192,7 +204,13 @@ export const postUser = async (
     properties: { method: 'email', language }
   });
 
-  await recordRequestAudit({ req, userId: createdUser.id, action: 'account.created', entityType: 'account', entityId: createdUser.id });
+  await recordRequestAudit({
+    req,
+    userId: createdUser.id,
+    action: 'account.created',
+    entityType: 'account',
+    entityId: createdUser.id
+  });
 
   return reply
     .status(201)
@@ -203,7 +221,7 @@ export const postOAuthUser = async (
   req: FastifyRequest<{ Body: OAuthUserBody }>,
   reply: FastifyReply
 ) => {
-  const { email, name, image, provider, emailVerified } = req.body;
+  const { email, name, provider, emailVerified } = req.body;
   const i18n = await useI18n(req);
   const languageHeader = req.headers['accept-language'];
   const requestedLanguage = Array.isArray(languageHeader)
@@ -228,7 +246,13 @@ export const postOAuthUser = async (
 
     if (!user) throw new BadRequestError(i18n.t('error.user.notFound'));
 
-    await recordRequestAudit({ req, userId: existingUser.id, action: 'account.oauth_login_succeeded', entityType: 'account', entityId: existingUser.id });
+    await recordRequestAudit({
+      req,
+      userId: existingUser.id,
+      action: 'account.oauth_login_succeeded',
+      entityType: 'account',
+      entityId: existingUser.id
+    });
 
     return reply.status(200).send({
       user,
@@ -242,7 +266,6 @@ export const postOAuthUser = async (
     password: generatedPassword,
     language,
     name: name || '',
-    profilePictureUrl: image || '',
     emailVerifiedAt: new Date().toISOString(),
     analyticsConsentStatus
   });
@@ -260,7 +283,13 @@ export const postOAuthUser = async (
     properties: { method: 'google', language }
   });
 
-  await recordRequestAudit({ req, userId: createdUser.id, action: 'account.oauth_created', entityType: 'account', entityId: createdUser.id });
+  await recordRequestAudit({
+    req,
+    userId: createdUser.id,
+    action: 'account.oauth_created',
+    entityType: 'account',
+    entityId: createdUser.id
+  });
 
   return reply.status(201).send({
     user,
@@ -330,7 +359,23 @@ export const updateUser = async (
   if (!updatedUser)
     throw new BadRequestError(i18n.t('error.user.unableToUpdate'));
 
-  await recordRequestAudit({ req, userId, action: 'business_profile.updated', entityType: 'business_profile', entityId: userId, previousValue: foundUser, newValue: { name, invoiceEmail, phone, businessNumber, vatNumber, isVatPayer, address } });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'business_profile.updated',
+    entityType: 'business_profile',
+    entityId: userId,
+    previousValue: foundUser,
+    newValue: {
+      name,
+      invoiceEmail,
+      phone,
+      businessNumber,
+      vatNumber,
+      isVatPayer,
+      address
+    }
+  });
 
   if (!foundUser.onboardingCompletedAt) {
     await captureAnalyticsEventForUser({
@@ -371,7 +416,9 @@ export const completeUserOnboarding = async (
   if (!hasRequiredFreelancerDetails)
     throw new BadRequestError(i18n.t('error.user.onboardingProfileIncomplete'));
   if (!hasRequiredInvoiceDefaults)
-    throw new BadRequestError(i18n.t('error.user.onboardingDefaultsIncomplete'));
+    throw new BadRequestError(
+      i18n.t('error.user.onboardingDefaultsIncomplete')
+    );
 
   const completedUser = await completeUserOnboardingInDb(userId);
 
@@ -399,7 +446,13 @@ export const deleteUser = async (
   const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
 
-  await recordRequestAudit({ req, userId, action: 'account.deletion_requested', entityType: 'account', entityId: userId });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'account.deletion_requested',
+    entityType: 'account',
+    entityId: userId
+  });
 
   const deletedUserId = await deleteUserFromDb(userId);
 
@@ -432,7 +485,14 @@ export const updateUserSelectedBankAccount = async (
       i18n.t('error.user.unableToUpdateSelectedBankAccount')
     );
 
-  await recordRequestAudit({ req, userId, action: 'business_profile.selected_bank_account_updated', entityType: 'business_profile', entityId: userId, newValue: { selectedBankAccountId } });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'business_profile.selected_bank_account_updated',
+    entityType: 'business_profile',
+    entityId: userId,
+    newValue: { selectedBankAccountId }
+  });
 
   reply.status(200).send({
     message: i18n.t('success.user.selectedBankAccountUpdated')
@@ -464,48 +524,130 @@ export const updateUserAnalyticsConsent = async (
 };
 
 export const updateUserProfilePicture = async (
-  req: FastifyRequest<{ Params: { userId: string } }> & { file: File },
+  req: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
-  const profilePicture = await req.file();
   const i18n = await useI18n(req);
+  const user = await getUserFromDb(userId);
 
-  let uploadedProfilePicture: UploadApiResponse | undefined;
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
 
-  if (profilePicture) {
-    const profilePictureBuffer = await profilePicture.toBuffer();
+  const logo = await req.file({
+    limits: { fileSize: BUSINESS_LOGO_MAX_BYTES, files: 1 }
+  });
 
-    uploadedProfilePicture = await cloudinary.uploader.upload(
-      `data:${profilePicture.mimetype};base64,${profilePictureBuffer.toString(
-        'base64'
-      )}`
+  if (!logo)
+    throw new BadRequestError(i18n.t('error.user.businessLogoRequired'));
+
+  if (!BUSINESS_LOGO_MIME_TYPES.has(logo.mimetype))
+    throw new BadRequestError(i18n.t('error.user.businessLogoInvalidType'));
+
+  let uploadedLogo: UploadApiResponse;
+
+  try {
+    const logoBuffer = await logo.toBuffer();
+
+    if (logo.file.truncated || logoBuffer.byteLength > BUSINESS_LOGO_MAX_BYTES)
+      throw new BadRequestError(i18n.t('error.user.businessLogoTooLarge'));
+
+    uploadedLogo = await cloudinary.uploader.upload(
+      `data:${logo.mimetype};base64,${logoBuffer.toString('base64')}`,
+      {
+        folder: `invoicetrackr/business-logos/${userId}`,
+        public_id: crypto.randomUUID(),
+        resource_type: 'image'
+      }
     );
+  } catch (error) {
+    if (error instanceof BadRequestError) throw error;
 
-    if (!uploadedProfilePicture)
-      throw new BadRequestError(
-        i18n.t('error.user.unableToUpdateProfilePicture')
-      );
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      error.code === 'FST_REQ_FILE_TOO_LARGE'
+    )
+      throw new BadRequestError(i18n.t('error.user.businessLogoTooLarge'));
+
+    req.log.error({ error, userId }, 'Unable to upload business logo');
+    throw new BadRequestError(
+      i18n.t('error.user.unableToUpdateProfilePicture')
+    );
   }
-
-  const urlWithHttps = uploadedProfilePicture?.url.replace(
-    'http://',
-    'https://'
-  );
 
   const updatedUser = await updateUserProfilePictureInDb(
     userId,
-    urlWithHttps || ''
+    uploadedLogo.secure_url,
+    uploadedLogo.public_id
   );
+
+  if (!updatedUser) {
+    try {
+      await cloudinary.uploader.destroy(uploadedLogo.public_id);
+    } catch (error) {
+      req.log.error({ error, userId }, 'Unable to clean up business logo');
+    }
+
+    throw new BadRequestError(
+      i18n.t('error.user.unableToUpdateProfilePicture')
+    );
+  }
+
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'business_profile.logo_updated',
+    entityType: 'business_profile',
+    entityId: userId,
+    previousValue: { profilePictureUrl: user.profilePictureUrl },
+    newValue: { profilePictureUrl: updatedUser.profilePictureUrl }
+  });
+
+  // Previous logo assets stay available because issued invoice snapshots may
+  // still reference their immutable Cloudinary URL.
+
+  reply.status(200).send({
+    user: {
+      id: updatedUser.id,
+      profilePictureUrl: updatedUser.profilePictureUrl
+    },
+    message: i18n.t('success.user.profilePictureUpdated')
+  });
+};
+
+export const deleteUserProfilePicture = async (
+  req: FastifyRequest<{ Params: { userId: string } }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const i18n = await useI18n(req);
+  const user = await getUserFromDb(userId);
+
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
+
+  // Clearing the active reference must not remove assets used by issued
+  // invoice snapshots.
+  const updatedUser = await updateUserProfilePictureInDb(userId, '', null);
 
   if (!updatedUser)
     throw new BadRequestError(
       i18n.t('error.user.unableToUpdateProfilePicture')
     );
 
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'business_profile.logo_removed',
+    entityType: 'business_profile',
+    entityId: userId,
+    previousValue: { profilePictureUrl: user.profilePictureUrl },
+    newValue: { profilePictureUrl: '' }
+  });
+
   reply.status(200).send({
-    user: updatedUser,
-    message: i18n.t('success.user.profilePictureUpdated')
+    user: { id: updatedUser.id, profilePictureUrl: '' },
+    message: i18n.t('success.user.profilePictureRemoved')
   });
 };
 
@@ -542,7 +684,14 @@ export const updateUserAccountSettings = async (
   if (!updatedUser)
     throw new BadRequestError('errors.user.accountSettings.update.badRequest');
 
-  await recordRequestAudit({ req, userId, action: 'business_profile.invoice_defaults_updated', entityType: 'business_profile', entityId: userId, newValue: req.body });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'business_profile.invoice_defaults_updated',
+    entityType: 'business_profile',
+    entityId: userId,
+    newValue: req.body
+  });
 
   reply
     .status(200)
@@ -586,7 +735,13 @@ export const changeUserPassword = async (
   if (!changedPassword)
     throw new BadRequestError(i18n.t('error.user.unableToChangePassword'));
 
-  await recordRequestAudit({ req, userId, action: 'account.password_changed', entityType: 'account', entityId: userId });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'account.password_changed',
+    entityType: 'account',
+    entityId: userId
+  });
 
   reply.status(200).send({ message: i18n.t('success.user.passwordChanged') });
 };
@@ -638,7 +793,13 @@ export const resetUserPassword = async (
     throw new BadRequestError(i18n.t('error.user.unableToSendResetLink'));
   }
 
-  await recordRequestAudit({ req, userId: user.id, action: 'account.password_reset_requested', entityType: 'account', entityId: user.id });
+  await recordRequestAudit({
+    req,
+    userId: user.id,
+    action: 'account.password_reset_requested',
+    entityType: 'account',
+    entityId: user.id
+  });
 
   reply.status(200).send({ message: i18n.t('success.user.resetLinkSent') });
 };
@@ -684,7 +845,13 @@ export const verifyUserEmail = async (
 
   await markEmailVerificationTokenUsedInDb(token);
 
-  await recordRequestAudit({ req, userId: tokenFromDb.userId, action: 'account.email_verified', entityType: 'account', entityId: tokenFromDb.userId });
+  await recordRequestAudit({
+    req,
+    userId: tokenFromDb.userId,
+    action: 'account.email_verified',
+    entityType: 'account',
+    entityId: tokenFromDb.userId
+  });
 
   reply.status(200).send({
     status: 'verified',
@@ -790,7 +957,13 @@ export const createNewUserPassword = async (
 
   await invalidateTokenInDb(userId, token);
 
-  await recordRequestAudit({ req, userId, action: 'account.password_reset_completed', entityType: 'account', entityId: userId });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'account.password_reset_completed',
+    entityType: 'account',
+    entityId: userId
+  });
 
   reply.status(200).send({ message: i18n.t('success.user.passwordChanged') });
 };

@@ -1,4 +1,4 @@
-import { BankAccountBody } from '@invoicetrackr/types';
+import { BankAccountInput } from '@invoicetrackr/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
@@ -53,7 +53,7 @@ export const getBankAccount = async (
 export const postBankAccount = async (
   req: FastifyRequest<{
     Params: { userId: string };
-    Body: Omit<BankAccountBody, 'id'> & { hasSelectedBankAccount: boolean };
+    Body: Omit<BankAccountInput, 'id'>;
   }>,
   reply: FastifyReply
 ) => {
@@ -108,7 +108,7 @@ export const postBankAccount = async (
 export const updateBankAccount = async (
   req: FastifyRequest<{
     Params: { userId: string; id: string };
-    Body: BankAccountBody;
+    Body: BankAccountInput;
   }>,
   reply: FastifyReply
 ) => {

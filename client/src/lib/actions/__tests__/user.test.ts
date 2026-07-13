@@ -1,13 +1,25 @@
 import { DEFAULT_CURRENCY, type User } from '@invoicetrackr/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { completeUserOnboarding, updateUser } from '@/api/user';
+import {
+  completeUserOnboarding,
+  deleteUserProfilePicture,
+  updateUser,
+  updateUserProfilePicture
+} from '@/api/user';
 import { updateSessionAction } from '@/lib/actions';
 
-import { completeUserOnboardingAction, updateUserAction } from '../user';
+import {
+  completeUserOnboardingAction,
+  deleteUserProfilePictureAction,
+  updateUserAction,
+  updateUserProfilePictureAction
+} from '../user';
 
 vi.mock('@/api/user', () => ({
   completeUserOnboarding: vi.fn(),
+  deleteUserProfilePicture: vi.fn(),
+  updateUserProfilePicture: vi.fn(),
   updateUser: vi.fn()
 }));
 
@@ -112,5 +124,43 @@ describe('user actions', () => {
         newSession: expect.objectContaining({ isOnboarded: true })
       })
     );
+  });
+
+  it('refreshes the session avatar after a business logo upload', async () => {
+    vi.mocked(updateUserProfilePicture).mockResolvedValue({
+      data: {
+        user: {
+          id: 1,
+          profilePictureUrl: 'https://res.cloudinary.com/logo.png'
+        },
+        message: 'Business logo updated successfully'
+      }
+    } as never);
+
+    const response = await updateUserProfilePictureAction({
+      userId: 1,
+      formData: new FormData()
+    });
+
+    expect(response.ok).toBe(true);
+    expect(updateSessionAction).toHaveBeenCalledWith({
+      newSession: { image: 'https://res.cloudinary.com/logo.png' }
+    });
+  });
+
+  it('clears the session avatar after removing the business logo', async () => {
+    vi.mocked(deleteUserProfilePicture).mockResolvedValue({
+      data: {
+        user: { id: 1, profilePictureUrl: '' },
+        message: 'Business logo removed successfully'
+      }
+    } as never);
+
+    const response = await deleteUserProfilePictureAction({ userId: 1 });
+
+    expect(response.ok).toBe(true);
+    expect(updateSessionAction).toHaveBeenCalledWith({
+      newSession: { image: null }
+    });
   });
 });
