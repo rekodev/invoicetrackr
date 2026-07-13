@@ -142,6 +142,46 @@ const isInvoicePayable = (invoice: InvoiceBody) =>
   !invoice.publicInvoiceRevokedAt &&
   !isPublicInvoiceLinkExpired(invoice.publicInvoiceExpiresAt);
 
+const hasCompleteFreelancerProfile = (
+  user: NonNullable<Awaited<ReturnType<typeof getUserFromDb>>>
+) =>
+  Boolean(
+    user.name.trim() &&
+      user.businessNumber.trim() &&
+      user.address.trim() &&
+      user.invoiceEmail?.trim()
+  );
+
+const hasCompleteInvoiceBankDetails = (invoice: InvoiceFromDb) =>
+  Boolean(
+    invoice.bankingInformation?.name?.trim() &&
+      invoice.bankingInformation.code?.trim() &&
+      invoice.bankingInformation.accountNumber?.trim()
+  );
+
+const assertInvoiceCanBeIssued = ({
+  invoice,
+  user,
+  i18n
+}: {
+  invoice: InvoiceFromDb;
+  user: NonNullable<Awaited<ReturnType<typeof getUserFromDb>>>;
+  i18n: Awaited<ReturnType<typeof useI18n>>;
+}) => {
+  if ((invoice.lifecycleStatus || 'draft') !== 'draft') return;
+
+  if (!hasCompleteFreelancerProfile(user))
+    throw new BadRequestError(i18n.t('error.invoice.senderProfileIncomplete'));
+
+  if (
+    (invoice.paymentMode || 'manual') === 'manual' &&
+    !hasCompleteInvoiceBankDetails(invoice)
+  )
+    throw new BadRequestError(
+      i18n.t('error.invoice.manualPaymentDetailsIncomplete')
+    );
+};
+
 const getManualPaymentReference = (invoice: InvoiceBody) =>
   invoice.manualPaymentReference?.trim() ||
   invoice.invoiceId ||
@@ -615,6 +655,8 @@ export const sendInvoiceEmail = async (
 
   if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
   if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+
+  assertInvoiceCanBeIssued({ invoice, user, i18n });
 
   let publicInvoiceToken =
     invoice.publicInvoiceToken || randomBytes(32).toString('hex');

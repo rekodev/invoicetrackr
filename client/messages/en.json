@@ -401,21 +401,36 @@
                 "tagline": "Manage invoices and track your income seamlessly"
             },
             "steps": {
-                "account": {
-                    "short_name": "Account",
-                    "name": "Create an account",
-                    "description": "Setting up your foundation"
-                },
                 "personal": {
-                    "short_name": "Profile",
-                    "name": "Freelancer Profile",
-                    "description": "Add the details needed for individual activity invoices"
+                    "short_name": "Details",
+                    "name": "Freelancer details",
+                    "description": "Add the legal details required on your individual activity invoices"
+                },
+                "banking": {
+                    "short_name": "Bank",
+                    "name": "Bank account",
+                    "description": "Optionally add the account clients should pay"
+                },
+                "defaults": {
+                    "short_name": "Defaults",
+                    "name": "Invoice defaults",
+                    "description": "Review the defaults used for new invoices"
                 }
             },
             "actions": {
                 "back": "Back",
                 "next": "Next",
-                "skip": "Skip"
+                "skip": "Skip",
+                "finish": "Finish setup"
+            },
+            "banking": {
+                "optional_note": "Bank details are optional. You can skip this step and issue invoices without payment instructions."
+            },
+            "details": {
+                "legal_name": "Legal name"
+            },
+            "defaults": {
+                "currency": "Currency"
             },
             "errors": {
                 "missing_user": "We could not find your account details. Please refresh and try again."
@@ -968,7 +983,8 @@
                 "bank_account_number_placeholder": "Enter bank account number",
                 "actions": {
                     "save": "Save",
-                    "cancel": "Cancel"
+                    "cancel": "Cancel",
+                    "skip": "Skip for now"
                 }
             }
         }

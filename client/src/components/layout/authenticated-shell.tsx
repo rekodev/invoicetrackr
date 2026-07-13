@@ -7,6 +7,7 @@ import {
 import {
   Avatar,
   Button,
+  cn,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -15,11 +16,15 @@ import {
   Separator
 } from '@heroui/react';
 import type { User } from '@invoicetrackr/types';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { logOutAction } from '@/lib/actions';
-import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
+import {
+  ONBOARDING_PAGE,
+  PERSONAL_INFORMATION_PAGE
+} from '@/lib/constants/pages';
 
 import LanguageSwitcher from './language-switcher';
 import MobileSidebar from './mobile-sidebar';
@@ -34,7 +39,10 @@ export default function AuthenticatedShell({
   children: ReactNode;
 }) {
   const t = useTranslations('header.user');
+  const pathname = usePathname();
+  const isOnboarding = pathname === ONBOARDING_PAGE;
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const isMobileNavigationOpen = isMobileOpen && !isOnboarding;
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
   const mobileDrawerRef = useRef<HTMLElement>(null);
   const closeMobileNavigation = () => {
@@ -43,7 +51,7 @@ export default function AuthenticatedShell({
   };
 
   useEffect(() => {
-    if (!isMobileOpen) return;
+    if (!isMobileNavigationOpen) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -76,7 +84,7 @@ export default function AuthenticatedShell({
       document.removeEventListener('keydown', handleKeyboard);
       document.body.style.overflow = previousOverflow;
     };
-  }, [isMobileOpen]);
+  }, [isMobileNavigationOpen]);
 
   const accountMenu = (
     <Dropdown>
@@ -116,29 +124,39 @@ export default function AuthenticatedShell({
 
   return (
     <div className="flex min-h-[calc(100vh-1px)] w-full">
-      <Sidebar />
-      {isMobileOpen && (
+      {!isOnboarding ? <Sidebar /> : null}
+      {isMobileNavigationOpen && (
         <MobileSidebar
           mobileDrawerRef={mobileDrawerRef}
           onClose={closeMobileNavigation}
         />
       )}
       <div className="min-w-0 flex-1">
-        <header className="border-default-200 bg-background/90 sticky top-0 z-40 flex h-16 items-center justify-between border-b px-4 backdrop-blur md:justify-end md:px-6">
-          <Button
-            ref={menuTriggerRef}
-            isIconOnly
-            variant="ghost"
-            className="md:hidden"
-            aria-label={t('a11y.open_navigation')}
-            onPress={() => setIsMobileOpen(true)}
-          >
-            <Bars3Icon className="size-5" />
-          </Button>
+        <header
+          className={cn(
+            'border-default-200 bg-background/90 sticky top-0 z-40 flex h-16 items-center border-b px-4 backdrop-blur md:justify-end md:px-6',
+            isOnboarding ? 'justify-end' : 'justify-between'
+          )}
+        >
+          {!isOnboarding ? (
+            <Button
+              ref={menuTriggerRef}
+              isIconOnly
+              variant="ghost"
+              className="md:hidden"
+              aria-label={t('a11y.open_navigation')}
+              onPress={() => setIsMobileOpen(true)}
+            >
+              <Bars3Icon className="size-5" />
+            </Button>
+          ) : null}
           <div className="flex items-center gap-2">
             <LanguageSwitcher user={user} />
             <ThemeSwitcher />
-            <Separator orientation="vertical" className="mx-1 h-6" />
+            <Separator
+              orientation="vertical"
+              className="mx-1 h-auto self-stretch"
+            />
             {accountMenu}
           </div>
         </header>

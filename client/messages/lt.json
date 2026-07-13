@@ -401,21 +401,36 @@
                 "tagline": "Tvarkykite sąskaitas faktūras ir stebėkite pajamas lengvai"
             },
             "steps": {
-                "account": {
-                    "short_name": "Paskyra",
-                    "name": "Sukurti paskyrą",
-                    "description": "Kuriame pagrindą"
-                },
                 "personal": {
-                    "short_name": "Profilis",
-                    "name": "Freelancerio profilis",
-                    "description": "Įveskite duomenis, reikalingus individualios veiklos sąskaitoms"
+                    "short_name": "Duomenys",
+                    "name": "Veiklos duomenys",
+                    "description": "Įveskite teisinius duomenis, reikalingus individualios veiklos sąskaitoms"
+                },
+                "banking": {
+                    "short_name": "Bankas",
+                    "name": "Banko sąskaita",
+                    "description": "Jei norite, pridėkite sąskaitą klientų mokėjimams"
+                },
+                "defaults": {
+                    "short_name": "Nuostatos",
+                    "name": "Sąskaitų nuostatos",
+                    "description": "Peržiūrėkite naujoms sąskaitoms taikomas nuostatas"
                 }
             },
             "actions": {
                 "back": "Atgal",
                 "next": "Toliau",
-                "skip": "Praleisti"
+                "skip": "Praleisti",
+                "finish": "Baigti nustatymą"
+            },
+            "banking": {
+                "optional_note": "Banko duomenys neprivalomi. Šį žingsnį galite praleisti ir išrašyti sąskaitas be mokėjimo nurodymų."
+            },
+            "details": {
+                "legal_name": "Vardas ir pavardė"
+            },
+            "defaults": {
+                "currency": "Valiuta"
             },
             "errors": {
                 "missing_user": "Nepavyko rasti paskyros duomenų. Atnaujinkite puslapį ir bandykite dar kartą."
@@ -968,7 +983,8 @@
                 "bank_account_number_placeholder": "Pvz., LT1234 5678 9012 3456 78",
                 "actions": {
                     "save": "Išsaugoti",
-                    "cancel": "Atšaukti"
+                    "cancel": "Atšaukti",
+                    "skip": "Kol kas praleisti"
                 }
             }
         }

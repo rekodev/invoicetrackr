@@ -6,7 +6,7 @@ import {
   ExclamationCircleIcon,
   ShieldCheckIcon
 } from '@heroicons/react/24/outline';
-import { buttonVariants, Card, cn,Link } from '@heroui/react';
+import { buttonVariants, Card, cn, Link } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -139,7 +139,7 @@ export default function VerifyEmailResultCard({
                 strokeWidth={2.25}
               />
             ) : isError ? (
-              <ExclamationCircleIcon className="text-danger-300 h-5 w-5" />
+              <ExclamationCircleIcon className="text-danger h-5 w-5" />
             ) : (
               <ShieldCheckIcon className="text-warning h-5 w-5" />
             )}

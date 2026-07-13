@@ -1,5 +1,6 @@
 import {
   accountSettingsBodySchema,
+  completeOnboardingResponseSchema,
   currentPasswordSchema,
   getUserResponseSchema,
   loginPasswordSchema,
@@ -19,6 +20,7 @@ import z from 'zod/v4';
 
 import {
   changeUserPassword,
+  completeUserOnboarding,
   createNewUserPassword,
   deleteUser,
   getUser,
@@ -107,6 +109,16 @@ export const updateUserOptions: RouteShorthandOptionsWithHandler = {
   preValidation: preValidateFileAndFields,
   preHandler: authMiddleware,
   handler: updateUser
+};
+
+export const completeUserOnboardingOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    response: {
+      200: completeOnboardingResponseSchema
+    }
+  },
+  preHandler: authMiddleware,
+  handler: completeUserOnboarding
 };
 
 export const deleteUserOptions: RouteShorthandOptionsWithHandler = {

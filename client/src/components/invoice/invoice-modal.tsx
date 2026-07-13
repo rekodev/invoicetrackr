@@ -13,7 +13,8 @@ import {
   ListBoxItem,
   Modal,
   Select,
-  Spinner} from '@heroui/react';
+  Spinner
+} from '@heroui/react';
 import type { InvoiceBody, InvoiceStatus } from '@invoicetrackr/types';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';

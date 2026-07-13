@@ -196,7 +196,8 @@ export default {
       emailAlreadyVerified: 'El. paštas jau patvirtintas',
       oauthLinked: 'Google paskyra prijungta sėkmingai',
       selectedBankAccountUpdated:
-        'Pagrindinė banko sąskaita atnaujinta sėkmingai'
+        'Pagrindinė banko sąskaita atnaujinta sėkmingai',
+      onboardingCompleted: 'Jūsų individualios veiklos darbo erdvė paruošta'
     },
     invoice: {
       created: 'Sąskaita faktūra pridėta sėkmingai',
@@ -264,7 +265,13 @@ export default {
       tokenAlreadyUsed: 'Raktas jau panaudotas',
       unableToUploadSignature: 'Nepavyko įkelti parašo',
       unableToUpdateSelectedBankAccount:
-        'Nepavyko atnaujinti pagrindinės banko sąskaitos'
+        'Nepavyko atnaujinti pagrindinės banko sąskaitos',
+      onboardingProfileIncomplete:
+        'Prieš baigdami nustatymą įveskite vardą ir pavardę, individualios veiklos pažymos numerį, adresą ir sąskaitų el. paštą.',
+      onboardingDefaultsIncomplete:
+        'Prieš baigdami nustatymą peržiūrėkite ir išsaugokite tinkamą EUR sąskaitų seriją bei apmokėjimo terminą.',
+      unableToCompleteOnboarding:
+        'Nepavyko užbaigti nustatymo. Patikrinkite duomenis ir bandykite dar kartą.'
     },
     invoice: {
       notFound: 'Sąskaita faktūra nerasta',
@@ -294,7 +301,11 @@ export default {
       voidedImmutable:
         'Anuliuotų sąskaitų būsenos negalima keisti iš lentelės pasirinkimo.',
       issuedImmutable:
-        'Išrašytų sąskaitų negalima redaguoti ar ištrinti šiame sraute'
+        'Išrašytų sąskaitų negalima redaguoti ar ištrinti šiame sraute',
+      senderProfileIncomplete:
+        'Prieš išrašydami sąskaitą užpildykite individualios veiklos duomenis nustatymuose.',
+      manualPaymentDetailsIncomplete:
+        'Prie sąskaitos pridėkite visus banko duomenis arba prieš ją išrašydami išjunkite mokėjimo nurodymus.'
     },
     client: {
       notFound: 'Klientas nerastas',

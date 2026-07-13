@@ -15,7 +15,8 @@ import {
   Input,
   Label,
   Link,
-  TextField} from '@heroui/react';
+  TextField
+} from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
@@ -132,14 +133,14 @@ export default function CreateNewPasswordForm({ userId, token }: Props) {
             {response?.message && (
               <div className="mb-6 flex items-center gap-1">
                 {response.ok ? (
-                  <CheckCircleIcon className="text-success-500 h-5 w-5" />
+                  <CheckCircleIcon className="text-success h-5 w-5" />
                 ) : (
-                  <ExclamationCircleIcon className="text-danger-500 h-5 w-5" />
+                  <ExclamationCircleIcon className="text-danger h-5 w-5" />
                 )}
                 <p
                   className={cn('text-sm', {
-                    'text-danger-500': !response.ok,
-                    'text-success-500': response.ok
+                    'text-danger': !response.ok,
+                    'text-success': response.ok
                   })}
                 >
                   {response.message}

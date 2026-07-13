@@ -15,7 +15,8 @@ import {
   Input,
   Label,
   Link,
-  TextField} from '@heroui/react';
+  TextField
+} from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
@@ -87,15 +88,14 @@ export default function ForgotPasswordForm() {
             {response?.message && (
               <div className="mb-6 flex items-center gap-1">
                 {response.ok ? (
-                  <CheckCircleIcon className="text-success-400 h-5 w-5" />
+                  <CheckCircleIcon className="text-success h-5 w-5" />
                 ) : (
-                  // TODO: Replace red with danger
-                  <ExclamationCircleIcon className="h-5 w-5 text-rose-500" />
+                  <ExclamationCircleIcon className="text-danger h-5 w-5" />
                 )}
                 <p
                   className={cn('text-sm', {
-                    'text-success-400': response.ok,
-                    'text-rose-500': !response.ok
+                    'text-success': response.ok,
+                    'text-danger': !response.ok
                   })}
                 >
                   {response.message}

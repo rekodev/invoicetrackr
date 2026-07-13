@@ -101,7 +101,7 @@ export async function signUpAction(
   const rawFormData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
-    confirmedPassword: formData.get('confirm-password') as string
+    confirmedPassword: formData.get('confirmedPassword') as string
   };
 
   const response = await registerUser(rawFormData);

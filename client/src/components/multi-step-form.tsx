@@ -1,17 +1,20 @@
 'use client';
 
 import { CheckIcon } from '@heroicons/react/24/outline';
-import { Button, cn, toast } from '@heroui/react';
+import { Button, Card, cn, Separator } from '@heroui/react';
 import { User } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useState } from 'react';
 
 import { DASHBOARD_PAGE } from '@/lib/constants/pages';
 import { isUserPersonalInformationSetUp } from '@/lib/utils/user';
 
+import AuthCardHeader from './auth/auth-card-header';
 import SignUpForm from './auth/sign-up-form';
-import PersonalInformationForm from './profile/personal-information-form';
+import FreelancerDetailsStep from './onboarding/freelancer-details-step';
+import InvoiceDefaultsStep from './onboarding/invoice-defaults-step';
+import BankAccountForm from './profile/bank-account-form';
 
 type Props = {
   existingUserData?: User;
@@ -23,39 +26,45 @@ export default function MultiStepForm({ existingUserData }: Props) {
 
   const steps = [
     {
-      id: 'account',
-      shortName: t('steps.account.short_name'),
-      name: t('steps.account.name'),
-      description: t('steps.account.description')
-    },
-    {
       id: 'personal',
       shortName: t('steps.personal.short_name'),
       name: t('steps.personal.name'),
       description: t('steps.personal.description')
+    },
+    {
+      id: 'banking',
+      shortName: t('steps.banking.short_name'),
+      name: t('steps.banking.name'),
+      description: t('steps.banking.description')
+    },
+    {
+      id: 'defaults',
+      shortName: t('steps.defaults.short_name'),
+      name: t('steps.defaults.name'),
+      description: t('steps.defaults.description')
     }
   ];
-  const initialCurrentStep = useMemo(() => {
+  const initialCurrentStep = (() => {
     if (!existingUserData) return 0;
-    if (isUserPersonalInformationSetUp(existingUserData)) return 1;
-
-    return 1;
-  }, [existingUserData]);
-  const minimumAllowedStep = existingUserData ? 1 : 0;
+    if (!isUserPersonalInformationSetUp(existingUserData)) return 0;
+    if (!existingUserData.selectedBankAccountId) return 1;
+    return 2;
+  })();
 
   const [currentStep, setCurrentStep] = useState(initialCurrentStep);
+  const [furthestStep, setFurthestStep] = useState(initialCurrentStep);
   const goToStep = (step: number) => {
-    setCurrentStep(Math.max(minimumAllowedStep, step));
+    if (step <= furthestStep) setCurrentStep(step);
   };
 
-  const completePersonalInformation = async () => {
-    if (!existingUserData?.id) {
-      toast(t('errors.missing_user'), { variant: 'danger' });
-      return;
-    }
-
+  const completeOnboarding = () => {
     router.refresh();
     router.push(DASHBOARD_PAGE);
+  };
+
+  const advanceToStep = (step: number) => {
+    setFurthestStep((current) => Math.max(current, step));
+    setCurrentStep(step);
   };
 
   const renderStepHeader = () => (
@@ -65,16 +74,36 @@ export default function MultiStepForm({ existingUserData }: Props) {
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return <SignUpForm headerContent={renderStepHeader()} />;
+        return (
+          <FreelancerDetailsStep
+            user={existingUserData!}
+            onSuccess={() => advanceToStep(1)}
+          />
+        );
       case 1:
         return (
-          <PersonalInformationForm
-            cardHeaderTitle={steps[1].name}
-            cardHeaderDescription={steps[1].description}
-            defaultValues={existingUserData}
-            headerContent={renderStepHeader()}
-            hideEmailVerificationBanner
-            onSuccess={completePersonalInformation}
+          <Card.Content className="p-6">
+            <p className="text-muted mb-4 text-sm">
+              {t('banking.optional_note')}
+            </p>
+            <BankAccountForm
+              variant="inline"
+              userId={existingUserData?.id}
+              userSelectedBankAccountId={
+                existingUserData?.selectedBankAccountId
+              }
+              isUserOnboarding
+              shouldSelectOnCreate
+              onSkip={() => advanceToStep(2)}
+              onSuccess={() => advanceToStep(2)}
+            />
+          </Card.Content>
+        );
+      case 2:
+        return (
+          <InvoiceDefaultsStep
+            user={existingUserData!}
+            onSuccess={completeOnboarding}
           />
         );
       default:
@@ -85,7 +114,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
   const renderHorizontalStepper = () => (
     <div className="flex w-full items-center">
       {steps.map((step, index) => {
-        const isCompleted = index < currentStep;
+        const isCompleted = index < furthestStep;
         const isCurrent = index === currentStep;
 
         return (
@@ -96,10 +125,10 @@ export default function MultiStepForm({ existingUserData }: Props) {
                 isIconOnly
                 size="sm"
                 variant={isCurrent ? 'primary' : 'outline'}
-                isDisabled={!isCurrent}
+                isDisabled={index > furthestStep}
                 onPress={() => goToStep(index)}
                 className={cn('h-8 min-w-8 text-xs font-medium', {
-                  'opacity-55': !isCurrent
+                  'opacity-55': index > furthestStep
                 })}
               >
                 {isCompleted ? <CheckIcon className="h-4 w-4" /> : index + 1}
@@ -133,7 +162,7 @@ export default function MultiStepForm({ existingUserData }: Props) {
     return (
       <section className="flex flex-1 items-center justify-center">
         <div className="w-full max-w-lg">
-          <SignUpForm headerContent={renderHorizontalStepper()} />
+          <SignUpForm />
         </div>
       </section>
     );
@@ -141,7 +170,16 @@ export default function MultiStepForm({ existingUserData }: Props) {
 
   return (
     <section className="flex flex-1 items-center justify-center py-2 md:py-6">
-      <div className="w-full max-w-lg">{renderStep()}</div>
+      <Card className="w-full max-w-xl border">
+        <AuthCardHeader
+          title={steps[currentStep].name}
+          description={steps[currentStep].description}
+        >
+          {renderStepHeader()}
+        </AuthCardHeader>
+        <Separator />
+        {renderStep()}
+      </Card>
     </section>
   );
 }

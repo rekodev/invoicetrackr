@@ -190,7 +190,8 @@ export default {
       emailVerified: 'Email verified successfully',
       emailAlreadyVerified: 'Email is already verified',
       oauthLinked: 'Google account connected successfully',
-      selectedBankAccountUpdated: 'Selected bank account updated successfully'
+      selectedBankAccountUpdated: 'Selected bank account updated successfully',
+      onboardingCompleted: 'Your freelancer workspace is ready'
     },
     invoice: {
       created: 'Invoice added successfully',
@@ -258,7 +259,13 @@ export default {
       tokenAlreadyUsed: 'Token has already been used',
       unableToUploadSignature: 'Unable to upload signature',
       unableToUpdateSelectedBankAccount:
-        'Unable to update selected bank account'
+        'Unable to update selected bank account',
+      onboardingProfileIncomplete:
+        'Add your legal name, individual activity certificate number, address, and invoice email before finishing setup.',
+      onboardingDefaultsIncomplete:
+        'Review and save a valid EUR invoice series and payment term before finishing setup.',
+      unableToCompleteOnboarding:
+        'Unable to finish setup. Please review your details and try again.'
     },
     invoice: {
       notFound: 'Invoice not found',
@@ -288,7 +295,11 @@ export default {
       voidedImmutable:
         'Voided invoices cannot be changed from the status dropdown.',
       issuedImmutable:
-        'Issued invoices cannot be edited or deleted from this flow'
+        'Issued invoices cannot be edited or deleted from this flow',
+      senderProfileIncomplete:
+        'Complete your freelancer details in Settings before issuing this invoice.',
+      manualPaymentDetailsIncomplete:
+        'Add complete bank details to this invoice or disable payment instructions before issuing it.'
     },
     client: {
       notFound: 'Client not found',

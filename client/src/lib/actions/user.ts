@@ -10,6 +10,7 @@ import { revalidatePath } from 'next/cache';
 
 import {
   changeUserPassword,
+  completeUserOnboarding,
   resendVerificationEmail,
   updateUser,
   updateUserAccountSettings,
@@ -21,6 +22,7 @@ import { updateSessionAction } from '../actions';
 import {
   ACCOUNT_SETTINGS_PAGE,
   CHANGE_PASSWORD_PAGE,
+  ONBOARDING_PAGE,
   PERSONAL_INFORMATION_PAGE
 } from '../constants/pages';
 import { ActionResponseModel } from '../types/action';
@@ -59,8 +61,6 @@ export async function updateUserAction({
 
   await updateSessionAction({
     newSession: {
-      isOnboarded: true,
-      onboardingCompletedAt: new Date().toISOString(),
       isVatPayer: user.isVatPayer,
       vatNumber: user.isVatPayer ? user.vatNumber : null,
       ...(user.isVatPayer ? {} : { defaultInvoiceVatMode: 'no_vat' })
@@ -70,6 +70,36 @@ export async function updateUserAction({
   revalidatePath(PERSONAL_INFORMATION_PAGE);
   revalidatePath(ACCOUNT_SETTINGS_PAGE);
   return { ok: true, message: response.data.message };
+}
+
+export async function completeUserOnboardingAction({
+  userId
+}: {
+  userId: number;
+}): Promise<ActionResponseModel> {
+  const response = await completeUserOnboarding(userId);
+
+  if (isResponseError(response)) {
+    return {
+      ok: false,
+      message: response.data.message,
+      validationErrors: mapValidationErrors(response.data.errors)
+    };
+  }
+
+  await updateSessionAction({
+    newSession: {
+      isOnboarded: true,
+      onboardingCompletedAt: response.data.user.onboardingCompletedAt
+    }
+  });
+
+  revalidatePath(ONBOARDING_PAGE);
+  return {
+    ok: true,
+    message: response.data.message,
+    data: response.data.user
+  };
 }
 
 export async function updateUserAccountSettingsAction({

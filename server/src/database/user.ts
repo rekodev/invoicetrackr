@@ -136,11 +136,27 @@ export const updateUserInDb = async (
       invoiceEmail: invoiceEmail || user.email,
       phone,
       signatureUrl: signature,
-      onboardingCompletedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     })
     .where(eq(businessProfilesTable.userId, Number(user.id)))
     .returning({ id: businessProfilesTable.userId });
+
+  return profiles.at(0);
+};
+
+export const completeUserOnboardingInDb = async (
+  userId: number
+): Promise<{ onboardingCompletedAt: string | null } | undefined> => {
+  const profiles = await db
+    .update(businessProfilesTable)
+    .set({
+      onboardingCompletedAt: sql<string>`COALESCE(${businessProfilesTable.onboardingCompletedAt}, CURRENT_TIMESTAMP)`,
+      updatedAt: new Date().toISOString()
+    })
+    .where(eq(businessProfilesTable.userId, userId))
+    .returning({
+      onboardingCompletedAt: businessProfilesTable.onboardingCompletedAt
+    });
 
   return profiles.at(0);
 };

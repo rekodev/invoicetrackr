@@ -1,5 +1,6 @@
 import z from 'zod/v4';
 import {
+  onboardingCompletionSchema,
   resetPasswordTokenGetSchema,
   userBodySchema,
   verifyEmailResponseSchema
@@ -42,6 +43,11 @@ export const verifyEmailTokenResponseSchema = verifyEmailResponseSchema;
 
 export const updateUserResponseSchema = z.object({
   user: userBodySchema.pick({ id: true }),
+  message: z.string()
+});
+
+export const completeOnboardingResponseSchema = z.object({
+  user: onboardingCompletionSchema,
   message: z.string()
 });
 
@@ -194,6 +200,9 @@ export type MessageResponse = z.infer<typeof messageResponseSchema>;
 export type GetUserResponse = z.infer<typeof getUserResponseSchema>;
 export type RegisterUserResponse = z.infer<typeof registerUserResponseSchema>;
 export type UpdateUserResponse = z.infer<typeof updateUserResponseSchema>;
+export type CompleteOnboardingResponse = z.infer<
+  typeof completeOnboardingResponseSchema
+>;
 export type LoginUserResponse = z.infer<typeof loginUserResponseSchema>;
 export type OAuthUserResponse = z.infer<typeof oauthUserResponseSchema>;
 export type UpdateUserAccountSettingsResponse = MessageResponse;

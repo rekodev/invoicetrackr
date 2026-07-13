@@ -380,7 +380,6 @@ describe('Invoice Controller', () => {
 
       await app.close();
     });
-
   });
 
   describe('DELETE /api/:userId/invoices/:id', () => {
@@ -516,6 +515,129 @@ describe('Invoice Controller', () => {
   });
 
   describe('POST /api/:userId/invoices/:id/send-email', () => {
+    it('rejects issuing when the freelancer profile is incomplete', async () => {
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
+        invoiceFromDbFactory.build({
+          id: 1,
+          lifecycleStatus: 'draft',
+          paymentMode: 'disabled',
+          bankingInformation: undefined
+        })
+      );
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(
+        userFactory.build({ id: testUserId, address: '' })
+      );
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/invoices/:id/send-email',
+          { preHandler: mockAuthMiddleware },
+          invoiceController.sendInvoiceEmail
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/invoices/1/send-email`,
+        payload: {
+          recipientEmail: 'receiver@example.com',
+          subject: 'Invoice SF001',
+          includePublicLink: false
+        }
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(JSON.parse(response.body).message).toContain('freelancer details');
+      expect(invoiceDb.markPublicInvoiceSentInDb).not.toHaveBeenCalled();
+      expect(mockResendSend).not.toHaveBeenCalled();
+
+      await app.close();
+    });
+
+    it('rejects issuing a manual-payment draft without bank details before mutating it', async () => {
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
+        invoiceFromDbFactory.build({
+          id: 1,
+          lifecycleStatus: 'draft',
+          paymentMode: 'manual',
+          bankingInformation: undefined
+        })
+      );
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(
+        userFactory.build({ id: testUserId })
+      );
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/invoices/:id/send-email',
+          { preHandler: mockAuthMiddleware },
+          invoiceController.sendInvoiceEmail
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/invoices/1/send-email`,
+        payload: {
+          recipientEmail: 'receiver@example.com',
+          subject: 'Invoice SF001'
+        }
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(JSON.parse(response.body).message).toContain('bank details');
+      expect(invoiceDb.preparePublicInvoiceFromDb).not.toHaveBeenCalled();
+      expect(invoiceDb.markPublicInvoiceSentInDb).not.toHaveBeenCalled();
+      expect(mockResendSend).not.toHaveBeenCalled();
+
+      await app.close();
+    });
+
+    it('issues a draft without bank details when payment instructions are disabled', async () => {
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
+        invoiceFromDbFactory.build({
+          id: 1,
+          lifecycleStatus: 'draft',
+          paymentMode: 'disabled',
+          bankingInformation: undefined
+        })
+      );
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(
+        userFactory.build({ id: testUserId })
+      );
+      vi.mocked(invoiceDb.markPublicInvoiceSentInDb).mockResolvedValue({
+        id: 1
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/invoices/:id/send-email',
+          { preHandler: mockAuthMiddleware },
+          invoiceController.sendInvoiceEmail
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/invoices/1/send-email`,
+        payload: {
+          recipientEmail: 'receiver@example.com',
+          subject: 'Invoice SF001',
+          includePublicLink: false
+        }
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(mockResendSend).toHaveBeenCalled();
+      expect(invoiceDb.markPublicInvoiceSentInDb).toHaveBeenCalledWith({
+        userId: testUserId,
+        id: 1,
+        requestSignature: false
+      });
+
+      await app.close();
+    });
+
     it('regenerates a revoked public link before resending invoice email', async () => {
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
         invoiceFromDbFactory.build({
@@ -817,5 +939,4 @@ describe('Invoice Controller', () => {
       await app.close();
     });
   });
-
 });
