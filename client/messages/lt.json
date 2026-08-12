@@ -1328,10 +1328,15 @@
             },
             "modals": {
                 "select_client": "Pasirinkti klientą",
-                "select_bank_account": "Pasirinkti banko sąskaitą",
+                "use_saved_payment_details": "Naudoti išsaugotus mokėjimo duomenis",
+                "select_payment_method": "Pasirinkti išsaugotus mokėjimo duomenis",
+                "bank_accounts": "Banko sąskaitos",
+                "crypto_wallets": "Kriptovaliutų piniginės",
                 "add_bank_account": "Pridėti banko sąskaitą",
+                "add_crypto_wallet": "Pridėti kriptovaliutų piniginę",
                 "no_clients": "Neturite klientų. Sukurkite vieną, kad pradėtumėte.",
-                "no_bank_accounts": "Neturite banko sąskaitų. Sukurkite vieną, kad pradėtumėte."
+                "no_bank_accounts": "Neturite banko sąskaitų. Sukurkite vieną, kad pradėtumėte.",
+                "no_payment_methods": "Dar neturite išsaugotų mokėjimo duomenų. Pridėkite banko sąskaitą arba kriptovaliutų piniginę."
             },
             "free_invoice": {
                 "eyebrow": "Nemokamas sąskaitos generatorius",

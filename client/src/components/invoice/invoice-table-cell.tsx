@@ -1,8 +1,8 @@
 'use client';
 
 import {
-  ChevronDownIcon,
   CheckBadgeIcon,
+  ChevronDownIcon,
   DocumentTextIcon,
   ExclamationCircleIcon,
   EyeIcon,
@@ -393,7 +393,9 @@ const InvoiceTableCell = ({
         </div>
       );
     default:
-      return cellValue;
+      return typeof cellValue === 'string' || typeof cellValue === 'number'
+        ? cellValue
+        : null;
   }
 };
 

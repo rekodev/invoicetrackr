@@ -5,11 +5,10 @@ import {
 } from 'fastify';
 
 import {
-  deleteInvoiceOptions,
   createRecipientDetailsRequestOptions,
+  deleteInvoiceOptions,
   getIncomeJournalOptions,
   getInvoiceOptions,
-  getRecipientDetailsRequestOptions,
   getInvoicesOptions,
   getInvoicesRevenueOptions,
   getInvoicesTotalAmountOptions,
@@ -17,8 +16,9 @@ import {
   getNextInvoiceNumberOptions,
   getPublicInvoiceOptions,
   getPublicInvoiceSigningOptions,
-  postInvoiceOptions,
+  getRecipientDetailsRequestOptions,
   issueInvoiceOptions,
+  postInvoiceOptions,
   regenerateInvoiceSigningOptions,
   regeneratePublicInvoiceOptions,
   revokeInvoiceSigningOptions,

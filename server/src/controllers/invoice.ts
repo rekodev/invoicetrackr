@@ -9,8 +9,8 @@ import {
   type InvoiceBody,
   invoiceBodySchema,
   issuableInvoiceBodySchema,
-  type RecipientDetailsBody,
   type PublicInvoice,
+  type RecipientDetailsBody,
   type SendRecipientDetailsRequestBody
 } from '@invoicetrackr/types';
 import { v2 as cloudinary } from 'cloudinary';
@@ -34,17 +34,17 @@ import {
   getInvoicesTotalAmountFromDb,
   getLatestInvoicesFromDb,
   getNextInvoiceNumberFromDb,
-  getRecipientDetailsRequestFromDb,
   getPublicInvoiceFromDb,
   getPublicInvoiceSigningFromDb,
+  getRecipientDetailsRequestFromDb,
   insertInvoiceInDb,
   INVOICE_UPDATE_NOT_DRAFT,
-  issueInvoiceInDb,
   type InvoiceFromDb,
+  issueInvoiceInDb,
   markPublicInvoiceSentInDb,
-  prepareRecipientDetailsRequestInDb,
   prepareInvoiceSigningFromDb,
   preparePublicInvoiceFromDb,
+  prepareRecipientDetailsRequestInDb,
   regenerateInvoiceSigningFromDb,
   regeneratePublicInvoiceFromDb,
   revokeInvoiceSigningFromDb,
@@ -838,13 +838,16 @@ export const sendInvoiceEmail = async (
   } = req.body;
   const i18n = await useI18n(req);
 
-  let [invoice, user] = await Promise.all([
+  const [foundInvoice, user] = await Promise.all([
     getInvoiceFromDb(userId, id),
     getUserFromDb(userId)
   ]);
 
   if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
-  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (!foundInvoice)
+    throw new NotFoundError(i18n.t('error.invoice.notFound'));
+
+  let invoice = foundInvoice;
 
   assertInvoiceCanBeIssued({ invoice, user, i18n });
   const wasDraft = (invoice.lifecycleStatus || 'draft') === 'draft';
@@ -898,12 +901,15 @@ export const sendInvoiceEmail = async (
           expiresAt: publicInvoiceExpiresAt
         });
 
-    if (!preparedPublicInvoice?.publicInvoiceToken)
-      throwDeliveryPreparationError(
+    const preparedPublicInvoiceToken =
+      preparedPublicInvoice?.publicInvoiceToken;
+
+    if (!preparedPublicInvoiceToken)
+      throw new BadRequestError(
         i18n.t('error.invoice.unableToCreatePublicLink')
       );
 
-    publicInvoiceToken = preparedPublicInvoice.publicInvoiceToken;
+    publicInvoiceToken = preparedPublicInvoiceToken;
   }
 
   if (requestSignature) {

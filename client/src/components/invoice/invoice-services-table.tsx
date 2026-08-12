@@ -35,7 +35,10 @@ import {
   useWatch
 } from 'react-hook-form';
 
-import { COMMON_INVOICE_UNITS } from '@/lib/constants/invoice';
+import {
+  COMMON_INVOICE_UNITS,
+  localizeInvoiceUnit
+} from '@/lib/constants/invoice';
 import { Currency } from '@/lib/types/currency';
 import { calculateInvoiceTotals } from '@/lib/utils';
 import { getCurrencySymbol } from '@/lib/utils/currency';
@@ -283,7 +286,10 @@ const InvoiceServicesTable = ({
                 className="w-28 min-w-28"
                 variant="secondary"
                 allowsCustomValue
-                inputValue={field.value || ''}
+                inputValue={localizeInvoiceUnit(
+                  field.value || '',
+                  (unit) => t(`units.${unit}`)
+                )}
                 onInputChange={field.onChange}
                 onSelectionChange={(key) => key && field.onChange(String(key))}
                 isInvalid={!!errors.services?.[index]?.unit}

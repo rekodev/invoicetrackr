@@ -933,7 +933,7 @@ export const updateInvoiceInDb = async (
     return getInvoiceFromDb(userId, id, tx);
   });
 
-  return updatedInvoice;
+  return updatedInvoice ?? null;
 };
 
 export async function updateInvoiceStatusInDb(

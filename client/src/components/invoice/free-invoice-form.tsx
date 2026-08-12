@@ -552,7 +552,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     </Alert>
   );
 
-  const getInvoicePreviewData = () => {
+  const getInvoicePreviewData = (): InvoiceBody => {
     const invoiceTotals = calculateInvoiceTotals(getValues('services'));
 
     return {

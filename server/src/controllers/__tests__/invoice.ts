@@ -896,6 +896,7 @@ describe('Invoice Controller', () => {
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
         invoiceFromDbFactory.build({
           id: 1,
+          lifecycleStatus: 'issued',
           publicInvoiceToken: 'old-token',
           publicInvoiceRevokedAt: new Date().toISOString()
         })
@@ -1031,6 +1032,7 @@ describe('Invoice Controller', () => {
 
     it('returns public invoice with bank-transfer payment details', async () => {
       const invoice = invoiceFromDbFactory.build({
+        lifecycleStatus: 'issued',
         publicInvoiceToken: 'public-token',
         publicInvoiceExpiresAt: new Date(Date.now() + 1000).toISOString(),
         recipientSigningRequestedAt: null,

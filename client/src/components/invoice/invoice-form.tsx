@@ -1,9 +1,9 @@
 'use client';
 
 import {
-  BuildingLibraryIcon,
   InformationCircleIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  WalletIcon
 } from '@heroicons/react/24/outline';
 import {
   Button,
@@ -11,11 +11,8 @@ import {
   FieldError,
   Input,
   Label,
-  ListBox,
-  ListBoxItem,
   Radio,
   RadioGroup,
-  Select,
   TextField,
   Tooltip
 } from '@heroui/react';
@@ -42,10 +39,12 @@ import {
 
 import SignaturePad from '../signature-pad';
 import CompleteProfile from '../ui/complete-profile';
-import BankingInformationDialog from './banking-information-dialog';
 import InvoiceDueDatePreselectionChips from './invoice-due-date-preselection-chips';
 import InvoiceFormReceiverModal from './invoice-form-receiver-modal';
 import InvoiceServicesTable from './invoice-services-table';
+import PaymentMethodDialog, {
+  type PaymentMethodSelection
+} from './payment-method-dialog';
 
 type Props = {
   user: User;
@@ -177,7 +176,7 @@ const InvoiceForm = ({
   } = methods;
 
   const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
-  const [isBankingInformationModalOpen, setIsBankingInformationModalOpen] =
+  const [isPaymentMethodModalOpen, setIsPaymentMethodModalOpen] =
     useState(false);
   const [senderSignature, setSenderSignature] = useState<
     string | File | undefined
@@ -195,7 +194,6 @@ const InvoiceForm = ({
   const isReceiverBusiness = watch('receiver.businessType') === 'business';
   const isSenderBusiness = watch('sender.businessType') === 'business';
   const paymentMode = watch('paymentMode') || 'manual';
-  const selectedCryptoWalletId = watch('cryptoWallet.id');
   const currentDate = watch('date');
   const senderVatNumber = watch('sender.vatNumber');
   const shouldShowSenderVatNumber = isVatEnabled || !!senderVatNumber;
@@ -219,19 +217,20 @@ const InvoiceForm = ({
     setIsReceiverModalOpen(false);
   };
 
-  const handleBankAccountSelect = (bankAccount: BankAccountBody) => {
-    setValue('bankingInformation.name', bankAccount.name);
-    setValue('bankingInformation.code', bankAccount.code);
-    setValue('bankingInformation.accountNumber', bankAccount.accountNumber);
-    clearErrors('bankingInformation');
-    setIsBankingInformationModalOpen(false);
-  };
+  const handlePaymentMethodSelect = (selection: PaymentMethodSelection) => {
+    if (selection.type === 'manual') {
+      setValue('paymentMode', 'manual', { shouldDirty: true });
+      setValue('bankingInformation', selection.bankAccount, {
+        shouldDirty: true
+      });
+      clearErrors('bankingInformation');
+    } else {
+      setValue('paymentMode', 'crypto', { shouldDirty: true });
+      setValue('cryptoWallet', selection.cryptoWallet, { shouldDirty: true });
+      clearErrors('cryptoWallet');
+    }
 
-  const handleCryptoWalletSelect = (id: string) => {
-    const wallet = cryptoWallets.find((entry) => String(entry.id) === id);
-    if (!wallet) return;
-    setValue('cryptoWallet', wallet, { shouldDirty: true });
-    clearErrors('cryptoWallet');
+    setIsPaymentMethodModalOpen(false);
   };
 
   const applyDefaultBankAccount = () => {
@@ -658,33 +657,32 @@ const InvoiceForm = ({
 
   const renderPaymentSettings = () => (
     <div className="col-span-4 flex flex-col gap-3">
-      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+      <div className="flex min-h-8 flex-col justify-between gap-2 sm:flex-row sm:items-end">
         <h4>{t('payment_settings.title')}</h4>
-        {paymentMode === 'manual' && (
-          <Button
-            size="sm"
-            variant="secondary"
-            className="h-unit-9 min-w-unit-10 sm:h-unit-8 sm:w-unit-26 w-full sm:max-w-min"
-            onPress={() => setIsBankingInformationModalOpen(true)}
-          >
-            <BuildingLibraryIcon className="min-h-4 min-w-4" />
-            {t('modals.select_bank_account')}
-          </Button>
-        )}
+        <Button
+          size="sm"
+          variant="secondary"
+          className="h-unit-9 min-w-unit-10 sm:h-unit-8 w-full sm:w-auto"
+          onPress={() => setIsPaymentMethodModalOpen(true)}
+        >
+          <WalletIcon className="min-h-4 min-w-4" />
+          {t('modals.use_saved_payment_details')}
+        </Button>
       </div>
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         <Controller
           name="paymentMode"
           control={control}
           render={({ field }) => (
-            <Select
-              className="w-full"
+            <RadioGroup
+              className="md:col-span-3"
               aria-label={t('a11y.payment_mode_label')}
+              orientation="horizontal"
               variant="secondary"
               value={getMvpPaymentMode(field.value)}
-              onChange={(key) => {
+              onChange={(value) => {
                 const selectedPaymentMode = getMvpPaymentMode(
-                  String(key || 'manual') as InvoiceBody['paymentMode']
+                  value as InvoiceBody['paymentMode']
                 );
 
                 field.onChange(selectedPaymentMode);
@@ -700,33 +698,25 @@ const InvoiceForm = ({
               isInvalid={!!errors.paymentMode}
             >
               <Label>{t('labels.payment_mode')}</Label>
-              <Select.Trigger>
-                <Select.Value />
-                <Select.Indicator />
-              </Select.Trigger>
-              <Select.Popover>
-                <ListBox>
-                  {paymentModeOptions.map((option) => (
-                    <ListBoxItem
-                      key={option}
-                      id={option}
-                      textValue={t(`payment_settings.modes.${option}`)}
-                    >
-                      {t(`payment_settings.modes.${option}`)}
-                      <ListBoxItem.Indicator />
-                    </ListBoxItem>
-                  ))}
-                </ListBox>
-              </Select.Popover>
+              {paymentModeOptions.map((option) => (
+                <Radio key={option} value={option}>
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content>
+                    <Label>{t(`payment_settings.modes.${option}`)}</Label>
+                  </Radio.Content>
+                </Radio>
+              ))}
               <FieldError>{errors.paymentMode?.message}</FieldError>
-              {paymentMode === 'disabled' && (
-                <p className="text-muted text-xs leading-5">
-                  {t('payment_settings.disabled_note')}
-                </p>
-              )}
-            </Select>
+            </RadioGroup>
           )}
         />
+        {paymentMode === 'disabled' && (
+          <p className="text-muted text-xs leading-5 md:col-span-3">
+            {t('payment_settings.disabled_note')}
+          </p>
+        )}
         {paymentMode !== 'disabled' && (
           <Controller
             name="manualPaymentReference"
@@ -752,34 +742,6 @@ const InvoiceForm = ({
         {paymentMode === 'manual' && renderBankingInformationFields()}
         {paymentMode === 'crypto' && (
           <>
-            {cryptoWallets.length ? (
-              <Select
-                aria-label={t('a11y.crypto_wallet_label')}
-                variant="secondary"
-                value={String(selectedCryptoWalletId || '')}
-                onChange={(key) => handleCryptoWalletSelect(String(key || ''))}
-              >
-                <Label>{t('labels.crypto_wallet')}</Label>
-                <Select.Trigger>
-                  <Select.Value />
-                  <Select.Indicator />
-                </Select.Trigger>
-                <Select.Popover>
-                  <ListBox>
-                    {cryptoWallets.map((wallet) => (
-                      <ListBoxItem
-                        key={wallet.id}
-                        id={String(wallet.id)}
-                        textValue={`${wallet.label} · ${wallet.asset}`}
-                      >
-                        {wallet.label} · {wallet.asset} ({wallet.network})
-                        <ListBoxItem.Indicator />
-                      </ListBoxItem>
-                    ))}
-                  </ListBox>
-                </Select.Popover>
-              </Select>
-            ) : null}
             {(['label', 'asset', 'network', 'address', 'memo'] as const).map(
               (name) => (
                 <Controller
@@ -869,7 +831,7 @@ const InvoiceForm = ({
           >
             <div className="col-span-4 flex flex-col gap-4">
               <h4>{t('invoice_details')}</h4>
-              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-4">
+              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
                 <Controller
                   name="invoiceSeries"
                   control={control}
@@ -990,12 +952,13 @@ const InvoiceForm = ({
         onClose={handleCloseReceiverModal}
         onReceiverSelect={handleSelectReceiver}
       />
-      <BankingInformationDialog
+      <PaymentMethodDialog
         userId={user.id || 0}
-        isOpen={isBankingInformationModalOpen}
-        onClose={() => setIsBankingInformationModalOpen(false)}
-        bankingInformationEntries={bankingInformationEntries}
-        onBankAccountSelect={handleBankAccountSelect}
+        isOpen={isPaymentMethodModalOpen}
+        onClose={() => setIsPaymentMethodModalOpen(false)}
+        bankAccounts={bankingInformationEntries}
+        cryptoWallets={cryptoWallets}
+        onSelect={handlePaymentMethodSelect}
       />
     </>
   );

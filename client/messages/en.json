@@ -1328,10 +1328,15 @@
             },
             "modals": {
                 "select_client": "Select Client",
-                "select_bank_account": "Select Bank Account",
+                "use_saved_payment_details": "Use saved payment details",
+                "select_payment_method": "Choose saved payment details",
+                "bank_accounts": "Bank accounts",
+                "crypto_wallets": "Crypto wallets",
                 "add_bank_account": "Add Bank Account",
+                "add_crypto_wallet": "Add Crypto Wallet",
                 "no_clients": "You have no clients. Create one to get started.",
-                "no_bank_accounts": "You have no bank accounts. Create one to get started."
+                "no_bank_accounts": "You have no bank accounts. Create one to get started.",
+                "no_payment_methods": "You have no saved payment details yet. Add a bank account or crypto wallet to get started."
             },
             "free_invoice": {
                 "eyebrow": "Free invoice generator",
