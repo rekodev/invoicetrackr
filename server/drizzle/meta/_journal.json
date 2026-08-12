@@ -260,6 +260,13 @@
       "when": 1783900800000,
       "tag": "0037_rek_98_focused_onboarding",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1783987200000,
+      "tag": "0038_rek_99_profile_settings",
+      "breakpoints": true
     }
   ]
 }

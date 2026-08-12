@@ -162,7 +162,9 @@ export default {
     bankAccount: {
       name: 'Banko pavadinimas yra privalomas',
       code: 'Banko kodas yra privalomas',
-      accountNumber: 'Banko sąskaitos numeris yra privalomas'
+      codeFormat: 'Įveskite tinkamą 5 skaitmenų banko kodą arba BIC / SWIFT kodą',
+      accountNumber: 'IBAN yra privalomas',
+      iban: 'Įveskite tinkamą IBAN'
     },
     user: {
       name: 'Vardas arba pavadinimas yra privalomas',
@@ -186,7 +188,8 @@ export default {
       created: 'Vartotojas sukurtas sėkmingai',
       updated: 'Vartotojo informacija atnaujinta sėkmingai',
       deleted: 'Paskyra ištrinta sėkmingai',
-      profilePictureUpdated: 'Profilio nuotrauka atnaujinta sėkmingai',
+      profilePictureUpdated: 'Veiklos logotipas atnaujintas sėkmingai',
+      profilePictureRemoved: 'Veiklos logotipas pašalintas sėkmingai',
       accountSettingsUpdated: 'Paskyros nustatymai atnaujinti sėkmingai',
       passwordChanged: 'Slaptažodis pakeistas sėkmingai',
       resetLinkSent:
@@ -247,7 +250,10 @@ export default {
       unableToCreate: 'Nepavyko sukurti vartotojo',
       unableToUpdate: 'Nepavyko atnaujinti vartotojo informacijos',
       unableToDelete: 'Šiuo metu nepavyko ištrinti paskyros. Bandykite vėliau',
-      unableToUpdateProfilePicture: 'Nepavyko atnaujinti profilio nuotraukos',
+      unableToUpdateProfilePicture: 'Nepavyko atnaujinti veiklos logotipo',
+      businessLogoRequired: 'Pasirinkite veiklos logotipą',
+      businessLogoInvalidType: 'Naudokite JPEG, PNG arba WebP paveikslėlį',
+      businessLogoTooLarge: 'Veiklos logotipas negali viršyti 5 MB',
       unableToUpdateAccountSettings: 'Nepavyko atnaujinti paskyros nustatymų',
       unableToChangePassword: 'Nepavyko pakeisti slaptažodžio',
       unableToSendResetLink:

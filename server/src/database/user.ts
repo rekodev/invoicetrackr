@@ -209,9 +209,17 @@ export const updateUserAnalyticsConsentInDb = async (
 
 export const updateUserProfilePictureInDb = async (
   userId: number,
-  url: string
+  url: string,
+  storageKey: string | null
 ): Promise<UserUpdateResult | undefined> => {
-  await db.update(businessProfilesTable).set({ logoUrl: url, updatedAt: new Date().toISOString() }).where(eq(businessProfilesTable.userId, userId));
+  await db
+    .update(businessProfilesTable)
+    .set({
+      logoUrl: url,
+      logoStorageKey: storageKey,
+      updatedAt: new Date().toISOString()
+    })
+    .where(eq(businessProfilesTable.userId, userId));
   return getUserFromDb(userId);
 };
 

@@ -854,13 +854,19 @@
         "personal_information": {
             "form": {
                 "a11y": {
-                    "form_label": "Asmeninės informacijos forma",
-                    "profile_picture_input": "Pasirinkti profilio nuotrauką",
-                    "dismiss_profile_picture": "Pašalinti pasirinktą profilio nuotrauką"
+                    "form_label": "Individualios veiklos profilio forma",
+                    "business_logo": "Veiklos logotipo peržiūra",
+                    "business_logo_input": "Pasirinkti veiklos logotipą",
+                    "dismiss_business_logo": "Pašalinti pasirinktą veiklos logotipą",
+                    "remove_business_logo": "Pašalinti esamą veiklos logotipą"
                 },
-                "title": "Asmeninė informacija",
-                "upload_profile_picture": "Įkelti nuotrauką",
-                "profile_picture_ready": "{size} · Paruošta įkelti",
+                "title": "Individualios veiklos profilis",
+                "description": "Veiklos duomenys, naudojami kaip numatytosios reikšmės būsimose sąskaitose.",
+                "business_logo": "Veiklos logotipas",
+                "business_logo_description": "JPEG, PNG arba WebP iki 5 MB. Išsaugomas su būsimomis sąskaitomis.",
+                "upload_business_logo": "Įkelti logotipą",
+                "replace_business_logo": "Pakeisti logotipą",
+                "business_logo_ready": "{size} · Paruošta įkelti",
                 "email": "El. paštas",
                 "invoice_email": "Sąskaitų el. paštas",
                 "email_placeholder": "Įveskite savo el. pašto adresą",
@@ -911,7 +917,7 @@
                 "payment_terms": "Numatytasis apmokėjimo terminas",
                 "payment_terms_days": "{days} d.",
                 "vat_locked_note": "Jei norite rinktis PVM nustatymus, pažymėkite save kaip PVM mokėtoją",
-                "personal_information_link": "asmeninės informacijos formoje",
+                "personal_information_link": "individualios veiklos profilyje",
                 "vat_modes": {
                     "no_vat": "Be PVM",
                     "standard_21": "Standartinis 21 %",
@@ -952,7 +958,8 @@
             "a11y": {
                 "form_label": "Bankinės informacijos forma"
             },
-            "title": "Bankinė informacija",
+            "title": "Banko sąskaitos",
+            "description": "Pasirinkite numatytąją banko sąskaitą būsimoms sąskaitoms faktūroms. Esamos sąskaitos išlaiko išsaugotus mokėjimo duomenis.",
             "actions": {
                 "add": "Pridėti naują",
                 "save": "Išsaugoti"
@@ -977,10 +984,10 @@
                 },
                 "bank_name": "Banko pavadinimas",
                 "bank_name_placeholder": "Pvz., Swedbank",
-                "bank_code": "Banko kodas",
-                "bank_code_placeholder": "Pvz., HABALT22",
-                "bank_account_number": "Atsiskaitomoji sąskaita",
-                "bank_account_number_placeholder": "Pvz., LT1234 5678 9012 3456 78",
+                "bank_code": "Banko kodas arba BIC / SWIFT",
+                "bank_code_placeholder": "Pvz., 73000 arba HABALT22",
+                "bank_account_number": "IBAN",
+                "bank_account_number_placeholder": "Pvz., LT121000011101001000",
                 "actions": {
                     "save": "Išsaugoti",
                     "cancel": "Atšaukti",

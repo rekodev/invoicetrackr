@@ -1,5 +1,6 @@
 import {
   Button,
+  FieldError,
   Input,
   Label,
   Modal,
@@ -8,7 +9,7 @@ import {
 } from '@heroui/react';
 import { BankAccount } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { ChangeEvent, useState, useTransition } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateBankingInformationAction } from '@/lib/actions/banking-information';
 
@@ -26,35 +27,62 @@ const EditBankingInformationDialog = ({
   bankingInformation
 }: Props) => {
   const t = useTranslations('profile.banking_information.form');
-  const [isPending, startTransition] = useTransition();
-  const [newBankingInformation, setNewBankingInformation] =
-    useState<BankAccount>(bankingInformation);
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting }
+  } = useForm<BankAccount>({ defaultValues: bankingInformation });
 
-  const handleChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    field: keyof BankAccount
-  ) => {
-    setNewBankingInformation((prev: BankAccount) => ({
-      ...prev,
-      [field]: event.target.value
-    }));
+  const onSubmit: SubmitHandler<BankAccount> = async (data) => {
+    const response = await updateBankingInformationAction(userId, data);
+
+    toast(response.message, {
+      variant: response.ok ? 'success' : 'danger'
+    });
+
+    if (!response.ok) {
+      Object.entries(response.validationErrors || {}).forEach(
+        ([key, message]) => {
+          setError(key as keyof BankAccount, { message });
+        }
+      );
+      return;
+    }
+
+    onClose();
   };
 
-  const handleSubmit = async () =>
-    startTransition(async () => {
-      const response = await updateBankingInformationAction(
-        userId,
-        newBankingInformation
-      );
-
-      toast(response.message, {
-        variant: response.ok ? 'success' : 'danger'
-      });
-
-      if (!response.ok) return;
-
-      onClose();
-    });
+  const renderTextField = ({
+    name,
+    label,
+    placeholder
+  }: {
+    name: keyof BankAccount;
+    label: string;
+    placeholder: string;
+  }) => (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <TextField variant="secondary" isInvalid={Boolean(errors[name])}>
+          <Label>{label}</Label>
+          <Input
+            name={field.name}
+            value={String(field.value ?? '')}
+            onBlur={field.onBlur}
+            onChange={field.onChange}
+            type="text"
+            placeholder={placeholder}
+          />
+          {errors[name]?.message ? (
+            <FieldError>{errors[name].message}</FieldError>
+          ) : null}
+        </TextField>
+      )}
+    />
+  );
 
   return (
     <Modal>
@@ -62,58 +90,46 @@ const EditBankingInformationDialog = ({
         <Modal.Container>
           <Modal.Dialog>
             <Modal.CloseTrigger />
-        <Modal.Header>
-          <Modal.Heading>{t('title.edit')}</Modal.Heading>
-        </Modal.Header>
-        <Modal.Body>
-          <TextField variant="secondary">
-            <Label>{t('bank_name')}</Label>
-            <Input
-              value={newBankingInformation.name}
-              onChange={(event) => handleChange(event, 'name')}
-              type="text"
-              placeholder={t('bank_name_placeholder')}
-            />
-          </TextField>
-          <TextField variant="secondary">
-            <Label>{t('bank_code')}</Label>
-            <Input
-              value={newBankingInformation.code}
-              onChange={(event) => handleChange(event, 'code')}
-              type="text"
-              placeholder={t('bank_code_placeholder')}
-            />
-          </TextField>
-          <TextField variant="secondary">
-            <Label>{t('bank_account_number')}</Label>
-            <Input
-              value={newBankingInformation.accountNumber}
-              onChange={(event) => handleChange(event, 'accountNumber')}
-              type="text"
-              placeholder={t('bank_account_number_placeholder')}
-            />
-          </TextField>
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
-            <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
-              <Button
-                variant="danger-soft"
-                className="w-full sm:w-auto"
-                onPress={onClose}
-              >
-                {t('actions.cancel')}
-              </Button>
-              <Button
-                isPending={isPending}
-                className="w-full sm:w-auto"
-                onPress={handleSubmit}
-              >
-                {t('actions.save')}
-              </Button>
-            </div>
-          </div>
-        </Modal.Footer>
+            <Modal.Header>
+              <Modal.Heading>{t('title.edit')}</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>
+              {renderTextField({
+                name: 'name',
+                label: t('bank_name'),
+                placeholder: t('bank_name_placeholder')
+              })}
+              {renderTextField({
+                name: 'code',
+                label: t('bank_code'),
+                placeholder: t('bank_code_placeholder')
+              })}
+              {renderTextField({
+                name: 'accountNumber',
+                label: t('bank_account_number'),
+                placeholder: t('bank_account_number_placeholder')
+              })}
+            </Modal.Body>
+            <Modal.Footer>
+              <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
+                <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+                  <Button
+                    variant="danger-soft"
+                    className="w-full sm:w-auto"
+                    onPress={onClose}
+                  >
+                    {t('actions.cancel')}
+                  </Button>
+                  <Button
+                    isPending={isSubmitting}
+                    className="w-full sm:w-auto"
+                    onPress={() => void handleSubmit(onSubmit)()}
+                  >
+                    {t('actions.save')}
+                  </Button>
+                </div>
+              </div>
+            </Modal.Footer>
           </Modal.Dialog>
         </Modal.Container>
       </Modal.Backdrop>

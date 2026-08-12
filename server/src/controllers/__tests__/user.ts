@@ -1,15 +1,24 @@
+import fastifyMultipart from '@fastify/multipart';
 import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import bcrypt from 'bcryptjs';
 import { describe, expect, it, vi } from 'vitest';
 
 import * as emailVerificationDb from '../../database/email-verification';
 import * as userDb from '../../database/user';
+import {
+  deleteUserProfilePictureOptions,
+  updateUserProfilePictureOptions
+} from '../../options/user';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import {
   userFactory,
   userWithPasswordFactory
 } from '../../test/factories/user';
-import { mockResendSend, mockUseI18n } from '../../test/setup';
+import {
+  mockCloudinaryUpload,
+  mockResendSend,
+  mockUseI18n
+} from '../../test/setup';
 import * as userController from '../user';
 
 vi.mock('../../database/user');
@@ -290,8 +299,12 @@ describe('User Controller', () => {
         expect.objectContaining({
           email: 'test@example.com',
           name: 'Test User',
-          profilePictureUrl: 'https://example.com/avatar.png',
           emailVerifiedAt: expect.any(String)
+        })
+      );
+      expect(userDb.registerUser).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          profilePictureUrl: 'https://example.com/avatar.png'
         })
       );
       expect(userDb.getUserFromDb).toHaveBeenCalledWith(testUserId);
@@ -659,6 +672,89 @@ describe('User Controller', () => {
         'standard_21',
         'MB',
         14
+      );
+
+      await app.close();
+    });
+  });
+
+  describe('business logo settings', () => {
+    it('uploads a logo into the authenticated user folder', async () => {
+      const uploadedUser = {
+        ...mockUser,
+        profilePictureUrl: 'https://res.cloudinary.com/logo.png'
+      };
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
+      vi.mocked(userDb.updateUserProfilePictureInDb).mockResolvedValue(
+        uploadedUser
+      );
+      mockCloudinaryUpload.mockResolvedValue({
+        secure_url: uploadedUser.profilePictureUrl,
+        public_id: 'invoicetrackr/business-logos/1/logo-id'
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.register(fastifyMultipart);
+        fastifyApp.put('/api/:userId/profile-picture', {
+          ...updateUserProfilePictureOptions,
+          preHandler: mockAuthMiddleware
+        });
+      });
+      const boundary = 'rek99-boundary';
+      const payload = Buffer.from(
+        `--${boundary}\r\nContent-Disposition: form-data; name="profilePicture"; filename="logo.png"\r\nContent-Type: image/png\r\n\r\nlogo-bytes\r\n--${boundary}--\r\n`
+      );
+
+      const response = await app.inject({
+        method: 'PUT',
+        url: `/api/${testUserId}/profile-picture`,
+        headers: {
+          'content-type': `multipart/form-data; boundary=${boundary}`
+        },
+        payload
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(mockCloudinaryUpload).toHaveBeenCalledWith(
+        expect.stringContaining('data:image/png;base64,'),
+        expect.objectContaining({
+          folder: `invoicetrackr/business-logos/${testUserId}`,
+          resource_type: 'image'
+        })
+      );
+      expect(userDb.updateUserProfilePictureInDb).toHaveBeenCalledWith(
+        testUserId,
+        uploadedUser.profilePictureUrl,
+        'invoicetrackr/business-logos/1/logo-id'
+      );
+
+      await app.close();
+    });
+
+    it('removes only the active profile logo reference', async () => {
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
+      vi.mocked(userDb.updateUserProfilePictureInDb).mockResolvedValue({
+        ...mockUser,
+        profilePictureUrl: ''
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.delete('/api/:userId/profile-picture', {
+          ...deleteUserProfilePictureOptions,
+          preHandler: mockAuthMiddleware
+        });
+      });
+
+      const response = await app.inject({
+        method: 'DELETE',
+        url: `/api/${testUserId}/profile-picture`
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(userDb.updateUserProfilePictureInDb).toHaveBeenCalledWith(
+        testUserId,
+        '',
+        null
       );
 
       await app.close();

@@ -9,6 +9,7 @@ import {
   completeUserOnboardingOptions,
   createNewUserPasswordOptions,
   deleteUserOptions,
+  deleteUserProfilePictureOptions,
   getUserOptions,
   getUserResetPasswordTokenOptions,
   loginUserOptions,
@@ -54,6 +55,11 @@ const userRoutes = (
   fastify.put(
     '/api/users/:userId/profile-picture',
     updateUserProfilePictureOptions
+  );
+
+  fastify.delete(
+    '/api/users/:userId/profile-picture',
+    deleteUserProfilePictureOptions
   );
 
   fastify.put(

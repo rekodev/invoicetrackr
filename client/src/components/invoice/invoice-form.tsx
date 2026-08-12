@@ -130,6 +130,7 @@ const InvoiceForm = ({
           sender: {
             ...user,
             email: user.invoiceEmail || user.email,
+            logoUrl: user.profilePictureUrl || '',
             type: 'sender',
             vatNumber: user.vatNumber || ''
           },

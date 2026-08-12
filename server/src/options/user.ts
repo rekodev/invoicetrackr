@@ -10,6 +10,7 @@ import {
   oauthUserResponseSchema,
   passwordSchema,
   registerUserResponseSchema,
+  updateUserLogoResponseSchema,
   updateUserResponseSchema,
   userBodySchema,
   userProfileUpdateBodySchema,
@@ -23,6 +24,7 @@ import {
   completeUserOnboarding,
   createNewUserPassword,
   deleteUser,
+  deleteUserProfilePicture,
   getUser,
   getUserResetPasswordToken,
   loginUser,
@@ -146,11 +148,22 @@ export const updateUserProfilePictureOptions: RouteShorthandOptionsWithHandler =
   {
     schema: {
       response: {
-        200: messageResponseSchema
+        200: updateUserLogoResponseSchema
       }
     },
     preHandler: authMiddleware,
     handler: updateUserProfilePicture
+  };
+
+export const deleteUserProfilePictureOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      response: {
+        200: updateUserLogoResponseSchema
+      }
+    },
+    preHandler: authMiddleware,
+    handler: deleteUserProfilePicture
   };
 
 export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler =

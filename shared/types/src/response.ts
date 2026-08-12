@@ -46,6 +46,11 @@ export const updateUserResponseSchema = z.object({
   message: z.string()
 });
 
+export const updateUserLogoResponseSchema = z.object({
+  user: userBodySchema.pick({ id: true, profilePictureUrl: true }),
+  message: z.string()
+});
+
 export const completeOnboardingResponseSchema = z.object({
   user: onboardingCompletionSchema,
   message: z.string()
@@ -200,6 +205,9 @@ export type MessageResponse = z.infer<typeof messageResponseSchema>;
 export type GetUserResponse = z.infer<typeof getUserResponseSchema>;
 export type RegisterUserResponse = z.infer<typeof registerUserResponseSchema>;
 export type UpdateUserResponse = z.infer<typeof updateUserResponseSchema>;
+export type UpdateUserLogoResponse = z.infer<
+  typeof updateUserLogoResponseSchema
+>;
 export type CompleteOnboardingResponse = z.infer<
   typeof completeOnboardingResponseSchema
 >;

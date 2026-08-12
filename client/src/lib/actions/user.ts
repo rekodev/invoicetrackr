@@ -11,6 +11,7 @@ import { revalidatePath } from 'next/cache';
 import {
   changeUserPassword,
   completeUserOnboarding,
+  deleteUserProfilePicture,
   resendVerificationEmail,
   updateUser,
   updateUserAccountSettings,
@@ -173,8 +174,36 @@ export async function updateUserProfilePictureAction({
     };
   }
 
+  await updateSessionAction({
+    newSession: { image: response.data.user.profilePictureUrl }
+  });
   revalidatePath(PERSONAL_INFORMATION_PAGE);
-  return { ok: true, message: response.data.message };
+  return {
+    ok: true,
+    message: response.data.message,
+    data: response.data.user
+  };
+}
+
+export async function deleteUserProfilePictureAction({
+  userId
+}: {
+  userId: number;
+}) {
+  const response = await deleteUserProfilePicture(userId);
+
+  if (isResponseError(response)) {
+    return { ok: false, message: response.data.message };
+  }
+
+  await updateSessionAction({ newSession: { image: null } });
+  revalidatePath(PERSONAL_INFORMATION_PAGE);
+
+  return {
+    ok: true,
+    message: response.data.message,
+    data: response.data.user
+  };
 }
 
 export async function changeUserPasswordAction({

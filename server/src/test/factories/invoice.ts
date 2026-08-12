@@ -79,6 +79,7 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
       businessType: 'individual',
       businessNumber: `BN${sequence}`,
       vatNumber: null,
+      logoUrl: '',
       address: `${sequence} Sender Street`,
       email: 'test@gmail.com'
     },

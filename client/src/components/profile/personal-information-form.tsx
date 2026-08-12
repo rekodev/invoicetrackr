@@ -6,6 +6,7 @@ import {
   DocumentIcon,
   ExclamationCircleIcon,
   InformationCircleIcon,
+  TrashIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import {
@@ -14,35 +15,30 @@ import {
   Button,
   Card,
   Checkbox,
-  cn,
   FieldError,
   Input,
   Label,
   Separator,
   TextField,
   toast,
-  Tooltip} from '@heroui/react';
+  Tooltip
+} from '@heroui/react';
 import type { User } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 
 import {
+  deleteUserProfilePictureAction,
   resendVerificationEmailAction,
   updateUserAction,
   updateUserProfilePictureAction
 } from '@/lib/actions/user';
 
-import AuthCardHeader from '../auth/auth-card-header';
 import SignaturePad from '../signature-pad';
 
 type Props = {
-  cardHeaderDescription?: string;
-  cardHeaderTitle?: string;
   defaultValues?: Partial<User> | undefined;
-  headerContent?: ReactNode;
-  hideEmailVerificationBanner?: boolean;
-  onSuccess?: () => void | Promise<void>;
 };
 
 const formatFileSize = (bytes: number) => {
@@ -51,14 +47,7 @@ const formatFileSize = (bytes: number) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-const PersonalInformationForm = ({
-  cardHeaderDescription,
-  cardHeaderTitle,
-  defaultValues,
-  headerContent,
-  hideEmailVerificationBanner = false,
-  onSuccess
-}: Props) => {
+const PersonalInformationForm = ({ defaultValues }: Props) => {
   const t = useTranslations('profile.personal_information.form');
 
   const {
@@ -79,10 +68,13 @@ const PersonalInformationForm = ({
   const [profilePictureFile, setProfilePictureFile] = useState<File>();
   const [profilePicturePreviewUrl, setProfilePicturePreviewUrl] =
     useState<string>();
+  const [currentLogoUrl, setCurrentLogoUrl] = useState(
+    defaultValues?.profilePictureUrl || ''
+  );
   const profilePictureInputRef = useRef<HTMLInputElement>(null);
   const [isResendingVerificationEmail, setIsResendingVerificationEmail] =
     useState(false);
-  const isOnboardingCard = Boolean(cardHeaderTitle && cardHeaderDescription);
+  const [isRemovingLogo, setIsRemovingLogo] = useState(false);
 
   const emailVerifiedAt = defaultValues?.emailVerifiedAt;
   const isEmailVerified = Boolean(emailVerifiedAt);
@@ -95,7 +87,9 @@ const PersonalInformationForm = ({
   const vatNumber = watch('vatNumber');
 
   useEffect(() => {
-    if (defaultValues) reset(defaultValues);
+    if (defaultValues) {
+      reset(defaultValues);
+    }
   }, [defaultValues, reset]);
 
   useEffect(
@@ -142,7 +136,14 @@ const PersonalInformationForm = ({
 
       if (!pictureResponse.ok) {
         toast(pictureResponse.message, { variant: 'danger' });
+        reset(profileData);
         return;
+      } else {
+        setCurrentLogoUrl(
+          (pictureResponse.data as { profilePictureUrl?: string } | undefined)
+            ?.profilePictureUrl || ''
+        );
+        setProfilePicturePreviewUrl(undefined);
       }
 
       setProfilePictureFile(undefined);
@@ -153,7 +154,31 @@ const PersonalInformationForm = ({
     toast(response.message, { variant: 'success' });
 
     reset(profileData);
-    await onSuccess?.();
+  };
+
+  const handleRemoveLogo = async () => {
+    if (!defaultValues?.id) return;
+
+    setIsRemovingLogo(true);
+    try {
+      const response = await deleteUserProfilePictureAction({
+        userId: Number(defaultValues.id)
+      });
+
+      toast(response.message, {
+        variant: response.ok ? 'success' : 'danger'
+      });
+
+      if (!response.ok) return;
+
+      setCurrentLogoUrl('');
+      setProfilePictureFile(undefined);
+      setProfilePicturePreviewUrl(undefined);
+      if (profilePictureInputRef.current)
+        profilePictureInputRef.current.value = '';
+    } finally {
+      setIsRemovingLogo(false);
+    }
   };
 
   const handleResendVerificationEmail = async () => {
@@ -267,8 +292,8 @@ const PersonalInformationForm = ({
       <div className="flex min-w-0 items-center gap-3">
         <Avatar size="lg">
           <Avatar.Image
-            src={profilePicturePreviewUrl || defaultValues?.profilePictureUrl}
-            alt={defaultValues?.name || defaultValues?.email || 'User'}
+            src={profilePicturePreviewUrl || currentLogoUrl}
+            alt={t('a11y.business_logo')}
           />
           <Avatar.Fallback>
             {(defaultValues?.name || defaultValues?.email || 'U')
@@ -277,10 +302,8 @@ const PersonalInformationForm = ({
           </Avatar.Fallback>
         </Avatar>
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">
-            {defaultValues?.name || 'User'}
-          </p>
-          <p className="text-muted truncate text-sm">{defaultValues?.email}</p>
+          <p className="truncate text-sm font-semibold">{t('business_logo')}</p>
+          <p className="text-muted text-sm">{t('business_logo_description')}</p>
         </div>
       </div>
       {profilePictureFile ? (
@@ -297,7 +320,7 @@ const PersonalInformationForm = ({
               {profilePictureFile.name}
             </p>
             <p className="text-muted text-xs">
-              {t('profile_picture_ready', {
+              {t('business_logo_ready', {
                 size: formatFileSize(profilePictureFile.size)
               })}
             </p>
@@ -307,7 +330,7 @@ const PersonalInformationForm = ({
             isIconOnly
             size="sm"
             variant="ghost"
-            aria-label={t('a11y.dismiss_profile_picture')}
+            aria-label={t('a11y.dismiss_business_logo')}
             onPress={() => {
               setProfilePictureFile(undefined);
               setProfilePicturePreviewUrl(undefined);
@@ -319,22 +342,38 @@ const PersonalInformationForm = ({
           </Button>
         </Card>
       ) : (
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full sm:w-auto"
-          onPress={() => profilePictureInputRef.current?.click()}
-        >
-          <CameraIcon className="size-4" aria-hidden="true" />
-          {t('upload_profile_picture')}
-        </Button>
+        <div className="flex w-full gap-2 sm:w-auto">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1 sm:flex-none"
+            onPress={() => profilePictureInputRef.current?.click()}
+          >
+            <CameraIcon className="size-4" aria-hidden="true" />
+            {currentLogoUrl
+              ? t('replace_business_logo')
+              : t('upload_business_logo')}
+          </Button>
+          {currentLogoUrl ? (
+            <Button
+              isIconOnly
+              type="button"
+              variant="danger-soft"
+              aria-label={t('a11y.remove_business_logo')}
+              isPending={isRemovingLogo}
+              onPress={handleRemoveLogo}
+            >
+              <TrashIcon className="size-4" aria-hidden="true" />
+            </Button>
+          ) : null}
+        </div>
       )}
       <input
         ref={profilePictureInputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         className="hidden"
-        aria-label={t('a11y.profile_picture_input')}
+        aria-label={t('a11y.business_logo_input')}
         onChange={(event) => {
           const file = event.target.files?.[0];
           setProfilePictureFile(file);
@@ -349,13 +388,8 @@ const PersonalInformationForm = ({
   const renderCardBodyAndFooter = () => {
     return (
       <>
-        <Card.Content
-          className={cn(
-            'grid grid-cols-1 gap-4 p-6',
-            !isOnboardingCard && 'md:grid-cols-2'
-          )}
-        >
-          {!hideEmailVerificationBanner && renderEmailVerificationBanner()}
+        <Card.Content className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
+          {renderEmailVerificationBanner()}
           {renderProfilePictureInput()}
           {renderTextField({
             name: 'email',
@@ -486,9 +520,7 @@ const PersonalInformationForm = ({
               (!isDirty && !Boolean(formSignature) && !profilePictureFile)
             }
             type="submit"
-            className={cn(
-              isOnboardingCard ? 'w-full' : 'w-full sm:w-auto sm:self-end'
-            )}
+            className="w-full sm:w-auto sm:self-end"
           >
             {t('save_changes')}
           </Button>
@@ -505,18 +537,11 @@ const PersonalInformationForm = ({
       className="w-full"
     >
       <Card className="w-full border">
-        {isOnboardingCard && (
-          <>
-            <AuthCardHeader
-              title={cardHeaderTitle!}
-              description={cardHeaderDescription!}
-            >
-              {headerContent}
-            </AuthCardHeader>
-
-            <Separator />
-          </>
-        )}
+        <Card.Header className="flex flex-col items-start gap-1 px-6 py-4">
+          <Card.Title className="text-2xl">{t('title')}</Card.Title>
+          <Card.Description>{t('description')}</Card.Description>
+        </Card.Header>
+        <Separator />
         {renderCardBodyAndFooter()}
       </Card>
     </form>
