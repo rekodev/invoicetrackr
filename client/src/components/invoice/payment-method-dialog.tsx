@@ -13,6 +13,8 @@ import {
   Input,
   Label,
   Modal,
+  Radio,
+  RadioGroup,
   TextField,
   toast
 } from '@heroui/react';
@@ -28,7 +30,8 @@ export type PaymentMethodSelection =
   | { type: 'manual'; bankAccount: BankAccountBody }
   | { type: 'crypto'; cryptoWallet: CryptoWalletBody };
 
-type DialogView = 'list' | 'add-bank' | 'add-crypto';
+type DialogView = 'list' | 'add';
+type PaymentMethodType = 'bank' | 'crypto';
 
 type Props = {
   userId: number;
@@ -59,6 +62,8 @@ export default function PaymentMethodDialog({
   const t = useTranslations('components.invoice_form');
   const tWallet = useTranslations('profile.crypto_wallets');
   const [view, setView] = useState<DialogView>('list');
+  const [paymentMethodType, setPaymentMethodType] =
+    useState<PaymentMethodType>('bank');
   const [wallet, setWallet] = useState<CryptoWalletBody>(() =>
     emptyCryptoWallet(!cryptoWallets.length)
   );
@@ -69,6 +74,7 @@ export default function PaymentMethodDialog({
 
   const reset = () => {
     setView('list');
+    setPaymentMethodType('bank');
     setWallet(emptyCryptoWallet(!cryptoWallets.length));
     setValidationErrors({});
   };
@@ -116,18 +122,20 @@ export default function PaymentMethodDialog({
     <button
       key={key}
       type="button"
-      className="w-full text-left"
+      className="block w-full shrink-0 text-left"
       onClick={onPress}
     >
-      <Card className="hover:bg-muted/5 justify-center border hover:cursor-pointer">
-        <CardContent className="flex min-h-[70px] w-full items-center gap-3">
-          <div className="border-default-200 bg-muted/5 flex shrink-0 rounded-md border p-2">
-            {icon}
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-bold">{title}</p>
-            <div className="text-muted flex min-w-0 flex-wrap gap-x-2 gap-y-0.5 text-xs">
-              {details}
+      <Card className="hover:bg-muted/5 h-auto shrink-0 border hover:cursor-pointer">
+        <CardContent className="flex min-h-[70px] w-full flex-row items-start justify-between gap-4 py-4 text-left">
+          <div className="flex min-w-0 flex-row items-start gap-3 text-left">
+            <div className="border-default-200 bg-muted/5 flex shrink-0 rounded-md border p-2">
+              {icon}
+            </div>
+            <div className="min-w-0 text-left">
+              <p className="truncate text-sm font-bold">{title}</p>
+              <div className="text-muted flex min-w-0 flex-wrap gap-x-2 gap-y-0.5 text-xs">
+                {details}
+              </div>
             </div>
           </div>
         </CardContent>
@@ -140,48 +148,36 @@ export default function PaymentMethodDialog({
       return <p className="text-muted">{t('modals.no_payment_methods')}</p>;
 
     return (
-      <div className="flex max-h-[60vh] flex-col gap-5 overflow-y-auto pr-1">
-        {bankAccounts.length ? (
-          <section className="flex flex-col gap-2">
-            <h3 className="font-semibold">{t('modals.bank_accounts')}</h3>
-            {bankAccounts.map((bankAccount) =>
-              renderPaymentMethod({
-                key: `bank-${bankAccount.id}`,
-                icon: <BuildingLibraryIcon className="h-5 w-5" />,
-                title: bankAccount.name,
-                details: (
-                  <>
-                    <span>{bankAccount.code}</span>
-                    <span className="break-all">
-                      {bankAccount.accountNumber}
-                    </span>
-                  </>
-                ),
-                onPress: () => selectBankAccount(bankAccount)
-              })
-            )}
-          </section>
-        ) : null}
-        {cryptoWallets.length ? (
-          <section className="flex flex-col gap-2">
-            <h3 className="font-semibold">{t('modals.crypto_wallets')}</h3>
-            {cryptoWallets.map((cryptoWallet) =>
-              renderPaymentMethod({
-                key: `crypto-${cryptoWallet.id}`,
-                icon: <WalletIcon className="h-5 w-5" />,
-                title: cryptoWallet.label,
-                details: (
-                  <>
-                    <span>{cryptoWallet.asset}</span>
-                    <span>{cryptoWallet.network}</span>
-                    <span className="break-all">{cryptoWallet.address}</span>
-                  </>
-                ),
-                onPress: () => selectCryptoWallet(cryptoWallet)
-              })
-            )}
-          </section>
-        ) : null}
+      <div className="flex max-h-[60vh] flex-col items-stretch justify-start gap-2 overflow-y-auto pr-1">
+        {bankAccounts.map((bankAccount) =>
+          renderPaymentMethod({
+            key: `bank-${bankAccount.id}`,
+            icon: <BuildingLibraryIcon className="h-5 w-5" />,
+            title: bankAccount.name,
+            details: (
+              <>
+                <span>{bankAccount.code}</span>
+                <span className="break-all">{bankAccount.accountNumber}</span>
+              </>
+            ),
+            onPress: () => selectBankAccount(bankAccount)
+          })
+        )}
+        {cryptoWallets.map((cryptoWallet) =>
+          renderPaymentMethod({
+            key: `crypto-${cryptoWallet.id}`,
+            icon: <WalletIcon className="h-5 w-5" />,
+            title: cryptoWallet.label,
+            details: (
+              <>
+                <span>{cryptoWallet.asset}</span>
+                <span>{cryptoWallet.network}</span>
+                <span className="break-all">{cryptoWallet.address}</span>
+              </>
+            ),
+            onPress: () => selectCryptoWallet(cryptoWallet)
+          })
+        )}
       </div>
     );
   };
@@ -238,6 +234,56 @@ export default function PaymentMethodDialog({
     );
   };
 
+  const renderAddPaymentMethod = () => (
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <Label className="text-muted">
+          {t('modals.payment_method_type')}
+        </Label>
+        <RadioGroup
+          aria-label={t('modals.payment_method_type')}
+          orientation="horizontal"
+          variant="secondary"
+          value={paymentMethodType}
+          onChange={(value) => {
+            setPaymentMethodType(value as PaymentMethodType);
+            setValidationErrors({});
+          }}
+        >
+          <Radio value="bank">
+            <Radio.Control>
+              <Radio.Indicator />
+            </Radio.Control>
+            <Radio.Content>
+              <Label>{t('modals.bank_account')}</Label>
+            </Radio.Content>
+          </Radio>
+          <Radio value="crypto">
+            <Radio.Control>
+              <Radio.Indicator />
+            </Radio.Control>
+            <Radio.Content>
+              <Label>{t('modals.crypto_wallet')}</Label>
+            </Radio.Content>
+          </Radio>
+        </RadioGroup>
+      </div>
+      {paymentMethodType === 'bank' ? (
+        <BankAccountForm
+          userId={userId}
+          variant="inline"
+          shouldSelectOnCreate={!bankAccounts.length}
+          onCancel={() => setView('list')}
+          onSuccess={(bankAccount) =>
+            bankAccount && selectBankAccount(bankAccount)
+          }
+        />
+      ) : (
+        renderCryptoWalletForm()
+      )}
+    </div>
+  );
+
   return (
     <Modal>
       <Modal.Backdrop
@@ -250,47 +296,23 @@ export default function PaymentMethodDialog({
             <Modal.Header>
               <Modal.Heading>
                 {t(
-                  view === 'add-bank'
-                    ? 'modals.add_bank_account'
-                    : view === 'add-crypto'
-                      ? 'modals.add_crypto_wallet'
-                      : 'modals.select_payment_method'
+                  view === 'add'
+                    ? 'modals.add_payment_method'
+                    : 'modals.select_payment_method'
                 )}
               </Modal.Heading>
             </Modal.Header>
-            <Modal.Body>
-              {view === 'add-bank' ? (
-                <BankAccountForm
-                  userId={userId}
-                  variant="inline"
-                  shouldSelectOnCreate={!bankAccounts.length}
-                  onCancel={() => setView('list')}
-                  onSuccess={(bankAccount) =>
-                    bankAccount && selectBankAccount(bankAccount)
-                  }
-                />
-              ) : view === 'add-crypto' ? (
-                renderCryptoWalletForm()
-              ) : (
-                renderList()
-              )}
+            <Modal.Body className="justify-start">
+              {view === 'add' ? renderAddPaymentMethod() : renderList()}
             </Modal.Body>
             {view === 'list' ? (
-              <Modal.Footer className="flex-col sm:flex-row">
-                <Button
-                  variant="secondary"
-                  className="w-full sm:w-auto"
-                  onPress={() => setView('add-bank')}
-                >
-                  <PlusCircleIcon className="h-5 w-5" />
-                  {t('modals.add_bank_account')}
-                </Button>
+              <Modal.Footer>
                 <Button
                   className="w-full sm:w-auto"
-                  onPress={() => setView('add-crypto')}
+                  onPress={() => setView('add')}
                 >
                   <PlusCircleIcon className="h-5 w-5" />
-                  {t('modals.add_crypto_wallet')}
+                  {t('modals.add_payment_method')}
                 </Button>
               </Modal.Footer>
             ) : null}
