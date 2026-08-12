@@ -16,5 +16,5 @@ const isCommonInvoiceUnit = (unit: string): unit is CommonInvoiceUnit =>
 
 export const localizeInvoiceUnit = (
   unit: string,
-  translate: (unit: CommonInvoiceUnit) => string
+  translate: (_unit: CommonInvoiceUnit) => string
 ) => (isCommonInvoiceUnit(unit) ? translate(unit) : unit);

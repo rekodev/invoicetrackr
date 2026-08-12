@@ -2,8 +2,8 @@ import { redirect, unauthorized } from 'next/navigation';
 
 import { getBankingInformationEntries } from '@/api/banking-information';
 import { getClients } from '@/api/client';
-import { getInvoice } from '@/api/invoice';
 import { getCryptoWallets } from '@/api/crypto-wallet';
+import { getInvoice } from '@/api/invoice';
 import { getUser } from '@/api/user';
 import { auth } from '@/auth';
 import InvoiceForm from '@/components/invoice/invoice-form';
