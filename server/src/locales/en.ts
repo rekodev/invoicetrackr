@@ -30,7 +30,10 @@ export default {
     },
     invoice: {
       title: 'InvoiceTrackr',
+      subject: 'Invoice %{invoiceId} - %{amount} %{currency}',
       defaultMessage: 'Please find your invoice attached.',
+      defaultLinkMessage:
+        'Please review your invoice using the secure link below.',
       detailsTitle: 'Invoice Details',
       sentBy: 'This invoice was sent from %{senderName} via InvoiceTrackr.',
       invoiceNumber: 'Invoice Number:',
@@ -46,8 +49,11 @@ export default {
       signingButton: 'Review and acknowledge',
       publicInvoiceTitle: 'View invoice',
       publicInvoiceMessage:
-        'Open the secure invoice page to review the PDF and bank-transfer payment details.',
+        'Open the secure invoice page to review the PDF and payment details.',
       publicInvoiceButton: 'View invoice',
+      recipientDetailsSubject: 'Complete your invoice details',
+      recipientDetailsMessage:
+        'Please complete the billing details for your draft invoice.',
       signedNotification: {
         recipient: 'The recipient',
         subject: 'Invoice %{invoiceId} was acknowledged',
@@ -117,7 +123,8 @@ export default {
         quantity: {
           number: 'Quantity must be a number',
           min: 'Quantity must be at least 0.0001',
-          max: 'Quantity must not exceed 10,000'
+          max: 'Quantity must not exceed 10,000',
+          scale: 'Quantity must have no more than four decimal places'
         },
         amount: {
           number: 'Amount must be a number',
@@ -130,6 +137,9 @@ export default {
         name: 'Bank name is required',
         code: 'Bank code is required',
         accountNumber: 'Bank account number is required'
+      },
+      cryptoWallet: {
+        required: 'Complete crypto wallet details are required'
       },
       email: {
         format: 'Invalid email',
@@ -161,6 +171,12 @@ export default {
       codeFormat: 'Enter a valid 5-digit bank code or BIC/SWIFT code',
       accountNumber: 'IBAN is required',
       iban: 'Enter a valid IBAN'
+    },
+    cryptoWallet: {
+      label: 'Wallet label is required',
+      asset: 'Asset or token is required',
+      network: 'Network is required',
+      address: 'Wallet address is required'
     },
     user: {
       name: 'Name is required',
@@ -202,6 +218,9 @@ export default {
       deleted: 'Invoice deleted successfully',
       statusUpdated: 'Invoice status updated successfully',
       emailSent: 'Email sent successfully',
+      issued: 'Invoice issued successfully',
+      recipientDetailsRequested: 'Recipient details request is ready',
+      recipientDetailsSubmitted: 'Details submitted for sender review',
       signed: 'Invoice acknowledgement recorded successfully',
       signingLinkRevoked: 'Acknowledgement link revoked',
       signingLinkRegenerated: 'Fresh acknowledgement link generated',
@@ -224,6 +243,11 @@ export default {
         'Bank account added successfully. Please select it as your main account.',
       updated: 'Bank account updated successfully',
       deleted: 'Bank account deleted successfully'
+    },
+    cryptoWallet: {
+      created: 'Crypto wallet added successfully',
+      updated: 'Crypto wallet updated successfully',
+      deleted: 'Crypto wallet deleted successfully'
     },
     expenseAttachment: {
       uploaded: 'Expense document uploaded successfully',
@@ -282,6 +306,15 @@ export default {
       unableToUpdateStatus: 'Unable to update invoice status',
       unableToRetrieveData: 'Unable to retrieve invoice data',
       unableToSendEmail: 'Unable to send email',
+      issuedButUnableToSendEmail:
+        'Invoice issued, but the email could not be sent. Retry from the issued invoice.',
+      unableToIssue:
+        'Complete the recipient and payment details before issuing this invoice.',
+      unableToCreateRecipientDetailsLink:
+        'Unable to create recipient details link',
+      recipientDetailsLinkInvalid:
+        'This recipient details link is invalid or expired',
+      unableToSubmitRecipientDetails: 'Unable to save recipient details',
       unableToCreatePublicLink: 'Unable to create public invoice link',
       unableToCreateSigningLink:
         'Unable to create invoice acknowledgement link',
@@ -333,6 +366,15 @@ export default {
       unableToUpdate: 'Unable to update bank account',
       unableToDelete: 'Unable to delete bank account',
       cannotDeleteSelected: 'Cannot delete selected bank account'
+    },
+    cryptoWallet: {
+      notFound: 'Crypto wallet not found',
+      alreadyExists: 'This crypto wallet already exists',
+      unableToCreate: 'Unable to add crypto wallet',
+      unableToUpdate: 'Unable to update crypto wallet',
+      unableToDelete: 'Unable to delete crypto wallet',
+      cannotDeleteDefault:
+        'Choose another default wallet before deleting this one'
     },
     contact: {
       unableToSendMessage: 'Failed to send message'

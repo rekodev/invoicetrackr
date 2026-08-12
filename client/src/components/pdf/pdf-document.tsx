@@ -10,6 +10,7 @@ import {
   View
 } from '@react-pdf/renderer';
 
+import { localizeInvoiceUnit } from '@/lib/constants/invoice';
 import {
   calculateInvoiceTotals,
   getDaysUntilDueDate,
@@ -57,7 +58,9 @@ export default function PDFDocument({
     ? pdfStyles.tableCol7
     : { ...pdfStyles.tableCol7, width: '25%' };
 
-  const splitId = splitInvoiceId(invoiceId);
+  const isDraft =
+    (invoiceData.lifecycleStatus || 'draft') === 'draft' || !invoiceId;
+  const splitId = splitInvoiceId(invoiceId || '');
   const series = splitId[0];
   const number = splitId[1];
 
@@ -67,6 +70,9 @@ export default function PDFDocument({
     invoiceData?.[party]?.businessType === 'business'
       ? t('business_number_business')
       : t('business_number_individual');
+
+  const renderUnit = (unit: string) =>
+    localizeInvoiceUnit(unit, (commonUnit) => t(`units.${commonUnit}`));
 
   const renderHeader = () => (
     <>
@@ -79,9 +85,15 @@ export default function PDFDocument({
           : t('individualTitle')}{' '}
       </Text>
       <Text style={pdfStyles.subtitle}>
-        {t('series_label')} <Text style={pdfStyles.boldText}>{series}</Text>{' '}
-        {t('invoice_number_label')}&nbsp;
-        <Text style={pdfStyles.boldText}>{number}</Text>
+        {invoiceId ? (
+          <>
+            {t('series_label')} <Text style={pdfStyles.boldText}>{series}</Text>{' '}
+            {t('invoice_number_label')}&nbsp;
+            <Text style={pdfStyles.boldText}>{number}</Text>
+          </>
+        ) : (
+          t('draft_number_label')
+        )}
       </Text>
     </>
   );
@@ -156,7 +168,7 @@ export default function PDFDocument({
         )}
       </View>
       <View style={[pdfStyles.tableCol, pdfStyles.tableCol3]}>
-        <Text style={pdfStyles.tableCell}>{unit}</Text>
+        <Text style={pdfStyles.tableCell}>{renderUnit(unit)}</Text>
       </View>
       <View style={[pdfStyles.tableCol, pdfStyles.tableCol4]}>
         <Text style={pdfStyles.tableCell}>{quantity}</Text>
@@ -334,7 +346,8 @@ export default function PDFDocument({
           days: date && dueDate ? getDaysUntilDueDate(date, dueDate) : '0'
         })}
       </Text>
-      {invoiceData.bankingInformation?.code &&
+      {(invoiceData.paymentMode || 'manual') === 'manual' &&
+        invoiceData.bankingInformation?.code &&
         invoiceData.bankingInformation?.name &&
         invoiceData.bankingInformation?.accountNumber && (
           <Text style={pdfStyles.footerItem}>
@@ -346,12 +359,42 @@ export default function PDFDocument({
             })}
           </Text>
         )}
+      {invoiceData.paymentMode === 'crypto' && invoiceData.cryptoWallet ? (
+        <Text style={pdfStyles.footerItem}>
+          {`${t('crypto_asset_label')}: ${invoiceData.cryptoWallet.asset} · ${t('crypto_network_label')}: ${invoiceData.cryptoWallet.network} · ${t('crypto_address_label')}: ${invoiceData.cryptoWallet.address}${invoiceData.cryptoWallet.memo ? ` · ${t('crypto_memo_label')}: ${invoiceData.cryptoWallet.memo}` : ''}`}
+        </Text>
+      ) : null}
+      {invoiceData.paymentMode !== 'disabled' &&
+      invoiceData.manualPaymentReference ? (
+        <Text style={pdfStyles.footerItem}>
+          {t('payment_reference_label')}: {invoiceData.manualPaymentReference}
+        </Text>
+      ) : null}
     </View>
   );
 
   return (
     <Document>
       <Page size="A4" style={pdfStyles.page}>
+        {isDraft ? (
+          <Text
+            fixed
+            style={{
+              position: 'absolute',
+              top: '46%',
+              left: '12%',
+              transform: 'rotate(-30deg)',
+              color: '#DC2626',
+              opacity: 0.16,
+              fontSize: 44,
+              fontWeight: 700
+            }}
+          >
+            {language.toLowerCase() === 'lt'
+              ? 'JUODRAŠTIS — NEIŠRAŠYTA'
+              : 'DRAFT — NOT ISSUED'}
+          </Text>
+        ) : null}
         {renderHeader()}
         {renderBillingDetailsSection()}
         {renderTableSection()}

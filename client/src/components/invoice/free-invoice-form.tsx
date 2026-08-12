@@ -15,11 +15,17 @@ import {
   Input,
   Label,
   Link,
-  TextField} from '@heroui/react';
+  ListBox,
+  ListBoxItem,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField
+} from '@heroui/react';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { type ComponentProps, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 import { captureAnalyticsEvent } from '@/lib/analytics/client';
 import { analyticsEvents } from '@/lib/analytics/events';
@@ -65,9 +71,20 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
         type: 'receiver' as const
       },
       services: [
-        { amount: 0, quantity: 0, description: '', unit: '', vatRate: 0 }
+        { amount: 0, quantity: 1, description: '', unit: 'service', vatRate: 0 }
       ],
       bankingInformation: { name: '', code: '', accountNumber: '' },
+      cryptoWallet: {
+        label: '',
+        asset: '',
+        network: '',
+        address: '',
+        memo: ''
+      },
+      paymentMode: 'manual',
+      manualPaymentReference: '',
+      status: 'pending',
+      totalAmount: '0.00',
       date: formatDate(new Date().toISOString()),
       dueDate: ''
     }
@@ -77,8 +94,13 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     formState: { errors },
     clearErrors,
     setValue,
-    getValues
+    getValues,
+    control,
+    watch
   } = methods;
+  const senderBusinessType = watch('sender.businessType');
+  const receiverBusinessType = watch('receiver.businessType');
+  const paymentMode = watch('paymentMode') || 'manual';
 
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [senderSignature, setSenderSignature] = useState<
@@ -135,6 +157,35 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-muted text-sm">{t('headings.from')}</p>
           </div>
+          <Controller
+            name="sender.businessType"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                aria-label={t('a11y.sender_business_type_label')}
+                orientation="horizontal"
+                value={field.value}
+                onChange={field.onChange}
+              >
+                <Radio value="business">
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content>
+                    <Label>{t('labels.business_type_business')}</Label>
+                  </Radio.Content>
+                </Radio>
+                <Radio value="individual">
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content>
+                    <Label>{t('labels.business_type_individual')}</Label>
+                  </Radio.Content>
+                </Radio>
+              </RadioGroup>
+            )}
+          />
           {renderTextField({
             label: t('labels.sender_name'),
             isInvalid: !!errors.sender?.name,
@@ -144,21 +195,34 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
               'aria-label': t('a11y.sender_name_label'),
               placeholder: t('placeholders.sender_name'),
               type: 'text',
-              maxLength: 20,
+              maxLength: 255,
               ...register('sender.name')
             }
           })}
           {renderTextField({
-            label: t('labels.sender_business_number_individual'),
+            label: t(`labels.sender_business_number_${senderBusinessType}`),
             isInvalid: !!errors.sender?.businessNumber,
             errorMessage: errors.sender?.businessNumber?.message,
             variant: 'primary',
             inputProps: {
-              'aria-label': t('a11y.sender_business_number_label_individual'),
+              'aria-label': t(
+                `a11y.sender_business_number_label_${senderBusinessType}`
+              ),
               placeholder: t('placeholders.sender_business_number'),
               type: 'text',
-              maxLength: 20,
+              maxLength: 255,
               ...register('sender.businessNumber')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.sender_vat_number'),
+            isInvalid: !!errors.sender?.vatNumber,
+            errorMessage: errors.sender?.vatNumber?.message,
+            variant: 'primary',
+            inputProps: {
+              type: 'text',
+              maxLength: 255,
+              ...register('sender.vatNumber')
             }
           })}
           {renderTextField({
@@ -170,7 +234,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
               'aria-label': t('a11y.sender_address_label'),
               placeholder: t('placeholders.sender_address'),
               type: 'text',
-              maxLength: 20,
+              maxLength: 1000,
               ...register('sender.address')
             }
           })}
@@ -183,7 +247,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
               'aria-label': t('a11y.sender_email_label'),
               placeholder: t('placeholders.sender_email'),
               type: 'text',
-              maxLength: 20,
+              maxLength: 255,
               ...register('sender.email')
             }
           })}
@@ -195,6 +259,35 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
           <div className="flex min-h-8 items-center justify-between">
             <p className="text-muted text-sm">{t('headings.to')}</p>
           </div>
+          <Controller
+            name="receiver.businessType"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                aria-label={t('a11y.receiver_business_type_label')}
+                orientation="horizontal"
+                value={field.value}
+                onChange={field.onChange}
+              >
+                <Radio value="business">
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content>
+                    <Label>{t('labels.business_type_business')}</Label>
+                  </Radio.Content>
+                </Radio>
+                <Radio value="individual">
+                  <Radio.Control>
+                    <Radio.Indicator />
+                  </Radio.Control>
+                  <Radio.Content>
+                    <Label>{t('labels.business_type_individual')}</Label>
+                  </Radio.Content>
+                </Radio>
+              </RadioGroup>
+            )}
+          />
           {renderTextField({
             label: t('labels.receiver_name'),
             isInvalid: !!errors.receiver?.name,
@@ -204,21 +297,34 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
               'aria-label': t('a11y.receiver_name_label'),
               placeholder: t('placeholders.receiver_name'),
               type: 'text',
-              maxLength: 20,
+              maxLength: 255,
               ...register('receiver.name')
             }
           })}
           {renderTextField({
-            label: t('labels.receiver_business_number_business'),
+            label: t(`labels.receiver_business_number_${receiverBusinessType}`),
             isInvalid: !!errors.receiver?.businessNumber,
             errorMessage: errors.receiver?.businessNumber?.message,
             variant: 'primary',
             inputProps: {
-              'aria-label': t('a11y.receiver_business_number_label_business'),
+              'aria-label': t(
+                `a11y.receiver_business_number_label_${receiverBusinessType}`
+              ),
               placeholder: t('placeholders.receiver_business_number'),
               type: 'text',
-              maxLength: 20,
+              maxLength: 255,
               ...register('receiver.businessNumber')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.receiver_vat_number'),
+            isInvalid: !!errors.receiver?.vatNumber,
+            errorMessage: errors.receiver?.vatNumber?.message,
+            variant: 'primary',
+            inputProps: {
+              type: 'text',
+              maxLength: 255,
+              ...register('receiver.vatNumber')
             }
           })}
           {renderTextField({
@@ -230,7 +336,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
               'aria-label': t('a11y.receiver_address_label'),
               placeholder: t('placeholders.receiver_address'),
               type: 'text',
-              maxLength: 20,
+              maxLength: 1000,
               ...register('receiver.address')
             }
           })}
@@ -243,7 +349,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
               'aria-label': t('a11y.receiver_email_label'),
               placeholder: t('placeholders.receiver_email'),
               type: 'text',
-              maxLength: 20,
+              maxLength: 255,
               ...register('receiver.email')
             }
           })}
@@ -266,45 +372,99 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
 
   const renderBankingInformation = () => (
     <div className="col-span-4 flex flex-col gap-4">
-      <h4>{t('banking_details')}</h4>
-      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
-        {renderTextField({
-          label: t('labels.bank_name'),
-          isInvalid: !!errors.bankingInformation?.name,
-          errorMessage: errors.bankingInformation?.name?.message,
-          inputProps: {
-            'aria-label': t('a11y.bank_name_label'),
-            type: 'text',
-            placeholder: t('placeholders.bank_name'),
-            maxLength: 20,
-            ...register('bankingInformation.name')
-          }
-        })}
-        {renderTextField({
-          label: t('labels.bank_code'),
-          isInvalid: !!errors.bankingInformation?.code,
-          errorMessage: errors.bankingInformation?.code?.message,
-          inputProps: {
-            'aria-label': t('a11y.bank_code_label'),
-            type: 'text',
-            maxLength: 20,
-            placeholder: t('placeholders.bank_code'),
-            ...register('bankingInformation.code')
-          }
-        })}
-        {renderTextField({
-          label: t('labels.bank_account_number'),
-          isInvalid: !!errors.bankingInformation?.accountNumber,
-          errorMessage: errors.bankingInformation?.accountNumber?.message,
-          inputProps: {
-            'aria-label': t('a11y.bank_account_number_label'),
-            placeholder: t('placeholders.bank_account_number'),
-            type: 'text',
-            maxLength: 20,
-            ...register('bankingInformation.accountNumber')
-          }
-        })}
-      </div>
+      <h4>{t('payment_settings.title')}</h4>
+      <Controller
+        name="paymentMode"
+        control={control}
+        render={({ field }) => (
+          <Select
+            aria-label={t('a11y.payment_mode_label')}
+            variant="secondary"
+            value={field.value}
+            onChange={(key) => field.onChange(String(key))}
+          >
+            <Label>{t('labels.payment_mode')}</Label>
+            <Select.Trigger>
+              <Select.Value />
+              <Select.Indicator />
+            </Select.Trigger>
+            <Select.Popover>
+              <ListBox>
+                {(['manual', 'crypto', 'disabled'] as const).map((mode) => (
+                  <ListBoxItem
+                    key={mode}
+                    id={mode}
+                    textValue={t(`payment_settings.modes.${mode}`)}
+                  >
+                    {t(`payment_settings.modes.${mode}`)}
+                    <ListBoxItem.Indicator />
+                  </ListBoxItem>
+                ))}
+              </ListBox>
+            </Select.Popover>
+          </Select>
+        )}
+      />
+      {paymentMode === 'manual' ? (
+        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
+          {renderTextField({
+            label: t('labels.bank_name'),
+            isInvalid: !!errors.bankingInformation?.name,
+            errorMessage: errors.bankingInformation?.name?.message,
+            inputProps: {
+              'aria-label': t('a11y.bank_name_label'),
+              type: 'text',
+              placeholder: t('placeholders.bank_name'),
+              maxLength: 255,
+              ...register('bankingInformation.name')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.bank_code'),
+            isInvalid: !!errors.bankingInformation?.code,
+            errorMessage: errors.bankingInformation?.code?.message,
+            inputProps: {
+              'aria-label': t('a11y.bank_code_label'),
+              type: 'text',
+              maxLength: 100,
+              placeholder: t('placeholders.bank_code'),
+              ...register('bankingInformation.code')
+            }
+          })}
+          {renderTextField({
+            label: t('labels.bank_account_number'),
+            isInvalid: !!errors.bankingInformation?.accountNumber,
+            errorMessage: errors.bankingInformation?.accountNumber?.message,
+            inputProps: {
+              'aria-label': t('a11y.bank_account_number_label'),
+              placeholder: t('placeholders.bank_account_number'),
+              type: 'text',
+              maxLength: 100,
+              ...register('bankingInformation.accountNumber')
+            }
+          })}
+        </div>
+      ) : null}
+      {paymentMode === 'crypto' ? (
+        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+          {(['label', 'asset', 'network', 'address', 'memo'] as const).map(
+            (name) =>
+              renderTextField({
+                label: t(`labels.crypto_${name}`),
+                isInvalid: !!errors.cryptoWallet?.[name],
+                errorMessage: errors.cryptoWallet?.[name]?.message,
+                inputProps: {
+                  type: 'text',
+                  maxLength: name === 'address' || name === 'memo' ? 255 : 100,
+                  ...register(`cryptoWallet.${name}`)
+                }
+              })
+          )}
+          <p className="text-muted text-xs leading-5 md:col-span-2">
+            {t('payment_settings.crypto_note')}
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 
@@ -397,6 +557,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
 
     return {
       ...getValues(),
+      lifecycleStatus: getValues('invoiceId') ? 'issued' : 'draft',
       subtotalAmount: invoiceTotals.subtotalAmount,
       vatAmount: invoiceTotals.vatAmount,
       totalAmount: invoiceTotals.totalAmount
@@ -427,6 +588,9 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
               </h1>
               <p className="text-muted max-w-2xl">
                 {t('free_invoice.description')}
+              </p>
+              <p className="text-muted max-w-2xl text-sm">
+                {t('free_invoice.untracked_notice')}
               </p>
             </div>
             {renderUpgradeAlert()}

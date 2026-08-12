@@ -84,6 +84,11 @@ const InvoiceModal = ({
   const t = useTranslations('invoices.pdf');
   const tTable = useTranslations('invoices.table');
   const { invoiceId } = invoiceData;
+  const pdfFileName = invoiceId
+    ? `${invoiceId}.pdf`
+    : invoiceData.id
+      ? `draft-${invoiceData.id}.pdf`
+      : 'invoice-draft.pdf';
   const [isIFrameLoading, setIsIFrameLoading] = useState(false);
 
   const { cookieConsent } = useCookieConsent();
@@ -172,7 +177,7 @@ const InvoiceModal = ({
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="min-w-0">
                     <span className="block truncate text-sm font-semibold">
-                      {invoiceId}
+                      {invoiceId || tTable('lifecycle_status.draft')}
                     </span>
                     {invoiceData.receiver.name && (
                       <span className="text-muted block truncate text-xs">
@@ -227,7 +232,7 @@ const InvoiceModal = ({
                   {pdfDocument ? (
                     <PDFDownloadLink
                       document={pdfDocument}
-                      fileName={`${invoiceId}.pdf`}
+                      fileName={pdfFileName}
                     >
                       {({ loading }) => {
                         const isLoading = isIFrameLoading || loading;
@@ -304,7 +309,7 @@ const InvoiceModal = ({
                 {pdfDocument ? (
                   <PDFDownloadLink
                     document={pdfDocument}
-                    fileName={`${invoiceId}.pdf`}
+                    fileName={pdfFileName}
                     className="w-full sm:hidden"
                   >
                     {({ loading }) => (

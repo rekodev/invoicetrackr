@@ -2,13 +2,15 @@
 
 import {
   ChevronDownIcon,
+  CheckBadgeIcon,
   DocumentTextIcon,
   ExclamationCircleIcon,
   EyeIcon,
   LinkIcon,
   PaperAirplaneIcon,
   PencilSquareIcon,
-  TrashIcon
+  TrashIcon,
+  UserPlusIcon
 } from '@heroicons/react/24/outline';
 import {
   Checkbox,
@@ -30,7 +32,11 @@ import { useTranslations } from 'next-intl';
 import type { JSX, Key } from 'react';
 import { useEffect, useState, useTransition } from 'react';
 
-import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
+import {
+  createRecipientDetailsRequestAction,
+  issueInvoiceAction,
+  updateInvoiceStatusAction
+} from '@/lib/actions/invoice';
 import { statusOptions } from '@/lib/constants/table';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
@@ -132,6 +138,41 @@ const InvoiceTableCell = ({
     handleChangeStatus(isPaid ? 'pending' : 'paid');
   };
 
+  const handleIssue = () =>
+    startTransition(async () => {
+      if (!invoice.id || !window.confirm(tCell('confirm_issue'))) return;
+      const response = await issueInvoiceAction(userId, Number(invoice.id));
+      toast(response.message, { variant: response.ok ? 'success' : 'danger' });
+    });
+
+  const handleRequestDetails = () =>
+    startTransition(async () => {
+      if (!invoice.id) return;
+      const recipientEmail =
+        invoice.receiver.email ||
+        window.prompt(tCell('prompt_details_email'))?.trim() ||
+        undefined;
+      const sendEmail = Boolean(
+        recipientEmail &&
+          (!invoice.receiver.email ||
+            window.confirm(tCell('confirm_email_details')))
+      );
+      const response = await createRecipientDetailsRequestAction(
+        userId,
+        Number(invoice.id),
+        recipientEmail,
+        sendEmail
+      );
+      if (response.ok && response.data?.url && !sendEmail)
+        await navigator.clipboard.writeText(response.data.url);
+      toast(
+        response.ok
+          ? tCell(sendEmail ? 'details_request_emailed' : 'details_link_copied')
+          : response.message,
+        { variant: response.ok ? 'success' : 'danger' }
+      );
+    });
+
   const cellValue =
     invoice[
       columnKey as keyof Omit<
@@ -159,7 +200,9 @@ const InvoiceTableCell = ({
         <div className="flex">
           <DocumentTextIcon className="h-5 w-5" />
           &nbsp;
-          <p className="text-bold text-sm capitalize">{invoice.invoiceId}</p>
+          <p className="text-bold text-sm capitalize">
+            {invoice.invoiceId || tTable('lifecycle_status.draft')}
+          </p>
         </div>
       );
     case 'receiver':
@@ -198,7 +241,7 @@ const InvoiceTableCell = ({
           <div className="flex items-center gap-4">
             <Dropdown>
               <DropdownTrigger
-                isDisabled={isPending}
+                isDisabled={isPending || isDraft}
                 className="h-auto min-w-0 cursor-pointer bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-50 [&[aria-expanded=true]_svg]:rotate-180"
               >
                 <Chip
@@ -246,12 +289,12 @@ const InvoiceTableCell = ({
                 className="mr-0.5 max-w-5 p-0"
                 isSelected={isPaid}
                 onChange={handleMarkAsPaidClick}
-                isDisabled={isPending}
+                isDisabled={isPending || isDraft}
               />
             )}
           </div>
 
-          {isPastDue && (
+          {isPastDue && !isDraft && (
             <span
               data-testid="invoice-past-due-indicator"
               className="text-danger flex items-center gap-1 text-nowrap text-xs font-medium"
@@ -301,6 +344,28 @@ const InvoiceTableCell = ({
           )}
           {isDraft && (
             <>
+              {renderTooltip(
+                tCell('tooltip_issue'),
+                <button
+                  type="button"
+                  aria-label={tCell('tooltip_issue')}
+                  onClick={handleIssue}
+                  className="text-accent cursor-pointer"
+                >
+                  <CheckBadgeIcon className="h-5 w-5" />
+                </button>
+              )}
+              {renderTooltip(
+                tCell('tooltip_request_details'),
+                <button
+                  type="button"
+                  aria-label={tCell('tooltip_request_details')}
+                  onClick={handleRequestDetails}
+                  className="text-muted cursor-pointer"
+                >
+                  <UserPlusIcon className="h-5 w-5" />
+                </button>
+              )}
               {renderTooltip(
                 tCell('tooltip_edit'),
                 <button

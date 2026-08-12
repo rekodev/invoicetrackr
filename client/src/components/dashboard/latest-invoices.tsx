@@ -1,5 +1,5 @@
 import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
-import { buttonVariants,Card, Chip } from '@heroui/react';
+import { buttonVariants, Card, Chip } from '@heroui/react';
 import Link from 'next/link';
 import { getLocale, getTranslations } from 'next-intl/server';
 
@@ -15,7 +15,7 @@ type Props = {
   currency: Currency;
 };
 
-type InvoiceStatus = 'paid' | 'pending' | 'overdue' | 'canceled';
+type InvoiceStatus = 'draft' | 'paid' | 'pending' | 'overdue' | 'canceled';
 
 const LatestInvoices = async ({ userId, currency }: Props) => {
   const t = await getTranslations('dashboard.latest_invoices');
@@ -65,15 +65,19 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
             <ul className="divide-default-200 divide-y">
               {invoices.map((invoice) => {
                 const isOverdue =
+                  invoice.lifecycleStatus !== 'draft' &&
                   invoice.status === 'pending' &&
                   new Date(invoice.dueDate).getTime() < currentTimestamp;
-                const status: InvoiceStatus = isOverdue
-                  ? 'overdue'
-                  : (invoice.status as InvoiceStatus);
+                const status: InvoiceStatus =
+                  invoice.lifecycleStatus === 'draft'
+                    ? 'draft'
+                    : isOverdue
+                      ? 'overdue'
+                      : (invoice.status as InvoiceStatus);
                 const color =
                   status === 'paid'
                     ? 'success'
-                    : status === 'pending'
+                    : status === 'pending' || status === 'draft'
                       ? 'warning'
                       : 'danger';
 
@@ -98,7 +102,7 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
                       </div>
                       <div className="text-muted mt-0.5 flex min-w-0 items-center gap-1.5 text-[11px]">
                         <span className="shrink-0 tabular-nums">
-                          {invoice.invoiceId}
+                          {invoice.invoiceId || t('statuses.draft')}
                         </span>
                         <span aria-hidden>·</span>
                         <span className="shrink-0">

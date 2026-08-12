@@ -267,6 +267,13 @@
       "when": 1783987200000,
       "tag": "0038_rek_99_profile_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1786563128000,
+      "tag": "0039_invoice_drafts_and_crypto_wallets",
+      "breakpoints": true
     }
   ]
 }

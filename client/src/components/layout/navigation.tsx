@@ -21,7 +21,6 @@ import type { ComponentType, ReactNode, SVGProps } from 'react';
 
 import {
   ACCOUNT_SETTINGS_PAGE,
-  BANKING_INFORMATION_PAGE,
   CHANGE_PASSWORD_PAGE,
   CLIENTS_PAGE,
   DASHBOARD_PAGE,
@@ -29,6 +28,7 @@ import {
   INVOICES_PAGE,
   PAYMENTS_PAGE,
   PERSONAL_INFORMATION_PAGE,
+  PAYMENT_METHODS_PAGE,
   PROFILE_PAGE,
   REPORTS_PAGE
 } from '@/lib/constants/pages';
@@ -58,8 +58,8 @@ const navigation: Array<NavLink> = [
         icon: IdentificationIcon
       },
       {
-        key: 'banking_information',
-        href: BANKING_INFORMATION_PAGE,
+        key: 'payment_methods',
+        href: PAYMENT_METHODS_PAGE,
         icon: BuildingLibraryIcon
       },
       {

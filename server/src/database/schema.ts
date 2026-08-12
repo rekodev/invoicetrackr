@@ -24,7 +24,7 @@ export const invoiceServicesTable = pgTable(
     invoiceId: integer('invoice_id').notNull(),
     description: text().notNull(),
     unit: varchar({ length: 255 }).notNull(),
-    quantity: integer().notNull(),
+    quantity: numeric({ precision: 12, scale: 4 }).notNull(),
     amount: numeric({ precision: 10, scale: 2 }).notNull(),
     vatRate: numeric('vat_rate', { precision: 5, scale: 2 })
       .default('0')
@@ -62,11 +62,13 @@ export const invoicesTable = pgTable(
       .default('draft')
       .notNull(),
     dueDate: date('due_date').notNull(),
-    invoiceId: varchar('invoice_id').notNull(),
+    invoiceId: varchar('invoice_id'),
+    invoiceSeries: varchar('invoice_series', { length: 8 }),
     id: serial().primaryKey().notNull(),
     senderSignature: varchar('sender_signature', { length: 255 }).notNull(),
     receiverSignature: varchar('receiver_signature', { length: 255 }),
     bankAccountId: integer('bank_account_id'),
+    cryptoWalletId: integer('crypto_wallet_id'),
     recipientSigningToken: varchar('recipient_signing_token', {
       length: 255
     }),
@@ -110,6 +112,23 @@ export const invoicesTable = pgTable(
       withTimezone: true,
       mode: 'string'
     }),
+    recipientDetailsToken: varchar('recipient_details_token', { length: 255 }),
+    recipientDetailsCreatedAt: timestamp('recipient_details_created_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    recipientDetailsExpiresAt: timestamp('recipient_details_expires_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    recipientDetailsSubmittedAt: timestamp('recipient_details_submitted_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
+    recipientDetailsRevokedAt: timestamp('recipient_details_revoked_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
     paymentMode: varchar('payment_mode', { length: 50 })
       .default('manual')
       .notNull(),
@@ -149,6 +168,11 @@ export const invoicesTable = pgTable(
       foreignColumns: [invoiceBankingInformationTable.id],
       name: 'fk_invoices_invoice_banking_information'
     }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.cryptoWalletId],
+      foreignColumns: [invoiceCryptoWalletsTable.id],
+      name: 'fk_invoices_invoice_crypto_wallet'
+    }).onDelete('cascade'),
     check(
       'invoices_status_check',
       sql`(status)::text = ANY ((ARRAY['paid'::character varying, 'pending'::character varying, 'canceled'::character varying])::text[])`
@@ -159,7 +183,7 @@ export const invoicesTable = pgTable(
     ),
     check(
       'invoices_payment_mode_check',
-      sql`(payment_mode)::text = ANY ((ARRAY['manual'::character varying, 'disabled'::character varying])::text[])`
+      sql`(payment_mode)::text = ANY ((ARRAY['manual'::character varying, 'crypto'::character varying, 'disabled'::character varying])::text[])`
     ),
     unique('invoices_user_invoice_id_key').on(table.userId, table.invoiceId),
     unique('invoices_id_user_id_key').on(table.id, table.userId),
@@ -167,6 +191,9 @@ export const invoicesTable = pgTable(
       table.recipientSigningToken
     ),
     unique('invoices_public_invoice_token_key').on(table.publicInvoiceToken),
+    unique('invoices_recipient_details_token_key').on(
+      table.recipientDetailsToken
+    ),
     index('invoices_paid_income_journal_idx')
       .on(table.userId, table.paidAt)
       .where(sql`status = 'paid'`)
@@ -261,6 +288,26 @@ export const invoiceBankingInformationTable = pgTable(
       columns: [table.invoiceId],
       foreignColumns: [invoicesTable.id],
       name: 'fk_invoice_banking_information_invoice_id'
+    }).onDelete('cascade')
+  ]
+);
+
+export const invoiceCryptoWalletsTable = pgTable(
+  'invoice_crypto_wallets',
+  {
+    id: serial().primaryKey().notNull(),
+    invoiceId: integer('invoice_id').notNull(),
+    label: varchar({ length: 100 }).notNull(),
+    asset: varchar({ length: 20 }).notNull(),
+    network: varchar({ length: 100 }).notNull(),
+    address: varchar({ length: 255 }).notNull(),
+    memo: varchar({ length: 255 })
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.invoiceId],
+      foreignColumns: [invoicesTable.id],
+      name: 'fk_invoice_crypto_wallets_invoice_id'
     }).onDelete('cascade')
   ]
 );
@@ -462,6 +509,42 @@ export const bankingInformationTable = pgTable(
       name: 'banking_information_user_id_fkey'
     }).onDelete('cascade'),
     unique('banking_information_id_user_id_key').on(table.id, table.userId)
+  ]
+);
+
+export const cryptoWalletsTable = pgTable(
+  'crypto_wallets',
+  {
+    id: serial().primaryKey().notNull(),
+    userId: integer('user_id').notNull(),
+    label: varchar({ length: 100 }).notNull(),
+    asset: varchar({ length: 20 }).notNull(),
+    network: varchar({ length: 100 }).notNull(),
+    address: varchar({ length: 255 }).notNull(),
+    memo: varchar({ length: 255 }),
+    isDefault: boolean('is_default').default(false).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull()
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [usersTable.id],
+      name: 'crypto_wallets_user_id_fkey'
+    }).onDelete('cascade'),
+    unique('crypto_wallets_id_user_id_key').on(table.id, table.userId),
+    unique('crypto_wallets_user_network_address_key').on(
+      table.userId,
+      table.network,
+      table.address
+    ),
+    uniqueIndex('crypto_wallets_one_default_per_user_idx')
+      .on(table.userId)
+      .where(sql`is_default = true`)
   ]
 );
 

@@ -3,7 +3,6 @@
 import {
   BuildingLibraryIcon,
   InformationCircleIcon,
-  SparklesIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
 import {
@@ -24,17 +23,17 @@ import type { Client } from '@invoicetrackr/types';
 import type {
   BankAccountBody,
   ClientBody,
+  CryptoWalletBody,
   InvoiceBody,
   User
 } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { type ComponentProps, useRef, useState, useTransition } from 'react';
+import { type ComponentProps, useRef, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
-import { getNextInvoiceNumberAction } from '@/lib/actions/invoice';
-import { statusOptions } from '@/lib/constants/table';
 import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
 import { Currency } from '@/lib/types/currency';
+import { splitInvoiceId } from '@/lib/utils';
 import {
   addDaysToDate,
   formatDate,
@@ -52,6 +51,7 @@ type Props = {
   user: User;
   clients: Array<ClientBody>;
   bankingInformationEntries: Array<BankAccountBody>;
+  cryptoWallets: Array<CryptoWalletBody>;
   invoiceData?: InvoiceBody;
   currency: Currency;
 };
@@ -71,10 +71,12 @@ const INITIAL_RECEIVER_DATA: Client = {
   type: 'receiver'
 };
 
-const paymentModeOptions = ['manual', 'disabled'] as const;
+const paymentModeOptions = ['manual', 'crypto', 'disabled'] as const;
 
 const getMvpPaymentMode = (paymentMode?: InvoiceBody['paymentMode']) =>
-  paymentMode === 'disabled' ? 'disabled' : 'manual';
+  paymentMode === 'disabled' || paymentMode === 'crypto'
+    ? paymentMode
+    : 'manual';
 
 const getDefaultVatRate = (user: User) => {
   if (!user.isVatPayer) return 0;
@@ -95,6 +97,7 @@ const InvoiceForm = ({
   user,
   currency,
   invoiceData,
+  cryptoWallets,
   clients,
   bankingInformationEntries
 }: Props) => {
@@ -118,10 +121,18 @@ const InvoiceForm = ({
     invoiceData?.bankingInformation ||
     selectedBankAccount ||
     emptyBankingInformation;
+  const defaultCryptoWallet =
+    invoiceData?.cryptoWallet ||
+    cryptoWallets.find((wallet) => wallet.isDefault) ||
+    cryptoWallets.at(0);
   const methods = useForm<InvoiceBody>({
     defaultValues: invoiceData
       ? {
           ...invoiceData,
+          invoiceSeries:
+            invoiceData.invoiceSeries ||
+            splitInvoiceId(invoiceData.invoiceId || '')[0] ||
+            user.defaultInvoiceSeries,
           paymentMode: getMvpPaymentMode(invoiceData.paymentMode),
           date: invoiceData.date ? formatDate(invoiceData.date) : today,
           dueDate: invoiceData.dueDate ? formatDate(invoiceData.dueDate) : ''
@@ -138,14 +149,16 @@ const InvoiceForm = ({
           services: [
             {
               amount: 0,
-              quantity: 0,
+              quantity: 1,
               description: '',
-              unit: '',
+              unit: 'service',
               vatRate: defaultVatRate
             }
           ],
           bankingInformation: defaultBankingInformation,
+          cryptoWallet: defaultCryptoWallet,
           status: 'pending',
+          invoiceSeries: user.defaultInvoiceSeries || 'SF',
           paymentMode: 'manual',
           manualPaymentReference: '',
           date: today,
@@ -169,8 +182,6 @@ const InvoiceForm = ({
   const [senderSignature, setSenderSignature] = useState<
     string | File | undefined
   >(defaultSenderSignature);
-  const [isNextInvoiceNumberPending, startNextInvoiceNumberTransition] =
-    useTransition();
 
   const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({
     invoiceData,
@@ -184,6 +195,7 @@ const InvoiceForm = ({
   const isReceiverBusiness = watch('receiver.businessType') === 'business';
   const isSenderBusiness = watch('sender.businessType') === 'business';
   const paymentMode = watch('paymentMode') || 'manual';
+  const selectedCryptoWalletId = watch('cryptoWallet.id');
   const currentDate = watch('date');
   const senderVatNumber = watch('sender.vatNumber');
   const shouldShowSenderVatNumber = isVatEnabled || !!senderVatNumber;
@@ -215,6 +227,13 @@ const InvoiceForm = ({
     setIsBankingInformationModalOpen(false);
   };
 
+  const handleCryptoWalletSelect = (id: string) => {
+    const wallet = cryptoWallets.find((entry) => String(entry.id) === id);
+    if (!wallet) return;
+    setValue('cryptoWallet', wallet, { shouldDirty: true });
+    clearErrors('cryptoWallet');
+  };
+
   const applyDefaultBankAccount = () => {
     if (!selectedBankAccount) return;
 
@@ -231,20 +250,6 @@ const InvoiceForm = ({
     setSenderSignature(signature);
     setValue('senderSignature', signature, { shouldDirty: true });
     clearErrors('senderSignature');
-  };
-
-  const handleNextInvoiceIdSelect = () => {
-    startNextInvoiceNumberTransition(async () => {
-      const response = await getNextInvoiceNumberAction({
-        userId: user.id || 0
-      });
-
-      if (!response.ok) return;
-
-      setValue('invoiceId', response.invoiceId, { shouldDirty: true });
-      setValue('invoiceSeries', response.series, { shouldDirty: true });
-      clearErrors('invoiceId');
-    });
   };
 
   const renderTextField = ({
@@ -352,7 +357,7 @@ const InvoiceForm = ({
                   value: field.value || '',
                   'aria-label': t('a11y.sender_name_label'),
                   placeholder: t('placeholders.sender_name'),
-                  maxLength: 20
+                  maxLength: 255
                 }
               })
             }
@@ -375,7 +380,7 @@ const InvoiceForm = ({
                     `a11y.sender_business_number_label_${isSenderBusiness ? 'business' : 'individual'}`
                   ),
                   placeholder: t('placeholders.sender_business_number'),
-                  maxLength: 20
+                  maxLength: 255
                 }
               })
             }
@@ -395,7 +400,7 @@ const InvoiceForm = ({
                     value: field.value || '',
                     'aria-label': t('a11y.sender_vat_number_label'),
                     placeholder: t('placeholders.sender_vat_number'),
-                    maxLength: 20
+                    maxLength: 255
                   }
                 })
               }
@@ -415,7 +420,7 @@ const InvoiceForm = ({
                   value: field.value || '',
                   'aria-label': t('a11y.sender_address_label'),
                   placeholder: t('placeholders.sender_address'),
-                  maxLength: 20
+                  maxLength: 1000
                 }
               })
             }
@@ -434,7 +439,7 @@ const InvoiceForm = ({
                   value: field.value || '',
                   'aria-label': t('a11y.sender_email_label'),
                   placeholder: t('placeholders.sender_email'),
-                  maxLength: 20
+                  maxLength: 255
                 }
               })
             }
@@ -484,7 +489,7 @@ const InvoiceForm = ({
                   'aria-label': t('a11y.receiver_name_label'),
                   placeholder: t('placeholders.receiver_name'),
                   type: 'text',
-                  maxLength: 20
+                  maxLength: 255
                 }
               })
             }
@@ -603,7 +608,7 @@ const InvoiceForm = ({
               'aria-label': t('a11y.bank_name_label'),
               type: 'text',
               placeholder: t('placeholders.bank_name'),
-              maxLength: 20
+              maxLength: 255
             }
           })
         }
@@ -622,7 +627,7 @@ const InvoiceForm = ({
               value: field.value || '',
               'aria-label': t('a11y.bank_code_label'),
               type: 'text',
-              maxLength: 20,
+              maxLength: 100,
               placeholder: t('placeholders.bank_code')
             }
           })
@@ -643,7 +648,7 @@ const InvoiceForm = ({
               'aria-label': t('a11y.bank_account_number_label'),
               placeholder: t('placeholders.bank_account_number'),
               type: 'text',
-              maxLength: 20
+              maxLength: 100
             }
           })
         }
@@ -655,16 +660,17 @@ const InvoiceForm = ({
     <div className="col-span-4 flex flex-col gap-3">
       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
         <h4>{t('payment_settings.title')}</h4>
-        <Button
-          size="sm"
-          variant="secondary"
-          className="h-unit-9 min-w-unit-10 sm:h-unit-8 sm:w-unit-26 w-full sm:max-w-min"
-          isDisabled={paymentMode === 'disabled'}
-          onPress={() => setIsBankingInformationModalOpen(true)}
-        >
-          <BuildingLibraryIcon className="min-h-4 min-w-4" />
-          {t('modals.select_bank_account')}
-        </Button>
+        {paymentMode === 'manual' && (
+          <Button
+            size="sm"
+            variant="secondary"
+            className="h-unit-9 min-w-unit-10 sm:h-unit-8 sm:w-unit-26 w-full sm:max-w-min"
+            onPress={() => setIsBankingInformationModalOpen(true)}
+          >
+            <BuildingLibraryIcon className="min-h-4 min-w-4" />
+            {t('modals.select_bank_account')}
+          </Button>
+        )}
       </div>
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         <Controller
@@ -687,7 +693,7 @@ const InvoiceForm = ({
                     shouldDirty: true
                   });
                   clearErrors(['manualPaymentReference', 'bankingInformation']);
-                } else {
+                } else if (selectedPaymentMode === 'manual') {
                   applyDefaultBankAccount();
                 }
               }}
@@ -721,7 +727,7 @@ const InvoiceForm = ({
             </Select>
           )}
         />
-        {paymentMode === 'manual' && (
+        {paymentMode !== 'disabled' && (
           <Controller
             name="manualPaymentReference"
             control={control}
@@ -744,6 +750,65 @@ const InvoiceForm = ({
           />
         )}
         {paymentMode === 'manual' && renderBankingInformationFields()}
+        {paymentMode === 'crypto' && (
+          <>
+            {cryptoWallets.length ? (
+              <Select
+                aria-label={t('a11y.crypto_wallet_label')}
+                variant="secondary"
+                value={String(selectedCryptoWalletId || '')}
+                onChange={(key) => handleCryptoWalletSelect(String(key || ''))}
+              >
+                <Label>{t('labels.crypto_wallet')}</Label>
+                <Select.Trigger>
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
+                <Select.Popover>
+                  <ListBox>
+                    {cryptoWallets.map((wallet) => (
+                      <ListBoxItem
+                        key={wallet.id}
+                        id={String(wallet.id)}
+                        textValue={`${wallet.label} · ${wallet.asset}`}
+                      >
+                        {wallet.label} · {wallet.asset} ({wallet.network})
+                        <ListBoxItem.Indicator />
+                      </ListBoxItem>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
+            ) : null}
+            {(['label', 'asset', 'network', 'address', 'memo'] as const).map(
+              (name) => (
+                <Controller
+                  key={name}
+                  name={`cryptoWallet.${name}`}
+                  control={control}
+                  render={({ field }) =>
+                    renderTextField({
+                      label: t(`labels.crypto_${name}`),
+                      isInvalid: !!errors.cryptoWallet?.[name],
+                      errorMessage: errors.cryptoWallet?.[name]?.message,
+                      inputProps: {
+                        ...field,
+                        value: field.value || '',
+                        'aria-label': t(`a11y.crypto_${name}_label`),
+                        type: 'text',
+                        maxLength:
+                          name === 'address' || name === 'memo' ? 255 : 100
+                      }
+                    })
+                  }
+                />
+              )
+            )}
+            <p className="text-muted text-xs leading-5 md:col-span-3">
+              {t('payment_settings.crypto_note')}
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -806,80 +871,34 @@ const InvoiceForm = ({
               <h4>{t('invoice_details')}</h4>
               <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-4">
                 <Controller
-                  name="invoiceId"
+                  name="invoiceSeries"
                   control={control}
-                  defaultValue={invoiceData?.invoiceId || ''}
                   render={({ field }) => (
                     <TextField
                       className="w-full"
                       variant="secondary"
-                      isInvalid={!!errors.invoiceId}
+                      isInvalid={!!errors.invoiceSeries}
                     >
-                      <Label>{t('labels.invoice_id')}</Label>
-                      <div className="relative">
-                        <Input
-                          {...field}
-                          onChange={(event) => {
-                            setValue('invoiceSeries', undefined, {
-                              shouldDirty: true
-                            });
-                            field.onChange(event);
-                          }}
-                          className="w-full pr-28"
-                          aria-label={t('a11y.invoice_id_label')}
-                          placeholder={t('placeholders.invoice_id')}
-                        />
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="secondary"
-                          className="absolute right-1 top-1/2 h-8 min-w-0 -translate-y-1/2 gap-1 px-2"
-                          onPress={handleNextInvoiceIdSelect}
-                          isPending={isNextInvoiceNumberPending}
-                        >
-                          {!isNextInvoiceNumberPending && (
-                            <SparklesIcon className="h-4 w-4 shrink-0" />
-                          )}
-                          {t('buttons.use_next')}
-                        </Button>
-                      </div>
-                      <FieldError>{errors.invoiceId?.message}</FieldError>
+                      <Label>{t('labels.invoice_series')}</Label>
+                      <Input
+                        {...field}
+                        value={field.value || ''}
+                        onChange={(event) =>
+                          field.onChange(event.target.value.toUpperCase())
+                        }
+                        aria-label={t('a11y.invoice_series_label')}
+                        placeholder={t('placeholders.invoice_series')}
+                        maxLength={8}
+                      />
+                      <FieldError>{errors.invoiceSeries?.message}</FieldError>
+                      <p className="text-muted text-xs leading-5">
+                        {invoiceData?.invoiceId
+                          ? t('numbering.reserved_number', {
+                              number: invoiceData.invoiceId
+                            })
+                          : t('numbering.assigned_on_issue')}
+                      </p>
                     </TextField>
-                  )}
-                />
-                <Controller
-                  name="status"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      className="w-full"
-                      aria-label={t('a11y.status_label')}
-                      variant="secondary"
-                      value={field.value || 'pending'}
-                      onChange={field.onChange}
-                      isInvalid={!!errors.status}
-                    >
-                      <Label>{t('labels.status')}</Label>
-                      <Select.Trigger>
-                        <Select.Value />
-                        <Select.Indicator />
-                      </Select.Trigger>
-                      <Select.Popover>
-                        <ListBox>
-                          {statusOptions.map((option) => (
-                            <ListBoxItem
-                              key={option.uid}
-                              id={option.uid}
-                              textValue={option.name}
-                            >
-                              {option.name}
-                              <ListBoxItem.Indicator />
-                            </ListBoxItem>
-                          ))}
-                        </ListBox>
-                      </Select.Popover>
-                      <FieldError>{errors.status?.message}</FieldError>
-                    </Select>
                   )}
                 />
                 <Controller

@@ -5,8 +5,10 @@ import { revalidatePath } from 'next/cache';
 
 import {
   addInvoice,
+  createRecipientDetailsRequest,
   deleteInvoice,
   getNextInvoiceNumber,
+  issueInvoice,
   updateInvoice,
   updateInvoiceStatus
 } from '@/api/invoice';
@@ -107,6 +109,36 @@ export const updateInvoiceStatusAction = async ({
   revalidatePath(INVOICES_PAGE);
 
   return { ok: true, message: response.data.message };
+};
+
+export const issueInvoiceAction = async (userId: number, invoiceId: number) => {
+  const response = await issueInvoice(userId, invoiceId);
+  revalidatePath(INVOICES_PAGE);
+  return isResponseError(response)
+    ? { ok: false, message: response.data.message }
+    : { ok: true, message: response.data.message };
+};
+
+export const createRecipientDetailsRequestAction = async (
+  userId: number,
+  invoiceId: number,
+  recipientEmail?: string,
+  sendEmail = false
+) => {
+  const response = await createRecipientDetailsRequest(
+    userId,
+    invoiceId,
+    recipientEmail,
+    sendEmail
+  );
+  revalidatePath(INVOICES_PAGE);
+  return isResponseError(response)
+    ? { ok: false, message: response.data.message }
+    : {
+        ok: true,
+        message: response.data.message,
+        data: { url: response.data.url }
+      };
 };
 
 export const deleteInvoiceAction = async ({

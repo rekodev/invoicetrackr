@@ -6,8 +6,10 @@ import {
 
 import {
   deleteInvoiceOptions,
+  createRecipientDetailsRequestOptions,
   getIncomeJournalOptions,
   getInvoiceOptions,
+  getRecipientDetailsRequestOptions,
   getInvoicesOptions,
   getInvoicesRevenueOptions,
   getInvoicesTotalAmountOptions,
@@ -16,12 +18,14 @@ import {
   getPublicInvoiceOptions,
   getPublicInvoiceSigningOptions,
   postInvoiceOptions,
+  issueInvoiceOptions,
   regenerateInvoiceSigningOptions,
   regeneratePublicInvoiceOptions,
   revokeInvoiceSigningOptions,
   revokePublicInvoiceOptions,
   sendInvoiceEmailOptions,
   signPublicInvoiceOptions,
+  submitRecipientDetailsOptions,
   updateInvoiceOptions,
   updateInvoiceStatusOptions
 } from '../options/invoice';
@@ -43,6 +47,13 @@ const invoiceRoutes = (
   fastify.get('/api/:userId/invoices/:id', getInvoiceOptions);
 
   fastify.post('/api/:userId/invoices', postInvoiceOptions);
+
+  fastify.post('/api/:userId/invoices/:id/issue', issueInvoiceOptions);
+
+  fastify.post(
+    '/api/:userId/invoices/:id/recipient-details-request',
+    createRecipientDetailsRequestOptions
+  );
 
   fastify.put('/api/:userId/invoices/:id', updateInvoiceOptions);
 
@@ -86,6 +97,12 @@ const invoiceRoutes = (
   fastify.post('/api/invoices/sign/:token', signPublicInvoiceOptions);
 
   fastify.get('/api/invoices/public/:token', getPublicInvoiceOptions);
+
+  fastify.get(
+    '/api/invoices/details/:token',
+    getRecipientDetailsRequestOptions
+  );
+  fastify.put('/api/invoices/details/:token', submitRecipientDetailsOptions);
 
   done();
 };

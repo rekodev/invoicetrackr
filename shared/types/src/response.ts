@@ -6,9 +6,11 @@ import {
   verifyEmailResponseSchema
 } from './user';
 import { bankAccountBodySchema } from './bank-account';
+import { cryptoWalletBodySchema } from './crypto-wallet';
 import { clientBodySchema } from './client';
 import {
   invoiceBodySchema,
+  invoiceReceiverBodySchema,
   publicInvoiceSchema,
   publicInvoiceSigningSchema
 } from './invoice';
@@ -68,10 +70,19 @@ export const postBankAccountResponseSchema = z.object({
   message: z.string()
 });
 
-export const updateBankAccountResponseSchema = z.object({
-  bankAccount: bankAccountBodySchema,
+export const updateBankAccountResponseSchema = postBankAccountResponseSchema;
+
+// Crypto wallet response schemas
+export const getCryptoWalletsResponseSchema = z.object({
+  cryptoWallets: z.array(cryptoWalletBodySchema)
+});
+
+export const postCryptoWalletResponseSchema = z.object({
+  cryptoWallet: cryptoWalletBodySchema,
   message: z.string()
 });
+
+export const updateCryptoWalletResponseSchema = postCryptoWalletResponseSchema;
 
 // Client response schemas
 export const getClientsResponseSchema = z.object({
@@ -114,9 +125,19 @@ export const postInvoiceResponseSchema = z.object({
   message: z.string()
 });
 
-export const updateInvoiceResponseSchema = z.object({
-  invoice: invoiceBodySchema,
+export const updateInvoiceResponseSchema = postInvoiceResponseSchema;
+export const issueInvoiceResponseSchema = postInvoiceResponseSchema;
+
+export const recipientDetailsRequestResponseSchema = z.object({
+  url: z.string(),
+  expiresAt: z.string(),
   message: z.string()
+});
+
+export const getRecipientDetailsResponseSchema = z.object({
+  receiver: invoiceReceiverBodySchema,
+  senderName: z.string(),
+  invoiceLabel: z.string()
 });
 
 export const getExpensesResponseSchema = z.object({
@@ -185,11 +206,12 @@ export const getLatestInvoicesResponseSchema = z.object({
   invoices: z.array(
     z.object({
       id: z.number(),
-      invoiceId: z.string(),
+      invoiceId: z.string().nullable(),
       totalAmount: z.string(),
       date: z.string(),
       dueDate: z.string(),
       status: z.string(),
+      lifecycleStatus: z.string(),
       name: z.string(),
       email: z.string()
     })
@@ -242,6 +264,13 @@ export type DeleteBankAccountResponse = MessageResponse;
 // Aliases for backwards compatibility
 export type GetBankingInformationEntriesResponse = GetBankAccountsResponse;
 export type AddBankingInformationResponse = PostBankAccountResponse;
+export type GetCryptoWalletsResponse = z.infer<
+  typeof getCryptoWalletsResponseSchema
+>;
+export type PostCryptoWalletResponse = z.infer<
+  typeof postCryptoWalletResponseSchema
+>;
+export type UpdateCryptoWalletResponse = PostCryptoWalletResponse;
 export type UpdateBankingInformationResponse = UpdateBankAccountResponse;
 export type DeleteBankingInformationResponse = DeleteBankAccountResponse;
 
@@ -276,6 +305,13 @@ export type AddClientResponse = PostClientResponse;
 
 export type GetInvoicesResponse = z.infer<typeof getInvoicesResponseSchema>;
 export type GetInvoiceResponse = z.infer<typeof getInvoiceResponseSchema>;
+export type IssueInvoiceResponse = z.infer<typeof issueInvoiceResponseSchema>;
+export type RecipientDetailsRequestResponse = z.infer<
+  typeof recipientDetailsRequestResponseSchema
+>;
+export type GetRecipientDetailsResponse = z.infer<
+  typeof getRecipientDetailsResponseSchema
+>;
 export type GetPublicInvoiceSigningResponse = z.infer<
   typeof getPublicInvoiceSigningResponseSchema
 >;

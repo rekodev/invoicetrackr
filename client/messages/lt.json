@@ -18,6 +18,7 @@
             "settings": "Nustatymai",
             "personal_information": "Veiklos profilis",
             "banking_information": "Banko sąskaitos",
+            "payment_methods": "Mokėjimo būdai",
             "account_settings": "Sąskaitų nustatymai",
             "change_password": "Slaptažodis",
             "my_profile": "Mano profilis",
@@ -473,6 +474,7 @@
                 "action": "Pridėti naują"
             },
             "statuses": {
+                "draft": "Juodraštis",
                 "paid": "Sumokėta",
                 "pending": "Laukiama",
                 "overdue": "Pradelsta",
@@ -557,6 +559,13 @@
         "cell": {
             "actions": {
                 "tooltip_send_email": "Siųsti sąskaitą el. paštu",
+                "tooltip_issue": "Išrašyti sąskaitą",
+                "tooltip_request_details": "Prašyti gavėjo duomenų",
+                "confirm_issue": "Išrašyti sąskaitą dabar? Jai bus suteiktas galutinis numeris ir jos nebegalėsite redaguoti.",
+                "confirm_email_details": "Siųsti gavėjo duomenų užklausą išsaugotu el. paštu? Pasirinkite Atšaukti, jei norite nukopijuoti nuorodą.",
+                "prompt_details_email": "Įveskite el. paštą užklausai siųsti arba pasirinkite Atšaukti, jei norite nukopijuoti nuorodą.",
+                "details_link_copied": "Gavėjo duomenų nuoroda nukopijuota.",
+                "details_request_emailed": "Gavėjo duomenų užklausa išsiųsta el. paštu.",
                 "tooltip_copy_public_link": "Kopijuoti viešą sąskaitos nuorodą",
                 "tooltip_view": "Išsami informacija",
                 "tooltip_edit": "Redaguoti sąskaitą faktūrą",
@@ -574,6 +583,7 @@
             "businessTitle": "PVM SĄSKAITA FAKTŪRA",
             "series_label": "Sąskaitos serija",
             "invoice_number_label": "Nr.",
+            "draft_number_label": "Juodraštis — numeris suteikiamas išrašant",
             "provider_label": "Tiekėjas:",
             "business_number_business": "Įmonės kodas:",
             "business_number_individual": "Individualios veiklos pažymėjimo Nr.:",
@@ -585,7 +595,7 @@
             "description_label": "Aprašymas",
             "unit_label": "Vnt.",
             "quantity_label": "Kiekis",
-            "amount_label": "Suma",
+            "amount_label": "Vieneto kaina",
             "vat_rate_label": "PVM",
             "vat_exemption_reason_label": "PVM pastaba",
             "line_total_label": "Eilutės suma",
@@ -599,6 +609,21 @@
             "name_label": "(vardas, pavardė)",
             "payment_terms_label": "Apmokėjimo terminas: {days} dienų",
             "bank_info_label": "{bank_name}, banko kodas {bank_code}; Sąskaitos numeris: {bank_account_number}",
+            "crypto_memo_label": "Memo / žyma",
+            "crypto_asset_label": "Kriptoturtas",
+            "crypto_network_label": "Tinklas",
+            "crypto_address_label": "Piniginės adresas",
+            "payment_reference_label": "Mokėjimo paskirtis",
+            "units": {
+                "service": "Paslauga",
+                "hour": "Valanda",
+                "day": "Diena",
+                "item": "Vienetas",
+                "month": "Mėnuo",
+                "project": "Projektas",
+                "kilometre": "Kilometras",
+                "kilogram": "Kilogramas"
+            },
             "buttons": {
                 "download_pdf": "Atsisiųsti PDF",
                 "print_pdf": "Spausdinti PDF",
@@ -755,6 +780,16 @@
         "amount": "Suma",
         "vat": "PVM",
         "line_total": "Iš viso",
+        "units": {
+            "service": "Paslauga",
+            "hour": "Valanda",
+            "day": "Diena",
+            "item": "Vienetas",
+            "month": "Mėnuo",
+            "project": "Projektas",
+            "kilometre": "Kilometras",
+            "kilogram": "Kilogramas"
+        },
         "subtotal": "Suma be PVM",
         "vat_total": "PVM suma",
         "total": "Iš viso",
@@ -763,6 +798,7 @@
         "payment_action_paid_title": "Mokėjimas gautas",
         "payment_action_paid_subtitle": "Papildomai apmokėti šios sąskaitos nereikia.",
         "payment_action_bank": "Apmokėkite bankiniu pavedimu pagal žemiau pateiktus rekvizitus.",
+        "payment_action_crypto": "Sąskaitos suma lieka nurodyta tradicine valiuta. Suderinkite kriptovaliutos sumą su siuntėju, tada naudokite tiksliai nurodytą turtą ir tinklą.",
         "voided_invoice_title": "Sąskaita anuliuota",
         "voided_invoice_description": "Siuntėjas anuliavo šią sąskaitą. Atsisiųskite ją tik savo įrašams.",
         "canceled_invoice_title": "Sąskaita atšaukta",
@@ -777,6 +813,10 @@
         "bank_code": "Banko kodas",
         "account_number": "Sąskaitos numeris",
         "payment_reference": "Paskirtis",
+        "crypto_asset": "Turtas / žetonas",
+        "crypto_network": "Tinklas",
+        "wallet_address": "Piniginės adresas",
+        "memo_tag": "Memo / žyma",
         "method_title": "Patvirtinimo būdas",
         "draw_signature": "Pieštas parašas",
         "signature_required": "Pridėkite pieštą parašą prieš patvirtindami.",
@@ -994,6 +1034,27 @@
                     "skip": "Kol kas praleisti"
                 }
             }
+        },
+        "crypto_wallets": {
+            "title": "Kriptovaliutų piniginės",
+            "description": "Tai tik išsaugotos mokėjimo instrukcijos. InvoiceTrackr neskaičiuoja valiutų kursų ir nestebi blokų grandinės.",
+            "default": "Numatytoji",
+            "memo": "Memo / žyma",
+            "edit": "Redaguoti",
+            "delete": "Ištrinti",
+            "add_title": "Pridėti kriptovaliutos piniginę",
+            "edit_title": "Redaguoti kriptovaliutos piniginę",
+            "use_default": "Naudoti kaip numatytąją piniginę",
+            "add": "Pridėti piniginę",
+            "save": "Išsaugoti piniginę",
+            "cancel": "Atšaukti",
+            "fields": {
+                "label": "Piniginės pavadinimas",
+                "asset": "Turtas / žetonas",
+                "network": "Tinklas",
+                "address": "Piniginės adresas",
+                "memo": "Memo / žyma (neprivaloma)"
+            }
         }
     },
     "forgot_password": {
@@ -1084,8 +1145,10 @@
             "message_label": "Žinutė (Neprivaloma)",
             "message_placeholder": "Pridėkite asmeninę žinutę savo klientui",
             "invoice": "Sąskaita faktūra",
+            "draft": "juodraštis",
             "client": "Klientas",
-            "public_link_note": "Klientas galės peržiūrėti internetu ir apmokėti bankiniu pavedimu.",
+            "public_link_note": "Klientas galės internetu peržiūrėti sąskaitą ir mokėjimo instrukcijas.",
+            "draft_public_link_note": "Siunčiant šis juodraštis bus išrašytas ir bus pridėtas galutinis sąskaitos puslapis.",
             "signing_link_note": "Paprašykite kliento vienu paspaudimu patvirtinti gavimą.",
             "email_verification_required": "Patvirtinkite paskyros el. paštą prieš siųsdami sąskaitas klientams.",
             "include_public_link": "Įtraukti viešą sąskaitos puslapį",
@@ -1097,15 +1160,16 @@
             "regenerate_public_link": "Generuoti naują viešą nuorodą",
             "replace_link_and_send": "Pakeisti nuorodą ir siųsti",
             "attached_pdf": "Pridedamas PDF",
+            "draft_delivery": "Išrašius bus pridėtas galutinis sąskaitos puslapis",
             "cancel": "Atšaukti",
             "send": "Siųsti"
         },
         "invoice_services_table": {
             "column_number": "#",
-            "column_description": "APRAŠYMAS",
-            "column_unit": "VIENETAS",
+            "column_description": "PASLAUGA / APRAŠYMAS",
+            "column_unit": "MATAVIMO VIENETAS",
             "column_quantity": "KIEKIS",
-            "column_amount": "SUMA",
+            "column_amount": "VIENETO KAINA",
             "column_vat_rate": "PVM",
             "column_vat_exemption_reason": "PVM PASTABA",
             "column_line_total": "VISO",
@@ -1115,6 +1179,17 @@
             "vat_total": "PVM suma",
             "grand_total": "Bendra suma",
             "delete_service": "Ištrinti paslaugą",
+            "calculation_help": "Kiekis × vieneto kaina = eilutės suma",
+            "units": {
+                "service": "Paslauga",
+                "hour": "Valanda",
+                "day": "Diena",
+                "item": "Vienetas",
+                "month": "Mėnuo",
+                "project": "Projektas",
+                "kilometre": "Kilometras",
+                "kilogram": "Kilogramas"
+            },
             "placeholders": {
                 "description": "pvz., Interneto svetainės kūrimas",
                 "unit": "pvz., val.",
@@ -1129,7 +1204,7 @@
                 "description_label": "Aprašymas",
                 "unit_label": "Vienetas",
                 "quantity_label": "Kiekis",
-                "amount_label": "Suma",
+                "amount_label": "Vieneto kaina",
                 "vat_rate_label": "PVM tarifas",
                 "vat_exemption_reason_label": "PVM išimties arba 0% tarifo pastaba",
                 "actions_label": "Veiksmai"
@@ -1156,11 +1231,18 @@
                 "bank_code_label": "Banko kodas",
                 "bank_account_number_label": "Banko sąskaitos numeris",
                 "invoice_id_label": "Sąskaitos faktūros ID",
+                "invoice_series_label": "Sąskaitų numerių serija",
                 "date_label": "Data",
                 "due_date_label": "Mokėjimo terminas",
                 "status_label": "Būsena",
                 "payment_mode_label": "Mokėjimo būdas",
                 "manual_payment_reference_label": "Rankinio mokėjimo paskirtis",
+                "crypto_wallet_label": "Išsaugota kriptovaliutos piniginė",
+                "crypto_label_label": "Piniginės pavadinimas",
+                "crypto_asset_label": "Kriptoturtas",
+                "crypto_network_label": "Kriptovaliutos tinklas",
+                "crypto_address_label": "Piniginės adresas",
+                "crypto_memo_label": "Memo arba žyma",
                 "static_actions_label": "Statiniai veiksmai"
             },
             "labels": {
@@ -1182,17 +1264,25 @@
                 "bank_code": "Banko kodas",
                 "bank_account_number": "Banko sąskaitos numeris",
                 "invoice_id": "Sąskaitos faktūros ID",
+                "invoice_series": "Sąskaitos serija",
                 "date": "Data",
                 "due_date": "Mokėjimo terminas",
                 "status": "Būsena",
                 "payment_mode": "Mokėjimo būdas",
-                "manual_payment_reference": "Mokėjimo paskirtis"
+                "manual_payment_reference": "Mokėjimo paskirtis",
+                "crypto_wallet": "Išsaugota kriptovaliutos piniginė",
+                "crypto_label": "Piniginės pavadinimas",
+                "crypto_asset": "Turtas / žetonas",
+                "crypto_network": "Tinklas",
+                "crypto_address": "Piniginės adresas",
+                "crypto_memo": "Memo / žyma (neprivaloma)"
             },
             "placeholders": {
                 "bank_name": "pvz., Swedbank",
                 "bank_code": "pvz., HABALT22",
                 "bank_account_number": "pvz., LT121000011101001000",
                 "invoice_id": "pvz., SF001",
+                "invoice_series": "pvz., SF",
                 "select_status": "Pasirinkite būseną",
                 "sender_name": "pvz., Jonas Jonaitis",
                 "sender_business_number": "pvz., 304000000",
@@ -1210,12 +1300,18 @@
                 "title": "Mokėjimo nustatymai",
                 "reference_note": "Palikite tuščią, jei mokėjimo paskirčiai norite naudoti sąskaitos numerį.",
                 "disabled_note": "Mokėjimo instrukcijos viešame sąskaitos puslapyje nerodomos.",
+                "crypto_note": "Sąskaitos suma lieka nurodyta pasirinkta tradicine valiuta. Čia rodomos tik piniginės instrukcijos; kriptovaliutos sumą suderinkite atskirai.",
                 "modes": {
                     "auto": "Bankinis pavedimas",
                     "online": "Internetinis mokėjimas (po MVP)",
                     "manual": "Bankinis pavedimas",
+                    "crypto": "Kriptovaliutos pervedimas",
                     "disabled": "Nerodyti mokėjimo bloko"
                 }
+            },
+            "numbering": {
+                "assigned_on_issue": "Galutinis numeris suteikiamas išrašant arba siunčiant sąskaitą el. paštu.",
+                "reserved_number": "Rezervuotas numeris: {number}"
             },
             "headings": {
                 "sender_receiver_data": "Siuntėjo ir gavėjo duomenys",
@@ -1241,6 +1337,7 @@
                 "eyebrow": "Nemokamas sąskaitos generatorius",
                 "title": "Sukurkite tvarkingą PDF sąskaitą be registracijos",
                 "description": "Paruoškite tikrą sąskaitą, peržiūrėkite PDF ir atsisiųskite nemokamai. Kai reikės pilnos freelancerio eigos, susikurkite paskyrą klientams, siuntimui, apmokėjimų sekimui ir eksportams.",
+                "untracked_notice": "Šis PDF nėra išsaugomas ir InvoiceTrackr nepažymi jo kaip išrašyto. Numeraciją ir apskaitą tvarkykite patys arba susikurkite paskyrą juodraščiams ir išrašymui valdyti.",
                 "upgrade_title": "Reikia daugiau nei PDF?",
                 "upgrade_description": "Sukurkite paskyrą, kad galėtumėte išsaugoti sąskaitas, naudoti klientus ir banko sąskaitas pakartotinai, siųsti sąskaitų nuorodas ir sekti apmokėjimą.",
                 "upgrade_cta": "Sukurti paskyrą",
@@ -1258,6 +1355,25 @@
                 "thirty_days": "30d",
                 "custom": "Pasirinktinis"
             }
+        }
+    },
+    "recipient_details": {
+        "submitted_title": "Duomenys pateikti",
+        "submitted_description": "{sender} patikrins duomenis prieš išrašydamas sąskaitą.",
+        "draft_from": "Juodraštis {invoice}, siuntėjas {sender}",
+        "title": "Užpildykite sąskaitos gavėjo duomenis",
+        "description": "Šis veiksmas neišrašo sąskaitos ir nekeičia jos sumos. Siuntėjas pirmiausia patikrins jūsų duomenis.",
+        "business_type": "Gavėjo tipas",
+        "business": "Verslas",
+        "individual": "Fizinis asmuo",
+        "company_number": "Įmonės kodas",
+        "activity_number": "Individualios veiklos pažymos numeris",
+        "submit": "Pateikti peržiūrai",
+        "fields": {
+            "name": "Vardas arba pavadinimas",
+            "vatNumber": "PVM mokėtojo kodas (neprivaloma)",
+            "address": "Adresas",
+            "email": "El. paštas (neprivaloma)"
         }
     },
     "privacy_policy": {

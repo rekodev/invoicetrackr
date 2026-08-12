@@ -1,7 +1,4 @@
-import type {
-  InvoiceBody,
-  PublicInvoiceSigning
-} from '@invoicetrackr/types';
+import type { InvoiceBody, PublicInvoiceSigning } from '@invoicetrackr/types';
 import {
   and,
   desc,
@@ -22,6 +19,7 @@ import {
   bankingInformationTable,
   businessProfilesTable,
   invoiceBankingInformationTable,
+  invoiceCryptoWalletsTable,
   invoiceNumberSequencesTable,
   invoiceReceiversTable,
   invoiceSendersTable,
@@ -59,6 +57,16 @@ const buildInvoiceBankingInformationInsert = ({
   };
 };
 
+const hasInvoiceCryptoWallet = (
+  cryptoWallet?: InvoiceBody['cryptoWallet'] | null
+): cryptoWallet is NonNullable<InvoiceBody['cryptoWallet']> =>
+  Boolean(
+    cryptoWallet?.label?.trim() &&
+      cryptoWallet.asset?.trim() &&
+      cryptoWallet.network?.trim() &&
+      cryptoWallet.address?.trim()
+  );
+
 const hasInvoiceBankingInformation = (
   bankingInformation?: InvoiceBody['bankingInformation'] | null
 ): bankingInformation is NonNullable<InvoiceBody['bankingInformation']> =>
@@ -73,14 +81,16 @@ const INVOICE_NUMBER_PADDING = 3;
 
 export type InvoiceFromDb = Omit<
   InvoiceBody,
-  'sender' | 'receiver' | 'services' | 'bankingInformation'
+  'sender' | 'receiver' | 'services' | 'bankingInformation' | 'cryptoWallet'
 > & {
-  bankingInformation:
-    | Pick<
-        typeof bankingInformationTable.$inferSelect,
-        'id' | 'name' | 'code' | 'accountNumber'
-      >
-    | null;
+  bankingInformation: Pick<
+    typeof bankingInformationTable.$inferSelect,
+    'id' | 'name' | 'code' | 'accountNumber'
+  > | null;
+  cryptoWallet: Omit<
+    typeof invoiceCryptoWalletsTable.$inferSelect,
+    'invoiceId'
+  > | null;
   sender: Omit<typeof invoiceSendersTable.$inferSelect, 'invoiceId'> | null;
   receiver: Omit<typeof invoiceReceiversTable.$inferSelect, 'invoiceId'> | null;
   services: Array<
@@ -88,11 +98,14 @@ export type InvoiceFromDb = Omit<
   > | null;
 };
 
+export const INVOICE_UPDATE_NOT_DRAFT = 'invoice-update-not-draft' as const;
+
 const normalizeInvoiceFromDb = (invoice: InvoiceFromDb): InvoiceFromDb => ({
   ...invoice,
   bankingInformation: invoice.bankingInformation?.id
     ? invoice.bankingInformation
-    : null
+    : null,
+  cryptoWallet: invoice.cryptoWallet?.id ? invoice.cryptoWallet : null
 });
 
 const normalizeInvoiceSeries = (series?: string | null) =>
@@ -125,7 +138,9 @@ const getInvoiceSeriesForNextNumber = async (
   if (requestedSeries) return normalizeInvoiceSeries(requestedSeries);
 
   const users = await query
-    .select({ defaultInvoiceSeries: businessProfilesTable.defaultInvoiceSeries })
+    .select({
+      defaultInvoiceSeries: businessProfilesTable.defaultInvoiceSeries
+    })
     .from(businessProfilesTable)
     .where(eq(businessProfilesTable.userId, userId))
     .limit(1);
@@ -196,36 +211,6 @@ const reserveNextInvoiceNumber = async (
   return formatInvoiceNumber(series, reservedNumber);
 };
 
-const advanceInvoiceNumberSequence = async (
-  tx: InvoiceTransaction,
-  userId: number,
-  invoiceId: string
-) => {
-  const parsedInvoiceNumber = parseInvoiceNumber(invoiceId);
-
-  if (!parsedInvoiceNumber) return;
-
-  const nextNumber = parsedInvoiceNumber.number + 1;
-
-  await tx
-    .insert(invoiceNumberSequencesTable)
-    .values({
-      userId,
-      series: parsedInvoiceNumber.series,
-      nextNumber
-    })
-    .onConflictDoUpdate({
-      target: [
-        invoiceNumberSequencesTable.userId,
-        invoiceNumberSequencesTable.series
-      ],
-      set: {
-        nextNumber: sql`GREATEST(${invoiceNumberSequencesTable.nextNumber}, ${nextNumber})`,
-        updatedAt: sql`CURRENT_TIMESTAMP`
-      }
-    });
-};
-
 export const findInvoiceById = async (userId: number, id: number) => {
   const invoices = await db
     .select({ id: invoicesTable.id })
@@ -259,6 +244,7 @@ export const getInvoicesFromDb = async (
     .select({
       id: invoicesTable.id,
       invoiceId: invoicesTable.invoiceId,
+      invoiceSeries: invoicesTable.invoiceSeries,
       date: invoicesTable.date,
       subtotalAmount: invoicesTable.subtotalAmount,
       vatAmount: invoicesTable.vatAmount,
@@ -283,6 +269,11 @@ export const getInvoicesFromDb = async (
       publicInvoiceSentAt: invoicesTable.publicInvoiceSentAt,
       publicInvoiceExpiresAt: invoicesTable.publicInvoiceExpiresAt,
       publicInvoiceRevokedAt: invoicesTable.publicInvoiceRevokedAt,
+      recipientDetailsToken: invoicesTable.recipientDetailsToken,
+      recipientDetailsCreatedAt: invoicesTable.recipientDetailsCreatedAt,
+      recipientDetailsExpiresAt: invoicesTable.recipientDetailsExpiresAt,
+      recipientDetailsSubmittedAt: invoicesTable.recipientDetailsSubmittedAt,
+      recipientDetailsRevokedAt: invoicesTable.recipientDetailsRevokedAt,
       paymentMode: invoicesTable.paymentMode,
       manualPaymentReference: invoicesTable.manualPaymentReference,
       bankingInformation: {
@@ -290,6 +281,14 @@ export const getInvoicesFromDb = async (
         code: invoiceBankingInformationTable.bankCode,
         name: invoiceBankingInformationTable.accountName,
         accountNumber: invoiceBankingInformationTable.accountNumber
+      },
+      cryptoWallet: {
+        id: invoiceCryptoWalletsTable.id,
+        label: invoiceCryptoWalletsTable.label,
+        asset: invoiceCryptoWalletsTable.asset,
+        network: invoiceCryptoWalletsTable.network,
+        address: invoiceCryptoWalletsTable.address,
+        memo: invoiceCryptoWalletsTable.memo
       },
       sender: {
         id: invoiceSendersTable.id,
@@ -336,6 +335,10 @@ export const getInvoicesFromDb = async (
       eq(invoicesTable.bankAccountId, invoiceBankingInformationTable.id)
     )
     .leftJoin(
+      invoiceCryptoWalletsTable,
+      eq(invoicesTable.cryptoWalletId, invoiceCryptoWalletsTable.id)
+    )
+    .leftJoin(
       invoiceServicesTable,
       eq(invoiceServicesTable.invoiceId, invoicesTable.id)
     )
@@ -344,7 +347,8 @@ export const getInvoicesFromDb = async (
       invoicesTable.id,
       invoiceSendersTable.id,
       invoiceReceiversTable.id,
-      invoiceBankingInformationTable.id
+      invoiceBankingInformationTable.id,
+      invoiceCryptoWalletsTable.id
     )
     .orderBy(desc(invoicesTable.id));
 
@@ -360,6 +364,7 @@ export const getInvoiceFromDb = async (
     .select({
       id: invoicesTable.id,
       invoiceId: invoicesTable.invoiceId,
+      invoiceSeries: invoicesTable.invoiceSeries,
       date: invoicesTable.date,
       subtotalAmount: invoicesTable.subtotalAmount,
       vatAmount: invoicesTable.vatAmount,
@@ -384,6 +389,11 @@ export const getInvoiceFromDb = async (
       publicInvoiceSentAt: invoicesTable.publicInvoiceSentAt,
       publicInvoiceExpiresAt: invoicesTable.publicInvoiceExpiresAt,
       publicInvoiceRevokedAt: invoicesTable.publicInvoiceRevokedAt,
+      recipientDetailsToken: invoicesTable.recipientDetailsToken,
+      recipientDetailsCreatedAt: invoicesTable.recipientDetailsCreatedAt,
+      recipientDetailsExpiresAt: invoicesTable.recipientDetailsExpiresAt,
+      recipientDetailsSubmittedAt: invoicesTable.recipientDetailsSubmittedAt,
+      recipientDetailsRevokedAt: invoicesTable.recipientDetailsRevokedAt,
       paymentMode: invoicesTable.paymentMode,
       manualPaymentReference: invoicesTable.manualPaymentReference,
       bankingInformation: {
@@ -391,6 +401,14 @@ export const getInvoiceFromDb = async (
         code: invoiceBankingInformationTable.bankCode,
         name: invoiceBankingInformationTable.accountName,
         accountNumber: invoiceBankingInformationTable.accountNumber
+      },
+      cryptoWallet: {
+        id: invoiceCryptoWalletsTable.id,
+        label: invoiceCryptoWalletsTable.label,
+        asset: invoiceCryptoWalletsTable.asset,
+        network: invoiceCryptoWalletsTable.network,
+        address: invoiceCryptoWalletsTable.address,
+        memo: invoiceCryptoWalletsTable.memo
       },
       sender: {
         id: invoiceSendersTable.id,
@@ -437,6 +455,10 @@ export const getInvoiceFromDb = async (
       eq(invoicesTable.bankAccountId, invoiceBankingInformationTable.id)
     )
     .leftJoin(
+      invoiceCryptoWalletsTable,
+      eq(invoicesTable.cryptoWalletId, invoiceCryptoWalletsTable.id)
+    )
+    .leftJoin(
       invoiceServicesTable,
       eq(invoiceServicesTable.invoiceId, invoicesTable.id)
     )
@@ -445,7 +467,8 @@ export const getInvoiceFromDb = async (
       invoicesTable.id,
       invoiceSendersTable.id,
       invoiceReceiversTable.id,
-      invoiceBankingInformationTable.id
+      invoiceBankingInformationTable.id,
+      invoiceCryptoWalletsTable.id
     );
 
   const invoice = invoices.at(0);
@@ -460,10 +483,12 @@ export const insertInvoiceInDb = async (
 ): Promise<InvoiceFromDb | null> => {
   const invoice = await db.transaction(async (tx) => {
     const totals = calculateInvoiceTotals(invoiceData.services);
-    const invoiceId =
-      invoiceData.invoiceSeries || !invoiceData.invoiceId
-        ? await reserveNextInvoiceNumber(tx, userId, invoiceData.invoiceSeries)
-        : invoiceData.invoiceId;
+    const invoiceSeries = normalizeInvoiceSeries(
+      invoiceData.invoiceSeries ||
+        (invoiceData.invoiceId
+          ? parseInvoiceNumber(invoiceData.invoiceId)?.series
+          : undefined)
+    );
 
     // Invoice insert
     const invoices = await tx
@@ -471,22 +496,15 @@ export const insertInvoiceInDb = async (
       .values({
         userId,
         date: invoiceData.date,
-        invoiceId,
+        invoiceId: null,
+        invoiceSeries,
         subtotalAmount: totals.subtotalAmount,
         vatAmount: totals.vatAmount,
         totalAmount: totals.totalAmount,
-        status: invoiceData.status,
-        paidAt:
-          invoiceData.status === 'paid'
-            ? invoiceData.paidAt || new Date().toISOString()
-            : null,
-        voidedAt:
-          invoiceData.status === 'canceled'
-            ? invoiceData.voidedAt || new Date().toISOString()
-            : null,
-        lifecycleStatus:
-          invoiceData.lifecycleStatus ||
-          (invoiceData.status === 'canceled' ? 'voided' : 'draft'),
+        status: 'pending',
+        paidAt: null,
+        voidedAt: null,
+        lifecycleStatus: 'draft',
         dueDate: invoiceData.dueDate,
         senderSignature: senderSignature,
         receiverSignature: invoiceData.receiverSignature || null,
@@ -501,10 +519,6 @@ export const insertInvoiceInDb = async (
     const insertedInvoiceId = invoices.at(0)?.id;
 
     if (!insertedInvoiceId) throw new Error('Failed to insert invoice');
-
-    if (!invoiceData.invoiceSeries && invoiceData.invoiceId) {
-      await advanceInvoiceNumberSequence(tx, userId, invoiceData.invoiceId);
-    }
 
     // Invoice sender insert
     const senders = await tx
@@ -539,8 +553,12 @@ export const insertInvoiceInDb = async (
 
     const paymentMode = invoiceData.paymentMode || 'manual';
     let bankAccountId: number | null = null;
+    let cryptoWalletId: number | null = null;
 
-    if (paymentMode !== 'disabled') {
+    if (
+      paymentMode === 'manual' &&
+      hasInvoiceBankingInformation(invoiceData.bankingInformation)
+    ) {
       const invoiceBankingInformation = buildInvoiceBankingInformationInsert({
         invoiceId: insertedInvoiceId,
         bankingInformation: invoiceData.bankingInformation
@@ -553,10 +571,29 @@ export const insertInvoiceInDb = async (
       bankAccountId = bankAccounts.at(0)?.id || null;
     }
 
+    if (
+      paymentMode === 'crypto' &&
+      hasInvoiceCryptoWallet(invoiceData.cryptoWallet)
+    ) {
+      const wallets = await tx
+        .insert(invoiceCryptoWalletsTable)
+        .values({
+          invoiceId: insertedInvoiceId,
+          label: invoiceData.cryptoWallet.label,
+          asset: invoiceData.cryptoWallet.asset,
+          network: invoiceData.cryptoWallet.network,
+          address: invoiceData.cryptoWallet.address,
+          memo: invoiceData.cryptoWallet.memo || null
+        })
+        .returning({ id: invoiceCryptoWalletsTable.id });
+
+      cryptoWalletId = wallets.at(0)?.id || null;
+    }
+
     // Invoice services insert
     for (const service of invoiceData.services) {
       await tx.insert(invoiceServicesTable).values({
-        quantity: service.quantity,
+        quantity: String(service.quantity),
         amount: String(service.amount),
         vatRate: String(service.vatRate || 0),
         vatExemptionReason: service.vatExemptionReason || null,
@@ -571,7 +608,8 @@ export const insertInvoiceInDb = async (
       .set({
         senderId: senders.at(0)?.id,
         receiverId: receivers.at(0)?.id,
-        bankAccountId
+        bankAccountId,
+        cryptoWalletId
       })
       .where(eq(invoicesTable.id, Number(insertedInvoiceId)));
 
@@ -592,7 +630,7 @@ export const updateInvoiceInDb = async (
   id: number,
   invoiceData: InvoiceBody,
   senderSignature: string
-): Promise<InvoiceFromDb | null | undefined> => {
+): Promise<InvoiceFromDb | null | typeof INVOICE_UPDATE_NOT_DRAFT> => {
   const updatedInvoice = await db.transaction(async (tx) => {
     const totals = calculateInvoiceTotals(invoiceData.services);
 
@@ -602,6 +640,7 @@ export const updateInvoiceInDb = async (
         senderId: invoicesTable.senderId,
         receiverId: invoicesTable.receiverId,
         bankAccountId: invoicesTable.bankAccountId,
+        cryptoWalletId: invoicesTable.cryptoWalletId,
         lifecycleStatus: invoicesTable.lifecycleStatus,
         issuedAt: invoicesTable.issuedAt,
         paidAt: invoicesTable.paidAt,
@@ -620,26 +659,21 @@ export const updateInvoiceInDb = async (
         publicInvoiceRevokedAt: invoicesTable.publicInvoiceRevokedAt,
         paymentMode: invoicesTable.paymentMode,
         manualPaymentReference: invoicesTable.manualPaymentReference,
+        invoiceId: invoicesTable.invoiceId,
+        invoiceSeries: invoicesTable.invoiceSeries,
         recipientSignedAt: invoicesTable.recipientSignedAt
       })
       .from(invoicesTable)
-      .where(and(eq(invoicesTable.userId, userId), eq(invoicesTable.id, id)));
+      .where(and(eq(invoicesTable.userId, userId), eq(invoicesTable.id, id)))
+      .for('update');
 
     if (!currentInvoice[0]) return null;
+    if (currentInvoice[0].lifecycleStatus !== 'draft')
+      return INVOICE_UPDATE_NOT_DRAFT;
 
     const currentInvoiceData = currentInvoice[0];
-    const paidAt =
-      invoiceData.status === 'paid'
-        ? invoiceData.paidAt ||
-          currentInvoiceData.paidAt ||
-          new Date().toISOString()
-        : null;
-    const voidedAt =
-      invoiceData.status === 'canceled'
-        ? invoiceData.voidedAt ||
-          currentInvoiceData.voidedAt ||
-          new Date().toISOString()
-        : null;
+    const paidAt = currentInvoiceData.paidAt;
+    const voidedAt = currentInvoiceData.voidedAt;
     const paymentMode =
       invoiceData.paymentMode || currentInvoiceData.paymentMode || 'manual';
     const manualPaymentReference =
@@ -717,7 +751,7 @@ export const updateInvoiceInDb = async (
       currentInvoiceData.receiverId = insertedReceiver[0].id;
     }
 
-    if (paymentMode === 'disabled') {
+    if (paymentMode !== 'manual') {
       currentInvoiceData.bankAccountId = null;
     } else if (hasInvoiceBankingInformation(invoiceData.bankingInformation)) {
       if (currentInvoiceData.bankAccountId) {
@@ -748,20 +782,54 @@ export const updateInvoiceInDb = async (
       }
     }
 
+    if (paymentMode !== 'crypto') {
+      currentInvoiceData.cryptoWalletId = null;
+    } else if (hasInvoiceCryptoWallet(invoiceData.cryptoWallet)) {
+      if (currentInvoiceData.cryptoWalletId) {
+        await tx
+          .update(invoiceCryptoWalletsTable)
+          .set({
+            label: invoiceData.cryptoWallet.label,
+            asset: invoiceData.cryptoWallet.asset,
+            network: invoiceData.cryptoWallet.network,
+            address: invoiceData.cryptoWallet.address,
+            memo: invoiceData.cryptoWallet.memo || null
+          })
+          .where(
+            eq(invoiceCryptoWalletsTable.id, currentInvoiceData.cryptoWalletId)
+          );
+      } else {
+        const wallets = await tx
+          .insert(invoiceCryptoWalletsTable)
+          .values({
+            invoiceId: id,
+            label: invoiceData.cryptoWallet.label,
+            asset: invoiceData.cryptoWallet.asset,
+            network: invoiceData.cryptoWallet.network,
+            address: invoiceData.cryptoWallet.address,
+            memo: invoiceData.cryptoWallet.memo || null
+          })
+          .returning({ id: invoiceCryptoWalletsTable.id });
+        currentInvoiceData.cryptoWalletId = wallets[0].id;
+      }
+    }
+
     // Update the main invoice record
     const invoices = await tx
       .update(invoicesTable)
       .set({
         userId,
-        invoiceId: invoiceData.invoiceId,
+        invoiceId: currentInvoiceData.invoiceId,
+        invoiceSeries:
+          invoiceData.invoiceSeries || currentInvoiceData.invoiceSeries,
         senderId: currentInvoiceData.senderId,
         receiverId: currentInvoiceData.receiverId,
         bankAccountId: currentInvoiceData.bankAccountId,
+        cryptoWalletId: currentInvoiceData.cryptoWalletId,
         date: invoiceData.date,
         dueDate: invoiceData.dueDate,
-        status: invoiceData.status,
-        lifecycleStatus:
-          invoiceData.lifecycleStatus || currentInvoiceData.lifecycleStatus,
+        status: 'pending',
+        lifecycleStatus: currentInvoiceData.lifecycleStatus,
         subtotalAmount: totals.subtotalAmount,
         vatAmount: totals.vatAmount,
         totalAmount: totals.totalAmount,
@@ -815,10 +883,6 @@ export const updateInvoiceInDb = async (
 
     if (!invoices[0]) return null;
 
-    if (invoiceData.invoiceId) {
-      await advanceInvoiceNumberSequence(tx, userId, invoiceData.invoiceId);
-    }
-
     // Handle services update
     const existingServices = await tx
       .select({ id: invoiceServicesTable.id })
@@ -849,7 +913,7 @@ export const updateInvoiceInDb = async (
             amount: String(service.amount),
             vatRate: String(service.vatRate || 0),
             vatExemptionReason: service.vatExemptionReason || null,
-            quantity: service.quantity,
+            quantity: String(service.quantity),
             unit: service.unit
           })
           .where(eq(invoiceServicesTable.id, service.id));
@@ -859,14 +923,14 @@ export const updateInvoiceInDb = async (
           amount: String(service.amount),
           vatRate: String(service.vatRate || 0),
           vatExemptionReason: service.vatExemptionReason || null,
-          quantity: service.quantity,
+          quantity: String(service.quantity),
           unit: service.unit,
           invoiceId: id
         });
       }
     }
 
-    return getInvoiceFromDb(userId, id);
+    return getInvoiceFromDb(userId, id, tx);
   });
 
   return updatedInvoice;
@@ -901,6 +965,166 @@ export async function updateInvoiceStatusInDb(
 
   return invoices.at(0);
 }
+
+export const issueInvoiceInDb = async (
+  userId: number,
+  id: number
+): Promise<InvoiceFromDb | undefined> =>
+  db.transaction(async (tx) => {
+    const current = await tx
+      .select({
+        lifecycleStatus: invoicesTable.lifecycleStatus,
+        invoiceId: invoicesTable.invoiceId,
+        invoiceSeries: invoicesTable.invoiceSeries
+      })
+      .from(invoicesTable)
+      .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+      .for('update');
+    const invoice = current.at(0);
+
+    if (!invoice) return undefined;
+    if (invoice.lifecycleStatus !== 'draft')
+      return getInvoiceFromDb(userId, id, tx);
+
+    const invoiceId =
+      invoice.invoiceId ||
+      (await reserveNextInvoiceNumber(
+        tx,
+        userId,
+        invoice.invoiceSeries || undefined
+      ));
+    const now = new Date().toISOString();
+
+    await tx
+      .update(invoicesTable)
+      .set({
+        invoiceId,
+        lifecycleStatus: 'issued',
+        issuedAt: now,
+        recipientDetailsRevokedAt: sql<string>`COALESCE(${invoicesTable.recipientDetailsRevokedAt}, ${now})`,
+        updatedAt: now
+      })
+      .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)));
+
+    return getInvoiceFromDb(userId, id, tx);
+  });
+
+export const prepareRecipientDetailsRequestInDb = async ({
+  userId,
+  id,
+  token,
+  expiresAt
+}: {
+  userId: number;
+  id: number;
+  token: string;
+  expiresAt: string;
+}) => {
+  const now = new Date().toISOString();
+  const invoices = await db
+    .update(invoicesTable)
+    .set({
+      recipientDetailsToken: token,
+      recipientDetailsCreatedAt: now,
+      recipientDetailsExpiresAt: expiresAt,
+      recipientDetailsSubmittedAt: null,
+      recipientDetailsRevokedAt: null
+    })
+    .where(
+      and(
+        eq(invoicesTable.id, id),
+        eq(invoicesTable.userId, userId),
+        eq(invoicesTable.lifecycleStatus, 'draft')
+      )
+    )
+    .returning({
+      id: invoicesTable.id,
+      expiresAt: invoicesTable.recipientDetailsExpiresAt
+    });
+
+  return invoices.at(0);
+};
+
+export const getRecipientDetailsRequestFromDb = async (token: string) => {
+  const rows = await db
+    .select({
+      id: invoicesTable.id,
+      userId: invoicesTable.userId,
+      invoiceId: invoicesTable.invoiceId,
+      invoiceSeries: invoicesTable.invoiceSeries,
+      lifecycleStatus: invoicesTable.lifecycleStatus,
+      expiresAt: invoicesTable.recipientDetailsExpiresAt,
+      submittedAt: invoicesTable.recipientDetailsSubmittedAt,
+      revokedAt: invoicesTable.recipientDetailsRevokedAt,
+      senderName: invoiceSendersTable.name,
+      receiver: {
+        name: invoiceReceiversTable.name,
+        businessType: invoiceReceiversTable.businessType,
+        businessNumber: invoiceReceiversTable.businessNumber,
+        vatNumber: invoiceReceiversTable.vatNumber,
+        address: invoiceReceiversTable.address,
+        email: invoiceReceiversTable.email,
+        type: invoiceReceiversTable.type
+      }
+    })
+    .from(invoicesTable)
+    .innerJoin(
+      invoiceSendersTable,
+      eq(invoicesTable.senderId, invoiceSendersTable.id)
+    )
+    .innerJoin(
+      invoiceReceiversTable,
+      eq(invoicesTable.receiverId, invoiceReceiversTable.id)
+    )
+    .where(eq(invoicesTable.recipientDetailsToken, token));
+
+  return rows.at(0);
+};
+
+export const submitRecipientDetailsInDb = async ({
+  token,
+  receiver
+}: {
+  token: string;
+  receiver: InvoiceBody['receiver'];
+}) =>
+  db.transaction(async (tx) => {
+    const requests = await tx
+      .select({ id: invoicesTable.id, receiverId: invoicesTable.receiverId })
+      .from(invoicesTable)
+      .where(
+        and(
+          eq(invoicesTable.recipientDetailsToken, token),
+          eq(invoicesTable.lifecycleStatus, 'draft'),
+          isNull(invoicesTable.recipientDetailsSubmittedAt),
+          isNull(invoicesTable.recipientDetailsRevokedAt),
+          gt(invoicesTable.recipientDetailsExpiresAt, new Date().toISOString())
+        )
+      )
+      .for('update');
+    const request = requests.at(0);
+    if (!request?.receiverId) return undefined;
+
+    await tx
+      .update(invoiceReceiversTable)
+      .set({
+        name: receiver.name,
+        businessType: receiver.businessType,
+        businessNumber: receiver.businessNumber,
+        vatNumber: receiver.vatNumber || null,
+        address: receiver.address,
+        email: receiver.email || ''
+      })
+      .where(eq(invoiceReceiversTable.id, request.receiverId));
+
+    const submittedAt = new Date().toISOString();
+    await tx
+      .update(invoicesTable)
+      .set({ recipientDetailsSubmittedAt: submittedAt, updatedAt: submittedAt })
+      .where(eq(invoicesTable.id, request.id));
+
+    return { id: request.id, submittedAt };
+  });
 
 export async function prepareInvoiceSigningFromDb({
   userId,
@@ -1125,7 +1349,10 @@ export async function getPublicInvoiceSigningFromDb(
     })
     .from(invoicesTable)
     .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
-    .innerJoin(businessProfilesTable, eq(invoicesTable.userId, businessProfilesTable.userId))
+    .innerJoin(
+      businessProfilesTable,
+      eq(invoicesTable.userId, businessProfilesTable.userId)
+    )
     .where(eq(invoicesTable.recipientSigningToken, token))
     .limit(1);
   const row = rows.at(0);
@@ -1158,7 +1385,10 @@ export async function getPublicInvoiceFromDb(
     })
     .from(invoicesTable)
     .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
-    .innerJoin(businessProfilesTable, eq(invoicesTable.userId, businessProfilesTable.userId))
+    .innerJoin(
+      businessProfilesTable,
+      eq(invoicesTable.userId, businessProfilesTable.userId)
+    )
     .where(
       or(
         eq(invoicesTable.publicInvoiceToken, token),
@@ -1244,7 +1474,12 @@ export const getInvoicesTotalAmountFromDb = async (userId: number) => {
       status: invoicesTable.status
     })
     .from(invoicesTable)
-    .where(eq(invoicesTable.userId, userId));
+    .where(
+      and(
+        eq(invoicesTable.userId, userId),
+        eq(invoicesTable.lifecycleStatus, 'issued')
+      )
+    );
 
   return invoices;
 };
@@ -1262,7 +1497,7 @@ export const getInvoicesRevenueFromDb = async (userId: number) => {
       and(
         eq(invoicesTable.userId, userId),
         eq(invoicesTable.status, 'paid'),
-        sql`${invoicesTable.lifecycleStatus} <> 'voided'`,
+        eq(invoicesTable.lifecycleStatus, 'issued'),
         gte(invoicesTable.date, sql`NOW() - INTERVAL '1 year'`)
       )
     );
@@ -1281,6 +1516,7 @@ export const getLatestInvoicesFromDb = async (userId: number) => {
       date: invoicesTable.date,
       dueDate: invoicesTable.dueDate,
       status: invoicesTable.status,
+      lifecycleStatus: invoicesTable.lifecycleStatus,
       name: invoiceReceiversTable.name,
       email: invoiceReceiversTable.email
     })
@@ -1330,16 +1566,23 @@ export const getIncomeJournalRowsFromDb = async ({
       eq(invoiceServicesTable.invoiceId, invoicesTable.id)
     )
     .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
-    .innerJoin(businessProfilesTable, eq(invoicesTable.userId, businessProfilesTable.userId))
+    .innerJoin(
+      businessProfilesTable,
+      eq(invoicesTable.userId, businessProfilesTable.userId)
+    )
     .where(
       and(
         eq(invoicesTable.userId, userId),
         eq(invoicesTable.status, 'paid'),
-        sql`${invoicesTable.lifecycleStatus} <> 'voided'`,
+        eq(invoicesTable.lifecycleStatus, 'issued'),
         gte(effectivePaidAt, `${from}T00:00:00.000Z`),
         lte(effectivePaidAt, `${to}T23:59:59.999Z`)
       )
     )
-    .groupBy(invoicesTable.id, invoiceReceiversTable.id, businessProfilesTable.currency)
+    .groupBy(
+      invoicesTable.id,
+      invoiceReceiversTable.id,
+      businessProfilesTable.currency
+    )
     .orderBy(effectivePaidAt, invoicesTable.id);
 };

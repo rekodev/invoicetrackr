@@ -41,9 +41,10 @@ const useInvoiceFormSubmissionHandler = ({
       vatAmount: invoiceTotals.vatAmount,
       totalAmount: invoiceTotals.totalAmount,
       bankingInformation:
-        paymentMode === 'disabled'
-          ? undefined
-          : bankingInformation || data.bankingInformation
+        paymentMode === 'manual'
+          ? bankingInformation || data.bankingInformation
+          : undefined,
+      cryptoWallet: paymentMode === 'crypto' ? data.cryptoWallet : undefined
     };
 
     const response = invoiceData

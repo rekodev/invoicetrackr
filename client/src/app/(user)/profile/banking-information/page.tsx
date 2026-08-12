@@ -1,26 +1,9 @@
-import { getBankingInformationEntries } from '@/api/banking-information';
-import { auth } from '@/auth';
-import BankingInformationForm from '@/components/profile/banking-information-form';
-import { isResponseError } from '@/lib/utils/error';
+import { redirect } from 'next/navigation';
+
+import { PAYMENT_METHODS_PAGE } from '@/lib/constants/pages';
 
 async function BankingInformationPage() {
-  const session = await auth();
-
-  if (!session?.user?.id) return null;
-
-  const bankingInformationResp = await getBankingInformationEntries(
-    Number(session.user.id)
-  );
-
-  if (isResponseError(bankingInformationResp))
-    throw new Error('Failed to fetch data');
-
-  return (
-    <BankingInformationForm
-      user={session.user}
-      bankAccounts={bankingInformationResp.data?.bankAccounts}
-    />
-  );
+  redirect(PAYMENT_METHODS_PAGE);
 }
 
 export default BankingInformationPage;

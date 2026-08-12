@@ -3,6 +3,11 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
 export const BadRequestError = createError('BAD_REQUEST', '%s', 400);
+export const InvoiceIssuedEmailError = createError(
+  'INVOICE_ISSUED_EMAIL_FAILED',
+  '%s',
+  400
+);
 export const UnauthorizedError = createError('UNAUTHORIZED', '%s', 401);
 export const ForbiddenError = createError('FORBIDDEN', '%s', 403);
 export const AlreadyExistsError = createError('ALREADY_EXISTS', '%s', 403);

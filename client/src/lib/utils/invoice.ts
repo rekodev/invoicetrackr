@@ -17,6 +17,7 @@ export function getInvoiceDueStatus(invoice: InvoiceBody) {
   );
 
   const isPastDue =
+    (invoice.lifecycleStatus || 'draft') === 'issued' &&
     todayStart.getTime() >= pastDueDateStart.getTime() &&
     invoice.status !== 'paid';
 

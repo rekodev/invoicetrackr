@@ -71,6 +71,10 @@ export default function InvoiceSigningPanel({
     payment.resolvedMode === 'manual' &&
     Boolean(invoice.bankingInformation) &&
     !isPaid;
+  const shouldShowCryptoPaymentDetails =
+    payment.resolvedMode === 'crypto' &&
+    Boolean(invoice.cryptoWallet) &&
+    !isPaid;
   const isVoided = (invoice.lifecycleStatus || 'draft') === 'voided';
   const isCanceled = invoice.status === 'canceled';
 
@@ -159,7 +163,11 @@ export default function InvoiceSigningPanel({
                 <p className="text-muted mt-1 text-sm leading-5">
                   {isPaid
                     ? t('payment_action_paid_subtitle')
-                    : t('payment_action_bank')}
+                    : t(
+                        payment.resolvedMode === 'crypto'
+                          ? 'payment_action_crypto'
+                          : 'payment_action_bank'
+                      )}
                 </p>
               </div>
             </div>
@@ -185,6 +193,29 @@ export default function InvoiceSigningPanel({
                 <p className="break-all">{payment.manualReference}</p>
               </div>
             )}
+            {shouldShowCryptoPaymentDetails && invoice.cryptoWallet ? (
+              <div className="bg-default-100 grid gap-x-4 gap-y-1 rounded-lg p-4 text-sm sm:grid-cols-[auto_1fr]">
+                <p className="text-muted">{t('amount_due')}</p>
+                <p className="font-medium">
+                  {currencySymbol}
+                  {invoice.totalAmount}
+                </p>
+                <p className="text-muted">{t('crypto_asset')}</p>
+                <p>{invoice.cryptoWallet.asset}</p>
+                <p className="text-muted">{t('crypto_network')}</p>
+                <p>{invoice.cryptoWallet.network}</p>
+                <p className="text-muted">{t('wallet_address')}</p>
+                <p className="break-all">{invoice.cryptoWallet.address}</p>
+                {invoice.cryptoWallet.memo ? (
+                  <>
+                    <p className="text-muted">{t('memo_tag')}</p>
+                    <p>{invoice.cryptoWallet.memo}</p>
+                  </>
+                ) : null}
+                <p className="text-muted">{t('payment_reference')}</p>
+                <p>{payment.manualReference}</p>
+              </div>
+            ) : null}
           </section>
         )}
 

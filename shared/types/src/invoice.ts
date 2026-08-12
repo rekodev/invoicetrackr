@@ -1,5 +1,6 @@
 import z from 'zod/v4';
 import { bankAccountBodySchema } from './bank-account';
+import { cryptoWalletBodySchema } from './crypto-wallet';
 
 // Enums
 export const invoiceStatusSchema = z.enum(['paid', 'pending', 'canceled'], {
@@ -13,12 +14,16 @@ export const invoiceLifecycleStatusSchema = z.enum(
   }
 );
 
-export const invoicePaymentModeSchema = z.enum(['manual', 'disabled'], {
-  message: 'validation.invoice.paymentMode'
-});
+export const invoicePaymentModeSchema = z.enum(
+  ['manual', 'crypto', 'disabled'],
+  {
+    message: 'validation.invoice.paymentMode'
+  }
+);
 
 export const publicInvoiceResolvedPaymentModeSchema = z.enum([
   'manual',
+  'crypto',
   'disabled'
 ]);
 
@@ -44,6 +49,22 @@ const optionalBankAccountBodySchema = z.preprocess((value) => {
 
   return value;
 }, bankAccountBodySchema.nullish());
+
+const optionalCryptoWalletBodySchema = z.preprocess((value) => {
+  if (typeof value !== 'object' || value === null) return value;
+
+  const wallet = value as Partial<z.infer<typeof cryptoWalletBodySchema>>;
+  if (
+    !wallet.label?.trim() &&
+    !wallet.asset?.trim() &&
+    !wallet.network?.trim() &&
+    !wallet.address?.trim() &&
+    !wallet.memo?.trim()
+  )
+    return undefined;
+
+  return value;
+}, cryptoWalletBodySchema.nullish());
 
 export const invoicePartyBusinessTypeSchema = z.enum(
   ['business', 'individual'],
@@ -78,7 +99,11 @@ export const invoiceServiceBodySchema = z.object({
   quantity: z.coerce
     .number('validation.invoice.services.quantity.number')
     .min(0.0001, 'validation.invoice.services.quantity.min')
-    .max(10000, 'validation.invoice.services.quantity.max'),
+    .max(10000, 'validation.invoice.services.quantity.max')
+    .refine(
+      (quantity) => Number(quantity.toFixed(4)) === quantity,
+      'validation.invoice.services.quantity.scale'
+    ),
   amount: z.coerce
     .number('validation.invoice.services.amount.number')
     .min(0.01, 'validation.invoice.services.amount.min')
@@ -111,13 +136,11 @@ export const invoiceReceiverBodySchema = z.object(
   {
     id: z.coerce.number().optional(),
     type: invoicePartyTypeSchema,
-    name: z.string().min(1, 'validation.invoice.receiver.name'),
+    name: z.string().max(255),
     businessType: invoicePartyBusinessTypeSchema,
-    businessNumber: z
-      .string()
-      .min(1, 'validation.invoice.receiver.businessNumber'),
+    businessNumber: z.string().max(255),
     vatNumber: z.string().nullish(),
-    address: z.string().min(1, 'validation.invoice.receiver.address'),
+    address: z.string().max(1000),
     email: z
       .email('validation.invoice.receiver.email')
       .optional()
@@ -129,8 +152,8 @@ export const invoiceReceiverBodySchema = z.object(
 export const invoiceBodySchema = z
   .object({
     id: z.coerce.number().optional(),
-    invoiceId: invoiceNumberSchema.optional().or(z.literal('')),
-    invoiceSeries: invoiceNumberSeriesSchema.optional(),
+    invoiceId: invoiceNumberSchema.nullish().or(z.literal('')),
+    invoiceSeries: invoiceNumberSeriesSchema.nullish(),
     date: z.iso.date('validation.invoice.date'),
     dueDate: z.iso.date('validation.invoice.dueDate'),
     sender: invoiceSenderBodySchema,
@@ -157,13 +180,19 @@ export const invoiceBodySchema = z
     publicInvoiceSentAt: z.string().nullish(),
     publicInvoiceExpiresAt: z.string().nullish(),
     publicInvoiceRevokedAt: z.string().nullish(),
+    recipientDetailsToken: z.string().nullish(),
+    recipientDetailsCreatedAt: z.string().nullish(),
+    recipientDetailsExpiresAt: z.string().nullish(),
+    recipientDetailsSubmittedAt: z.string().nullish(),
+    recipientDetailsRevokedAt: z.string().nullish(),
     paymentMode: invoicePaymentModeSchema.default('manual'),
     manualPaymentReference: z.string().trim().max(255).nullish(),
     services: z
       .array(invoiceServiceBodySchema)
       .min(1, 'validation.invoice.services.required')
       .max(100),
-    bankingInformation: optionalBankAccountBodySchema
+    bankingInformation: optionalBankAccountBodySchema,
+    cryptoWallet: optionalCryptoWalletBodySchema
   })
   .refine(
     (data) => new Date(data.dueDate).getTime() >= new Date(data.date).getTime(),
@@ -171,16 +200,81 @@ export const invoiceBodySchema = z
       message: 'validation.invoice.dueDateAfterDate',
       path: ['dueDate']
     }
-  )
-  .superRefine((data, ctx) => {
+  );
+
+export const issuableInvoiceBodySchema = invoiceBodySchema.superRefine(
+  (data, ctx) => {
+    const requiredReceiverFields = [
+      ['name', data.receiver.name],
+      ['businessNumber', data.receiver.businessNumber],
+      ['address', data.receiver.address]
+    ] as const;
+
+    for (const [field, value] of requiredReceiverFields) {
+      if (!value.trim()) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `validation.invoice.receiver.${field}`,
+          path: ['receiver', field]
+        });
+      }
+    }
+
     if (
-      data.paymentMode !== 'disabled' &&
+      data.paymentMode === 'manual' &&
       !hasBankingInformation(data.bankingInformation)
     ) {
       ctx.addIssue({
         code: 'custom',
         message: 'validation.invoice.bankingInformation.required',
         path: ['bankingInformation']
+      });
+    }
+
+    if (data.paymentMode === 'crypto' && !data.cryptoWallet) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'validation.invoice.cryptoWallet.required',
+        path: ['cryptoWallet']
+      });
+    }
+  }
+);
+
+export const recipientDetailsBodySchema = invoiceReceiverBodySchema
+  .pick({
+    name: true,
+    businessType: true,
+    businessNumber: true,
+    vatNumber: true,
+    address: true,
+    email: true
+  })
+  .extend({
+    name: z.string().trim().min(1, 'validation.invoice.receiver.name').max(255),
+    businessNumber: z
+      .string()
+      .trim()
+      .min(1, 'validation.invoice.receiver.businessNumber')
+      .max(255),
+    address: z
+      .string()
+      .trim()
+      .min(1, 'validation.invoice.receiver.address')
+      .max(1000)
+  });
+
+export const sendRecipientDetailsRequestBodySchema = z
+  .object({
+    recipientEmail: z.email('validation.invoice.recipientEmail').optional(),
+    sendEmail: z.boolean().default(false)
+  })
+  .superRefine((data, ctx) => {
+    if (data.sendEmail && !data.recipientEmail) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'validation.invoice.recipientEmail',
+        path: ['recipientEmail']
       });
     }
   });
@@ -264,6 +358,10 @@ export type InvoiceService = InvoiceServiceBody;
 export type InvoiceSenderBody = z.infer<typeof invoiceSenderBodySchema>;
 export type InvoiceReceiverBody = z.infer<typeof invoiceReceiverBodySchema>;
 export type InvoicePartyBody = InvoiceSenderBody | InvoiceReceiverBody;
+export type RecipientDetailsBody = z.infer<typeof recipientDetailsBodySchema>;
+export type SendRecipientDetailsRequestBody = z.infer<
+  typeof sendRecipientDetailsRequestBodySchema
+>;
 export type InvoiceParty = InvoicePartyBody;
 
 export type InvoiceBody = z.infer<typeof invoiceBodySchema>;
