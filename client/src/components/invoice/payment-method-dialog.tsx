@@ -126,7 +126,7 @@ export default function PaymentMethodDialog({
       onClick={onPress}
     >
       <Card className="hover:bg-muted/5 h-auto shrink-0 border hover:cursor-pointer">
-        <CardContent className="flex min-h-[70px] w-full flex-row items-start justify-between gap-4 py-4 text-left">
+        <CardContent className="flex w-full flex-row items-start justify-between gap-4 text-left">
           <div className="flex min-w-0 flex-row items-start gap-3 text-left">
             <div className="border-default-200 bg-muted/5 flex shrink-0 rounded-md border p-2">
               {icon}
@@ -236,38 +236,33 @@ export default function PaymentMethodDialog({
 
   const renderAddPaymentMethod = () => (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2">
-        <Label className="text-muted">
-          {t('modals.payment_method_type')}
-        </Label>
-        <RadioGroup
-          aria-label={t('modals.payment_method_type')}
-          orientation="horizontal"
-          variant="secondary"
-          value={paymentMethodType}
-          onChange={(value) => {
-            setPaymentMethodType(value as PaymentMethodType);
-            setValidationErrors({});
-          }}
-        >
-          <Radio value="bank">
-            <Radio.Control>
-              <Radio.Indicator />
-            </Radio.Control>
-            <Radio.Content>
-              <Label>{t('modals.bank_account')}</Label>
-            </Radio.Content>
-          </Radio>
-          <Radio value="crypto">
-            <Radio.Control>
-              <Radio.Indicator />
-            </Radio.Control>
-            <Radio.Content>
-              <Label>{t('modals.crypto_wallet')}</Label>
-            </Radio.Content>
-          </Radio>
-        </RadioGroup>
-      </div>
+      <RadioGroup
+        aria-label={t('modals.payment_method_type')}
+        orientation="horizontal"
+        variant="secondary"
+        value={paymentMethodType}
+        onChange={(value) => {
+          setPaymentMethodType(value as PaymentMethodType);
+          setValidationErrors({});
+        }}
+      >
+        <Radio value="bank">
+          <Radio.Control>
+            <Radio.Indicator />
+          </Radio.Control>
+          <Radio.Content>
+            <Label>{t('modals.bank_account')}</Label>
+          </Radio.Content>
+        </Radio>
+        <Radio value="crypto">
+          <Radio.Control>
+            <Radio.Indicator />
+          </Radio.Control>
+          <Radio.Content>
+            <Label>{t('modals.crypto_wallet')}</Label>
+          </Radio.Content>
+        </Radio>
+      </RadioGroup>
       {paymentMethodType === 'bank' ? (
         <BankAccountForm
           userId={userId}

@@ -663,6 +663,7 @@ const InvoiceForm = ({
           size="sm"
           variant="secondary"
           className="h-unit-9 min-w-unit-10 sm:h-unit-8 w-full sm:w-auto"
+          isDisabled={paymentMode === 'disabled'}
           onPress={() => setIsPaymentMethodModalOpen(true)}
         >
           <WalletIcon className="min-h-4 min-w-4" />
@@ -697,7 +698,6 @@ const InvoiceForm = ({
               }}
               isInvalid={!!errors.paymentMode}
             >
-              <Label>{t('labels.payment_mode')}</Label>
               {paymentModeOptions.map((option) => (
                 <Radio key={option} value={option}>
                   <Radio.Control>
