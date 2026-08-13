@@ -4,8 +4,11 @@ import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   Chip,
+  ComboBox,
   FieldError,
   Input,
+  ListBox,
+  ListBoxItem,
   Table,
   TableBody,
   TableCell,
@@ -25,8 +28,17 @@ import {
   useMemo,
   useRef
 } from 'react';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch
+} from 'react-hook-form';
 
+import {
+  COMMON_INVOICE_UNITS,
+  localizeInvoiceUnit
+} from '@/lib/constants/invoice';
 import { Currency } from '@/lib/types/currency';
 import { calculateInvoiceTotals } from '@/lib/utils';
 import { getCurrencySymbol } from '@/lib/utils/currency';
@@ -174,8 +186,8 @@ const InvoiceServicesTable = ({
       id: 0,
       amount: 0,
       description: '',
-      quantity: 0,
-      unit: '',
+      quantity: 1,
+      unit: 'service',
       vatRate: defaultVatRate
     });
 
@@ -265,18 +277,52 @@ const InvoiceServicesTable = ({
           }
         });
       case 'unit':
-        return renderServiceInput({
-          isInvalid: !!errors.services?.[index]?.unit,
-          errorMessage: errors.services?.[index]?.unit?.message,
-          inputProps: {
-            className: 'w-20 min-w-20',
-            'aria-label': t('a11y.unit_label'),
-            placeholder: t('placeholders.unit'),
-            type: 'text',
-            maxLength: 20,
-            ...register(`services.${index}.unit`)
-          }
-        });
+        return (
+          <Controller
+            name={`services.${index}.unit`}
+            control={control}
+            render={({ field }) => (
+              <ComboBox
+                className="w-28 min-w-28"
+                variant="secondary"
+                allowsCustomValue
+                inputValue={localizeInvoiceUnit(
+                  field.value || '',
+                  (unit) => t(`units.${unit}`)
+                )}
+                onInputChange={field.onChange}
+                onSelectionChange={(key) => key && field.onChange(String(key))}
+                isInvalid={!!errors.services?.[index]?.unit}
+              >
+                <ComboBox.InputGroup>
+                  <Input
+                    aria-label={t('a11y.unit_label')}
+                    placeholder={t('placeholders.unit')}
+                    data-invoice-service-focusable
+                  />
+                  <ComboBox.Trigger />
+                </ComboBox.InputGroup>
+                <ComboBox.Popover>
+                  <ListBox>
+                    {COMMON_INVOICE_UNITS.map((unit) => (
+                      <ListBoxItem
+                        key={unit}
+                        id={unit}
+                        textValue={t(`units.${unit}`)}
+                      >
+                        {t(`units.${unit}`)}
+                        <ListBoxItem.Indicator />
+                      </ListBoxItem>
+                    ))}
+                  </ListBox>
+                </ComboBox.Popover>
+                <FieldError>
+                  {errors.services?.[index]?.unit?.message}
+                </FieldError>
+              </ComboBox>
+            )}
+          />
+        );
       case 'quantity':
         return renderServiceInput({
           isInvalid: !!errors.services?.[index]?.quantity,
@@ -286,6 +332,8 @@ const InvoiceServicesTable = ({
             'aria-label': t('a11y.quantity_label'),
             placeholder: t('placeholders.quantity'),
             type: 'number',
+            min: 0.0001,
+            step: '0.0001',
             ...register(`services.${index}.quantity`)
           }
         });
@@ -298,6 +346,8 @@ const InvoiceServicesTable = ({
             'aria-label': t('a11y.amount_label'),
             placeholder: t('placeholders.amount'),
             type: 'number',
+            min: 0.01,
+            step: '0.01',
             ...register(`services.${index}.amount`)
           }
         });
@@ -392,6 +442,7 @@ const InvoiceServicesTable = ({
           </TableContent>
         </TableScrollContainer>
       </Table>
+      <p className="text-muted text-xs">{t('calculation_help')}</p>
       {renderBottomContent()}
       {isInvalid && (
         <Chip

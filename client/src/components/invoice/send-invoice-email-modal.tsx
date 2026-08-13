@@ -75,7 +75,7 @@ export default function SendInvoiceEmailModal({
   );
   const defaultRecipientEmail =
     invoice.receiver.email || invoice.recipientSigningEmail || '';
-  const defaultSubject = `Invoice ${invoice.invoiceId} ${
+  const defaultSubject = `Invoice ${invoice.invoiceId || t('draft')} ${
     invoice.totalAmount
       ? `- Amount: ${getCurrencySymbol(currency)}${invoice.totalAmount}`
       : ''
@@ -172,7 +172,7 @@ export default function SendInvoiceEmailModal({
       const response = await sendInvoiceEmail({
         id: Number(invoice.id),
         userId,
-        blob,
+        blob: isIssued ? blob : null,
         invoiceId: invoice.invoiceId || '',
         recipientEmail: data.recipientEmail,
         subject: data.subject,
@@ -191,6 +191,11 @@ export default function SendInvoiceEmailModal({
             message: error.value
           });
         });
+
+        if (response.data.code === 'INVOICE_ISSUED_EMAIL_FAILED') {
+          handleCloseSendDialog();
+          router.refresh();
+        }
 
         return;
       }
@@ -287,6 +292,7 @@ export default function SendInvoiceEmailModal({
         id="include-public-link"
         variant="primary"
         isSelected={includePublicLink}
+        isDisabled={!isIssued}
         onChange={handleIncludePublicLinkChange}
         className="rounded-lg px-2 py-2"
       >
@@ -298,6 +304,9 @@ export default function SendInvoiceEmailModal({
             {t('include_public_link')}
           </Label>
           <p className="text-muted text-xs">{t('public_link_note')}</p>
+          {!isIssued ? (
+            <p className="text-muted text-xs">{t('draft_public_link_note')}</p>
+          ) : null}
         </Checkbox.Content>
       </Checkbox>
       {renderPublicLinkPreview()}
@@ -426,7 +435,8 @@ export default function SendInvoiceEmailModal({
                   <Modal.Footer className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="text-muted flex min-w-0 flex-col gap-0.5 text-xs">
                       <span>
-                        {t('attached_pdf')} · {invoice.date}
+                        {t(isIssued ? 'attached_pdf' : 'draft_delivery')} ·{' '}
+                        {invoice.date}
                       </span>
                     </div>
                     <div className="flex w-full flex-col-reverse gap-2 sm:ml-auto sm:w-auto sm:flex-row">

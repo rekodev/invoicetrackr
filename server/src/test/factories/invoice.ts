@@ -56,6 +56,7 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
     voidedAt: null,
     paymentMode: 'manual',
     manualPaymentReference: null,
+    cryptoWallet: null,
     bankingInformation: {
       id: sequence,
       code: `CODE${sequence}`,
@@ -88,7 +89,7 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
         id: sequence,
         description: `Service ${sequence}`,
         unit: 'hour',
-        quantity: 10,
+        quantity: '10',
         amount: '100.00',
         vatRate: '0.00',
         vatExemptionReason: null

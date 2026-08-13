@@ -18,6 +18,7 @@ type Props = {
   message: string;
   publicInvoiceLink?: string;
   isSigningAvailable?: boolean;
+  hasAttachment?: boolean;
   translations: {
     title: string;
     detailsTitle: string;
@@ -47,6 +48,7 @@ const InvoiceEmail = ({
   message,
   publicInvoiceLink,
   isSigningAvailable = true,
+  hasAttachment = true,
   translations
 }: Props) => {
   const actionTitle = isSigningAvailable
@@ -95,9 +97,11 @@ const InvoiceEmail = ({
         <EmailDetail label={translations.from}>{senderName}</EmailDetail>
       </EmailPanel>
 
-      <EmailNotice title={translations.attachmentTitle}>
-        {translations.attachmentMessage}
-      </EmailNotice>
+      {hasAttachment && (
+        <EmailNotice title={translations.attachmentTitle}>
+          {translations.attachmentMessage}
+        </EmailNotice>
+      )}
 
       {publicInvoiceLink && (
         <Section className="mt-[24px] text-center">

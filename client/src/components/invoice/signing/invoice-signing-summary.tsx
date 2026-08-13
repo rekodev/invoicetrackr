@@ -11,6 +11,7 @@ import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
+import { localizeInvoiceUnit } from '@/lib/constants/invoice';
 import type { Currency } from '@/lib/types/currency';
 import { calculateInvoiceTotals } from '@/lib/utils';
 import { getCurrencySymbol } from '@/lib/utils/currency';
@@ -137,7 +138,11 @@ export default function InvoiceSigningSummary({
                     className="border-default-100 border-b"
                   >
                     <td className="px-2 py-3">{service.description}</td>
-                    <td className="px-2 py-3">{service.unit}</td>
+                    <td className="px-2 py-3">
+                      {localizeInvoiceUnit(service.unit, (commonUnit) =>
+                        t(`units.${commonUnit}`)
+                      )}
+                    </td>
                     <td className="px-2 py-3 text-right">{service.quantity}</td>
                     <td className="px-2 py-3 text-right">
                       {currencySymbol}
@@ -203,6 +208,28 @@ export default function InvoiceSigningSummary({
             </div>
           </div>
         )}
+        {invoice.cryptoWallet ? (
+          <div className="bg-default-100 mt-auto flex gap-3 rounded-lg p-4">
+            <BanknotesIcon className="text-muted h-5 w-5 shrink-0" />
+            <div className="min-w-0 text-sm">
+              <p className="font-medium">{t('payment_details')}</p>
+              <div className="mt-3 grid gap-x-6 gap-y-1 sm:grid-cols-[auto_1fr]">
+                <p className="text-muted">{t('crypto_asset')}</p>
+                <p>{invoice.cryptoWallet.asset}</p>
+                <p className="text-muted">{t('crypto_network')}</p>
+                <p>{invoice.cryptoWallet.network}</p>
+                <p className="text-muted">{t('wallet_address')}</p>
+                <p className="break-all">{invoice.cryptoWallet.address}</p>
+                {invoice.cryptoWallet.memo ? (
+                  <>
+                    <p className="text-muted">{t('memo_tag')}</p>
+                    <p>{invoice.cryptoWallet.memo}</p>
+                  </>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   );

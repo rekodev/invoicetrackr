@@ -9,6 +9,9 @@ import type {
   GetNextInvoiceNumberResponse,
   GetPublicInvoiceResponse,
   GetPublicInvoiceSigningResponse,
+  GetRecipientDetailsResponse,
+  IssueInvoiceResponse,
+  RecipientDetailsRequestResponse,
   RegenerateInvoiceSigningLinkResponse,
   RegeneratePublicInvoiceLinkResponse,
   RevokeInvoiceSigningLinkResponse,
@@ -26,6 +29,28 @@ import api from './api-instance';
 
 export const getInvoice = async (userId: number, invoiceId: number) =>
   await api.get<GetInvoiceResponse>(`/api/${userId}/invoices/${invoiceId}`);
+
+export const issueInvoice = (userId: number, invoiceId: number) =>
+  api.post<IssueInvoiceResponse>(`/api/${userId}/invoices/${invoiceId}/issue`);
+
+export const createRecipientDetailsRequest = (
+  userId: number,
+  invoiceId: number,
+  recipientEmail?: string,
+  sendEmail = false
+) =>
+  api.post<RecipientDetailsRequestResponse>(
+    `/api/${userId}/invoices/${invoiceId}/recipient-details-request`,
+    { recipientEmail, sendEmail }
+  );
+
+export const getRecipientDetailsRequest = (token: string) =>
+  api.get<GetRecipientDetailsResponse>(`/api/invoices/details/${token}`);
+
+export const submitRecipientDetails = (
+  token: string,
+  receiver: InvoiceBody['receiver']
+) => api.put<{ message: string }>(`/api/invoices/details/${token}`, receiver);
 
 export const getPublicInvoiceSigning = async (token: string) =>
   await api.get<GetPublicInvoiceSigningResponse>(`/api/invoices/sign/${token}`);
@@ -206,6 +231,19 @@ export const sendInvoiceEmail = async ({
   requestSignature?: boolean;
   blob: Blob | null;
 }) => {
+  if (!blob) {
+    return await api.post<SendInvoiceEmailResponse>(
+      `/api/${userId}/invoices/${id}/send-email`,
+      {
+        recipientEmail,
+        subject,
+        message,
+        includePublicLink: includePublicLink ?? true,
+        requestSignature: !!requestSignature
+      }
+    );
+  }
+
   const formData = new FormData();
   formData.append('recipientEmail', recipientEmail);
   formData.append('subject', subject);
@@ -214,12 +252,10 @@ export const sendInvoiceEmail = async ({
   }
   formData.append('includePublicLink', String(includePublicLink ?? true));
   formData.append('requestSignature', String(!!requestSignature));
-  if (blob) {
-    formData.append(
-      'pdfAttachment',
-      new File([blob], `${invoiceId}.pdf`, { type: 'application/pdf' })
-    );
-  }
+  formData.append(
+    'pdfAttachment',
+    new File([blob], `${invoiceId}.pdf`, { type: 'application/pdf' })
+  );
 
   return await api.post<SendInvoiceEmailResponse>(
     `/api/${userId}/invoices/${id}/send-email`,

@@ -9,7 +9,11 @@ import {
   updateBankingInformation
 } from '@/api/banking-information';
 
-import { BANKING_INFORMATION_PAGE, ONBOARDING_PAGE } from '../constants/pages';
+import {
+  BANKING_INFORMATION_PAGE,
+  ONBOARDING_PAGE,
+  PAYMENT_METHODS_PAGE
+} from '../constants/pages';
 import { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
@@ -35,6 +39,7 @@ export async function addBankingInformationAction(
   }
 
   revalidatePath(isUserOnboarding ? ONBOARDING_PAGE : BANKING_INFORMATION_PAGE);
+  revalidatePath(PAYMENT_METHODS_PAGE);
   return {
     ok: true,
     message: response.data.message,
@@ -57,6 +62,7 @@ export async function updateBankingInformationAction(
   }
 
   revalidatePath(BANKING_INFORMATION_PAGE);
+  revalidatePath(PAYMENT_METHODS_PAGE);
   return { ok: true, message: response.data.message };
 }
 
@@ -74,5 +80,6 @@ export async function deleteBankingInformationAction(
   }
 
   revalidatePath(BANKING_INFORMATION_PAGE);
+  revalidatePath(PAYMENT_METHODS_PAGE);
   return { ok: true, message: response.data.message };
 }

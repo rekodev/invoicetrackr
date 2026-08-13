@@ -19,6 +19,7 @@ import i18n from './plugins/i18n';
 import bankingInformationRoutes from './routes/banking-information';
 import clientRoutes from './routes/client';
 import contactRoutes from './routes/contact';
+import cryptoWalletRoutes from './routes/crypto-wallet';
 import expenseRoutes from './routes/expense';
 import invoiceRoutes from './routes/invoice';
 import userRoutes from './routes/user';
@@ -88,6 +89,7 @@ server.register(clientRoutes);
 server.register(userRoutes);
 server.register(bankingInformationRoutes);
 server.register(contactRoutes);
+server.register(cryptoWalletRoutes);
 
 getPgVersion();
 

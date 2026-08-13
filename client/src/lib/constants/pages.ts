@@ -17,6 +17,7 @@ export const REPORTS_PAGE = '/reports';
 export const PROFILE_PAGE = '/profile';
 export const PERSONAL_INFORMATION_PAGE = '/profile/personal-information';
 export const BANKING_INFORMATION_PAGE = '/profile/banking-information';
+export const PAYMENT_METHODS_PAGE = '/profile/payment-methods';
 export const ADD_NEW_BANK_ACCOUNT_PAGE = '/profile/banking-information/new';
 export const ONBOARDING_PAGE = '/onboarding';
 

@@ -18,6 +18,7 @@
             "settings": "Settings",
             "personal_information": "Freelancer profile",
             "banking_information": "Bank accounts",
+            "payment_methods": "Payment methods",
             "account_settings": "Invoice defaults",
             "change_password": "Password",
             "my_profile": "My Profile",
@@ -473,6 +474,7 @@
                 "action": "Add New"
             },
             "statuses": {
+                "draft": "Draft",
                 "paid": "Paid",
                 "pending": "Pending",
                 "overdue": "Overdue",
@@ -557,6 +559,13 @@
         "cell": {
             "actions": {
                 "tooltip_send_email": "Send Invoice Email",
+                "tooltip_issue": "Issue invoice",
+                "tooltip_request_details": "Request recipient details",
+                "confirm_issue": "Issue this invoice now? It will receive its final number and become immutable.",
+                "confirm_email_details": "Send the recipient-details request to the saved recipient email? Choose Cancel to copy the link instead.",
+                "prompt_details_email": "Enter an email to send the request, or choose Cancel to copy the link instead.",
+                "details_link_copied": "Recipient details link copied.",
+                "details_request_emailed": "Recipient details request emailed.",
                 "tooltip_copy_public_link": "Copy public invoice link",
                 "tooltip_view": "Details",
                 "tooltip_edit": "Edit invoice",
@@ -574,6 +583,7 @@
             "individualTitle": "INVOICE",
             "series_label": "Invoice Series",
             "invoice_number_label": "No.",
+            "draft_number_label": "Draft — number assigned on issue",
             "provider_label": "Provider:",
             "business_number_business": "Company code:",
             "business_number_individual": "Sole proprietorship certificate No.:",
@@ -585,7 +595,7 @@
             "description_label": "Description",
             "unit_label": "Unit",
             "quantity_label": "Qty",
-            "amount_label": "Amount",
+            "amount_label": "Unit price",
             "vat_rate_label": "VAT",
             "vat_exemption_reason_label": "VAT note",
             "line_total_label": "Line total",
@@ -599,6 +609,21 @@
             "name_label": "(name, surname)",
             "payment_terms_label": "Payment terms: {days} days",
             "bank_info_label": "{bank_name}, bank code {bank_code}; Account number: {bank_account_number}",
+            "crypto_memo_label": "Memo/tag",
+            "crypto_asset_label": "Crypto asset",
+            "crypto_network_label": "Network",
+            "crypto_address_label": "Wallet address",
+            "payment_reference_label": "Payment reference",
+            "units": {
+                "service": "Service",
+                "hour": "Hour",
+                "day": "Day",
+                "item": "Item",
+                "month": "Month",
+                "project": "Project",
+                "kilometre": "Kilometre",
+                "kilogram": "Kilogram"
+            },
             "buttons": {
                 "download_pdf": "Download PDF",
                 "print_pdf": "Print PDF",
@@ -755,6 +780,16 @@
         "amount": "Amount",
         "vat": "VAT",
         "line_total": "Total",
+        "units": {
+            "service": "Service",
+            "hour": "Hour",
+            "day": "Day",
+            "item": "Item",
+            "month": "Month",
+            "project": "Project",
+            "kilometre": "Kilometre",
+            "kilogram": "Kilogram"
+        },
         "subtotal": "Subtotal",
         "vat_total": "VAT total",
         "total": "Total",
@@ -763,6 +798,7 @@
         "payment_action_paid_title": "Payment received",
         "payment_action_paid_subtitle": "No further payment is needed for this invoice.",
         "payment_action_bank": "Pay by bank transfer using the details below.",
+        "payment_action_crypto": "The invoice remains denominated in fiat. Confirm the crypto amount with the sender, then use the exact asset and network below.",
         "voided_invoice_title": "Invoice voided",
         "voided_invoice_description": "The sender has voided this invoice. Download it only for your records.",
         "canceled_invoice_title": "Invoice canceled",
@@ -777,6 +813,10 @@
         "bank_code": "Bank code",
         "account_number": "Account number",
         "payment_reference": "Reference",
+        "crypto_asset": "Asset / token",
+        "crypto_network": "Network",
+        "wallet_address": "Wallet address",
+        "memo_tag": "Memo/tag",
         "method_title": "Acknowledgement method",
         "draw_signature": "Drawn signature",
         "signature_required": "Add a drawn signature before confirming.",
@@ -994,6 +1034,27 @@
                     "skip": "Skip for now"
                 }
             }
+        },
+        "crypto_wallets": {
+            "title": "Crypto wallets",
+            "description": "Saved payment instructions only. InvoiceTrackr does not calculate exchange rates or monitor the blockchain.",
+            "default": "Default",
+            "memo": "Memo/tag",
+            "edit": "Edit",
+            "delete": "Delete",
+            "add_title": "Add crypto wallet",
+            "edit_title": "Edit crypto wallet",
+            "use_default": "Use as default wallet",
+            "add": "Add wallet",
+            "save": "Save wallet",
+            "cancel": "Cancel",
+            "fields": {
+                "label": "Wallet label",
+                "asset": "Asset / token",
+                "network": "Network",
+                "address": "Wallet address",
+                "memo": "Memo/tag (optional)"
+            }
         }
     },
     "forgot_password": {
@@ -1084,8 +1145,10 @@
             "message_label": "Message (Optional)",
             "message_placeholder": "Add a personal message to your client",
             "invoice": "Invoice",
+            "draft": "draft",
             "client": "Client",
-            "public_link_note": "Client can view online and pay via bank transfer.",
+            "public_link_note": "Client can view the invoice and its payment instructions online.",
+            "draft_public_link_note": "Sending this draft issues it and includes the final invoice page.",
             "signing_link_note": "Ask client to confirm receipt with one click.",
             "email_verification_required": "Verify your account email before sending invoices to clients.",
             "include_public_link": "Include public invoice page",
@@ -1097,15 +1160,16 @@
             "regenerate_public_link": "Generate fresh public link",
             "replace_link_and_send": "Replace link and send",
             "attached_pdf": "Attaching PDF",
+            "draft_delivery": "Final invoice page included after issue",
             "cancel": "Cancel",
             "send": "Send"
         },
         "invoice_services_table": {
             "column_number": "#",
-            "column_description": "DESCRIPTION",
-            "column_unit": "UNIT",
+            "column_description": "SERVICE / DESCRIPTION",
+            "column_unit": "BILLING UNIT",
             "column_quantity": "QUANTITY",
-            "column_amount": "AMOUNT",
+            "column_amount": "UNIT PRICE",
             "column_vat_rate": "VAT",
             "column_vat_exemption_reason": "VAT NOTE",
             "column_line_total": "TOTAL",
@@ -1115,6 +1179,17 @@
             "vat_total": "VAT Total",
             "grand_total": "Grand Total",
             "delete_service": "Delete service",
+            "calculation_help": "Quantity × unit price = line total",
+            "units": {
+                "service": "Service",
+                "hour": "Hour",
+                "day": "Day",
+                "item": "Item",
+                "month": "Month",
+                "project": "Project",
+                "kilometre": "Kilometre",
+                "kilogram": "Kilogram"
+            },
             "placeholders": {
                 "description": "e.g., Web design services",
                 "unit": "e.g., h",
@@ -1129,7 +1204,7 @@
                 "description_label": "Description",
                 "unit_label": "Unit",
                 "quantity_label": "Quantity",
-                "amount_label": "Amount",
+                "amount_label": "Unit price",
                 "vat_rate_label": "VAT Rate",
                 "vat_exemption_reason_label": "VAT exemption or 0% rate note",
                 "actions_label": "Actions"
@@ -1156,11 +1231,18 @@
                 "bank_code_label": "Bank Code",
                 "bank_account_number_label": "Bank Account Number",
                 "invoice_id_label": "Invoice ID",
+                "invoice_series_label": "Invoice number series",
                 "date_label": "Date",
                 "due_date_label": "Due Date",
                 "status_label": "Status",
                 "payment_mode_label": "Payment mode",
                 "manual_payment_reference_label": "Manual payment reference",
+                "crypto_wallet_label": "Saved crypto wallet",
+                "crypto_label_label": "Wallet label",
+                "crypto_asset_label": "Crypto asset",
+                "crypto_network_label": "Crypto network",
+                "crypto_address_label": "Wallet address",
+                "crypto_memo_label": "Memo or tag",
                 "static_actions_label": "Static Actions"
             },
             "labels": {
@@ -1182,17 +1264,25 @@
                 "bank_code": "Bank Code",
                 "bank_account_number": "Bank Account Number",
                 "invoice_id": "Invoice ID",
+                "invoice_series": "Invoice series",
                 "date": "Date",
                 "due_date": "Due Date",
                 "status": "Status",
                 "payment_mode": "Payment mode",
-                "manual_payment_reference": "Manual payment reference"
+                "manual_payment_reference": "Manual payment reference",
+                "crypto_wallet": "Saved crypto wallet",
+                "crypto_label": "Wallet label",
+                "crypto_asset": "Asset / token",
+                "crypto_network": "Network",
+                "crypto_address": "Wallet address",
+                "crypto_memo": "Memo/tag (optional)"
             },
             "placeholders": {
                 "bank_name": "e.g., Swedbank",
                 "bank_code": "e.g., HABALT22",
                 "bank_account_number": "e.g., LT121000011101001000",
                 "invoice_id": "e.g., INV001",
+                "invoice_series": "e.g., SF",
                 "select_status": "Select status",
                 "sender_name": "e.g., John Smith",
                 "sender_business_number": "e.g., 304000000",
@@ -1210,12 +1300,18 @@
                 "title": "Payment settings",
                 "reference_note": "Leave blank to use the invoice number as the payment reference.",
                 "disabled_note": "Payment instructions are hidden on the public invoice page.",
+                "crypto_note": "The invoice total stays in the selected fiat currency. This only displays wallet instructions; confirm the crypto amount separately.",
                 "modes": {
                     "auto": "Bank transfer",
                     "online": "Online payment (post-MVP)",
                     "manual": "Bank transfer",
+                    "crypto": "Crypto transfer",
                     "disabled": "No payment block"
                 }
+            },
+            "numbering": {
+                "assigned_on_issue": "The final number is assigned when you issue or email the invoice.",
+                "reserved_number": "Reserved number: {number}"
             },
             "headings": {
                 "sender_receiver_data": "Sender and Receiver Data",
@@ -1232,15 +1328,21 @@
             },
             "modals": {
                 "select_client": "Select Client",
-                "select_bank_account": "Select Bank Account",
-                "add_bank_account": "Add Bank Account",
+                "use_saved_payment_details": "Use saved payment details",
+                "select_payment_method": "Choose saved payment details",
+                "add_payment_method": "Add payment method",
+                "payment_method_type": "Payment method type",
+                "bank_account": "Bank account",
+                "crypto_wallet": "Crypto wallet",
                 "no_clients": "You have no clients. Create one to get started.",
-                "no_bank_accounts": "You have no bank accounts. Create one to get started."
+                "no_bank_accounts": "You have no bank accounts. Create one to get started.",
+                "no_payment_methods": "You have no saved payment details yet. Add a bank account or crypto wallet to get started."
             },
             "free_invoice": {
                 "eyebrow": "Free invoice generator",
                 "title": "Create a polished PDF invoice without signing up",
                 "description": "Build a real invoice, preview the PDF, and download it for free. When you need the full freelancer workflow, create an account to save clients, send invoices, record payments, and prepare exports.",
+                "untracked_notice": "This download is not stored or marked as issued by InvoiceTrackr. Keep your own numbering and records, or create an account for managed drafts and issuance.",
                 "upgrade_title": "Need more than a PDF?",
                 "upgrade_description": "Create an account to save invoices, reuse clients and bank accounts, send invoice links, and track payment status.",
                 "upgrade_cta": "Create account",
@@ -1258,6 +1360,25 @@
                 "thirty_days": "30d",
                 "custom": "Custom"
             }
+        }
+    },
+    "recipient_details": {
+        "submitted_title": "Details submitted",
+        "submitted_description": "{sender} will review the details before issuing the invoice.",
+        "draft_from": "Draft {invoice} from {sender}",
+        "title": "Complete your billing details",
+        "description": "This does not issue the invoice or change its amount. The sender reviews your details first.",
+        "business_type": "Recipient type",
+        "business": "Business",
+        "individual": "Individual",
+        "company_number": "Company code",
+        "activity_number": "Individual activity certificate number",
+        "submit": "Submit for review",
+        "fields": {
+            "name": "Name",
+            "vatNumber": "VAT number (optional)",
+            "address": "Address",
+            "email": "Email (optional)"
         }
     },
     "privacy_policy": {

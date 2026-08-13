@@ -7,13 +7,18 @@ import {
   getNextInvoiceNumberResponseSchema,
   getPublicInvoiceResponseSchema,
   getPublicInvoiceSigningResponseSchema,
+  getRecipientDetailsResponseSchema,
   incomeJournalQuerySchema,
   invoiceBodySchema,
   invoiceNumberSeriesSchema,
+  issueInvoiceResponseSchema,
   messageResponseSchema,
   postInvoiceResponseSchema,
+  recipientDetailsBodySchema,
+  recipientDetailsRequestResponseSchema,
   regeneratePublicInvoiceLinkResponseSchema,
   sendInvoiceEmailBodySchema,
+  sendRecipientDetailsRequestBodySchema,
   signInvoiceResponseSchema,
   updateInvoiceResponseSchema
 } from '@invoicetrackr/types';
@@ -21,6 +26,7 @@ import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
 import {
+  createRecipientDetailsRequest,
   deleteInvoice,
   getIncomeJournal,
   getInvoice,
@@ -31,6 +37,8 @@ import {
   getNextInvoiceNumber,
   getPublicInvoice,
   getPublicInvoiceSigning,
+  getRecipientDetailsRequest,
+  issueInvoice,
   postInvoice,
   regenerateInvoiceSigning,
   regeneratePublicInvoice,
@@ -38,10 +46,15 @@ import {
   revokePublicInvoice,
   sendInvoiceEmail,
   signPublicInvoice,
+  submitRecipientDetails,
   updateInvoice,
   updateInvoiceStatus
 } from '../controllers/invoice';
-import { authMiddleware, requireVerifiedEmail } from '../middleware/auth';
+import {
+  authMiddleware,
+  requireVerifiedEmail,
+  requireVerifiedEmailWhenSending
+} from '../middleware/auth';
 import { preValidateFileAndFields } from '../utils/multipart';
 
 const authenticatedAccess = [authMiddleware];
@@ -172,6 +185,36 @@ export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
   preHandler: [...authenticatedAccess, requireVerifiedEmail],
   preValidation: preValidateFileAndFields,
   handler: sendInvoiceEmail
+};
+
+export const issueInvoiceOptions: RouteShorthandOptionsWithHandler = {
+  schema: { response: { 200: issueInvoiceResponseSchema } },
+  preHandler: authenticatedAccess,
+  handler: issueInvoice
+};
+
+export const createRecipientDetailsRequestOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: {
+      body: sendRecipientDetailsRequestBodySchema,
+      response: { 200: recipientDetailsRequestResponseSchema }
+    },
+    preHandler: [...authenticatedAccess, requireVerifiedEmailWhenSending],
+    handler: createRecipientDetailsRequest
+  };
+
+export const getRecipientDetailsRequestOptions: RouteShorthandOptionsWithHandler =
+  {
+    schema: { response: { 200: getRecipientDetailsResponseSchema } },
+    handler: getRecipientDetailsRequest
+  };
+
+export const submitRecipientDetailsOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    body: recipientDetailsBodySchema,
+    response: { 200: messageResponseSchema }
+  },
+  handler: submitRecipientDetails
 };
 
 export const revokePublicInvoiceOptions: RouteShorthandOptionsWithHandler = {

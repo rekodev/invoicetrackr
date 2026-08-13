@@ -1,3 +1,4 @@
+import type { SendRecipientDetailsRequestBody } from '@invoicetrackr/types';
 import { FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 import { decode } from 'next-auth/jwt';
@@ -44,4 +45,15 @@ export const requireVerifiedEmail = async (
   if (!user?.emailVerifiedAt) {
     throw new ForbiddenError(i18n.t('error.user.emailVerificationRequired'));
   }
+};
+
+export const requireVerifiedEmailWhenSending = async (
+  req: FastifyRequest<{
+    Params: { userId?: string };
+    Body: SendRecipientDetailsRequestBody;
+  }>
+) => {
+  if (!req.body.sendEmail) return;
+
+  await requireVerifiedEmail(req);
 };

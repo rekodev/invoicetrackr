@@ -32,7 +32,10 @@ export default {
     },
     invoice: {
       title: 'InvoiceTrackr',
+      subject: 'Sąskaita %{invoiceId} - %{amount} %{currency}',
       defaultMessage: 'Prašome rasti prisegtos sąskaitos faktūrą.',
+      defaultLinkMessage:
+        'Peržiūrėkite sąskaitą naudodami saugią nuorodą žemiau.',
       detailsTitle: 'Sąskaitos faktūros informacija',
       sentBy: 'Šią sąskaitą faktūrą per InvoiceTrackr išsiuntė %{senderName}.',
       invoiceNumber: 'Sąskaitos numeris:',
@@ -48,8 +51,11 @@ export default {
       signingButton: 'Peržiūrėti ir patvirtinti',
       publicInvoiceTitle: 'Peržiūrėti sąskaitą',
       publicInvoiceMessage:
-        'Atidarykite saugų sąskaitos puslapį, peržiūrėkite PDF ir bankinio pavedimo mokėjimo informaciją.',
+        'Atidarykite saugų sąskaitos puslapį, peržiūrėkite PDF ir mokėjimo informaciją.',
       publicInvoiceButton: 'Peržiūrėti sąskaitą',
+      recipientDetailsSubject: 'Užpildykite sąskaitos duomenis',
+      recipientDetailsMessage:
+        'Užpildykite juodraštinės sąskaitos gavėjo duomenis.',
       signedNotification: {
         recipient: 'Gavėjas',
         subject: 'Sąskaita %{invoiceId} buvo patvirtinta',
@@ -120,7 +126,9 @@ export default {
         quantity: {
           number: 'Kiekis turi būti skaičius',
           min: 'Kiekis turi būti bent 0.0001',
-          max: 'Kiekis negali viršyti 10,000'
+          max: 'Kiekis negali viršyti 10,000',
+          scale:
+            'Kiekis gali turėti ne daugiau kaip keturis skaitmenis po kablelio'
         },
         amount: {
           number: 'Suma turi būti skaičius',
@@ -133,6 +141,9 @@ export default {
         name: 'Banko pavadinimas yra privalomas',
         code: 'Banko kodas yra privalomas',
         accountNumber: 'Banko sąskaitos numeris yra privalomas'
+      },
+      cryptoWallet: {
+        required: 'Būtina užpildyti kriptovaliutos piniginės duomenis'
       },
       email: {
         format: 'Neteisingas el. pašto adresas',
@@ -162,9 +173,16 @@ export default {
     bankAccount: {
       name: 'Banko pavadinimas yra privalomas',
       code: 'Banko kodas yra privalomas',
-      codeFormat: 'Įveskite tinkamą 5 skaitmenų banko kodą arba BIC / SWIFT kodą',
+      codeFormat:
+        'Įveskite tinkamą 5 skaitmenų banko kodą arba BIC / SWIFT kodą',
       accountNumber: 'IBAN yra privalomas',
       iban: 'Įveskite tinkamą IBAN'
+    },
+    cryptoWallet: {
+      label: 'Piniginės pavadinimas yra privalomas',
+      asset: 'Turtas arba žetonas yra privalomas',
+      network: 'Tinklas yra privalomas',
+      address: 'Piniginės adresas yra privalomas'
     },
     user: {
       name: 'Vardas arba pavadinimas yra privalomas',
@@ -208,6 +226,9 @@ export default {
       deleted: 'Sąskaita faktūra ištrinta sėkmingai',
       statusUpdated: 'Sąskaitos faktūros būsena atnaujinta sėkmingai',
       emailSent: 'El. laiškas išsiųstas sėkmingai',
+      issued: 'Sąskaita faktūra išrašyta sėkmingai',
+      recipientDetailsRequested: 'Gavėjo duomenų užklausa paruošta',
+      recipientDetailsSubmitted: 'Duomenys pateikti siuntėjo peržiūrai',
       signed: 'Sąskaitos faktūros patvirtinimas užregistruotas sėkmingai',
       signingLinkRevoked: 'Patvirtinimo nuoroda atšaukta',
       signingLinkRegenerated: 'Sugeneruota nauja patvirtinimo nuoroda',
@@ -230,6 +251,11 @@ export default {
         'Banko sąskaita pridėta sėkmingai. Pasirinkite ją kaip pagrindinę sąskaitą.',
       updated: 'Banko sąskaita atnaujinta sėkmingai',
       deleted: 'Banko sąskaita ištrinta sėkmingai'
+    },
+    cryptoWallet: {
+      created: 'Kriptovaliutos piniginė pridėta sėkmingai',
+      updated: 'Kriptovaliutos piniginė atnaujinta sėkmingai',
+      deleted: 'Kriptovaliutos piniginė ištrinta sėkmingai'
     },
     expenseAttachment: {
       uploaded: 'Išlaidų dokumentas įkeltas sėkmingai',
@@ -288,6 +314,15 @@ export default {
       unableToUpdateStatus: 'Nepavyko atnaujinti sąskaitos faktūros būsenos',
       unableToRetrieveData: 'Nepavyko gauti sąskaitos faktūros duomenų',
       unableToSendEmail: 'Nepavyko išsiųsti el. laiško',
+      issuedButUnableToSendEmail:
+        'Sąskaita išrašyta, bet el. laiško išsiųsti nepavyko. Bandykite siųsti dar kartą iš išrašytos sąskaitos.',
+      unableToIssue:
+        'Prieš išrašydami sąskaitą užpildykite gavėjo ir mokėjimo duomenis.',
+      unableToCreateRecipientDetailsLink:
+        'Nepavyko sukurti gavėjo duomenų nuorodos',
+      recipientDetailsLinkInvalid:
+        'Ši gavėjo duomenų nuoroda negalioja arba jos galiojimas baigėsi',
+      unableToSubmitRecipientDetails: 'Nepavyko išsaugoti gavėjo duomenų',
       unableToCreatePublicLink: 'Nepavyko sukurti viešos sąskaitos nuorodos',
       unableToCreateSigningLink:
         'Nepavyko sukurti sąskaitos patvirtinimo nuorodos',
@@ -340,6 +375,15 @@ export default {
       unableToUpdate: 'Nepavyko atnaujinti banko sąskaitos',
       unableToDelete: 'Nepavyko ištrinti banko sąskaitos',
       cannotDeleteSelected: 'Negalima ištrinti pasirinktos banko sąskaitos'
+    },
+    cryptoWallet: {
+      notFound: 'Kriptovaliutos piniginė nerasta',
+      alreadyExists: 'Ši kriptovaliutos piniginė jau egzistuoja',
+      unableToCreate: 'Nepavyko pridėti kriptovaliutos piniginės',
+      unableToUpdate: 'Nepavyko atnaujinti kriptovaliutos piniginės',
+      unableToDelete: 'Nepavyko ištrinti kriptovaliutos piniginės',
+      cannotDeleteDefault:
+        'Prieš ištrindami pasirinkite kitą numatytąją piniginę'
     },
     contact: {
       unableToSendMessage: 'Nepavyko išsiųsti žinutės'

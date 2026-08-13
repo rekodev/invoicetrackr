@@ -77,6 +77,7 @@ describe('<InvoiceTable/>', () => {
           date: '2023-01-01',
           dueDate: '2023-01-10',
           status: 'pending',
+          lifecycleStatus: 'issued',
           paymentMode: 'manual',
           services: [
             {

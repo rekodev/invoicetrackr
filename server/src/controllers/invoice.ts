@@ -8,7 +8,11 @@ import {
   type IncomeJournalQuery,
   type InvoiceBody,
   invoiceBodySchema,
-  type PublicInvoice} from '@invoicetrackr/types';
+  issuableInvoiceBodySchema,
+  type PublicInvoice,
+  type RecipientDetailsBody,
+  type SendRecipientDetailsRequestBody
+} from '@invoicetrackr/types';
 import { v2 as cloudinary } from 'cloudinary';
 import { randomBytes } from 'crypto';
 import { FastifyReply, FastifyRequest } from 'fastify';
@@ -32,16 +36,21 @@ import {
   getNextInvoiceNumberFromDb,
   getPublicInvoiceFromDb,
   getPublicInvoiceSigningFromDb,
+  getRecipientDetailsRequestFromDb,
   insertInvoiceInDb,
+  INVOICE_UPDATE_NOT_DRAFT,
   type InvoiceFromDb,
+  issueInvoiceInDb,
   markPublicInvoiceSentInDb,
   prepareInvoiceSigningFromDb,
   preparePublicInvoiceFromDb,
+  prepareRecipientDetailsRequestInDb,
   regenerateInvoiceSigningFromDb,
   regeneratePublicInvoiceFromDb,
   revokeInvoiceSigningFromDb,
   revokePublicInvoiceFromDb,
   signInvoiceByRecipientTokenInDb,
+  submitRecipientDetailsInDb,
   updateInvoiceInDb,
   updateInvoiceStatusInDb
 } from '../database/invoice';
@@ -52,6 +61,7 @@ import { recordRequestAudit } from '../utils/audit';
 import {
   AlreadyExistsError,
   BadRequestError,
+  InvoiceIssuedEmailError,
   NotFoundError
 } from '../utils/error';
 
@@ -90,24 +100,21 @@ const formatCsvDate = (value: string | null | undefined) =>
 const UNSIGNED_SIGNING_LINK_VALIDITY_DAYS = 30;
 const SIGNED_SIGNING_LINK_VALIDITY_DAYS = 90;
 const PUBLIC_INVOICE_LINK_VALIDITY_DAYS = 90;
+const RECIPIENT_DETAILS_LINK_VALIDITY_DAYS = 30;
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+const createLinkExpiration = (validityDays: number) =>
+  new Date(Date.now() + validityDays * MILLISECONDS_PER_DAY).toISOString();
 const createSigningLinkExpiration = (isSigned = false) =>
-  new Date(
-    Date.now() +
-      (isSigned
-        ? SIGNED_SIGNING_LINK_VALIDITY_DAYS
-        : UNSIGNED_SIGNING_LINK_VALIDITY_DAYS) *
-        24 *
-        60 *
-        60 *
-        1000
-  ).toISOString();
+  createLinkExpiration(
+    isSigned
+      ? SIGNED_SIGNING_LINK_VALIDITY_DAYS
+      : UNSIGNED_SIGNING_LINK_VALIDITY_DAYS
+  );
 const createPublicInvoiceExpiration = () =>
-  new Date(
-    Date.now() + PUBLIC_INVOICE_LINK_VALIDITY_DAYS * 24 * 60 * 60 * 1000
-  ).toISOString();
-const isSigningLinkExpired = (expiresAt?: string | null) =>
-  Boolean(expiresAt && new Date(expiresAt).getTime() <= Date.now());
-const isPublicInvoiceLinkExpired = (expiresAt?: string | null) =>
+  createLinkExpiration(PUBLIC_INVOICE_LINK_VALIDITY_DAYS);
+const createRecipientDetailsExpiration = () =>
+  createLinkExpiration(RECIPIENT_DETAILS_LINK_VALIDITY_DAYS);
+const isLinkExpired = (expiresAt?: string | null) =>
   Boolean(expiresAt && new Date(expiresAt).getTime() <= Date.now());
 
 const assertSigningLinkAvailable = (
@@ -119,7 +126,7 @@ const assertSigningLinkAvailable = (
 ) => {
   if (invoice.recipientSigningRevokedAt)
     throw new BadRequestError(i18n.t('error.invoice.signingLinkRevoked'));
-  if (isSigningLinkExpired(invoice.recipientSigningExpiresAt))
+  if (isLinkExpired(invoice.recipientSigningExpiresAt))
     throw new BadRequestError(i18n.t('error.invoice.signingLinkExpired'));
 };
 
@@ -132,15 +139,15 @@ const assertPublicInvoiceLinkAvailable = (
 ) => {
   if (invoice.publicInvoiceRevokedAt)
     throw new BadRequestError(i18n.t('error.invoice.publicLinkRevoked'));
-  if (isPublicInvoiceLinkExpired(invoice.publicInvoiceExpiresAt))
+  if (isLinkExpired(invoice.publicInvoiceExpiresAt))
     throw new BadRequestError(i18n.t('error.invoice.publicLinkExpired'));
 };
 
 const isInvoicePayable = (invoice: InvoiceBody) =>
   invoice.status === 'pending' &&
-  (invoice.lifecycleStatus || 'draft') !== 'voided' &&
+  (invoice.lifecycleStatus || 'draft') === 'issued' &&
   !invoice.publicInvoiceRevokedAt &&
-  !isPublicInvoiceLinkExpired(invoice.publicInvoiceExpiresAt);
+  !isLinkExpired(invoice.publicInvoiceExpiresAt);
 
 const hasCompleteFreelancerProfile = (
   user: NonNullable<Awaited<ReturnType<typeof getUserFromDb>>>
@@ -150,13 +157,6 @@ const hasCompleteFreelancerProfile = (
       user.businessNumber.trim() &&
       user.address.trim() &&
       user.invoiceEmail?.trim()
-  );
-
-const hasCompleteInvoiceBankDetails = (invoice: InvoiceFromDb) =>
-  Boolean(
-    invoice.bankingInformation?.name?.trim() &&
-      invoice.bankingInformation.code?.trim() &&
-      invoice.bankingInformation.accountNumber?.trim()
   );
 
 const assertInvoiceCanBeIssued = ({
@@ -173,13 +173,158 @@ const assertInvoiceCanBeIssued = ({
   if (!hasCompleteFreelancerProfile(user))
     throw new BadRequestError(i18n.t('error.invoice.senderProfileIncomplete'));
 
+  const result = issuableInvoiceBodySchema.safeParse(invoice);
+  if (!result.success)
+    throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
+};
+
+export const issueInvoice = async (
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const id = Number(req.params.id);
+  const i18n = await useI18n(req);
+  const [invoice, user] = await Promise.all([
+    getInvoiceFromDb(userId, id),
+    getUserFromDb(userId)
+  ]);
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
+  assertInvoiceCanBeIssued({ invoice, user, i18n });
+  const issued = await issueInvoiceInDb(userId, id);
+  if (!issued) throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'invoice.issued',
+    entityType: 'invoice',
+    entityId: id,
+    previousValue: invoice,
+    newValue: issued
+  });
+  return reply
+    .status(200)
+    .send({ invoice: issued, message: i18n.t('success.invoice.issued') });
+};
+
+export const createRecipientDetailsRequest = async (
+  req: FastifyRequest<{
+    Params: { userId: string; id: string };
+    Body: SendRecipientDetailsRequestBody;
+  }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const id = Number(req.params.id);
+  const i18n = await useI18n(req);
+  const invoice = await getInvoiceFromDb(userId, id);
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if ((invoice.lifecycleStatus || 'draft') !== 'draft')
+    throw new BadRequestError(i18n.t('error.invoice.issuedImmutable'));
+  const token = randomBytes(32).toString('hex');
+  const expiresAt = createRecipientDetailsExpiration();
+  const prepared = await prepareRecipientDetailsRequestInDb({
+    userId,
+    id,
+    token,
+    expiresAt
+  });
+  if (!prepared)
+    throw new BadRequestError(
+      i18n.t('error.invoice.unableToCreateRecipientDetailsLink')
+    );
+  const url = getAppUrl(`/invoices/details/${token}`);
+  if (req.body.sendEmail && req.body.recipientEmail) {
+    const { error } = await resend.emails.send({
+      to: req.body.recipientEmail,
+      from: appEmailFrom,
+      subject: i18n.t('emails.invoice.recipientDetailsSubject'),
+      html: `<p>${i18n.t('emails.invoice.recipientDetailsMessage')}</p><p><a href="${url}">${url}</a></p>`
+    });
+    if (error)
+      throw new BadRequestError(i18n.t('error.invoice.unableToSendEmail'));
+  }
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'invoice.recipient_details_requested',
+    entityType: 'invoice',
+    entityId: id,
+    newValue: { expiresAt, emailed: !!req.body.sendEmail }
+  });
+  return reply.status(200).send({
+    url,
+    expiresAt,
+    message: i18n.t('success.invoice.recipientDetailsRequested')
+  });
+};
+
+type RecipientDetailsRequest = NonNullable<
+  Awaited<ReturnType<typeof getRecipientDetailsRequestFromDb>>
+>;
+
+function assertRecipientDetailsRequestAvailable(
+  request: RecipientDetailsRequest | undefined,
+  i18n: Awaited<ReturnType<typeof useI18n>>
+): asserts request is RecipientDetailsRequest {
   if (
-    (invoice.paymentMode || 'manual') === 'manual' &&
-    !hasCompleteInvoiceBankDetails(invoice)
+    !request ||
+    request.lifecycleStatus !== 'draft' ||
+    request.revokedAt ||
+    request.submittedAt ||
+    !request.expiresAt ||
+    isLinkExpired(request.expiresAt)
   )
     throw new BadRequestError(
-      i18n.t('error.invoice.manualPaymentDetailsIncomplete')
+      i18n.t('error.invoice.recipientDetailsLinkInvalid')
     );
+}
+
+export const getRecipientDetailsRequest = async (
+  req: FastifyRequest<{ Params: { token: string } }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const request = await getRecipientDetailsRequestFromDb(req.params.token);
+  assertRecipientDetailsRequestAvailable(request, i18n);
+  return reply.status(200).send({
+    receiver: request.receiver,
+    senderName: request.senderName,
+    invoiceLabel: request.invoiceId || request.invoiceSeries || 'Draft invoice'
+  });
+};
+
+export const submitRecipientDetails = async (
+  req: FastifyRequest<{
+    Params: { token: string };
+    Body: RecipientDetailsBody;
+  }>,
+  reply: FastifyReply
+) => {
+  const i18n = await useI18n(req);
+  const request = await getRecipientDetailsRequestFromDb(req.params.token);
+  assertRecipientDetailsRequestAvailable(request, i18n);
+  const result = await submitRecipientDetailsInDb({
+    token: req.params.token,
+    receiver: { ...req.body, type: 'receiver' }
+  });
+  if (!result)
+    throw new BadRequestError(
+      i18n.t('error.invoice.unableToSubmitRecipientDetails')
+    );
+  await recordRequestAudit({
+    req,
+    userId: request.userId,
+    action: 'invoice.recipient_details_submitted',
+    entityType: 'invoice',
+    entityId: request.id,
+    previousValue: request.receiver,
+    newValue: req.body
+  });
+  return reply
+    .status(200)
+    .send({ message: i18n.t('success.invoice.recipientDetailsSubmitted') });
 };
 
 const getManualPaymentReference = (invoice: InvoiceBody) =>
@@ -202,14 +347,18 @@ const resolvePublicInvoicePayment = ({
       invoice.bankingInformation.code &&
       invoice.bankingInformation.accountNumber
   );
+  const hasCryptoPaymentDetails = Boolean(
+    invoice.cryptoWallet?.asset &&
+      invoice.cryptoWallet.network &&
+      invoice.cryptoWallet.address
+  );
   const resolvedMode =
     !canShowPayment ||
     configuredMode === 'disabled' ||
-    !hasManualPaymentDetails
+    (configuredMode === 'manual' && !hasManualPaymentDetails) ||
+    (configuredMode === 'crypto' && !hasCryptoPaymentDetails)
       ? 'disabled'
-      : configuredMode === 'manual'
-        ? 'manual'
-        : 'disabled';
+      : configuredMode;
 
   return {
     configuredMode,
@@ -266,7 +415,7 @@ const buildPublicInvoicePayload = async ({
     signingRequested &&
     !signingSigned &&
     !invoice.recipientSigningRevokedAt &&
-    !isSigningLinkExpired(invoice.recipientSigningExpiresAt);
+    !isLinkExpired(invoice.recipientSigningExpiresAt);
   const payment = resolvePublicInvoicePayment({
     invoice,
     token
@@ -344,7 +493,14 @@ export const getIncomeJournal = async (
       .join(',')
   );
 
-  await recordRequestAudit({ req, userId, action: 'report.income_journal_exported', entityType: 'report', entityId: `${from}:${to}`, newValue: { from, to, rowCount: rows.length } });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'report.income_journal_exported',
+    entityType: 'report',
+    entityId: `${from}:${to}`,
+    newValue: { from, to, rowCount: rows.length }
+  });
 
   reply
     .header('Content-Type', 'text/csv; charset=utf-8')
@@ -428,7 +584,14 @@ export const postInvoice = async (
   if (!insertedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToCreate'));
 
-  await recordRequestAudit({ req, userId, action: 'invoice.created', entityType: 'invoice', entityId: insertedInvoice.id, newValue: insertedInvoice });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'invoice.created',
+    entityType: 'invoice',
+    entityId: insertedInvoice.id,
+    newValue: insertedInvoice
+  });
 
   await captureAnalyticsEventForUser({
     userId,
@@ -498,10 +661,21 @@ export const updateInvoice = async (
     signatureUrl
   );
 
+  if (updatedInvoice === INVOICE_UPDATE_NOT_DRAFT)
+    throw new BadRequestError(i18n.t('error.invoice.issuedImmutable'));
+
   if (!updatedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToUpdate'));
 
-  await recordRequestAudit({ req, userId, action: 'invoice.updated', entityType: 'invoice', entityId: id, previousValue: foundInvoice, newValue: updatedInvoice });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'invoice.updated',
+    entityType: 'invoice',
+    entityId: id,
+    previousValue: foundInvoice,
+    newValue: updatedInvoice
+  });
 
   reply.status(200).send({
     invoice: updatedInvoice,
@@ -524,6 +698,8 @@ export async function updateInvoiceStatus(
   const foundInvoice = await getInvoiceFromDb(userId, id);
 
   if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if ((foundInvoice.lifecycleStatus || 'draft') === 'draft')
+    throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
   if ((foundInvoice.lifecycleStatus || 'draft') === 'voided')
     throw new BadRequestError(i18n.t('error.invoice.voidedImmutable'));
   const updatedInvoice = await updateInvoiceStatusInDb(userId, id, status);
@@ -531,7 +707,15 @@ export async function updateInvoiceStatus(
   if (!updatedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToUpdateStatus'));
 
-  await recordRequestAudit({ req, userId, action: `invoice.status_${status}`, entityType: 'invoice', entityId: id, previousValue: { status: foundInvoice.status }, newValue: { status } });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: `invoice.status_${status}`,
+    entityType: 'invoice',
+    entityId: id,
+    previousValue: { status: foundInvoice.status },
+    newValue: { status }
+  });
 
   reply.status(200).send({ message: i18n.t('success.invoice.statusUpdated') });
 }
@@ -554,7 +738,14 @@ export const deleteInvoice = async (
   if (!deletedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToDelete'));
 
-  await recordRequestAudit({ req, userId, action: 'invoice.deleted', entityType: 'invoice', entityId: id, previousValue: invoice });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'invoice.deleted',
+    entityType: 'invoice',
+    entityId: id,
+    previousValue: invoice
+  });
 
   reply.status(200).send({ message: i18n.t('success.invoice.deleted') });
 };
@@ -640,23 +831,49 @@ export const sendInvoiceEmail = async (
   const userId = Number(req.params.userId);
   const {
     recipientEmail,
-    subject,
+    subject: requestedSubject,
     message,
-    includePublicLink = true,
+    includePublicLink: requestedIncludePublicLink = true,
     file
   } = req.body;
-  const requestSignature = includePublicLink && !!req.body.requestSignature;
   const i18n = await useI18n(req);
 
-  const [invoice, user] = await Promise.all([
+  const [foundInvoice, user] = await Promise.all([
     getInvoiceFromDb(userId, id),
     getUserFromDb(userId)
   ]);
 
   if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
-  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (!foundInvoice)
+    throw new NotFoundError(i18n.t('error.invoice.notFound'));
+
+  let invoice = foundInvoice;
 
   assertInvoiceCanBeIssued({ invoice, user, i18n });
+  const wasDraft = (invoice.lifecycleStatus || 'draft') === 'draft';
+  const includePublicLink = wasDraft ? true : requestedIncludePublicLink;
+  const requestSignature = includePublicLink && !!req.body.requestSignature;
+
+  if (wasDraft) {
+    const issued = await issueInvoiceInDb(userId, id);
+    if (!issued)
+      throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
+    invoice = issued;
+  }
+  const throwDeliveryPreparationError = (message: string): never => {
+    if (wasDraft)
+      throw new InvoiceIssuedEmailError(
+        i18n.t('error.invoice.issuedButUnableToSendEmail')
+      );
+    throw new BadRequestError(message);
+  };
+  const subject = wasDraft
+    ? i18n.t('emails.invoice.subject', {
+        invoiceId: invoice.invoiceId || '',
+        amount: invoice.totalAmount,
+        currency: user.currency.toUpperCase()
+      })
+    : requestedSubject;
 
   let publicInvoiceToken =
     invoice.publicInvoiceToken || randomBytes(32).toString('hex');
@@ -668,7 +885,7 @@ export const sendInvoiceEmail = async (
     const shouldRotatePublicLink = Boolean(
       invoice.publicInvoiceToken &&
         (invoice.publicInvoiceRevokedAt ||
-          isPublicInvoiceLinkExpired(invoice.publicInvoiceExpiresAt))
+          isLinkExpired(invoice.publicInvoiceExpiresAt))
     );
     const preparedPublicInvoice = shouldRotatePublicLink
       ? await regeneratePublicInvoiceFromDb({
@@ -684,19 +901,22 @@ export const sendInvoiceEmail = async (
           expiresAt: publicInvoiceExpiresAt
         });
 
-    if (!preparedPublicInvoice?.publicInvoiceToken)
+    const preparedPublicInvoiceToken =
+      preparedPublicInvoice?.publicInvoiceToken;
+
+    if (!preparedPublicInvoiceToken)
       throw new BadRequestError(
         i18n.t('error.invoice.unableToCreatePublicLink')
       );
 
-    publicInvoiceToken = preparedPublicInvoice.publicInvoiceToken;
+    publicInvoiceToken = preparedPublicInvoiceToken;
   }
 
   if (requestSignature) {
     const shouldRotateSigningLink = Boolean(
       invoice.recipientSigningToken &&
         (invoice.recipientSigningRevokedAt ||
-          isSigningLinkExpired(invoice.recipientSigningExpiresAt) ||
+          isLinkExpired(invoice.recipientSigningExpiresAt) ||
           (invoice.recipientSigningEmail &&
             invoice.recipientSigningEmail.toLowerCase() !==
               recipientEmail.toLowerCase()))
@@ -715,7 +935,7 @@ export const sendInvoiceEmail = async (
       });
 
       if (!regenerated)
-        throw new BadRequestError(
+        throwDeliveryPreparationError(
           i18n.t('error.invoice.unableToRegenerateSigningLink')
         );
     } else if (invoice.recipientSigningToken) {
@@ -731,7 +951,7 @@ export const sendInvoiceEmail = async (
     });
 
     if (!preparedInvoice?.recipientSigningToken)
-      throw new BadRequestError(
+      throwDeliveryPreparationError(
         i18n.t('error.invoice.unableToCreateSigningLink')
       );
   }
@@ -740,16 +960,24 @@ export const sendInvoiceEmail = async (
     ? getAppUrl(`/invoices/public/${publicInvoiceToken}`)
     : undefined;
 
-  const attachment = file
-    ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
-    : undefined;
+  const attachment =
+    file && !wasDraft
+      ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
+      : undefined;
 
   const htmlContent = InvoiceEmail({
     invoiceNumber: invoice.invoiceId || '',
-    amount: `${invoice.totalAmount} ${user.currency}`,
+    amount: `${invoice.totalAmount} ${user.currency.toUpperCase()}`,
     dueDate: invoice.dueDate,
     senderName: user.name || user.email,
-    message: message || i18n.t('emails.invoice.defaultMessage'),
+    message:
+      message ||
+      i18n.t(
+        attachment
+          ? 'emails.invoice.defaultMessage'
+          : 'emails.invoice.defaultLinkMessage'
+      ),
+    hasAttachment: Boolean(attachment),
     translations: {
       title: i18n.t('emails.invoice.title'),
       detailsTitle: i18n.t('emails.invoice.detailsTitle'),
@@ -793,9 +1021,15 @@ export const sendInvoiceEmail = async (
   });
 
   if (error)
-    throw new BadRequestError(i18n.t('error.invoice.unableToSendEmail'));
+    throwDeliveryPreparationError(i18n.t('error.invoice.unableToSendEmail'));
 
-  await recordEmailDeliveryInDb({ userId, invoiceId: id, providerMessageId: data?.id, kind: 'invoice', recipient: recipientEmail });
+  await recordEmailDeliveryInDb({
+    userId,
+    invoiceId: id,
+    providerMessageId: data?.id,
+    kind: 'invoice',
+    recipient: recipientEmail
+  });
 
   await markPublicInvoiceSentInDb({ userId, id, requestSignature });
 
@@ -817,7 +1051,19 @@ export const sendInvoiceEmail = async (
     }
   });
 
-  await recordRequestAudit({ req, userId, action: 'invoice.email_sent', entityType: 'invoice', entityId: id, newValue: { recipientEmail, includePublicLink, requestSignature, hasAttachment: Boolean(attachment) } });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'invoice.email_sent',
+    entityType: 'invoice',
+    entityId: id,
+    newValue: {
+      recipientEmail,
+      includePublicLink,
+      requestSignature,
+      hasAttachment: Boolean(attachment)
+    }
+  });
 
   reply.status(200).send({ message: i18n.t('success.invoice.emailSent') });
 };
