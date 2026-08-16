@@ -45,6 +45,10 @@ const PDFDownloadLink = dynamic(
   }
 );
 
+const PdfPrintButton = dynamic(() => import('../pdf/pdf-print-button'), {
+  ssr: false
+});
+
 const statusIndicatorClassMap: Record<
   InvoiceStatus,
   { dot: string; text: string }
@@ -66,6 +70,7 @@ type Props = {
   isPdfDocumentLoading?: boolean;
   showFooterStatus?: boolean;
   conversionContent?: ReactNode;
+  isDocumentBuilder?: boolean;
 };
 
 const InvoiceModal = ({
@@ -79,12 +84,17 @@ const InvoiceModal = ({
   pdfUrl,
   isPdfDocumentLoading,
   showFooterStatus = false,
-  conversionContent
+  conversionContent,
+  isDocumentBuilder = false
 }: Props) => {
   const t = useTranslations('invoices.pdf');
   const tTable = useTranslations('invoices.table');
   const { invoiceId } = invoiceData;
-  const pdfFileName = invoiceId
+  const pdfFileName = isDocumentBuilder
+    ? invoiceId
+      ? `${invoiceId}.pdf`
+      : 'invoice.pdf'
+    : invoiceId
     ? `${invoiceId}.pdf`
     : invoiceData.id
       ? `draft-${invoiceData.id}.pdf`
@@ -177,7 +187,10 @@ const InvoiceModal = ({
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="min-w-0">
                     <span className="block truncate text-sm font-semibold">
-                      {invoiceId || tTable('lifecycle_status.draft')}
+                      {invoiceId ||
+                        (isDocumentBuilder
+                          ? t('document_builder_title')
+                          : tTable('lifecycle_status.draft'))}
                     </span>
                     {invoiceData.receiver.name && (
                       <span className="text-muted block truncate text-xs">
@@ -306,6 +319,12 @@ const InvoiceModal = ({
                 </div>
               </div>
               <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+                {isDocumentBuilder && pdfDocument ? (
+                  <PdfPrintButton
+                    document={pdfDocument}
+                    label={t('buttons.print_pdf')}
+                  />
+                ) : null}
                 {pdfDocument ? (
                   <PDFDownloadLink
                     document={pdfDocument}

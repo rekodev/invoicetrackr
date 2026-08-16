@@ -1083,14 +1083,26 @@ export const getRecipientDetailsRequestFromDb = async (token: string) => {
 
 export const submitRecipientDetailsInDb = async ({
   token,
-  receiver
+  receiver,
+  publicInvoiceToken,
+  publicInvoiceExpiresAt,
+  receiverSignature
 }: {
   token: string;
   receiver: InvoiceBody['receiver'];
+  publicInvoiceToken: string;
+  publicInvoiceExpiresAt: string;
+  receiverSignature?: string;
 }) =>
   db.transaction(async (tx) => {
     const requests = await tx
-      .select({ id: invoicesTable.id, receiverId: invoicesTable.receiverId })
+      .select({
+        id: invoicesTable.id,
+        userId: invoicesTable.userId,
+        receiverId: invoicesTable.receiverId,
+        invoiceId: invoicesTable.invoiceId,
+        invoiceSeries: invoicesTable.invoiceSeries
+      })
       .from(invoicesTable)
       .where(
         and(
@@ -1118,12 +1130,39 @@ export const submitRecipientDetailsInDb = async ({
       .where(eq(invoiceReceiversTable.id, request.receiverId));
 
     const submittedAt = new Date().toISOString();
+    const invoiceId =
+      request.invoiceId ||
+      (await reserveNextInvoiceNumber(
+        tx,
+        request.userId,
+        request.invoiceSeries || undefined
+      ));
     await tx
       .update(invoicesTable)
-      .set({ recipientDetailsSubmittedAt: submittedAt, updatedAt: submittedAt })
+      .set({
+        invoiceId,
+        lifecycleStatus: 'issued',
+        issuedAt: submittedAt,
+        recipientDetailsSubmittedAt: submittedAt,
+        recipientDetailsRevokedAt: submittedAt,
+        publicInvoiceToken,
+        publicInvoiceExpiresAt,
+        publicInvoiceRevokedAt: null,
+        publicInvoiceSentAt: submittedAt,
+        ...(receiverSignature
+          ? {
+              receiverSignature,
+              recipientSignedAt: submittedAt,
+              recipientSigningExpiresAt: new Date(
+                Date.now() + 90 * 24 * 60 * 60 * 1000
+              ).toISOString()
+            }
+          : {}),
+        updatedAt: submittedAt
+      })
       .where(eq(invoicesTable.id, request.id));
 
-    return { id: request.id, submittedAt };
+    return getInvoiceFromDb(request.userId, request.id, tx);
   });
 
 export async function prepareInvoiceSigningFromDb({

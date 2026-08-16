@@ -400,6 +400,163 @@ describe('Invoice Controller', () => {
     });
   });
 
+  describe('recipient details requests', () => {
+    it('reuses an existing valid recipient details link', async () => {
+      const token = 'existing-details-token';
+      const draft = invoiceFromDbFactory.build({
+        id: 1,
+        lifecycleStatus: 'draft',
+        recipientDetailsToken: token,
+        recipientDetailsExpiresAt: new Date(
+          Date.now() + 60_000
+        ).toISOString(),
+        recipientDetailsSubmittedAt: null,
+        recipientDetailsRevokedAt: null
+      });
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(draft);
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(
+        userFactory.build({ id: testUserId })
+      );
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/invoices/:id/recipient-details-request',
+          { preHandler: mockAuthMiddleware },
+          invoiceController.createRecipientDetailsRequest
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/invoices/1/recipient-details-request`,
+        payload: { sendEmail: false }
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(JSON.parse(response.body).url).toContain(token);
+      expect(
+        invoiceDb.prepareRecipientDetailsRequestInDb
+      ).not.toHaveBeenCalled();
+
+      await app.close();
+    });
+
+    it('does not create a link when non-recipient issuance data is incomplete', async () => {
+      const draft = invoiceFromDbFactory.build({
+        id: 1,
+        lifecycleStatus: 'draft',
+        paymentMode: 'manual',
+        bankingInformation: undefined
+      });
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(draft);
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(
+        userFactory.build({ id: testUserId })
+      );
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post(
+          '/api/:userId/invoices/:id/recipient-details-request',
+          { preHandler: mockAuthMiddleware },
+          invoiceController.createRecipientDetailsRequest
+        );
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: `/api/${testUserId}/invoices/1/recipient-details-request`,
+        payload: { sendEmail: false }
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(
+        invoiceDb.prepareRecipientDetailsRequestInDb
+      ).not.toHaveBeenCalled();
+
+      await app.close();
+    });
+
+    it('completes recipient details and returns the issued public invoice', async () => {
+      const receiver = invoiceFromDbFactory.build().receiver!;
+      const draft = invoiceFromDbFactory.build({
+        id: 1,
+        invoiceId: null,
+        lifecycleStatus: 'draft',
+        recipientDetailsToken: 'details-token',
+        receiver: {
+          ...receiver,
+          name: '',
+          businessNumber: '',
+          address: ''
+        }
+      });
+      const completedReceiver = {
+        ...receiver,
+        name: 'Client UAB',
+        businessNumber: '123456789',
+        address: 'Vilnius',
+        email: 'client@example.com'
+      };
+      const issued = {
+        ...draft,
+        invoiceId: 'SF001',
+        lifecycleStatus: 'issued' as const,
+        issuedAt: new Date().toISOString(),
+        receiver: completedReceiver,
+        publicInvoiceToken: 'public-token'
+      };
+
+      vi.mocked(
+        invoiceDb.getRecipientDetailsRequestFromDb
+      ).mockResolvedValue({
+        id: 1,
+        userId: testUserId,
+        invoiceId: null,
+        invoiceSeries: 'SF',
+        lifecycleStatus: 'draft',
+        expiresAt: new Date(Date.now() + 60_000).toISOString(),
+        submittedAt: null,
+        revokedAt: null,
+        senderName: draft.sender.name,
+        receiver: draft.receiver
+      });
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(draft);
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(
+        userFactory.build({ id: testUserId, language: 'en' })
+      );
+      vi.mocked(invoiceDb.submitRecipientDetailsInDb).mockResolvedValue(issued);
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.put(
+          '/api/invoices/details/:token',
+          invoiceController.submitRecipientDetails
+        );
+      });
+
+      const response = await app.inject({
+        method: 'PUT',
+        url: '/api/invoices/details/details-token',
+        payload: completedReceiver
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(JSON.parse(response.body)).toEqual({
+        invoiceId: 'SF001',
+        publicInvoiceToken: expect.any(String),
+        message: en.success.invoice.recipientDetailsSubmitted
+      });
+      expect(invoiceDb.submitRecipientDetailsInDb).toHaveBeenCalledWith({
+        token: 'details-token',
+        receiver: { ...completedReceiver, type: 'receiver' },
+        publicInvoiceToken: expect.any(String),
+        publicInvoiceExpiresAt: expect.any(String),
+        receiverSignature: undefined
+      });
+      expect(mockResendSend).toHaveBeenCalledTimes(1);
+
+      await app.close();
+    });
+  });
+
   describe('PUT /api/:userId/invoices/:id', () => {
     it('should update an existing invoice', async () => {
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(mockInvoiceForDb);

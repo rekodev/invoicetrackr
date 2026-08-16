@@ -3,8 +3,7 @@ import { unauthorized } from 'next/navigation';
 import { getBankingInformationEntries } from '@/api/banking-information';
 import { getCryptoWallets } from '@/api/crypto-wallet';
 import { auth } from '@/auth';
-import BankingInformationForm from '@/components/profile/banking-information-form';
-import CryptoWalletsForm from '@/components/profile/crypto-wallets-form';
+import PaymentMethodsForm from '@/components/profile/payment-methods-form';
 import { isResponseError } from '@/lib/utils/error';
 
 export default async function PaymentMethodsPage() {
@@ -18,12 +17,10 @@ export default async function PaymentMethodsPage() {
   if (isResponseError(banks) || isResponseError(wallets))
     throw new Error('Failed to load payment methods');
   return (
-    <div className="flex flex-col gap-8">
-      <BankingInformationForm
-        user={session.user}
-        bankAccounts={banks.data.bankAccounts}
-      />
-      <CryptoWalletsForm userId={userId} wallets={wallets.data.cryptoWallets} />
-    </div>
+    <PaymentMethodsForm
+      user={session.user}
+      bankAccounts={banks.data.bankAccounts}
+      cryptoWallets={wallets.data.cryptoWallets}
+    />
   );
 }

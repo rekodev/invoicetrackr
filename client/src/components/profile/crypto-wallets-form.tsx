@@ -1,12 +1,23 @@
 'use client';
 
 import {
+  LockClosedIcon,
+  PencilSquareIcon,
+  PlusIcon,
+  TrashIcon,
+  WalletIcon
+} from '@heroicons/react/24/outline';
+import {
   Button,
   Card,
   CardContent,
+  CardFooter,
+  cn,
   FieldError,
   Input,
   Label,
+  Radio,
+  RadioGroup,
   TextField,
   toast
 } from '@heroui/react';
@@ -20,20 +31,38 @@ import {
   updateCryptoWalletAction
 } from '@/lib/actions/crypto-wallet';
 
-type Props = { userId: number; wallets: Array<CryptoWalletBody> };
+type Props = {
+  userId: number;
+  wallets: Array<CryptoWalletBody>;
+  isEmbedded?: boolean;
+};
 
-const EMPTY_WALLET: CryptoWalletBody = {
+const emptyWallet = (isDefault: boolean): CryptoWalletBody => ({
   label: '',
   asset: '',
   network: '',
   address: '',
   memo: '',
-  isDefault: false
-};
+  isDefault
+});
 
-export default function CryptoWalletsForm({ userId, wallets }: Props) {
+export default function CryptoWalletsForm({
+  userId,
+  wallets,
+  isEmbedded = false
+}: Props) {
   const t = useTranslations('profile.crypto_wallets');
-  const [wallet, setWallet] = useState<CryptoWalletBody>(EMPTY_WALLET);
+  const defaultWallet = wallets.find((item) => item.isDefault);
+  const [selectedWalletId, setSelectedWalletId] = useState(
+    String(defaultWallet?.id || wallets.at(0)?.id || '')
+  );
+  const [wallet, setWallet] = useState<CryptoWalletBody>(() =>
+    emptyWallet(!wallets.length)
+  );
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string | undefined>
+  >({});
   const [isPending, startTransition] = useTransition();
   const isEditing = Boolean(wallet.id);
   const canSubmit = Boolean(
@@ -43,123 +72,232 @@ export default function CryptoWalletsForm({ userId, wallets }: Props) {
       wallet.address.trim()
   );
 
-  const setField = (field: keyof CryptoWalletBody, value: string | boolean) =>
+  const setField = (field: keyof CryptoWalletBody, value: string) => {
     setWallet((current) => ({ ...current, [field]: value }));
+    setValidationErrors((current) => ({ ...current, [field]: undefined }));
+  };
 
-  const reset = () => setWallet(EMPTY_WALLET);
+  const closeEditor = () => {
+    setWallet(emptyWallet(!wallets.length));
+    setValidationErrors({});
+    setIsEditorOpen(false);
+  };
+
+  const startAdding = () => {
+    setWallet(emptyWallet(!wallets.length));
+    setValidationErrors({});
+    setIsEditorOpen(true);
+  };
+
+  const startEditing = (item: CryptoWalletBody) => {
+    setWallet(item);
+    setValidationErrors({});
+    setIsEditorOpen(true);
+  };
 
   const submit = () =>
     startTransition(async () => {
       const response = isEditing
         ? await updateCryptoWalletAction(userId, wallet)
         : await addCryptoWalletAction(userId, wallet);
+
       toast(response.message, {
         variant: response.ok ? 'success' : 'danger'
       });
-      if (response.ok) reset();
+
+      if (!response.ok) {
+        setValidationErrors(response.validationErrors || {});
+        return;
+      }
+
+      closeEditor();
     });
 
-  const remove = (id: number) =>
+  const saveDefault = () =>
     startTransition(async () => {
-      const response = await deleteCryptoWalletAction(userId, id);
+      const selected = wallets.find(
+        (item) => String(item.id) === selectedWalletId
+      );
+      if (!selected) return;
+
+      const response = await updateCryptoWalletAction(userId, {
+        ...selected,
+        isDefault: true
+      });
       toast(response.message, {
         variant: response.ok ? 'success' : 'danger'
       });
-      if (wallet.id === id) reset();
     });
 
-  return (
-    <section className="flex flex-col gap-4">
-      <div>
-        <h2 className="text-xl font-semibold">{t('title')}</h2>
-        <p className="text-muted text-sm">{t('description')}</p>
-      </div>
-      <div className="grid gap-3 md:grid-cols-2">
-        {wallets.map((item) => (
-          <Card key={item.id} variant="secondary" className="border">
-            <CardContent className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <p className="font-semibold">
-                  {item.label}
-                  {item.isDefault ? ` · ${t('default')}` : ''}
-                </p>
-                <p className="text-muted text-sm">
-                  {item.asset} · {item.network}
-                </p>
-                <p className="mt-1 break-all text-sm">{item.address}</p>
-                {item.memo ? (
-                  <p className="text-muted text-sm">
-                    {t('memo')}: {item.memo}
-                  </p>
-                ) : null}
-              </div>
-              <div className="flex shrink-0 flex-col gap-2">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  isDisabled={isPending}
-                  onPress={() => setWallet(item)}
-                >
-                  {t('edit')}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="danger-soft"
-                  isDisabled={item.isDefault || isPending}
-                  onPress={() => item.id && remove(item.id)}
-                >
-                  {t('delete')}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      <Card variant="secondary" className="border p-4">
-        <h3 className="mb-4 font-semibold">
-          {t(isEditing ? 'edit_title' : 'add_title')}
-        </h3>
-        <div className="grid gap-4 md:grid-cols-2">
-          {(['label', 'asset', 'network', 'address', 'memo'] as const).map(
-            (field) => (
-              <TextField
-                key={field}
+  const remove = (item: CryptoWalletBody) =>
+    startTransition(async () => {
+      if (!item.id) return;
+      const response = await deleteCryptoWalletAction(userId, item.id);
+      toast(response.message, {
+        variant: response.ok ? 'success' : 'danger'
+      });
+      if (wallet.id === item.id) closeEditor();
+    });
+
+  const renderWallets = () => {
+    if (!wallets.length) {
+      return (
+        <div className="flex flex-col items-center gap-3 py-8 text-center">
+          <WalletIcon className="text-muted size-10" />
+          <div>
+            <p className="font-semibold">{t('empty_title')}</p>
+            <p className="text-muted mt-1 text-sm">{t('empty_description')}</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <RadioGroup
+        aria-label={t('select_default')}
+        value={selectedWalletId}
+        onChange={setSelectedWalletId}
+      >
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {wallets.map((item) => {
+            const isSelected = selectedWalletId === String(item.id);
+
+            return (
+              <Card
+                key={item.id}
                 variant="secondary"
-                className={field === 'address' ? 'md:col-span-2' : ''}
+                className={cn('group border pt-0', {
+                  'border-accent border-2': isSelected
+                })}
               >
-                <Label>{t(`fields.${field}`)}</Label>
-                <Input
-                  value={String(wallet[field] || '')}
-                  onChange={(event) => setField(field, event.target.value)}
-                />
-                <FieldError />
-              </TextField>
-            )
-          )}
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={!!wallet.isDefault}
-              onChange={(event) => setField('isDefault', event.target.checked)}
-            />
-            {t('use_default')}
-          </label>
+                <CardContent className="flex flex-row items-start gap-2 pr-24">
+                  <Radio value={String(item.id)} className="min-w-0">
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
+                    <Radio.Content>
+                      <Label className="text-large font-semibold">
+                        {item.label}
+                      </Label>
+                      <p className="text-xs font-bold uppercase">
+                        {item.asset} · {item.network}
+                      </p>
+                      <small className="text-muted mt-1 break-all">
+                        {item.address}
+                      </small>
+                      {item.memo ? (
+                        <small className="text-muted mt-1 block">
+                          {t('memo')}: {item.memo}
+                        </small>
+                      ) : null}
+                    </Radio.Content>
+                  </Radio>
+                  <div className="pointer-events-none absolute right-2 top-2 flex gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="tertiary"
+                      aria-label={t('edit')}
+                      onPress={() => startEditing(item)}
+                    >
+                      <PencilSquareIcon className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      isDisabled={item.isDefault}
+                      variant={item.isDefault ? 'tertiary' : 'danger-soft'}
+                      aria-label={t('delete')}
+                      onPress={() => !item.isDefault && remove(item)}
+                    >
+                      {item.isDefault ? (
+                        <LockClosedIcon className="h-4 w-4" />
+                      ) : (
+                        <TrashIcon className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
-        <div className="mt-4 flex gap-2">
-          <Button
-            isDisabled={!canSubmit}
-            isPending={isPending}
-            onPress={submit}
-          >
-            {t(isEditing ? 'save' : 'add')}
-          </Button>
-          {isEditing ? (
-            <Button variant="ghost" isDisabled={isPending} onPress={reset}>
-              {t('cancel')}
-            </Button>
-          ) : null}
-        </div>
-      </Card>
-    </section>
+      </RadioGroup>
+    );
+  };
+
+  const editor = isEditorOpen ? (
+    <Card variant="secondary" className="mt-6 border p-4">
+      <h3 className="mb-4 font-semibold">
+        {t(isEditing ? 'edit_title' : 'add_title')}
+      </h3>
+      <div className="grid gap-4 md:grid-cols-2">
+        {(['label', 'asset', 'network', 'address', 'memo'] as const).map(
+          (field) => (
+            <TextField
+              key={field}
+              variant="secondary"
+              className={field === 'address' ? 'md:col-span-2' : ''}
+              isInvalid={!!validationErrors[field]}
+            >
+              <Label>{t(`fields.${field}`)}</Label>
+              <Input
+                value={String(wallet[field] || '')}
+                onChange={(event) => setField(field, event.target.value)}
+              />
+              <FieldError>{validationErrors[field]}</FieldError>
+            </TextField>
+          )
+        )}
+      </div>
+      <div className="mt-4 flex justify-end gap-2">
+        <Button
+          variant="danger-soft"
+          isDisabled={isPending}
+          onPress={closeEditor}
+        >
+          {t('cancel')}
+        </Button>
+        <Button isDisabled={!canSubmit} isPending={isPending} onPress={submit}>
+          {t(isEditing ? 'save' : 'add')}
+        </Button>
+      </div>
+    </Card>
+  ) : null;
+
+  const content = (
+    <>
+      <div className="flex justify-end px-6 pt-6">
+        <Button
+          variant="secondary"
+          className="w-full sm:w-auto"
+          onPress={startAdding}
+        >
+          <PlusIcon className="h-4 w-4" />
+          {t('add')}
+        </Button>
+      </div>
+      <CardContent className="p-6">
+        {renderWallets()}
+        {editor}
+      </CardContent>
+      <CardFooter className="flex justify-end px-6 py-4">
+        <Button
+          isDisabled={
+            !selectedWalletId ||
+            selectedWalletId === String(defaultWallet?.id)
+          }
+          isPending={isPending}
+          onPress={saveDefault}
+          className="w-full sm:w-auto"
+        >
+          {t('save_default')}
+        </Button>
+      </CardFooter>
+    </>
   );
+
+  if (isEmbedded) return content;
+
+  return <Card className="w-full border">{content}</Card>;
 }

@@ -652,6 +652,7 @@ describe('User Controller', () => {
         method: 'PUT',
         url: `/api/${testUserId}/account-settings`,
         payload: {
+          invoiceEmail: 'invoices@example.com',
           language: 'lt',
           currency: DEFAULT_CURRENCY,
           preferredInvoiceLanguage: 'lt',
@@ -665,6 +666,7 @@ describe('User Controller', () => {
       expect(response.statusCode).toBe(200);
       expect(userDb.updateUserAccountSettingsInDb).toHaveBeenCalledWith(
         testUserId,
+        'invoices@example.com',
         'lt',
         'eur',
         'lt',

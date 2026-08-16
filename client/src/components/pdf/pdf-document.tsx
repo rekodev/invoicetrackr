@@ -29,6 +29,7 @@ type Props = {
   receiverSignatureImage?: string;
   currency: string;
   language: string;
+  showDraftState?: boolean;
 };
 
 export default function PDFDocument({
@@ -37,7 +38,8 @@ export default function PDFDocument({
   senderSignatureImage,
   receiverSignatureImage,
   currency,
-  language
+  language,
+  showDraftState = true
 }: Props) {
   const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
     invoiceData;
@@ -59,7 +61,8 @@ export default function PDFDocument({
     : { ...pdfStyles.tableCol7, width: '25%' };
 
   const isDraft =
-    (invoiceData.lifecycleStatus || 'draft') === 'draft' || !invoiceId;
+    showDraftState &&
+    ((invoiceData.lifecycleStatus || 'draft') === 'draft' || !invoiceId);
   const splitId = splitInvoiceId(invoiceId || '');
   const series = splitId[0];
   const number = splitId[1];
@@ -84,17 +87,20 @@ export default function PDFDocument({
           ? t('businessTitle')
           : t('individualTitle')}{' '}
       </Text>
-      <Text style={pdfStyles.subtitle}>
-        {invoiceId ? (
-          <>
-            {t('series_label')} <Text style={pdfStyles.boldText}>{series}</Text>{' '}
-            {t('invoice_number_label')}&nbsp;
-            <Text style={pdfStyles.boldText}>{number}</Text>
-          </>
-        ) : (
-          t('draft_number_label')
-        )}
-      </Text>
+      {invoiceId || showDraftState ? (
+        <Text style={pdfStyles.subtitle}>
+          {invoiceId ? (
+            <>
+              {t('series_label')}{' '}
+              <Text style={pdfStyles.boldText}>{series}</Text>{' '}
+              {t('invoice_number_label')}&nbsp;
+              <Text style={pdfStyles.boldText}>{number}</Text>
+            </>
+          ) : (
+            t('draft_number_label')
+          )}
+        </Text>
+      ) : null}
     </>
   );
 

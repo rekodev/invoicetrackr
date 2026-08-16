@@ -4,6 +4,7 @@ import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   Chip,
+  cn,
   ComboBox,
   FieldError,
   Input,
@@ -24,6 +25,7 @@ import { useTranslations } from 'next-intl';
 import {
   type ComponentProps,
   type Key,
+  type KeyboardEvent as ReactKeyboardEvent,
   useEffect,
   useMemo,
   useRef
@@ -199,6 +201,19 @@ const InvoiceServicesTable = ({
     remove(index);
   };
 
+  const handleEditorKeyDownCapture = (
+    event: ReactKeyboardEvent<HTMLDivElement>
+  ) => {
+    const editor =
+      event.target instanceof HTMLElement
+        ? event.target.closest('[data-invoice-service-editor]')
+        : null;
+
+    if (!editor || event.key === 'Tab') return;
+
+    event.stopPropagation();
+  };
+
   const renderServiceInput = ({
     isInvalid,
     errorMessage,
@@ -213,10 +228,13 @@ const InvoiceServicesTable = ({
     return (
       <TextField
         aria-label={typeof ariaLabel === 'string' ? ariaLabel : undefined}
+        className="w-full"
         isInvalid={isInvalid}
       >
         <Input
           {...inputProps}
+          className={cn(inputProps.className, 'w-full')}
+          data-invoice-service-editor
           data-invoice-service-focusable
           variant="secondary"
         />
@@ -283,7 +301,8 @@ const InvoiceServicesTable = ({
             control={control}
             render={({ field }) => (
               <ComboBox
-                className="w-28 min-w-28"
+                aria-label={t('a11y.unit_label')}
+                className="w-full min-w-28"
                 variant="secondary"
                 allowsCustomValue
                 inputValue={localizeInvoiceUnit(
@@ -297,6 +316,7 @@ const InvoiceServicesTable = ({
                 <ComboBox.InputGroup>
                   <Input
                     aria-label={t('a11y.unit_label')}
+                    className="w-full"
                     placeholder={t('placeholders.unit')}
                     data-invoice-service-focusable
                   />
@@ -381,7 +401,7 @@ const InvoiceServicesTable = ({
         });
       case 'lineTotal':
         return (
-          <p className="min-w-20 text-right text-sm font-medium">
+          <p className="min-w-20 text-left text-sm font-medium">
             {getCurrencySymbol(currency)}
             {(lineTotals[index] || 0).toFixed(2)}
           </p>
@@ -413,6 +433,7 @@ const InvoiceServicesTable = ({
       ref={servicesTableRef}
       data-invoice-services-table
       className="contents"
+      onKeyDownCapture={handleEditorKeyDownCapture}
     >
       <Table>
         <TableScrollContainer>
@@ -442,7 +463,6 @@ const InvoiceServicesTable = ({
           </TableContent>
         </TableScrollContainer>
       </Table>
-      <p className="text-muted text-xs">{t('calculation_help')}</p>
       {renderBottomContent()}
       {isInvalid && (
         <Chip

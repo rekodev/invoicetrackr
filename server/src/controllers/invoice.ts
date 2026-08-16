@@ -178,6 +178,33 @@ const assertInvoiceCanBeIssued = ({
     throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
 };
 
+const assertInvoiceCanRequestRecipientDetails = ({
+  invoice,
+  user,
+  i18n
+}: {
+  invoice: InvoiceFromDb;
+  user: NonNullable<Awaited<ReturnType<typeof getUserFromDb>>>;
+  i18n: Awaited<ReturnType<typeof useI18n>>;
+}) => {
+  const receiver = invoice.receiver;
+
+  assertInvoiceCanBeIssued({
+    invoice: {
+      ...invoice,
+      receiver: {
+        ...receiver,
+        name: receiver.name.trim() || 'Pending recipient',
+        businessNumber: receiver.businessNumber.trim() || 'Pending',
+        address: receiver.address.trim() || 'Pending',
+        type: 'receiver'
+      }
+    },
+    user,
+    i18n
+  });
+};
+
 export const issueInvoice = async (
   req: FastifyRequest<{ Params: { userId: string; id: string } }>,
   reply: FastifyReply
@@ -218,22 +245,45 @@ export const createRecipientDetailsRequest = async (
   const userId = Number(req.params.userId);
   const id = Number(req.params.id);
   const i18n = await useI18n(req);
-  const invoice = await getInvoiceFromDb(userId, id);
+  const [invoice, user] = await Promise.all([
+    getInvoiceFromDb(userId, id),
+    getUserFromDb(userId)
+  ]);
   if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
   if ((invoice.lifecycleStatus || 'draft') !== 'draft')
     throw new BadRequestError(i18n.t('error.invoice.issuedImmutable'));
-  const token = randomBytes(32).toString('hex');
-  const expiresAt = createRecipientDetailsExpiration();
-  const prepared = await prepareRecipientDetailsRequestInDb({
-    userId,
-    id,
-    token,
-    expiresAt
-  });
-  if (!prepared)
-    throw new BadRequestError(
-      i18n.t('error.invoice.unableToCreateRecipientDetailsLink')
-    );
+  assertInvoiceCanRequestRecipientDetails({ invoice, user, i18n });
+  const existingToken = invoice.recipientDetailsToken;
+  const existingExpiresAt = invoice.recipientDetailsExpiresAt;
+  const canReuseExistingLink = Boolean(
+    existingToken &&
+      existingExpiresAt &&
+      !invoice.recipientDetailsSubmittedAt &&
+      !invoice.recipientDetailsRevokedAt &&
+      !isLinkExpired(existingExpiresAt)
+  );
+  const token =
+    canReuseExistingLink && existingToken
+      ? existingToken
+      : randomBytes(32).toString('hex');
+  const expiresAt =
+    canReuseExistingLink && existingExpiresAt
+      ? existingExpiresAt
+      : createRecipientDetailsExpiration();
+
+  if (!canReuseExistingLink) {
+    const prepared = await prepareRecipientDetailsRequestInDb({
+      userId,
+      id,
+      token,
+      expiresAt
+    });
+    if (!prepared)
+      throw new BadRequestError(
+        i18n.t('error.invoice.unableToCreateRecipientDetailsLink')
+      );
+  }
   const url = getAppUrl(`/invoices/details/${token}`);
   if (req.body.sendEmail && req.body.recipientEmail) {
     const { error } = await resend.emails.send({
@@ -298,21 +348,48 @@ export const getRecipientDetailsRequest = async (
 export const submitRecipientDetails = async (
   req: FastifyRequest<{
     Params: { token: string };
-    Body: RecipientDetailsBody;
+    Body: RecipientDetailsBody & { file?: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {
   const i18n = await useI18n(req);
+  const { file, ...receiverBody } = req.body;
   const request = await getRecipientDetailsRequestFromDb(req.params.token);
   assertRecipientDetailsRequestAvailable(request, i18n);
+  const [invoice, user] = await Promise.all([
+    getInvoiceFromDb(request.userId, request.id),
+    getUserFromDb(request.userId)
+  ]);
+  if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
+
+  const receiver = { ...receiverBody, type: 'receiver' as const };
+  assertInvoiceCanBeIssued({
+    invoice: { ...invoice, receiver },
+    user,
+    i18n
+  });
+
+  const receiverSignature = file
+    ? await uploadSignatureFile(
+        file,
+        i18n.t('error.user.unableToUploadSignature')
+      )
+    : undefined;
+  const publicInvoiceToken = randomBytes(32).toString('hex');
   const result = await submitRecipientDetailsInDb({
     token: req.params.token,
-    receiver: { ...req.body, type: 'receiver' }
+    receiver,
+    publicInvoiceToken,
+    publicInvoiceExpiresAt: createPublicInvoiceExpiration(),
+    receiverSignature
   });
   if (!result)
     throw new BadRequestError(
       i18n.t('error.invoice.unableToSubmitRecipientDetails')
     );
+  if (!result.invoiceId)
+    throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
   await recordRequestAudit({
     req,
     userId: request.userId,
@@ -320,11 +397,65 @@ export const submitRecipientDetails = async (
     entityType: 'invoice',
     entityId: request.id,
     previousValue: request.receiver,
-    newValue: req.body
+    newValue: {
+      receiver,
+      lifecycleStatus: result.lifecycleStatus,
+      invoiceId: result.invoiceId,
+      signed: Boolean(receiverSignature)
+    }
   });
+
+  if (result.sender.email) {
+    const invoiceId = result.invoiceId || String(result.id);
+    const locale = locales[user.language as keyof typeof locales] || locales.en;
+    const translations = locale.emails.invoice.signedNotification;
+    const receiverName = result.receiver.name || translations.recipient;
+    const invoiceUrl = getAppUrl(`/invoices/public/${publicInvoiceToken}`);
+    const notificationMessage = interpolateTranslation(translations.message, {
+      receiverName,
+      invoiceId
+    });
+    const subject = interpolateTranslation(translations.subject, {
+      invoiceId
+    });
+    const emailHtml = InvoiceSignedNotificationEmail({
+      subject,
+      message: notificationMessage,
+      reviewMessage: translations.review,
+      buttonText: translations.reviewButton,
+      invoiceUrl,
+      footer: locale.emails.invoice.footer,
+      copyright: `© ${new Date().getFullYear()} ${locale.emails.invoice.copyright}`
+    });
+
+    await resend.emails
+      .send({
+        to: result.sender.email,
+        from: appEmailFrom,
+        subject,
+        react: emailHtml,
+        text: [
+          notificationMessage,
+          '',
+          translations.review,
+          invoiceUrl
+        ].join('\n')
+      })
+      .catch((error) => {
+        req.log.error(
+          { error, invoiceId: result.id },
+          'Unable to send invoice received notification'
+        );
+      });
+  }
+
   return reply
     .status(200)
-    .send({ message: i18n.t('success.invoice.recipientDetailsSubmitted') });
+    .send({
+      invoiceId: result.invoiceId,
+      publicInvoiceToken,
+      message: i18n.t('success.invoice.recipientDetailsSubmitted')
+    });
 };
 
 const getManualPaymentReference = (invoice: InvoiceBody) =>

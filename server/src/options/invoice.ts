@@ -20,6 +20,7 @@ import {
   sendInvoiceEmailBodySchema,
   sendRecipientDetailsRequestBodySchema,
   signInvoiceResponseSchema,
+  submitRecipientDetailsResponseSchema,
   updateInvoiceResponseSchema
 } from '@invoicetrackr/types';
 import { RouteShorthandOptionsWithHandler } from 'fastify';
@@ -211,9 +212,10 @@ export const getRecipientDetailsRequestOptions: RouteShorthandOptionsWithHandler
 
 export const submitRecipientDetailsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: recipientDetailsBodySchema,
-    response: { 200: messageResponseSchema }
+    body: recipientDetailsBodySchema.safeExtend({ file: z.any().nullish() }),
+    response: { 200: submitRecipientDetailsResponseSchema }
   },
+  preValidation: preValidateFileAndFields,
   handler: submitRecipientDetails
 };
 

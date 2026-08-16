@@ -64,6 +64,7 @@ export default function LanguageSwitcher({ user }: Props) {
     if (user?.id) {
       await updateUserAccountSettingsAction({
         userId: Number(user.id),
+        invoiceEmail: user.invoiceEmail || user.email || '',
         language: selectedLanguage,
         preferredInvoiceLanguage:
           user.preferredInvoiceLanguage || selectedLanguage,

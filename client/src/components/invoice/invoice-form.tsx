@@ -42,6 +42,7 @@ import CompleteProfile from '../ui/complete-profile';
 import InvoiceDueDatePreselectionChips from './invoice-due-date-preselection-chips';
 import InvoiceFormReceiverModal from './invoice-form-receiver-modal';
 import InvoiceServicesTable from './invoice-services-table';
+import InvoiceServicesHeading from './invoice-services-heading';
 import PaymentMethodDialog, {
   type PaymentMethodSelection
 } from './payment-method-dialog';
@@ -579,7 +580,11 @@ const InvoiceForm = ({
 
   const renderInvoiceServices = () => (
     <div className="col-span-4 flex flex-col gap-4">
-      <h4>{t('services_heading')}</h4>
+      <InvoiceServicesHeading
+        label={t('services_heading')}
+        explanation={t('services_explanation')}
+        formula={t('services_formula')}
+      />
       <InvoiceServicesTable
         currency={currency}
         invoiceServices={invoiceData?.services}

@@ -42,6 +42,9 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
   const isSigned = Boolean(
     invoice.receiverSignature || invoice.recipientSignedAt
   );
+  const isAcknowledged = Boolean(
+    invoice.recipientDetailsSubmittedAt || isSigned
+  );
   const isPaid = Boolean(invoice.status === 'paid');
   const currency = DEFAULT_CURRENCY;
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
@@ -82,7 +85,10 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8">
-      <InvoiceSigningHeader invoice={invoice} />
+      <InvoiceSigningHeader
+        invoice={invoice}
+        isAcknowledged={isAcknowledged}
+      />
 
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <InvoiceSigningSummary
@@ -93,6 +99,7 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
         <aside className="flex flex-col gap-4">
           <InvoiceSigningPanel
             invoice={invoice}
+            isAcknowledged={isAcknowledged}
             isPaid={isPaid}
             isPending={isSigningPending}
             isSigningRequested={publicInvoice.signing.requested}

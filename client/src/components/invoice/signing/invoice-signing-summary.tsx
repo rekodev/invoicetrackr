@@ -46,29 +46,27 @@ export default function InvoiceSigningSummary({
 
   return (
     <Card className="h-full border shadow-sm">
-      <CardHeader className="border-default-200 flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4">
-        <div className="flex items-center gap-3">
-          <DocumentTextIcon className="text-secondary h-6 w-6" />
-          <div>
-            <h2 className="font-semibold">{t('summary_title')}</h2>
-            <p className="text-muted text-sm">
-              {invoice.invoiceId || t('invoice')}
-            </p>
+      <CardHeader className="border-default-200 block border-b px-5 py-4">
+        <div className="flex w-full items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <DocumentTextIcon className="text-secondary h-6 w-6" />
+            <div>
+              <h2 className="font-semibold">{t('summary_title')}</h2>
+              <p className="text-muted text-sm">
+                {invoice.invoiceId || t('invoice')}
+              </p>
+            </div>
           </div>
+          <Button variant="secondary" onPress={onOpenPdf}>
+            <EyeIcon className="h-4 w-4" />
+            {t('view_pdf')}
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          className="w-full sm:w-auto"
-          onPress={onOpenPdf}
-        >
-          <EyeIcon className="h-4 w-4" />
-          {t('view_pdf')}
-        </Button>
       </CardHeader>
       <CardContent className="gap-6 p-5 sm:p-6">
         <div className="grid gap-4 sm:grid-cols-2">
           {[invoice.sender, invoice.receiver].map((party) => (
-            <div key={party.type} className="bg-default-100 rounded-lg p-4">
+            <div key={party.type} className="py-4">
               <p className="text-muted text-xs font-medium uppercase">
                 {t(party.type)}
               </p>
@@ -191,7 +189,7 @@ export default function InvoiceSigningSummary({
         </div>
 
         {invoice.bankingInformation && (
-          <div className="bg-default-100 mt-auto flex gap-3 rounded-lg p-4">
+          <div className="mt-auto flex gap-3 py-4">
             <BanknotesIcon className="text-muted h-5 w-5 shrink-0" />
             <div className="min-w-0 text-sm">
               <p className="font-medium">{t('payment_details')}</p>
@@ -204,12 +202,16 @@ export default function InvoiceSigningSummary({
                 <p className="break-all">
                   {invoice.bankingInformation.accountNumber}
                 </p>
+                <p className="text-muted">{t('payment_reference')}</p>
+                <p>
+                  {invoice.manualPaymentReference || invoice.invoiceId || ''}
+                </p>
               </div>
             </div>
           </div>
         )}
         {invoice.cryptoWallet ? (
-          <div className="bg-default-100 mt-auto flex gap-3 rounded-lg p-4">
+          <div className="mt-auto flex gap-3 py-4">
             <BanknotesIcon className="text-muted h-5 w-5 shrink-0" />
             <div className="min-w-0 text-sm">
               <p className="font-medium">{t('payment_details')}</p>
@@ -226,6 +228,10 @@ export default function InvoiceSigningSummary({
                     <p>{invoice.cryptoWallet.memo}</p>
                   </>
                 ) : null}
+                <p className="text-muted">{t('payment_reference')}</p>
+                <p>
+                  {invoice.manualPaymentReference || invoice.invoiceId || ''}
+                </p>
               </div>
             </div>
           </div>

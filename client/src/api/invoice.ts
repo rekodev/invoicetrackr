@@ -18,6 +18,7 @@ import type {
   RevokePublicInvoiceLinkResponse,
   SendInvoiceEmailResponse,
   SignInvoiceResponse,
+  SubmitRecipientDetailsResponse,
   UpdateInvoiceResponse,
   UpdateInvoiceStatusResponse
 } from '@invoicetrackr/types';
@@ -49,8 +50,24 @@ export const getRecipientDetailsRequest = (token: string) =>
 
 export const submitRecipientDetails = (
   token: string,
-  receiver: InvoiceBody['receiver']
-) => api.put<{ message: string }>(`/api/invoices/details/${token}`, receiver);
+  receiver: InvoiceBody['receiver'],
+  signature?: File | string
+) => {
+  if (signature instanceof File) {
+    const formData = buildFormData(receiver);
+    formData.append('file', signature);
+
+    return api.put<SubmitRecipientDetailsResponse>(
+      `/api/invoices/details/${token}`,
+      formData
+    );
+  }
+
+  return api.put<SubmitRecipientDetailsResponse>(
+    `/api/invoices/details/${token}`,
+    receiver
+  );
+};
 
 export const getPublicInvoiceSigning = async (token: string) =>
   await api.get<GetPublicInvoiceSigningResponse>(`/api/invoices/sign/${token}`);

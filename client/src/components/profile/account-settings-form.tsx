@@ -15,9 +15,8 @@ import {
   TextField,
   toast
 } from '@heroui/react';
-import type { DefaultInvoiceVatMode } from '@invoicetrackr/types';
+import type { DefaultInvoiceVatMode, User } from '@invoicetrackr/types';
 import Link from 'next/link';
-import { User } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -29,6 +28,7 @@ import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
 import DeleteAccountModal from './delete-account-modal';
 
 type AccountSettingsFormModel = {
+  invoiceEmail: string;
   language: string;
   preferredInvoiceLanguage: string;
   defaultInvoiceVatMode: DefaultInvoiceVatMode;
@@ -61,6 +61,7 @@ const AccountSettingsForm = ({ user }: Props) => {
     reset
   } = useForm<AccountSettingsFormModel>({
     defaultValues: {
+      invoiceEmail: user.invoiceEmail || user.email || '',
       language: user?.language,
       preferredInvoiceLanguage: user?.preferredInvoiceLanguage || user.language,
       defaultInvoiceVatMode: isVatPayer
@@ -78,6 +79,7 @@ const AccountSettingsForm = ({ user }: Props) => {
 
     const response = await updateUserAccountSettingsAction({
       userId: Number(user.id),
+      invoiceEmail: data.invoiceEmail,
       language: data.language,
       preferredInvoiceLanguage: data.preferredInvoiceLanguage,
       isVatPayer,
@@ -157,6 +159,29 @@ const AccountSettingsForm = ({ user }: Props) => {
             {t('invoice_defaults.description')}
           </p>
         </div>
+        <Controller
+          control={control}
+          name="invoiceEmail"
+          render={({ field }) => (
+            <TextField
+              className="w-full"
+              variant="secondary"
+              isInvalid={!!errors.invoiceEmail}
+            >
+              <Label>{t('invoice_defaults.invoice_email')}</Label>
+              <Input
+                {...field}
+                value={field.value || ''}
+                type="email"
+                placeholder={t('invoice_defaults.invoice_email_placeholder')}
+              />
+              <p className="text-muted text-xs">
+                {t('invoice_defaults.invoice_email_description')}
+              </p>
+              <FieldError>{errors.invoiceEmail?.message}</FieldError>
+            </TextField>
+          )}
+        />
         <Controller
           control={control}
           name="preferredInvoiceLanguage"
