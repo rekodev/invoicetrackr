@@ -516,8 +516,8 @@ describe('Invoice Controller', () => {
         expiresAt: new Date(Date.now() + 60_000).toISOString(),
         submittedAt: null,
         revokedAt: null,
-        senderName: draft.sender.name,
-        receiver: draft.receiver
+        senderName: draft.sender!.name,
+        receiver: draft.receiver!
       });
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(draft);
       vi.mocked(userDb.getUserFromDb).mockResolvedValue(

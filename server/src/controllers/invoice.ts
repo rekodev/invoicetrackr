@@ -189,6 +189,9 @@ const assertInvoiceCanRequestRecipientDetails = ({
 }) => {
   const receiver = invoice.receiver;
 
+  if (!receiver)
+    throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
+
   assertInvoiceCanBeIssued({
     invoice: {
       ...invoice,
@@ -363,7 +366,16 @@ export const submitRecipientDetails = async (
   if (!invoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
   if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
 
-  const receiver = { ...receiverBody, type: 'receiver' as const };
+  if (!invoice.receiver)
+    throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
+
+  const receiver = {
+    ...receiverBody,
+    id: invoice.receiver.id,
+    email: receiverBody.email || '',
+    vatNumber: receiverBody.vatNumber || null,
+    type: 'receiver' as const
+  };
   assertInvoiceCanBeIssued({
     invoice: { ...invoice, receiver },
     user,
@@ -389,6 +401,8 @@ export const submitRecipientDetails = async (
       i18n.t('error.invoice.unableToSubmitRecipientDetails')
     );
   if (!result.invoiceId)
+    throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
+  if (!result.sender || !result.receiver)
     throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
   await recordRequestAudit({
     req,
