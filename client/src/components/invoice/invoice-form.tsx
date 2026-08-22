@@ -41,8 +41,8 @@ import SignaturePad from '../signature-pad';
 import CompleteProfile from '../ui/complete-profile';
 import InvoiceDueDatePreselectionChips from './invoice-due-date-preselection-chips';
 import InvoiceFormReceiverModal from './invoice-form-receiver-modal';
-import InvoiceServicesTable from './invoice-services-table';
 import InvoiceServicesHeading from './invoice-services-heading';
+import InvoiceServicesTable from './invoice-services-table';
 import PaymentMethodDialog, {
   type PaymentMethodSelection
 } from './payment-method-dialog';
