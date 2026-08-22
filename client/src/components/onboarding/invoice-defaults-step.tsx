@@ -54,6 +54,7 @@ export default function InvoiceDefaultsStep({ user, onSuccess }: Props) {
     const normalizedSeries = defaults.defaultInvoiceSeries.trim().toUpperCase();
     const settingsResponse = await updateUserAccountSettingsAction({
       userId: user.id,
+      invoiceEmail: user.invoiceEmail || user.email || '',
       language: user.language,
       preferredInvoiceLanguage: user.preferredInvoiceLanguage || user.language,
       isVatPayer: user.isVatPayer,

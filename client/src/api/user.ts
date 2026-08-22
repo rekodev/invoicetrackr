@@ -128,6 +128,7 @@ export const deleteUserProfilePicture = async (userId: number) =>
 export const updateUserAccountSettings = async (
   userId: number,
   {
+    invoiceEmail,
     language,
     currency,
     preferredInvoiceLanguage,
@@ -136,6 +137,7 @@ export const updateUserAccountSettings = async (
     defaultInvoiceSeries,
     defaultPaymentTermsDays
   }: {
+    invoiceEmail: AccountSettingsBody['invoiceEmail'];
     language: AccountSettingsBody['language'];
     currency: AccountSettingsBody['currency'];
     preferredInvoiceLanguage?: AccountSettingsBody['preferredInvoiceLanguage'];
@@ -148,6 +150,7 @@ export const updateUserAccountSettings = async (
   await api.put<UpdateUserAccountSettingsResponse>(
     `/api/users/${userId}/account-settings`,
     {
+      invoiceEmail,
       language,
       currency,
       preferredInvoiceLanguage,

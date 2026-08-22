@@ -140,6 +140,12 @@ export const getRecipientDetailsResponseSchema = z.object({
   invoiceLabel: z.string()
 });
 
+export const submitRecipientDetailsResponseSchema = z.object({
+  invoiceId: z.string(),
+  publicInvoiceToken: z.string(),
+  message: z.string()
+});
+
 export const getExpensesResponseSchema = z.object({
   expenses: z.array(expenseBodySchema)
 });
@@ -311,6 +317,9 @@ export type RecipientDetailsRequestResponse = z.infer<
 >;
 export type GetRecipientDetailsResponse = z.infer<
   typeof getRecipientDetailsResponseSchema
+>;
+export type SubmitRecipientDetailsResponse = z.infer<
+  typeof submitRecipientDetailsResponseSchema
 >;
 export type GetPublicInvoiceSigningResponse = z.infer<
   typeof getPublicInvoiceSigningResponseSchema

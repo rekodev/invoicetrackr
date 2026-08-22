@@ -43,6 +43,7 @@
     "breadcrumbs": {
         "account_settings": "Paskyros nustatymai",
         "banking_information": "Bankinė informacija",
+        "payment_methods": "Mokėjimo būdai",
         "change_password": "Pakeisti slaptažodį",
         "clients": "Klientai",
         "create_invoice": "Sukurti sąskaitą faktūrą",
@@ -56,7 +57,7 @@
         "payments": "Mokėjimai",
         "reports": "Ataskaitos",
         "login": "Prisijungti",
-        "new": "Naujas",
+        "new": "Nauja",
         "onboarding": "Įvedimas",
         "personal_information": "Asmeninė informacija",
         "privacy_policy": "Privatumo politika",
@@ -562,8 +563,14 @@
                 "tooltip_issue": "Išrašyti sąskaitą",
                 "tooltip_request_details": "Prašyti gavėjo duomenų",
                 "confirm_issue": "Išrašyti sąskaitą dabar? Jai bus suteiktas galutinis numeris ir jos nebegalėsite redaguoti.",
-                "confirm_email_details": "Siųsti gavėjo duomenų užklausą išsaugotu el. paštu? Pasirinkite Atšaukti, jei norite nukopijuoti nuorodą.",
-                "prompt_details_email": "Įveskite el. paštą užklausai siųsti arba pasirinkite Atšaukti, jei norite nukopijuoti nuorodą.",
+                "request_details_title": "Prašyti gavėjo duomenų",
+                "request_details_description": "Gavėjas galės užpildyti savo rekvizitus ir patvirtinti sąskaitos gavimą. Patvirtinus sąskaita bus išrašyta automatiškai.",
+                "recipient_email": "Gavėjo el. paštas",
+                "recipient_email_placeholder": "klientas@example.com",
+                "cancel": "Atšaukti",
+                "copy_link": "Kopijuoti nuorodą",
+                "send_email": "Siųsti el. paštu",
+                "request_details_failed": "Nepavyko sukurti gavėjo duomenų užklausos.",
                 "details_link_copied": "Gavėjo duomenų nuoroda nukopijuota.",
                 "details_request_emailed": "Gavėjo duomenų užklausa išsiųsta el. paštu.",
                 "tooltip_copy_public_link": "Kopijuoti viešą sąskaitos nuorodą",
@@ -629,6 +636,7 @@
                 "print_pdf": "Spausdinti PDF",
                 "close": "Uždaryti"
             },
+            "document_builder_title": "Sąskaita faktūra",
             "past_due_alert": "Saskaita faktūra vėluoja {days}d. Apmokėjimo terminas buvo {dueDate}."
         }
     },
@@ -759,13 +767,15 @@
         }
     },
     "invoice_signing": {
-        "eyebrow": "Kliento patvirtinimas",
         "title": "Gauta sąskaita iš",
         "subtitle": "Peržiūrėkite sąskaitą {invoiceId}, pridėkite ranka pieštą patvirtinimą, jei viskas teisinga, ir atsisiųskite PDF savo įrašams.",
+        "subtitle_acknowledged": "Sąskaita {invoiceId} išrašyta ir patvirtinta. Atsisiųskite PDF savo įrašams.",
         "signed_status": "Patvirtinta",
         "loading_pdf": "Įkeliamas PDF...",
         "panel_title": "Patvirtinti šią sąskaitą",
         "panel_description": "Peržiūrėkite šalis, bankinio pavedimo duomenis ir patvirtinimo prašymą.",
+        "panel_title_acknowledged": "Sąskaitos duomenys",
+        "panel_description_acknowledged": "Peržiūrėkite šalis ir mokėjimo duomenis, tada atsisiųskite sąskaitą savo įrašams.",
         "receiver": "Gavėjas",
         "sender": "Siuntėjas",
         "summary_title": "Sąskaitos santrauka",
@@ -797,8 +807,8 @@
         "payment_action_title": "Apmokėti sąskaitą",
         "payment_action_paid_title": "Mokėjimas gautas",
         "payment_action_paid_subtitle": "Papildomai apmokėti šios sąskaitos nereikia.",
-        "payment_action_bank": "Apmokėkite bankiniu pavedimu pagal žemiau pateiktus rekvizitus.",
-        "payment_action_crypto": "Sąskaitos suma lieka nurodyta tradicine valiuta. Suderinkite kriptovaliutos sumą su siuntėju, tada naudokite tiksliai nurodytą turtą ir tinklą.",
+        "payment_action_bank": "Apmokėkite bankiniu pavedimu pagal sąskaitos santraukoje pateiktus rekvizitus.",
+        "payment_action_crypto": "Suderinkite kriptovaliutos sumą su siuntėju ir naudokite sąskaitos santraukoje pateiktus piniginės duomenis.",
         "voided_invoice_title": "Sąskaita anuliuota",
         "voided_invoice_description": "Siuntėjas anuliavo šią sąskaitą. Atsisiųskite ją tik savo įrašams.",
         "canceled_invoice_title": "Sąskaita atšaukta",
@@ -952,6 +962,9 @@
             "invoice_defaults": {
                 "title": "Sąskaitų numatytieji nustatymai",
                 "description": "Naudojama kuriant naujas išsaugotas sąskaitas. Esamos sąskaitos išlaiko savo reikšmes.",
+                "invoice_email": "Sąskaitų el. paštas",
+                "invoice_email_placeholder": "saskaitos@example.com",
+                "invoice_email_description": "Naudojamas kaip siuntėjo ir atsakymo adresas naujose sąskaitose.",
                 "default_vat_mode": "Numatytasis PVM taikymas",
                 "default_series": "Numatytoji sąskaitos serija",
                 "payment_terms": "Numatytasis apmokėjimo terminas",
@@ -1048,6 +1061,10 @@
             "add": "Pridėti piniginę",
             "save": "Išsaugoti piniginę",
             "cancel": "Atšaukti",
+            "empty_title": "Nėra kriptovaliutų piniginių",
+            "empty_description": "Pridėkite piniginę, kad jos mokėjimo instrukcijas galėtumėte naudoti sąskaitose.",
+            "select_default": "Pasirinkite numatytąją kriptovaliutų piniginę",
+            "save_default": "Išsaugoti numatytąją",
             "fields": {
                 "label": "Piniginės pavadinimas",
                 "asset": "Turtas / žetonas",
@@ -1055,6 +1072,13 @@
                 "address": "Piniginės adresas",
                 "memo": "Memo / žyma (neprivaloma)"
             }
+        },
+        "payment_methods": {
+            "title": "Mokėjimo būdai",
+            "description": "Tvarkykite banko sąskaitas ir kriptovaliutų piniginių instrukcijas, naudojamas išsaugotose sąskaitose.",
+            "selector_label": "Mokėjimo būdų kategorija",
+            "bank_accounts": "Banko sąskaitos",
+            "crypto_wallets": "Kriptovaliutų piniginės"
         }
     },
     "forgot_password": {
@@ -1179,7 +1203,6 @@
             "vat_total": "PVM suma",
             "grand_total": "Bendra suma",
             "delete_service": "Ištrinti paslaugą",
-            "calculation_help": "Kiekis × vieneto kaina = eilutės suma",
             "units": {
                 "service": "Paslauga",
                 "hour": "Valanda",
@@ -1328,8 +1351,8 @@
             },
             "modals": {
                 "select_client": "Pasirinkti klientą",
-                "use_saved_payment_details": "Naudoti išsaugotus mokėjimo duomenis",
-                "select_payment_method": "Pasirinkti išsaugotus mokėjimo duomenis",
+                "use_saved_payment_details": "Pasirinkti mokėjimo būdą",
+                "select_payment_method": "Pasirinkti mokėjimo būdą",
                 "add_payment_method": "Pridėti mokėjimo būdą",
                 "payment_method_type": "Mokėjimo būdo tipas",
                 "bank_account": "Banko sąskaita",
@@ -1350,6 +1373,8 @@
                 "modal_cta_button": "Sukurti paskyrą ir siųsti sąskaitas"
             },
             "services_heading": "Paslaugos",
+            "services_explanation": "Aprašymas nurodo paslaugą ar prekę. Vienetas nusako matavimo būdą. Kiekis – vienetų skaičius, o vieneto kaina – vieno vieneto kaina.",
+            "services_formula": "Kiekis × Vieneto kaina = Eilutės suma",
             "signature_heading": "Parašas",
             "banking_details": "Bankinė informacija",
             "invoice_details": "Sąskaitos faktūros informacija",
@@ -1363,17 +1388,19 @@
         }
     },
     "recipient_details": {
-        "submitted_title": "Duomenys pateikti",
-        "submitted_description": "{sender} patikrins duomenis prieš išrašydamas sąskaitą.",
-        "draft_from": "Juodraštis {invoice}, siuntėjas {sender}",
+        "draft_from": "Sąskaitos faktūros juodraštis, siuntėjas – {sender}",
         "title": "Užpildykite sąskaitos gavėjo duomenis",
-        "description": "Šis veiksmas neišrašo sąskaitos ir nekeičia jos sumos. Siuntėjas pirmiausia patikrins jūsų duomenis.",
+        "description": "Patvirtinkite gavėjo duomenis ir gaukite galutinę sąskaitą. Čia negalima keisti sumos ar paslaugų.",
+        "invalid_title": "Ši nuoroda nebegalioja",
+        "invalid_description": "Paprašykite sąskaitos siuntėjo dar kartą nukopijuoti gavėjo duomenų nuorodą.",
         "business_type": "Gavėjo tipas",
         "business": "Verslas",
         "individual": "Fizinis asmuo",
         "company_number": "Įmonės kodas",
         "activity_number": "Individualios veiklos pažymos numeris",
-        "submit": "Pateikti peržiūrai",
+        "signature_title": "Parašas (neprivaloma)",
+        "signature_description": "Jei norite, pridėkite pieštą patvirtinimą, kuris bus įtrauktas į išrašytą sąskaitą.",
+        "submit": "Patvirtinti duomenis ir gauti sąskaitą",
         "fields": {
             "name": "Vardas arba pavadinimas",
             "vatNumber": "PVM mokėtojo kodas (neprivaloma)",

@@ -105,6 +105,7 @@ export async function completeUserOnboardingAction({
 
 export async function updateUserAccountSettingsAction({
   userId,
+  invoiceEmail,
   language,
   preferredInvoiceLanguage,
   isVatPayer,
@@ -113,6 +114,7 @@ export async function updateUserAccountSettingsAction({
   defaultPaymentTermsDays
 }: {
   userId: number;
+  invoiceEmail: AccountSettingsBody['invoiceEmail'];
   language: AccountSettingsBody['language'];
   preferredInvoiceLanguage?: AccountSettingsBody['preferredInvoiceLanguage'];
   isVatPayer: AccountSettingsBody['isVatPayer'];
@@ -125,6 +127,7 @@ export async function updateUserAccountSettingsAction({
     : 'no_vat';
 
   const response = await updateUserAccountSettings(userId, {
+    invoiceEmail,
     language,
     currency: DEFAULT_CURRENCY,
     preferredInvoiceLanguage,
@@ -144,6 +147,7 @@ export async function updateUserAccountSettingsAction({
 
   await updateSessionAction({
     newSession: {
+      invoiceEmail,
       language,
       preferredInvoiceLanguage,
       currency: DEFAULT_CURRENCY,

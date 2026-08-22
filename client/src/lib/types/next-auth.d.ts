@@ -14,6 +14,7 @@ declare module 'next-auth' {
     id: string;
     name: string;
     email: string;
+    invoiceEmail: string;
     language: string;
     preferredInvoiceLanguage: string;
     isVatPayer: boolean;

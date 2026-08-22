@@ -110,6 +110,7 @@ export const oauthUserBodySchema = z.object({
 
 export const accountSettingsBodySchema = userBodyBaseSchema
   .pick({
+    invoiceEmail: true,
     currency: true,
     language: true,
     preferredInvoiceLanguage: true,
@@ -119,6 +120,7 @@ export const accountSettingsBodySchema = userBodyBaseSchema
     defaultPaymentTermsDays: true
   })
   .extend({
+    invoiceEmail: z.email('validation.user.email'),
     preferredInvoiceLanguage: z.string().max(2).min(2).optional(),
     currency: currencySchema,
     language: z.string().max(2).min(2)

@@ -220,7 +220,7 @@ export default {
       emailSent: 'Email sent successfully',
       issued: 'Invoice issued successfully',
       recipientDetailsRequested: 'Recipient details request is ready',
-      recipientDetailsSubmitted: 'Details submitted for sender review',
+      recipientDetailsSubmitted: 'Invoice received and issued successfully',
       signed: 'Invoice acknowledgement recorded successfully',
       signingLinkRevoked: 'Acknowledgement link revoked',
       signingLinkRegenerated: 'Fresh acknowledgement link generated',

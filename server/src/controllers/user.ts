@@ -660,6 +660,7 @@ export const updateUserAccountSettings = async (
 ) => {
   const userId = Number(req.params.userId);
   const {
+    invoiceEmail,
     currency,
     language,
     preferredInvoiceLanguage,
@@ -672,6 +673,7 @@ export const updateUserAccountSettings = async (
 
   const updatedUser = await updateUserAccountSettingsInDb(
     userId,
+    invoiceEmail,
     language,
     currency,
     preferredInvoiceLanguage,

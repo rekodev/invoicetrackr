@@ -1,25 +1,16 @@
 'use client';
 
-import {
-  ArrowRightIcon,
-  EyeIcon,
-  PaperAirplaneIcon
-} from '@heroicons/react/24/outline';
+import { EyeIcon } from '@heroicons/react/24/outline';
 import {
   Alert,
   Button,
-  buttonVariants,
   Card,
   Chip,
   FieldError,
   Input,
   Label,
-  Link,
-  ListBox,
-  ListBoxItem,
   Radio,
   RadioGroup,
-  Select,
   TextField
 } from '@heroui/react';
 import type { InvoiceBody } from '@invoicetrackr/types';
@@ -27,9 +18,6 @@ import { useTranslations } from 'next-intl';
 import { type ComponentProps, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
-import { captureAnalyticsEvent } from '@/lib/analytics/client';
-import { analyticsEvents } from '@/lib/analytics/events';
-import { SIGN_UP_PAGE } from '@/lib/constants/pages';
 import { Currency } from '@/lib/types/currency';
 import { calculateInvoiceTotals } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/date';
@@ -37,6 +25,7 @@ import { formatDate } from '@/lib/utils/date';
 import PDFDocument from '../pdf/pdf-document';
 import SignaturePad from '../signature-pad';
 import InvoiceModal from './invoice-modal';
+import InvoiceServicesHeading from './invoice-services-heading';
 import InvoiceServicesTable from './invoice-services-table';
 
 type TextInputProps = ComponentProps<typeof Input>;
@@ -74,15 +63,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
         { amount: 0, quantity: 1, description: '', unit: 'service', vatRate: 0 }
       ],
       bankingInformation: { name: '', code: '', accountNumber: '' },
-      cryptoWallet: {
-        label: '',
-        asset: '',
-        network: '',
-        address: '',
-        memo: ''
-      },
       paymentMode: 'manual',
-      manualPaymentReference: '',
       status: 'pending',
       totalAmount: '0.00',
       date: formatDate(new Date().toISOString()),
@@ -100,7 +81,6 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
   } = methods;
   const senderBusinessType = watch('sender.businessType');
   const receiverBusinessType = watch('receiver.businessType');
-  const paymentMode = watch('paymentMode') || 'manual';
 
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [senderSignature, setSenderSignature] = useState<
@@ -111,19 +91,10 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     !senderSignature || typeof senderSignature === 'string'
       ? ''
       : URL.createObjectURL(senderSignature);
-  const signupUrl = `${SIGN_UP_PAGE}?source=free-invoice`;
-
   const handleSignatureChange = (signature: string | File) => {
     setSenderSignature(signature);
     setValue('senderSignature', signature);
     clearErrors('senderSignature');
-  };
-
-  const handleSignupClick = (source: string) => {
-    captureAnalyticsEvent(analyticsEvents.freeInvoiceSignUpClicked, {
-      source,
-      line_count: getValues('services').length
-    });
   };
 
   const renderTextField = ({
@@ -360,7 +331,11 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
 
   const renderInvoiceServices = () => (
     <div className="col-span-4 flex flex-col gap-4">
-      <h4>{t('services_heading')}</h4>
+      <InvoiceServicesHeading
+        label={t('services_heading')}
+        explanation={t('services_explanation')}
+        formula={t('services_formula')}
+      />
       <InvoiceServicesTable
         currency={currency}
         isVatEnabled={false}
@@ -372,99 +347,45 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
 
   const renderBankingInformation = () => (
     <div className="col-span-4 flex flex-col gap-4">
-      <h4>{t('payment_settings.title')}</h4>
-      <Controller
-        name="paymentMode"
-        control={control}
-        render={({ field }) => (
-          <Select
-            aria-label={t('a11y.payment_mode_label')}
-            variant="secondary"
-            value={field.value}
-            onChange={(key) => field.onChange(String(key))}
-          >
-            <Label>{t('labels.payment_mode')}</Label>
-            <Select.Trigger>
-              <Select.Value />
-              <Select.Indicator />
-            </Select.Trigger>
-            <Select.Popover>
-              <ListBox>
-                {(['manual', 'crypto', 'disabled'] as const).map((mode) => (
-                  <ListBoxItem
-                    key={mode}
-                    id={mode}
-                    textValue={t(`payment_settings.modes.${mode}`)}
-                  >
-                    {t(`payment_settings.modes.${mode}`)}
-                    <ListBoxItem.Indicator />
-                  </ListBoxItem>
-                ))}
-              </ListBox>
-            </Select.Popover>
-          </Select>
-        )}
-      />
-      {paymentMode === 'manual' ? (
-        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
-          {renderTextField({
-            label: t('labels.bank_name'),
-            isInvalid: !!errors.bankingInformation?.name,
-            errorMessage: errors.bankingInformation?.name?.message,
-            inputProps: {
-              'aria-label': t('a11y.bank_name_label'),
-              type: 'text',
-              placeholder: t('placeholders.bank_name'),
-              maxLength: 255,
-              ...register('bankingInformation.name')
-            }
-          })}
-          {renderTextField({
-            label: t('labels.bank_code'),
-            isInvalid: !!errors.bankingInformation?.code,
-            errorMessage: errors.bankingInformation?.code?.message,
-            inputProps: {
-              'aria-label': t('a11y.bank_code_label'),
-              type: 'text',
-              maxLength: 100,
-              placeholder: t('placeholders.bank_code'),
-              ...register('bankingInformation.code')
-            }
-          })}
-          {renderTextField({
-            label: t('labels.bank_account_number'),
-            isInvalid: !!errors.bankingInformation?.accountNumber,
-            errorMessage: errors.bankingInformation?.accountNumber?.message,
-            inputProps: {
-              'aria-label': t('a11y.bank_account_number_label'),
-              placeholder: t('placeholders.bank_account_number'),
-              type: 'text',
-              maxLength: 100,
-              ...register('bankingInformation.accountNumber')
-            }
-          })}
-        </div>
-      ) : null}
-      {paymentMode === 'crypto' ? (
-        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-          {(['label', 'asset', 'network', 'address', 'memo'] as const).map(
-            (name) =>
-              renderTextField({
-                label: t(`labels.crypto_${name}`),
-                isInvalid: !!errors.cryptoWallet?.[name],
-                errorMessage: errors.cryptoWallet?.[name]?.message,
-                inputProps: {
-                  type: 'text',
-                  maxLength: name === 'address' || name === 'memo' ? 255 : 100,
-                  ...register(`cryptoWallet.${name}`)
-                }
-              })
-          )}
-          <p className="text-muted text-xs leading-5 md:col-span-2">
-            {t('payment_settings.crypto_note')}
-          </p>
-        </div>
-      ) : null}
+      <h4>{t('banking_details')}</h4>
+      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
+        {renderTextField({
+          label: t('labels.bank_name'),
+          isInvalid: !!errors.bankingInformation?.name,
+          errorMessage: errors.bankingInformation?.name?.message,
+          inputProps: {
+            'aria-label': t('a11y.bank_name_label'),
+            type: 'text',
+            placeholder: t('placeholders.bank_name'),
+            maxLength: 255,
+            ...register('bankingInformation.name')
+          }
+        })}
+        {renderTextField({
+          label: t('labels.bank_code'),
+          isInvalid: !!errors.bankingInformation?.code,
+          errorMessage: errors.bankingInformation?.code?.message,
+          inputProps: {
+            'aria-label': t('a11y.bank_code_label'),
+            type: 'text',
+            maxLength: 100,
+            placeholder: t('placeholders.bank_code'),
+            ...register('bankingInformation.code')
+          }
+        })}
+        {renderTextField({
+          label: t('labels.bank_account_number'),
+          isInvalid: !!errors.bankingInformation?.accountNumber,
+          errorMessage: errors.bankingInformation?.accountNumber?.message,
+          inputProps: {
+            'aria-label': t('a11y.bank_account_number_label'),
+            placeholder: t('placeholders.bank_account_number'),
+            type: 'text',
+            maxLength: 100,
+            ...register('bankingInformation.accountNumber')
+          }
+        })}
+      </div>
     </div>
   );
 
@@ -492,32 +413,8 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
           <EyeIcon className="h-5 w-5" />
           {t('buttons.preview')}
         </Button>
-        <Link
-          href={signupUrl}
-          onClick={() => handleSignupClick('form_actions')}
-          className={buttonVariants({
-            className: 'w-full justify-center gap-2 sm:w-auto'
-          })}
-        >
-          <PaperAirplaneIcon className="h-5 w-5" />
-          {t('free_invoice.signup_cta')}
-        </Link>
       </div>
     </div>
-  );
-
-  const renderSignupPrompt = () => (
-    <Link
-      href={signupUrl}
-      onClick={() => handleSignupClick('preview_modal')}
-      className={buttonVariants({
-        size: 'sm',
-        className: 'w-full justify-center gap-2 sm:w-auto'
-      })}
-    >
-      {t('free_invoice.modal_cta_button')}
-      <ArrowRightIcon className="h-4 w-4" />
-    </Link>
   );
 
   const renderUpgradeAlert = () => (
@@ -528,27 +425,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
         <Alert.Description>
           {t('free_invoice.upgrade_description')}
         </Alert.Description>
-        <Link
-          href={signupUrl}
-          onClick={() => handleSignupClick('intro_panel')}
-          className={buttonVariants({
-            size: 'sm',
-            className: 'mt-2 sm:hidden'
-          })}
-        >
-          {t('free_invoice.upgrade_cta')}
-        </Link>
       </Alert.Content>
-      <Link
-        href={signupUrl}
-        onClick={() => handleSignupClick('intro_panel')}
-        className={buttonVariants({
-          size: 'sm',
-          className: 'hidden sm:flex'
-        })}
-      >
-        {t('free_invoice.upgrade_cta')}
-      </Link>
     </Alert>
   );
 
@@ -571,6 +448,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
       senderSignatureImage={senderSignatureImage}
       t={pdfTranslator}
       language={language}
+      showDraftState={false}
     />
   );
 
@@ -655,7 +533,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
         invoiceLanguage={language}
         isOpen={isInvoiceModalOpen}
         onOpenChange={setIsInvoiceModalOpen}
-        conversionContent={renderSignupPrompt()}
+        isDocumentBuilder
       />
     </>
   );

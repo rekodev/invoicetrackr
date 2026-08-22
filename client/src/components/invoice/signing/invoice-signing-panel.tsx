@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  ArrowDownTrayIcon,
   BanknotesIcon,
   CheckCircleIcon,
   PencilSquareIcon
@@ -11,6 +12,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Chip,
   Separator
 } from '@heroui/react';
 import type { InvoiceBody, PublicInvoicePayment } from '@invoicetrackr/types';
@@ -39,6 +41,7 @@ const PDFDownloadLink = dynamic(
 type Props = {
   currency: Currency;
   invoice: InvoiceBody;
+  isAcknowledged: boolean;
   isPaid: boolean;
   isPending: boolean;
   isSigningRequested: boolean;
@@ -53,6 +56,7 @@ type Props = {
 export default function InvoiceSigningPanel({
   currency,
   invoice,
+  isAcknowledged,
   isPaid,
   isPending,
   isSigningRequested,
@@ -67,14 +71,6 @@ export default function InvoiceSigningPanel({
   const currencySymbol = getCurrencySymbol(currency);
   const shouldShowPaymentSection =
     isPaid || payment.resolvedMode !== 'disabled';
-  const shouldShowManualPaymentDetails =
-    payment.resolvedMode === 'manual' &&
-    Boolean(invoice.bankingInformation) &&
-    !isPaid;
-  const shouldShowCryptoPaymentDetails =
-    payment.resolvedMode === 'crypto' &&
-    Boolean(invoice.cryptoWallet) &&
-    !isPaid;
   const isVoided = (invoice.lifecycleStatus || 'draft') === 'voided';
   const isCanceled = invoice.status === 'canceled';
 
@@ -100,31 +96,44 @@ export default function InvoiceSigningPanel({
         description: t('paid_invoice_description')
       };
     }
-    if (isSigned) {
-      return {
-        status: 'success' as const,
-        title: t('signed_invoice_title'),
-        description: t('signed_invoice_description')
-      };
-    }
-
     return null;
-  }, [t, isVoided, isCanceled, isPaid, isSigned]);
+  }, [t, isVoided, isCanceled, isPaid]);
 
   return (
     <Card className="h-full border shadow-sm">
       <CardHeader className="flex flex-col items-start gap-1 px-5 py-4 sm:px-6">
-        <h2 className="text-lg font-semibold">{t('panel_title')}</h2>
-        <p className="text-muted text-sm">{t('panel_description')}</p>
+        <h2 className="text-lg font-semibold">
+          {t(isAcknowledged ? 'panel_title_acknowledged' : 'panel_title')}
+        </h2>
+        <p className="text-muted text-sm">
+          {t(
+            isAcknowledged
+              ? 'panel_description_acknowledged'
+              : 'panel_description'
+          )}
+        </p>
       </CardHeader>
       <Separator />
       <CardContent className="flex flex-1 flex-col gap-5 px-5 py-6 sm:px-6">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
           {[invoice.sender, invoice.receiver].map((party) => (
-            <div key={party.type} className="text-sm">
-              <p className="text-muted">{t(party.type)}</p>
+            <div key={party.type} className="flex flex-col gap-2 text-sm">
+              <Chip variant="primary" className="max-w-min">
+                {t(party.type)}
+              </Chip>
               <p className="font-medium">{party.name}</p>
-              {party.email && <p className="text-muted">{party.email}</p>}
+              <div className="flex flex-col gap-1">
+                {party.email && <p className="text-muted">{party.email}</p>}
+                {party.address && <p className="text-muted">{party.address}</p>}
+                {party.businessNumber && (
+                  <p className="text-muted">{party.businessNumber}</p>
+                )}
+                {party.vatNumber && (
+                  <p className="text-muted">
+                    {t('vat_number')}: {party.vatNumber}
+                  </p>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -172,7 +181,7 @@ export default function InvoiceSigningPanel({
               </div>
             </div>
 
-            {shouldShowManualPaymentDetails && invoice.bankingInformation && (
+            {!isPaid && (
               <div className="bg-default-100 grid gap-x-4 gap-y-1 rounded-lg p-4 text-sm sm:grid-cols-[auto_1fr]">
                 <p className="text-muted">{t('amount_due')}</p>
                 <p className="font-medium">
@@ -181,41 +190,10 @@ export default function InvoiceSigningPanel({
                 </p>
                 <p className="text-muted">{t('due_date')}</p>
                 <p>{invoice.dueDate}</p>
-                <p className="text-muted">{t('bank')}</p>
-                <p>{invoice.bankingInformation.name}</p>
-                <p className="text-muted">{t('bank_code')}</p>
-                <p>{invoice.bankingInformation.code}</p>
-                <p className="text-muted">{t('account_number')}</p>
-                <p className="break-all">
-                  {invoice.bankingInformation.accountNumber}
-                </p>
                 <p className="text-muted">{t('payment_reference')}</p>
                 <p className="break-all">{payment.manualReference}</p>
               </div>
             )}
-            {shouldShowCryptoPaymentDetails && invoice.cryptoWallet ? (
-              <div className="bg-default-100 grid gap-x-4 gap-y-1 rounded-lg p-4 text-sm sm:grid-cols-[auto_1fr]">
-                <p className="text-muted">{t('amount_due')}</p>
-                <p className="font-medium">
-                  {currencySymbol}
-                  {invoice.totalAmount}
-                </p>
-                <p className="text-muted">{t('crypto_asset')}</p>
-                <p>{invoice.cryptoWallet.asset}</p>
-                <p className="text-muted">{t('crypto_network')}</p>
-                <p>{invoice.cryptoWallet.network}</p>
-                <p className="text-muted">{t('wallet_address')}</p>
-                <p className="break-all">{invoice.cryptoWallet.address}</p>
-                {invoice.cryptoWallet.memo ? (
-                  <>
-                    <p className="text-muted">{t('memo_tag')}</p>
-                    <p>{invoice.cryptoWallet.memo}</p>
-                  </>
-                ) : null}
-                <p className="text-muted">{t('payment_reference')}</p>
-                <p>{payment.manualReference}</p>
-              </div>
-            ) : null}
           </section>
         )}
 
@@ -285,7 +263,8 @@ export default function InvoiceSigningPanel({
               document={pdfDocument}
               fileName={`${invoice.invoiceId || 'invoice'}.pdf`}
             >
-              <Button variant="outline" className="w-full">
+              <Button variant="primary" className="w-full">
+                <ArrowDownTrayIcon className="h-4 w-4" />
                 {t('download_pdf')}
               </Button>
             </PDFDownloadLink>

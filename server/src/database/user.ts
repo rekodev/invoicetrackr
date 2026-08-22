@@ -225,6 +225,7 @@ export const updateUserProfilePictureInDb = async (
 
 export const updateUserAccountSettingsInDb = async (
   userId: number,
+  invoiceEmail: string,
   language: string,
   _currency: string,
   preferredInvoiceLanguage?: string,
@@ -234,6 +235,7 @@ export const updateUserAccountSettingsInDb = async (
   defaultPaymentTermsDays: UserBody['defaultPaymentTermsDays'] = 30
 ): Promise<UserUpdateResult | undefined> => {
   const updateData: Partial<typeof businessProfilesTable.$inferInsert> = {
+    invoiceEmail,
     currency: DEFAULT_CURRENCY,
     isVatPayer,
     defaultInvoiceVatMode: isVatPayer ? defaultInvoiceVatMode : 'no_vat',

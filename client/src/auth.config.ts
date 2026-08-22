@@ -30,6 +30,7 @@ const setUserTokenFields = (token: JWT, user: TokenUser) => {
   token.picture =
     ('profilePictureUrl' in user ? user.profilePictureUrl : user.image) || null;
   token.language = user.language;
+  token.invoiceEmail = user.invoiceEmail || user.email;
   token.emailVerifiedAt = user.emailVerifiedAt;
   token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
   token.isVatPayer = user.isVatPayer;
@@ -104,12 +105,18 @@ export const authConfig = {
       ];
       const path = nextUrl.pathname;
       const isPublicInvoiceSigningPage = path.startsWith('/invoices/sign/');
+      const isPublicRecipientDetailsPage = path.startsWith(
+        '/invoices/details/'
+      );
+      const isPublicInvoicePage = path.startsWith('/invoices/public/');
       const isEmailVerificationPage = path.startsWith(VERIFY_EMAIL_PAGE);
       const pathIsPublic =
         publicPaths.includes(path) ||
         path.startsWith('/create-new-password') ||
         isEmailVerificationPage ||
-        isPublicInvoiceSigningPage;
+        isPublicInvoiceSigningPage ||
+        isPublicRecipientDetailsPage ||
+        isPublicInvoicePage;
 
       const isOnboarded = !!auth?.user?.isOnboarded;
       const isOnboardingPage = path.startsWith(ONBOARDING_PAGE);
@@ -136,7 +143,9 @@ export const authConfig = {
         isLoggedIn &&
         !sharedPaths.includes(path) &&
         !isEmailVerificationPage &&
-        !isPublicInvoiceSigningPage
+        !isPublicInvoiceSigningPage &&
+        !isPublicRecipientDetailsPage &&
+        !isPublicInvoicePage
       ) {
         return Response.redirect(new URL(DASHBOARD_PAGE, nextUrl));
       }
@@ -174,7 +183,8 @@ export const authConfig = {
           analyticsConsentStatus: session.user.analyticsConsentStatus,
           analyticsConsentUpdatedAt: session.user.analyticsConsentUpdatedAt,
           selectedBankAccountId: session.user.selectedBankAccountId,
-          vatNumber: session.user.vatNumber
+          vatNumber: session.user.vatNumber,
+          invoiceEmail: session.user.invoiceEmail
         };
       }
 
@@ -184,6 +194,7 @@ export const authConfig = {
       session.user.id = token.sub!;
       session.user.image = token.picture || null;
       session.user.language = token.language as string;
+      session.user.invoiceEmail = token.invoiceEmail as string;
       session.user.emailVerifiedAt = token.emailVerifiedAt as string | null;
       session.user.preferredInvoiceLanguage =
         token.preferredInvoiceLanguage as string;

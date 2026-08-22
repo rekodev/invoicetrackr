@@ -228,7 +228,7 @@ export default {
       emailSent: 'El. laiškas išsiųstas sėkmingai',
       issued: 'Sąskaita faktūra išrašyta sėkmingai',
       recipientDetailsRequested: 'Gavėjo duomenų užklausa paruošta',
-      recipientDetailsSubmitted: 'Duomenys pateikti siuntėjo peržiūrai',
+      recipientDetailsSubmitted: 'Sąskaita gauta ir sėkmingai išrašyta',
       signed: 'Sąskaitos faktūros patvirtinimas užregistruotas sėkmingai',
       signingLinkRevoked: 'Patvirtinimo nuoroda atšaukta',
       signingLinkRegenerated: 'Sugeneruota nauja patvirtinimo nuoroda',

@@ -83,7 +83,7 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8">
-      <InvoiceSigningHeader invoice={invoice} />
+      <InvoiceSigningHeader invoice={invoice} isAcknowledged={isSigned} />
 
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <InvoiceSigningSummary
@@ -94,6 +94,7 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
         <InvoiceSigningPanel
           invoice={invoice}
           currency={currency}
+          isAcknowledged={isSigned}
           isPaid={invoice.status === 'paid'}
           isPending={isPending}
           isSigningRequested
