@@ -20,6 +20,7 @@ const mapUserToSessionUser = (user: InvoiceTrackrUser): User => {
     id: String(user.id),
     name: user.name,
     email: user.email,
+    invoiceEmail: user.invoiceEmail || user.email,
     image: user.profilePictureUrl || null,
     emailVerifiedAt: user.emailVerifiedAt,
     language: user.language,
