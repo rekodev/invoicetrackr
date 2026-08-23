@@ -43,7 +43,11 @@ export class InvoiceFormPage {
       .getByRole('spinbutton', { name: 'Unit price', exact: true })
       .first()
       .fill(invoice.unitPrice);
-    await this.page.getByRole('radio', { name: 'No payment block' }).click();
+    const noPaymentRadio = this.page.getByRole('radio', {
+      name: 'No payment block'
+    });
+    await noPaymentRadio.check({ force: true });
+    await expect(noPaymentRadio).toBeChecked();
     await this.page.getByRole('button', { name: /^Save$/ }).click();
 
     await expect(this.page).toHaveURL(/\/invoices$/);

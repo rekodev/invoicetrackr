@@ -52,6 +52,9 @@ setup('authenticate completed freelancer', async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.login(e2eUser.email, e2eUser.password);
 
+  const declineAnalytics = page.getByRole('button', { name: 'Decline' });
+  if (await declineAnalytics.isVisible()) await declineAnalytics.click();
+
   await expect(page.getByRole('link', { name: 'Invoices' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Payments' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Reports' })).toHaveCount(0);
