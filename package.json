@@ -14,7 +14,14 @@
     "lint": "pnpm run client lint && pnpm run server lint",
     "lint:fix": "pnpm run client lint:fix && pnpm run server lint:fix",
     "typecheck": "pnpm run types build && pnpm run emails build && pnpm run server tsc && pnpm run client tsc",
-    "verify": "pnpm run lint && pnpm run typecheck && pnpm run build"
+    "verify": "pnpm run lint && pnpm run typecheck && pnpm run build",
+    "e2e:infra:up": "docker compose --project-name invoicetrackr-e2e --file e2e/docker-compose.yml up --detach --wait",
+    "e2e:infra:down": "docker compose --project-name invoicetrackr-e2e --file e2e/docker-compose.yml down --volumes",
+    "e2e:db:prepare": "node e2e/scripts/prepare-database.mjs",
+    "test:e2e": "node e2e/scripts/run-local.mjs",
+    "test:e2e:headed": "node e2e/scripts/run-local.mjs --headed",
+    "test:e2e:ui": "node e2e/scripts/run-local.mjs --ui",
+    "test:e2e:ci": "playwright test"
   },
   "keywords": [],
   "author": "rekodev",
@@ -34,6 +41,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/node": "^22.13.14",
     "@typescript-eslint/eslint-plugin": "^8.46.4",
     "@typescript-eslint/parser": "^8.46.4",

@@ -2,9 +2,7 @@
 
 import {
   AdjustmentsHorizontalIcon,
-  BanknotesIcon,
   BuildingLibraryIcon,
-  ChartBarSquareIcon,
   Cog6ToothIcon,
   DocumentTextIcon,
   HomeIcon,
@@ -27,10 +25,8 @@ import {
   EXPENSES_PAGE,
   INVOICES_PAGE,
   PAYMENT_METHODS_PAGE,
-  PAYMENTS_PAGE,
   PERSONAL_INFORMATION_PAGE,
-  PROFILE_PAGE,
-  REPORTS_PAGE
+  PROFILE_PAGE
 } from '@/lib/constants/pages';
 
 type NavLink = {
@@ -44,9 +40,7 @@ const navigation: Array<NavLink> = [
   { key: 'dashboard', href: DASHBOARD_PAGE, icon: HomeIcon },
   { key: 'invoices', href: INVOICES_PAGE, icon: DocumentTextIcon },
   { key: 'clients', href: CLIENTS_PAGE, icon: UserGroupIcon },
-  { key: 'payments', href: PAYMENTS_PAGE, icon: BanknotesIcon },
   { key: 'expenses', href: EXPENSES_PAGE, icon: ReceiptPercentIcon },
-  { key: 'reports', href: REPORTS_PAGE, icon: ChartBarSquareIcon },
   {
     key: 'settings',
     href: PROFILE_PAGE,
