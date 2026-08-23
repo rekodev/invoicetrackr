@@ -64,8 +64,8 @@ jobs:
           pnpm run types build
           pnpm run emails build
 
-      - name: Apply database migrations
-        run: pnpm run server migrate
+      - name: Prepare E2E database
+        run: pnpm e2e:db:prepare
 
       - name: Run Playwright tests
         run: pnpm test:e2e:ci

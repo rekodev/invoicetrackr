@@ -17,6 +17,7 @@
     "verify": "pnpm run lint && pnpm run typecheck && pnpm run build",
     "e2e:infra:up": "docker compose --project-name invoicetrackr-e2e --file e2e/docker-compose.yml up --detach --wait",
     "e2e:infra:down": "docker compose --project-name invoicetrackr-e2e --file e2e/docker-compose.yml down --volumes",
+    "e2e:db:prepare": "node e2e/scripts/prepare-database.mjs",
     "test:e2e": "node e2e/scripts/run-local.mjs",
     "test:e2e:headed": "node e2e/scripts/run-local.mjs --headed",
     "test:e2e:ui": "node e2e/scripts/run-local.mjs --ui",
