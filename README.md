@@ -126,6 +126,11 @@ client must allow these redirect URIs:
   - Tests focus on client components with user interaction logic
   - Mocked Next.js router, cookies, and server actions
   - Internationalization wrapper for consistent i18n testing
+- **End-to-End Tests**: Playwright with a disposable PostgreSQL database
+  - `pnpm test:e2e` starts isolated Docker infrastructure, applies migrations,
+    installs Chromium when needed, runs the suite, and removes the test database
+  - `pnpm test:e2e:headed` and `pnpm test:e2e:ui` provide local debugging modes
+  - Authentication state is created by the setup project and never committed
 - **Type Safety**: Shared Zod schemas ensure consistency across test environments
 - **CI/CD**: Automated testing in GitHub Actions for all pull requests
 
