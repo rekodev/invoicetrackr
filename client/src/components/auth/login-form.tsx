@@ -17,7 +17,7 @@ import {
 } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import type { ChangeEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 
 import AuthCardHeader from '@/components/auth/auth-card-header';
@@ -32,6 +32,8 @@ type LoginFormModel = {
 type Props = {
   initialErrorMessage?: string;
 };
+
+const subscribeToHydration = () => () => {};
 
 export default function LoginForm({ initialErrorMessage }: Props) {
   const pageT = useTranslations('login');
@@ -50,9 +52,11 @@ export default function LoginForm({ initialErrorMessage }: Props) {
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     initialErrorMessage
   );
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => setIsHydrated(true), []);
+  const isHydrated = useSyncExternalStore(
+    subscribeToHydration,
+    () => true,
+    () => false
+  );
 
   const onSubmit: SubmitHandler<LoginFormModel> = async (data) => {
     setErrorMessage(undefined);

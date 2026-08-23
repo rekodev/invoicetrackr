@@ -18,7 +18,7 @@ export class InvoicesPage {
     const row = this.rowFor(recipientName);
 
     await row
-      .getByRole('button', { name: 'Request recipient details' })
+      .locator('button[aria-label="Request recipient details"]')
       .click();
     await expect(
       this.page.getByRole('heading', { name: 'Request recipient details' })
