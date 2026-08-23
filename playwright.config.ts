@@ -2,6 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.E2E_BASE_URL || 'http://127.0.0.1:3100';
 const authFile = 'e2e/.auth/user.json';
+const webServerCommand = process.env.CI
+  ? 'pnpm exec concurrently --kill-others-on-fail --names server,client "pnpm --filter @invoicetrackr/server start" "pnpm --filter @invoicetrackr/client start --port 3100"'
+  : 'pnpm exec concurrently --kill-others-on-fail --names server,client "pnpm --filter @invoicetrackr/server dev" "pnpm --filter @invoicetrackr/client dev --port 3100"';
 
 export default defineConfig({
   testDir: './e2e',
@@ -26,8 +29,7 @@ export default defineConfig({
     video: 'retain-on-failure'
   },
   webServer: {
-    command:
-      'pnpm exec concurrently --kill-others-on-fail --names server,client "pnpm --filter @invoicetrackr/server dev" "pnpm --filter @invoicetrackr/client dev --port 3100"',
+    command: webServerCommand,
     url: `${baseURL}/login`,
     reuseExistingServer: false,
     timeout: 120_000

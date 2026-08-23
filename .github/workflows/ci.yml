@@ -36,7 +36,7 @@ jobs:
       DATABASE_URL: postgresql://invoicetrackr:invoicetrackr@127.0.0.1:5432/invoicetrackr_e2e
       E2E_BASE_URL: http://127.0.0.1:3100
       NEXT_PUBLIC_BASE_URL: http://127.0.0.1:3100
-      NODE_ENV: development
+      NODE_ENV: production
       RESEND_EMAIL_API_KEY: re_e2e_placeholder
       SERVER_PORT: 5100
 
@@ -66,6 +66,11 @@ jobs:
 
       - name: Prepare E2E database
         run: pnpm e2e:db:prepare
+
+      - name: Build applications
+        run: |
+          pnpm run server build
+          pnpm run client build
 
       - name: Run Playwright tests
         run: pnpm test:e2e:ci
