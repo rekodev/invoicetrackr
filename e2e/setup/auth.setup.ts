@@ -5,6 +5,9 @@ import { expect, test as setup } from '@playwright/test';
 import bcrypt from 'bcryptjs';
 
 import {
+  ANALYTICS_CONSENT_COOKIE
+} from '../../client/src/lib/analytics/constants';
+import {
   completeUserOnboardingInDb,
   deleteUserFromDb,
   getUserByEmailFromDb,
@@ -16,6 +19,15 @@ import { authFile } from '../utils/paths';
 import { e2eUser } from '../utils/test-data';
 
 setup('authenticate completed freelancer', async ({ page }) => {
+  await page.context().addCookies([
+    {
+      name: ANALYTICS_CONSENT_COOKIE,
+      value: 'declined',
+      url: process.env.E2E_BASE_URL || 'http://127.0.0.1:3100',
+      sameSite: 'Lax'
+    }
+  ]);
+
   const existingUser = await getUserByEmailFromDb(e2eUser.email);
   if (existingUser?.id) await deleteUserFromDb(existingUser.id);
 
@@ -51,9 +63,6 @@ setup('authenticate completed freelancer', async ({ page }) => {
 
   const loginPage = new LoginPage(page);
   await loginPage.login(e2eUser.email, e2eUser.password);
-
-  const declineAnalytics = page.getByRole('button', { name: 'Decline' });
-  if (await declineAnalytics.isVisible()) await declineAnalytics.click();
 
   await expect(page.getByRole('link', { name: 'Invoices' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Payments' })).toHaveCount(0);
