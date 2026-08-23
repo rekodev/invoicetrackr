@@ -32,11 +32,17 @@ export class InvoiceFormPage {
     }
 
     await this.page
-      .getByLabel('Description')
+      .getByRole('textbox', { name: 'Description', exact: true })
       .first()
       .fill(invoice.serviceDescription);
-    await this.page.getByLabel('Quantity').first().fill(invoice.quantity);
-    await this.page.getByLabel('Unit price').first().fill(invoice.unitPrice);
+    await this.page
+      .getByRole('spinbutton', { name: 'Quantity', exact: true })
+      .first()
+      .fill(invoice.quantity);
+    await this.page
+      .getByRole('spinbutton', { name: 'Unit price', exact: true })
+      .first()
+      .fill(invoice.unitPrice);
     await this.page.getByRole('radio', { name: 'No payment block' }).click();
     await this.page.getByRole('button', { name: /^Save$/ }).click();
 
