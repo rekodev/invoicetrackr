@@ -243,7 +243,7 @@ export default {
       created: 'Klientas pridėtas sėkmingai',
       updated: 'Klientas atnaujintas sėkmingai',
       deleted: 'Klientas ištrintas sėkmingai',
-      archived: 'Klientas sėkmingai archyvuotas'
+      archived: 'Klientas sėkmingai pašalintas'
     },
     expense: {
       created: 'Išlaidų įrašas pridėtas sėkmingai',
@@ -361,7 +361,7 @@ export default {
       unableToCreate: 'Nepavyko pridėti kliento',
       unableToUpdate: 'Nepavyko atnaujinti kliento',
       unableToDelete: 'Nepavyko ištrinti kliento',
-      unableToArchive: 'Nepavyko archyvuoti kliento'
+      unableToArchive: 'Nepavyko pašalinti kliento'
     },
     expense: {
       notFound: 'Išlaidų įrašas nerastas',

@@ -840,7 +840,7 @@
     "clients": {
         "page_title": "Clients",
         "edit": "Edit",
-        "archive": "Archive",
+        "archive": "Remove",
         "no_clients": "No clients found",
         "empty_state": {
             "title": "You have no clients yet",
@@ -866,9 +866,9 @@
             "next": "Next"
         },
         "archive_modal": {
-            "title": "Archive Client",
-            "description": "Archive {clientName}? The client will no longer appear in active lists, but existing invoice history will remain unchanged.",
-            "confirm": "Archive",
+            "title": "Remove Client",
+            "description": "Remove {clientName} from your client list? Existing invoices will remain unchanged.",
+            "confirm": "Remove",
             "cancel": "Cancel"
         },
         "form_dialog": {
@@ -893,7 +893,7 @@
         },
         "actions": {
             "tooltip_edit": "Edit client",
-            "tooltip_archive": "Archive client"
+            "tooltip_archive": "Remove client"
         },
         "card": {
             "business_number_business": "Company code:",

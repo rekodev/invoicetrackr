@@ -840,7 +840,7 @@
     "clients": {
         "page_title": "Klientai",
         "edit": "Redaguoti",
-        "archive": "Archyvuoti",
+        "archive": "Pašalinti",
         "no_clients": "Klientų nerasta",
         "empty_state": {
             "title": "Dar neturite klientų",
@@ -866,9 +866,9 @@
             "next": "Kitas"
         },
         "archive_modal": {
-            "title": "Archyvuoti klientą",
-            "description": "Archyvuoti {clientName}? Klientas nebebus rodomas aktyviuose sąrašuose, tačiau esamų sąskaitų istorija nepasikeis.",
-            "confirm": "Archyvuoti",
+            "title": "Pašalinti klientą",
+            "description": "Pašalinti {clientName} iš klientų sąrašo? Esamos sąskaitos faktūros nepasikeis.",
+            "confirm": "Pašalinti",
             "cancel": "Atšaukti"
         },
         "form_dialog": {
@@ -893,7 +893,7 @@
         },
         "actions": {
             "tooltip_edit": "Redaguoti klientą",
-            "tooltip_archive": "Archyvuoti klientą"
+            "tooltip_archive": "Pašalinti klientą"
         },
         "card": {
             "business_number_business": "Įmonės kodas:",

@@ -38,7 +38,7 @@ describe('<ArchiveClientModal />', () => {
 
     mockArchiveClientAction.mockResolvedValue({
       ok: true,
-      message: 'Client archived successfully'
+      message: 'Client removed successfully'
     });
   });
 
@@ -51,7 +51,7 @@ describe('<ArchiveClientModal />', () => {
   it('calls archiveClientAction and onClose when confirm is clicked', async () => {
     renderHelper(<ArchiveClientModal {...props} />);
 
-    const confirmButton = screen.getByRole('button', { name: /Archive/i });
+    const confirmButton = screen.getByRole('button', { name: /Remove/i });
     await userEvent.click(confirmButton);
 
     expect(mockArchiveClientAction).toHaveBeenCalledWith({
@@ -70,7 +70,7 @@ describe('<ArchiveClientModal />', () => {
     renderHelper(<ArchiveClientModal {...props} />);
 
     const confirmButton = screen.getByRole('button', {
-      name: /Archive/i
+      name: /Remove/i
     });
     await userEvent.click(confirmButton);
 

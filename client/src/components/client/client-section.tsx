@@ -1,10 +1,10 @@
 'use client';
 
 import {
-  ArchiveBoxIcon,
   EllipsisVerticalIcon,
   PencilIcon,
-  PencilSquareIcon
+  PencilSquareIcon,
+  TrashIcon
 } from '@heroicons/react/24/outline';
 import {
   Button,
@@ -104,7 +104,7 @@ const ClientSection = ({ userId, clients }: Props) => {
             onAction={() => handleOpenArchiveClientModal(clientData)}
           >
             <div className="flex items-center gap-1">
-              <ArchiveBoxIcon className="h-4 w-4" />
+              <TrashIcon className="h-4 w-4" />
               {t('archive')}
             </div>
           </DropdownItem>
@@ -135,7 +135,7 @@ const ClientSection = ({ userId, clients }: Props) => {
           aria-label={t('actions.tooltip_archive')}
           onPress={() => handleOpenArchiveClientModal(clientData)}
         >
-          <ArchiveBoxIcon className="h-4 w-4" />
+          <TrashIcon className="h-4 w-4" />
         </Button>
       </div>
     </>

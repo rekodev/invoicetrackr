@@ -235,7 +235,7 @@ export default {
       created: 'Client added successfully',
       updated: 'Client updated successfully',
       deleted: 'Client deleted successfully',
-      archived: 'Client archived successfully'
+      archived: 'Client removed successfully'
     },
     expense: {
       created: 'Expense added successfully',
@@ -353,7 +353,7 @@ export default {
       unableToCreate: 'Unable to add client',
       unableToUpdate: 'Unable to update client',
       unableToDelete: 'Unable to delete client',
-      unableToArchive: 'Unable to archive client'
+      unableToArchive: 'Unable to remove client'
     },
     expense: {
       notFound: 'Expense not found',
