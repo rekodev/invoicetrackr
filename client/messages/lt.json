@@ -886,6 +886,7 @@
                 "business": "Įmonė",
                 "individual": "Individualus"
             },
+            "duplicate_warning_title": "Galimas dublikatas",
             "cancel": "Atšaukti",
             "submit_add": "Pridėti",
             "submit_edit": "Išsaugoti",

@@ -349,7 +349,7 @@ export default {
       notFound: 'Client not found',
       alreadyExists: 'Client already exists',
       potentialDuplicate:
-        'A client matching "%{clientName}" already exists. Submit again only if this is a different client.',
+        'Some details match an existing client: "%{clientName}". Continue only if this is a different client.',
       unableToCreate: 'Unable to add client',
       unableToUpdate: 'Unable to update client',
       unableToDelete: 'Unable to delete client',

@@ -886,6 +886,7 @@
                 "business": "Business",
                 "individual": "Individual"
             },
+            "duplicate_warning_title": "Potential duplicate",
             "cancel": "Cancel",
             "submit_add": "Add",
             "submit_edit": "Save",

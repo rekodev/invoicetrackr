@@ -357,7 +357,7 @@ export default {
       notFound: 'Klientas nerastas',
       alreadyExists: 'Klientas jau egzistuoja',
       potentialDuplicate:
-        'Jau yra klientas, atitinkantis „%{clientName}“. Pateikite dar kartą tik jei tai kitas klientas.',
+        'Kai kurie duomenys sutampa su esamo kliento „%{clientName}“ duomenimis. Tęskite tik jei tai kitas klientas.',
       unableToCreate: 'Nepavyko pridėti kliento',
       unableToUpdate: 'Nepavyko atnaujinti kliento',
       unableToDelete: 'Nepavyko ištrinti kliento',

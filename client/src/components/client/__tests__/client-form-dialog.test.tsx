@@ -114,6 +114,32 @@ describe('<ClientFormDialog />', () => {
     expect(props.onClose).not.toHaveBeenCalled();
   });
 
+  it('shows the server validation message for an invalid email', async () => {
+    mockAddClientAction.mockResolvedValue({
+      ok: false,
+      message: 'Validation failed',
+      validationErrors: {
+        email: 'Must be a valid email address'
+      }
+    });
+
+    renderHelper(<ClientFormDialog {...props} />);
+
+    await userEvent.type(screen.getByLabelText(/Name/i), 'New Client');
+    await userEvent.type(
+      screen.getByLabelText(/Business Number/i),
+      '987654321'
+    );
+    await userEvent.type(screen.getByLabelText(/Address/i), 'New Address');
+    await userEvent.type(screen.getByLabelText(/Email/i), 'invalid-email');
+    await userEvent.click(screen.getByRole('button', { name: /^Add$/i }));
+
+    expect(
+      await screen.findByText('Must be a valid email address')
+    ).toBeDefined();
+    expect(props.onClose).not.toHaveBeenCalled();
+  });
+
   it('requires confirmation before saving a potential duplicate', async () => {
     mockAddClientAction
       .mockResolvedValueOnce({
@@ -139,6 +165,7 @@ describe('<ClientFormDialog />', () => {
     expect(
       await screen.findByText('A matching client already exists')
     ).toBeDefined();
+    expect(screen.getByText('Potential duplicate')).toBeDefined();
     expect(props.onClose).not.toHaveBeenCalled();
 
     await userEvent.click(

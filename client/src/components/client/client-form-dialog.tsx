@@ -176,21 +176,13 @@ const ClientFormDialog = ({
         <Modal.Container>
           <Modal.Dialog>
             <Modal.CloseTrigger />
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form noValidate onSubmit={handleSubmit(onSubmit)}>
               <Modal.Header>
                 <Modal.Heading>
                   {isEditMode ? t('title_edit') : t('title_add')}
                 </Modal.Heading>
               </Modal.Header>
               <Modal.Body className="flex flex-col gap-2">
-                {duplicateWarning ? (
-                  <Alert status="warning">
-                    <Alert.Indicator />
-                    <Alert.Content>
-                      <Alert.Description>{duplicateWarning}</Alert.Description>
-                    </Alert.Content>
-                  </Alert>
-                ) : null}
                 {renderTextField({ name: 'name', label: t('fields.name') })}
                 <Controller
                   control={control}
@@ -247,7 +239,20 @@ const ClientFormDialog = ({
                 })}
               </Modal.Body>
               <Modal.Footer>
-                <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
+                <div className="flex w-full flex-col gap-3 overflow-x-hidden">
+                  {duplicateWarning ? (
+                    <Alert status="warning" className="w-full p-0">
+                      <Alert.Indicator />
+                      <Alert.Content>
+                        <Alert.Title>
+                          {t('duplicate_warning_title')}
+                        </Alert.Title>
+                        <Alert.Description>
+                          {duplicateWarning}
+                        </Alert.Description>
+                      </Alert.Content>
+                    </Alert>
+                  ) : null}
                   <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
                     <Button
                       variant="ghost"
