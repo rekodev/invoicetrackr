@@ -56,7 +56,9 @@ describe('<ClientSectionTopContent />', () => {
   it('renders correctly', () => {
     renderHelper(<ClientSectionTopContent {...props} />);
 
-    expect(screen.getByPlaceholderText('Search by name...')).toBeDefined();
+    expect(
+      screen.getByPlaceholderText('Search by name or code...')
+    ).toBeDefined();
     expect(screen.getByText('Add New')).toBeDefined();
     expect(screen.getByText('Type')).toBeDefined();
   });
@@ -77,7 +79,7 @@ describe('<ClientSectionTopContent />', () => {
   it('calls onSearch when typing in search input', async () => {
     renderHelper(<ClientSectionTopContent {...props} />);
 
-    const input = screen.getByPlaceholderText('Search by name...');
+    const input = screen.getByPlaceholderText('Search by name or code...');
     await userEvent.type(input, 'test');
 
     expect(props.onSearch).toHaveBeenCalled();

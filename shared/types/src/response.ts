@@ -284,7 +284,8 @@ export type GetClientsResponse = z.infer<typeof getClientsResponseSchema>;
 export type GetClientResponse = z.infer<typeof getClientResponseSchema>;
 export type PostClientResponse = z.infer<typeof postClientResponseSchema>;
 export type UpdateClientResponse = z.infer<typeof updateClientResponseSchema>;
-export type DeleteClientResponse = MessageResponse;
+export type ArchiveClientResponse = MessageResponse;
+export type DeleteClientResponse = ArchiveClientResponse;
 
 export type GetExpensesResponse = z.infer<typeof getExpensesResponseSchema>;
 export type GetExpenseResponse = z.infer<typeof getExpenseResponseSchema>;

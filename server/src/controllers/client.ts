@@ -1,19 +1,19 @@
-import { ClientBody } from '@invoicetrackr/types';
+import type { ClientMutationBody } from '@invoicetrackr/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
 import { analyticsEvents } from '../analytics/events';
 import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import {
-  deleteClientFromDb,
-  findClientByEmail,
+  archiveClientInDb,
+  findPotentialDuplicateClientFromDb,
   getClientFromDb,
   getClientsFromDb,
   insertClientInDb,
   updateClientInDb
 } from '../database/client';
 import { recordRequestAudit } from '../utils/audit';
-import { BadRequestError, NotFoundError } from '../utils/error';
+import { BadRequestError, ConflictError, NotFoundError } from '../utils/error';
 
 export const getClients = async (
   req: FastifyRequest<{ Params: { userId: string } }>,
@@ -42,17 +42,29 @@ export const getClient = async (
 };
 
 export const postClient = async (
-  req: FastifyRequest<{ Params: { userId: string }; Body: ClientBody }>,
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Body: ClientMutationBody;
+  }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
-  const clientData = req.body;
+  const { duplicateAcknowledged, ...clientData } = req.body;
   const i18n = await useI18n(req);
 
-  const foundClient = await findClientByEmail(userId, clientData.email || '');
+  const duplicate = await findPotentialDuplicateClientFromDb(userId, {
+    name: clientData.name,
+    businessNumber: clientData.businessNumber,
+    email: clientData.email || ''
+  });
 
-  if (foundClient)
-    throw new BadRequestError(i18n.t('error.client.alreadyExists'));
+  if (duplicate && !duplicateAcknowledged) {
+    throw new ConflictError(
+      i18n.t('error.client.potentialDuplicate', {
+        clientName: duplicate.name
+      })
+    );
+  }
 
   const insertedClient = await insertClientInDb(userId, {
     ...clientData,
@@ -63,7 +75,14 @@ export const postClient = async (
   if (!insertedClient)
     throw new BadRequestError(i18n.t('error.client.unableToCreate'));
 
-  await recordRequestAudit({ req, userId, action: 'client.created', entityType: 'client', entityId: insertedClient.id, newValue: insertedClient });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'client.created',
+    entityType: 'client',
+    entityId: insertedClient.id,
+    newValue: insertedClient
+  });
 
   await captureAnalyticsEventForUser({
     userId,
@@ -84,21 +103,56 @@ export const postClient = async (
 export const updateClient = async (
   req: FastifyRequest<{
     Params: { userId: string; id: string };
-    Body: ClientBody;
+    Body: ClientMutationBody;
   }>,
   reply: FastifyReply
 ) => {
   const id = Number(req.params.id);
   const userId = Number(req.params.userId);
-  const clientData = req.body;
+  const { duplicateAcknowledged, ...clientData } = req.body;
   const i18n = await useI18n(req);
 
-  const updatedClient = await updateClientInDb(userId, id, clientData);
+  const existingClient = await getClientFromDb(userId, id);
+
+  if (!existingClient || existingClient.archivedAt)
+    throw new NotFoundError(i18n.t('error.client.notFound'));
+
+  const duplicate = await findPotentialDuplicateClientFromDb(
+    userId,
+    {
+      name: clientData.name,
+      businessNumber: clientData.businessNumber,
+      email: clientData.email || ''
+    },
+    id
+  );
+
+  if (duplicate && !duplicateAcknowledged) {
+    throw new ConflictError(
+      i18n.t('error.client.potentialDuplicate', {
+        clientName: duplicate.name
+      })
+    );
+  }
+
+  const updatedClient = await updateClientInDb(userId, id, {
+    ...clientData,
+    email: clientData.email || '',
+    vatNumber: clientData.vatNumber || null
+  });
 
   if (!updatedClient)
     throw new BadRequestError(i18n.t('error.client.unableToUpdate'));
 
-  await recordRequestAudit({ req, userId, action: 'client.updated', entityType: 'client', entityId: id, newValue: updatedClient });
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'client.updated',
+    entityType: 'client',
+    entityId: id,
+    previousValue: existingClient,
+    newValue: updatedClient
+  });
 
   reply.status(200).send({
     message: i18n.t('success.client.updated'),
@@ -106,7 +160,7 @@ export const updateClient = async (
   });
 };
 
-export const deleteClient = async (
+export const archiveClient = async (
   req: FastifyRequest<{ Params: { userId: string; id: string } }>,
   reply: FastifyReply
 ) => {
@@ -114,12 +168,25 @@ export const deleteClient = async (
   const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
 
-  const deletedClient = await deleteClientFromDb(userId, id);
+  const client = await getClientFromDb(userId, id);
 
-  if (!deletedClient)
-    throw new BadRequestError(i18n.t('error.client.unableToDelete'));
+  if (!client || client.archivedAt)
+    throw new NotFoundError(i18n.t('error.client.notFound'));
 
-  await recordRequestAudit({ req, userId, action: 'client.deleted', entityType: 'client', entityId: id });
+  const archivedClient = await archiveClientInDb(userId, id);
 
-  reply.status(200).send({ message: i18n.t('success.client.deleted') });
+  if (!archivedClient)
+    throw new BadRequestError(i18n.t('error.client.unableToArchive'));
+
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'client.archived',
+    entityType: 'client',
+    entityId: id,
+    previousValue: client,
+    newValue: { ...client, archivedAt: archivedClient.archivedAt }
+  });
+
+  reply.status(200).send({ message: i18n.t('success.client.archived') });
 };

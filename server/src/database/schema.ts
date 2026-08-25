@@ -331,6 +331,10 @@ export const clientsTable = pgTable(
       withTimezone: true,
       mode: 'string'
     }).default(sql`CURRENT_TIMESTAMP`),
+    archivedAt: timestamp('archived_at', {
+      withTimezone: true,
+      mode: 'string'
+    }),
     userId: integer('user_id').notNull()
   },
   (table) => [
@@ -338,7 +342,10 @@ export const clientsTable = pgTable(
       columns: [table.userId],
       foreignColumns: [usersTable.id],
       name: 'fk_clients_user_id'
-    }).onDelete('cascade')
+    }).onDelete('cascade'),
+    index('clients_user_active_idx')
+      .on(table.userId)
+      .where(sql`${table.archivedAt} IS NULL`)
   ]
 );
 

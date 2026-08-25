@@ -13,5 +13,6 @@ export const clientFactory = Factory.define<SelectClient>(({ sequence }) => ({
   type: 'receiver',
   userId: 1,
   createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
+  updatedAt: new Date().toISOString(),
+  archivedAt: null
 }));

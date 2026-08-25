@@ -22,6 +22,7 @@ describe('<ClientFormDialog />', () => {
   const renderHelper = (component: JSX.Element) => render(withIntl(component));
 
   beforeEach(() => {
+    vi.clearAllMocks();
     props = {
       userId: 1,
       isOpen: true,
@@ -111,6 +112,43 @@ describe('<ClientFormDialog />', () => {
 
     expect(await screen.findByText('Name is required')).toBeDefined();
     expect(props.onClose).not.toHaveBeenCalled();
+  });
+
+  it('requires confirmation before saving a potential duplicate', async () => {
+    mockAddClientAction
+      .mockResolvedValueOnce({
+        ok: false,
+        code: 'CONFLICT',
+        message: 'A matching client already exists'
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        message: 'Success'
+      });
+
+    renderHelper(<ClientFormDialog {...props} />);
+
+    await userEvent.type(screen.getByLabelText(/Name/i), 'Existing Client');
+    await userEvent.type(
+      screen.getByLabelText(/Business Number/i),
+      '987654321'
+    );
+    await userEvent.type(screen.getByLabelText(/Address/i), 'New Address');
+    await userEvent.click(screen.getByRole('button', { name: /^Add$/i }));
+
+    expect(
+      await screen.findByText('A matching client already exists')
+    ).toBeDefined();
+    expect(props.onClose).not.toHaveBeenCalled();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /Continue anyway/i })
+    );
+
+    expect(mockAddClientAction).toHaveBeenLastCalledWith(
+      expect.objectContaining({ duplicateAcknowledged: true })
+    );
+    expect(props.onClose).toHaveBeenCalled();
   });
 
   it('calls onClose when cancel button is clicked', async () => {

@@ -1,10 +1,10 @@
 'use client';
 
 import {
+  ArchiveBoxIcon,
   EllipsisVerticalIcon,
   PencilIcon,
-  PencilSquareIcon,
-  TrashIcon
+  PencilSquareIcon
 } from '@heroicons/react/24/outline';
 import {
   Button,
@@ -13,8 +13,9 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownPopover,
-  DropdownTrigger} from '@heroui/react';
-import { ClientBody } from '@invoicetrackr/types';
+  DropdownTrigger
+} from '@heroui/react';
+import type { ClientBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
@@ -22,10 +23,10 @@ import EmptyState from '@/components/empty-state';
 import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 
 import ClientCard from '../client-card';
+import ArchiveClientModal from './archive-client-modal';
 import ClientFormDialog from './client-form-dialog';
 import ClientSectionBottomContent from './client-section-bottom-content';
 import ClientSectionTopContent from './client-section-top-content';
-import DeleteClientModal from './delete-client-modal';
 
 const PER_PAGE = 8;
 
@@ -49,19 +50,20 @@ const ClientSection = ({ userId, clients }: Props) => {
 
   const [currentClientData, setCurrentClientData] = useState<ClientBody>();
   const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false);
-  const [isDeleteClientModalOpen, setIsDeleteClientModalOpen] = useState(false);
+  const [isArchiveClientModalOpen, setIsArchiveClientModalOpen] =
+    useState(false);
 
   const handleCloseEditClientModal = () => {
     setIsEditClientModalOpen(false);
   };
 
-  const handleOpenDeleteClientModal = (clientData: ClientBody) => {
+  const handleOpenArchiveClientModal = (clientData: ClientBody) => {
     setCurrentClientData(clientData);
-    setIsDeleteClientModalOpen(true);
+    setIsArchiveClientModalOpen(true);
   };
 
-  const handleCloseDeleteClientModal = () => {
-    setIsDeleteClientModalOpen(false);
+  const handleCloseArchiveClientModal = () => {
+    setIsArchiveClientModalOpen(false);
   };
 
   const handleEditClient = (clientData: ClientBody) => {
@@ -72,6 +74,7 @@ const ClientSection = ({ userId, clients }: Props) => {
   const renderMobileClientCardActions = (clientData: ClientBody) => (
     <Dropdown>
       <DropdownTrigger
+        aria-label={t('a11y.actions_label')}
         className={buttonVariants({
           variant: 'tertiary',
           size: 'sm',
@@ -95,15 +98,14 @@ const ClientSection = ({ userId, clients }: Props) => {
             </div>
           </DropdownItem>
           <DropdownItem
-            key="remove-client"
-            id="remove-client"
-            textValue={t('remove')}
-            variant="danger"
-            onAction={() => handleOpenDeleteClientModal(clientData)}
+            key="archive-client"
+            id="archive-client"
+            textValue={t('archive')}
+            onAction={() => handleOpenArchiveClientModal(clientData)}
           >
             <div className="flex items-center gap-1">
-              <TrashIcon className="h-4 w-4" />
-              {t('remove')}
+              <ArchiveBoxIcon className="h-4 w-4" />
+              {t('archive')}
             </div>
           </DropdownItem>
         </DropdownMenu>
@@ -120,18 +122,20 @@ const ClientSection = ({ userId, clients }: Props) => {
           className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
           variant="tertiary"
           size="sm"
+          aria-label={t('actions.tooltip_edit')}
           onPress={() => handleEditClient(clientData)}
         >
           <PencilSquareIcon className="h-4 w-4" />
         </Button>
         <Button
           isIconOnly
-          variant="danger-soft"
+          variant="tertiary"
           size="sm"
           className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
-          onPress={() => handleOpenDeleteClientModal(clientData)}
+          aria-label={t('actions.tooltip_archive')}
+          onPress={() => handleOpenArchiveClientModal(clientData)}
         >
-          <TrashIcon className="h-4 w-4" />
+          <ArchiveBoxIcon className="h-4 w-4" />
         </Button>
       </div>
     </>
@@ -208,12 +212,12 @@ const ClientSection = ({ userId, clients }: Props) => {
           clientData={currentClientData}
         />
       )}
-      {currentClientData && isDeleteClientModalOpen && (
-        <DeleteClientModal
+      {currentClientData && isArchiveClientModalOpen && (
+        <ArchiveClientModal
           userId={userId}
           clientData={currentClientData}
-          isOpen={isDeleteClientModalOpen}
-          onClose={handleCloseDeleteClientModal}
+          isOpen={isArchiveClientModalOpen}
+          onClose={handleCloseArchiveClientModal}
         />
       )}
     </section>

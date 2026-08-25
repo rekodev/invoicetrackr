@@ -1,5 +1,5 @@
 import {
-  clientBodySchema,
+  clientMutationBodySchema,
   getClientResponseSchema,
   getClientsResponseSchema,
   messageResponseSchema,
@@ -9,7 +9,7 @@ import {
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 
 import {
-  deleteClient,
+  archiveClient,
   getClient,
   getClients,
   postClient,
@@ -41,7 +41,7 @@ export const getClientOptions: RouteShorthandOptionsWithHandler = {
 
 export const postClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: clientBodySchema.omit({ id: true }),
+    body: clientMutationBodySchema.omit({ id: true }),
     response: {
       201: postClientResponseSchema
     }
@@ -52,7 +52,7 @@ export const postClientOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: clientBodySchema,
+    body: clientMutationBodySchema,
     response: {
       200: updateClientResponseSchema
     }
@@ -61,12 +61,12 @@ export const updateClientOptions: RouteShorthandOptionsWithHandler = {
   handler: updateClient
 };
 
-export const deleteClientOptions: RouteShorthandOptionsWithHandler = {
+export const archiveClientOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     response: {
       200: messageResponseSchema
     }
   },
   preHandler: authenticatedAccess,
-  handler: deleteClient
+  handler: archiveClient
 };
