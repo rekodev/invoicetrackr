@@ -596,6 +596,8 @@
             "business_number_individual": "Sole proprietorship certificate No.:",
             "address_label": "Address:",
             "invoice_date_label": "Invoice date:",
+            "service_date_label": "Service date:",
+            "notes_label": "Notes",
             "payer_label": "Payer:",
             "vat_number_label": "VAT Number:",
             "position_label": "Pos",
@@ -1205,6 +1207,8 @@
             "vat_total": "VAT Total",
             "grand_total": "Grand Total",
             "delete_service": "Delete service",
+            "move_service_up": "Move service up",
+            "move_service_down": "Move service down",
             "units": {
                 "service": "Service",
                 "hour": "Hour",
@@ -1258,7 +1262,9 @@
                 "invoice_id_label": "Invoice ID",
                 "invoice_series_label": "Invoice number series",
                 "date_label": "Date",
+                "service_date_label": "Service date",
                 "due_date_label": "Due Date",
+                "notes_label": "Client-visible notes",
                 "status_label": "Status",
                 "payment_mode_label": "Payment mode",
                 "manual_payment_reference_label": "Manual payment reference",
@@ -1291,7 +1297,9 @@
                 "invoice_id": "Invoice ID",
                 "invoice_series": "Invoice series",
                 "date": "Date",
+                "service_date": "Service date",
                 "due_date": "Due Date",
+                "notes": "Notes for the client",
                 "status": "Status",
                 "payment_mode": "Payment mode",
                 "manual_payment_reference": "Manual payment reference",
@@ -1319,7 +1327,8 @@
                 "receiver_vat_number": "e.g., LT100000000000",
                 "receiver_address": "e.g., Konstitucijos pr. 7, Vilnius",
                 "receiver_email": "e.g., billing@client.com",
-                "manual_payment_reference": "Defaults to the invoice number"
+                "manual_payment_reference": "Defaults to the invoice number",
+                "notes": "Optional information shown on the invoice"
             },
             "payment_settings": {
                 "title": "Payment settings",
@@ -1380,6 +1389,7 @@
             "signature_heading": "Signature",
             "banking_details": "Banking Details",
             "invoice_details": "Invoice Details",
+            "unsaved_changes": "You have unsaved invoice changes. Leave without saving?",
             "select_client": "Select Client",
             "due_date_preselection_chips": {
                 "seven_days": "7d",

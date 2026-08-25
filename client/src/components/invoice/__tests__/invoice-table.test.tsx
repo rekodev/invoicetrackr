@@ -75,6 +75,8 @@ describe('<InvoiceTable/>', () => {
           },
           totalAmount: '100.00',
           date: '2023-01-01',
+          serviceDate: '2023-01-01',
+          notes: null,
           dueDate: '2023-01-10',
           status: 'pending',
           lifecycleStatus: 'issued',
@@ -82,6 +84,7 @@ describe('<InvoiceTable/>', () => {
           services: [
             {
               id: 5,
+              position: 0,
               amount: 100,
               unit: 'hours',
               description: 'Test Service',

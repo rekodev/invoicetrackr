@@ -12,6 +12,8 @@ import { bankingInformationFactory } from './banking-information';
 export const invoiceFactory = Factory.define<InvoiceBody>(({ sequence }) => ({
   id: sequence,
   date: new Date().toISOString().split('T')[0],
+  serviceDate: new Date().toISOString().split('T')[0],
+  notes: null,
   userId: 1,
   senderId: 1,
   receiverId: 1,
@@ -41,6 +43,8 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
   ({ sequence }) => ({
     id: sequence,
     date: new Date().toISOString().split('T')[0],
+    serviceDate: new Date().toISOString().split('T')[0],
+    notes: null,
     totalAmount: '1000.00',
     subtotalAmount: '1000.00',
     vatAmount: '0.00',
@@ -87,6 +91,7 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
     services: [
       {
         id: sequence,
+        position: 0,
         description: `Service ${sequence}`,
         unit: 'hour',
         quantity: '10',
@@ -127,6 +132,7 @@ export const invoiceSenderFactory = Factory.define<InvoiceSenderBody>(
 export const invoiceServiceFactory = Factory.define<InvoiceServiceBody>(
   ({ sequence }) => ({
     id: sequence,
+    position: 0,
     description: `Service ${sequence}`,
     unit: 'hour',
     quantity: 10,

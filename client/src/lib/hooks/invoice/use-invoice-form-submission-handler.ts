@@ -14,13 +14,15 @@ type Props = {
   user: User | undefined;
   bankingInformation?: BankAccount;
   setError: UseFormSetError<InvoiceBody>;
+  onSuccess?: () => void;
 };
 
 const useInvoiceFormSubmissionHandler = ({
   invoiceData,
   user,
   bankingInformation,
-  setError
+  setError,
+  onSuccess
 }: Props) => {
   const router = useRouter();
 
@@ -36,6 +38,12 @@ const useInvoiceFormSubmissionHandler = ({
 
     const fullData: typeof data = {
       ...data,
+      serviceDate: data.serviceDate || data.date,
+      notes: data.notes?.trim() || null,
+      services: data.services.map((service, position) => ({
+        ...service,
+        position
+      })),
       senderSignature: data.senderSignature || '',
       subtotalAmount: invoiceTotals.subtotalAmount,
       vatAmount: invoiceTotals.vatAmount,
@@ -71,6 +79,7 @@ const useInvoiceFormSubmissionHandler = ({
       return;
     }
 
+    onSuccess?.();
     redirectToInvoicesPage();
   };
 

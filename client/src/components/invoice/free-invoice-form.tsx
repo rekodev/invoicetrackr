@@ -67,6 +67,8 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
       status: 'pending',
       totalAmount: '0.00',
       date: formatDate(new Date().toISOString()),
+      serviceDate: formatDate(new Date().toISOString()),
+      notes: '',
       dueDate: ''
     }
   });
@@ -434,6 +436,7 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
 
     return {
       ...getValues(),
+      serviceDate: getValues('date'),
       lifecycleStatus: getValues('invoiceId') ? 'issued' : 'draft',
       subtotalAmount: invoiceTotals.subtotalAmount,
       vatAmount: invoiceTotals.vatAmount,

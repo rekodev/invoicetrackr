@@ -12,6 +12,9 @@ export type InvoiceTestData = {
   recipientAddress?: string;
   recipientEmail?: string;
   serviceDescription: string;
+  secondServiceDescription?: string;
+  serviceDate?: string;
+  notes?: string;
   quantity: string;
   unitPrice: string;
 };

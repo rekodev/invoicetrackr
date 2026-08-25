@@ -596,6 +596,8 @@
             "business_number_individual": "Individualios veiklos pažymėjimo Nr.:",
             "address_label": "Adresas:",
             "invoice_date_label": "Sąskaitos data:",
+            "service_date_label": "Paslaugos data:",
+            "notes_label": "Pastabos",
             "payer_label": "Mokėtojas:",
             "vat_number_label": "PVM mokėtojo kodas:",
             "position_label": "Eil. Nr.",
@@ -1205,6 +1207,8 @@
             "vat_total": "PVM suma",
             "grand_total": "Bendra suma",
             "delete_service": "Ištrinti paslaugą",
+            "move_service_up": "Perkelti paslaugą aukštyn",
+            "move_service_down": "Perkelti paslaugą žemyn",
             "units": {
                 "service": "Paslauga",
                 "hour": "Valanda",
@@ -1258,7 +1262,9 @@
                 "invoice_id_label": "Sąskaitos faktūros ID",
                 "invoice_series_label": "Sąskaitų numerių serija",
                 "date_label": "Data",
+                "service_date_label": "Paslaugos data",
                 "due_date_label": "Mokėjimo terminas",
+                "notes_label": "Klientui matomos pastabos",
                 "status_label": "Būsena",
                 "payment_mode_label": "Mokėjimo būdas",
                 "manual_payment_reference_label": "Rankinio mokėjimo paskirtis",
@@ -1291,7 +1297,9 @@
                 "invoice_id": "Sąskaitos faktūros ID",
                 "invoice_series": "Sąskaitos serija",
                 "date": "Data",
+                "service_date": "Paslaugos data",
                 "due_date": "Mokėjimo terminas",
+                "notes": "Pastabos klientui",
                 "status": "Būsena",
                 "payment_mode": "Mokėjimo būdas",
                 "manual_payment_reference": "Mokėjimo paskirtis",
@@ -1319,7 +1327,8 @@
                 "receiver_vat_number": "pvz., LT100000000000",
                 "receiver_address": "pvz., Konstitucijos pr. 7, Vilnius",
                 "receiver_email": "pvz., saskaitos@klientas.lt",
-                "manual_payment_reference": "Pagal nutylėjimą naudojamas sąskaitos numeris"
+                "manual_payment_reference": "Pagal nutylėjimą naudojamas sąskaitos numeris",
+                "notes": "Neprivaloma informacija, rodoma sąskaitoje"
             },
             "payment_settings": {
                 "title": "Mokėjimo nustatymai",
@@ -1380,6 +1389,7 @@
             "signature_heading": "Parašas",
             "banking_details": "Bankinė informacija",
             "invoice_details": "Sąskaitos faktūros informacija",
+            "unsaved_changes": "Turite neišsaugotų sąskaitos pakeitimų. Išeiti jų neišsaugojus?",
             "select_client": "Pasirinkti klientą",
             "due_date_preselection_chips": {
                 "seven_days": "7d",

@@ -91,6 +91,7 @@ export const invoiceNumberSchema = z
 
 export const invoiceServiceBodySchema = z.object({
   id: z.coerce.number().optional(),
+  position: z.coerce.number().int().min(0).optional(),
   description: z
     .string()
     .min(1, 'validation.invoice.services.description')
@@ -107,8 +108,20 @@ export const invoiceServiceBodySchema = z.object({
   amount: z.coerce
     .number('validation.invoice.services.amount.number')
     .min(0.01, 'validation.invoice.services.amount.min')
-    .max(10000000, 'validation.invoice.services.amount.max'),
-  vatRate: z.coerce.number().min(0).max(100).optional(),
+    .max(10000000, 'validation.invoice.services.amount.max')
+    .refine(
+      (amount) => Number(amount.toFixed(2)) === amount,
+      'validation.invoice.services.amount.scale'
+    ),
+  vatRate: z.coerce
+    .number()
+    .min(0)
+    .max(100)
+    .refine(
+      (vatRate) => Number(vatRate.toFixed(2)) === vatRate,
+      'validation.invoice.services.vatRate.scale'
+    )
+    .optional(),
   vatExemptionReason: z.string().trim().max(255).nullish()
 });
 
@@ -155,7 +168,9 @@ export const invoiceBodySchema = z
     invoiceId: invoiceNumberSchema.nullish().or(z.literal('')),
     invoiceSeries: invoiceNumberSeriesSchema.nullish(),
     date: z.iso.date('validation.invoice.date'),
+    serviceDate: z.iso.date('validation.invoice.serviceDate'),
     dueDate: z.iso.date('validation.invoice.dueDate'),
+    notes: z.string().trim().max(2000, 'validation.invoice.notes').nullish(),
     sender: invoiceSenderBodySchema,
     senderSignature: z.any().optional(),
     receiverSignature: z.string().nullish(),
