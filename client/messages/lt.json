@@ -840,7 +840,7 @@
     "clients": {
         "page_title": "Klientai",
         "edit": "Redaguoti",
-        "remove": "Pašalinti",
+        "archive": "Pašalinti",
         "no_clients": "Klientų nerasta",
         "empty_state": {
             "title": "Dar neturite klientų",
@@ -852,7 +852,7 @@
             "actions_label": "Veiksmai"
         },
         "top_content": {
-            "search_placeholder": "Ieškoti pagal pavadinimą...",
+            "search_placeholder": "Ieškoti pagal pavadinimą arba kodą...",
             "add_new": "Pridėti naują",
             "type_filter": "Tipas",
             "total_singular": "Viso 1 klientas",
@@ -865,10 +865,10 @@
             "previous": "Ankstesnis",
             "next": "Kitas"
         },
-        "delete_modal": {
-            "title": "Ištrinti klientą",
-            "description": "Ar tikrai norite ištrinti {clientName}? Šis klientas bus ištrintas nedelsiant. Šio veiksmo negalima atšaukti.",
-            "confirm": "Ištrinti",
+        "archive_modal": {
+            "title": "Pašalinti klientą",
+            "description": "Pašalinti {clientName} iš klientų sąrašo? Esamos sąskaitos faktūros nepasikeis.",
+            "confirm": "Pašalinti",
             "cancel": "Atšaukti"
         },
         "form_dialog": {
@@ -886,13 +886,15 @@
                 "business": "Įmonė",
                 "individual": "Individualus"
             },
+            "duplicate_warning_title": "Galimas dublikatas",
             "cancel": "Atšaukti",
             "submit_add": "Pridėti",
-            "submit_edit": "Išsaugoti"
+            "submit_edit": "Išsaugoti",
+            "submit_duplicate": "Vis tiek tęsti"
         },
         "actions": {
             "tooltip_edit": "Redaguoti klientą",
-            "tooltip_delete": "Ištrinti klientą"
+            "tooltip_archive": "Pašalinti klientą"
         },
         "card": {
             "business_number_business": "Įmonės kodas:",

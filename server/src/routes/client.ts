@@ -5,7 +5,7 @@ import {
 } from 'fastify';
 
 import {
-  deleteClientOptions,
+  archiveClientOptions,
   getClientOptions,
   getClientsOptions,
   postClientOptions,
@@ -25,7 +25,7 @@ const clientRoutes = (
 
   fastify.put('/api/:userId/clients/:id', updateClientOptions);
 
-  fastify.delete('/api/:userId/clients/:id', deleteClientOptions);
+  fastify.delete('/api/:userId/clients/:id', archiveClientOptions);
 
   done();
 };

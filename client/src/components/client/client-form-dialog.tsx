@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Alert,
   Button,
   FieldError,
   Input,
@@ -12,16 +13,15 @@ import {
   TextField,
   toast
 } from '@heroui/react';
-import { ClientBody } from '@invoicetrackr/types';
+import type { ClientBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { addClientAction, updateClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 
 const INITIAL_CLIENT_DATA: ClientFormData = {
-  id: 0,
   name: '',
   type: 'receiver',
   businessType: 'business',
@@ -39,12 +39,18 @@ type Props = {
   clientData?: ClientBody;
 };
 
-type ClientFormData = ClientBody;
+type ClientFormData = Omit<ClientBody, 'archivedAt'>;
 
 const getInitialClientData = (clientData?: ClientBody): ClientFormData => ({
-  ...INITIAL_CLIENT_DATA,
-  ...clientData,
-  type: 'receiver'
+  id: clientData?.id,
+  name: clientData?.name || INITIAL_CLIENT_DATA.name,
+  type: 'receiver',
+  businessType: clientData?.businessType || INITIAL_CLIENT_DATA.businessType,
+  businessNumber:
+    clientData?.businessNumber || INITIAL_CLIENT_DATA.businessNumber,
+  vatNumber: clientData?.vatNumber || INITIAL_CLIENT_DATA.vatNumber,
+  address: clientData?.address || INITIAL_CLIENT_DATA.address,
+  email: clientData?.email || INITIAL_CLIENT_DATA.email
 });
 
 const ClientFormDialog = ({
@@ -57,6 +63,7 @@ const ClientFormDialog = ({
   const t = useTranslations('clients.form_dialog');
   const tTypes = useTranslations('clients.form_dialog.business_types');
   const isEditMode = mode === 'edit';
+  const [duplicateWarning, setDuplicateWarning] = useState<string>();
 
   const {
     control,
@@ -75,17 +82,32 @@ const ClientFormDialog = ({
     reset(getInitialClientData(clientData));
   }, [clientData, isEditMode, isOpen, reset]);
 
+  const handleClose = () => {
+    setDuplicateWarning(undefined);
+    onClose();
+  };
+
   const onSubmit: SubmitHandler<ClientFormData> = async (data) => {
+    const duplicateConfirmation = duplicateWarning
+      ? { duplicateAcknowledged: true }
+      : {};
     const response =
       isEditMode && clientData
         ? await updateClientAction({
             userId,
-            clientData: { ...data, type: 'receiver' }
+            clientData: { ...data, type: 'receiver' },
+            ...duplicateConfirmation
           })
         : await addClientAction({
             userId,
-            clientData: { ...data, type: 'receiver' }
+            clientData: { ...data, type: 'receiver' },
+            ...duplicateConfirmation
           });
+
+    if (response.code === 'CONFLICT') {
+      setDuplicateWarning(response.message);
+      return;
+    }
 
     toast(response.message || '', {
       variant: response.ok ? 'success' : 'danger'
@@ -105,7 +127,7 @@ const ClientFormDialog = ({
       return;
     }
 
-    onClose();
+    handleClose();
   };
 
   const renderTextField = ({
@@ -131,7 +153,10 @@ const ClientFormDialog = ({
               value={String(field.value ?? '')}
               type={type}
               onBlur={field.onBlur}
-              onChange={field.onChange}
+              onChange={(event) => {
+                field.onChange(event);
+                setDuplicateWarning(undefined);
+              }}
             />
             {error?.message ? <FieldError>{error.message}</FieldError> : null}
           </TextField>
@@ -146,12 +171,12 @@ const ClientFormDialog = ({
     <Modal>
       <Modal.Backdrop
         isOpen={isOpen}
-        onOpenChange={(open) => !open && onClose()}
+        onOpenChange={(open) => !open && handleClose()}
       >
         <Modal.Container>
           <Modal.Dialog>
             <Modal.CloseTrigger />
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form noValidate onSubmit={handleSubmit(onSubmit)}>
               <Modal.Header>
                 <Modal.Heading>
                   {isEditMode ? t('title_edit') : t('title_add')}
@@ -166,7 +191,10 @@ const ClientFormDialog = ({
                     <Select
                       variant="secondary"
                       value={field.value}
-                      onChange={field.onChange}
+                      onChange={(value) => {
+                        field.onChange(value);
+                        setDuplicateWarning(undefined);
+                      }}
                       isInvalid={!!errors.businessType}
                     >
                       <Label>{t('fields.business_type')}</Label>
@@ -211,12 +239,25 @@ const ClientFormDialog = ({
                 })}
               </Modal.Body>
               <Modal.Footer>
-                <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
+                <div className="flex w-full flex-col gap-3 overflow-x-hidden">
+                  {duplicateWarning ? (
+                    <Alert status="warning" className="w-full p-0">
+                      <Alert.Indicator />
+                      <Alert.Content>
+                        <Alert.Title>
+                          {t('duplicate_warning_title')}
+                        </Alert.Title>
+                        <Alert.Description>
+                          {duplicateWarning}
+                        </Alert.Description>
+                      </Alert.Content>
+                    </Alert>
+                  ) : null}
                   <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
                     <Button
                       variant="ghost"
                       className="w-full sm:w-auto"
-                      onPress={onClose}
+                      onPress={handleClose}
                     >
                       {t('cancel')}
                     </Button>
@@ -226,7 +267,11 @@ const ClientFormDialog = ({
                       type="submit"
                       className="w-full sm:w-auto"
                     >
-                      {isEditMode ? t('submit_edit') : t('submit_add')}
+                      {duplicateWarning
+                        ? t('submit_duplicate')
+                        : isEditMode
+                          ? t('submit_edit')
+                          : t('submit_add')}
                     </Button>
                   </div>
                 </div>

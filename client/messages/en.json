@@ -840,7 +840,7 @@
     "clients": {
         "page_title": "Clients",
         "edit": "Edit",
-        "remove": "Remove",
+        "archive": "Remove",
         "no_clients": "No clients found",
         "empty_state": {
             "title": "You have no clients yet",
@@ -852,7 +852,7 @@
             "actions_label": "Actions"
         },
         "top_content": {
-            "search_placeholder": "Search by name...",
+            "search_placeholder": "Search by name or code...",
             "add_new": "Add New",
             "type_filter": "Type",
             "total_singular": "Total 1 client",
@@ -865,10 +865,10 @@
             "previous": "Previous",
             "next": "Next"
         },
-        "delete_modal": {
-            "title": "Delete Client",
-            "description": "Are you sure you want to delete {clientName}? This client will be deleted immediately. You can't undo this action.",
-            "confirm": "Delete",
+        "archive_modal": {
+            "title": "Remove Client",
+            "description": "Remove {clientName} from your client list? Existing invoices will remain unchanged.",
+            "confirm": "Remove",
             "cancel": "Cancel"
         },
         "form_dialog": {
@@ -886,13 +886,15 @@
                 "business": "Business",
                 "individual": "Individual"
             },
+            "duplicate_warning_title": "Potential duplicate",
             "cancel": "Cancel",
             "submit_add": "Add",
-            "submit_edit": "Save"
+            "submit_edit": "Save",
+            "submit_duplicate": "Continue anyway"
         },
         "actions": {
             "tooltip_edit": "Edit client",
-            "tooltip_delete": "Delete client"
+            "tooltip_archive": "Remove client"
         },
         "card": {
             "business_number_business": "Company code:",

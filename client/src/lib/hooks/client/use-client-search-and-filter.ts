@@ -1,5 +1,7 @@
-import { ClientBody } from '@invoicetrackr/types';
-import { InvoicePartyBusinessType } from '@invoicetrackr/types';
+import type {
+  ClientBody,
+  InvoicePartyBusinessType
+} from '@invoicetrackr/types';
 import { ChangeEvent, useMemo, useState } from 'react';
 
 const INVOICE_PARTY_BUSINESS_TYPES: Array<InvoicePartyBusinessType> = [
@@ -22,9 +24,19 @@ const useClientSearchAndFilter = (clients: Array<ClientBody> | undefined) => {
     let filteredClients = [...clients];
 
     if (hasSearchFilter) {
-      filteredClients = filteredClients.filter((client) =>
-        client.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+
+      filteredClients = filteredClients.filter((client) => {
+        const searchableValues = [
+          client.name,
+          client.businessNumber,
+          client.email || ''
+        ];
+
+        return searchableValues.some((value) =>
+          value.toLowerCase().includes(normalizedSearchTerm)
+        );
+      });
     }
 
     filteredClients = filteredClients.filter((client) =>
@@ -41,6 +53,7 @@ const useClientSearchAndFilter = (clients: Array<ClientBody> | undefined) => {
 
   const handleClearSearch = () => {
     setSearchTerm('');
+    setPage(1);
   };
 
   return {

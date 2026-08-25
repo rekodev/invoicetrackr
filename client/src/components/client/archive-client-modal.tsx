@@ -1,11 +1,11 @@
 'use client';
 
 import { Button, Modal, toast } from '@heroui/react';
-import { ClientBody } from '@invoicetrackr/types';
+import type { ClientBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
 
-import { deleteClientAction } from '@/lib/actions/client';
+import { archiveClientAction } from '@/lib/actions/client';
 
 type Props = {
   userId: number;
@@ -14,15 +14,15 @@ type Props = {
   onClose: () => void;
 };
 
-const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
-  const t = useTranslations('clients.delete_modal');
+const ArchiveClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
+  const t = useTranslations('clients.archive_modal');
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = async () =>
     startTransition(async () => {
       if (!clientData.id) return;
 
-      const response = await deleteClientAction({
+      const response = await archiveClientAction({
         userId,
         clientId: clientData.id
       });
@@ -49,7 +49,7 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
           </Button>
           <Button
             isPending={isPending}
-            variant="danger"
+            variant="secondary"
             className="w-full sm:w-auto"
             onPress={handleSubmit}
           >
@@ -83,4 +83,4 @@ const DeleteClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
   );
 };
 
-export default DeleteClientModal;
+export default ArchiveClientModal;

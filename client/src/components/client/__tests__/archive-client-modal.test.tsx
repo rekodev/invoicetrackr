@@ -5,21 +5,22 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { withIntl } from '@/test/with-intl';
 
-import DeleteClientModal from '../delete-client-modal';
+import ArchiveClientModal from '../archive-client-modal';
 
-const { mockDeleteClientAction } = vi.hoisted(() => ({
-  mockDeleteClientAction: vi.fn()
+const { mockArchiveClientAction } = vi.hoisted(() => ({
+  mockArchiveClientAction: vi.fn()
 }));
 
 vi.mock('@/lib/actions/client', () => ({
-  deleteClientAction: mockDeleteClientAction
+  archiveClientAction: mockArchiveClientAction
 }));
 
-describe('<DeleteClientModal />', () => {
-  let props: ComponentProps<typeof DeleteClientModal>;
+describe('<ArchiveClientModal />', () => {
+  let props: ComponentProps<typeof ArchiveClientModal>;
   const renderHelper = (component: JSX.Element) => render(withIntl(component));
 
   beforeEach(() => {
+    vi.clearAllMocks();
     props = {
       userId: 1,
       clientData: {
@@ -35,50 +36,50 @@ describe('<DeleteClientModal />', () => {
       onClose: vi.fn()
     };
 
-    mockDeleteClientAction.mockResolvedValue({
+    mockArchiveClientAction.mockResolvedValue({
       ok: true,
-      message: 'Client deleted successfully'
+      message: 'Client removed successfully'
     });
   });
 
   it('renders correctly when open', () => {
-    renderHelper(<DeleteClientModal {...props} />);
+    renderHelper(<ArchiveClientModal {...props} />);
 
     expect(screen.getByText(/Test Client/)).toBeDefined();
   });
 
-  it('calls deleteClientAction and onClose when confirm is clicked', async () => {
-    renderHelper(<DeleteClientModal {...props} />);
+  it('calls archiveClientAction and onClose when confirm is clicked', async () => {
+    renderHelper(<ArchiveClientModal {...props} />);
 
-    const confirmButton = screen.getByRole('button', { name: /Delete/i });
+    const confirmButton = screen.getByRole('button', { name: /Remove/i });
     await userEvent.click(confirmButton);
 
-    expect(mockDeleteClientAction).toHaveBeenCalledWith({
+    expect(mockArchiveClientAction).toHaveBeenCalledWith({
       userId: 1,
       clientId: 10
     });
     expect(props.onClose).toHaveBeenCalled();
   });
 
-  it('does not close modal when deletion fails', async () => {
-    mockDeleteClientAction.mockResolvedValue({
+  it('does not close modal when archiving fails', async () => {
+    mockArchiveClientAction.mockResolvedValue({
       ok: false,
-      message: 'Deletion failed'
+      message: 'Archiving failed'
     });
 
-    renderHelper(<DeleteClientModal {...props} />);
+    renderHelper(<ArchiveClientModal {...props} />);
 
     const confirmButton = screen.getByRole('button', {
-      name: /Delete/i
+      name: /Remove/i
     });
     await userEvent.click(confirmButton);
 
-    expect(mockDeleteClientAction).toHaveBeenCalled();
+    expect(mockArchiveClientAction).toHaveBeenCalled();
     expect(props.onClose).not.toHaveBeenCalled();
   });
 
   it('calls onClose when cancel button is clicked', async () => {
-    renderHelper(<DeleteClientModal {...props} />);
+    renderHelper(<ArchiveClientModal {...props} />);
 
     const cancelButton = screen.getByRole('button', { name: /Cancel/i });
     await userEvent.click(cancelButton);

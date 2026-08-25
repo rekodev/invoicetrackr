@@ -152,8 +152,12 @@ export default {
     },
     client: {
       name: 'Name is required',
+      nameMax: 'Name must not exceed 255 characters',
       businessNumber: 'Business number is required',
+      businessNumberMax: 'Business number must not exceed 255 characters',
+      vatNumberMax: 'VAT number must not exceed 255 characters',
       address: 'Address is required',
+      addressMax: 'Address must not exceed 1000 characters',
       email: 'Must be a valid email address'
     },
     expense: {
@@ -230,7 +234,8 @@ export default {
     client: {
       created: 'Client added successfully',
       updated: 'Client updated successfully',
-      deleted: 'Client deleted successfully'
+      deleted: 'Client deleted successfully',
+      archived: 'Client removed successfully'
     },
     expense: {
       created: 'Expense added successfully',
@@ -343,9 +348,12 @@ export default {
     client: {
       notFound: 'Client not found',
       alreadyExists: 'Client already exists',
+      potentialDuplicate:
+        'Some details match an existing client: "%{clientName}". Continue only if this is a different client.',
       unableToCreate: 'Unable to add client',
       unableToUpdate: 'Unable to update client',
-      unableToDelete: 'Unable to delete client'
+      unableToDelete: 'Unable to delete client',
+      unableToArchive: 'Unable to remove client'
     },
     expense: {
       notFound: 'Expense not found',

@@ -156,8 +156,12 @@ export default {
     },
     client: {
       name: 'Vardas arba pavadinimas yra privalomas',
+      nameMax: 'Vardas arba pavadinimas negali viršyti 255 simbolių',
       businessNumber: 'Įmonės kodas yra privalomas',
+      businessNumberMax: 'Įmonės kodas negali viršyti 255 simbolių',
+      vatNumberMax: 'PVM mokėtojo kodas negali viršyti 255 simbolių',
       address: 'Adresas yra privalomas',
+      addressMax: 'Adresas negali viršyti 1000 simbolių',
       email: 'Turi būti tinkamas el. pašto adresas'
     },
     expense: {
@@ -238,7 +242,8 @@ export default {
     client: {
       created: 'Klientas pridėtas sėkmingai',
       updated: 'Klientas atnaujintas sėkmingai',
-      deleted: 'Klientas ištrintas sėkmingai'
+      deleted: 'Klientas ištrintas sėkmingai',
+      archived: 'Klientas sėkmingai pašalintas'
     },
     expense: {
       created: 'Išlaidų įrašas pridėtas sėkmingai',
@@ -351,9 +356,12 @@ export default {
     client: {
       notFound: 'Klientas nerastas',
       alreadyExists: 'Klientas jau egzistuoja',
+      potentialDuplicate:
+        'Kai kurie duomenys sutampa su esamo kliento „%{clientName}“ duomenimis. Tęskite tik jei tai kitas klientas.',
       unableToCreate: 'Nepavyko pridėti kliento',
       unableToUpdate: 'Nepavyko atnaujinti kliento',
-      unableToDelete: 'Nepavyko ištrinti kliento'
+      unableToDelete: 'Nepavyko ištrinti kliento',
+      unableToArchive: 'Nepavyko pašalinti kliento'
     },
     expense: {
       notFound: 'Išlaidų įrašas nerastas',
