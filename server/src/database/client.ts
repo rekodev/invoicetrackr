@@ -1,8 +1,8 @@
 import { and, desc, eq, isNull, ne, or, sql } from 'drizzle-orm';
 
 import { db } from './db';
-import { clientsTable } from './schema';
 import type { SelectClient } from './schema';
+import { clientsTable } from './schema';
 
 const clientSelection = {
   id: clientsTable.id,
