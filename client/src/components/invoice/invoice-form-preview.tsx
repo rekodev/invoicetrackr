@@ -2,7 +2,7 @@
 
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Currency } from '@/lib/types/currency';
 
@@ -23,20 +23,19 @@ export default function InvoiceFormPreview({
   onClose
 }: Props) {
   const pdfTranslator = useTranslations('invoices.pdf');
-  const [signatureFileUrl, setSignatureFileUrl] = useState('');
   const signature = invoiceData.senderSignature;
+  const signatureFileUrl = useMemo(
+    () => (signature instanceof File ? URL.createObjectURL(signature) : ''),
+    [signature]
+  );
 
   useEffect(() => {
-    if (!(signature instanceof File)) {
-      setSignatureFileUrl('');
+    if (!signatureFileUrl) {
       return;
     }
 
-    const objectUrl = URL.createObjectURL(signature);
-    setSignatureFileUrl(objectUrl);
-
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [signature]);
+    return () => URL.revokeObjectURL(signatureFileUrl);
+  }, [signatureFileUrl]);
 
   const senderSignatureImage =
     typeof signature === 'string' ? signature : signatureFileUrl;

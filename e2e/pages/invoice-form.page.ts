@@ -69,7 +69,9 @@ export class InvoiceFormPage {
     }
 
     if (invoice.notes) {
-      await this.page.getByLabel('Client-visible notes').fill(invoice.notes);
+      await this.page
+        .getByPlaceholder('Optional information shown on the invoice')
+        .fill(invoice.notes);
     }
 
     if (invoice.secondServiceDescription) {
@@ -99,9 +101,9 @@ export class InvoiceFormPage {
     }
 
     if (invoice.notes) {
-      await expect(this.page.getByLabel('Client-visible notes')).toHaveValue(
-        invoice.notes
-      );
+      await expect(
+        this.page.getByPlaceholder('Optional information shown on the invoice')
+      ).toHaveValue(invoice.notes);
     }
 
     if (invoice.secondServiceDescription) {

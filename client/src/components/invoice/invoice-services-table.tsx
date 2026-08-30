@@ -25,7 +25,7 @@ import {
   TableScrollContainer,
   TextField
 } from '@heroui/react';
-import type { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import {
   type ComponentProps,
@@ -51,7 +51,6 @@ import { calculateInvoiceTotals } from '@/lib/utils';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
 type Props = {
-  invoiceServices?: Array<InvoiceServiceBody>;
   isInvalid?: boolean;
   errorMessage?: string;
   currency: Currency;
@@ -62,7 +61,6 @@ type Props = {
 type ServiceInputProps = ComponentProps<typeof Input>;
 
 const InvoiceServicesTable = ({
-  invoiceServices,
   isInvalid,
   errorMessage,
   currency,
@@ -76,7 +74,7 @@ const InvoiceServicesTable = ({
     clearErrors,
     formState: { errors }
   } = useFormContext<InvoiceBody>();
-  const { fields, append, move, remove, replace } = useFieldArray({
+  const { fields, append, move, remove } = useFieldArray({
     name: 'services',
     control,
     keyName: 'fieldId'
@@ -133,16 +131,6 @@ const InvoiceServicesTable = ({
       }),
     [services]
   );
-
-  useEffect(() => {
-    if (!invoiceServices?.length) return;
-
-    replace(
-      [...invoiceServices].sort(
-        (first, second) => (first.position ?? 0) - (second.position ?? 0)
-      )
-    );
-  }, [invoiceServices, replace]);
 
   useEffect(() => {
     const serviceTable = servicesTableRef.current;
@@ -298,7 +286,8 @@ const InvoiceServicesTable = ({
             placeholder: t('placeholders.description'),
             type: 'text',
             maxLength: 200,
-            ...register(`services.${index}.description`)
+            ...register(`services.${index}.description`),
+            value: services[index]?.description || ''
           }
         });
       case 'unit':
@@ -360,7 +349,8 @@ const InvoiceServicesTable = ({
             type: 'number',
             min: 0.0001,
             step: '0.0001',
-            ...register(`services.${index}.quantity`)
+            ...register(`services.${index}.quantity`),
+            value: services[index]?.quantity ?? ''
           }
         });
       case 'amount':
@@ -374,7 +364,8 @@ const InvoiceServicesTable = ({
             type: 'number',
             min: 0.01,
             step: '0.01',
-            ...register(`services.${index}.amount`)
+            ...register(`services.${index}.amount`),
+            value: services[index]?.amount ?? ''
           }
         });
       case 'vatRate':
@@ -389,7 +380,8 @@ const InvoiceServicesTable = ({
             min: 0,
             max: 100,
             step: '0.01',
-            ...register(`services.${index}.vatRate`)
+            ...register(`services.${index}.vatRate`),
+            value: services[index]?.vatRate ?? ''
           }
         });
       case 'vatExemptionReason':
@@ -402,7 +394,8 @@ const InvoiceServicesTable = ({
             placeholder: t('placeholders.vat_exemption_reason'),
             type: 'text',
             maxLength: 255,
-            ...register(`services.${index}.vatExemptionReason`)
+            ...register(`services.${index}.vatExemptionReason`),
+            value: services[index]?.vatExemptionReason || ''
           }
         });
       case 'lineTotal':
@@ -482,7 +475,11 @@ const InvoiceServicesTable = ({
             </TableHeader>
             <TableBody>
               {fields.map((field, index) => (
-                <TableRow key={field.fieldId} id={`service-${index}`}>
+                <TableRow
+                  key={field.fieldId}
+                  id={field.fieldId}
+                  dependencies={[index]}
+                >
                   {visibleColumns.map((column) => (
                     <TableCell key={column.uid}>
                       {renderCell(column.uid, index)}

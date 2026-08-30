@@ -1,7 +1,7 @@
 import { DEFAULT_CURRENCY, type InvoiceBody } from '@invoicetrackr/types';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useForm, FormProvider } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { describe, expect, it } from 'vitest';
 
 import { withIntl } from '@/test/with-intl';
@@ -36,7 +36,6 @@ const Harness = ({ initialServices = services }) => {
     <FormProvider {...methods}>
       <InvoiceServicesTable
         currency={DEFAULT_CURRENCY}
-        invoiceServices={initialServices}
       />
     </FormProvider>
   );
@@ -77,6 +76,13 @@ describe('<InvoiceServicesTable />', () => {
 
     expect(moveUpButtons[0]).toBeDisabled();
     expect(moveDownButtons[1]).toBeDisabled();
+
+    expect(
+      screen.getAllByRole('textbox', { name: 'Description' })[0]
+    ).toHaveValue('Consulting');
+    expect(
+      screen.getAllByRole('textbox', { name: 'Description' })[1]
+    ).toHaveValue('Workshop');
 
     await user.click(moveUpButtons[1]);
 

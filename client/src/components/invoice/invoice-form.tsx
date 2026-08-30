@@ -142,6 +142,10 @@ const InvoiceForm = ({
     defaultValues: invoiceData
       ? {
           ...invoiceData,
+          services: [...invoiceData.services].sort(
+            (first, second) =>
+              (first.position ?? 0) - (second.position ?? 0)
+          ),
           invoiceSeries:
             invoiceData.invoiceSeries ||
             splitInvoiceId(invoiceData.invoiceId || '')[0] ||
@@ -639,7 +643,6 @@ const InvoiceForm = ({
       />
       <InvoiceServicesTable
         currency={currency}
-        invoiceServices={invoiceData?.services}
         defaultVatRate={defaultVatRate}
         isVatEnabled={isVatEnabled}
         isInvalid={!!errors.services}
