@@ -317,7 +317,7 @@ const InvoiceTable = ({
                     ? 'secondary'
                     : 'primary'
                 }
-                className="w-full sm:w-auto"
+                className="w-full whitespace-nowrap sm:w-auto"
                 onPress={() => {
                   onOpenChange(false);
                   handleSendInvoiceEmail(currentInvoice);

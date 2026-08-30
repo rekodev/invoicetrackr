@@ -8,18 +8,20 @@ import {
   UserPlusIcon
 } from '@heroicons/react/24/outline';
 import {
-  buttonVariants,
-  Dropdown,
+  Button,
   DropdownItem,
   DropdownMenu,
   DropdownPopover,
-  DropdownTrigger,
   toast,
-  Tooltip
+  Tooltip,
+  useOverlayState
 } from '@heroui/react';
+import { dropdownVariants } from '@heroui/styles';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import type { JSX } from 'react';
+import { type JSX, useRef } from 'react';
+
+const dropdownStyles = dropdownVariants();
 
 type Props = {
   invoice: InvoiceBody;
@@ -45,6 +47,8 @@ const InvoiceMoreActionsMenu = ({
   showLabel = false
 }: Props) => {
   const t = useTranslations('invoices.cell.actions');
+  const menuState = useOverlayState();
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const isDraft = (invoice.lifecycleStatus || 'draft') === 'draft';
 
   const handleCopyPublicLink = async () => {
@@ -93,44 +97,58 @@ const InvoiceMoreActionsMenu = ({
 
   if (!actions.length) return null;
 
-  const trigger = (
-    <DropdownTrigger
+  const triggerButton = (
+    <Button
+      ref={triggerRef}
       aria-label={t('more_actions')}
-      className={buttonVariants({
-        variant: showLabel ? 'secondary' : 'tertiary',
-        size: 'sm',
-        isIconOnly: !showLabel,
-        className: showLabel
-          ? 'w-full sm:w-auto'
-          : 'flex size-8 min-w-8 shrink-0 items-center justify-center p-0'
-      })}
+      className={showLabel ? 'w-full whitespace-nowrap sm:w-auto' : undefined}
+      isIconOnly={!showLabel}
+      size="sm"
+      variant={showLabel ? 'secondary' : 'tertiary'}
+      onPress={menuState.toggle}
     >
       <EllipsisVerticalIcon className="h-5 w-5" />
       {showLabel ? t('more_actions') : null}
-    </DropdownTrigger>
+    </Button>
+  );
+
+  const trigger = showLabel ? (
+    triggerButton
+  ) : (
+    <Tooltip delay={0}>
+      {triggerButton}
+      <Tooltip.Content>{t('more_actions')}</Tooltip.Content>
+    </Tooltip>
   );
 
   return (
-    <Dropdown>
-      {showLabel ? (
-        trigger
-      ) : (
-        <Tooltip delay={0}>
-          {trigger}
-          <Tooltip.Content>{t('more_actions')}</Tooltip.Content>
-        </Tooltip>
-      )}
-      <DropdownPopover>
-        <DropdownMenu aria-label={t('more_actions')} items={actions}>
+    <>
+      {trigger}
+      <DropdownPopover
+        isOpen={menuState.isOpen}
+        onOpenChange={menuState.setOpen}
+        triggerRef={triggerRef}
+        placement="bottom end"
+        className={`${dropdownStyles.popover()} w-max max-w-[calc(100vw-2rem)]`}
+      >
+        <DropdownMenu
+          autoFocus="first"
+          aria-label={t('more_actions')}
+          className={dropdownStyles.menu()}
+          items={actions}
+        >
           {(action) => (
             <DropdownItem
               key={action.id}
               id={action.id}
               textValue={action.label}
               className={action.className}
-              onAction={action.onAction}
+              onAction={() => {
+                action.onAction();
+                menuState.close();
+              }}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 whitespace-nowrap">
                 {action.icon}
                 {action.label}
               </div>
@@ -138,7 +156,7 @@ const InvoiceMoreActionsMenu = ({
           )}
         </DropdownMenu>
       </DropdownPopover>
-    </Dropdown>
+    </>
   );
 };
 

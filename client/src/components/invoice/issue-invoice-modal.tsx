@@ -1,7 +1,6 @@
 import { CheckBadgeIcon } from '@heroicons/react/24/outline';
 import {
   Button,
-  buttonVariants,
   Modal,
   toast,
   Tooltip,
@@ -43,35 +42,42 @@ const IssueInvoiceModal = ({
       }
     });
 
-  const trigger = (
-    <Modal.Trigger
+  const triggerButton = (
+    <Button
       aria-label={t('title')}
       className={
         triggerVariant === 'button'
-          ? buttonVariants({
-              variant: 'primary',
-              size: 'sm',
-              className: 'w-full sm:w-auto'
-            })
-          : 'text-accent hover:bg-accent/10 flex size-8 cursor-pointer items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-2'
+          ? 'w-full whitespace-nowrap sm:w-auto'
+          : 'text-accent'
       }
+      isIconOnly={triggerVariant === 'icon'}
+      size="sm"
+      type="button"
+      variant={triggerVariant === 'button' ? 'primary' : 'tertiary'}
+      onPress={state.open}
     >
       <CheckBadgeIcon className="h-5 w-5" />
       {triggerVariant === 'button' ? t('confirm') : null}
-    </Modal.Trigger>
+    </Button>
   );
 
+  const trigger =
+    triggerVariant === 'icon' ? (
+      <Tooltip delay={0}>
+        {triggerButton}
+        <Tooltip.Content>{t('title')}</Tooltip.Content>
+      </Tooltip>
+    ) : (
+      triggerButton
+    );
+
   return (
-    <Modal state={state}>
-      {triggerVariant === 'icon' ? (
-        <Tooltip delay={0}>
-          {trigger}
-          <Tooltip.Content>{t('title')}</Tooltip.Content>
-        </Tooltip>
-      ) : (
-        trigger
-      )}
-      <Modal.Backdrop>
+    <>
+      {trigger}
+      <Modal.Backdrop
+        isOpen={state.isOpen}
+        onOpenChange={state.setOpen}
+      >
         <Modal.Container>
           <Modal.Dialog>
             <Modal.CloseTrigger />
@@ -103,7 +109,7 @@ const IssueInvoiceModal = ({
           </Modal.Dialog>
         </Modal.Container>
       </Modal.Backdrop>
-    </Modal>
+    </>
   );
 };
 

@@ -319,7 +319,7 @@ const InvoiceModal = ({
                 {renderFooterStatus()}
               </div>
             </div>
-            <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+            <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center lg:w-auto">
               {isDocumentBuilder && pdfDocument ? (
                 <PdfPrintButton
                   document={pdfDocument}
@@ -367,8 +367,8 @@ const InvoiceModal = ({
               )}
               <Button
                 size="sm"
-                variant="secondary"
-                className="w-full sm:w-auto"
+                variant="tertiary"
+                className="w-full whitespace-nowrap sm:w-auto"
                 onPress={() => onOpenChange(false)}
               >
                 {t('buttons.close')}
