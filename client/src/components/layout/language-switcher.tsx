@@ -71,7 +71,8 @@ export default function LanguageSwitcher({ user }: Props) {
         isVatPayer: user.isVatPayer,
         defaultInvoiceVatMode: user.defaultInvoiceVatMode || 'no_vat',
         defaultInvoiceSeries: user.defaultInvoiceSeries || 'SF',
-        defaultPaymentTermsDays: user.defaultPaymentTermsDays || 30
+        defaultPaymentTermsDays: user.defaultPaymentTermsDays || 30,
+        defaultInvoiceIncludeLogo: user.defaultInvoiceIncludeLogo ?? true
       });
     }
   };

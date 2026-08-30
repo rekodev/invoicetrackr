@@ -12,7 +12,7 @@ export class RecipientDetailsPage {
   }) {
     await expect(
       this.page.getByRole('heading', {
-        name: 'Complete your billing details'
+        name: 'Complete Your Billing Details'
       })
     ).toBeVisible();
     await this.page.getByLabel('Company Code').fill(businessNumber);
@@ -23,7 +23,7 @@ export class RecipientDetailsPage {
 
     await expect(this.page).toHaveURL(/\/invoices\/public\/[a-f0-9]+$/);
     await expect(
-      this.page.getByRole('heading', { name: /Invoice Received from/ })
+      this.page.getByRole('heading', { name: /Invoice Received From/ })
     ).toBeVisible();
     await expect(this.page.getByText(/SF\d{3}/).first()).toBeVisible();
   }

@@ -77,6 +77,7 @@ describe('<MultiStepForm />', () => {
     defaultInvoiceVatMode: 'no_vat',
     defaultInvoiceSeries: 'SF',
     defaultPaymentTermsDays: 30,
+    defaultInvoiceIncludeLogo: true,
     currency: DEFAULT_CURRENCY,
     businessType: 'individual',
     profilePictureUrl: ''
@@ -104,7 +105,7 @@ describe('<MultiStepForm />', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Freelancer details' })
+      screen.getByRole('heading', { name: 'Freelancer Details' })
     ).toBeInTheDocument();
   });
 
@@ -116,7 +117,7 @@ describe('<MultiStepForm />', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Bank account' })
+      screen.getByRole('heading', { name: 'Bank Account' })
     ).toBeInTheDocument();
   });
 
@@ -124,7 +125,7 @@ describe('<MultiStepForm />', () => {
     renderHelper(<MultiStepForm {...props} />);
 
     expect(
-      screen.getByRole('heading', { name: 'Invoice defaults' })
+      screen.getByRole('heading', { name: 'Invoice Defaults' })
     ).toBeInTheDocument();
   });
 
@@ -144,7 +145,7 @@ describe('<MultiStepForm />', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Bank account' })
+      screen.getByRole('heading', { name: 'Bank Account' })
     ).toBeInTheDocument();
   });
 
@@ -158,7 +159,7 @@ describe('<MultiStepForm />', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Skip for now' }));
 
     expect(
-      screen.getByRole('heading', { name: 'Invoice defaults' })
+      screen.getByRole('heading', { name: 'Invoice Defaults' })
     ).toBeInTheDocument();
   });
 
@@ -172,7 +173,7 @@ describe('<MultiStepForm />', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Add bank account' }));
 
     expect(
-      screen.getByRole('heading', { name: 'Invoice defaults' })
+      screen.getByRole('heading', { name: 'Invoice Defaults' })
     ).toBeInTheDocument();
   });
 

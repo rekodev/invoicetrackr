@@ -3,6 +3,7 @@
 import {
   Button,
   Card,
+  Checkbox,
   FieldError,
   Input,
   Label,
@@ -23,7 +24,9 @@ import {
 
 type InvoiceDefaults = Pick<
   User,
-  'defaultInvoiceSeries' | 'defaultPaymentTermsDays'
+  | 'defaultInvoiceSeries'
+  | 'defaultPaymentTermsDays'
+  | 'defaultInvoiceIncludeLogo'
 >;
 
 const paymentTermsOptions = [7, 14, 30] as const;
@@ -44,7 +47,8 @@ export default function InvoiceDefaultsStep({ user, onSuccess }: Props) {
   } = useForm<InvoiceDefaults>({
     defaultValues: {
       defaultInvoiceSeries: user.defaultInvoiceSeries || 'SF',
-      defaultPaymentTermsDays: user.defaultPaymentTermsDays || 30
+      defaultPaymentTermsDays: user.defaultPaymentTermsDays || 30,
+      defaultInvoiceIncludeLogo: user.defaultInvoiceIncludeLogo ?? true
     }
   });
 
@@ -60,7 +64,8 @@ export default function InvoiceDefaultsStep({ user, onSuccess }: Props) {
       isVatPayer: user.isVatPayer,
       defaultInvoiceVatMode: user.defaultInvoiceVatMode,
       defaultInvoiceSeries: normalizedSeries,
-      defaultPaymentTermsDays: defaults.defaultPaymentTermsDays
+      defaultPaymentTermsDays: defaults.defaultPaymentTermsDays,
+      defaultInvoiceIncludeLogo: defaults.defaultInvoiceIncludeLogo
     });
 
     if (!settingsResponse.ok) {
@@ -147,6 +152,25 @@ export default function InvoiceDefaultsStep({ user, onSuccess }: Props) {
               </Select.Popover>
               <FieldError>{errors.defaultPaymentTermsDays?.message}</FieldError>
             </Select>
+          )}
+        />
+        <Controller
+          control={control}
+          name="defaultInvoiceIncludeLogo"
+          render={({ field }) => (
+            <Checkbox
+              className="sm:col-span-2"
+              variant="secondary"
+              isSelected={field.value}
+              onChange={field.onChange}
+            >
+              <Checkbox.Control>
+                <Checkbox.Indicator />
+              </Checkbox.Control>
+              <Checkbox.Content>
+                <Label>{t('include_logo')}</Label>
+              </Checkbox.Content>
+            </Checkbox>
           )}
         />
       </Card.Content>

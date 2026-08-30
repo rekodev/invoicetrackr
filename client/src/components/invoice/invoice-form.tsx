@@ -9,6 +9,7 @@ import {
 import {
   Button,
   Card,
+  Checkbox,
   FieldError,
   Input,
   Label,
@@ -66,6 +67,12 @@ type Props = {
   cryptoWallets: Array<CryptoWalletBody>;
   invoiceData?: InvoiceBody;
   currency: Currency;
+};
+
+type InvoicePreviewData = {
+  invoiceData: InvoiceBody;
+  senderSignatureImage: string;
+  signatureObjectUrl?: string;
 };
 
 type TextInputProps = ComponentProps<typeof Input>;
@@ -162,7 +169,10 @@ const InvoiceForm = ({
           sender: {
             ...user,
             email: user.invoiceEmail || user.email,
-            logoUrl: user.profilePictureUrl || '',
+            logoUrl:
+              user.defaultInvoiceIncludeLogo === false
+                ? ''
+                : user.profilePictureUrl || '',
             type: 'sender',
             vatNumber: user.vatNumber || ''
           },
@@ -207,7 +217,9 @@ const InvoiceForm = ({
   const [senderSignature, setSenderSignature] = useState<
     string | File | undefined
   >(defaultSenderSignature);
-  const [previewData, setPreviewData] = useState<InvoiceBody | null>(null);
+  const [previewData, setPreviewData] = useState<InvoicePreviewData | null>(
+    null
+  );
   const isDueDateManuallyOverriddenRef = useRef(
     Boolean(
       invoiceData &&
@@ -239,6 +251,8 @@ const InvoiceForm = ({
   const paymentMode = watch('paymentMode') || 'manual';
   const currentDate = watch('date');
   const senderVatNumber = watch('sender.vatNumber');
+  const availableSenderLogoUrl =
+    invoiceData?.sender.logoUrl || user.profilePictureUrl || '';
   const shouldShowSenderVatNumber = isVatEnabled || !!senderVatNumber;
 
   const handleOpenReceiverModal = () => {
@@ -305,7 +319,17 @@ const InvoiceForm = ({
   };
 
   const handlePreview = () => {
-    setPreviewData(buildInvoicePreviewData(getValues()));
+    const invoiceData = buildInvoicePreviewData(getValues());
+    const signature = invoiceData.senderSignature;
+    const signatureObjectUrl =
+      signature instanceof File ? URL.createObjectURL(signature) : undefined;
+
+    setPreviewData({
+      invoiceData,
+      senderSignatureImage:
+        typeof signature === 'string' ? signature : (signatureObjectUrl ?? ''),
+      signatureObjectUrl
+    });
   };
 
   const renderTextField = ({
@@ -335,15 +359,16 @@ const InvoiceForm = ({
         <Label>{label}</Label>
         {tooltip && (
           <Tooltip delay={0}>
-            <Tooltip.Trigger>
-              <button
-                type="button"
-                aria-label={tooltip}
-                className="text-muted hover:text-foreground cursor-pointer"
-              >
-                <InformationCircleIcon className="h-4 w-4" />
-              </button>
-            </Tooltip.Trigger>
+            <Button
+              isIconOnly
+              size="sm"
+              variant="tertiary"
+              type="button"
+              aria-label={tooltip}
+              className="text-muted hover:text-foreground size-5 min-w-5 rounded-full p-0"
+            >
+              <InformationCircleIcon className="h-4 w-4" />
+            </Button>
             <Tooltip.Content>{tooltip}</Tooltip.Content>
           </Tooltip>
         )}
@@ -382,8 +407,31 @@ const InvoiceForm = ({
           variant="secondary"
           className="flex w-full flex-col gap-4 border p-4 pb-6"
         >
-          <div className="flex min-h-8 items-center justify-between">
+          <div className="flex min-h-8 items-center justify-between gap-4">
             <p className="text-muted section-eyebrow">{t('headings.from')}</p>
+            {availableSenderLogoUrl && (
+              <Controller
+                name="sender.logoUrl"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    aria-label={t('a11y.include_logo_label')}
+                    variant="secondary"
+                    isSelected={Boolean(field.value)}
+                    onChange={(isSelected) =>
+                      field.onChange(isSelected ? availableSenderLogoUrl : '')
+                    }
+                  >
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
+                    <Checkbox.Content>
+                      <Label>{t('labels.include_logo')}</Label>
+                    </Checkbox.Content>
+                  </Checkbox>
+                )}
+              />
+            )}
           </div>
           <Controller
             name="sender.businessType"
@@ -1103,8 +1151,10 @@ const InvoiceForm = ({
       {previewData && (
         <InvoiceFormPreview
           currency={currency}
-          invoiceData={previewData}
+          invoiceData={previewData.invoiceData}
           language={locale}
+          senderSignatureImage={previewData.senderSignatureImage}
+          signatureObjectUrl={previewData.signatureObjectUrl}
           onClose={() => setPreviewData(null)}
         />
       )}

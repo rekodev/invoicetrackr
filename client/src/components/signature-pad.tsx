@@ -211,59 +211,57 @@ const SignaturePad = ({
         )}
       </div>
 
-      <Modal>
-        <Modal.Backdrop
-          isOpen={isOpen}
-          onOpenChange={(open) => !open && onOpenChange(false)}
-        >
-          <Modal.Container>
-            <Modal.Dialog className="mx-auto !w-[min(92vw,548px)] !max-w-[548px]">
-              <Modal.CloseTrigger />
-              <Modal.Header>
-                <Modal.Heading>{t('modal_title')}</Modal.Heading>
-              </Modal.Header>
-              <Modal.Body className="items-center">
-                <div
-                  ref={canvasContainerRef}
-                  className="border-default-300 w-full max-w-[508px] overflow-hidden rounded-lg border-2 border-dashed bg-white"
-                >
-                  <SignatureCanvas
-                    ref={signatureRef}
-                    clearOnResize={false}
-                    throttle={0}
-                    minDistance={1}
-                    canvasProps={{
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => !open && onOpenChange(false)}
+      >
+        <Modal.Container>
+          <Modal.Dialog className="mx-auto !w-[min(92vw,548px)] !max-w-[548px]">
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>{t('modal_title')}</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="items-center">
+              <div
+                ref={canvasContainerRef}
+                className="border-default-300 w-full max-w-[508px] overflow-hidden rounded-lg border-2 border-dashed bg-white"
+              >
+                <SignatureCanvas
+                  ref={signatureRef}
+                  clearOnResize={false}
+                  throttle={0}
+                  minDistance={1}
+                  canvasProps={{
+                    width: canvasSize.width,
+                    height: canvasSize.height,
+                    className: 'block',
+                    style: {
                       width: canvasSize.width,
                       height: canvasSize.height,
-                      className: 'block',
-                      style: {
-                        width: canvasSize.width,
-                        height: canvasSize.height,
-                        backgroundColor: 'white',
-                        cursor: SIGNATURE_CANVAS_CURSOR,
-                        touchAction: 'none'
-                      }
-                    }}
-                    backgroundColor="white"
-                  />
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  variant="danger"
-                  className="w-full sm:w-auto"
-                  onPress={() => signatureRef.current?.clear()}
-                >
-                  {t('clear')}
-                </Button>
-                <Button className="w-full sm:w-auto" onPress={saveSignature}>
-                  {t('save')}
-                </Button>
-              </Modal.Footer>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+                      backgroundColor: 'white',
+                      cursor: SIGNATURE_CANVAS_CURSOR,
+                      touchAction: 'none'
+                    }
+                  }}
+                  backgroundColor="white"
+                />
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="danger"
+                className="w-full sm:w-auto"
+                onPress={() => signatureRef.current?.clear()}
+              >
+                {t('clear')}
+              </Button>
+              <Button className="w-full sm:w-auto" onPress={saveSignature}>
+                {t('save')}
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </>
   );
 };

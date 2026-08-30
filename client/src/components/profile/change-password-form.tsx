@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardFooter,
-  Separator,
   toast
 } from '@heroui/react';
 import { useTranslations } from 'next-intl';
@@ -121,10 +120,6 @@ export default function ChangePasswordForm({ userId }: Props) {
       onSubmit={handleSubmit(onSubmit)}
     >
       <Card className="border">
-        <Card.Header className="px-6 py-4">
-          <Card.Title className="text-2xl">{t('title')}</Card.Title>
-        </Card.Header>
-        <Separator />
         {renderCardBodyAndFooter()}
       </Card>
     </form>

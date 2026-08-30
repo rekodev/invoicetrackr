@@ -2,7 +2,7 @@
 
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 import { Currency } from '@/lib/types/currency';
 
@@ -13,6 +13,8 @@ type Props = {
   currency: Currency;
   invoiceData: InvoiceBody;
   language: string;
+  senderSignatureImage: string;
+  signatureObjectUrl?: string;
   onClose: () => void;
 };
 
@@ -20,25 +22,17 @@ export default function InvoiceFormPreview({
   currency,
   invoiceData,
   language,
+  senderSignatureImage,
+  signatureObjectUrl,
   onClose
 }: Props) {
   const pdfTranslator = useTranslations('invoices.pdf');
-  const signature = invoiceData.senderSignature;
-  const signatureFileUrl = useMemo(
-    () => (signature instanceof File ? URL.createObjectURL(signature) : ''),
-    [signature]
-  );
 
   useEffect(() => {
-    if (!signatureFileUrl) {
-      return;
-    }
-
-    return () => URL.revokeObjectURL(signatureFileUrl);
-  }, [signatureFileUrl]);
-
-  const senderSignatureImage =
-    typeof signature === 'string' ? signature : signatureFileUrl;
+    return () => {
+      if (signatureObjectUrl) URL.revokeObjectURL(signatureObjectUrl);
+    };
+  }, [signatureObjectUrl]);
   const pdfDocument = (
     <PDFDocument
       currency={currency}

@@ -288,6 +288,13 @@
       "when": 1787689800000,
       "tag": "0041_rek_101_invoice_editor_hardening",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1788080400000,
+      "tag": "0042_rek_101_invoice_logo_default",
+      "breakpoints": true
     }
   ]
 }

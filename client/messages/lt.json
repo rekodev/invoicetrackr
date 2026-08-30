@@ -16,12 +16,12 @@
             "payments": "Mokėjimai",
             "reports": "Ataskaitos",
             "settings": "Nustatymai",
-            "personal_information": "Veiklos profilis",
+            "freelancer_profile": "Veiklos profilis",
             "banking_information": "Banko sąskaitos",
             "payment_methods": "Mokėjimo būdai",
             "account_settings": "Sąskaitų nustatymai",
             "change_password": "Slaptažodis",
-            "my_profile": "Mano profilis",
+            "my_profile": "Veiklos profilis",
             "log_out": "Atsijungti",
             "signed_in_as": "Prisijungęs vartotojas",
             "a11y": {
@@ -56,17 +56,30 @@
         "expenses": "Išlaidos",
         "payments": "Mokėjimai",
         "reports": "Ataskaitos",
+        "settings": "Nustatymai",
         "login": "Prisijungti",
         "new": "Nauja",
         "onboarding": "Įvedimas",
-        "personal_information": "Asmeninė informacija",
+        "freelancer_profile": "Veiklos profilis",
         "privacy_policy": "Privatumo politika",
         "profile": "Profilis",
         "sign_up": "Registruotis",
         "terms_of_service": "Paslaugų teikimo sąlygos"
     },
-    "payments": { "empty": { "heading": "Mokėjimai", "title": "Mokėjimų dar nėra", "description": "Banko pavedimai bus rodomi čia, kai bus įdiegtas rankinis mokėjimų registravimas." } },
-    "reports": { "empty": { "heading": "Ataskaitos", "title": "Ataskaitos ruošiamos", "description": "Čia rasite pajamų žurnalus, mokesčių prognozes, metines suvestines ir eksportą buhalteriui." } },
+    "payments": {
+        "empty": {
+            "heading": "Mokėjimai",
+            "title": "Mokėjimų dar nėra",
+            "description": "Banko pavedimai bus rodomi čia, kai bus įdiegtas rankinis mokėjimų registravimas."
+        }
+    },
+    "reports": {
+        "empty": {
+            "heading": "Ataskaitos",
+            "title": "Ataskaitos ruošiamos",
+            "description": "Čia rasite pajamų žurnalus, mokesčių prognozes, metines suvestines ir eksportą buhalteriui."
+        }
+    },
     "general_error": "Ajajai! Kažkas negerai...",
     "cookie_consent": {
         "message": "Naudojame pasirenkamus analitikos slapukus, kad suprastume produkto naudojimą ir gerintume InvoiceTrackr. Analitika pradedama tik jums sutikus, kaip aprašyta mūsų",
@@ -539,6 +552,12 @@
             "confirm": "Ištrinti",
             "cancel": "Atšaukti"
         },
+        "issue_modal": {
+            "title": "Išrašyti sąskaitą",
+            "description": "Ar tikrai norite išrašyti šią sąskaitą? Po išrašymo jos redaguoti nebegalėsite.",
+            "confirm": "Išrašyti sąskaitą",
+            "cancel": "Atšaukti"
+        },
         "top_content": {
             "search_placeholder": "Ieškoti pagal sąskaitos faktūros ID...",
             "add_new": "Pridėti naują",
@@ -562,7 +581,6 @@
                 "tooltip_send_email": "Siųsti sąskaitą el. paštu",
                 "tooltip_issue": "Išrašyti sąskaitą",
                 "tooltip_request_details": "Prašyti gavėjo duomenų",
-                "confirm_issue": "Išrašyti sąskaitą dabar? Jai bus suteiktas galutinis numeris ir jos nebegalėsite redaguoti.",
                 "request_details_title": "Prašyti gavėjo duomenų",
                 "request_details_description": "Gavėjas galės užpildyti savo rekvizitus ir patvirtinti sąskaitos gavimą. Patvirtinus sąskaita bus išrašyta automatiškai.",
                 "recipient_email": "Gavėjo el. paštas",
@@ -578,6 +596,7 @@
                 "tooltip_edit": "Redaguoti sąskaitą faktūrą",
                 "tooltip_delete": "Ištrinti sąskaitą faktūrą",
                 "tooltip_download": "Atsisiųsti",
+                "more_actions": "Daugiau veiksmų",
                 "mark_as_paid": "Pažymėti kaip sumokėtą",
                 "mark_as_pending": "Pažymėti kaip laukiamą",
                 "status_locked": "Šios sąskaitos būsenos keisti negalima.",
@@ -942,12 +961,9 @@
                 "signature": "Parašas",
                 "save_changes": "Išsaugoti pakeitimus",
                 "email_verification": {
-                    "title": "El. pašto patvirtinimas",
-                    "confirmed": "El. paštas patvirtintas",
-                    "confirmed_description": "Jūsų paskyros el. paštas patvirtintas.",
-                    "unverified_description": "Patvirtinkite paskyros el. paštą, kad apsaugotumėte prieigą.",
-                    "resend": "Siųsti patvirtinimo laišką",
-                    "sent_at": "Patvirtinta {date}"
+                    "verified": "El. paštas patvirtintas",
+                    "not_verified": "Nepatvirtintas",
+                    "verify": "Patvirtinti"
                 }
             }
         },
@@ -973,6 +989,7 @@
                 "default_series": "Numatytoji sąskaitos serija",
                 "payment_terms": "Numatytasis apmokėjimo terminas",
                 "payment_terms_days": "{days} d.",
+                "include_logo": "Įtraukti logotipą į naujas sąskaitas",
                 "vat_locked_note": "Jei norite rinktis PVM nustatymus, pažymėkite save kaip PVM mokėtoją",
                 "personal_information_link": "individualios veiklos profilyje",
                 "vat_modes": {
@@ -1082,7 +1099,8 @@
             "description": "Tvarkykite banko sąskaitas ir kriptovaliutų piniginių instrukcijas, naudojamas išsaugotose sąskaitose.",
             "selector_label": "Mokėjimo būdų kategorija",
             "bank_accounts": "Banko sąskaitos",
-            "crypto_wallets": "Kriptovaliutų piniginės"
+            "crypto_wallets": "Kriptovaliutų piniginės",
+            "add_new": "Pridėti naują"
         }
     },
     "forgot_password": {
@@ -1175,9 +1193,7 @@
             "invoice": "Sąskaita faktūra",
             "draft": "juodraštis",
             "client": "Klientas",
-            "public_link_note": "Klientas galės internetu peržiūrėti sąskaitą ir mokėjimo instrukcijas.",
             "draft_public_link_note": "Siunčiant šis juodraštis bus išrašytas ir bus pridėtas galutinis sąskaitos puslapis.",
-            "signing_link_note": "Paprašykite kliento vienu paspaudimu patvirtinti gavimą.",
             "email_verification_required": "Patvirtinkite paskyros el. paštą prieš siųsdami sąskaitas klientams.",
             "include_public_link": "Įtraukti viešą sąskaitos puslapį",
             "request_signature": "Prašyti kliento patvirtinimo",
@@ -1187,8 +1203,6 @@
             "generate_public_link": "Generuoti nuorodą",
             "regenerate_public_link": "Generuoti naują viešą nuorodą",
             "replace_link_and_send": "Pakeisti nuorodą ir siųsti",
-            "attached_pdf": "Pridedamas PDF",
-            "draft_delivery": "Išrašius bus pridėtas galutinis sąskaitos puslapis",
             "cancel": "Atšaukti",
             "send": "Siųsti"
         },
@@ -1249,6 +1263,7 @@
                 "sender_address_label": "Siuntėjo adresas",
                 "sender_email_label": "Siuntėjo el. paštas",
                 "sender_business_type_label": "Siuntėjo veiklos tipas",
+                "include_logo_label": "Įtraukti veiklos logotipą į šią sąskaitą",
                 "receiver_name_label": "Gavėjo vardas",
                 "receiver_business_number_label_business": "Gavėjo įmonės kodas",
                 "receiver_business_number_label_individual": "Gavėjo IV pažymos Nr.",
@@ -1285,6 +1300,7 @@
                 "sender_vat_number": "Siuntėjo PVM mokėtojo kodas",
                 "sender_address": "Siuntėjo adresas",
                 "sender_email": "Siuntėjo el. paštas",
+                "include_logo": "Įtraukti logotipą",
                 "receiver_name": "Gavėjo vardas",
                 "receiver_business_number_business": "Gavėjo įmonės kodas",
                 "receiver_business_number_individual": "Gavėjo IV pažymos Nr.",

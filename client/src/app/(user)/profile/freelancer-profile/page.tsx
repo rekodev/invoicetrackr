@@ -1,0 +1,7 @@
+import { permanentRedirect } from 'next/navigation';
+
+import { FREELANCER_PROFILE_PAGE } from '@/lib/constants/pages';
+
+export default function LegacyFreelancerProfilePage() {
+  permanentRedirect(FREELANCER_PROFILE_PAGE);
+}

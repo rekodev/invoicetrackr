@@ -7,7 +7,7 @@ import {
   EXPENSES_PAGE,
   INVOICES_PAGE,
   ONBOARDING_PAGE,
-  PROFILE_PAGE,
+  SETTINGS_PAGE,
   VERIFY_EMAIL_PAGE
 } from '@/lib/constants/pages';
 
@@ -24,7 +24,10 @@ export default function robots(): MetadataRoute.Robots {
         `${EXPENSES_PAGE}/`,
         `${INVOICES_PAGE}/`,
         ONBOARDING_PAGE,
-        `${PROFILE_PAGE}/`,
+        '/profile',
+        '/profile/',
+        SETTINGS_PAGE,
+        `${SETTINGS_PAGE}/`,
         VERIFY_EMAIL_PAGE
       ]
     },

@@ -165,7 +165,7 @@ describe('<ClientFormDialog />', () => {
     expect(
       await screen.findByText('A matching client already exists')
     ).toBeDefined();
-    expect(screen.getByText('Potential duplicate')).toBeDefined();
+    expect(screen.getByText('Potential Duplicate')).toBeDefined();
     expect(props.onClose).not.toHaveBeenCalled();
 
     await userEvent.click(

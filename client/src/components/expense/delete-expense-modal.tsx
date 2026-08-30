@@ -43,47 +43,41 @@ const DeleteExpenseModal = ({
     });
 
   return (
-    <Modal>
-      <Modal.Backdrop
-        isOpen={isOpen}
-        onOpenChange={(open) => !open && onClose()}
-      >
-        <Modal.Container>
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-            <Modal.Header>
-              <Modal.Heading>{t('title')}</Modal.Heading>
-            </Modal.Header>
-            <Modal.Body>
-              {t('description', {
-                supplier: expenseData.supplier,
-                date:
-                  formatLocalizedDate(expenseData.expenseDate, 'lt-LT') || ''
-              })}
-            </Modal.Body>
-            <Modal.Footer>
-              <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
-                <Button
-                  className="w-full sm:w-auto"
-                  variant="outline"
-                  onPress={onClose}
-                >
-                  {t('cancel')}
-                </Button>
-                <Button
-                  isPending={isPending}
-                  variant="danger"
-                  className="w-full sm:w-auto"
-                  onPress={handleSubmit}
-                >
-                  {t('confirm')}
-                </Button>
-              </div>
-            </Modal.Footer>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+    <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <Modal.Container>
+        <Modal.Dialog>
+          <Modal.CloseTrigger />
+          <Modal.Header>
+            <Modal.Heading>{t('title')}</Modal.Heading>
+          </Modal.Header>
+          <Modal.Body>
+            {t('description', {
+              supplier: expenseData.supplier,
+              date: formatLocalizedDate(expenseData.expenseDate, 'lt-LT') || ''
+            })}
+          </Modal.Body>
+          <Modal.Footer>
+            <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+              <Button
+                className="w-full sm:w-auto"
+                variant="outline"
+                onPress={onClose}
+              >
+                {t('cancel')}
+              </Button>
+              <Button
+                isPending={isPending}
+                variant="danger"
+                className="w-full sm:w-auto"
+                onPress={handleSubmit}
+              >
+                {t('confirm')}
+              </Button>
+            </div>
+          </Modal.Footer>
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 };
 

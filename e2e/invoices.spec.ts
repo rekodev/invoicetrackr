@@ -3,7 +3,28 @@ import { RecipientDetailsPage } from './pages/recipient-details.page';
 import { createInvoiceTestData } from './utils/test-data';
 
 test.describe('invoices', () => {
-  test('creates a draft invoice', async ({ invoiceForm, invoicesPage }) => {
+  test('creates a draft invoice', async ({
+    invoiceForm,
+    invoicesPage,
+    page
+  }) => {
+    const reactAriaMessages: string[] = [];
+    page.on('console', (message) => {
+      const text = message.text();
+      const isInvoiceFormRoute =
+        page.url().endsWith('/invoices/new') ||
+        /\/invoices\/edit\/\d+$/.test(page.url());
+
+      if (!isInvoiceFormRoute) return;
+
+      if (
+        text.includes('Cannot change the id of an item') ||
+        text.includes('A PressResponder was rendered without a pressable child')
+      ) {
+        reactAriaMessages.push(text);
+      }
+    });
+
     const invoice = createInvoiceTestData('Draft recipient', {
       recipientBusinessNumber: '305000001',
       recipientAddress: 'Konstitucijos pr. 7, Vilnius',
@@ -17,6 +38,7 @@ test.describe('invoices', () => {
     await invoicesPage.expectLifecycle(invoice.recipientName, 'Draft');
     await invoicesPage.openDraftForEditing(invoice.recipientName);
     await invoiceForm.expectPersistedDraft(invoice);
+    expect(reactAriaMessages).toEqual([]);
   });
 
   test('recipient completion issues the draft', async ({

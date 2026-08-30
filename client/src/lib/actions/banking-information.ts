@@ -10,7 +10,6 @@ import {
 } from '@/api/banking-information';
 
 import {
-  BANKING_INFORMATION_PAGE,
   ONBOARDING_PAGE,
   PAYMENT_METHODS_PAGE
 } from '../constants/pages';
@@ -38,7 +37,7 @@ export async function addBankingInformationAction(
     };
   }
 
-  revalidatePath(isUserOnboarding ? ONBOARDING_PAGE : BANKING_INFORMATION_PAGE);
+  if (isUserOnboarding) revalidatePath(ONBOARDING_PAGE);
   revalidatePath(PAYMENT_METHODS_PAGE);
   return {
     ok: true,
@@ -61,7 +60,6 @@ export async function updateBankingInformationAction(
     };
   }
 
-  revalidatePath(BANKING_INFORMATION_PAGE);
   revalidatePath(PAYMENT_METHODS_PAGE);
   return { ok: true, message: response.data.message };
 }
@@ -79,7 +77,6 @@ export async function deleteBankingInformationAction(
     };
   }
 
-  revalidatePath(BANKING_INFORMATION_PAGE);
   revalidatePath(PAYMENT_METHODS_PAGE);
   return { ok: true, message: response.data.message };
 }

@@ -37,6 +37,7 @@ const setUserTokenFields = (token: JWT, user: TokenUser) => {
   token.defaultInvoiceVatMode = user.defaultInvoiceVatMode;
   token.defaultInvoiceSeries = user.defaultInvoiceSeries;
   token.defaultPaymentTermsDays = user.defaultPaymentTermsDays;
+  token.defaultInvoiceIncludeLogo = user.defaultInvoiceIncludeLogo ?? true;
   token.currency = DEFAULT_CURRENCY;
   token.isOnboarded = isOnboarded;
   token.onboardingCompletedAt = user.onboardingCompletedAt;
@@ -178,6 +179,7 @@ export const authConfig = {
           defaultInvoiceVatMode: session.user.defaultInvoiceVatMode,
           defaultInvoiceSeries: session.user.defaultInvoiceSeries,
           defaultPaymentTermsDays: session.user.defaultPaymentTermsDays,
+          defaultInvoiceIncludeLogo: session.user.defaultInvoiceIncludeLogo,
           currency: DEFAULT_CURRENCY,
           onboardingCompletedAt: session.user.onboardingCompletedAt,
           analyticsConsentStatus: session.user.analyticsConsentStatus,
@@ -207,6 +209,8 @@ export const authConfig = {
       session.user.defaultPaymentTermsDays =
         (token.defaultPaymentTermsDays as AuthUser['defaultPaymentTermsDays']) ||
         30;
+      session.user.defaultInvoiceIncludeLogo =
+        (token.defaultInvoiceIncludeLogo as boolean | undefined) ?? true;
       session.user.currency = DEFAULT_CURRENCY;
       session.user.isOnboarded = Boolean(token.isOnboarded);
       session.user.onboardingCompletedAt = token.onboardingCompletedAt as

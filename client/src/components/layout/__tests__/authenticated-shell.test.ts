@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { PROFILE_PAGE } from '@/lib/constants/pages';
+import { SETTINGS_PAGE } from '@/lib/constants/pages';
 
 import { isCurrentPath } from '../navigation';
 
@@ -10,7 +10,9 @@ describe('authenticated shell route matching', () => {
     expect(isCurrentPath('/invoices/edit/42', '/payments')).toBe(false);
   });
 
-  it('keeps legacy profile screens inside the Settings section', () => {
-    expect(isCurrentPath('/profile/banking-information', PROFILE_PAGE)).toBe(true);
+  it('keeps nested settings screens inside the Settings section', () => {
+    expect(isCurrentPath('/settings/payment-methods', SETTINGS_PAGE)).toBe(
+      true
+    );
   });
 });

@@ -1,8 +1,4 @@
-import {
-  Button,
-  Modal,
-  toast
-} from '@heroui/react';
+import { Button, Modal, toast } from '@heroui/react';
 import { BankAccount } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
@@ -68,22 +64,20 @@ const DeleteBankAccountDialog = ({
   );
 
   return (
-    <Modal>
-      <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <Modal.Container>
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-        <Modal.Header>
-          <Modal.Heading>
-          {t('title', { bank_number: bankAccount?.accountNumber })}
-          </Modal.Heading>
-        </Modal.Header>
-        <Modal.Body>{t('description')}</Modal.Body>
-        {renderModalFooter()}
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+    <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <Modal.Container>
+        <Modal.Dialog>
+          <Modal.CloseTrigger />
+          <Modal.Header>
+            <Modal.Heading>
+              {t('title', { bank_number: bankAccount?.accountNumber })}
+            </Modal.Heading>
+          </Modal.Header>
+          <Modal.Body>{t('description')}</Modal.Body>
+          {renderModalFooter()}
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 };
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { cn, Table, useOverlayState } from '@heroui/react';
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { Button, Table, useOverlayState } from '@heroui/react';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
@@ -13,9 +14,12 @@ import type { SortDescriptor } from '@/lib/types/table';
 
 import DeleteInvoiceModal from './delete-invoice-modal';
 import InvoiceModal from './invoice-modal';
+import InvoiceMoreActionsMenu from './invoice-more-actions-menu';
 import InvoiceTableBottomContent from './invoice-table-bottom-content';
 import InvoiceTableCell from './invoice-table-cell';
 import InvoiceTableTopContent from './invoice-table-top-content';
+import IssueInvoiceModal from './issue-invoice-modal';
+import RecipientDetailsRequestModal from './recipient-details-request-modal';
 import SendInvoiceEmailModal from './send-invoice-email-modal';
 
 const ROWS_PER_PAGE = 10;
@@ -47,6 +51,7 @@ const InvoiceTable = ({
   isEmailVerified
 }: Props) => {
   const t = useTranslations('invoices.table');
+  const tActions = useTranslations('invoices.cell.actions');
   const pdfTranslator = useTranslations('invoices.pdf');
 
   const columns = useMemo(
@@ -99,7 +104,10 @@ const InvoiceTable = ({
     handleCloseDeleteInvoiceModal,
     isSendInvoiceEmailModalOpen,
     handleCloseSendInvoiceEmailModal,
-    handleSendInvoiceEmail
+    handleSendInvoiceEmail,
+    handleRequestRecipientDetails,
+    isRecipientDetailsModalOpen,
+    handleCloseRecipientDetailsModal
   } = useInvoiceTableActionHandlers({ setCurrentInvoice, onOpen });
 
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
@@ -240,9 +248,6 @@ const InvoiceTable = ({
                   key={column.uid}
                   id={column.uid}
                   allowsSorting={column.sortable}
-                  className={cn({
-                    'text-center': column.uid === 'actions'
-                  })}
                 >
                   {column.name}
                 </Table.Column>
@@ -264,6 +269,7 @@ const InvoiceTable = ({
                           onView={handleViewInvoice}
                           onEdit={handleEditInvoice}
                           onDelete={handleDeleteInvoice}
+                          onRequestDetails={handleRequestRecipientDetails}
                         />
                       </Table.Cell>
                     ))}
@@ -294,6 +300,47 @@ const InvoiceTable = ({
           pdfUrl={pdfUrl}
           isPdfDocumentLoading={isPdfDocumentLoading}
           showFooterStatus
+          actions={
+            <>
+              {(currentInvoice.lifecycleStatus || 'draft') === 'draft' ? (
+                <IssueInvoiceModal
+                  userId={userId}
+                  invoiceData={currentInvoice}
+                  triggerVariant="button"
+                  onIssued={() => onOpenChange(false)}
+                />
+              ) : null}
+              <Button
+                size="sm"
+                variant={
+                  (currentInvoice.lifecycleStatus || 'draft') === 'draft'
+                    ? 'secondary'
+                    : 'primary'
+                }
+                className="w-full sm:w-auto"
+                onPress={() => {
+                  onOpenChange(false);
+                  handleSendInvoiceEmail(currentInvoice);
+                }}
+              >
+                <PaperAirplaneIcon className="h-4 w-4" />
+                {tActions('send_email')}
+              </Button>
+              <InvoiceMoreActionsMenu
+                invoice={currentInvoice}
+                showLabel
+                onRequestDetails={(invoice) => {
+                  onOpenChange(false);
+                  handleRequestRecipientDetails(invoice);
+                }}
+                onEdit={handleEditInvoice}
+                onDelete={(invoice) => {
+                  onOpenChange(false);
+                  handleDeleteInvoice(invoice);
+                }}
+              />
+            </>
+          }
         />
       )}
       {currentInvoice && (
@@ -313,6 +360,17 @@ const InvoiceTable = ({
           currency={currency}
           userId={userId}
           isEmailVerified={isEmailVerified}
+        />
+      )}
+      {currentInvoice && (
+        <RecipientDetailsRequestModal
+          key={`${currentInvoice.id}-${currentInvoice.receiver.email || ''}`}
+          userId={userId}
+          invoice={currentInvoice}
+          isOpen={isRecipientDetailsModalOpen}
+          onOpenChange={(open) => {
+            if (!open) handleCloseRecipientDetailsModal();
+          }}
         />
       )}
     </section>

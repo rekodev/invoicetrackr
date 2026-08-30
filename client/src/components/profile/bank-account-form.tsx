@@ -7,7 +7,6 @@ import {
   FieldError,
   Input,
   Label,
-  Separator,
   TextField,
   toast
 } from '@heroui/react';
@@ -17,7 +16,7 @@ import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { addBankingInformationAction } from '@/lib/actions/banking-information';
-import { BANKING_INFORMATION_PAGE } from '@/lib/constants/pages';
+import { PAYMENT_METHODS_PAGE } from '@/lib/constants/pages';
 
 const INITIAL_BANK_ACCOUNT_DATA: BankAccountBody = {
   name: '',
@@ -97,7 +96,7 @@ export default function BankAccountForm({
     if (onSuccess) {
       onSuccess(bankAccount);
     } else {
-      router.push(BANKING_INFORMATION_PAGE);
+      router.push(PAYMENT_METHODS_PAGE);
     }
   };
 
@@ -107,7 +106,7 @@ export default function BankAccountForm({
       return;
     }
 
-    router.push(BANKING_INFORMATION_PAGE);
+    router.push(PAYMENT_METHODS_PAGE);
   };
 
   const renderTextField = ({
@@ -144,12 +143,6 @@ export default function BankAccountForm({
 
   const formContent = (
     <>
-      {variant === 'card' && (
-        <Card.Header className="px-6 py-4">
-          <Card.Title className="text-3xl">{t('title.create')}</Card.Title>
-        </Card.Header>
-      )}
-      {variant === 'card' && <Separator />}
       <div
         className={cn(
           'grid grid-cols-1 gap-4',

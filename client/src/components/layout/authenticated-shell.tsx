@@ -22,8 +22,8 @@ import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { logOutAction } from '@/lib/actions';
 import {
-  ONBOARDING_PAGE,
-  PERSONAL_INFORMATION_PAGE
+  FREELANCER_PROFILE_PAGE,
+  ONBOARDING_PAGE
 } from '@/lib/constants/pages';
 
 import LanguageSwitcher from './language-switcher';
@@ -107,10 +107,14 @@ export default function AuthenticatedShell({
                 {user.email}
               </span>
             </DropdownItem>
-            <DropdownItem key="profile" href={PERSONAL_INFORMATION_PAGE}>
+            <DropdownItem key="profile" href={FREELANCER_PROFILE_PAGE}>
               {t('my_profile')}
             </DropdownItem>
-            <DropdownItem key="logout" onPress={logOutAction} variant="danger">
+            <DropdownItem
+              key="logout"
+              onPress={logOutAction}
+              className="bg-danger-soft text-danger-soft-foreground hover:bg-danger-soft-hover data-[hovered=true]:bg-danger-soft-hover"
+            >
               <span className="flex items-center gap-2">
                 <ArrowRightStartOnRectangleIcon className="size-4" />
                 {t('log_out')}

@@ -5,13 +5,13 @@ import {
   Card,
   CardContent,
   CardFooter,
+  Checkbox,
   FieldError,
   Input,
   Label,
   ListBox,
   ListBoxItem,
   Select,
-  Separator,
   TextField,
   toast
 } from '@heroui/react';
@@ -23,7 +23,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 import { availableLanguages } from '@/lib/constants/languages';
-import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
+import { FREELANCER_PROFILE_PAGE } from '@/lib/constants/pages';
 
 import DeleteAccountModal from './delete-account-modal';
 
@@ -34,6 +34,7 @@ type AccountSettingsFormModel = {
   defaultInvoiceVatMode: DefaultInvoiceVatMode;
   defaultInvoiceSeries: string;
   defaultPaymentTermsDays: 7 | 14 | 30;
+  defaultInvoiceIncludeLogo: boolean;
 };
 
 type Props = {
@@ -68,7 +69,8 @@ const AccountSettingsForm = ({ user }: Props) => {
         ? user?.defaultInvoiceVatMode || 'no_vat'
         : 'no_vat',
       defaultInvoiceSeries: user?.defaultInvoiceSeries || 'SF',
-      defaultPaymentTermsDays: user?.defaultPaymentTermsDays || 30
+      defaultPaymentTermsDays: user?.defaultPaymentTermsDays || 30,
+      defaultInvoiceIncludeLogo: user?.defaultInvoiceIncludeLogo ?? true
     }
   });
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
@@ -85,7 +87,8 @@ const AccountSettingsForm = ({ user }: Props) => {
       isVatPayer,
       defaultInvoiceVatMode: isVatPayer ? data.defaultInvoiceVatMode : 'no_vat',
       defaultInvoiceSeries: data.defaultInvoiceSeries.trim().toUpperCase(),
-      defaultPaymentTermsDays: data.defaultPaymentTermsDays
+      defaultPaymentTermsDays: data.defaultPaymentTermsDays,
+      defaultInvoiceIncludeLogo: data.defaultInvoiceIncludeLogo
     });
 
     toast(response.message, {
@@ -111,7 +114,7 @@ const AccountSettingsForm = ({ user }: Props) => {
 
   const renderCardBodyAndFooter = () => (
     <>
-      <CardContent className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
+      <CardContent className="grid grid-cols-1 gap-4 px-6 pb-2 pt-6 md:grid-cols-2">
         <div className="flex flex-col gap-1 md:col-span-2">
           <h3 className="text-lg font-medium">{t('general.title')}</h3>
           <p className="text-muted text-sm">{t('general.description')}</p>
@@ -151,8 +154,7 @@ const AccountSettingsForm = ({ user }: Props) => {
           )}
         />
       </CardContent>
-      <Separator />
-      <CardContent className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
+      <CardContent className="grid grid-cols-1 gap-4 px-6 pb-6 pt-2 md:grid-cols-2">
         <div className="flex flex-col gap-1 md:col-span-2">
           <h3 className="text-lg font-medium">{t('invoice_defaults.title')}</h3>
           <p className="text-muted text-sm">
@@ -257,7 +259,7 @@ const AccountSettingsForm = ({ user }: Props) => {
                 <p className="text-muted text-xs">
                   {t('invoice_defaults.vat_locked_note')}{' '}
                   <Link
-                    href={PERSONAL_INFORMATION_PAGE}
+                    href={FREELANCER_PROFILE_PAGE}
                     className="text-foreground underline underline-offset-2"
                   >
                     {t('invoice_defaults.personal_information_link')}
@@ -333,6 +335,25 @@ const AccountSettingsForm = ({ user }: Props) => {
             </Select>
           )}
         />
+        <Controller
+          control={control}
+          name="defaultInvoiceIncludeLogo"
+          render={({ field }) => (
+            <Checkbox
+              className="md:col-span-2"
+              variant="secondary"
+              isSelected={field.value}
+              onChange={field.onChange}
+            >
+              <Checkbox.Control>
+                <Checkbox.Indicator />
+              </Checkbox.Control>
+              <Checkbox.Content>
+                <Label>{t('invoice_defaults.include_logo')}</Label>
+              </Checkbox.Content>
+            </Checkbox>
+          )}
+        />
       </CardContent>
       <CardFooter className="w-full flex-col justify-between px-6 py-4">
         <div className="flex w-full flex-col-reverse gap-2 self-end sm:w-auto sm:flex-row">
@@ -365,10 +386,6 @@ const AccountSettingsForm = ({ user }: Props) => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <Card className="w-full border">
-          <Card.Header className="px-6 py-4">
-            <Card.Title className="text-2xl">{t('title')}</Card.Title>
-          </Card.Header>
-          <Separator />
           {renderCardBodyAndFooter()}
         </Card>
       </form>

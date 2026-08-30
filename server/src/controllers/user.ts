@@ -667,7 +667,8 @@ export const updateUserAccountSettings = async (
     isVatPayer,
     defaultInvoiceVatMode,
     defaultInvoiceSeries,
-    defaultPaymentTermsDays
+    defaultPaymentTermsDays,
+    defaultInvoiceIncludeLogo
   } = req.body;
   const i18n = await useI18n(req);
 
@@ -680,7 +681,8 @@ export const updateUserAccountSettings = async (
     isVatPayer,
     defaultInvoiceVatMode,
     defaultInvoiceSeries,
-    defaultPaymentTermsDays
+    defaultPaymentTermsDays,
+    defaultInvoiceIncludeLogo
   );
 
   if (!updatedUser)

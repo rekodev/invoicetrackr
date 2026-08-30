@@ -21,6 +21,7 @@ declare module 'next-auth' {
     defaultInvoiceVatMode: DefaultInvoiceVatMode;
     defaultInvoiceSeries: string;
     defaultPaymentTermsDays: 7 | 14 | 30;
+    defaultInvoiceIncludeLogo: boolean;
     currency: Currency;
     type: string;
     businessType: string;

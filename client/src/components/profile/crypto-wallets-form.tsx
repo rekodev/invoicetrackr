@@ -35,6 +35,9 @@ type Props = {
   userId: number;
   wallets: Array<CryptoWalletBody>;
   isEmbedded?: boolean;
+  showAddAction?: boolean;
+  isEditorOpen?: boolean;
+  onEditorOpenChange?: (_isOpen: boolean) => void;
 };
 
 const emptyWallet = (isDefault: boolean): CryptoWalletBody => ({
@@ -49,7 +52,10 @@ const emptyWallet = (isDefault: boolean): CryptoWalletBody => ({
 export default function CryptoWalletsForm({
   userId,
   wallets,
-  isEmbedded = false
+  isEmbedded = false,
+  showAddAction = true,
+  isEditorOpen: controlledIsEditorOpen,
+  onEditorOpenChange
 }: Props) {
   const t = useTranslations('profile.crypto_wallets');
   const defaultWallet = wallets.find((item) => item.isDefault);
@@ -59,7 +65,9 @@ export default function CryptoWalletsForm({
   const [wallet, setWallet] = useState<CryptoWalletBody>(() =>
     emptyWallet(!wallets.length)
   );
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [internalIsEditorOpen, setInternalIsEditorOpen] = useState(false);
+  const isEditorOpen = controlledIsEditorOpen ?? internalIsEditorOpen;
+  const setIsEditorOpen = onEditorOpenChange ?? setInternalIsEditorOpen;
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string | undefined>
   >({});
@@ -267,16 +275,18 @@ export default function CryptoWalletsForm({
 
   const content = (
     <>
-      <div className="flex justify-end px-6 pt-6">
-        <Button
-          variant="secondary"
-          className="w-full sm:w-auto"
-          onPress={startAdding}
-        >
-          <PlusIcon className="h-4 w-4" />
-          {t('add')}
-        </Button>
-      </div>
+      {showAddAction ? (
+        <div className="flex justify-end px-6 pt-6">
+          <Button
+            variant="secondary"
+            className="w-full sm:w-auto"
+            onPress={startAdding}
+          >
+            <PlusIcon className="h-4 w-4" />
+            {t('add')}
+          </Button>
+        </div>
+      ) : null}
       <CardContent className="p-6">
         {renderWallets()}
         {editor}
@@ -284,8 +294,7 @@ export default function CryptoWalletsForm({
       <CardFooter className="flex justify-end px-6 py-4">
         <Button
           isDisabled={
-            !selectedWalletId ||
-            selectedWalletId === String(defaultWallet?.id)
+            !selectedWalletId || selectedWalletId === String(defaultWallet?.id)
           }
           isPending={isPending}
           onPress={saveDefault}

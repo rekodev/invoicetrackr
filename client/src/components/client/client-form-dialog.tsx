@@ -168,119 +168,113 @@ const ClientFormDialog = ({
   if (isEditMode && !clientData) return null;
 
   return (
-    <Modal>
-      <Modal.Backdrop
-        isOpen={isOpen}
-        onOpenChange={(open) => !open && handleClose()}
-      >
-        <Modal.Container>
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-            <form noValidate onSubmit={handleSubmit(onSubmit)}>
-              <Modal.Header>
-                <Modal.Heading>
-                  {isEditMode ? t('title_edit') : t('title_add')}
-                </Modal.Heading>
-              </Modal.Header>
-              <Modal.Body className="flex flex-col gap-2">
-                {renderTextField({ name: 'name', label: t('fields.name') })}
-                <Controller
-                  control={control}
-                  name="businessType"
-                  render={({ field }) => (
-                    <Select
-                      variant="secondary"
-                      value={field.value}
-                      onChange={(value) => {
-                        field.onChange(value);
-                        setDuplicateWarning(undefined);
-                      }}
-                      isInvalid={!!errors.businessType}
-                    >
-                      <Label>{t('fields.business_type')}</Label>
-                      <Select.Trigger>
-                        <Select.Value />
-                        <Select.Indicator />
-                      </Select.Trigger>
-                      <Select.Popover>
-                        <ListBox>
-                          {CLIENT_BUSINESS_TYPES.map((type) => (
-                            <ListBoxItem
-                              key={type}
-                              id={type}
-                              textValue={tTypes(type)}
-                            >
-                              {tTypes(type)}
-                              <ListBoxItem.Indicator />
-                            </ListBoxItem>
-                          ))}
-                        </ListBox>
-                      </Select.Popover>
-                      <FieldError>{errors.businessType?.message}</FieldError>
-                    </Select>
-                  )}
-                />
-                {renderTextField({
-                  name: 'businessNumber',
-                  label: t('fields.business_number')
-                })}
-                {renderTextField({
-                  name: 'vatNumber',
-                  label: t('fields.vat_number')
-                })}
-                {renderTextField({
-                  name: 'address',
-                  label: t('fields.address')
-                })}
-                {renderTextField({
-                  name: 'email',
-                  label: t('fields.email'),
-                  type: 'email'
-                })}
-              </Modal.Body>
-              <Modal.Footer>
-                <div className="flex w-full flex-col gap-3 overflow-x-hidden">
-                  {duplicateWarning ? (
-                    <Alert status="warning" className="w-full p-0">
-                      <Alert.Indicator />
-                      <Alert.Content>
-                        <Alert.Title>
-                          {t('duplicate_warning_title')}
-                        </Alert.Title>
-                        <Alert.Description>
-                          {duplicateWarning}
-                        </Alert.Description>
-                      </Alert.Content>
-                    </Alert>
-                  ) : null}
-                  <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
-                    <Button
-                      variant="ghost"
-                      className="w-full sm:w-auto"
-                      onPress={handleClose}
-                    >
-                      {t('cancel')}
-                    </Button>
-                    <Button
-                      data-testid="client-form-dialog-submit-button"
-                      isDisabled={isSubmitting || !isDirty}
-                      type="submit"
-                      className="w-full sm:w-auto"
-                    >
-                      {duplicateWarning
-                        ? t('submit_duplicate')
-                        : isEditMode
-                          ? t('submit_edit')
-                          : t('submit_add')}
-                    </Button>
-                  </div>
+    <Modal.Backdrop
+      isOpen={isOpen}
+      onOpenChange={(open) => !open && handleClose()}
+    >
+      <Modal.Container>
+        <Modal.Dialog>
+          <Modal.CloseTrigger />
+          <form noValidate onSubmit={handleSubmit(onSubmit)}>
+            <Modal.Header>
+              <Modal.Heading>
+                {isEditMode ? t('title_edit') : t('title_add')}
+              </Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="flex flex-col gap-2">
+              {renderTextField({ name: 'name', label: t('fields.name') })}
+              <Controller
+                control={control}
+                name="businessType"
+                render={({ field }) => (
+                  <Select
+                    variant="secondary"
+                    value={field.value}
+                    onChange={(value) => {
+                      field.onChange(value);
+                      setDuplicateWarning(undefined);
+                    }}
+                    isInvalid={!!errors.businessType}
+                  >
+                    <Label>{t('fields.business_type')}</Label>
+                    <Select.Trigger>
+                      <Select.Value />
+                      <Select.Indicator />
+                    </Select.Trigger>
+                    <Select.Popover>
+                      <ListBox>
+                        {CLIENT_BUSINESS_TYPES.map((type) => (
+                          <ListBoxItem
+                            key={type}
+                            id={type}
+                            textValue={tTypes(type)}
+                          >
+                            {tTypes(type)}
+                            <ListBoxItem.Indicator />
+                          </ListBoxItem>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
+                    <FieldError>{errors.businessType?.message}</FieldError>
+                  </Select>
+                )}
+              />
+              {renderTextField({
+                name: 'businessNumber',
+                label: t('fields.business_number')
+              })}
+              {renderTextField({
+                name: 'vatNumber',
+                label: t('fields.vat_number')
+              })}
+              {renderTextField({
+                name: 'address',
+                label: t('fields.address')
+              })}
+              {renderTextField({
+                name: 'email',
+                label: t('fields.email'),
+                type: 'email'
+              })}
+            </Modal.Body>
+            <Modal.Footer>
+              <div className="flex w-full flex-col gap-3 overflow-x-hidden">
+                {duplicateWarning ? (
+                  <Alert status="warning" className="w-full p-0">
+                    <Alert.Indicator />
+                    <Alert.Content>
+                      <Alert.Title>{t('duplicate_warning_title')}</Alert.Title>
+                      <Alert.Description>{duplicateWarning}</Alert.Description>
+                    </Alert.Content>
+                  </Alert>
+                ) : null}
+                <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+                  <Button
+                    variant="ghost"
+                    className="w-full sm:w-auto"
+                    onPress={handleClose}
+                  >
+                    {t('cancel')}
+                  </Button>
+                  <Button
+                    data-testid="client-form-dialog-submit-button"
+                    isDisabled={isSubmitting || !isDirty}
+                    type="submit"
+                    className="w-full sm:w-auto"
+                  >
+                    {duplicateWarning
+                      ? t('submit_duplicate')
+                      : isEditMode
+                        ? t('submit_edit')
+                        : t('submit_add')}
+                  </Button>
                 </div>
-              </Modal.Footer>
-            </form>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+              </div>
+            </Modal.Footer>
+          </form>
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 };
 

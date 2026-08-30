@@ -53,58 +53,56 @@ export default function IncomeJournalExportModal({
   };
 
   return (
-    <Modal>
-      <Modal.Backdrop
-        isOpen={isOpen}
-        onOpenChange={(open) => !open && onOpenChange(false)}
-      >
-        <Modal.Container>
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-            <Modal.Header>
-              <Modal.Heading>{t('title')}</Modal.Heading>
-            </Modal.Header>
-            <Modal.Body>
-              <p className="text-muted text-sm">{t('description')}</p>
-              <TextField>
-                <Label>{t('from')}</Label>
-                <Input
-                  type="date"
-                  value={from}
-                  onChange={(event) => setFrom(event.target.value)}
-                />
-              </TextField>
-              <TextField>
-                <Label>{t('to')}</Label>
-                <Input
-                  type="date"
-                  value={to}
-                  onChange={(event) => setTo(event.target.value)}
-                />
-              </TextField>
-            </Modal.Body>
-            <Modal.Footer>
-              <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                <Button
-                  variant="tertiary"
-                  className="w-full sm:w-auto"
-                  onPress={() => onOpenChange(false)}
-                >
-                  {t('cancel')}
-                </Button>
-                <Button
-                  isDisabled={!from || !to || from > to}
-                  onPress={handleExport}
-                  isPending={isExporting}
-                  className="w-full sm:w-auto"
-                >
-                  {t('export')}
-                </Button>
-              </div>
-            </Modal.Footer>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+    <Modal.Backdrop
+      isOpen={isOpen}
+      onOpenChange={(open) => !open && onOpenChange(false)}
+    >
+      <Modal.Container>
+        <Modal.Dialog>
+          <Modal.CloseTrigger />
+          <Modal.Header>
+            <Modal.Heading>{t('title')}</Modal.Heading>
+          </Modal.Header>
+          <Modal.Body>
+            <p className="text-muted text-sm">{t('description')}</p>
+            <TextField>
+              <Label>{t('from')}</Label>
+              <Input
+                type="date"
+                value={from}
+                onChange={(event) => setFrom(event.target.value)}
+              />
+            </TextField>
+            <TextField>
+              <Label>{t('to')}</Label>
+              <Input
+                type="date"
+                value={to}
+                onChange={(event) => setTo(event.target.value)}
+              />
+            </TextField>
+          </Modal.Body>
+          <Modal.Footer>
+            <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button
+                variant="tertiary"
+                className="w-full sm:w-auto"
+                onPress={() => onOpenChange(false)}
+              >
+                {t('cancel')}
+              </Button>
+              <Button
+                isDisabled={!from || !to || from > to}
+                onPress={handleExport}
+                isPending={isExporting}
+                className="w-full sm:w-auto"
+              >
+                {t('export')}
+              </Button>
+            </div>
+          </Modal.Footer>
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 }

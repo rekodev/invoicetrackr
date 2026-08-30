@@ -18,7 +18,11 @@ import {
 } from '@/lib/utils';
 import { amountToWords } from '@/lib/utils/amount-to-words';
 import { formatDate } from '@/lib/utils/date';
-import { pdfStyles, registerPdfFont } from '@/lib/utils/pdf';
+import {
+  getPdfCompatibleImageSource,
+  pdfStyles,
+  registerPdfFont
+} from '@/lib/utils/pdf';
 
 registerPdfFont();
 
@@ -88,7 +92,10 @@ export default function PDFDocument({
   const renderHeader = () => (
     <>
       {sender?.logoUrl ? (
-        <PDFImage src={sender.logoUrl} style={pdfStyles.businessLogo} />
+        <PDFImage
+          src={getPdfCompatibleImageSource(sender.logoUrl)}
+          style={pdfStyles.businessLogo}
+        />
       ) : null}
       <Text style={pdfStyles.title}>
         {invoiceData?.sender?.vatNumber
@@ -113,9 +120,9 @@ export default function PDFDocument({
   );
 
   const renderBillingDetailsSection = () => (
-    <>
-      <View style={pdfStyles.row}>
-        <View style={pdfStyles.leftColumn}>
+    <View style={pdfStyles.row}>
+      <View style={pdfStyles.leftColumn}>
+        <View style={pdfStyles.detailGroup}>
           <Text style={pdfStyles.detailItemTitle}>{t('provider_label')}</Text>
           <Text style={pdfStyles.detailItem}>{sender?.name}</Text>
           <Text style={pdfStyles.detailItem}>
@@ -130,24 +137,7 @@ export default function PDFDocument({
             {t('address_label')} {sender?.address}
           </Text>
         </View>
-        <View style={pdfStyles.rightColumn}>
-          <Text style={[pdfStyles.detailItem, pdfStyles.boldText]}>
-            {t('invoice_date_label')}
-          </Text>
-          <Text style={pdfStyles.detailItem}>
-            {date ? formatDate(date) : ''}
-          </Text>
-          <Text style={[pdfStyles.detailItem, pdfStyles.boldText]}>
-            {t('service_date_label')}
-          </Text>
-          <Text style={pdfStyles.detailItem}>
-            {serviceDate ? formatDate(serviceDate) : formatDate(date)}
-          </Text>
-        </View>
-      </View>
-
-      <View style={pdfStyles.row}>
-        <View style={pdfStyles.leftColumn}>
+        <View style={pdfStyles.detailGroupSpaced}>
           <Text style={pdfStyles.detailItemTitle}>{t('payer_label')}</Text>
           <Text style={pdfStyles.detailItem}>{receiver?.name}</Text>
           <Text style={pdfStyles.detailItem}>
@@ -163,7 +153,25 @@ export default function PDFDocument({
           </Text>
         </View>
       </View>
-    </>
+      <View style={pdfStyles.rightColumn}>
+        <View style={pdfStyles.rightDetailGroup}>
+          <Text style={[pdfStyles.detailItem, pdfStyles.boldText]}>
+            {t('invoice_date_label')}
+          </Text>
+          <Text style={pdfStyles.detailItem}>
+            {date ? formatDate(date) : ''}
+          </Text>
+        </View>
+        <View style={pdfStyles.rightDetailGroupSpaced}>
+          <Text style={[pdfStyles.detailItem, pdfStyles.boldText]}>
+            {t('service_date_label')}
+          </Text>
+          <Text style={pdfStyles.detailItem}>
+            {serviceDate ? formatDate(serviceDate) : formatDate(date)}
+          </Text>
+        </View>
+      </View>
+    </View>
   );
 
   const renderTableRow = (
@@ -302,7 +310,7 @@ export default function PDFDocument({
               <View style={pdfStyles.signatureImageContainer}>
                 <PDFImage
                   style={pdfStyles.signatureImage}
-                  src={senderSignatureImage}
+                  src={getPdfCompatibleImageSource(senderSignatureImage)}
                 />
               </View>
             )}
@@ -329,7 +337,9 @@ export default function PDFDocument({
               <View style={pdfStyles.signatureImageContainer}>
                 <PDFImage
                   style={pdfStyles.signatureImage}
-                  src={receiverSignatureImage || invoiceData.receiverSignature}
+                  src={getPdfCompatibleImageSource(
+                    receiverSignatureImage || invoiceData.receiverSignature
+                  )}
                 />
               </View>
             )}
@@ -397,25 +407,6 @@ export default function PDFDocument({
   return (
     <Document>
       <Page size="A4" style={pdfStyles.page}>
-        {isDraft ? (
-          <Text
-            fixed
-            style={{
-              position: 'absolute',
-              top: '46%',
-              left: '12%',
-              transform: 'rotate(-30deg)',
-              color: '#DC2626',
-              opacity: 0.16,
-              fontSize: 44,
-              fontWeight: 700
-            }}
-          >
-            {language.toLowerCase() === 'lt'
-              ? 'JUODRAŠTIS — NEIŠRAŠYTA'
-              : 'DRAFT — NOT ISSUED'}
-          </Text>
-        ) : null}
         {renderHeader()}
         {renderBillingDetailsSection()}
         {renderTableSection()}
@@ -436,6 +427,13 @@ export default function PDFDocument({
           {renderSignatureSection()}
         </View>
         {renderFooter()}
+        {isDraft ? (
+          <Text fixed style={pdfStyles.draftWatermark}>
+            {language.toLowerCase() === 'lt'
+              ? 'JUODRAŠTIS — NEIŠRAŠYTA'
+              : 'DRAFT — NOT ISSUED'}
+          </Text>
+        ) : null}
       </Page>
     </Document>
   );

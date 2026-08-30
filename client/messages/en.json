@@ -5,7 +5,7 @@
         },
         "language_switcher": {
             "a11y": {
-                "label": "Select language"
+                "label": "Select Language"
             }
         },
         "user": {
@@ -16,12 +16,12 @@
             "payments": "Payments",
             "reports": "Reports",
             "settings": "Settings",
-            "personal_information": "Freelancer profile",
-            "banking_information": "Bank accounts",
-            "payment_methods": "Payment methods",
-            "account_settings": "Invoice defaults",
+            "freelancer_profile": "Freelancer Profile",
+            "banking_information": "Bank Accounts",
+            "payment_methods": "Payment Methods",
+            "account_settings": "Invoice Defaults",
             "change_password": "Password",
-            "my_profile": "My Profile",
+            "my_profile": "Freelancer Profile",
             "log_out": "Log Out",
             "signed_in_as": "Signed in as",
             "a11y": {
@@ -56,17 +56,30 @@
         "expenses": "Expenses",
         "payments": "Payments",
         "reports": "Reports",
+        "settings": "Settings",
         "login": "Log In",
         "new": "New",
         "onboarding": "Onboarding",
-        "personal_information": "Personal Information",
+        "freelancer_profile": "Freelancer Profile",
         "privacy_policy": "Privacy Policy",
         "profile": "Profile",
         "sign_up": "Sign Up",
         "terms_of_service": "Terms of Service"
     },
-    "payments": { "empty": { "heading": "Payments", "title": "No payments recorded yet", "description": "Bank-transfer payments will appear here once manual payment recording is available." } },
-    "reports": { "empty": { "heading": "Reports", "title": "Reports are being prepared", "description": "Income journals, tax estimates, annual summaries, and accountant exports will live here." } },
+    "payments": {
+        "empty": {
+            "heading": "Payments",
+            "title": "No Payments Recorded Yet",
+            "description": "Bank-transfer payments will appear here once manual payment recording is available."
+        }
+    },
+    "reports": {
+        "empty": {
+            "heading": "Reports",
+            "title": "Reports Are Being Prepared",
+            "description": "Income journals, tax estimates, annual summaries, and accountant exports will live here."
+        }
+    },
     "general_error": "Uh oh! Something went wrong...",
     "cookie_consent": {
         "message": "We use optional analytics cookies to understand product usage and improve InvoiceTrackr. Analytics starts only if you accept, as described in our",
@@ -78,7 +91,7 @@
         }
     },
     "not_found": {
-        "title": "Page not found",
+        "title": "Page Not Found",
         "description": "Sorry, we couldn't find the page you were looking for. It may have been moved or deleted.",
         "go_home": "Go back home"
     },
@@ -88,19 +101,19 @@
         "go_home": "Go back home"
     },
     "error_page": {
-        "title": "Something went wrong",
+        "title": "Something Went Wrong",
         "description": "We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.",
         "try_again": "Try again"
     },
     "home": {
         "hero": {
             "badge_label": "New",
-            "badge_text": "Upload expense documents",
+            "badge_text": "Upload Expense Documents",
             "title": "Invoice clients.",
             "title_accent": "Know what to set aside.",
             "subtitle": "A focused finance workspace for Lithuanian freelancers operating under individuali veikla pagal pažymą: invoices, clients, bank-transfer payment tracking, and income-journal exports.",
-            "cta_primary": "Create a free invoice",
-            "cta_secondary": "Create account",
+            "cta_primary": "Create a Free Invoice",
+            "cta_secondary": "Create Account",
             "note": "For Lithuanian individual activity freelancers · not MB/UAB accounting"
         },
         "preview": {
@@ -114,19 +127,19 @@
             "dashboard": {
                 "cards": {
                     "paid": {
-                        "label": "Paid invoices",
+                        "label": "Paid Invoices",
                         "value": "€18,420.00"
                     },
                     "pending": {
-                        "label": "Pending invoices",
+                        "label": "Pending Invoices",
                         "value": "€4,820.00"
                     },
                     "invoices": {
-                        "label": "Total invoices",
+                        "label": "Total Invoices",
                         "value": "24"
                     },
                     "clients": {
-                        "label": "Total clients",
+                        "label": "Total Clients",
                         "value": "12"
                     }
                 },
@@ -134,9 +147,9 @@
                     "title": "Invoice Revenue by Month"
                 },
                 "latest": {
-                    "title": "Latest invoices",
-                    "subtitle": "Recently created invoices",
-                    "view_all": "View all",
+                    "title": "Latest Invoices",
+                    "subtitle": "Recently Created Invoices",
+                    "view_all": "View All",
                     "rows": {
                         "paid": {
                             "client": "Northstar Studio",
@@ -165,30 +178,30 @@
         },
         "product": {
             "eyebrow": "The product",
-            "title": "A small set of tools",
+            "title": "A Small Set of Tools",
             "title_accent": "that actually fit together.",
             "subtitle": "Invoices, clients, bank-transfer payments, reminders, and exports follow the workflow a solo freelancer actually uses.",
             "items": {
                 "invoices": {
                     "eyebrow": "Invoices",
-                    "title": "The table that runs your invoicing.",
+                    "title": "The Table That Runs Your Invoicing.",
                     "body": "Search, filter, export the income journal, and open each invoice for preview, sending, editing, or status updates."
                 },
                 "dashboard": {
-                    "title": "A dashboard, not a chore.",
+                    "title": "A Dashboard, Not a Chore.",
                     "body": "Paid revenue, pending invoices, client count, monthly revenue, and latest invoices at a glance."
                 },
                 "clients": {
-                    "title": "Clients in one tidy place.",
+                    "title": "Clients in One Tidy Place.",
                     "body": "Client names, addresses, email, payment terms, and optional registration details ready to reuse on every invoice."
                 }
             },
             "invoice_table": {
-                "search": "Search invoices",
+                "search": "Search Invoices",
                 "add_new": "Add New",
                 "export": "Export",
                 "total": "Total 24 invoices",
-                "rows_per_page": "Rows per page:",
+                "rows_per_page": "Rows per Page:",
                 "columns": {
                     "id": "ID",
                     "receiver": "Receiver",
@@ -221,7 +234,7 @@
                 }
             },
             "clients_preview": {
-                "search": "Search clients",
+                "search": "Search Clients",
                 "add_new": "Add New",
                 "total": "Total 12 clients",
                 "cards": {
@@ -246,19 +259,19 @@
             "capabilities": {
                 "payments": {
                     "badge": "MVP",
-                    "title": "Manual bank-transfer tracking.",
+                    "title": "Manual Bank-Transfer Tracking.",
                     "body": "Record full or partial payments when money lands, without pretending the invoice was paid on issue date."
                 },
                 "links": {
-                    "title": "Invoice links without client accounts.",
+                    "title": "Invoice Links Without Client Accounts.",
                     "body": "Share the finalized invoice and payment instructions while keeping your own workflow private."
                 },
                 "email": {
-                    "title": "Email delivery and reminders.",
+                    "title": "Email Delivery and Reminders.",
                     "body": "Send the invoice and nudge overdue ones from the same screen."
                 },
                 "language": {
-                    "title": "English and Lithuanian, one click.",
+                    "title": "English and Lithuanian, One Click.",
                     "body": "Issue Lithuanian or English documents from the same reusable client and profile data."
                 },
                 "export": {
@@ -291,10 +304,10 @@
         },
         "cta": {
             "badge": "Free invoice generator · no sign-up",
-            "title": "Ready to send a better invoice?",
+            "title": "Ready to Send a Better Invoice?",
             "subtitle": "Generate one for free, or create an account to build the saved individual-activity workflow.",
-            "primary": "Create account",
-            "secondary": "Generate a free invoice"
+            "primary": "Create Account",
+            "secondary": "Generate a Free Invoice"
         }
     },
     "footer": {
@@ -307,7 +320,7 @@
     },
     "seo": {
         "home": {
-            "title": "Invoice software for Lithuanian freelancers",
+            "title": "Invoice Software for Lithuanian Freelancers",
             "description": "Create invoices, manage clients, record bank-transfer payments, track expenses, and prepare income-journal exports for Lithuanian individual-activity work.",
             "keywords": [
                 "invoice software Lithuania",
@@ -326,7 +339,7 @@
             ]
         },
         "createInvoice": {
-            "title": "Free invoice generator for PDF invoices",
+            "title": "Free Invoice Generator for PDF Invoices",
             "description": "Create a free invoice online, choose English or Lithuanian output, add line items and bank-transfer details, then download a polished PDF.",
             "keywords": [
                 "free invoice generator",
@@ -369,7 +382,7 @@
             "email_placeholder": "Enter your email address",
             "password": "Password",
             "password_placeholder": "Enter password",
-            "submit": "Log in",
+            "submit": "Log In",
             "google_submit": "Continue with Google",
             "oauth_divider": "or continue with email",
             "forgot_password": "Forgot Password?",
@@ -383,7 +396,7 @@
         }
     },
     "sign_up": {
-        "page_title": "Sign up",
+        "page_title": "Sign Up",
         "page_description": "Create your InvoiceTrackr account.",
         "form": {
             "email": "Email",
@@ -405,17 +418,17 @@
             "steps": {
                 "personal": {
                     "short_name": "Details",
-                    "name": "Freelancer details",
+                    "name": "Freelancer Details",
                     "description": "Add the legal details required on your individual activity invoices"
                 },
                 "banking": {
                     "short_name": "Bank",
-                    "name": "Bank account",
+                    "name": "Bank Account",
                     "description": "Optionally add the account clients should pay"
                 },
                 "defaults": {
                     "short_name": "Defaults",
-                    "name": "Invoice defaults",
+                    "name": "Invoice Defaults",
                     "description": "Review the defaults used for new invoices"
                 }
             },
@@ -470,7 +483,7 @@
             "subtitle": "Most recent activity",
             "view_all": "View All",
             "empty_state": {
-                "title": "Create your first invoice",
+                "title": "Create Your First Invoice",
                 "description": "You have no invoices yet. Start by creating one and it will appear here.",
                 "action": "Add New"
             },
@@ -508,7 +521,7 @@
                 "pending": "Pending"
             },
             "search_placeholder": "Search by receiver...",
-            "rows_per_page": "Rows per page:",
+            "rows_per_page": "Rows per Page:",
             "total": "Total",
             "selected": "of",
             "actions": {
@@ -520,14 +533,14 @@
             "filters": {
                 "status": "Status",
                 "columns": "Columns",
-                "clear": "Clear filters",
+                "clear": "Clear Filters",
                 "a11y": {
                     "status_label": "Status",
                     "columns_label": "Table Columns"
                 }
             },
             "empty_state": {
-                "title": "You have no invoices yet",
+                "title": "You Have No Invoices Yet",
                 "description": "Click the \"Add New +\" button to create your first invoice.",
                 "no_results_title": "No invoices match your filters",
                 "no_results_description": "Try changing the search term or status filter."
@@ -539,6 +552,12 @@
             "confirm": "Delete",
             "cancel": "Cancel"
         },
+        "issue_modal": {
+            "title": "Issue Invoice",
+            "description": "Are you sure you want to issue this invoice? You won't be able to edit it afterward.",
+            "confirm": "Issue Invoice",
+            "cancel": "Cancel"
+        },
         "top_content": {
             "search_placeholder": "Search by invoice ID...",
             "add_new": "Add New",
@@ -546,10 +565,10 @@
             "total_plural": "Total {count} invoices"
         },
         "income_journal": {
-            "title": "Export income journal",
+            "title": "Export Income Journal",
             "description": "The CSV includes invoices paid during the selected period. Unpaid invoices are excluded from the income journal.",
-            "from": "Paid from",
-            "to": "Paid to",
+            "from": "Paid From",
+            "to": "Paid To",
             "export": "Export CSV",
             "cancel": "Cancel"
         },
@@ -560,24 +579,24 @@
         "cell": {
             "actions": {
                 "tooltip_send_email": "Send Invoice Email",
-                "tooltip_issue": "Issue invoice",
-                "tooltip_request_details": "Request recipient details",
-                "confirm_issue": "Issue this invoice now? It will receive its final number and become immutable.",
-                "request_details_title": "Request recipient details",
+                "tooltip_issue": "Issue Invoice",
+                "tooltip_request_details": "Request Recipient Details",
+                "request_details_title": "Request Recipient Details",
                 "request_details_description": "The recipient can complete their billing details and confirm receipt. Confirmation issues the invoice automatically.",
-                "recipient_email": "Recipient email",
+                "recipient_email": "Recipient Email",
                 "recipient_email_placeholder": "client@example.com",
                 "cancel": "Cancel",
-                "copy_link": "Copy link",
-                "send_email": "Send email",
+                "copy_link": "Copy Link",
+                "send_email": "Send Email",
                 "request_details_failed": "Unable to create the recipient details request.",
                 "details_link_copied": "Recipient details link copied.",
                 "details_request_emailed": "Recipient details request emailed.",
-                "tooltip_copy_public_link": "Copy public invoice link",
+                "tooltip_copy_public_link": "Copy Public Invoice Link",
                 "tooltip_view": "Details",
-                "tooltip_edit": "Edit invoice",
-                "tooltip_delete": "Delete invoice",
+                "tooltip_edit": "Edit Invoice",
+                "tooltip_delete": "Delete Invoice",
                 "tooltip_download": "Download",
+                "more_actions": "More Actions",
                 "mark_as_paid": "Mark as Paid",
                 "mark_as_pending": "Mark as Pending",
                 "status_locked": "Status updates are not available for this invoice.",
@@ -645,15 +664,15 @@
     "expenses": {
         "top_content": {
             "search_placeholder": "Search supplier or description...",
-            "clear_search": "Clear search",
-            "add_new": "Add expense",
+            "clear_search": "Clear Search",
+            "add_new": "Add Expense",
             "total_singular": "Total 1 expense",
             "total_plural": "Total {count} expenses"
         },
         "summary": {
-            "total_label": "Total expenses · {year}",
-            "deductible_label": "Deductible amount",
-            "missing_documents_label": "Missing documents"
+            "total_label": "Total Expenses · {year}",
+            "deductible_label": "Deductible Amount",
+            "missing_documents_label": "Missing Documents"
         },
         "table": {
             "a11y": {
@@ -670,20 +689,20 @@
                 "documents": "DOCS",
                 "actions": "ACTIONS"
             },
-            "rows_per_page": "Rows per page:"
+            "rows_per_page": "Rows per Page:"
         },
         "filters": {
-            "from": "From date",
-            "to": "To date",
+            "from": "From Date",
+            "to": "To Date",
             "category": "Category",
-            "payment_method": "Payment method",
-            "all_categories": "All categories",
-            "all_payment_methods": "All methods",
-            "has_attachment": "Has document",
-            "clear": "Clear filters",
+            "payment_method": "Payment Method",
+            "all_categories": "All Categories",
+            "all_payment_methods": "All Methods",
+            "has_attachment": "Has Document",
+            "clear": "Clear Filters",
             "clear_short": "Clear",
             "clear_count": "Clear ({count})",
-            "clear_all": "Clear all",
+            "clear_all": "Clear All",
             "remove_filter": "Remove {filter} filter"
         },
         "categories": {
@@ -693,30 +712,30 @@
             "office": "Office",
             "travel": "Travel",
             "transport": "Transport",
-            "professional_services": "Professional services",
+            "professional_services": "Professional Services",
             "marketing": "Marketing",
             "education": "Education",
-            "bank_fees": "Bank fees",
+            "bank_fees": "Bank Fees",
             "insurance": "Insurance",
             "other": "Other"
         },
         "payment_methods": {
-            "bank_transfer": "Bank transfer",
+            "bank_transfer": "Bank Transfer",
             "card": "Card",
             "cash": "Cash",
             "other": "Other",
-            "not_set": "Not set"
+            "not_set": "Not Set"
         },
         "documents": {
             "attached": "{count} attached",
             "missing": "Missing"
         },
         "actions": {
-            "edit": "Edit expense",
-            "delete": "Delete expense"
+            "edit": "Edit Expense",
+            "delete": "Delete Expense"
         },
         "empty_state": {
-            "title": "You have no expenses yet",
+            "title": "You Have No Expenses Yet",
             "description": "Add business expenses and attach supporting documents as you go.",
             "no_results_title": "No expenses match your filters",
             "no_results_description": "Try changing the search term, date range, category, or payment method."
@@ -726,30 +745,30 @@
             "next": "Next"
         },
         "delete_modal": {
-            "title": "Delete expense",
+            "title": "Delete Expense",
             "description": "Delete expense from {supplier} on {date}? It will be removed from the active list, but an audit record may remain in account history.",
             "confirm": "Delete",
             "cancel": "Cancel"
         },
         "form_dialog": {
-            "title_add": "Add expense",
-            "title_edit": "Edit expense",
+            "title_add": "Add Expense",
+            "title_edit": "Edit Expense",
             "description": "Amounts are stored in EUR. The deductible amount is calculated from total amount and business-use percentage.",
             "currency_fixed": "EUR – Euro",
             "fields": {
-                "expense_date": "Expense date",
-                "payment_date": "Payment date",
+                "expense_date": "Expense Date",
+                "payment_date": "Payment Date",
                 "supplier": "Supplier",
-                "document_number": "Document number",
+                "document_number": "Document Number",
                 "category": "Category",
                 "description": "Description",
-                "total_amount": "Total amount",
-                "vat_amount": "VAT / PVM amount",
+                "total_amount": "Total Amount",
+                "vat_amount": "VAT / PVM Amount",
                 "business_use_percentage": "Business-use %",
-                "deductible_amount": "Deductible amount",
-                "payment_method": "Payment method",
+                "deductible_amount": "Deductible Amount",
+                "payment_method": "Payment Method",
                 "currency": "Currency",
-                "attachment": "Receipt / document",
+                "attachment": "Receipt / Document",
                 "notes": "Notes"
             },
             "placeholders": {
@@ -761,15 +780,15 @@
             "upload": {
                 "dropzone_title": "Drag files here or click to browse",
                 "hint": "Supports JPEG, PNG, and PDF up to 10 MB.",
-                "select_file": "Select file"
+                "select_file": "Select File"
             },
             "cancel": "Cancel",
-            "submit_add": "Add expense",
-            "submit_edit": "Save changes"
+            "submit_add": "Add Expense",
+            "submit_edit": "Save Changes"
         }
     },
     "invoice_signing": {
-        "title": "Invoice Received from",
+        "title": "Invoice Received From",
         "subtitle": "Review invoice {invoiceId}, add a handwritten acknowledgement if everything looks correct, and download the PDF for your records.",
         "subtitle_acknowledged": "Invoice {invoiceId} has been issued and acknowledged. Download the PDF for your records.",
         "signed_status": "Acknowledged",
@@ -835,7 +854,7 @@
         "signature_received_title": "Acknowledgement Received",
         "signature_received_subtitle": "This invoice has already been acknowledged.",
         "sign_button": "Confirm Invoice",
-        "already_signed": "Invoice acknowledged",
+        "already_signed": "Invoice Acknowledged",
         "download_pdf": "Download PDF",
         "link_unavailable": "Invoice Link Unavailable"
     },
@@ -845,7 +864,7 @@
         "archive": "Remove",
         "no_clients": "No clients found",
         "empty_state": {
-            "title": "You have no clients yet",
+            "title": "You Have No Clients Yet",
             "description": "Click the \"Add New +\" button to create your first client.",
             "no_results_title": "No clients match your filters",
             "no_results_description": "Try changing the search term or client type filter."
@@ -888,15 +907,15 @@
                 "business": "Business",
                 "individual": "Individual"
             },
-            "duplicate_warning_title": "Potential duplicate",
+            "duplicate_warning_title": "Potential Duplicate",
             "cancel": "Cancel",
             "submit_add": "Add",
             "submit_edit": "Save",
-            "submit_duplicate": "Continue anyway"
+            "submit_duplicate": "Continue Anyway"
         },
         "actions": {
-            "tooltip_edit": "Edit client",
-            "tooltip_archive": "Remove client"
+            "tooltip_edit": "Edit Client",
+            "tooltip_archive": "Remove Client"
         },
         "card": {
             "business_number_business": "Company code:",
@@ -914,25 +933,25 @@
                     "dismiss_business_logo": "Remove selected business logo",
                     "remove_business_logo": "Remove current business logo"
                 },
-                "title": "Freelancer profile",
+                "title": "Freelancer Profile",
                 "description": "Business details used as defaults for future invoices.",
-                "business_logo": "Business logo",
+                "business_logo": "Business Logo",
                 "business_logo_description": "JPEG, PNG, or WebP up to 5 MB. Saved with future invoices.",
-                "upload_business_logo": "Upload logo",
-                "replace_business_logo": "Replace logo",
+                "upload_business_logo": "Upload Logo",
+                "replace_business_logo": "Replace Logo",
                 "business_logo_ready": "{size} · Ready to upload",
                 "email": "Email",
-                "invoice_email": "Invoice email",
+                "invoice_email": "Invoice Email",
                 "email_placeholder": "Enter your email address",
-                "phone": "Phone (optional)",
+                "phone": "Phone (Optional)",
                 "phone_placeholder": "Enter your phone number",
                 "name": "Name",
                 "name_placeholder": "Enter your name",
-                "business_type": "Activity type",
+                "business_type": "Activity Type",
                 "business_type_placeholder": "Individual activity by certificate",
-                "business_number": "Individual activity certificate No.",
+                "business_number": "Individual Activity Certificate No.",
                 "business_number_placeholder": "Enter individual activity certificate number",
-                "is_vat_payer": "VAT payer",
+                "is_vat_payer": "VAT Payer",
                 "is_vat_payer_option": "Registered as a VAT payer",
                 "is_vat_payer_description": "Individual activity freelancers can be VAT payers. Enable only if you are registered with VMI as a VAT payer.",
                 "vat_number": "VAT Number",
@@ -942,12 +961,9 @@
                 "signature": "Signature",
                 "save_changes": "Save Changes",
                 "email_verification": {
-                    "title": "Email verification",
-                    "confirmed": "Email confirmed",
-                    "confirmed_description": "Your account email is verified.",
-                    "unverified_description": "Verify your account email to protect account access.",
-                    "resend": "Send verification email",
-                    "sent_at": "Verified {date}"
+                    "verified": "Email Verified",
+                    "not_verified": "Not Verified",
+                    "verify": "Verify"
                 }
             }
         },
@@ -964,22 +980,23 @@
                 "description": "Language and regional preferences for your account."
             },
             "invoice_defaults": {
-                "title": "Invoice defaults",
+                "title": "Invoice Defaults",
                 "description": "Used when creating new saved invoices. Existing invoices keep their saved values.",
-                "invoice_email": "Invoice email",
+                "invoice_email": "Invoice Email",
                 "invoice_email_placeholder": "invoices@example.com",
                 "invoice_email_description": "Used as the sender and reply-to address on new invoices.",
-                "default_vat_mode": "Default VAT behavior",
-                "default_series": "Default invoice series",
-                "payment_terms": "Default payment terms",
+                "default_vat_mode": "Default VAT Behavior",
+                "default_series": "Default Invoice Series",
+                "payment_terms": "Default Payment Terms",
                 "payment_terms_days": "{days} days",
+                "include_logo": "Include Logo on New Invoices",
                 "vat_locked_note": "To choose VAT defaults, mark yourself as a VAT payer in",
-                "personal_information_link": "Freelancer profile",
+                "personal_information_link": "Freelancer Profile",
                 "vat_modes": {
                     "no_vat": "No VAT",
                     "standard_21": "Standard 21%",
                     "zero": "0%",
-                    "manual": "Manual per line"
+                    "manual": "Manual per Line"
                 }
             },
             "available_languages": {
@@ -1015,14 +1032,14 @@
             "a11y": {
                 "form_label": "Banking Information Form"
             },
-            "title": "Bank accounts",
+            "title": "Bank Accounts",
             "description": "Choose the default bank account for future invoices. Existing invoices keep their saved payment details.",
             "actions": {
                 "add": "Add New",
                 "save": "Save"
             },
             "empty_state": {
-                "title": "No bank accounts",
+                "title": "No Bank Accounts",
                 "description": "You have no bank accounts added. To add one, click on the \"Add New +\" button"
             },
             "delete_dialog": {
@@ -1041,48 +1058,49 @@
                 },
                 "bank_name": "Bank Name",
                 "bank_name_placeholder": "E.g., Swedbank",
-                "bank_code": "Bank code or BIC/SWIFT",
+                "bank_code": "Bank Code or BIC/SWIFT",
                 "bank_code_placeholder": "E.g., 73000 or HABALT22",
                 "bank_account_number": "IBAN",
                 "bank_account_number_placeholder": "E.g., LT121000011101001000",
                 "actions": {
                     "save": "Save",
                     "cancel": "Cancel",
-                    "skip": "Skip for now"
+                    "skip": "Skip for Now"
                 }
             }
         },
         "crypto_wallets": {
-            "title": "Crypto wallets",
+            "title": "Crypto Wallets",
             "description": "Saved payment instructions only. InvoiceTrackr does not calculate exchange rates or monitor the blockchain.",
             "default": "Default",
             "memo": "Memo/tag",
             "edit": "Edit",
             "delete": "Delete",
-            "add_title": "Add crypto wallet",
-            "edit_title": "Edit crypto wallet",
-            "use_default": "Use as default wallet",
-            "add": "Add wallet",
-            "save": "Save wallet",
+            "add_title": "Add Crypto Wallet",
+            "edit_title": "Edit Crypto Wallet",
+            "use_default": "Use as Default Wallet",
+            "add": "Add Wallet",
+            "save": "Save Wallet",
             "cancel": "Cancel",
-            "empty_title": "No crypto wallets",
+            "empty_title": "No Crypto Wallets",
             "empty_description": "Add a wallet to reuse its payment instructions on invoices.",
-            "select_default": "Choose the default crypto wallet",
-            "save_default": "Save default",
+            "select_default": "Choose the Default Crypto Wallet",
+            "save_default": "Save Default",
             "fields": {
-                "label": "Wallet label",
-                "asset": "Asset / token",
+                "label": "Wallet Label",
+                "asset": "Asset / Token",
                 "network": "Network",
-                "address": "Wallet address",
-                "memo": "Memo/tag (optional)"
+                "address": "Wallet Address",
+                "memo": "Memo/Tag (Optional)"
             }
         },
         "payment_methods": {
-            "title": "Payment methods",
+            "title": "Payment Methods",
             "description": "Manage the bank accounts and crypto wallet instructions available on saved invoices.",
-            "selector_label": "Payment method category",
-            "bank_accounts": "Bank accounts",
-            "crypto_wallets": "Crypto wallets"
+            "selector_label": "Payment Method Category",
+            "bank_accounts": "Bank Accounts",
+            "crypto_wallets": "Crypto Wallets",
+            "add_new": "Add New"
         }
     },
     "forgot_password": {
@@ -1102,7 +1120,7 @@
             "title": "Invalid Token",
             "description": "Password reset links are only valid for a limited time for security reasons",
             "request_new": "Request New Reset Link",
-            "sign_in": "Sign in",
+            "sign_in": "Sign In",
             "remember_your_password": "Remember your password?"
         },
         "form": {
@@ -1112,30 +1130,30 @@
             "confirmed_new_password_placeholder": "Confirm new password",
             "submit": "Reset Password",
             "remember_your_password": "Remember your password?",
-            "sign_in": "Sign in"
+            "sign_in": "Sign In"
         }
     },
     "verify_email": {
         "pending": {
-            "title": "Verifying your email",
+            "title": "Verifying Your Email",
             "description": "Hang tight while we confirm this address and finish securing your account."
         },
         "verified": {
-            "title": "Email verified",
+            "title": "Email Verified",
             "description": "Your email has been verified. You can now send invoices by email."
         },
         "already_verified": {
-            "title": "Email already verified",
+            "title": "Email Already Verified",
             "description": "This email address is already verified on your account."
         },
         "error": {
-            "title": "Email verification failed",
+            "title": "Email Verification Failed",
             "description": "This verification link is invalid or has expired."
         },
         "actions": {
-            "confirm": "Confirm email",
-            "dashboard": "Go to dashboard",
-            "profile": "Go to profile"
+            "confirm": "Confirm Email",
+            "dashboard": "Go to Dashboard",
+            "profile": "Go to Profile"
         }
     },
     "components": {
@@ -1175,20 +1193,16 @@
             "invoice": "Invoice",
             "draft": "draft",
             "client": "Client",
-            "public_link_note": "Client can view the invoice and its payment instructions online.",
             "draft_public_link_note": "Sending this draft issues it and includes the final invoice page.",
-            "signing_link_note": "Ask client to confirm receipt with one click.",
             "email_verification_required": "Verify your account email before sending invoices to clients.",
-            "include_public_link": "Include public invoice page",
-            "request_signature": "Request client acknowledgement",
+            "include_public_link": "Include Public Invoice Page",
+            "request_signature": "Request Client Acknowledgement",
             "public_link_generated_on_send": "Link will be generated on send",
             "public_link_copied": "Public invoice link copied.",
-            "copy_public_link": "Copy link",
-            "generate_public_link": "Generate link",
-            "regenerate_public_link": "Generate fresh public link",
-            "replace_link_and_send": "Replace link and send",
-            "attached_pdf": "Attaching PDF",
-            "draft_delivery": "Final invoice page included after issue",
+            "copy_public_link": "Copy Link",
+            "generate_public_link": "Generate Link",
+            "regenerate_public_link": "Generate Fresh Public Link",
+            "replace_link_and_send": "Replace Link and Send",
             "cancel": "Cancel",
             "send": "Send"
         },
@@ -1206,9 +1220,9 @@
             "subtotal": "Subtotal",
             "vat_total": "VAT Total",
             "grand_total": "Grand Total",
-            "delete_service": "Delete service",
-            "move_service_up": "Move service up",
-            "move_service_down": "Move service down",
+            "delete_service": "Delete Service",
+            "move_service_up": "Move Service Up",
+            "move_service_down": "Move Service Down",
             "units": {
                 "service": "Service",
                 "hour": "Hour",
@@ -1249,6 +1263,7 @@
                 "sender_address_label": "Sender's Address",
                 "sender_email_label": "Sender's Email",
                 "sender_business_type_label": "Sender business type",
+                "include_logo_label": "Include business logo on this invoice",
                 "receiver_name_label": "Receiver's Name",
                 "receiver_business_number_label_business": "Receiver's Company Code",
                 "receiver_business_number_label_individual": "Receiver's Sole Proprietorship Certificate Number",
@@ -1285,6 +1300,7 @@
                 "sender_vat_number": "Sender's VAT Number",
                 "sender_address": "Sender's Address",
                 "sender_email": "Sender's Email",
+                "include_logo": "Include Logo",
                 "receiver_name": "Receiver's Name",
                 "receiver_business_number_business": "Receiver's Company Code",
                 "receiver_business_number_individual": "Receiver's Sole Proprietorship Certificate Number",
@@ -1295,20 +1311,20 @@
                 "bank_code": "Bank Code",
                 "bank_account_number": "Bank Account Number",
                 "invoice_id": "Invoice ID",
-                "invoice_series": "Invoice series",
+                "invoice_series": "Invoice Series",
                 "date": "Date",
-                "service_date": "Service date",
+                "service_date": "Service Date",
                 "due_date": "Due Date",
-                "notes": "Notes for the client",
+                "notes": "Notes for the Client",
                 "status": "Status",
-                "payment_mode": "Payment mode",
-                "manual_payment_reference": "Manual payment reference",
-                "crypto_wallet": "Saved crypto wallet",
-                "crypto_label": "Wallet label",
-                "crypto_asset": "Asset / token",
+                "payment_mode": "Payment Mode",
+                "manual_payment_reference": "Manual Payment Reference",
+                "crypto_wallet": "Saved Crypto Wallet",
+                "crypto_label": "Wallet Label",
+                "crypto_asset": "Asset / Token",
                 "crypto_network": "Network",
-                "crypto_address": "Wallet address",
-                "crypto_memo": "Memo/tag (optional)"
+                "crypto_address": "Wallet Address",
+                "crypto_memo": "Memo/Tag (Optional)"
             },
             "placeholders": {
                 "bank_name": "e.g., Swedbank",
@@ -1331,16 +1347,16 @@
                 "notes": "Optional information shown on the invoice"
             },
             "payment_settings": {
-                "title": "Payment settings",
+                "title": "Payment Settings",
                 "reference_note": "Leave blank to use the invoice number as the payment reference.",
                 "disabled_note": "Payment instructions are hidden on the public invoice page.",
                 "crypto_note": "The invoice total stays in the selected fiat currency. This only displays wallet instructions; confirm the crypto amount separately.",
                 "modes": {
-                    "auto": "Bank transfer",
-                    "online": "Online payment (post-MVP)",
-                    "manual": "Bank transfer",
-                    "crypto": "Crypto transfer",
-                    "disabled": "No payment block"
+                    "auto": "Bank Transfer",
+                    "online": "Online Payment (Post-MVP)",
+                    "manual": "Bank Transfer",
+                    "crypto": "Crypto Transfer",
+                    "disabled": "No Payment Block"
                 }
             },
             "numbering": {
@@ -1373,15 +1389,15 @@
                 "no_payment_methods": "You have no saved payment details yet. Add a bank account or crypto wallet to get started."
             },
             "free_invoice": {
-                "eyebrow": "Free invoice generator",
-                "title": "Create a polished PDF invoice without signing up",
+                "eyebrow": "Free Invoice Generator",
+                "title": "Create a Polished PDF Invoice Without Signing Up",
                 "description": "Build a real invoice, preview the PDF, and download it for free. When you need the full freelancer workflow, create an account to save clients, send invoices, record payments, and prepare exports.",
                 "untracked_notice": "This download is not stored or marked as issued by InvoiceTrackr. Keep your own numbering and records, or create an account for managed drafts and issuance.",
                 "upgrade_title": "Need more than a PDF?",
                 "upgrade_description": "Create an account to save invoices, reuse clients and bank accounts, send invoice links, and track payment status.",
-                "upgrade_cta": "Create account",
-                "signup_cta": "Save and send from an account",
-                "modal_cta_button": "Create account to send invoices"
+                "upgrade_cta": "Create Account",
+                "signup_cta": "Save and Send from an Account",
+                "modal_cta_button": "Create Account to Send Invoices"
             },
             "services_heading": "Services",
             "services_explanation": "Description identifies the service or product. Unit describes how it is measured. Quantity is the number of units, and unit price is the price for one unit.",
@@ -1401,7 +1417,7 @@
     },
     "recipient_details": {
         "draft_from": "Draft Invoice from {sender}",
-        "title": "Complete your billing details",
+        "title": "Complete Your Billing Details",
         "description": "Confirm your billing details to receive the final invoice. Its amount and services cannot be changed here.",
         "invalid_title": "This link is no longer available",
         "invalid_description": "Ask the invoice sender to copy the recipient-details link again.",
@@ -1434,7 +1450,7 @@
                     "heading": "2.1 Personal Information",
                     "intro": "When you register for an account, we collect:",
                     "items": {
-                        "name": "Name and business information",
+                        "name": "Name and Business Information",
                         "email": "Email address",
                         "business_type": "Individual activity profile details",
                         "registration": "Individual activity certificate number",
@@ -1552,7 +1568,7 @@
                         "description": "Opt-out of marketing communications"
                     },
                     "withdraw": {
-                        "title": "Withdraw consent",
+                        "title": "Withdraw Consent",
                         "description": "Withdraw consent where processing is based on consent"
                     }
                 },

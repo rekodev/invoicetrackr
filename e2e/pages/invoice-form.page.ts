@@ -80,9 +80,9 @@ export class InvoiceFormPage {
       await this.page.getByRole('button', { name: 'Close' }).last().click();
     }
     const noPaymentRadio = this.page.getByRole('radio', {
-      name: 'No payment block'
+      name: 'No Payment Block'
     });
-    await this.page.getByText('No payment block', { exact: true }).click();
+    await this.page.getByText('No Payment Block', { exact: true }).click();
     await expect(noPaymentRadio).toBeChecked();
     await this.page.getByRole('button', { name: /^Save$/ }).click();
 
