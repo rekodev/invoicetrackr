@@ -281,6 +281,13 @@
       "when": 1787669499000,
       "tag": "0040_rek_100_client_archiving",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1787689800000,
+      "tag": "0041_rek_101_invoice_editor_hardening",
+      "breakpoints": true
     }
   ]
 }

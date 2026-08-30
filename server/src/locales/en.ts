@@ -116,6 +116,8 @@ export default {
         address: 'Address up to 255 characters is required',
         email: 'Valid email is required'
       },
+      serviceDate: 'A valid service date is required',
+      notes: 'Notes must not exceed 2,000 characters',
       services: {
         required: 'At least one service is required',
         description: 'Description up to 200 characters is required',
@@ -129,7 +131,11 @@ export default {
         amount: {
           number: 'Amount must be a number',
           min: 'Amount must be at least 0.01',
-          max: 'Amount must not exceed 10,000,000'
+          max: 'Amount must not exceed 10,000,000',
+          scale: 'Amount must have no more than two decimal places'
+        },
+        vatRate: {
+          scale: 'VAT rate must have no more than two decimal places'
         }
       },
       bankingInformation: {

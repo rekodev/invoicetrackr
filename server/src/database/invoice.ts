@@ -12,7 +12,10 @@ import {
   sql
 } from 'drizzle-orm';
 
-import { calculateInvoiceTotals } from '../utils/invoice';
+import {
+  calculateInvoiceTotals,
+  positionInvoiceServices
+} from '../utils/invoice';
 import { jsonAgg } from '../utils/json';
 import { db } from './db';
 import {
@@ -246,6 +249,8 @@ export const getInvoicesFromDb = async (
       invoiceId: invoicesTable.invoiceId,
       invoiceSeries: invoicesTable.invoiceSeries,
       date: invoicesTable.date,
+      serviceDate: invoicesTable.serviceDate,
+      notes: invoicesTable.notes,
       subtotalAmount: invoicesTable.subtotalAmount,
       vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
@@ -311,15 +316,19 @@ export const getInvoicesFromDb = async (
         address: invoiceReceiversTable.address,
         email: invoiceReceiversTable.email
       },
-      services: jsonAgg({
-        id: invoiceServicesTable.id,
-        description: invoiceServicesTable.description,
-        amount: invoiceServicesTable.amount,
-        quantity: invoiceServicesTable.quantity,
-        unit: invoiceServicesTable.unit,
-        vatRate: invoiceServicesTable.vatRate,
-        vatExemptionReason: invoiceServicesTable.vatExemptionReason
-      })
+      services: jsonAgg(
+        {
+          id: invoiceServicesTable.id,
+          position: invoiceServicesTable.position,
+          description: invoiceServicesTable.description,
+          amount: invoiceServicesTable.amount,
+          quantity: invoiceServicesTable.quantity,
+          unit: invoiceServicesTable.unit,
+          vatRate: invoiceServicesTable.vatRate,
+          vatExemptionReason: invoiceServicesTable.vatExemptionReason
+        },
+        invoiceServicesTable.position
+      )
     })
     .from(invoicesTable)
     .leftJoin(
@@ -366,6 +375,8 @@ export const getInvoiceFromDb = async (
       invoiceId: invoicesTable.invoiceId,
       invoiceSeries: invoicesTable.invoiceSeries,
       date: invoicesTable.date,
+      serviceDate: invoicesTable.serviceDate,
+      notes: invoicesTable.notes,
       subtotalAmount: invoicesTable.subtotalAmount,
       vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
@@ -431,15 +442,19 @@ export const getInvoiceFromDb = async (
         address: invoiceReceiversTable.address,
         email: invoiceReceiversTable.email
       },
-      services: jsonAgg({
-        id: invoiceServicesTable.id,
-        description: invoiceServicesTable.description,
-        amount: invoiceServicesTable.amount,
-        quantity: invoiceServicesTable.quantity,
-        unit: invoiceServicesTable.unit,
-        vatRate: invoiceServicesTable.vatRate,
-        vatExemptionReason: invoiceServicesTable.vatExemptionReason
-      })
+      services: jsonAgg(
+        {
+          id: invoiceServicesTable.id,
+          position: invoiceServicesTable.position,
+          description: invoiceServicesTable.description,
+          amount: invoiceServicesTable.amount,
+          quantity: invoiceServicesTable.quantity,
+          unit: invoiceServicesTable.unit,
+          vatRate: invoiceServicesTable.vatRate,
+          vatExemptionReason: invoiceServicesTable.vatExemptionReason
+        },
+        invoiceServicesTable.position
+      )
     })
     .from(invoicesTable)
     .leftJoin(
@@ -496,6 +511,8 @@ export const insertInvoiceInDb = async (
       .values({
         userId,
         date: invoiceData.date,
+        serviceDate: invoiceData.serviceDate || invoiceData.date,
+        notes: invoiceData.notes?.trim() || null,
         invoiceId: null,
         invoiceSeries,
         subtotalAmount: totals.subtotalAmount,
@@ -591,8 +608,9 @@ export const insertInvoiceInDb = async (
     }
 
     // Invoice services insert
-    for (const service of invoiceData.services) {
+    for (const service of positionInvoiceServices(invoiceData.services)) {
       await tx.insert(invoiceServicesTable).values({
+        position: service.position,
         quantity: String(service.quantity),
         amount: String(service.amount),
         vatRate: String(service.vatRate || 0),
@@ -827,7 +845,9 @@ export const updateInvoiceInDb = async (
         bankAccountId: currentInvoiceData.bankAccountId,
         cryptoWalletId: currentInvoiceData.cryptoWalletId,
         date: invoiceData.date,
+        serviceDate: invoiceData.serviceDate || invoiceData.date,
         dueDate: invoiceData.dueDate,
+        notes: invoiceData.notes?.trim() || null,
         status: 'pending',
         lifecycleStatus: currentInvoiceData.lifecycleStatus,
         subtotalAmount: totals.subtotalAmount,
@@ -904,12 +924,13 @@ export const updateInvoiceInDb = async (
         .where(inArray(invoiceServicesTable.id, servicesToDelete));
     }
 
-    for (const service of invoiceData.services) {
+    for (const service of positionInvoiceServices(invoiceData.services)) {
       if (service.id && existingServiceIds.includes(service.id)) {
         await tx
           .update(invoiceServicesTable)
           .set({
             description: service.description,
+            position: service.position,
             amount: String(service.amount),
             vatRate: String(service.vatRate || 0),
             vatExemptionReason: service.vatExemptionReason || null,
@@ -920,6 +941,7 @@ export const updateInvoiceInDb = async (
       } else {
         await tx.insert(invoiceServicesTable).values({
           description: service.description,
+          position: service.position,
           amount: String(service.amount),
           vatRate: String(service.vatRate || 0),
           vatExemptionReason: service.vatExemptionReason || null,

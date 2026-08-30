@@ -36,6 +36,13 @@ export class InvoicesPage {
     await expect(this.rowFor(recipientName)).toContainText(/SF\d{3}/);
   }
 
+  async openDraftForEditing(recipientName: string) {
+    await this.rowFor(recipientName)
+      .locator('button[aria-label="Edit invoice"]')
+      .click();
+    await expect(this.page).toHaveURL(/\/invoices\/edit\/\d+$/);
+  }
+
   private async readClipboard() {
     return this.page.evaluate(() => navigator.clipboard.readText());
   }

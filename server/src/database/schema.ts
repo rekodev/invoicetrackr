@@ -22,6 +22,7 @@ export const invoiceServicesTable = pgTable(
   {
     id: serial().primaryKey().notNull(),
     invoiceId: integer('invoice_id').notNull(),
+    position: integer().notNull(),
     description: text().notNull(),
     unit: varchar({ length: 255 }).notNull(),
     quantity: numeric({ precision: 12, scale: 4 }).notNull(),
@@ -32,6 +33,7 @@ export const invoiceServicesTable = pgTable(
     vatExemptionReason: text('vat_exemption_reason')
   },
   (table) => [
+    check('invoice_services_position_check', sql`${table.position} >= 0`),
     foreignKey({
       columns: [table.invoiceId],
       foreignColumns: [invoicesTable.id],
@@ -44,19 +46,21 @@ export const invoicesTable = pgTable(
   'invoices',
   {
     date: date().notNull(),
+    serviceDate: date('service_date').notNull(),
     userId: integer('user_id').notNull(),
     senderId: integer('sender_id'),
     receiverId: integer('receiver_id'),
     subtotalAmount: numeric('subtotal_amount', {
-      precision: 10,
+      precision: 16,
       scale: 2
     })
       .default('0')
       .notNull(),
-    vatAmount: numeric('vat_amount', { precision: 10, scale: 2 })
+    vatAmount: numeric('vat_amount', { precision: 16, scale: 2 })
       .default('0')
       .notNull(),
-    totalAmount: numeric('total_amount', { precision: 10, scale: 2 }).notNull(),
+    totalAmount: numeric('total_amount', { precision: 16, scale: 2 }).notNull(),
+    notes: text(),
     status: varchar({ length: 50 }).notNull(),
     lifecycleStatus: varchar('lifecycle_status', { length: 50 })
       .default('draft')

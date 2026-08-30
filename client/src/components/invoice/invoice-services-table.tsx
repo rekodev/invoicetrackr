@@ -1,6 +1,11 @@
 'use client';
 
-import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  PlusIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline';
 import {
   Button,
   Chip,
@@ -20,7 +25,7 @@ import {
   TableScrollContainer,
   TextField
 } from '@heroui/react';
-import type { InvoiceBody, InvoiceServiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import {
   type ComponentProps,
@@ -46,7 +51,6 @@ import { calculateInvoiceTotals } from '@/lib/utils';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 
 type Props = {
-  invoiceServices?: Array<InvoiceServiceBody>;
   isInvalid?: boolean;
   errorMessage?: string;
   currency: Currency;
@@ -57,7 +61,6 @@ type Props = {
 type ServiceInputProps = ComponentProps<typeof Input>;
 
 const InvoiceServicesTable = ({
-  invoiceServices,
   isInvalid,
   errorMessage,
   currency,
@@ -71,9 +74,10 @@ const InvoiceServicesTable = ({
     clearErrors,
     formState: { errors }
   } = useFormContext<InvoiceBody>();
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, append, move, remove } = useFieldArray({
     name: 'services',
-    control
+    control,
+    keyName: 'fieldId'
   });
   const servicesTableRef = useRef<HTMLDivElement>(null);
 
@@ -123,21 +127,10 @@ const InvoiceServicesTable = ({
   const lineTotals = useMemo(
     () =>
       services.map((service) => {
-        const amount = Number(service?.amount) || 0;
-        const quantity = Number(service?.quantity) || 0;
-        const vatRate = Number(service?.vatRate ?? 0) || 0;
-        const subtotal = amount * quantity;
-
-        return subtotal + subtotal * (vatRate / 100);
+        return calculateInvoiceTotals([service]).totalAmount;
       }),
     [services]
   );
-
-  useEffect(() => {
-    if (!invoiceServices?.length) return;
-
-    replace(invoiceServices);
-  }, [invoiceServices, replace]);
 
   useEffect(() => {
     const serviceTable = servicesTableRef.current;
@@ -186,6 +179,7 @@ const InvoiceServicesTable = ({
   const handleAddService = () => {
     append({
       id: 0,
+      position: fields.length,
       amount: 0,
       description: '',
       quantity: 1,
@@ -198,6 +192,7 @@ const InvoiceServicesTable = ({
   };
 
   const handleRemoveService = (index: number) => {
+    if (fields.length === 1) return;
     remove(index);
   };
 
@@ -291,7 +286,8 @@ const InvoiceServicesTable = ({
             placeholder: t('placeholders.description'),
             type: 'text',
             maxLength: 200,
-            ...register(`services.${index}.description`)
+            ...register(`services.${index}.description`),
+            value: services[index]?.description || ''
           }
         });
       case 'unit':
@@ -305,9 +301,8 @@ const InvoiceServicesTable = ({
                 className="w-full min-w-28"
                 variant="secondary"
                 allowsCustomValue
-                inputValue={localizeInvoiceUnit(
-                  field.value || '',
-                  (unit) => t(`units.${unit}`)
+                inputValue={localizeInvoiceUnit(field.value || '', (unit) =>
+                  t(`units.${unit}`)
                 )}
                 onInputChange={field.onChange}
                 onSelectionChange={(key) => key && field.onChange(String(key))}
@@ -354,7 +349,8 @@ const InvoiceServicesTable = ({
             type: 'number',
             min: 0.0001,
             step: '0.0001',
-            ...register(`services.${index}.quantity`)
+            ...register(`services.${index}.quantity`),
+            value: services[index]?.quantity ?? ''
           }
         });
       case 'amount':
@@ -368,7 +364,8 @@ const InvoiceServicesTable = ({
             type: 'number',
             min: 0.01,
             step: '0.01',
-            ...register(`services.${index}.amount`)
+            ...register(`services.${index}.amount`),
+            value: services[index]?.amount ?? ''
           }
         });
       case 'vatRate':
@@ -383,7 +380,8 @@ const InvoiceServicesTable = ({
             min: 0,
             max: 100,
             step: '0.01',
-            ...register(`services.${index}.vatRate`)
+            ...register(`services.${index}.vatRate`),
+            value: services[index]?.vatRate ?? ''
           }
         });
       case 'vatExemptionReason':
@@ -396,14 +394,15 @@ const InvoiceServicesTable = ({
             placeholder: t('placeholders.vat_exemption_reason'),
             type: 'text',
             maxLength: 255,
-            ...register(`services.${index}.vatExemptionReason`)
+            ...register(`services.${index}.vatExemptionReason`),
+            value: services[index]?.vatExemptionReason || ''
           }
         });
       case 'lineTotal':
         return (
           <p className="min-w-20 text-left text-sm font-medium">
             {getCurrencySymbol(currency)}
-            {(lineTotals[index] || 0).toFixed(2)}
+            {lineTotals[index] || '0.00'}
           </p>
         );
       case 'actions':
@@ -413,11 +412,36 @@ const InvoiceServicesTable = ({
             className="relative flex items-center gap-2"
           >
             <Button
-              aria-label={t('delete_service')}
-              onPress={() => handleRemoveService(index)}
+              isIconOnly
+              size="sm"
+              aria-label={t('move_service_up')}
+              onPress={() => move(index, index - 1)}
+              isDisabled={index === 0}
               variant="tertiary"
               data-invoice-service-focusable
-              className="text-danger min-w-min cursor-pointer p-3 text-lg active:opacity-50"
+            >
+              <ArrowUpIcon className="h-4 w-4" />
+            </Button>
+            <Button
+              isIconOnly
+              size="sm"
+              aria-label={t('move_service_down')}
+              onPress={() => move(index, index + 1)}
+              isDisabled={index === fields.length - 1}
+              variant="tertiary"
+              data-invoice-service-focusable
+            >
+              <ArrowDownIcon className="h-4 w-4" />
+            </Button>
+            <Button
+              isIconOnly
+              size="sm"
+              aria-label={t('delete_service')}
+              onPress={() => handleRemoveService(index)}
+              isDisabled={fields.length === 1}
+              variant="tertiary"
+              data-invoice-service-focusable
+              className="text-danger"
             >
               <TrashIcon className="h-5 w-5" />
             </Button>
@@ -451,7 +475,11 @@ const InvoiceServicesTable = ({
             </TableHeader>
             <TableBody>
               {fields.map((field, index) => (
-                <TableRow key={field.id} id={`service-${index}`}>
+                <TableRow
+                  key={field.fieldId}
+                  id={field.fieldId}
+                  dependencies={[index]}
+                >
                   {visibleColumns.map((column) => (
                     <TableCell key={column.uid}>
                       {renderCell(column.uid, index)}

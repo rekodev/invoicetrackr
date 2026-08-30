@@ -41,8 +41,16 @@ export default function PDFDocument({
   language,
   showDraftState = true
 }: Props) {
-  const { date, dueDate, invoiceId, receiver, sender, services, totalAmount } =
-    invoiceData;
+  const {
+    date,
+    serviceDate,
+    dueDate,
+    invoiceId,
+    receiver,
+    sender,
+    services,
+    totalAmount
+  } = invoiceData;
   const invoiceTotals = calculateInvoiceTotals(services);
   const subtotalAmount =
     invoiceData.subtotalAmount || invoiceTotals.subtotalAmount;
@@ -129,6 +137,12 @@ export default function PDFDocument({
           <Text style={pdfStyles.detailItem}>
             {date ? formatDate(date) : ''}
           </Text>
+          <Text style={[pdfStyles.detailItem, pdfStyles.boldText]}>
+            {t('service_date_label')}
+          </Text>
+          <Text style={pdfStyles.detailItem}>
+            {serviceDate ? formatDate(serviceDate) : formatDate(date)}
+          </Text>
         </View>
       </View>
 
@@ -191,11 +205,7 @@ export default function PDFDocument({
       )}
       <View style={[pdfStyles.tableCol, lineTotalColumnStyle]}>
         <Text style={pdfStyles.tableCell}>
-          {(
-            Number(amount) *
-            Number(quantity) *
-            (1 + Number(vatRate ?? 0) / 100)
-          ).toFixed(2)}{' '}
+          {calculateInvoiceTotals([{ amount, quantity, vatRate }]).totalAmount}{' '}
           {currency.toUpperCase()}
         </Text>
       </View>
@@ -374,6 +384,11 @@ export default function PDFDocument({
       invoiceData.manualPaymentReference ? (
         <Text style={pdfStyles.footerItem}>
           {t('payment_reference_label')}: {invoiceData.manualPaymentReference}
+        </Text>
+      ) : null}
+      {invoiceData.notes ? (
+        <Text style={pdfStyles.footerItem}>
+          {t('notes_label')}: {invoiceData.notes}
         </Text>
       ) : null}
     </View>

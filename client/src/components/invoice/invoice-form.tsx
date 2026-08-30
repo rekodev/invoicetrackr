@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  EyeIcon,
   InformationCircleIcon,
   UserGroupIcon,
   WalletIcon
@@ -13,6 +14,7 @@ import {
   Label,
   Radio,
   RadioGroup,
+  TextArea,
   TextField,
   Tooltip
 } from '@heroui/react';
@@ -24,11 +26,13 @@ import type {
   InvoiceBody,
   User
 } from '@invoicetrackr/types';
-import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
+import { useLocale, useTranslations } from 'next-intl';
 import { type ComponentProps, useRef, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 import useInvoiceFormSubmissionHandler from '@/lib/hooks/invoice/use-invoice-form-submission-handler';
+import useUnsavedChangesGuard from '@/lib/hooks/use-unsaved-changes-guard';
 import { Currency } from '@/lib/types/currency';
 import { splitInvoiceId } from '@/lib/utils';
 import {
@@ -36,6 +40,10 @@ import {
   formatDate,
   getDateDifferenceInDays
 } from '@/lib/utils/date';
+import {
+  buildInvoicePreviewData,
+  getDueDateAfterIssueDateChange
+} from '@/lib/utils/invoice-editor';
 
 import SignaturePad from '../signature-pad';
 import CompleteProfile from '../ui/complete-profile';
@@ -46,6 +54,10 @@ import InvoiceServicesTable from './invoice-services-table';
 import PaymentMethodDialog, {
   type PaymentMethodSelection
 } from './payment-method-dialog';
+
+const InvoiceFormPreview = dynamic(() => import('./invoice-form-preview'), {
+  ssr: false
+});
 
 type Props = {
   user: User;
@@ -102,6 +114,7 @@ const InvoiceForm = ({
   bankingInformationEntries
 }: Props) => {
   const t = useTranslations('components.invoice_form');
+  const locale = useLocale();
   const today = formatDate(new Date().toISOString());
   const defaultPaymentTermsDays = user.defaultPaymentTermsDays || 30;
   const defaultVatRate = getDefaultVatRate(user);
@@ -129,12 +142,20 @@ const InvoiceForm = ({
     defaultValues: invoiceData
       ? {
           ...invoiceData,
+          services: [...invoiceData.services].sort(
+            (first, second) =>
+              (first.position ?? 0) - (second.position ?? 0)
+          ),
           invoiceSeries:
             invoiceData.invoiceSeries ||
             splitInvoiceId(invoiceData.invoiceId || '')[0] ||
             user.defaultInvoiceSeries,
           paymentMode: getMvpPaymentMode(invoiceData.paymentMode),
           date: invoiceData.date ? formatDate(invoiceData.date) : today,
+          serviceDate: invoiceData.serviceDate
+            ? formatDate(invoiceData.serviceDate)
+            : formatDate(invoiceData.date),
+          notes: invoiceData.notes || '',
           dueDate: invoiceData.dueDate ? formatDate(invoiceData.dueDate) : ''
         }
       : {
@@ -149,6 +170,7 @@ const InvoiceForm = ({
           services: [
             {
               amount: 0,
+              position: 0,
               quantity: 1,
               description: '',
               unit: 'service',
@@ -162,14 +184,17 @@ const InvoiceForm = ({
           paymentMode: 'manual',
           manualPaymentReference: '',
           date: today,
+          serviceDate: today,
+          notes: '',
           dueDate: addDaysToDate(today, defaultPaymentTermsDays),
           senderSignature: defaultSenderSignature || ''
         }
   });
   const {
     handleSubmit,
+    getValues,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { errors, isDirty, isSubmitting },
     clearErrors,
     setValue,
     control,
@@ -182,11 +207,28 @@ const InvoiceForm = ({
   const [senderSignature, setSenderSignature] = useState<
     string | File | undefined
   >(defaultSenderSignature);
+  const [previewData, setPreviewData] = useState<InvoiceBody | null>(null);
+  const isDueDateManuallyOverriddenRef = useRef(
+    Boolean(
+      invoiceData &&
+        getDateDifferenceInDays(invoiceData.date, invoiceData.dueDate) !==
+          defaultPaymentTermsDays
+    )
+  );
+  const isServiceDateManuallyOverriddenRef = useRef(
+    Boolean(invoiceData && invoiceData.serviceDate !== invoiceData.date)
+  );
+
+  const { confirmNavigation, disableGuard } = useUnsavedChangesGuard({
+    isDirty,
+    message: t('unsaved_changes')
+  });
 
   const { onSubmit, redirectToInvoicesPage } = useInvoiceFormSubmissionHandler({
     invoiceData,
     user,
-    setError
+    setError,
+    onSuccess: disableGuard
   });
 
   const dueDateInputRef = useRef<HTMLInputElement | null>(null);
@@ -208,12 +250,18 @@ const InvoiceForm = ({
   };
 
   const handleSelectReceiver = (receiver: ClientBody) => {
-    setValue('receiver.businessType', receiver.businessType);
-    setValue('receiver.name', receiver.name);
-    setValue('receiver.businessNumber', receiver.businessNumber);
-    setValue('receiver.vatNumber', isVatEnabled ? receiver.vatNumber : '');
-    setValue('receiver.address', receiver.address);
-    setValue('receiver.email', receiver.email);
+    setValue('receiver.businessType', receiver.businessType, {
+      shouldDirty: true
+    });
+    setValue('receiver.name', receiver.name, { shouldDirty: true });
+    setValue('receiver.businessNumber', receiver.businessNumber, {
+      shouldDirty: true
+    });
+    setValue('receiver.vatNumber', isVatEnabled ? receiver.vatNumber : '', {
+      shouldDirty: true
+    });
+    setValue('receiver.address', receiver.address, { shouldDirty: true });
+    setValue('receiver.email', receiver.email, { shouldDirty: true });
     clearErrors('receiver');
     setIsReceiverModalOpen(false);
   };
@@ -250,6 +298,14 @@ const InvoiceForm = ({
     setSenderSignature(signature);
     setValue('senderSignature', signature, { shouldDirty: true });
     clearErrors('senderSignature');
+  };
+
+  const handleCancel = () => {
+    if (confirmNavigation()) redirectToInvoicesPage();
+  };
+
+  const handlePreview = () => {
+    setPreviewData(buildInvoicePreviewData(getValues()));
   };
 
   const renderTextField = ({
@@ -587,7 +643,6 @@ const InvoiceForm = ({
       />
       <InvoiceServicesTable
         currency={currency}
-        invoiceServices={invoiceData?.services}
         defaultVatRate={defaultVatRate}
         isVatEnabled={isVatEnabled}
         isInvalid={!!errors.services}
@@ -800,12 +855,21 @@ const InvoiceForm = ({
         <Button
           variant="ghost"
           className="w-full sm:w-auto"
-          onPress={redirectToInvoicesPage}
+          onPress={handleCancel}
         >
           {t('buttons.cancel')}
         </Button>
         <Button
-          isDisabled={!methods.formState.isDirty || isSubmitting}
+          type="button"
+          variant="secondary"
+          className="w-full sm:w-auto"
+          onPress={handlePreview}
+        >
+          <EyeIcon className="h-5 w-5" />
+          {t('buttons.preview')}
+        </Button>
+        <Button
+          isDisabled={!isDirty || isSubmitting}
           type="submit"
           className="w-full sm:w-auto"
         >
@@ -836,7 +900,7 @@ const InvoiceForm = ({
           >
             <div className="col-span-4 flex flex-col gap-4">
               <h4>{t('invoice_details')}</h4>
-              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
+              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-4">
                 <Controller
                   name="invoiceSeries"
                   control={control}
@@ -879,7 +943,47 @@ const InvoiceForm = ({
                       inputProps: {
                         ...field,
                         value: field.value || today,
+                        onChange: (event) => {
+                          field.onChange(event);
+                          if (!isServiceDateManuallyOverriddenRef.current) {
+                            setValue('serviceDate', event.target.value, {
+                              shouldDirty: true
+                            });
+                          }
+                          setValue(
+                            'dueDate',
+                            getDueDateAfterIssueDateChange({
+                              issueDate: event.target.value,
+                              currentDueDate: getValues('dueDate'),
+                              paymentTermsDays: defaultPaymentTermsDays,
+                              isManuallyOverridden:
+                                isDueDateManuallyOverriddenRef.current
+                            }),
+                            { shouldDirty: true }
+                          );
+                        },
                         'aria-label': t('a11y.date_label'),
+                        type: 'date'
+                      }
+                    })
+                  }
+                />
+                <Controller
+                  name="serviceDate"
+                  control={control}
+                  render={({ field }) =>
+                    renderTextField({
+                      label: t('labels.service_date'),
+                      isInvalid: !!errors.serviceDate,
+                      errorMessage: errors.serviceDate?.message,
+                      inputProps: {
+                        ...field,
+                        value: field.value || currentDate || today,
+                        onChange: (event) => {
+                          isServiceDateManuallyOverriddenRef.current = true;
+                          field.onChange(event);
+                        },
+                        'aria-label': t('a11y.service_date_label'),
                         type: 'date'
                       }
                     })
@@ -899,6 +1003,7 @@ const InvoiceForm = ({
                           onDueDatePreselectionChange={(
                             dueDatePreselection
                           ) => {
+                            isDueDateManuallyOverriddenRef.current = true;
                             const currentDatePlusDays = new Date(currentDate);
 
                             if (dueDatePreselection === 'custom') {
@@ -930,6 +1035,10 @@ const InvoiceForm = ({
                             {...field}
                             ref={dueDateInputRef}
                             value={field.value || ''}
+                            onChange={(event) => {
+                              isDueDateManuallyOverriddenRef.current = true;
+                              field.onChange(event);
+                            }}
                             aria-label={t('a11y.due_date_label')}
                             type="date"
                           />
@@ -943,6 +1052,32 @@ const InvoiceForm = ({
             </div>
             {renderSenderAndReceiverFields()}
             {renderInvoiceServices()}
+            <div className="col-span-4">
+              <Controller
+                name="notes"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    className="w-full"
+                    variant="secondary"
+                    isInvalid={!!errors.notes}
+                  >
+                    <Label>{t('labels.notes')}</Label>
+                    <TextArea
+                      name={field.name}
+                      value={field.value || ''}
+                      rows={4}
+                      maxLength={2000}
+                      aria-label={t('a11y.notes_label')}
+                      placeholder={t('placeholders.notes')}
+                      onBlur={field.onBlur}
+                      onChange={field.onChange}
+                    />
+                    <FieldError>{errors.notes?.message}</FieldError>
+                  </TextField>
+                )}
+              />
+            </div>
             {renderPaymentSettings()}
             {renderInvoiceSignature()}
             {renderActions()}
@@ -965,6 +1100,14 @@ const InvoiceForm = ({
         cryptoWallets={cryptoWallets}
         onSelect={handlePaymentMethodSelect}
       />
+      {previewData && (
+        <InvoiceFormPreview
+          currency={currency}
+          invoiceData={previewData}
+          language={locale}
+          onClose={() => setPreviewData(null)}
+        />
+      )}
     </>
   );
 };

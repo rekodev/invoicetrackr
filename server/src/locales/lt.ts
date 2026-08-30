@@ -119,6 +119,8 @@ export default {
         address: 'Adresas iki 255 simbolių yra privalomas',
         email: 'Tinkamas el. pašto adresas yra privalomas'
       },
+      serviceDate: 'Būtina nurodyti tinkamą paslaugos datą',
+      notes: 'Pastabos negali viršyti 2 000 simbolių',
       services: {
         required: 'Būtina bent viena paslauga',
         description: 'Aprašymas iki 200 simbolių yra privalomas',
@@ -133,7 +135,12 @@ export default {
         amount: {
           number: 'Suma turi būti skaičius',
           min: 'Suma turi būti bent 0.01',
-          max: 'Suma negali viršyti 10,000,000'
+          max: 'Suma negali viršyti 10,000,000',
+          scale: 'Suma gali turėti ne daugiau kaip du skaitmenis po kablelio'
+        },
+        vatRate: {
+          scale:
+            'PVM tarifas gali turėti ne daugiau kaip du skaitmenis po kablelio'
         }
       },
       bankingInformation: {

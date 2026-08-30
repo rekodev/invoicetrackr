@@ -125,10 +125,7 @@ export default function InvoiceSigningSummary({
             </thead>
             <tbody>
               {invoice.services.map((service, index) => {
-                const subtotal =
-                  Number(service.amount) * Number(service.quantity);
-                const lineTotal =
-                  subtotal * (1 + Number(service.vatRate ?? 0) / 100);
+                const lineTotal = calculateInvoiceTotals([service]).totalAmount;
 
                 return (
                   <tr
@@ -153,7 +150,7 @@ export default function InvoiceSigningSummary({
                     )}
                     <td className="px-2 py-3 text-right font-medium">
                       {currencySymbol}
-                      {lineTotal.toFixed(2)}
+                      {lineTotal}
                     </td>
                   </tr>
                 );

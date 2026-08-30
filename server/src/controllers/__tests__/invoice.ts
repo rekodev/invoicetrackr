@@ -1,5 +1,6 @@
 import {
   DEFAULT_CURRENCY,
+  invoiceBodySchema,
   invoiceServiceBodySchema
 } from '@invoicetrackr/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -652,6 +653,51 @@ describe('Invoice Controller', () => {
         expect(result.error.issues.at(0)?.message).toBe(
           'validation.invoice.services.quantity.scale'
         );
+    });
+
+    it('rejects unit prices and VAT rates with more than two decimal places', () => {
+      expect(
+        invoiceServiceBodySchema.safeParse({
+          ...service,
+          quantity: 1,
+          amount: 10.001
+        }).success
+      ).toBe(false);
+      expect(
+        invoiceServiceBodySchema.safeParse({
+          ...service,
+          quantity: 1,
+          vatRate: 21.001
+        }).success
+      ).toBe(false);
+    });
+  });
+
+  describe('service date and notes validation', () => {
+    it('accepts a valid service date and trims recipient-visible notes', () => {
+      const result = invoiceBodySchema.safeParse({
+        ...mockInvoice,
+        serviceDate: '2026-08-25',
+        notes: '  Thank you  '
+      });
+
+      expect(result.success).toBe(true);
+      if (result.success) expect(result.data.notes).toBe('Thank you');
+    });
+
+    it('rejects an invalid service date and notes over 2,000 characters', () => {
+      expect(
+        invoiceBodySchema.safeParse({
+          ...mockInvoice,
+          serviceDate: '25-08-2026'
+        }).success
+      ).toBe(false);
+      expect(
+        invoiceBodySchema.safeParse({
+          ...mockInvoice,
+          notes: 'x'.repeat(2001)
+        }).success
+      ).toBe(false);
     });
   });
 

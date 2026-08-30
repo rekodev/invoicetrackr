@@ -1,6 +1,9 @@
 import { AnyColumn, InferColumnsDataTypes, SQL, sql } from 'drizzle-orm';
 
-export function jsonAgg<T extends Record<string, AnyColumn>>(select: T) {
+export function jsonAgg<T extends Record<string, AnyColumn>>(
+  select: T,
+  orderBy?: AnyColumn
+) {
   const chunks: SQL[] = [];
 
   Object.entries(select).forEach(([key, column], index) => {
@@ -10,7 +13,7 @@ export function jsonAgg<T extends Record<string, AnyColumn>>(select: T) {
 
   return sql<InferColumnsDataTypes<T>[]>`
     coalesce(
-      json_agg(json_build_object(${sql.join(chunks)})),
+      json_agg(json_build_object(${sql.join(chunks)}) ${orderBy ? sql`ORDER BY ${orderBy}` : sql.empty()}),
       '[]'
     )
   `;

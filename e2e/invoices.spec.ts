@@ -7,11 +7,16 @@ test.describe('invoices', () => {
     const invoice = createInvoiceTestData('Draft recipient', {
       recipientBusinessNumber: '305000001',
       recipientAddress: 'Konstitucijos pr. 7, Vilnius',
-      recipientEmail: 'draft.recipient@example.com'
+      recipientEmail: 'draft.recipient@example.com',
+      serviceDate: '2026-08-20',
+      notes: 'Thank you for your business.',
+      secondServiceDescription: 'Implementation workshop'
     });
 
     await invoiceForm.createDraft(invoice);
     await invoicesPage.expectLifecycle(invoice.recipientName, 'Draft');
+    await invoicesPage.openDraftForEditing(invoice.recipientName);
+    await invoiceForm.expectPersistedDraft(invoice);
   });
 
   test('recipient completion issues the draft', async ({
