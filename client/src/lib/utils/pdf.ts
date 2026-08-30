@@ -43,10 +43,11 @@ export const pdfStyles = StyleSheet.create({
     textAlign: 'center'
   },
   businessLogo: {
-    alignSelf: 'center',
     height: 48,
-    marginBottom: 8,
+    left: 20,
     objectFit: 'contain',
+    position: 'absolute',
+    top: 20,
     width: 120
   },
   row: {

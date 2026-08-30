@@ -5,11 +5,12 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  Link} from '@heroui/react';
+  Link
+} from '@heroui/react';
 import NextLink from 'next/link';
 import { useTranslations } from 'next-intl';
 
-import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
+import { FREELANCER_PROFILE_PAGE } from '@/lib/constants/pages';
 
 type Props = {
   title: string;
@@ -29,7 +30,7 @@ const CompleteProfile = ({ title }: Props) => {
       </CardContent>
       <CardFooter className="justify-center p-6 pt-0 text-center">
         <NextLink
-          href={PERSONAL_INFORMATION_PAGE}
+          href={FREELANCER_PROFILE_PAGE}
           className={buttonVariants({ variant: 'primary' })}
         >
           {t('go_to_profile')}

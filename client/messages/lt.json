@@ -16,7 +16,7 @@
             "payments": "Mokėjimai",
             "reports": "Ataskaitos",
             "settings": "Nustatymai",
-            "personal_information": "Veiklos profilis",
+            "freelancer_profile": "Veiklos profilis",
             "banking_information": "Banko sąskaitos",
             "payment_methods": "Mokėjimo būdai",
             "account_settings": "Sąskaitų nustatymai",
@@ -59,14 +59,26 @@
         "login": "Prisijungti",
         "new": "Nauja",
         "onboarding": "Įvedimas",
-        "personal_information": "Asmeninė informacija",
+        "freelancer_profile": "Veiklos profilis",
         "privacy_policy": "Privatumo politika",
         "profile": "Profilis",
         "sign_up": "Registruotis",
         "terms_of_service": "Paslaugų teikimo sąlygos"
     },
-    "payments": { "empty": { "heading": "Mokėjimai", "title": "Mokėjimų dar nėra", "description": "Banko pavedimai bus rodomi čia, kai bus įdiegtas rankinis mokėjimų registravimas." } },
-    "reports": { "empty": { "heading": "Ataskaitos", "title": "Ataskaitos ruošiamos", "description": "Čia rasite pajamų žurnalus, mokesčių prognozes, metines suvestines ir eksportą buhalteriui." } },
+    "payments": {
+        "empty": {
+            "heading": "Mokėjimai",
+            "title": "Mokėjimų dar nėra",
+            "description": "Banko pavedimai bus rodomi čia, kai bus įdiegtas rankinis mokėjimų registravimas."
+        }
+    },
+    "reports": {
+        "empty": {
+            "heading": "Ataskaitos",
+            "title": "Ataskaitos ruošiamos",
+            "description": "Čia rasite pajamų žurnalus, mokesčių prognozes, metines suvestines ir eksportą buhalteriui."
+        }
+    },
     "general_error": "Ajajai! Kažkas negerai...",
     "cookie_consent": {
         "message": "Naudojame pasirenkamus analitikos slapukus, kad suprastume produkto naudojimą ir gerintume InvoiceTrackr. Analitika pradedama tik jums sutikus, kaip aprašyta mūsų",
@@ -539,6 +551,13 @@
             "confirm": "Ištrinti",
             "cancel": "Atšaukti"
         },
+        "issue_modal": {
+            "title": "Išrašyti sąskaitą",
+            "description": "Sąskaitai bus suteiktas galutinis numeris ir ji taps nekeičiamu išrašytu dokumentu.",
+            "email_note": "Šis veiksmas el. laiško nesiunčia. Išrašytą sąskaitą galėsite išsiųsti atskirai.",
+            "confirm": "Išrašyti sąskaitą",
+            "cancel": "Atšaukti"
+        },
         "top_content": {
             "search_placeholder": "Ieškoti pagal sąskaitos faktūros ID...",
             "add_new": "Pridėti naują",
@@ -562,7 +581,6 @@
                 "tooltip_send_email": "Siųsti sąskaitą el. paštu",
                 "tooltip_issue": "Išrašyti sąskaitą",
                 "tooltip_request_details": "Prašyti gavėjo duomenų",
-                "confirm_issue": "Išrašyti sąskaitą dabar? Jai bus suteiktas galutinis numeris ir jos nebegalėsite redaguoti.",
                 "request_details_title": "Prašyti gavėjo duomenų",
                 "request_details_description": "Gavėjas galės užpildyti savo rekvizitus ir patvirtinti sąskaitos gavimą. Patvirtinus sąskaita bus išrašyta automatiškai.",
                 "recipient_email": "Gavėjo el. paštas",
@@ -1082,7 +1100,8 @@
             "description": "Tvarkykite banko sąskaitas ir kriptovaliutų piniginių instrukcijas, naudojamas išsaugotose sąskaitose.",
             "selector_label": "Mokėjimo būdų kategorija",
             "bank_accounts": "Banko sąskaitos",
-            "crypto_wallets": "Kriptovaliutų piniginės"
+            "crypto_wallets": "Kriptovaliutų piniginės",
+            "add_new": "Pridėti naują"
         }
     },
     "forgot_password": {
@@ -1249,6 +1268,7 @@
                 "sender_address_label": "Siuntėjo adresas",
                 "sender_email_label": "Siuntėjo el. paštas",
                 "sender_business_type_label": "Siuntėjo veiklos tipas",
+                "include_logo_label": "Įtraukti veiklos logotipą į šią sąskaitą",
                 "receiver_name_label": "Gavėjo vardas",
                 "receiver_business_number_label_business": "Gavėjo įmonės kodas",
                 "receiver_business_number_label_individual": "Gavėjo IV pažymos Nr.",
@@ -1285,6 +1305,7 @@
                 "sender_vat_number": "Siuntėjo PVM mokėtojo kodas",
                 "sender_address": "Siuntėjo adresas",
                 "sender_email": "Siuntėjo el. paštas",
+                "include_logo": "Įtraukti logotipą",
                 "receiver_name": "Gavėjo vardas",
                 "receiver_business_number_business": "Gavėjo įmonės kodas",
                 "receiver_business_number_individual": "Gavėjo IV pažymos Nr.",

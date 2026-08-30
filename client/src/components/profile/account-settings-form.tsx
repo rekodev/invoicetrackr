@@ -23,7 +23,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 import { availableLanguages } from '@/lib/constants/languages';
-import { PERSONAL_INFORMATION_PAGE } from '@/lib/constants/pages';
+import { FREELANCER_PROFILE_PAGE } from '@/lib/constants/pages';
 
 import DeleteAccountModal from './delete-account-modal';
 
@@ -151,7 +151,6 @@ const AccountSettingsForm = ({ user }: Props) => {
           )}
         />
       </CardContent>
-      <Separator />
       <CardContent className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
         <div className="flex flex-col gap-1 md:col-span-2">
           <h3 className="text-lg font-medium">{t('invoice_defaults.title')}</h3>
@@ -257,7 +256,7 @@ const AccountSettingsForm = ({ user }: Props) => {
                 <p className="text-muted text-xs">
                   {t('invoice_defaults.vat_locked_note')}{' '}
                   <Link
-                    href={PERSONAL_INFORMATION_PAGE}
+                    href={FREELANCER_PROFILE_PAGE}
                     className="text-foreground underline underline-offset-2"
                   >
                     {t('invoice_defaults.personal_information_link')}

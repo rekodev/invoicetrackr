@@ -8,7 +8,6 @@ import {
 import {
   Alert,
   Button,
-  Card,
   Checkbox,
   FieldError,
   Input,
@@ -247,8 +246,8 @@ export default function SendInvoiceEmailModal({
     if (!includePublicLink) return null;
 
     return (
-      <div className="bg-segment mx-2 flex items-center gap-2 rounded-3xl border p-2">
-        <LinkIcon className="text-muted ml-2 h-4 w-4 shrink-0" />
+      <div className="bg-segment flex h-10 items-center gap-2 rounded-2xl border px-2">
+        <LinkIcon className="text-muted ml-1 h-4 w-4 shrink-0" />
         {publicLinkStatus === 'active' ? (
           <>
             <code className="text-muted min-w-0 flex-1 truncate text-xs">
@@ -257,6 +256,7 @@ export default function SendInvoiceEmailModal({
             <Button
               size="sm"
               variant="tertiary"
+              className="h-8 min-h-8 px-3 text-xs"
               isDisabled={!publicInvoiceLink}
               onPress={handleCopyPublicLink}
             >
@@ -272,6 +272,7 @@ export default function SendInvoiceEmailModal({
             {isIssued ? (
               <Button
                 size="sm"
+                className="h-8 min-h-8 px-3 text-xs"
                 isDisabled={isPending}
                 onPress={handleGeneratePublicLink}
               >
@@ -287,14 +288,14 @@ export default function SendInvoiceEmailModal({
   };
 
   const renderOptions = () => (
-    <Card variant="secondary" className="flex flex-col gap-2 border p-2">
+    <div className="flex flex-col gap-2">
       <Checkbox
         id="include-public-link"
         variant="primary"
         isSelected={includePublicLink}
         isDisabled={!isIssued}
         onChange={handleIncludePublicLinkChange}
-        className="rounded-lg px-2 py-2"
+        className="rounded-lg py-2"
       >
         <Checkbox.Control>
           <Checkbox.Indicator />
@@ -315,7 +316,7 @@ export default function SendInvoiceEmailModal({
         variant="primary"
         isSelected={requestSignature}
         onChange={handleRequestSignatureChange}
-        className="rounded-lg px-2 py-2"
+        className="rounded-lg py-2"
       >
         <Checkbox.Control>
           <Checkbox.Indicator />
@@ -325,147 +326,145 @@ export default function SendInvoiceEmailModal({
           <p className="text-muted text-xs">{t('signing_link_note')}</p>
         </Checkbox.Content>
       </Checkbox>
-    </Card>
+    </div>
   );
 
   return (
-    <Modal>
-      <Modal.Backdrop
-        isOpen={isOpen}
-        onOpenChange={(open) => {
-          if (!open) handleCloseSendDialog();
-        }}
-      >
-        <Modal.Container size="lg" scroll="outside">
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-            <BlobProvider document={pdfDocument}>
-              {({ blob }) => (
-                <form
-                  onSubmit={handleSubmit((data) => onSubmit(data, blob))}
-                  encType="multipart/form-data"
-                >
-                  <Modal.Header>
-                    <div className="flex min-w-0 flex-col gap-1 pr-8">
-                      <Modal.Heading>
-                        {invoice.invoiceId || t('invoice')}
-                      </Modal.Heading>
-                      <p className="text-muted truncate text-sm">
-                        {invoice.receiver.name} - {invoiceAmount}
-                      </p>
-                    </div>
-                  </Modal.Header>
-                  <Modal.Body className="flex w-full flex-col gap-4">
-                    {!isEmailVerified ? (
-                      <Alert status="warning">
-                        <Alert.Indicator />
-                        <Alert.Content>
-                          <Alert.Description>
-                            {t('email_verification_required')}
-                          </Alert.Description>
-                        </Alert.Content>
-                      </Alert>
-                    ) : null}
+    <Modal.Backdrop
+      isOpen={isOpen}
+      onOpenChange={(open) => {
+        if (!open) handleCloseSendDialog();
+      }}
+    >
+      <Modal.Container size="lg" scroll="outside">
+        <Modal.Dialog>
+          <Modal.CloseTrigger />
+          <BlobProvider document={pdfDocument}>
+            {({ blob }) => (
+              <form
+                onSubmit={handleSubmit((data) => onSubmit(data, blob))}
+                encType="multipart/form-data"
+              >
+                <Modal.Header>
+                  <div className="flex min-w-0 flex-col gap-1 pr-8">
+                    <Modal.Heading>
+                      {invoice.invoiceId || t('invoice')}
+                    </Modal.Heading>
+                    <p className="text-muted truncate text-sm">
+                      {invoice.receiver.name} - {invoiceAmount}
+                    </p>
+                  </div>
+                </Modal.Header>
+                <Modal.Body className="flex w-full flex-col gap-4">
+                  {!isEmailVerified ? (
+                    <Alert status="warning">
+                      <Alert.Indicator />
+                      <Alert.Content>
+                        <Alert.Description>
+                          {t('email_verification_required')}
+                        </Alert.Description>
+                      </Alert.Content>
+                    </Alert>
+                  ) : null}
 
-                    <Controller
-                      control={control}
-                      name="recipientEmail"
-                      render={({ field }) => (
-                        <TextField
-                          variant="secondary"
-                          isInvalid={!!errors.recipientEmail}
-                        >
-                          <Label>{t('recipient_email')}</Label>
-                          <Input
-                            name={field.name}
-                            value={field.value}
-                            placeholder={t('recipient_placeholder')}
-                            onBlur={field.onBlur}
-                            onChange={field.onChange}
-                          />
-                          <FieldError>
-                            {errors.recipientEmail?.message}
-                          </FieldError>
-                        </TextField>
-                      )}
-                    />
-                    <Controller
-                      control={control}
-                      name="subject"
-                      render={({ field }) => (
-                        <TextField
-                          variant="secondary"
-                          isInvalid={!!errors.subject}
-                        >
-                          <Label>{t('subject_label')}</Label>
-                          <Input
-                            name={field.name}
-                            value={field.value}
-                            placeholder={t('subject_placeholder')}
-                            onBlur={field.onBlur}
-                            onChange={field.onChange}
-                          />
-                          <FieldError>{errors.subject?.message}</FieldError>
-                        </TextField>
-                      )}
-                    />
-                    <Controller
-                      control={control}
-                      name="message"
-                      render={({ field }) => (
-                        <TextField
-                          variant="secondary"
-                          isInvalid={!!errors.message}
-                        >
-                          <Label>{t('message_label')}</Label>
-                          <TextArea
-                            name={field.name}
-                            value={field.value || ''}
-                            placeholder={t('message_placeholder')}
-                            onBlur={field.onBlur}
-                            onChange={field.onChange}
-                          />
-                          <FieldError>{errors.message?.message}</FieldError>
-                        </TextField>
-                      )}
-                    />
+                  <Controller
+                    control={control}
+                    name="recipientEmail"
+                    render={({ field }) => (
+                      <TextField
+                        variant="secondary"
+                        isInvalid={!!errors.recipientEmail}
+                      >
+                        <Label>{t('recipient_email')}</Label>
+                        <Input
+                          name={field.name}
+                          value={field.value}
+                          placeholder={t('recipient_placeholder')}
+                          onBlur={field.onBlur}
+                          onChange={field.onChange}
+                        />
+                        <FieldError>
+                          {errors.recipientEmail?.message}
+                        </FieldError>
+                      </TextField>
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="subject"
+                    render={({ field }) => (
+                      <TextField
+                        variant="secondary"
+                        isInvalid={!!errors.subject}
+                      >
+                        <Label>{t('subject_label')}</Label>
+                        <Input
+                          name={field.name}
+                          value={field.value}
+                          placeholder={t('subject_placeholder')}
+                          onBlur={field.onBlur}
+                          onChange={field.onChange}
+                        />
+                        <FieldError>{errors.subject?.message}</FieldError>
+                      </TextField>
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="message"
+                    render={({ field }) => (
+                      <TextField
+                        variant="secondary"
+                        isInvalid={!!errors.message}
+                      >
+                        <Label>{t('message_label')}</Label>
+                        <TextArea
+                          name={field.name}
+                          value={field.value || ''}
+                          placeholder={t('message_placeholder')}
+                          onBlur={field.onBlur}
+                          onChange={field.onChange}
+                        />
+                        <FieldError>{errors.message?.message}</FieldError>
+                      </TextField>
+                    )}
+                  />
 
-                    {renderOptions()}
-                  </Modal.Body>
-                  <Modal.Footer className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="text-muted flex min-w-0 flex-col gap-0.5 text-xs">
-                      <span>
-                        {t(isIssued ? 'attached_pdf' : 'draft_delivery')} ·{' '}
-                        {invoice.date}
-                      </span>
-                    </div>
-                    <div className="flex w-full flex-col-reverse gap-2 sm:ml-auto sm:w-auto sm:flex-row">
-                      <Button
-                        onPress={handleCloseSendDialog}
-                        variant="ghost"
-                        className="w-full sm:w-auto"
-                      >
-                        {t('cancel')}
-                      </Button>
-                      <Button
-                        isDisabled={!isEmailVerified}
-                        isPending={isPending}
-                        type="submit"
-                        className="w-full sm:w-auto"
-                      >
-                        <PaperAirplaneIcon className="h-4 w-4" />
-                        {shouldRotateSigningLink
-                          ? t('replace_link_and_send')
-                          : t('send')}
-                      </Button>
-                    </div>
-                  </Modal.Footer>
-                </form>
-              )}
-            </BlobProvider>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+                  {renderOptions()}
+                </Modal.Body>
+                <Modal.Footer className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="text-muted flex min-w-0 flex-col gap-0.5 text-xs">
+                    <span>
+                      {t(isIssued ? 'attached_pdf' : 'draft_delivery')} ·{' '}
+                      {invoice.date}
+                    </span>
+                  </div>
+                  <div className="flex w-full flex-col-reverse gap-2 sm:ml-auto sm:w-auto sm:flex-row">
+                    <Button
+                      onPress={handleCloseSendDialog}
+                      variant="ghost"
+                      className="w-full sm:w-auto"
+                    >
+                      {t('cancel')}
+                    </Button>
+                    <Button
+                      isDisabled={!isEmailVerified}
+                      isPending={isPending}
+                      type="submit"
+                      className="w-full sm:w-auto"
+                    >
+                      <PaperAirplaneIcon className="h-4 w-4" />
+                      {shouldRotateSigningLink
+                        ? t('replace_link_and_send')
+                        : t('send')}
+                    </Button>
+                  </div>
+                </Modal.Footer>
+              </form>
+            )}
+          </BlobProvider>
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 }

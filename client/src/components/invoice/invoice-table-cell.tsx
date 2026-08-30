@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  CheckBadgeIcon,
   ChevronDownIcon,
   DocumentTextIcon,
   ExclamationCircleIcon,
@@ -13,6 +12,7 @@ import {
   UserPlusIcon
 } from '@heroicons/react/24/outline';
 import {
+  Button,
   Checkbox,
   Chip,
   Dropdown,
@@ -32,16 +32,14 @@ import { useTranslations } from 'next-intl';
 import type { JSX, Key } from 'react';
 import { useEffect, useState, useTransition } from 'react';
 
-import {
-  issueInvoiceAction,
-  updateInvoiceStatusAction
-} from '@/lib/actions/invoice';
+import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
 import { statusOptions } from '@/lib/constants/table';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { formatDate } from '@/lib/utils/date';
 import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 
+import IssueInvoiceModal from './issue-invoice-modal';
 import RecipientDetailsRequestModal from './recipient-details-request-modal';
 
 const statusColorMap: Record<InvoiceStatus, 'success' | 'danger' | 'warning'> =
@@ -131,7 +129,7 @@ const InvoiceTableCell = ({
 
   const renderTooltip = (content: string, children: JSX.Element) => (
     <Tooltip delay={0}>
-      <Tooltip.Trigger>{children}</Tooltip.Trigger>
+      {children}
       <Tooltip.Content>{content}</Tooltip.Content>
     </Tooltip>
   );
@@ -140,13 +138,6 @@ const InvoiceTableCell = ({
     setIsPaid(!isPaid);
     handleChangeStatus(isPaid ? 'pending' : 'paid');
   };
-
-  const handleIssue = () =>
-    startTransition(async () => {
-      if (!invoice.id || !window.confirm(tCell('confirm_issue'))) return;
-      const response = await issueInvoiceAction(userId, Number(invoice.id));
-      toast(response.message, { variant: response.ok ? 'success' : 'danger' });
-    });
 
   const cellValue =
     invoice[
@@ -258,15 +249,15 @@ const InvoiceTableCell = ({
               </DropdownPopover>
             </Dropdown>
 
-            {renderTooltip(
-              isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid'),
-              <Checkbox
-                className="mr-0.5 max-w-5 p-0"
-                isSelected={isPaid}
-                onChange={handleMarkAsPaidClick}
-                isDisabled={isPending || isDraft}
-              />
-            )}
+            <Checkbox
+              aria-label={
+                isPaid ? tCell('mark_as_pending') : tCell('mark_as_paid')
+              }
+              className="mr-0.5 max-w-5 p-0"
+              isSelected={isPaid}
+              onChange={handleMarkAsPaidClick}
+              isDisabled={isPending || isDraft}
+            />
           </div>
 
           {isPastDue && !isDraft && (
@@ -286,83 +277,91 @@ const InvoiceTableCell = ({
           <div className="relative flex items-center justify-end gap-2">
             {renderTooltip(
               tCell('tooltip_send_email'),
-              <button
+              <Button
+                isIconOnly
+                size="sm"
+                variant="tertiary"
                 type="button"
                 aria-label={tCell('tooltip_send_email')}
-                onClick={() => onSendEmail(invoice)}
-                className="text-accent cursor-pointer active:opacity-50"
+                onPress={() => onSendEmail(invoice)}
+                className="text-accent"
               >
                 <PaperAirplaneIcon className="h-4 w-4" />
-              </button>
+              </Button>
             )}
             {invoice.publicInvoiceToken &&
               renderTooltip(
                 tCell('tooltip_copy_public_link'),
-                <button
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="tertiary"
                   type="button"
                   aria-label={tCell('tooltip_copy_public_link')}
-                  onClick={handleCopyPublicLink}
-                  className="text-muted cursor-pointer text-lg active:opacity-50"
+                  onPress={handleCopyPublicLink}
+                  className="text-muted"
                 >
                   <LinkIcon className="h-5 w-5" />
-                </button>
+                </Button>
               )}
             {renderTooltip(
               tCell('tooltip_view'),
-              <button
+              <Button
+                isIconOnly
+                size="sm"
+                variant="tertiary"
                 type="button"
                 aria-label={tCell('tooltip_view')}
-                onClick={handleViewIconClick}
-                className="text-muted cursor-pointer text-lg active:opacity-50"
+                onPress={handleViewIconClick}
+                className="text-muted"
               >
                 <EyeIcon className="h-5 w-5" />
-              </button>
+              </Button>
             )}
             {isDraft && (
               <>
-                {renderTooltip(
-                  tCell('tooltip_issue'),
-                  <button
-                    type="button"
-                    aria-label={tCell('tooltip_issue')}
-                    onClick={handleIssue}
-                    className="text-accent cursor-pointer"
-                  >
-                    <CheckBadgeIcon className="h-5 w-5" />
-                  </button>
-                )}
+                <IssueInvoiceModal userId={userId} invoiceData={invoice} />
                 {renderTooltip(
                   tCell('tooltip_request_details'),
-                  <button
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="tertiary"
                     type="button"
                     aria-label={tCell('tooltip_request_details')}
-                    onClick={() => setIsRecipientDetailsModalOpen(true)}
-                    className="text-muted cursor-pointer"
+                    onPress={() => setIsRecipientDetailsModalOpen(true)}
+                    className="text-muted"
                   >
                     <UserPlusIcon className="h-5 w-5" />
-                  </button>
+                  </Button>
                 )}
                 {renderTooltip(
                   tCell('tooltip_edit'),
-                  <button
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="tertiary"
                     type="button"
                     aria-label={tCell('tooltip_edit')}
-                    className="text-muted cursor-pointer text-lg active:opacity-50"
-                    onClick={handleEditInvoiceClick}
+                    className="text-muted"
+                    onPress={handleEditInvoiceClick}
                   >
                     <PencilSquareIcon className="h-5 w-5" />
-                  </button>
+                  </Button>
                 )}
                 {renderTooltip(
                   tCell('tooltip_delete'),
-                  <button
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="tertiary"
                     type="button"
                     aria-label={tCell('tooltip_delete')}
-                    className="text-danger cursor-pointer text-lg active:opacity-50"
-                    onClick={handleDeleteInvoiceClick}
+                    className="text-danger"
+                    onPress={handleDeleteInvoiceClick}
                   >
                     <TrashIcon className="h-5 w-5" />
-                  </button>
+                  </Button>
                 )}
               </>
             )}

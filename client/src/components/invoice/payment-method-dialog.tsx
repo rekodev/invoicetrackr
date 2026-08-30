@@ -280,40 +280,38 @@ export default function PaymentMethodDialog({
   );
 
   return (
-    <Modal>
-      <Modal.Backdrop
-        isOpen={isOpen}
-        onOpenChange={(open) => !open && handleClose()}
-      >
-        <Modal.Container>
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-            <Modal.Header>
-              <Modal.Heading>
-                {t(
-                  view === 'add'
-                    ? 'modals.add_payment_method'
-                    : 'modals.select_payment_method'
-                )}
-              </Modal.Heading>
-            </Modal.Header>
-            <Modal.Body className="justify-start">
-              {view === 'add' ? renderAddPaymentMethod() : renderList()}
-            </Modal.Body>
-            {view === 'list' ? (
-              <Modal.Footer>
-                <Button
-                  className="w-full sm:w-auto"
-                  onPress={() => setView('add')}
-                >
-                  <PlusCircleIcon className="h-5 w-5" />
-                  {t('modals.add_payment_method')}
-                </Button>
-              </Modal.Footer>
-            ) : null}
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+    <Modal.Backdrop
+      isOpen={isOpen}
+      onOpenChange={(open) => !open && handleClose()}
+    >
+      <Modal.Container>
+        <Modal.Dialog>
+          <Modal.CloseTrigger />
+          <Modal.Header>
+            <Modal.Heading>
+              {t(
+                view === 'add'
+                  ? 'modals.add_payment_method'
+                  : 'modals.select_payment_method'
+              )}
+            </Modal.Heading>
+          </Modal.Header>
+          <Modal.Body className="justify-start">
+            {view === 'add' ? renderAddPaymentMethod() : renderList()}
+          </Modal.Body>
+          {view === 'list' ? (
+            <Modal.Footer>
+              <Button
+                className="w-full sm:w-auto"
+                onPress={() => setView('add')}
+              >
+                <PlusCircleIcon className="h-5 w-5" />
+                {t('modals.add_payment_method')}
+              </Button>
+            </Modal.Footer>
+          ) : null}
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 }

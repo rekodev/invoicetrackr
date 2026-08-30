@@ -59,6 +59,12 @@ type Props = {
 };
 
 type ServiceInputProps = ComponentProps<typeof Input>;
+type ServiceInputName = `services.${number}.${
+  | 'description'
+  | 'quantity'
+  | 'amount'
+  | 'vatRate'
+  | 'vatExemptionReason'}`;
 
 const InvoiceServicesTable = ({
   isInvalid,
@@ -69,7 +75,6 @@ const InvoiceServicesTable = ({
 }: Props) => {
   const t = useTranslations('components.invoice_services_table');
   const {
-    register,
     control,
     clearErrors,
     formState: { errors }
@@ -210,10 +215,12 @@ const InvoiceServicesTable = ({
   };
 
   const renderServiceInput = ({
+    name,
     isInvalid,
     errorMessage,
     inputProps
   }: {
+    name: ServiceInputName;
     isInvalid: boolean;
     errorMessage?: string;
     inputProps: ServiceInputProps;
@@ -221,20 +228,31 @@ const InvoiceServicesTable = ({
     const ariaLabel = inputProps['aria-label'];
 
     return (
-      <TextField
-        aria-label={typeof ariaLabel === 'string' ? ariaLabel : undefined}
-        className="w-full"
-        isInvalid={isInvalid}
-      >
-        <Input
-          {...inputProps}
-          className={cn(inputProps.className, 'w-full')}
-          data-invoice-service-editor
-          data-invoice-service-focusable
-          variant="secondary"
-        />
-        <FieldError>{errorMessage}</FieldError>
-      </TextField>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <TextField
+            aria-label={typeof ariaLabel === 'string' ? ariaLabel : undefined}
+            className="w-full"
+            isInvalid={isInvalid}
+          >
+            <Input
+              {...inputProps}
+              ref={field.ref}
+              name={field.name}
+              value={field.value == null ? '' : String(field.value)}
+              className={cn(inputProps.className, 'w-full')}
+              data-invoice-service-editor
+              data-invoice-service-focusable
+              variant="secondary"
+              onBlur={field.onBlur}
+              onChange={field.onChange}
+            />
+            <FieldError>{errorMessage}</FieldError>
+          </TextField>
+        )}
+      />
     );
   };
 
@@ -278,6 +296,7 @@ const InvoiceServicesTable = ({
         return <div aria-label={t('a11y.number_label')}>{index + 1}</div>;
       case 'description':
         return renderServiceInput({
+          name: `services.${index}.description`,
           isInvalid: !!errors.services?.[index]?.description,
           errorMessage: errors.services?.[index]?.description?.message,
           inputProps: {
@@ -285,9 +304,7 @@ const InvoiceServicesTable = ({
             'aria-label': t('a11y.description_label'),
             placeholder: t('placeholders.description'),
             type: 'text',
-            maxLength: 200,
-            ...register(`services.${index}.description`),
-            value: services[index]?.description || ''
+            maxLength: 200
           }
         });
       case 'unit':
@@ -340,6 +357,7 @@ const InvoiceServicesTable = ({
         );
       case 'quantity':
         return renderServiceInput({
+          name: `services.${index}.quantity`,
           isInvalid: !!errors.services?.[index]?.quantity,
           errorMessage: errors.services?.[index]?.quantity?.message,
           inputProps: {
@@ -348,13 +366,12 @@ const InvoiceServicesTable = ({
             placeholder: t('placeholders.quantity'),
             type: 'number',
             min: 0.0001,
-            step: '0.0001',
-            ...register(`services.${index}.quantity`),
-            value: services[index]?.quantity ?? ''
+            step: '0.0001'
           }
         });
       case 'amount':
         return renderServiceInput({
+          name: `services.${index}.amount`,
           isInvalid: !!errors.services?.[index]?.amount,
           errorMessage: errors.services?.[index]?.amount?.message,
           inputProps: {
@@ -363,13 +380,12 @@ const InvoiceServicesTable = ({
             placeholder: t('placeholders.amount'),
             type: 'number',
             min: 0.01,
-            step: '0.01',
-            ...register(`services.${index}.amount`),
-            value: services[index]?.amount ?? ''
+            step: '0.01'
           }
         });
       case 'vatRate':
         return renderServiceInput({
+          name: `services.${index}.vatRate`,
           isInvalid: !!errors.services?.[index]?.vatRate,
           errorMessage: errors.services?.[index]?.vatRate?.message,
           inputProps: {
@@ -379,13 +395,12 @@ const InvoiceServicesTable = ({
             type: 'number',
             min: 0,
             max: 100,
-            step: '0.01',
-            ...register(`services.${index}.vatRate`),
-            value: services[index]?.vatRate ?? ''
+            step: '0.01'
           }
         });
       case 'vatExemptionReason':
         return renderServiceInput({
+          name: `services.${index}.vatExemptionReason`,
           isInvalid: !!errors.services?.[index]?.vatExemptionReason,
           errorMessage: errors.services?.[index]?.vatExemptionReason?.message,
           inputProps: {
@@ -393,9 +408,7 @@ const InvoiceServicesTable = ({
             'aria-label': t('a11y.vat_exemption_reason_label'),
             placeholder: t('placeholders.vat_exemption_reason'),
             type: 'text',
-            maxLength: 255,
-            ...register(`services.${index}.vatExemptionReason`),
-            value: services[index]?.vatExemptionReason || ''
+            maxLength: 255
           }
         });
       case 'lineTotal':

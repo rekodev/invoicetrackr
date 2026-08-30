@@ -391,7 +391,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
   const renderCardBodyAndFooter = () => {
     return (
       <>
-        <Card.Content className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
+        <Card.Content className="grid grid-cols-1 gap-4 px-6 pb-6 pt-4 md:grid-cols-2">
           {renderProfilePictureInput()}
           {renderTextField({
             name: 'email',
@@ -535,7 +535,6 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
       <Card className="w-full border">
         <Card.Header className="flex flex-col items-start gap-1 px-6 py-4">
           <Card.Title className="text-2xl">{t('title')}</Card.Title>
-          <Card.Description>{t('description')}</Card.Description>
         </Card.Header>
         <Separator />
         {renderCardBodyAndFooter()}

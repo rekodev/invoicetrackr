@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Skeleton } from '@heroui/react';
+import { Skeleton } from '@heroui/react';
 import { cn } from '@heroui/styles';
 
 type BasicCardSkeletonProps = {
@@ -9,12 +9,10 @@ type BasicCardSkeletonProps = {
 
 export function BasicCardSkeleton({ className }: BasicCardSkeletonProps) {
   return (
-    <Card
+    <Skeleton
       aria-hidden="true"
-      className={cn('min-h-32 w-full border p-4', className)}
-    >
-      <Skeleton className="h-full min-h-24 w-full rounded-xl" />
-    </Card>
+      className={cn('min-h-32 w-full rounded-3xl', className)}
+    />
   );
 }
 

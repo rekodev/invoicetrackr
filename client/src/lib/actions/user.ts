@@ -23,8 +23,8 @@ import { updateSessionAction } from '../actions';
 import {
   ACCOUNT_SETTINGS_PAGE,
   CHANGE_PASSWORD_PAGE,
-  ONBOARDING_PAGE,
-  PERSONAL_INFORMATION_PAGE
+  FREELANCER_PROFILE_PAGE,
+  ONBOARDING_PAGE
 } from '../constants/pages';
 import { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
@@ -68,7 +68,7 @@ export async function updateUserAction({
     }
   });
 
-  revalidatePath(PERSONAL_INFORMATION_PAGE);
+  revalidatePath(FREELANCER_PROFILE_PAGE);
   revalidatePath(ACCOUNT_SETTINGS_PAGE);
   return { ok: true, message: response.data.message };
 }
@@ -181,7 +181,7 @@ export async function updateUserProfilePictureAction({
   await updateSessionAction({
     newSession: { image: response.data.user.profilePictureUrl }
   });
-  revalidatePath(PERSONAL_INFORMATION_PAGE);
+  revalidatePath(FREELANCER_PROFILE_PAGE);
   return {
     ok: true,
     message: response.data.message,
@@ -201,7 +201,7 @@ export async function deleteUserProfilePictureAction({
   }
 
   await updateSessionAction({ newSession: { image: null } });
-  revalidatePath(PERSONAL_INFORMATION_PAGE);
+  revalidatePath(FREELANCER_PROFILE_PAGE);
 
   return {
     ok: true,

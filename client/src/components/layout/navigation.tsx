@@ -23,9 +23,9 @@ import {
   CLIENTS_PAGE,
   DASHBOARD_PAGE,
   EXPENSES_PAGE,
+  FREELANCER_PROFILE_PAGE,
   INVOICES_PAGE,
   PAYMENT_METHODS_PAGE,
-  PERSONAL_INFORMATION_PAGE,
   PROFILE_PAGE
 } from '@/lib/constants/pages';
 
@@ -47,8 +47,8 @@ const navigation: Array<NavLink> = [
     icon: Cog6ToothIcon,
     children: [
       {
-        key: 'personal_information',
-        href: PERSONAL_INFORMATION_PAGE,
+        key: 'freelancer_profile',
+        href: FREELANCER_PROFILE_PAGE,
         icon: IdentificationIcon
       },
       {

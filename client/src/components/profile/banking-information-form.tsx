@@ -39,12 +39,14 @@ type Props = {
   user: User;
   bankAccounts: Array<Omit<BankAccount, 'id'> & { id?: number }> | undefined;
   isEmbedded?: boolean;
+  showAddAction?: boolean;
 };
 
 const BankingInformationForm = ({
   user,
   bankAccounts,
-  isEmbedded = false
+  isEmbedded = false,
+  showAddAction = true
 }: Props) => {
   const t = useTranslations('profile.banking_information');
   const router = useRouter();
@@ -205,7 +207,7 @@ const BankingInformationForm = ({
 
   const content = (
     <>
-      {isEmbedded ? (
+      {isEmbedded && showAddAction ? (
         <div className="flex justify-end px-6 pt-6">
           <Button
             variant="secondary"
@@ -243,12 +245,7 @@ const BankingInformationForm = ({
       ) : (
         <Card className="w-full border">
           <Card.Header className="flex flex-col items-stretch justify-between gap-4 px-6 py-4 sm:flex-row sm:items-center">
-            <div>
-              <Card.Title className="text-2xl">{t('title')}</Card.Title>
-              <Card.Description className="mt-1">
-                {t('description')}
-              </Card.Description>
-            </div>
+            <Card.Title className="text-2xl">{t('title')}</Card.Title>
             <Button
               variant="secondary"
               className="w-full sm:w-auto"

@@ -48,31 +48,29 @@ const InvoiceFormPartyModal = ({
 
   return (
     <>
-      <Modal>
-        <Modal.Backdrop
-          isOpen={isOpen}
-          onOpenChange={(open) => !open && onClose()}
-        >
-          <Modal.Container size="lg">
-            <Modal.Dialog>
-              <Modal.CloseTrigger />
-              <Modal.Header>
-                <Modal.Heading>{t('modals.select_client')}</Modal.Heading>
-              </Modal.Header>
-              <Modal.Body>{renderBody()}</Modal.Body>
-              <Modal.Footer>
-                <Button
-                  className="w-full sm:w-auto"
-                  onPress={() => setIsAddNewClientModalOpen(true)}
-                >
-                  <PlusCircleIcon className="h-5 w-5" />
-                  {t('buttons.add_new')}
-                </Button>
-              </Modal.Footer>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => !open && onClose()}
+      >
+        <Modal.Container size="lg">
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>{t('modals.select_client')}</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body>{renderBody()}</Modal.Body>
+            <Modal.Footer>
+              <Button
+                className="w-full sm:w-auto"
+                onPress={() => setIsAddNewClientModalOpen(true)}
+              >
+                <PlusCircleIcon className="h-5 w-5" />
+                {t('buttons.add_new')}
+              </Button>
+            </Modal.Footer>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
       <ClientFormDialog
         userId={userId}
         isOpen={isAddNewClientModalOpen}
