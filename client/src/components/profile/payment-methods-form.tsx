@@ -14,8 +14,8 @@ import {
   RadioGroup
 } from '@heroui/react';
 import type { BankAccount, CryptoWalletBody } from '@invoicetrackr/types';
-import type { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
+import type { User } from 'next-auth';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 

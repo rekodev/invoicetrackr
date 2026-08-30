@@ -64,16 +64,16 @@ describe('<IssueInvoiceModal />', () => {
     });
   });
 
-  it('states that issuing does not send email', async () => {
+  it('warns that an issued invoice cannot be edited', async () => {
     const user = userEvent.setup();
     render(
       withIntl(<IssueInvoiceModal userId={1} invoiceData={invoiceData} />)
     );
 
-    await user.click(screen.getByRole('button', { name: 'Issue invoice' }));
+    await user.click(screen.getByRole('button', { name: 'Issue Invoice' }));
 
     expect(
-      screen.getByText(/This action does not send an email/i)
+      screen.getByText(/You won't be able to edit it afterward/i)
     ).toBeInTheDocument();
   });
 
@@ -83,10 +83,10 @@ describe('<IssueInvoiceModal />', () => {
       withIntl(<IssueInvoiceModal userId={1} invoiceData={invoiceData} />)
     );
 
-    await user.click(screen.getByRole('button', { name: 'Issue invoice' }));
+    await user.click(screen.getByRole('button', { name: 'Issue Invoice' }));
     const dialog = screen.getByRole('dialog');
     await user.click(
-      within(dialog).getByRole('button', { name: 'Issue invoice' })
+      within(dialog).getByRole('button', { name: 'Issue Invoice' })
     );
 
     expect(mockIssueInvoiceAction).toHaveBeenCalledWith(1, 42);

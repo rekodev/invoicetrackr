@@ -13,8 +13,8 @@ import { Currency } from '@/lib/types/currency';
 import type { SortDescriptor } from '@/lib/types/table';
 
 import DeleteInvoiceModal from './delete-invoice-modal';
-import InvoiceMoreActionsMenu from './invoice-more-actions-menu';
 import InvoiceModal from './invoice-modal';
+import InvoiceMoreActionsMenu from './invoice-more-actions-menu';
 import InvoiceTableBottomContent from './invoice-table-bottom-content';
 import InvoiceTableCell from './invoice-table-cell';
 import InvoiceTableTopContent from './invoice-table-top-content';

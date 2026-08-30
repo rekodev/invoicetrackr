@@ -47,19 +47,19 @@ describe('<InvoiceServicesTable />', () => {
     render(withIntl(<Harness initialServices={[services[0]]} />));
 
     expect(
-      screen.getByRole('button', { name: 'Delete service' })
+      screen.getByRole('button', { name: 'Delete Service' })
     ).toBeDisabled();
 
     await user.click(screen.getByRole('button', { name: 'Add Service' }));
     expect(
-      screen.getAllByRole('button', { name: 'Delete service' })
+      screen.getAllByRole('button', { name: 'Delete Service' })
     ).toHaveLength(2);
 
     await user.click(
-      screen.getAllByRole('button', { name: 'Delete service' })[1]
+      screen.getAllByRole('button', { name: 'Delete Service' })[1]
     );
     expect(
-      screen.getByRole('button', { name: 'Delete service' })
+      screen.getByRole('button', { name: 'Delete Service' })
     ).toBeDisabled();
   });
 
@@ -68,10 +68,10 @@ describe('<InvoiceServicesTable />', () => {
     render(withIntl(<Harness />));
 
     const moveUpButtons = screen.getAllByRole('button', {
-      name: 'Move service up'
+      name: 'Move Service Up'
     });
     const moveDownButtons = screen.getAllByRole('button', {
-      name: 'Move service down'
+      name: 'Move Service Down'
     });
 
     expect(moveUpButtons[0]).toBeDisabled();
