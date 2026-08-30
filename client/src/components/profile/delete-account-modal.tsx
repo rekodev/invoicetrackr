@@ -58,24 +58,19 @@ const DeleteAccountModal = ({ userId, isOpen, onClose }: Props) => {
   );
 
   return (
-    <Modal>
-      <Modal.Backdrop
-        isOpen={isOpen}
-        onOpenChange={(open) => !open && onClose()}
-      >
-        <Modal.Container>
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-            <Modal.Header className="flex items-end gap-2">
-              <ExclamationTriangleIcon className="text-danger h-6 w-6" />
-              <Modal.Heading>{t('title')}</Modal.Heading>
-            </Modal.Header>
-            <Modal.Body>{t('description')}</Modal.Body>
-            {renderModalFooter()}
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+    <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <Modal.Container>
+        <Modal.Dialog>
+          <Modal.CloseTrigger />
+          <Modal.Header className="flex items-end gap-2">
+            <ExclamationTriangleIcon className="text-danger h-6 w-6" />
+            <Modal.Heading>{t('title')}</Modal.Heading>
+          </Modal.Header>
+          <Modal.Body>{t('description')}</Modal.Body>
+          {renderModalFooter()}
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 };
 

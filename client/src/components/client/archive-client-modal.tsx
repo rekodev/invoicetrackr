@@ -61,25 +61,20 @@ const ArchiveClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
   );
 
   return (
-    <Modal>
-      <Modal.Backdrop
-        isOpen={isOpen}
-        onOpenChange={(open) => !open && onClose()}
-      >
-        <Modal.Container>
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-            <Modal.Header>
-              <Modal.Heading>{t('title')}</Modal.Heading>
-            </Modal.Header>
-            <Modal.Body>
-              {t('description', { clientName: clientData.name })}
-            </Modal.Body>
-            {renderModalFooter()}
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+    <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <Modal.Container>
+        <Modal.Dialog>
+          <Modal.CloseTrigger />
+          <Modal.Header>
+            <Modal.Heading>{t('title')}</Modal.Heading>
+          </Modal.Header>
+          <Modal.Body>
+            {t('description', { clientName: clientData.name })}
+          </Modal.Body>
+          {renderModalFooter()}
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 };
 

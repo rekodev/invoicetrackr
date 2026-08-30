@@ -85,55 +85,53 @@ const EditBankingInformationDialog = ({
   );
 
   return (
-    <Modal>
-      <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <Modal.Container>
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-            <Modal.Header>
-              <Modal.Heading>{t('title.edit')}</Modal.Heading>
-            </Modal.Header>
-            <Modal.Body>
-              {renderTextField({
-                name: 'name',
-                label: t('bank_name'),
-                placeholder: t('bank_name_placeholder')
-              })}
-              {renderTextField({
-                name: 'code',
-                label: t('bank_code'),
-                placeholder: t('bank_code_placeholder')
-              })}
-              {renderTextField({
-                name: 'accountNumber',
-                label: t('bank_account_number'),
-                placeholder: t('bank_account_number_placeholder')
-              })}
-            </Modal.Body>
-            <Modal.Footer>
-              <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
-                <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
-                  <Button
-                    variant="danger-soft"
-                    className="w-full sm:w-auto"
-                    onPress={onClose}
-                  >
-                    {t('actions.cancel')}
-                  </Button>
-                  <Button
-                    isPending={isSubmitting}
-                    className="w-full sm:w-auto"
-                    onPress={() => void handleSubmit(onSubmit)()}
-                  >
-                    {t('actions.save')}
-                  </Button>
-                </div>
+    <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <Modal.Container>
+        <Modal.Dialog>
+          <Modal.CloseTrigger />
+          <Modal.Header>
+            <Modal.Heading>{t('title.edit')}</Modal.Heading>
+          </Modal.Header>
+          <Modal.Body>
+            {renderTextField({
+              name: 'name',
+              label: t('bank_name'),
+              placeholder: t('bank_name_placeholder')
+            })}
+            {renderTextField({
+              name: 'code',
+              label: t('bank_code'),
+              placeholder: t('bank_code_placeholder')
+            })}
+            {renderTextField({
+              name: 'accountNumber',
+              label: t('bank_account_number'),
+              placeholder: t('bank_account_number_placeholder')
+            })}
+          </Modal.Body>
+          <Modal.Footer>
+            <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
+              <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+                <Button
+                  variant="danger-soft"
+                  className="w-full sm:w-auto"
+                  onPress={onClose}
+                >
+                  {t('actions.cancel')}
+                </Button>
+                <Button
+                  isPending={isSubmitting}
+                  className="w-full sm:w-auto"
+                  onPress={() => void handleSubmit(onSubmit)()}
+                >
+                  {t('actions.save')}
+                </Button>
               </div>
-            </Modal.Footer>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
-    </Modal>
+            </div>
+          </Modal.Footer>
+        </Modal.Dialog>
+      </Modal.Container>
+    </Modal.Backdrop>
   );
 };
 
