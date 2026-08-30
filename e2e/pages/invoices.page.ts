@@ -17,13 +17,14 @@ export class InvoicesPage {
   async copyRecipientDetailsLink(recipientName: string) {
     const row = this.rowFor(recipientName);
 
-    await row
-      .locator('button[aria-label="Request recipient details"]')
+    await row.getByRole('button', { name: 'More Actions' }).click();
+    await this.page
+      .getByRole('menuitem', { name: 'Request Recipient Details' })
       .click();
     await expect(
-      this.page.getByRole('heading', { name: 'Request recipient details' })
+      this.page.getByRole('heading', { name: 'Request Recipient Details' })
     ).toBeVisible();
-    await this.page.getByRole('button', { name: 'Copy link' }).click();
+    await this.page.getByRole('button', { name: 'Copy Link' }).click();
 
     await expect.poll(() => this.readClipboard()).toMatch(
       /\/invoices\/details\/[a-f0-9]+$/
@@ -38,8 +39,9 @@ export class InvoicesPage {
 
   async openDraftForEditing(recipientName: string) {
     await this.rowFor(recipientName)
-      .locator('button[aria-label="Edit invoice"]')
+      .getByRole('button', { name: 'More Actions' })
       .click();
+    await this.page.getByRole('menuitem', { name: 'Edit Invoice' }).click();
     await expect(this.page).toHaveURL(/\/invoices\/edit\/\d+$/);
   }
 
