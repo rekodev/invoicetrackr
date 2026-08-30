@@ -26,7 +26,7 @@ import {
   FREELANCER_PROFILE_PAGE,
   INVOICES_PAGE,
   PAYMENT_METHODS_PAGE,
-  PROFILE_PAGE
+  SETTINGS_PAGE
 } from '@/lib/constants/pages';
 
 type NavLink = {
@@ -43,7 +43,7 @@ const navigation: Array<NavLink> = [
   { key: 'expenses', href: EXPENSES_PAGE, icon: ReceiptPercentIcon },
   {
     key: 'settings',
-    href: PROFILE_PAGE,
+    href: SETTINGS_PAGE,
     icon: Cog6ToothIcon,
     children: [
       {

@@ -77,6 +77,7 @@ describe('<MultiStepForm />', () => {
     defaultInvoiceVatMode: 'no_vat',
     defaultInvoiceSeries: 'SF',
     defaultPaymentTermsDays: 30,
+    defaultInvoiceIncludeLogo: true,
     currency: DEFAULT_CURRENCY,
     businessType: 'individual',
     profilePictureUrl: ''

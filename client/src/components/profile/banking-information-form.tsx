@@ -16,7 +16,6 @@ import {
   Label,
   Radio,
   RadioGroup,
-  Separator,
   toast,
   useOverlayState
 } from '@heroui/react';
@@ -244,8 +243,7 @@ const BankingInformationForm = ({
         content
       ) : (
         <Card className="w-full border">
-          <Card.Header className="flex flex-col items-stretch justify-between gap-4 px-6 py-4 sm:flex-row sm:items-center">
-            <Card.Title className="text-2xl">{t('title')}</Card.Title>
+          <div className="flex justify-end px-6 pt-6">
             <Button
               variant="secondary"
               className="w-full sm:w-auto"
@@ -254,8 +252,7 @@ const BankingInformationForm = ({
               <PlusIcon className="h-4 w-4" />
               {t('actions.add')}
             </Button>
-          </Card.Header>
-          <Separator />
+          </div>
           {content}
         </Card>
       )}

@@ -1,5 +1,29 @@
 import { Font, StyleSheet } from '@react-pdf/renderer';
 
+export const getPdfCompatibleImageSource = (source: string) => {
+  try {
+    const url = new URL(source);
+
+    if (
+      !url.hostname.endsWith('cloudinary.com') ||
+      !url.pathname.includes('/image/upload/')
+    )
+      return source;
+
+    url.pathname = url.pathname.replace(
+      '/image/upload/',
+      '/image/upload/f_png/'
+    );
+    url.pathname = /\.[^./]+$/.test(url.pathname)
+      ? url.pathname.replace(/\.[^./]+$/, '.png')
+      : `${url.pathname}.png`;
+
+    return url.toString();
+  } catch {
+    return source;
+  }
+};
+
 export const registerPdfFont = () => {
   Font.register({
     family: 'Roboto',
@@ -39,16 +63,29 @@ export const pdfStyles = StyleSheet.create({
   },
   subtitle: {
     marginTop: 2,
+    marginBottom: 18,
     fontSize: 12,
     textAlign: 'center'
   },
   businessLogo: {
-    height: 48,
+    height: 56,
     left: 20,
     objectFit: 'contain',
     position: 'absolute',
-    top: 20,
-    width: 120
+    top: 40,
+    width: 56
+  },
+  draftWatermark: {
+    position: 'absolute',
+    top: '46%',
+    left: 0,
+    width: '100%',
+    textAlign: 'center',
+    transform: 'rotate(-30deg)',
+    color: '#DC2626',
+    opacity: 0.16,
+    fontSize: 44,
+    fontWeight: 700
   },
   row: {
     flexDirection: 'row',
@@ -72,8 +109,27 @@ export const pdfStyles = StyleSheet.create({
     justifyContent: 'flex-start',
     width: '50%',
     alignItems: 'flex-end',
-    paddingRight: 10,
-    paddingTop: 10
+    paddingRight: 10
+  },
+  detailGroup: {
+    flexDirection: 'column',
+    gap: 2
+  },
+  detailGroupSpaced: {
+    flexDirection: 'column',
+    gap: 2,
+    marginTop: 14
+  },
+  rightDetailGroup: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: 2
+  },
+  rightDetailGroupSpaced: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: 2,
+    marginTop: 14
   },
   footer: {
     display: 'flex',
@@ -85,12 +141,13 @@ export const pdfStyles = StyleSheet.create({
     fontSize: 10
   },
   detailItemTitle: {
-    marginTop: 12,
     fontSize: 11,
-    fontWeight: 700
+    fontWeight: 700,
+    lineHeight: 1.25
   },
   detailItem: {
-    fontSize: 10
+    fontSize: 10,
+    lineHeight: 1.3
   },
   line: {
     borderBottomWidth: 1,

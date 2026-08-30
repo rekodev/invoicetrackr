@@ -29,6 +29,7 @@ const mapUserToSessionUser = (user: InvoiceTrackrUser): User => {
     defaultInvoiceVatMode: user.defaultInvoiceVatMode,
     defaultInvoiceSeries: user.defaultInvoiceSeries,
     defaultPaymentTermsDays: user.defaultPaymentTermsDays,
+    defaultInvoiceIncludeLogo: user.defaultInvoiceIncludeLogo,
     currency: DEFAULT_CURRENCY,
     type: user.type,
     businessType: user.businessType,

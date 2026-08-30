@@ -135,7 +135,8 @@ export const updateUserAccountSettings = async (
     isVatPayer,
     defaultInvoiceVatMode,
     defaultInvoiceSeries,
-    defaultPaymentTermsDays
+    defaultPaymentTermsDays,
+    defaultInvoiceIncludeLogo
   }: {
     invoiceEmail: AccountSettingsBody['invoiceEmail'];
     language: AccountSettingsBody['language'];
@@ -145,6 +146,7 @@ export const updateUserAccountSettings = async (
     defaultInvoiceVatMode: AccountSettingsBody['defaultInvoiceVatMode'];
     defaultInvoiceSeries: AccountSettingsBody['defaultInvoiceSeries'];
     defaultPaymentTermsDays: AccountSettingsBody['defaultPaymentTermsDays'];
+    defaultInvoiceIncludeLogo: AccountSettingsBody['defaultInvoiceIncludeLogo'];
   }
 ) =>
   await api.put<UpdateUserAccountSettingsResponse>(
@@ -157,7 +159,8 @@ export const updateUserAccountSettings = async (
       isVatPayer,
       defaultInvoiceVatMode,
       defaultInvoiceSeries,
-      defaultPaymentTermsDays
+      defaultPaymentTermsDays,
+      defaultInvoiceIncludeLogo
     }
   );
 

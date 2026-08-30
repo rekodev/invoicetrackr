@@ -69,6 +69,7 @@ type Props = {
   pdfUrl?: string | null;
   isPdfDocumentLoading?: boolean;
   showFooterStatus?: boolean;
+  actions?: ReactNode;
   conversionContent?: ReactNode;
   isDocumentBuilder?: boolean;
 };
@@ -84,6 +85,7 @@ const InvoiceModal = ({
   pdfUrl,
   isPdfDocumentLoading,
   showFooterStatus = false,
+  actions,
   conversionContent,
   isDocumentBuilder = false
 }: Props) => {
@@ -290,7 +292,7 @@ const InvoiceModal = ({
                 <Button
                   isIconOnly
                   size="sm"
-                  variant="ghost"
+                  variant="secondary"
                   aria-label={t('buttons.close')}
                   onPress={() => onOpenChange(false)}
                 >
@@ -365,12 +367,13 @@ const InvoiceModal = ({
               )}
               <Button
                 size="sm"
-                variant="ghost"
+                variant="secondary"
                 className="w-full sm:w-auto"
                 onPress={() => onOpenChange(false)}
               >
                 {t('buttons.close')}
               </Button>
+              {actions}
               {conversionContent}
             </div>
           </footer>

@@ -21,6 +21,7 @@ export const businessProfileSchema = z.object({
   defaultInvoiceVatMode: z.enum(['no_vat', 'standard_21', 'zero', 'manual']),
   defaultInvoiceSeries: z.string(),
   defaultPaymentTermsDays: z.union([z.literal(7), z.literal(14), z.literal(30)]),
+  defaultInvoiceIncludeLogo: z.boolean(),
   onboardingCompletedAt: z.string().nullish()
 });
 

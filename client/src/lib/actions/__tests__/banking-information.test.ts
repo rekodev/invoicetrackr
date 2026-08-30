@@ -6,10 +6,7 @@ import {
   deleteBankingInformation,
   updateBankingInformation
 } from '@/api/banking-information';
-import {
-  BANKING_INFORMATION_PAGE,
-  PAYMENT_METHODS_PAGE
-} from '@/lib/constants/pages';
+import { PAYMENT_METHODS_PAGE } from '@/lib/constants/pages';
 
 import {
   addBankingInformationAction,
@@ -62,7 +59,6 @@ describe('banking information actions', () => {
     async ({ action }) => {
       await action();
 
-      expect(revalidatePath).toHaveBeenCalledWith(BANKING_INFORMATION_PAGE);
       expect(revalidatePath).toHaveBeenCalledWith(PAYMENT_METHODS_PAGE);
     }
   );

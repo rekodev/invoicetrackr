@@ -21,7 +21,7 @@
             "payment_methods": "Payment Methods",
             "account_settings": "Invoice Defaults",
             "change_password": "Password",
-            "my_profile": "My Profile",
+            "my_profile": "Freelancer Profile",
             "log_out": "Log Out",
             "signed_in_as": "Signed in as",
             "a11y": {
@@ -56,6 +56,7 @@
         "expenses": "Expenses",
         "payments": "Payments",
         "reports": "Reports",
+        "settings": "Settings",
         "login": "Log In",
         "new": "New",
         "onboarding": "Onboarding",
@@ -553,8 +554,7 @@
         },
         "issue_modal": {
             "title": "Issue Invoice",
-            "description": "The invoice will receive its final number and become an immutable issued snapshot.",
-            "email_note": "This action does not send an email. You can send it separately after issuing.",
+            "description": "Are you sure you want to issue this invoice? You won't be able to edit it afterward.",
             "confirm": "Issue Invoice",
             "cancel": "Cancel"
         },
@@ -596,6 +596,7 @@
                 "tooltip_edit": "Edit Invoice",
                 "tooltip_delete": "Delete Invoice",
                 "tooltip_download": "Download",
+                "more_actions": "More Actions",
                 "mark_as_paid": "Mark as Paid",
                 "mark_as_pending": "Mark as Pending",
                 "status_locked": "Status updates are not available for this invoice.",
@@ -960,12 +961,9 @@
                 "signature": "Signature",
                 "save_changes": "Save Changes",
                 "email_verification": {
-                    "title": "Email Verification",
-                    "confirmed": "Email Confirmed",
-                    "confirmed_description": "Your account email is verified.",
-                    "unverified_description": "Verify your account email to protect account access.",
-                    "resend": "Send Verification Email",
-                    "sent_at": "Verified {date}"
+                    "verified": "Email Verified",
+                    "not_verified": "Not Verified",
+                    "verify": "Verify"
                 }
             }
         },
@@ -991,6 +989,7 @@
                 "default_series": "Default Invoice Series",
                 "payment_terms": "Default Payment Terms",
                 "payment_terms_days": "{days} days",
+                "include_logo": "Include Logo on New Invoices",
                 "vat_locked_note": "To choose VAT defaults, mark yourself as a VAT payer in",
                 "personal_information_link": "Freelancer Profile",
                 "vat_modes": {
@@ -1194,9 +1193,7 @@
             "invoice": "Invoice",
             "draft": "draft",
             "client": "Client",
-            "public_link_note": "Client can view the invoice and its payment instructions online.",
             "draft_public_link_note": "Sending this draft issues it and includes the final invoice page.",
-            "signing_link_note": "Ask client to confirm receipt with one click.",
             "email_verification_required": "Verify your account email before sending invoices to clients.",
             "include_public_link": "Include Public Invoice Page",
             "request_signature": "Request Client Acknowledgement",
@@ -1206,8 +1203,6 @@
             "generate_public_link": "Generate Link",
             "regenerate_public_link": "Generate Fresh Public Link",
             "replace_link_and_send": "Replace Link and Send",
-            "attached_pdf": "Attaching PDF",
-            "draft_delivery": "Final invoice page included after issue",
             "cancel": "Cancel",
             "send": "Send"
         },

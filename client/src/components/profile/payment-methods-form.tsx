@@ -11,8 +11,7 @@ import {
   CardContent,
   Label,
   Radio,
-  RadioGroup,
-  Separator
+  RadioGroup
 } from '@heroui/react';
 import type { BankAccount, CryptoWalletBody } from '@invoicetrackr/types';
 import type { User } from 'next-auth';
@@ -54,10 +53,6 @@ export default function PaymentMethodsForm({
 
   return (
     <Card className="w-full border">
-      <Card.Header className="px-6 py-4">
-        <Card.Title className="text-2xl">{t('title')}</Card.Title>
-      </Card.Header>
-      <Separator />
       <CardContent className="px-6 pb-0 pt-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <RadioGroup

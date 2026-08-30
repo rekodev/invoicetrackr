@@ -111,7 +111,8 @@ export async function updateUserAccountSettingsAction({
   isVatPayer,
   defaultInvoiceVatMode,
   defaultInvoiceSeries,
-  defaultPaymentTermsDays
+  defaultPaymentTermsDays,
+  defaultInvoiceIncludeLogo
 }: {
   userId: number;
   invoiceEmail: AccountSettingsBody['invoiceEmail'];
@@ -121,6 +122,7 @@ export async function updateUserAccountSettingsAction({
   defaultInvoiceVatMode: AccountSettingsBody['defaultInvoiceVatMode'];
   defaultInvoiceSeries: AccountSettingsBody['defaultInvoiceSeries'];
   defaultPaymentTermsDays: AccountSettingsBody['defaultPaymentTermsDays'];
+  defaultInvoiceIncludeLogo: AccountSettingsBody['defaultInvoiceIncludeLogo'];
 }) {
   const normalizedDefaultInvoiceVatMode = isVatPayer
     ? defaultInvoiceVatMode
@@ -134,7 +136,8 @@ export async function updateUserAccountSettingsAction({
     isVatPayer,
     defaultInvoiceVatMode: normalizedDefaultInvoiceVatMode,
     defaultInvoiceSeries,
-    defaultPaymentTermsDays
+    defaultPaymentTermsDays,
+    defaultInvoiceIncludeLogo
   });
 
   if (isResponseError(response)) {
@@ -154,7 +157,8 @@ export async function updateUserAccountSettingsAction({
       isVatPayer,
       defaultInvoiceVatMode: normalizedDefaultInvoiceVatMode,
       defaultInvoiceSeries,
-      defaultPaymentTermsDays
+      defaultPaymentTermsDays,
+      defaultInvoiceIncludeLogo
     }
   });
 

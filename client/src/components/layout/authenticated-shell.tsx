@@ -110,7 +110,11 @@ export default function AuthenticatedShell({
             <DropdownItem key="profile" href={FREELANCER_PROFILE_PAGE}>
               {t('my_profile')}
             </DropdownItem>
-            <DropdownItem key="logout" onPress={logOutAction} variant="danger">
+            <DropdownItem
+              key="logout"
+              onPress={logOutAction}
+              className="bg-danger-soft text-danger-soft-foreground hover:bg-danger-soft-hover data-[hovered=true]:bg-danger-soft-hover"
+            >
               <span className="flex items-center gap-2">
                 <ArrowRightStartOnRectangleIcon className="size-4" />
                 {t('log_out')}

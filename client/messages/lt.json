@@ -21,7 +21,7 @@
             "payment_methods": "Mokėjimo būdai",
             "account_settings": "Sąskaitų nustatymai",
             "change_password": "Slaptažodis",
-            "my_profile": "Mano profilis",
+            "my_profile": "Veiklos profilis",
             "log_out": "Atsijungti",
             "signed_in_as": "Prisijungęs vartotojas",
             "a11y": {
@@ -56,6 +56,7 @@
         "expenses": "Išlaidos",
         "payments": "Mokėjimai",
         "reports": "Ataskaitos",
+        "settings": "Nustatymai",
         "login": "Prisijungti",
         "new": "Nauja",
         "onboarding": "Įvedimas",
@@ -553,8 +554,7 @@
         },
         "issue_modal": {
             "title": "Išrašyti sąskaitą",
-            "description": "Sąskaitai bus suteiktas galutinis numeris ir ji taps nekeičiamu išrašytu dokumentu.",
-            "email_note": "Šis veiksmas el. laiško nesiunčia. Išrašytą sąskaitą galėsite išsiųsti atskirai.",
+            "description": "Ar tikrai norite išrašyti šią sąskaitą? Po išrašymo jos redaguoti nebegalėsite.",
             "confirm": "Išrašyti sąskaitą",
             "cancel": "Atšaukti"
         },
@@ -596,6 +596,7 @@
                 "tooltip_edit": "Redaguoti sąskaitą faktūrą",
                 "tooltip_delete": "Ištrinti sąskaitą faktūrą",
                 "tooltip_download": "Atsisiųsti",
+                "more_actions": "Daugiau veiksmų",
                 "mark_as_paid": "Pažymėti kaip sumokėtą",
                 "mark_as_pending": "Pažymėti kaip laukiamą",
                 "status_locked": "Šios sąskaitos būsenos keisti negalima.",
@@ -960,12 +961,9 @@
                 "signature": "Parašas",
                 "save_changes": "Išsaugoti pakeitimus",
                 "email_verification": {
-                    "title": "El. pašto patvirtinimas",
-                    "confirmed": "El. paštas patvirtintas",
-                    "confirmed_description": "Jūsų paskyros el. paštas patvirtintas.",
-                    "unverified_description": "Patvirtinkite paskyros el. paštą, kad apsaugotumėte prieigą.",
-                    "resend": "Siųsti patvirtinimo laišką",
-                    "sent_at": "Patvirtinta {date}"
+                    "verified": "El. paštas patvirtintas",
+                    "not_verified": "Nepatvirtintas",
+                    "verify": "Patvirtinti"
                 }
             }
         },
@@ -991,6 +989,7 @@
                 "default_series": "Numatytoji sąskaitos serija",
                 "payment_terms": "Numatytasis apmokėjimo terminas",
                 "payment_terms_days": "{days} d.",
+                "include_logo": "Įtraukti logotipą į naujas sąskaitas",
                 "vat_locked_note": "Jei norite rinktis PVM nustatymus, pažymėkite save kaip PVM mokėtoją",
                 "personal_information_link": "individualios veiklos profilyje",
                 "vat_modes": {
@@ -1194,9 +1193,7 @@
             "invoice": "Sąskaita faktūra",
             "draft": "juodraštis",
             "client": "Klientas",
-            "public_link_note": "Klientas galės internetu peržiūrėti sąskaitą ir mokėjimo instrukcijas.",
             "draft_public_link_note": "Siunčiant šis juodraštis bus išrašytas ir bus pridėtas galutinis sąskaitos puslapis.",
-            "signing_link_note": "Paprašykite kliento vienu paspaudimu patvirtinti gavimą.",
             "email_verification_required": "Patvirtinkite paskyros el. paštą prieš siųsdami sąskaitas klientams.",
             "include_public_link": "Įtraukti viešą sąskaitos puslapį",
             "request_signature": "Prašyti kliento patvirtinimo",
@@ -1206,8 +1203,6 @@
             "generate_public_link": "Generuoti nuorodą",
             "regenerate_public_link": "Generuoti naują viešą nuorodą",
             "replace_link_and_send": "Pakeisti nuorodą ir siųsti",
-            "attached_pdf": "Pridedamas PDF",
-            "draft_delivery": "Išrašius bus pridėtas galutinis sąskaitos puslapis",
             "cancel": "Atšaukti",
             "send": "Siųsti"
         },

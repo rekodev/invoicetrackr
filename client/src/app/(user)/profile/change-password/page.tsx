@@ -1,12 +1,7 @@
-import { auth } from '@/auth';
-import ChangePasswordForm from '@/components/profile/change-password-form';
+import { permanentRedirect } from 'next/navigation';
 
-const ChangePasswordPage = async () => {
-  const session = await auth();
+import { CHANGE_PASSWORD_PAGE } from '@/lib/constants/pages';
 
-  if (!session?.user?.id) return null;
-
-  return <ChangePasswordForm userId={Number(session.user.id)} />;
-};
-
-export default ChangePasswordPage;
+export default function LegacyChangePasswordPage() {
+  permanentRedirect(CHANGE_PASSWORD_PAGE);
+}

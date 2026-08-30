@@ -291,7 +291,7 @@ export default function SendInvoiceEmailModal({
     <div className="flex flex-col gap-2">
       <Checkbox
         id="include-public-link"
-        variant="primary"
+        variant="secondary"
         isSelected={includePublicLink}
         isDisabled={!isIssued}
         onChange={handleIncludePublicLinkChange}
@@ -304,7 +304,6 @@ export default function SendInvoiceEmailModal({
           <Label htmlFor="include-public-link">
             {t('include_public_link')}
           </Label>
-          <p className="text-muted text-xs">{t('public_link_note')}</p>
           {!isIssued ? (
             <p className="text-muted text-xs">{t('draft_public_link_note')}</p>
           ) : null}
@@ -313,7 +312,7 @@ export default function SendInvoiceEmailModal({
       {renderPublicLinkPreview()}
       <Checkbox
         id="request-signature"
-        variant="primary"
+        variant="secondary"
         isSelected={requestSignature}
         onChange={handleRequestSignatureChange}
         className="rounded-lg py-2"
@@ -323,7 +322,6 @@ export default function SendInvoiceEmailModal({
         </Checkbox.Control>
         <Checkbox.Content>
           <Label htmlFor="request-signature">{t('request_signature')}</Label>
-          <p className="text-muted text-xs">{t('signing_link_note')}</p>
         </Checkbox.Content>
       </Checkbox>
     </div>
@@ -432,13 +430,7 @@ export default function SendInvoiceEmailModal({
 
                   {renderOptions()}
                 </Modal.Body>
-                <Modal.Footer className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="text-muted flex min-w-0 flex-col gap-0.5 text-xs">
-                    <span>
-                      {t(isIssued ? 'attached_pdf' : 'draft_delivery')} ·{' '}
-                      {invoice.date}
-                    </span>
-                  </div>
+                <Modal.Footer className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
                   <div className="flex w-full flex-col-reverse gap-2 sm:ml-auto sm:w-auto sm:flex-row">
                     <Button
                       onPress={handleCloseSendDialog}

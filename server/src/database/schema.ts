@@ -418,6 +418,9 @@ export const businessProfilesTable = pgTable(
     defaultPaymentTermsDays: integer('default_payment_terms_days')
       .default(30)
       .notNull(),
+    defaultInvoiceIncludeLogo: boolean('default_invoice_include_logo')
+      .default(true)
+      .notNull(),
     onboardingCompletedAt: timestamp('onboarding_completed_at', {
       withTimezone: true,
       mode: 'string'

@@ -38,6 +38,7 @@ const userSelection = {
   defaultInvoiceVatMode: businessProfilesTable.defaultInvoiceVatMode,
   defaultInvoiceSeries: businessProfilesTable.defaultInvoiceSeries,
   defaultPaymentTermsDays: businessProfilesTable.defaultPaymentTermsDays,
+  defaultInvoiceIncludeLogo: businessProfilesTable.defaultInvoiceIncludeLogo,
   onboardingCompletedAt: businessProfilesTable.onboardingCompletedAt,
   analyticsConsentStatus: usersTable.analyticsConsentStatus,
   analyticsConsentUpdatedAt: usersTable.analyticsConsentUpdatedAt
@@ -232,7 +233,8 @@ export const updateUserAccountSettingsInDb = async (
   isVatPayer = false,
   defaultInvoiceVatMode: UserBody['defaultInvoiceVatMode'] = 'no_vat',
   defaultInvoiceSeries = 'SF',
-  defaultPaymentTermsDays: UserBody['defaultPaymentTermsDays'] = 30
+  defaultPaymentTermsDays: UserBody['defaultPaymentTermsDays'] = 30,
+  defaultInvoiceIncludeLogo = true
 ): Promise<UserUpdateResult | undefined> => {
   const updateData: Partial<typeof businessProfilesTable.$inferInsert> = {
     invoiceEmail,
@@ -241,6 +243,7 @@ export const updateUserAccountSettingsInDb = async (
     defaultInvoiceVatMode: isVatPayer ? defaultInvoiceVatMode : 'no_vat',
     defaultInvoiceSeries,
     defaultPaymentTermsDays,
+    defaultInvoiceIncludeLogo,
     updatedAt: new Date().toISOString()
   };
 

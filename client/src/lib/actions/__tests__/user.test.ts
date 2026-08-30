@@ -50,6 +50,7 @@ const user: User = {
   defaultInvoiceVatMode: 'no_vat',
   defaultInvoiceSeries: 'SF',
   defaultPaymentTermsDays: 30,
+  defaultInvoiceIncludeLogo: true,
   onboardingCompletedAt: null
 };
 

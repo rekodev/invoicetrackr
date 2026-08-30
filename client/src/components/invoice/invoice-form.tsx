@@ -169,7 +169,10 @@ const InvoiceForm = ({
           sender: {
             ...user,
             email: user.invoiceEmail || user.email,
-            logoUrl: user.profilePictureUrl || '',
+            logoUrl:
+              user.defaultInvoiceIncludeLogo === false
+                ? ''
+                : user.profilePictureUrl || '',
             type: 'sender',
             vatNumber: user.vatNumber || ''
           },
@@ -248,7 +251,6 @@ const InvoiceForm = ({
   const paymentMode = watch('paymentMode') || 'manual';
   const currentDate = watch('date');
   const senderVatNumber = watch('sender.vatNumber');
-  const senderLogoUrl = watch('sender.logoUrl');
   const availableSenderLogoUrl =
     invoiceData?.sender.logoUrl || user.profilePictureUrl || '';
   const shouldShowSenderVatNumber = isVatEnabled || !!senderVatNumber;
@@ -408,19 +410,27 @@ const InvoiceForm = ({
           <div className="flex min-h-8 items-center justify-between gap-4">
             <p className="text-muted section-eyebrow">{t('headings.from')}</p>
             {availableSenderLogoUrl && (
-              <Checkbox
-                aria-label={t('a11y.include_logo_label')}
-                isSelected={Boolean(senderLogoUrl)}
-                onChange={(isSelected) =>
-                  setValue(
-                    'sender.logoUrl',
-                    isSelected ? availableSenderLogoUrl : '',
-                    { shouldDirty: true }
-                  )
-                }
-              >
-                {t('labels.include_logo')}
-              </Checkbox>
+              <Controller
+                name="sender.logoUrl"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    aria-label={t('a11y.include_logo_label')}
+                    variant="secondary"
+                    isSelected={Boolean(field.value)}
+                    onChange={(isSelected) =>
+                      field.onChange(isSelected ? availableSenderLogoUrl : '')
+                    }
+                  >
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
+                    <Checkbox.Content>
+                      <Label>{t('labels.include_logo')}</Label>
+                    </Checkbox.Content>
+                  </Checkbox>
+                )}
+              />
             )}
           </div>
           <Controller

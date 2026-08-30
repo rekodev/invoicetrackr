@@ -47,6 +47,7 @@ const userBodyBaseSchema = z.object({
   defaultPaymentTermsDays: z
     .union([z.literal(7), z.literal(14), z.literal(30)])
     .default(30),
+  defaultInvoiceIncludeLogo: z.boolean().default(true),
   onboardingCompletedAt: z.string().nullish(),
   analyticsConsentStatus: analyticsConsentStatusSchema.nullish(),
   analyticsConsentUpdatedAt: z.string().nullish()
@@ -117,7 +118,8 @@ export const accountSettingsBodySchema = userBodyBaseSchema
     isVatPayer: true,
     defaultInvoiceVatMode: true,
     defaultInvoiceSeries: true,
-    defaultPaymentTermsDays: true
+    defaultPaymentTermsDays: true,
+    defaultInvoiceIncludeLogo: true
   })
   .extend({
     invoiceEmail: z.email('validation.user.email'),

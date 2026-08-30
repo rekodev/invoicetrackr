@@ -659,7 +659,8 @@ describe('User Controller', () => {
           isVatPayer: true,
           defaultInvoiceVatMode: 'standard_21',
           defaultInvoiceSeries: 'MB',
-          defaultPaymentTermsDays: 14
+          defaultPaymentTermsDays: 14,
+          defaultInvoiceIncludeLogo: false
         }
       });
 
@@ -673,7 +674,8 @@ describe('User Controller', () => {
         true,
         'standard_21',
         'MB',
-        14
+        14,
+        false
       );
 
       await app.close();
