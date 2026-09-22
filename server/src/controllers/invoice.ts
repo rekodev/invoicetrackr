@@ -61,7 +61,6 @@ import { recordRequestAudit } from '../utils/audit';
 import {
   AlreadyExistsError,
   BadRequestError,
-  InvoiceIssuedEmailError,
   NotFoundError
 } from '../utils/error';
 
@@ -992,33 +991,13 @@ export const sendInvoiceEmail = async (
   if (!foundInvoice)
     throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
-  let invoice = foundInvoice;
+  if ((foundInvoice.lifecycleStatus || 'draft') !== 'issued')
+    throw new BadRequestError(i18n.t('error.invoice.emailRequiresIssued'));
 
-  assertInvoiceCanBeIssued({ invoice, user, i18n });
-  const wasDraft = (invoice.lifecycleStatus || 'draft') === 'draft';
-  const includePublicLink = wasDraft ? true : requestedIncludePublicLink;
+  const invoice = foundInvoice;
+  const includePublicLink = requestedIncludePublicLink;
   const requestSignature = includePublicLink && !!req.body.requestSignature;
-
-  if (wasDraft) {
-    const issued = await issueInvoiceInDb(userId, id);
-    if (!issued)
-      throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
-    invoice = issued;
-  }
-  const throwDeliveryPreparationError = (message: string): never => {
-    if (wasDraft)
-      throw new InvoiceIssuedEmailError(
-        i18n.t('error.invoice.issuedButUnableToSendEmail')
-      );
-    throw new BadRequestError(message);
-  };
-  const subject = wasDraft
-    ? i18n.t('emails.invoice.subject', {
-        invoiceId: invoice.invoiceId || '',
-        amount: invoice.totalAmount,
-        currency: user.currency.toUpperCase()
-      })
-    : requestedSubject;
+  const subject = requestedSubject;
 
   let publicInvoiceToken =
     invoice.publicInvoiceToken || randomBytes(32).toString('hex');
@@ -1080,7 +1059,7 @@ export const sendInvoiceEmail = async (
       });
 
       if (!regenerated)
-        throwDeliveryPreparationError(
+        throw new BadRequestError(
           i18n.t('error.invoice.unableToRegenerateSigningLink')
         );
     } else if (invoice.recipientSigningToken) {
@@ -1096,7 +1075,7 @@ export const sendInvoiceEmail = async (
     });
 
     if (!preparedInvoice?.recipientSigningToken)
-      throwDeliveryPreparationError(
+      throw new BadRequestError(
         i18n.t('error.invoice.unableToCreateSigningLink')
       );
   }
@@ -1105,14 +1084,13 @@ export const sendInvoiceEmail = async (
     ? getAppUrl(`/invoices/public/${publicInvoiceToken}`)
     : undefined;
 
-  const attachment =
-    file && !wasDraft
-      ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
-      : undefined;
+  const attachment = file
+    ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
+    : undefined;
 
   const htmlContent = InvoiceEmail({
     invoiceNumber: invoice.invoiceId || '',
-    amount: `${invoice.totalAmount} ${user.currency.toUpperCase()}`,
+    amount: `${invoice.totalAmount} ${(invoice.currency || DEFAULT_CURRENCY).toUpperCase()}`,
     dueDate: invoice.dueDate,
     senderName: user.name || user.email,
     message:
@@ -1166,7 +1144,7 @@ export const sendInvoiceEmail = async (
   });
 
   if (error)
-    throwDeliveryPreparationError(i18n.t('error.invoice.unableToSendEmail'));
+    throw new BadRequestError(i18n.t('error.invoice.unableToSendEmail'));
 
   await recordEmailDeliveryInDb({
     userId,

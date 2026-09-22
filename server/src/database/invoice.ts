@@ -133,6 +133,34 @@ const parseInvoiceNumber = (invoiceId: string) => {
 
 type InvoiceTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
+// Resolve defaults at issue time, using the same transaction as the state change.
+const getDocumentSettingsForIssue = async (
+  tx: InvoiceTransaction,
+  userId: number
+) => {
+  const [settings] = await tx
+    .select({
+      documentLanguage: sql<'lt' | 'en'>`CASE
+        WHEN ${businessProfilesTable.preferredInvoiceLanguage} IN ('lt', 'en')
+          THEN ${businessProfilesTable.preferredInvoiceLanguage}
+        WHEN ${usersTable.language} IN ('lt', 'en') THEN ${usersTable.language}
+        ELSE 'en' END`
+    })
+    .from(usersTable)
+    .leftJoin(
+      businessProfilesTable,
+      eq(usersTable.id, businessProfilesTable.userId)
+    )
+    .where(eq(usersTable.id, userId));
+
+  if (!settings) throw new Error('Invoice owner not found');
+
+  return {
+    currency: 'eur' as const,
+    documentLanguage: settings.documentLanguage
+  };
+};
+
 const getInvoiceSeriesForNextNumber = async (
   query: InvoiceTransaction | typeof db,
   userId: number,
@@ -248,6 +276,8 @@ export const getInvoicesFromDb = async (
       id: invoicesTable.id,
       invoiceId: invoicesTable.invoiceId,
       invoiceSeries: invoicesTable.invoiceSeries,
+      currency: invoicesTable.currency,
+      documentLanguage: invoicesTable.documentLanguage,
       date: invoicesTable.date,
       serviceDate: invoicesTable.serviceDate,
       notes: invoicesTable.notes,
@@ -374,6 +404,8 @@ export const getInvoiceFromDb = async (
       id: invoicesTable.id,
       invoiceId: invoicesTable.invoiceId,
       invoiceSeries: invoicesTable.invoiceSeries,
+      currency: invoicesTable.currency,
+      documentLanguage: invoicesTable.documentLanguage,
       date: invoicesTable.date,
       serviceDate: invoicesTable.serviceDate,
       notes: invoicesTable.notes,
@@ -1022,6 +1054,7 @@ export const issueInvoiceInDb = async (
       .set({
         invoiceId,
         lifecycleStatus: 'issued',
+        ...(await getDocumentSettingsForIssue(tx, userId)),
         issuedAt: now,
         recipientDetailsRevokedAt: sql<string>`COALESCE(${invoicesTable.recipientDetailsRevokedAt}, ${now})`,
         updatedAt: now
@@ -1164,6 +1197,7 @@ export const submitRecipientDetailsInDb = async ({
       .set({
         invoiceId,
         lifecycleStatus: 'issued',
+        ...(await getDocumentSettingsForIssue(tx, request.userId)),
         issuedAt: submittedAt,
         recipientDetailsSubmittedAt: submittedAt,
         recipientDetailsRevokedAt: submittedAt,
@@ -1404,21 +1438,15 @@ export async function getPublicInvoiceSigningFromDb(
     .select({
       id: invoicesTable.id,
       userId: invoicesTable.userId,
-      currency: businessProfilesTable.currency,
-      language: usersTable.language,
-      preferredInvoiceLanguage: businessProfilesTable.preferredInvoiceLanguage
+      currency: invoicesTable.currency,
+      language: invoicesTable.documentLanguage
     })
     .from(invoicesTable)
-    .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
-    .innerJoin(
-      businessProfilesTable,
-      eq(invoicesTable.userId, businessProfilesTable.userId)
-    )
     .where(eq(invoicesTable.recipientSigningToken, token))
     .limit(1);
   const row = rows.at(0);
 
-  if (!row) return undefined;
+  if (!row?.currency || !row.language) return undefined;
 
   const invoice = await getInvoiceFromDb(row.userId, row.id);
 
@@ -1429,7 +1457,7 @@ export async function getPublicInvoiceSigningFromDb(
     userId: row.userId,
     currency: row.currency,
     language: row.language,
-    preferredInvoiceLanguage: row.preferredInvoiceLanguage
+    preferredInvoiceLanguage: row.language
   };
 }
 
@@ -1440,16 +1468,10 @@ export async function getPublicInvoiceFromDb(
     .select({
       id: invoicesTable.id,
       userId: invoicesTable.userId,
-      currency: businessProfilesTable.currency,
-      language: usersTable.language,
-      preferredInvoiceLanguage: businessProfilesTable.preferredInvoiceLanguage
+      currency: invoicesTable.currency,
+      language: invoicesTable.documentLanguage
     })
     .from(invoicesTable)
-    .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
-    .innerJoin(
-      businessProfilesTable,
-      eq(invoicesTable.userId, businessProfilesTable.userId)
-    )
     .where(
       or(
         eq(invoicesTable.publicInvoiceToken, token),
@@ -1459,7 +1481,7 @@ export async function getPublicInvoiceFromDb(
     .limit(1);
   const row = rows.at(0);
 
-  if (!row) return undefined;
+  if (!row?.currency || !row.language) return undefined;
 
   const invoice = await getInvoiceFromDb(row.userId, row.id);
 
@@ -1470,7 +1492,7 @@ export async function getPublicInvoiceFromDb(
     userId: row.userId,
     currency: row.currency,
     language: row.language,
-    preferredInvoiceLanguage: row.preferredInvoiceLanguage
+    preferredInvoiceLanguage: row.language
   };
 }
 
@@ -1615,7 +1637,7 @@ export const getIncomeJournalRowsFromDb = async ({
       subtotalAmount: invoicesTable.subtotalAmount,
       vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
-      currency: businessProfilesTable.currency
+      currency: invoicesTable.currency
     })
     .from(invoicesTable)
     .innerJoin(
@@ -1625,11 +1647,6 @@ export const getIncomeJournalRowsFromDb = async ({
     .innerJoin(
       invoiceServicesTable,
       eq(invoiceServicesTable.invoiceId, invoicesTable.id)
-    )
-    .innerJoin(usersTable, eq(invoicesTable.userId, usersTable.id))
-    .innerJoin(
-      businessProfilesTable,
-      eq(invoicesTable.userId, businessProfilesTable.userId)
     )
     .where(
       and(
@@ -1643,7 +1660,7 @@ export const getIncomeJournalRowsFromDb = async ({
     .groupBy(
       invoicesTable.id,
       invoiceReceiversTable.id,
-      businessProfilesTable.currency
+      invoicesTable.currency
     )
     .orderBy(effectivePaidAt, invoicesTable.id);
 };

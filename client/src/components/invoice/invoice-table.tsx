@@ -4,7 +4,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { Button, Table, useOverlayState } from '@heroui/react';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
 import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
@@ -95,6 +95,7 @@ const InvoiceTable = ({
   const [invoiceLanguage, setInvoiceLanguage] = useState(
     userPreferredInvoiceLanguage || language
   );
+  const defaultInvoiceLanguage = userPreferredInvoiceLanguage || language;
 
   const {
     handleViewInvoice,
@@ -110,11 +111,35 @@ const InvoiceTable = ({
     handleCloseRecipientDetailsModal
   } = useInvoiceTableActionHandlers({ setCurrentInvoice, onOpen });
 
+  const handleViewInvoiceWithSavedLanguage = useCallback(
+    (invoice: InvoiceBody) => {
+      setInvoiceLanguage(
+        invoice.documentLanguage || defaultInvoiceLanguage
+      );
+      handleViewInvoice(invoice);
+    },
+    [defaultInvoiceLanguage, handleViewInvoice]
+  );
+
+  const previewCurrency = currentInvoice?.currency || currency;
+  const savedInvoiceLanguage =
+    currentInvoice?.documentLanguage || defaultInvoiceLanguage;
+  const savedInvoiceCurrency = currentInvoice?.currency || currency;
+
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
-    currency,
+    currency: previewCurrency,
     defaultTranslator: pdfTranslator,
     invoiceLanguage,
     invoiceData: currentInvoice,
+    senderSignatureImage: currentInvoice?.senderSignature as string,
+    receiverSignatureImage: currentInvoice?.receiverSignature as string
+  });
+
+  const { pdfDocument: emailPdfDocument } = useDynamicPdf({
+    currency: savedInvoiceCurrency,
+    defaultTranslator: pdfTranslator,
+    invoiceLanguage: savedInvoiceLanguage,
+    invoiceData: isSendInvoiceEmailModalOpen ? currentInvoice : undefined,
     senderSignatureImage: currentInvoice?.senderSignature as string,
     receiverSignatureImage: currentInvoice?.receiverSignature as string
   });
@@ -260,13 +285,12 @@ const InvoiceTable = ({
                     {headerColumns.map((column) => (
                       <Table.Cell key={column.uid}>
                         <InvoiceTableCell
-                          pdfDocument={pdfDocument}
                           userId={userId}
                           currency={currency}
                           invoice={item}
                           columnKey={column.uid}
                           onSendEmail={handleSendInvoiceEmail}
-                          onView={handleViewInvoice}
+                          onView={handleViewInvoiceWithSavedLanguage}
                           onEdit={handleEditInvoice}
                           onDelete={handleDeleteInvoice}
                           onRequestDetails={handleRequestRecipientDetails}
@@ -310,22 +334,20 @@ const InvoiceTable = ({
                   onIssued={() => onOpenChange(false)}
                 />
               ) : null}
-              <Button
-                size="sm"
-                variant={
-                  (currentInvoice.lifecycleStatus || 'draft') === 'draft'
-                    ? 'secondary'
-                    : 'primary'
-                }
-                className="w-full whitespace-nowrap sm:w-auto"
-                onPress={() => {
-                  onOpenChange(false);
-                  handleSendInvoiceEmail(currentInvoice);
-                }}
-              >
-                <PaperAirplaneIcon className="h-4 w-4" />
-                {tActions('send_email')}
-              </Button>
+              {(currentInvoice.lifecycleStatus || 'draft') === 'issued' ? (
+                <Button
+                  size="sm"
+                  variant="primary"
+                  className="w-full whitespace-nowrap sm:w-auto"
+                  onPress={() => {
+                    onOpenChange(false);
+                    handleSendInvoiceEmail(currentInvoice);
+                  }}
+                >
+                  <PaperAirplaneIcon className="h-4 w-4" />
+                  {tActions('send_email')}
+                </Button>
+              ) : null}
               <InvoiceMoreActionsMenu
                 invoice={currentInvoice}
                 showLabel
@@ -351,13 +373,13 @@ const InvoiceTable = ({
           onClose={handleCloseDeleteInvoiceModal}
         />
       )}
-      {currentInvoice && pdfDocument && (
+      {currentInvoice && emailPdfDocument && (
         <SendInvoiceEmailModal
-          pdfDocument={pdfDocument}
+          pdfDocument={emailPdfDocument}
           isOpen={isSendInvoiceEmailModalOpen}
           onClose={handleCloseSendInvoiceEmailModal}
           invoice={currentInvoice}
-          currency={currency}
+          currency={savedInvoiceCurrency}
           userId={userId}
           isEmailVerified={isEmailVerified}
         />

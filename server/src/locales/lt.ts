@@ -326,8 +326,8 @@ export default {
       unableToUpdateStatus: 'Nepavyko atnaujinti sąskaitos faktūros būsenos',
       unableToRetrieveData: 'Nepavyko gauti sąskaitos faktūros duomenų',
       unableToSendEmail: 'Nepavyko išsiųsti el. laiško',
-      issuedButUnableToSendEmail:
-        'Sąskaita išrašyta, bet el. laiško išsiųsti nepavyko. Bandykite siųsti dar kartą iš išrašytos sąskaitos.',
+      emailRequiresIssued:
+        'Prieš siųsdami sąskaitą el. paštu pirmiausia ją išrašykite.',
       unableToIssue:
         'Prieš išrašydami sąskaitą užpildykite gavėjo ir mokėjimo duomenis.',
       unableToCreateRecipientDetailsLink:

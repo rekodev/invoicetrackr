@@ -2,8 +2,8 @@
 
 import { InvoiceBody } from '@invoicetrackr/types';
 import { usePDF } from '@react-pdf/renderer';
-import { createTranslator } from 'next-intl';
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import { createTranslator, useLocale } from 'next-intl';
+import { JSX, useEffect, useMemo, useRef, useState } from 'react';
 
 import PDFDocument from '@/components/pdf/pdf-document';
 import { Currency } from '@/lib/types/currency';
@@ -25,39 +25,48 @@ export default function useDynamicPdf({
   senderSignatureImage,
   receiverSignatureImage
 }: Props) {
-  const [isPending, startTransition] = useTransition();
-  const [pdfDocumentTranslator, setPdfDocumentTranslator] =
-    useState<ReturnType<typeof createTranslator>>();
+  const locale = useLocale();
+  const [loadedTranslator, setLoadedTranslator] = useState<{
+    language: string;
+    translator: ReturnType<typeof createTranslator>;
+  }>();
 
   useEffect(() => {
-    function loadMessages() {
-      startTransition(async () => {
-        const mod = await import(
-          `../../../../messages/${invoiceLanguage}.json`
-        );
-        const loadedMessages = mod.default;
+    if (invoiceLanguage === locale) return;
 
-        const translator = createTranslator({
+    let isCancelled = false;
+
+    import(`../../../../messages/${invoiceLanguage}.json`).then((mod) => {
+      if (isCancelled) return;
+
+      setLoadedTranslator({
+        language: invoiceLanguage,
+        translator: createTranslator({
           locale: invoiceLanguage,
-          messages: loadedMessages,
+          messages: mod.default,
           namespace: 'invoices.pdf'
-        });
-
-        startTransition(() => {
-          setPdfDocumentTranslator(() => translator);
-        });
+        })
       });
-    }
+    });
 
-    loadMessages();
-  }, [invoiceLanguage]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [invoiceLanguage, locale]);
+
+  const pdfDocumentTranslator =
+    invoiceLanguage === locale
+      ? defaultTranslator
+      : loadedTranslator?.language === invoiceLanguage
+        ? loadedTranslator.translator
+        : undefined;
 
   const pdfDocument = useMemo(() => {
-    if (!invoiceData) return null;
+    if (!invoiceData || !pdfDocumentTranslator) return null;
 
     return (
       <PDFDocument
-        t={pdfDocumentTranslator || defaultTranslator}
+        t={pdfDocumentTranslator}
         language={invoiceLanguage}
         currency={currency}
         invoiceData={invoiceData}
@@ -67,7 +76,6 @@ export default function useDynamicPdf({
     );
   }, [
     currency,
-    defaultTranslator,
     invoiceData,
     invoiceLanguage,
     pdfDocumentTranslator,
@@ -76,17 +84,48 @@ export default function useDynamicPdf({
   ]);
 
   const [pdfInstance, updatePdfInstance] = usePDF();
+  const latestPdfUrlRef = useRef<string | null>(pdfInstance.url || null);
+  latestPdfUrlRef.current = pdfInstance.url || null;
+  const [pdfRequest, setPdfRequest] = useState<{
+    document: JSX.Element;
+    previousUrl: string | null;
+  }>();
+  const [completedPdfDocument, setCompletedPdfDocument] =
+    useState<JSX.Element | null>(null);
 
   useEffect(() => {
     if (!pdfDocument) return;
 
+    setPdfRequest({
+      document: pdfDocument,
+      previousUrl: latestPdfUrlRef.current
+    });
     updatePdfInstance(pdfDocument);
   }, [pdfDocument, updatePdfInstance]);
 
+  useEffect(() => {
+    if (
+      !pdfRequest ||
+      pdfInstance.loading ||
+      !pdfInstance.url ||
+      pdfInstance.url === pdfRequest.previousUrl
+    )
+      return;
+
+    setCompletedPdfDocument(pdfRequest.document);
+  }, [pdfInstance.loading, pdfInstance.url, pdfRequest]);
+
+  const isPdfDocumentReady =
+    completedPdfDocument === pdfDocument && Boolean(pdfInstance.url);
+
   return {
     pdfDocument,
-    pdfUrl: pdfInstance.url,
+    pdfUrl: isPdfDocumentReady ? pdfInstance.url : null,
     isPdfDocumentLoading:
-      !pdfDocumentTranslator || isPending || pdfInstance.loading
+      Boolean(invoiceData) &&
+      (!pdfDocumentTranslator ||
+        !pdfDocument ||
+        pdfInstance.loading ||
+        !isPdfDocumentReady)
   };
 }

@@ -82,8 +82,6 @@ export default function SendInvoiceEmailModal({
   const defaultRequestSignature = Boolean(
     invoice.recipientSigningRequestedAt && !invoice.recipientSignedAt
   );
-  const isIssued = (invoice.lifecycleStatus || 'draft') === 'issued';
-
   const {
     control,
     handleSubmit,
@@ -164,14 +162,14 @@ export default function SendInvoiceEmailModal({
     reset
   ]);
 
-  const onSubmit = (data: SendInvoiceForm, blob: Blob | null) =>
+  const onSubmit = (data: SendInvoiceForm, blob: Blob) =>
     startTransition(async () => {
       if (!isEmailVerified) return;
 
       const response = await sendInvoiceEmail({
         id: Number(invoice.id),
         userId,
-        blob: isIssued ? blob : null,
+        blob,
         invoiceId: invoice.invoiceId || '',
         recipientEmail: data.recipientEmail,
         subject: data.subject,
@@ -190,11 +188,6 @@ export default function SendInvoiceEmailModal({
             message: error.value
           });
         });
-
-        if (response.data.code === 'INVOICE_ISSUED_EMAIL_FAILED') {
-          handleCloseSendDialog();
-          router.refresh();
-        }
 
         return;
       }
@@ -269,18 +262,16 @@ export default function SendInvoiceEmailModal({
             <span className="text-muted min-w-0 flex-1 truncate text-xs">
               {t('public_link_generated_on_send')}
             </span>
-            {isIssued ? (
-              <Button
-                size="sm"
-                className="h-8 min-h-8 px-3 text-xs"
-                isDisabled={isPending}
-                onPress={handleGeneratePublicLink}
-              >
-                {publicLinkStatus === 'missing'
-                  ? t('generate_public_link')
-                  : t('regenerate_public_link')}
-              </Button>
-            ) : null}
+            <Button
+              size="sm"
+              className="h-8 min-h-8 px-3 text-xs"
+              isDisabled={isPending}
+              onPress={handleGeneratePublicLink}
+            >
+              {publicLinkStatus === 'missing'
+                ? t('generate_public_link')
+                : t('regenerate_public_link')}
+            </Button>
           </>
         )}
       </div>
@@ -293,7 +284,6 @@ export default function SendInvoiceEmailModal({
         id="include-public-link"
         variant="secondary"
         isSelected={includePublicLink}
-        isDisabled={!isIssued}
         onChange={handleIncludePublicLinkChange}
         className="rounded-lg py-2"
       >
@@ -304,9 +294,6 @@ export default function SendInvoiceEmailModal({
           <Label htmlFor="include-public-link">
             {t('include_public_link')}
           </Label>
-          {!isIssued ? (
-            <p className="text-muted text-xs">{t('draft_public_link_note')}</p>
-          ) : null}
         </Checkbox.Content>
       </Checkbox>
       {renderPublicLinkPreview()}
@@ -338,9 +325,11 @@ export default function SendInvoiceEmailModal({
         <Modal.Dialog>
           <Modal.CloseTrigger />
           <BlobProvider document={pdfDocument}>
-            {({ blob }) => (
+            {({ blob, loading: isPdfLoading }) => (
               <form
-                onSubmit={handleSubmit((data) => onSubmit(data, blob))}
+                onSubmit={handleSubmit((data) => {
+                  if (blob) onSubmit(data, blob);
+                })}
                 encType="multipart/form-data"
               >
                 <Modal.Header>
@@ -440,8 +429,10 @@ export default function SendInvoiceEmailModal({
                       {t('cancel')}
                     </Button>
                     <Button
-                      isDisabled={!isEmailVerified}
-                      isPending={isPending}
+                      isDisabled={
+                        !isEmailVerified || isPdfLoading || !blob
+                      }
+                      isPending={isPending || isPdfLoading}
                       type="submit"
                       className="w-full sm:w-auto"
                     >

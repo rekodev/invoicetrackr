@@ -2,7 +2,6 @@
 
 import { toast, useOverlayState } from '@heroui/react';
 import {
-  DEFAULT_CURRENCY,
   type InvoiceBody,
   type PublicInvoiceSigning
 } from '@invoicetrackr/types';
@@ -41,7 +40,7 @@ export default function InvoiceSigningPageContent({ signing }: Props) {
   const isSigned = Boolean(
     invoice.receiverSignature || invoice.recipientSignedAt
   );
-  const currency = DEFAULT_CURRENCY;
+  const currency = signing.currency;
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
     currency,
     defaultTranslator: pdfTranslator,

@@ -27,28 +27,7 @@ describe('sendInvoiceEmail', () => {
     } as never);
   });
 
-  it('uses JSON when a draft has no PDF attachment', async () => {
-    await sendInvoiceEmail({
-      id: 7,
-      userId: 1,
-      invoiceId: 'draft',
-      recipientEmail: 'client@example.com',
-      subject: 'Draft invoice',
-      includePublicLink: true,
-      requestSignature: false,
-      blob: null
-    });
-
-    expect(api.post).toHaveBeenCalledWith('/api/1/invoices/7/send-email', {
-      recipientEmail: 'client@example.com',
-      subject: 'Draft invoice',
-      message: undefined,
-      includePublicLink: true,
-      requestSignature: false
-    });
-  });
-
-  it('keeps multipart delivery when an issued invoice includes a PDF', async () => {
+  it('sends an issued invoice and its saved PDF as multipart data', async () => {
     await sendInvoiceEmail({
       id: 7,
       userId: 1,

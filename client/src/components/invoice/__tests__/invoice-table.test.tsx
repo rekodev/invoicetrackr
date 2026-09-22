@@ -1,19 +1,29 @@
 import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import mockRouter from 'next-router-mock';
 import { ComponentProps, JSX } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { AnalyticsConsentContext } from '@/lib/analytics/consent-context';
 import { withIntl } from '@/test/with-intl';
 
 import InvoiceTable from '../invoice-table';
 
-const { mockUpdateInvoiceStatusAction } = vi.hoisted(() => ({
-  mockUpdateInvoiceStatusAction: vi.fn()
+const { mockUpdateInvoiceStatusAction, mockUseDynamicPdf } = vi.hoisted(() => ({
+  mockUpdateInvoiceStatusAction: vi.fn(),
+  mockUseDynamicPdf: vi.fn((_settings: any) => ({
+    pdfDocument: null,
+    pdfUrl: null,
+    isPdfDocumentLoading: false
+  }))
 }));
 
 vi.mock('@/lib/actions', () => ({
   updateInvoiceStatusAction: mockUpdateInvoiceStatusAction
+}));
+vi.mock('@/lib/hooks/pdf/use-dynamic-pdf', () => ({
+  default: mockUseDynamicPdf
 }));
 vi.mock('@react-pdf/renderer', () => ({
   BlobProvider: ({ children }: any) =>
@@ -38,10 +48,20 @@ vi.mock('next/navigation', () =>
 
 describe('<InvoiceTable/>', () => {
   let props: ComponentProps<typeof InvoiceTable>;
-  const renderHelper = (component: JSX.Element) => render(withIntl(component));
+  const renderHelper = (component: JSX.Element) =>
+    render(
+      withIntl(
+        <AnalyticsConsentContext.Provider
+          value={{ consentStatus: 'declined', setConsentStatus: vi.fn() }}
+        >
+          {component}
+        </AnalyticsConsentContext.Provider>
+      )
+    );
 
   beforeEach(() => {
     mockRouter.push('/invoices');
+    mockUseDynamicPdf.mockClear();
     props = {
       userId: 1,
       currency: DEFAULT_CURRENCY,
@@ -80,6 +100,8 @@ describe('<InvoiceTable/>', () => {
           dueDate: '2023-01-10',
           status: 'pending',
           lifecycleStatus: 'issued',
+          currency: 'eur',
+          documentLanguage: 'lt',
           paymentMode: 'manual',
           services: [
             {
@@ -94,6 +116,7 @@ describe('<InvoiceTable/>', () => {
         }
       ],
       language: 'en',
+      userPreferredInvoiceLanguage: 'en',
       isEmailVerified: true
     };
   });
@@ -117,5 +140,61 @@ describe('<InvoiceTable/>', () => {
     expect(screen.getByTestId('invoice-past-due-indicator')).toHaveTextContent(
       '15d past due'
     );
+  });
+
+  it('opens an issued invoice in its saved document language', async () => {
+    const user = userEvent.setup();
+    renderHelper(<InvoiceTable {...props} />);
+
+    await user.click(screen.getByRole('button', { name: 'Details' }));
+
+    await waitFor(() =>
+      expect(
+        mockUseDynamicPdf.mock.calls.some(
+          ([settings]) =>
+            settings.invoiceData?.id === 1 &&
+            settings.invoiceLanguage === 'lt' &&
+            settings.currency === 'eur'
+        )
+      ).toBe(true)
+    );
+  });
+
+  it('builds the email attachment with saved document settings', async () => {
+    const user = userEvent.setup();
+    renderHelper(<InvoiceTable {...props} />);
+
+    await user.click(
+      screen.getByRole('button', { name: 'Send Invoice Email' })
+    );
+
+    await waitFor(() =>
+      expect(
+        mockUseDynamicPdf.mock.calls.some(
+          ([settings]) =>
+            settings.invoiceData?.id === 1 &&
+            settings.invoiceLanguage === 'lt' &&
+            settings.currency === 'eur'
+        )
+      ).toBe(true)
+    );
+  });
+
+  it('keeps issuing and emailing as separate draft actions', () => {
+    props.invoices[0] = {
+      ...props.invoices[0],
+      lifecycleStatus: 'draft',
+      currency: null,
+      documentLanguage: null
+    };
+
+    renderHelper(<InvoiceTable {...props} />);
+
+    expect(
+      screen.queryByRole('button', { name: 'Send Invoice Email' })
+    ).toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'Issue Invoice' })
+    ).toBeInTheDocument();
   });
 });

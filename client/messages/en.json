@@ -1193,7 +1193,6 @@
             "invoice": "Invoice",
             "draft": "draft",
             "client": "Client",
-            "draft_public_link_note": "Sending this draft issues it and includes the final invoice page.",
             "email_verification_required": "Verify your account email before sending invoices to clients.",
             "include_public_link": "Include Public Invoice Page",
             "request_signature": "Request Client Acknowledgement",

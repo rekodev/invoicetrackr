@@ -2,11 +2,7 @@
 
 import { toast } from '@heroui/react';
 import { useOverlayState } from '@heroui/react';
-import {
-  DEFAULT_CURRENCY,
-  type InvoiceBody,
-  type PublicInvoice
-} from '@invoicetrackr/types';
+import type { InvoiceBody, PublicInvoice } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState, useTransition } from 'react';
 
@@ -46,7 +42,7 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
     invoice.recipientDetailsSubmittedAt || isSigned
   );
   const isPaid = Boolean(invoice.status === 'paid');
-  const currency = DEFAULT_CURRENCY;
+  const currency = publicInvoice.currency;
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
     currency,
     defaultTranslator: pdfTranslator,
