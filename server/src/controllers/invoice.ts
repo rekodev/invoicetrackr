@@ -975,9 +975,9 @@ export const sendInvoiceEmail = async (
   const userId = Number(req.params.userId);
   const {
     recipientEmail,
-    subject: requestedSubject,
+    subject,
     message,
-    includePublicLink: requestedIncludePublicLink = true,
+    includePublicLink = true,
     file
   } = req.body;
   const i18n = await useI18n(req);
@@ -995,9 +995,7 @@ export const sendInvoiceEmail = async (
     throw new BadRequestError(i18n.t('error.invoice.emailRequiresIssued'));
 
   const invoice = foundInvoice;
-  const includePublicLink = requestedIncludePublicLink;
   const requestSignature = includePublicLink && !!req.body.requestSignature;
-  const subject = requestedSubject;
 
   let publicInvoiceToken =
     invoice.publicInvoiceToken || randomBytes(32).toString('hex');

@@ -15,6 +15,7 @@ type Props = {
   invoiceData?: InvoiceBody;
   senderSignatureImage: string;
   receiverSignatureImage?: string;
+  generatePdfUrl?: boolean;
 };
 
 export default function useDynamicPdf({
@@ -23,7 +24,8 @@ export default function useDynamicPdf({
   invoiceLanguage,
   invoiceData,
   senderSignatureImage,
-  receiverSignatureImage
+  receiverSignatureImage,
+  generatePdfUrl = true
 }: Props) {
   const locale = useLocale();
   const [loadedTranslator, setLoadedTranslator] = useState<{
@@ -94,14 +96,14 @@ export default function useDynamicPdf({
     useState<JSX.Element | null>(null);
 
   useEffect(() => {
-    if (!pdfDocument) return;
+    if (!pdfDocument || !generatePdfUrl) return;
 
     setPdfRequest({
       document: pdfDocument,
       previousUrl: latestPdfUrlRef.current
     });
     updatePdfInstance(pdfDocument);
-  }, [pdfDocument, updatePdfInstance]);
+  }, [generatePdfUrl, pdfDocument, updatePdfInstance]);
 
   useEffect(() => {
     if (
@@ -116,11 +118,13 @@ export default function useDynamicPdf({
   }, [pdfInstance.loading, pdfInstance.url, pdfRequest]);
 
   const isPdfDocumentReady =
-    completedPdfDocument === pdfDocument && Boolean(pdfInstance.url);
+    !generatePdfUrl ||
+    (completedPdfDocument === pdfDocument && Boolean(pdfInstance.url));
 
   return {
     pdfDocument,
-    pdfUrl: isPdfDocumentReady ? pdfInstance.url : null,
+    pdfUrl:
+      generatePdfUrl && isPdfDocumentReady ? pdfInstance.url : null,
     isPdfDocumentLoading:
       Boolean(invoiceData) &&
       (!pdfDocumentTranslator ||

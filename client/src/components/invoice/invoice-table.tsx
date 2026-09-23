@@ -92,10 +92,10 @@ const InvoiceTable = ({
   });
   const [page, setPage] = useState(1);
 
-  const [invoiceLanguage, setInvoiceLanguage] = useState(
-    userPreferredInvoiceLanguage || language
-  );
   const defaultInvoiceLanguage = userPreferredInvoiceLanguage || language;
+  const [invoiceLanguage, setInvoiceLanguage] = useState(
+    defaultInvoiceLanguage
+  );
 
   const {
     handleViewInvoice,
@@ -121,13 +121,12 @@ const InvoiceTable = ({
     [defaultInvoiceLanguage, handleViewInvoice]
   );
 
-  const previewCurrency = currentInvoice?.currency || currency;
+  const invoiceCurrency = currentInvoice?.currency || currency;
   const savedInvoiceLanguage =
     currentInvoice?.documentLanguage || defaultInvoiceLanguage;
-  const savedInvoiceCurrency = currentInvoice?.currency || currency;
 
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
-    currency: previewCurrency,
+    currency: invoiceCurrency,
     defaultTranslator: pdfTranslator,
     invoiceLanguage,
     invoiceData: currentInvoice,
@@ -136,12 +135,13 @@ const InvoiceTable = ({
   });
 
   const { pdfDocument: emailPdfDocument } = useDynamicPdf({
-    currency: savedInvoiceCurrency,
+    currency: invoiceCurrency,
     defaultTranslator: pdfTranslator,
     invoiceLanguage: savedInvoiceLanguage,
     invoiceData: isSendInvoiceEmailModalOpen ? currentInvoice : undefined,
     senderSignatureImage: currentInvoice?.senderSignature as string,
-    receiverSignatureImage: currentInvoice?.receiverSignature as string
+    receiverSignatureImage: currentInvoice?.receiverSignature as string,
+    generatePdfUrl: false
   });
 
   const hasSearchFilter = Boolean(filterValue);
@@ -379,7 +379,7 @@ const InvoiceTable = ({
           isOpen={isSendInvoiceEmailModalOpen}
           onClose={handleCloseSendInvoiceEmailModal}
           invoice={currentInvoice}
-          currency={savedInvoiceCurrency}
+          currency={invoiceCurrency}
           userId={userId}
           isEmailVerified={isEmailVerified}
         />

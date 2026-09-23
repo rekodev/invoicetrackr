@@ -174,7 +174,8 @@ describe('<InvoiceTable/>', () => {
           ([settings]) =>
             settings.invoiceData?.id === 1 &&
             settings.invoiceLanguage === 'lt' &&
-            settings.currency === 'eur'
+            settings.currency === 'eur' &&
+            settings.generatePdfUrl === false
         )
       ).toBe(true)
     );
