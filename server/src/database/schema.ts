@@ -68,6 +68,11 @@ export const invoicesTable = pgTable(
     dueDate: date('due_date').notNull(),
     invoiceId: varchar('invoice_id'),
     invoiceSeries: varchar('invoice_series', { length: 8 }),
+    currency: varchar('currency', { length: 3, enum: ['eur'] }),
+    documentLanguage: varchar('document_language', {
+      length: 2,
+      enum: ['lt', 'en']
+    }),
     id: serial().primaryKey().notNull(),
     senderSignature: varchar('sender_signature', { length: 255 }).notNull(),
     receiverSignature: varchar('receiver_signature', { length: 255 }),
@@ -188,6 +193,15 @@ export const invoicesTable = pgTable(
     check(
       'invoices_payment_mode_check',
       sql`(payment_mode)::text = ANY ((ARRAY['manual'::character varying, 'crypto'::character varying, 'disabled'::character varying])::text[])`
+    ),
+    check('invoices_currency_check', sql`${table.currency} = 'eur'`),
+    check(
+      'invoices_document_language_check',
+      sql`${table.documentLanguage} IN ('lt', 'en')`
+    ),
+    check(
+      'invoices_document_settings_check',
+      sql`(${table.lifecycleStatus} = 'draft' AND ${table.currency} IS NULL AND ${table.documentLanguage} IS NULL) OR (${table.lifecycleStatus} <> 'draft' AND ${table.currency} IS NOT NULL AND ${table.documentLanguage} IS NOT NULL)`
     ),
     unique('invoices_user_invoice_id_key').on(table.userId, table.invoiceId),
     unique('invoices_id_user_id_key').on(table.id, table.userId),

@@ -334,6 +334,8 @@ describe('Invoice Controller', () => {
         ...draft,
         invoiceId: 'SF001',
         lifecycleStatus: 'issued' as const,
+        currency: 'eur' as const,
+        documentLanguage: 'lt' as const,
         issuedAt: new Date().toISOString()
       };
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(draft);
@@ -357,7 +359,13 @@ describe('Invoice Controller', () => {
 
       expect(response.statusCode).toBe(200);
       expect(invoiceDb.issueInvoiceInDb).toHaveBeenCalledWith(testUserId, 1);
-      expect(JSON.parse(response.body).invoice.invoiceId).toBe('SF001');
+      expect(JSON.parse(response.body).invoice).toEqual(
+        expect.objectContaining({
+          invoiceId: 'SF001',
+          currency: 'eur',
+          documentLanguage: 'lt'
+        })
+      );
 
       await app.close();
     });
@@ -501,6 +509,8 @@ describe('Invoice Controller', () => {
         ...draft,
         invoiceId: 'SF001',
         lifecycleStatus: 'issued' as const,
+        currency: 'eur' as const,
+        documentLanguage: 'en' as const,
         issuedAt: new Date().toISOString(),
         receiver: completedReceiver,
         publicInvoiceToken: 'public-token'
@@ -841,7 +851,7 @@ describe('Invoice Controller', () => {
           recipientSigningExpiresAt: new Date(Date.now() - 1000).toISOString()
         }),
         userId: testUserId,
-        currency: 'EUR',
+        currency: 'eur',
         language: 'en',
         preferredInvoiceLanguage: null
       });
@@ -872,7 +882,7 @@ describe('Invoice Controller', () => {
           recipientSigningRevokedAt: new Date().toISOString()
         }),
         userId: testUserId,
-        currency: 'EUR',
+        currency: 'eur',
         language: 'en',
         preferredInvoiceLanguage: null
       });
@@ -899,17 +909,17 @@ describe('Invoice Controller', () => {
   });
 
   describe('POST /api/:userId/invoices/:id/send-email', () => {
-    it('rejects issuing when the freelancer profile is incomplete', async () => {
+    it('rejects a draft without issuing or sending it', async () => {
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
         invoiceFromDbFactory.build({
           id: 1,
           lifecycleStatus: 'draft',
-          paymentMode: 'disabled',
-          bankingInformation: undefined
+          documentLanguage: null,
+          currency: null
         })
       );
       vi.mocked(userDb.getUserFromDb).mockResolvedValue(
-        userFactory.build({ id: testUserId, address: '' })
+        userFactory.build({ id: testUserId })
       );
 
       const app = await createTestApp((fastifyApp) => {
@@ -931,47 +941,10 @@ describe('Invoice Controller', () => {
       });
 
       expect(response.statusCode).toBe(400);
-      expect(JSON.parse(response.body).message).toContain('freelancer details');
-      expect(invoiceDb.markPublicInvoiceSentInDb).not.toHaveBeenCalled();
-      expect(mockResendSend).not.toHaveBeenCalled();
-
-      await app.close();
-    });
-
-    it('rejects issuing a manual-payment draft without bank details before mutating it', async () => {
-      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
-        invoiceFromDbFactory.build({
-          id: 1,
-          lifecycleStatus: 'draft',
-          paymentMode: 'manual',
-          bankingInformation: undefined
-        })
+      expect(JSON.parse(response.body).message).toBe(
+        'Issue this invoice before sending it by email.'
       );
-      vi.mocked(userDb.getUserFromDb).mockResolvedValue(
-        userFactory.build({ id: testUserId })
-      );
-
-      const app = await createTestApp((fastifyApp) => {
-        fastifyApp.post(
-          '/api/:userId/invoices/:id/send-email',
-          { preHandler: mockAuthMiddleware },
-          invoiceController.sendInvoiceEmail
-        );
-      });
-
-      const response = await app.inject({
-        method: 'POST',
-        url: `/api/${testUserId}/invoices/1/send-email`,
-        payload: {
-          recipientEmail: 'receiver@example.com',
-          subject: 'Invoice SF001'
-        }
-      });
-
-      expect(response.statusCode).toBe(400);
-      expect(JSON.parse(response.body).message).toContain(
-        'recipient and payment details'
-      );
+      expect(invoiceDb.issueInvoiceInDb).not.toHaveBeenCalled();
       expect(invoiceDb.preparePublicInvoiceFromDb).not.toHaveBeenCalled();
       expect(invoiceDb.markPublicInvoiceSentInDb).not.toHaveBeenCalled();
       expect(mockResendSend).not.toHaveBeenCalled();
@@ -979,35 +952,19 @@ describe('Invoice Controller', () => {
       await app.close();
     });
 
-    it('issues a draft without bank details when payment instructions are disabled', async () => {
+    it('rejects a voided invoice', async () => {
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
         invoiceFromDbFactory.build({
           id: 1,
-          lifecycleStatus: 'draft',
-          paymentMode: 'disabled',
-          bankingInformation: undefined
+          lifecycleStatus: 'voided',
+          status: 'canceled',
+          documentLanguage: 'lt',
+          currency: 'eur'
         })
       );
       vi.mocked(userDb.getUserFromDb).mockResolvedValue(
         userFactory.build({ id: testUserId })
       );
-      vi.mocked(invoiceDb.issueInvoiceInDb).mockResolvedValue(
-        invoiceFromDbFactory.build({
-          id: 1,
-          invoiceId: 'INV001',
-          lifecycleStatus: 'issued',
-          issuedAt: new Date().toISOString(),
-          paymentMode: 'disabled',
-          bankingInformation: undefined
-        })
-      );
-      vi.mocked(invoiceDb.preparePublicInvoiceFromDb).mockResolvedValue({
-        id: 1,
-        publicInvoiceToken: 'public-token'
-      });
-      vi.mocked(invoiceDb.markPublicInvoiceSentInDb).mockResolvedValue({
-        id: 1
-      });
 
       const app = await createTestApp((fastifyApp) => {
         fastifyApp.post(
@@ -1023,42 +980,30 @@ describe('Invoice Controller', () => {
         payload: {
           recipientEmail: 'receiver@example.com',
           subject: 'Invoice SF001',
-          includePublicLink: false
+          includePublicLink: true
         }
       });
 
-      expect(response.statusCode).toBe(200);
-      expect(mockResendSend).toHaveBeenCalled();
-      expect(invoiceDb.issueInvoiceInDb).toHaveBeenCalledWith(testUserId, 1);
-      expect(invoiceDb.preparePublicInvoiceFromDb).toHaveBeenCalled();
-      expect(invoiceDb.markPublicInvoiceSentInDb).toHaveBeenCalledWith({
-        userId: testUserId,
-        id: 1,
-        requestSignature: false
-      });
+      expect(response.statusCode).toBe(400);
+      expect(invoiceDb.preparePublicInvoiceFromDb).not.toHaveBeenCalled();
+      expect(mockResendSend).not.toHaveBeenCalled();
 
       await app.close();
     });
 
-    it('keeps a draft issued when the first email delivery fails', async () => {
-      const draft = invoiceFromDbFactory.build({
+    it('does not mutate an issued invoice when email delivery fails', async () => {
+      const invoice = invoiceFromDbFactory.build({
         id: 1,
-        invoiceId: null,
+        invoiceId: 'SF001',
         invoiceSeries: 'SF',
-        lifecycleStatus: 'draft',
-        paymentMode: 'disabled',
-        bankingInformation: undefined
+        lifecycleStatus: 'issued',
+        documentLanguage: 'lt',
+        currency: 'eur'
       });
-      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(draft);
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(invoice);
       vi.mocked(userDb.getUserFromDb).mockResolvedValue(
         userFactory.build({ id: testUserId })
       );
-      vi.mocked(invoiceDb.issueInvoiceInDb).mockResolvedValue({
-        ...draft,
-        invoiceId: 'SF001',
-        lifecycleStatus: 'issued',
-        issuedAt: new Date().toISOString()
-      });
       vi.mocked(invoiceDb.preparePublicInvoiceFromDb).mockResolvedValue({
         id: 1,
         publicInvoiceToken: 'public-token'
@@ -1086,10 +1031,8 @@ describe('Invoice Controller', () => {
       });
 
       expect(response.statusCode).toBe(400);
-      expect(JSON.parse(response.body).code).toBe(
-        'INVOICE_ISSUED_EMAIL_FAILED'
-      );
-      expect(invoiceDb.issueInvoiceInDb).toHaveBeenCalledWith(testUserId, 1);
+      expect(JSON.parse(response.body).code).toBe('BAD_REQUEST');
+      expect(invoiceDb.issueInvoiceInDb).not.toHaveBeenCalled();
       expect(invoiceDb.markPublicInvoiceSentInDb).not.toHaveBeenCalled();
 
       await app.close();
@@ -1175,7 +1118,7 @@ describe('Invoice Controller', () => {
           publicInvoiceExpiresAt: new Date(Date.now() - 1000).toISOString()
         }),
         userId: testUserId,
-        currency: 'EUR',
+        currency: 'eur',
         language: 'en',
         preferredInvoiceLanguage: null
       });
@@ -1208,7 +1151,7 @@ describe('Invoice Controller', () => {
           publicInvoiceRevokedAt: new Date().toISOString()
         }),
         userId: testUserId,
-        currency: 'EUR',
+        currency: 'eur',
         language: 'en',
         preferredInvoiceLanguage: null
       });
@@ -1245,7 +1188,7 @@ describe('Invoice Controller', () => {
       vi.mocked(invoiceDb.getPublicInvoiceFromDb).mockResolvedValue({
         invoice,
         userId: testUserId,
-        currency: 'EUR',
+        currency: 'eur',
         language: 'en',
         preferredInvoiceLanguage: null
       });
@@ -1283,7 +1226,7 @@ describe('Invoice Controller', () => {
           paymentMode: 'disabled'
         }),
         userId: testUserId,
-        currency: 'EUR',
+        currency: 'eur',
         language: 'en',
         preferredInvoiceLanguage: null
       });

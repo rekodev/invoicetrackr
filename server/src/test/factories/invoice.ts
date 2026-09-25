@@ -22,6 +22,8 @@ export const invoiceFactory = Factory.define<InvoiceBody>(({ sequence }) => ({
   totalAmount: '1000.00',
   status: 'pending',
   lifecycleStatus: 'draft',
+  currency: null,
+  documentLanguage: null,
   dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     .toISOString()
     .split('T')[0],
@@ -50,6 +52,8 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
     vatAmount: '0.00',
     status: 'pending',
     lifecycleStatus: 'draft',
+    currency: null,
+    documentLanguage: null,
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       .toISOString()
       .split('T')[0],

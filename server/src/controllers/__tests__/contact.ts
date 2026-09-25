@@ -4,8 +4,6 @@ import { resend } from '../../config/resend';
 import { createTestApp } from '../../test/app';
 import * as contactController from '../contact';
 
-vi.mock('../../config/resend');
-
 describe('Contact Controller', () => {
   describe('POST /api/contact', () => {
     it('should send contact message successfully', async () => {

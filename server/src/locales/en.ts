@@ -317,8 +317,7 @@ export default {
       unableToUpdateStatus: 'Unable to update invoice status',
       unableToRetrieveData: 'Unable to retrieve invoice data',
       unableToSendEmail: 'Unable to send email',
-      issuedButUnableToSendEmail:
-        'Invoice issued, but the email could not be sent. Retry from the issued invoice.',
+      emailRequiresIssued: 'Issue this invoice before sending it by email.',
       unableToIssue:
         'Complete the recipient and payment details before issuing this invoice.',
       unableToCreateRecipientDetailsLink:

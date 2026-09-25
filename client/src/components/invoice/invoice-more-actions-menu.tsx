@@ -50,6 +50,7 @@ const InvoiceMoreActionsMenu = ({
   const menuState = useOverlayState();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const isDraft = (invoice.lifecycleStatus || 'draft') === 'draft';
+  const isIssued = invoice.lifecycleStatus === 'issued';
 
   const handleCopyPublicLink = async () => {
     if (!invoice.publicInvoiceToken) return;
@@ -60,7 +61,7 @@ const InvoiceMoreActionsMenu = ({
   };
 
   const actions: Action[] = [
-    ...(invoice.publicInvoiceToken
+    ...(isIssued && invoice.publicInvoiceToken
       ? [
           {
             id: 'copy-public-link',

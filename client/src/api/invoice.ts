@@ -246,21 +246,8 @@ export const sendInvoiceEmail = async ({
   message?: string;
   includePublicLink?: boolean;
   requestSignature?: boolean;
-  blob: Blob | null;
+  blob: Blob;
 }) => {
-  if (!blob) {
-    return await api.post<SendInvoiceEmailResponse>(
-      `/api/${userId}/invoices/${id}/send-email`,
-      {
-        recipientEmail,
-        subject,
-        message,
-        includePublicLink: includePublicLink ?? true,
-        requestSignature: !!requestSignature
-      }
-    );
-  }
-
   const formData = new FormData();
   formData.append('recipientEmail', recipientEmail);
   formData.append('subject', subject);

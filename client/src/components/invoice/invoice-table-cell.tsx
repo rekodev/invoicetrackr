@@ -63,7 +63,6 @@ type Props = {
   onEdit: (_invoice: InvoiceBody) => void;
   onDelete: (_invoice: InvoiceBody) => void;
   onRequestDetails: (_invoice: InvoiceBody) => void;
-  pdfDocument: JSX.Element | null;
 };
 
 const InvoiceTableCell = ({
@@ -84,7 +83,9 @@ const InvoiceTableCell = ({
   const [isPending, startTransition] = useTransition();
 
   const { isPastDue, daysPastDue } = getInvoiceDueStatus(invoice);
-  const isDraft = (invoice.lifecycleStatus || 'draft') === 'draft';
+  const lifecycleStatus = invoice.lifecycleStatus || 'draft';
+  const isDraft = lifecycleStatus === 'draft';
+  const isIssued = lifecycleStatus === 'issued';
 
   const handleViewIconClick = () => onView(invoice);
   const handleChangeStatus = (
@@ -161,7 +162,9 @@ const InvoiceTableCell = ({
     case 'totalAmount':
       return (
         <p className="flex gap-0.5">
-          <span className="text-success">{getCurrencySymbol(currency)}</span>
+          <span className="text-success">
+            {getCurrencySymbol(invoice.currency || currency)}
+          </span>
           {(Number(invoice.totalAmount) || 0).toFixed(2)}
         </p>
       );
@@ -186,7 +189,7 @@ const InvoiceTableCell = ({
           <div className="flex items-center gap-4">
             <Dropdown>
               <DropdownTrigger
-                isDisabled={isPending || isDraft}
+                isDisabled={isPending || !isIssued}
                 className="h-auto min-w-0 cursor-pointer bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-50 [&[aria-expanded=true]_svg]:rotate-180"
               >
                 <Chip
@@ -229,7 +232,7 @@ const InvoiceTableCell = ({
             </Dropdown>
 
             {renderTooltip(
-              isDraft
+              !isIssued
                 ? tCell('status_locked')
                 : isPaid
                   ? tCell('mark_as_pending')
@@ -241,7 +244,7 @@ const InvoiceTableCell = ({
                 className="mr-0.5 max-w-5 p-0"
                 isSelected={isPaid}
                 onChange={handleMarkAsPaidClick}
-                isDisabled={isPending || isDraft}
+                isDisabled={isPending || !isIssued}
               />
             )}
           </div>
@@ -277,20 +280,22 @@ const InvoiceTableCell = ({
           {isDraft ? (
             <IssueInvoiceModal userId={userId} invoiceData={invoice} />
           ) : null}
-          {renderTooltip(
-            tCell('tooltip_send_email'),
-            <Button
-              isIconOnly
-              size="sm"
-              variant="tertiary"
-              type="button"
-              aria-label={tCell('tooltip_send_email')}
-              onPress={() => onSendEmail(invoice)}
-              className="text-accent"
-            >
-              <PaperAirplaneIcon className="h-4 w-4" />
-            </Button>
-          )}
+          {isIssued
+            ? renderTooltip(
+                tCell('tooltip_send_email'),
+                <Button
+                  isIconOnly
+                  size="sm"
+                  variant="tertiary"
+                  type="button"
+                  aria-label={tCell('tooltip_send_email')}
+                  onPress={() => onSendEmail(invoice)}
+                  className="text-accent"
+                >
+                  <PaperAirplaneIcon className="h-4 w-4" />
+                </Button>
+              )
+            : null}
           <InvoiceMoreActionsMenu
             invoice={invoice}
             onRequestDetails={onRequestDetails}

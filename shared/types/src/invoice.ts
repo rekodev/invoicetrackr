@@ -1,5 +1,6 @@
 import z from 'zod/v4';
 import { bankAccountBodySchema } from './bank-account';
+import { currencySchema, languageSchema } from './common';
 import { cryptoWalletBodySchema } from './crypto-wallet';
 
 // Enums
@@ -167,6 +168,8 @@ export const invoiceBodySchema = z
     id: z.coerce.number().optional(),
     invoiceId: invoiceNumberSchema.nullish().or(z.literal('')),
     invoiceSeries: invoiceNumberSeriesSchema.nullish(),
+    currency: currencySchema.nullish(),
+    documentLanguage: languageSchema.nullish(),
     date: z.iso.date('validation.invoice.date'),
     serviceDate: z.iso.date('validation.invoice.serviceDate'),
     dueDate: z.iso.date('validation.invoice.dueDate'),
@@ -297,9 +300,9 @@ export const sendRecipientDetailsRequestBodySchema = z
 export const publicInvoiceSigningSchema = z.object({
   token: z.string(),
   invoice: invoiceBodySchema,
-  currency: z.string(),
-  language: z.string(),
-  preferredInvoiceLanguage: z.string().nullish()
+  currency: currencySchema,
+  language: languageSchema,
+  preferredInvoiceLanguage: languageSchema.nullish()
 });
 
 export const publicInvoicePaymentSchema = z.object({
@@ -313,9 +316,9 @@ export const publicInvoicePaymentSchema = z.object({
 export const publicInvoiceSchema = z.object({
   token: z.string(),
   invoice: invoiceBodySchema,
-  currency: z.string(),
-  language: z.string(),
-  preferredInvoiceLanguage: z.string().nullish(),
+  currency: currencySchema,
+  language: languageSchema,
+  preferredInvoiceLanguage: languageSchema.nullish(),
   payment: publicInvoicePaymentSchema,
   signing: z.object({
     requested: z.boolean(),
