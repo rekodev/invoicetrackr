@@ -127,7 +127,7 @@ export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateInvoiceStatusOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: z.object({ status: z.string() }),
+    body: z.object({ status: z.literal('canceled') }),
     response: {
       200: messageResponseSchema
     }

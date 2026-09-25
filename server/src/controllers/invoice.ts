@@ -51,9 +51,14 @@ import {
   revokePublicInvoiceFromDb,
   signInvoiceByRecipientTokenInDb,
   submitRecipientDetailsInDb,
-  updateInvoiceInDb,
-  updateInvoiceStatusInDb
+  updateInvoiceInDb
 } from '../database/invoice';
+import {
+  cancelInvoiceWithoutPaymentsInDb,
+  PAYMENT_CANCEL_BLOCKED,
+  PAYMENT_INVALID_STATE,
+  PAYMENT_NOT_FOUND
+} from '../database/invoice-payment';
 import { getUserFromDb } from '../database/user';
 import en from '../locales/en';
 import lt from '../locales/lt';
@@ -447,12 +452,9 @@ export const submitRecipientDetails = async (
         from: appEmailFrom,
         subject,
         react: emailHtml,
-        text: [
-          notificationMessage,
-          '',
-          translations.review,
-          invoiceUrl
-        ].join('\n')
+        text: [notificationMessage, '', translations.review, invoiceUrl].join(
+          '\n'
+        )
       })
       .catch((error) => {
         req.log.error(
@@ -462,13 +464,11 @@ export const submitRecipientDetails = async (
       });
   }
 
-  return reply
-    .status(200)
-    .send({
-      invoiceId: result.invoiceId,
-      publicInvoiceToken,
-      message: i18n.t('success.invoice.recipientDetailsSubmitted')
-    });
+  return reply.status(200).send({
+    invoiceId: result.invoiceId,
+    publicInvoiceToken,
+    message: i18n.t('success.invoice.recipientDetailsSubmitted')
+  });
 };
 
 const getManualPaymentReference = (invoice: InvoiceBody) =>
@@ -616,6 +616,7 @@ export const getIncomeJournal = async (
     i18n.t('emails.incomeJournal.client'),
     i18n.t('emails.incomeJournal.clientCode'),
     i18n.t('emails.incomeJournal.services'),
+    i18n.t('emails.incomeJournal.receivedAmount', { currency }),
     i18n.t('emails.incomeJournal.subtotal', { currency }),
     i18n.t('emails.incomeJournal.vatTotal', { currency }),
     i18n.t('emails.incomeJournal.grandTotal', { currency })
@@ -629,6 +630,7 @@ export const getIncomeJournal = async (
       row.receiverName,
       row.receiverBusinessNumber,
       row.descriptions,
+      row.receivedAmount,
       row.subtotalAmount,
       row.vatAmount,
       row.totalAmount
@@ -830,7 +832,7 @@ export const updateInvoice = async (
 export async function updateInvoiceStatus(
   req: FastifyRequest<{
     Params: { userId: string; id: string };
-    Body: { status: 'paid' | 'pending' | 'canceled' };
+    Body: { status: string };
   }>,
   reply: FastifyReply
 ) {
@@ -842,14 +844,20 @@ export async function updateInvoiceStatus(
   const foundInvoice = await getInvoiceFromDb(userId, id);
 
   if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
-  if ((foundInvoice.lifecycleStatus || 'draft') === 'draft')
-    throw new BadRequestError(i18n.t('error.invoice.unableToIssue'));
-  if ((foundInvoice.lifecycleStatus || 'draft') === 'voided')
-    throw new BadRequestError(i18n.t('error.invoice.voidedImmutable'));
-  const updatedInvoice = await updateInvoiceStatusInDb(userId, id, status);
-
-  if (!updatedInvoice)
+  if (status !== 'canceled')
     throw new BadRequestError(i18n.t('error.invoice.unableToUpdateStatus'));
+  try {
+    await cancelInvoiceWithoutPaymentsInDb(userId, id);
+  } catch (error) {
+    const code = error instanceof Error ? error.message : '';
+    if (code === PAYMENT_CANCEL_BLOCKED)
+      throw new BadRequestError(i18n.t('error.invoice.paymentCancelBlocked'));
+    if (code === PAYMENT_INVALID_STATE)
+      throw new BadRequestError(i18n.t('error.invoice.issuedImmutable'));
+    if (code === PAYMENT_NOT_FOUND)
+      throw new NotFoundError(i18n.t('error.invoice.notFound'));
+    throw error;
+  }
 
   await recordRequestAudit({
     req,
@@ -935,9 +943,11 @@ export const getInvoicesRevenue = async (
     11: 0
   };
 
-  invoices.forEach((invoice) => {
-    const date = new Date(invoice.date);
-    revenueByMonth[date.getMonth()] += Number(invoice.totalAmount);
+  invoices.forEach((payment) => {
+    const month = Number(payment.paymentDate.slice(5, 7)) - 1;
+    revenueByMonth[month as keyof typeof revenueByMonth] += Number(
+      payment.amount
+    );
   });
 
   reply.status(200).send({ revenueByMonth });
@@ -988,8 +998,7 @@ export const sendInvoiceEmail = async (
   ]);
 
   if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
-  if (!foundInvoice)
-    throw new NotFoundError(i18n.t('error.invoice.notFound'));
+  if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
   if ((foundInvoice.lifecycleStatus || 'draft') !== 'issued')
     throw new BadRequestError(i18n.t('error.invoice.emailRequiresIssued'));

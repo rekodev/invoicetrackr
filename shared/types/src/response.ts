@@ -15,6 +15,7 @@ import {
   publicInvoiceSigningSchema
 } from './invoice';
 import { expenseAttachmentSchema, expenseBodySchema } from './expense';
+import { invoicePaymentSchema, invoicePaymentSummarySchema } from './payment';
 
 // Common response schemas
 export const messageResponseSchema = z.object({
@@ -112,6 +113,27 @@ export const getInvoiceResponseSchema = z.object({
   invoice: invoiceBodySchema
 });
 
+export const invoiceWorkspaceResponseSchema = z.object({
+  invoice: invoiceBodySchema,
+  canCopyPublicLink: z.boolean(),
+  payments: z.array(invoicePaymentSchema),
+  balance: invoicePaymentSummarySchema,
+  deliveries: z.array(
+    z.object({
+      id: z.number(),
+      recipient: z.string(),
+      kind: z.string(),
+      status: z.string(),
+      sentAt: z.string().nullish()
+    })
+  )
+});
+
+export const invoicePaymentResponseSchema = z.object({
+  payment: invoicePaymentSchema,
+  balance: invoicePaymentSummarySchema
+});
+
 export const getPublicInvoiceSigningResponseSchema = z.object({
   signing: publicInvoiceSigningSchema
 });
@@ -198,6 +220,7 @@ export const getInvoicesTotalAmountResponseSchema = z.object({
   invoices: z.array(
     z.object({
       totalAmount: z.string(),
+      paidAmount: z.string(),
       status: z.string()
     })
   ),
@@ -312,6 +335,12 @@ export type AddClientResponse = PostClientResponse;
 
 export type GetInvoicesResponse = z.infer<typeof getInvoicesResponseSchema>;
 export type GetInvoiceResponse = z.infer<typeof getInvoiceResponseSchema>;
+export type InvoiceWorkspaceResponse = z.infer<
+  typeof invoiceWorkspaceResponseSchema
+>;
+export type InvoicePaymentResponse = z.infer<
+  typeof invoicePaymentResponseSchema
+>;
 export type IssueInvoiceResponse = z.infer<typeof issueInvoiceResponseSchema>;
 export type RecipientDetailsRequestResponse = z.infer<
   typeof recipientDetailsRequestResponseSchema

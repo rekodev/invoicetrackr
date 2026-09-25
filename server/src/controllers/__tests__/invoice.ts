@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as clientDb from '../../database/client';
 import * as invoiceDb from '../../database/invoice';
+import * as paymentDb from '../../database/invoice-payment';
 import * as userDb from '../../database/user';
 import en from '../../locales/en';
 import lt from '../../locales/lt';
@@ -21,6 +22,7 @@ import { mockResendSend, mockUseI18n } from '../../test/setup';
 import * as invoiceController from '../invoice';
 
 vi.mock('../../database/invoice');
+vi.mock('../../database/invoice-payment');
 vi.mock('../../database/client');
 vi.mock('../../database/user');
 vi.mock('cloudinary');
@@ -107,6 +109,20 @@ describe('Invoice Controller', () => {
           subtotalAmount: '100.00',
           vatAmount: '21.00',
           totalAmount: '121.00',
+          receivedAmount: '61.00',
+          currency: DEFAULT_CURRENCY
+        },
+        {
+          paidAt: '2026-05-25',
+          date: '2026-05-15',
+          invoiceId: 'SF001',
+          receiverName: 'Test Client',
+          receiverBusinessNumber: '123456789',
+          descriptions: 'Consulting, implementation',
+          subtotalAmount: '100.00',
+          vatAmount: '21.00',
+          totalAmount: '121.00',
+          receivedAmount: '60.00',
           currency: DEFAULT_CURRENCY
         }
       ]);
@@ -136,6 +152,10 @@ describe('Invoice Controller', () => {
       );
       expect(response.body).toContain('\uFEFF"Payment date"');
       expect(response.body).toContain('"Consulting, implementation"');
+      expect(response.body).toContain('"Received amount (EUR)"');
+      expect(response.body.match(/"SF001"/g)).toHaveLength(2);
+      expect(response.body).toContain('"61.00"');
+      expect(response.body).toContain('"60.00"');
       expect(invoiceDb.getIncomeJournalRowsFromDb).toHaveBeenCalledWith({
         userId: testUserId,
         from: '2026-05-01',
@@ -416,9 +436,7 @@ describe('Invoice Controller', () => {
         id: 1,
         lifecycleStatus: 'draft',
         recipientDetailsToken: token,
-        recipientDetailsExpiresAt: new Date(
-          Date.now() + 60_000
-        ).toISOString(),
+        recipientDetailsExpiresAt: new Date(Date.now() + 60_000).toISOString(),
         recipientDetailsSubmittedAt: null,
         recipientDetailsRevokedAt: null
       });
@@ -516,9 +534,7 @@ describe('Invoice Controller', () => {
         publicInvoiceToken: 'public-token'
       };
 
-      vi.mocked(
-        invoiceDb.getRecipientDetailsRequestFromDb
-      ).mockResolvedValue({
+      vi.mocked(invoiceDb.getRecipientDetailsRequestFromDb).mockResolvedValue({
         id: 1,
         userId: testUserId,
         invoiceId: null,
@@ -712,13 +728,13 @@ describe('Invoice Controller', () => {
   });
 
   describe('PUT /api/:userId/invoices/:id/status', () => {
-    it('should update invoice status', async () => {
+    it('should cancel an issued invoice without payments', async () => {
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
         invoiceFromDbFactory.build({ lifecycleStatus: 'issued' })
       );
-      vi.mocked(invoiceDb.updateInvoiceStatusInDb).mockResolvedValue({
-        id: 1
-      });
+      vi.mocked(paymentDb.cancelInvoiceWithoutPaymentsInDb).mockResolvedValue(
+        undefined
+      );
 
       const { updateInvoiceStatus } = invoiceController;
 
@@ -736,18 +752,22 @@ describe('Invoice Controller', () => {
         method: 'PUT',
         url: `/api/${testUserId}/invoices/${mockInvoice.id}/status`,
         payload: {
-          status: 'paid'
+          status: 'canceled'
         }
       });
 
       expect(response.statusCode).toBe(200);
       const body = JSON.parse(response.body);
       expect(body.message).toBeDefined();
+      expect(paymentDb.cancelInvoiceWithoutPaymentsInDb).toHaveBeenCalledWith(
+        testUserId,
+        Number(mockInvoice.id)
+      );
 
       await app.close();
     });
 
-    it('should reject status changes for a draft', async () => {
+    it('should reject paid status writes through the old endpoint', async () => {
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
         invoiceFromDbFactory.build({
           lifecycleStatus: 'draft',
@@ -770,7 +790,7 @@ describe('Invoice Controller', () => {
       });
 
       expect(response.statusCode).toBe(400);
-      expect(invoiceDb.updateInvoiceStatusInDb).not.toHaveBeenCalled();
+      expect(paymentDb.cancelInvoiceWithoutPaymentsInDb).not.toHaveBeenCalled();
 
       await app.close();
     });
@@ -809,8 +829,20 @@ describe('Invoice Controller', () => {
   describe('GET /api/:userId/invoices/total-amount', () => {
     it('should return total amount and client data', async () => {
       const mockInvoiceTotals = [
-        { status: 1, subtotalAmount: 1000, vatAmount: 0, totalAmount: 1000 },
-        { status: 2, subtotalAmount: 2000, vatAmount: 0, totalAmount: 2000 }
+        {
+          status: 'pending',
+          subtotalAmount: '1000.00',
+          vatAmount: '0.00',
+          totalAmount: '1000.00',
+          paidAmount: '300.00'
+        },
+        {
+          status: 'paid',
+          subtotalAmount: '2000.00',
+          vatAmount: '0.00',
+          totalAmount: '2000.00',
+          paidAmount: '2000.00'
+        }
       ];
       const mockClient = clientFactory.build();
 
@@ -840,6 +872,33 @@ describe('Invoice Controller', () => {
       const body = JSON.parse(response.body);
       expect(body).toBeDefined();
 
+      await app.close();
+    });
+  });
+
+  describe('GET /api/:userId/invoices/revenue', () => {
+    it('uses received payment amounts and dates for partial payments', async () => {
+      vi.mocked(invoiceDb.getInvoicesRevenueFromDb).mockResolvedValue([
+        { amount: '40.00', paymentDate: '2026-05-20' },
+        { amount: '60.00', paymentDate: '2026-06-03' }
+      ]);
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.get(
+          '/api/:userId/invoices/revenue',
+          { preHandler: mockAuthMiddleware },
+          invoiceController.getInvoicesRevenue
+        );
+      });
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/1/invoices/revenue'
+      });
+      expect(response.statusCode).toBe(200);
+      expect(JSON.parse(response.body).revenueByMonth).toMatchObject({
+        4: 40,
+        5: 60
+      });
       await app.close();
     });
   });

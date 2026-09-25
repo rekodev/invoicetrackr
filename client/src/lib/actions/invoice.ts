@@ -1,19 +1,25 @@
 'use server';
 
-import type { InvoiceBody } from '@invoicetrackr/types';
+import type { InvoiceBody, InvoicePaymentBody } from '@invoicetrackr/types';
 import { revalidatePath } from 'next/cache';
 
 import {
   addInvoice,
+  createInvoicePayment,
   createRecipientDetailsRequest,
   deleteInvoice,
+  deleteInvoicePayment,
   getNextInvoiceNumber,
   issueInvoice,
   updateInvoice,
+  updateInvoicePayment,
   updateInvoiceStatus
 } from '@/api/invoice';
 
-import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '../constants/pages';
+import {
+  EDIT_INVOICE_PAGE,
+  INVOICE_WORKSPACE_PAGE,
+  INVOICES_PAGE} from '../constants/pages';
 import type { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
@@ -83,6 +89,7 @@ export const updateInvoiceAction = async ({
 
   revalidatePath(EDIT_INVOICE_PAGE(Number(invoiceData.id)));
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(INVOICE_WORKSPACE_PAGE(Number(invoiceData.id)));
 
   return { ok: true, message: response.data.message };
 };
@@ -94,7 +101,7 @@ export const updateInvoiceStatusAction = async ({
 }: {
   userId: number;
   invoiceId: number;
-  newStatus: 'paid' | 'pending' | 'canceled';
+  newStatus: 'canceled';
 }): Promise<ActionResponseModel> => {
   const response = await updateInvoiceStatus({ userId, invoiceId, newStatus });
 
@@ -107,6 +114,7 @@ export const updateInvoiceStatusAction = async ({
   }
 
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
 
   return { ok: true, message: response.data.message };
 };
@@ -114,9 +122,46 @@ export const updateInvoiceStatusAction = async ({
 export const issueInvoiceAction = async (userId: number, invoiceId: number) => {
   const response = await issueInvoice(userId, invoiceId);
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
   return isResponseError(response)
     ? { ok: false, message: response.data.message }
     : { ok: true, message: response.data.message };
+};
+
+export const saveInvoicePaymentAction = async ({
+  userId,
+  invoiceId,
+  paymentId,
+  payment
+}: {
+  userId: number;
+  invoiceId: number;
+  paymentId?: number;
+  payment: InvoicePaymentBody;
+}) => {
+  const response = paymentId
+    ? await updateInvoicePayment(userId, invoiceId, paymentId, payment)
+    : await createInvoicePayment(userId, invoiceId, payment);
+  if (isResponseError(response))
+    return { ok: false, message: response.data.message };
+  revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
+  revalidatePath(INVOICES_PAGE);
+  revalidatePath('/dashboard');
+  return { ok: true, message: '' };
+};
+
+export const removeInvoicePaymentAction = async (
+  userId: number,
+  invoiceId: number,
+  paymentId: number
+) => {
+  const response = await deleteInvoicePayment(userId, invoiceId, paymentId);
+  if (isResponseError(response))
+    return { ok: false, message: response.data.message };
+  revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
+  revalidatePath(INVOICES_PAGE);
+  revalidatePath('/dashboard');
+  return { ok: true, message: response.data.message };
 };
 
 export const createRecipientDetailsRequestAction = async (

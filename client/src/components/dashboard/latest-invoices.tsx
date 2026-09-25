@@ -5,7 +5,10 @@ import { getLocale, getTranslations } from 'next-intl/server';
 
 import { getLatestInvoices } from '@/api/invoice';
 import EmptyState from '@/components/empty-state';
-import { ADD_NEW_INVOICE_PAGE, INVOICES_PAGE } from '@/lib/constants/pages';
+import {
+  ADD_NEW_INVOICE_PAGE,
+  INVOICE_WORKSPACE_PAGE,
+  INVOICES_PAGE} from '@/lib/constants/pages';
 import { Currency } from '@/lib/types/currency';
 import { getCurrencySymbol } from '@/lib/utils/currency';
 import { isResponseError } from '@/lib/utils/error';
@@ -89,7 +92,12 @@ const LatestInvoices = async ({ userId, currency }: Props) => {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="truncate text-sm font-medium">
-                          {invoice.name}
+                          <Link
+                            href={INVOICE_WORKSPACE_PAGE(invoice.id)}
+                            className="hover:underline"
+                          >
+                            {invoice.name}
+                          </Link>
                         </span>
                         <Chip
                           size="sm"

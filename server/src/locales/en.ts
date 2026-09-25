@@ -72,9 +72,10 @@ export default {
       client: 'Client',
       clientCode: 'Client code',
       services: 'Services / goods',
-      subtotal: 'Subtotal (%{currency})',
-      vatTotal: 'VAT total (%{currency})',
-      grandTotal: 'Grand total (%{currency})'
+      subtotal: 'Invoice subtotal (%{currency})',
+      vatTotal: 'Invoice VAT total (%{currency})',
+      grandTotal: 'Invoice total (%{currency})',
+      receivedAmount: 'Received amount (%{currency})'
     }
   },
   validation: {
@@ -227,6 +228,7 @@ export default {
       updated: 'Invoice updated successfully',
       deleted: 'Invoice deleted successfully',
       statusUpdated: 'Invoice status updated successfully',
+      paymentRemoved: 'Payment removed',
       emailSent: 'Email sent successfully',
       issued: 'Invoice issued successfully',
       recipientDetailsRequested: 'Recipient details request is ready',
@@ -315,6 +317,12 @@ export default {
       unableToUpdate: 'Unable to update invoice',
       unableToDelete: 'Unable to delete invoice',
       unableToUpdateStatus: 'Unable to update invoice status',
+      paymentRequiresIssued:
+        'Payments can only be recorded on an issued invoice',
+      paymentExceedsBalance: 'Payment exceeds the remaining balance',
+      paymentFutureDate: 'Payment date cannot be in the future',
+      paymentCancelBlocked:
+        'Remove or correct recorded payments before cancelling this invoice',
       unableToRetrieveData: 'Unable to retrieve invoice data',
       unableToSendEmail: 'Unable to send email',
       emailRequiresIssued: 'Issue this invoice before sending it by email.',

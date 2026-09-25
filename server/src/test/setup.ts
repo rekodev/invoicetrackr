@@ -60,7 +60,8 @@ vi.mock('../database/audit', () => ({
 }));
 
 vi.mock('../database/email-delivery', () => ({
-  recordEmailDeliveryInDb: mockRecordEmailDelivery
+  recordEmailDeliveryInDb: mockRecordEmailDelivery,
+  getInvoiceDeliveriesFromDb: vi.fn().mockResolvedValue([])
 }));
 
 beforeEach(() => {

@@ -74,9 +74,10 @@ export default {
       client: 'Pirkėjas',
       clientCode: 'Pirkėjo kodas',
       services: 'Paslaugos / prekės',
-      subtotal: 'Suma be PVM (%{currency})',
-      vatTotal: 'PVM suma (%{currency})',
-      grandTotal: 'Bendra suma (%{currency})'
+      subtotal: 'Sąskaitos suma be PVM (%{currency})',
+      vatTotal: 'Sąskaitos PVM suma (%{currency})',
+      grandTotal: 'Sąskaitos bendra suma (%{currency})',
+      receivedAmount: 'Gauta suma (%{currency})'
     }
   },
   validation: {
@@ -236,6 +237,7 @@ export default {
       updated: 'Sąskaita faktūra atnaujinta sėkmingai',
       deleted: 'Sąskaita faktūra ištrinta sėkmingai',
       statusUpdated: 'Sąskaitos faktūros būsena atnaujinta sėkmingai',
+      paymentRemoved: 'Mokėjimas pašalintas',
       emailSent: 'El. laiškas išsiųstas sėkmingai',
       issued: 'Sąskaita faktūra išrašyta sėkmingai',
       recipientDetailsRequested: 'Gavėjo duomenų užklausa paruošta',
@@ -324,6 +326,11 @@ export default {
       unableToUpdate: 'Nepavyko atnaujinti sąskaitos faktūros',
       unableToDelete: 'Nepavyko ištrinti sąskaitos faktūros',
       unableToUpdateStatus: 'Nepavyko atnaujinti sąskaitos faktūros būsenos',
+      paymentRequiresIssued: 'Mokėjimą galima įrašyti tik išrašytai sąskaitai',
+      paymentExceedsBalance: 'Mokėjimas viršija likusią sumą',
+      paymentFutureDate: 'Mokėjimo data negali būti ateityje',
+      paymentCancelBlocked:
+        'Prieš anuliuodami sąskaitą pašalinkite arba pataisykite mokėjimus',
       unableToRetrieveData: 'Nepavyko gauti sąskaitos faktūros duomenų',
       unableToSendEmail: 'Nepavyko išsiųsti el. laiško',
       emailRequiresIssued:

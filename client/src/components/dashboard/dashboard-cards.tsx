@@ -33,11 +33,11 @@ const DashboardCards = async ({ userId, currency }: Props) => {
     paid: number;
   }>(
     (acc, currentValue) => {
-      if (currentValue.status === 'paid') {
-        acc.paid += Number(currentValue.totalAmount);
-      } else if (currentValue.status === 'pending') {
-        acc.pending += Number(currentValue.totalAmount);
-      }
+      acc.paid += Number(currentValue.paidAmount);
+      acc.pending += Math.max(
+        0,
+        Number(currentValue.totalAmount) - Number(currentValue.paidAmount)
+      );
 
       return acc;
     },
