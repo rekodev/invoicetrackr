@@ -88,7 +88,7 @@ test.describe('invoices', () => {
 
     await invoiceForm.createDraft(invoice);
     const row = invoicesPage.rowFor(invoice.recipientName);
-    await row.getByRole('link', { name: 'View', exact: true }).click();
+    await row.getByRole('link', { name: 'Details' }).click();
     await expect(page).toHaveURL(/\/invoices\/\d+$/);
     await expect(
       page.getByRole('heading', { name: 'Draft invoice' })

@@ -26,6 +26,7 @@ import {
   ONBOARDING_PAGE
 } from '@/lib/constants/pages';
 
+import Breadcrumbs from './breadcrumbs';
 import LanguageSwitcher from './language-switcher';
 import MobileSidebar from './mobile-sidebar';
 import Sidebar from './sidebar';
@@ -154,7 +155,8 @@ export default function AuthenticatedShell({
               <Bars3Icon className="size-5" />
             </Button>
           ) : null}
-          <div className="ml-auto flex items-center gap-2">
+          {!isOnboarding ? <Breadcrumbs /> : null}
+          <div className="flex items-center gap-2">
             <LanguageSwitcher user={user} />
             <ThemeSwitcher />
             <Separator

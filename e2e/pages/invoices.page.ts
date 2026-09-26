@@ -17,7 +17,7 @@ export class InvoicesPage {
   async copyRecipientDetailsLink(recipientName: string) {
     const row = this.rowFor(recipientName);
 
-    await row.getByRole('link', { name: 'View', exact: true }).click();
+    await row.getByRole('link', { name: 'Details' }).click();
     await this.page
       .getByRole('button', { name: 'Request Recipient Details' })
       .click();
@@ -39,7 +39,7 @@ export class InvoicesPage {
 
   async openDraftForEditing(recipientName: string) {
     await this.rowFor(recipientName)
-      .getByRole('link', { name: 'View', exact: true })
+      .getByRole('link', { name: 'Details' })
       .click();
     await this.page.getByRole('link', { name: 'Edit draft' }).click();
     await expect(this.page).toHaveURL(/\/invoices\/edit\/\d+$/);
