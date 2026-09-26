@@ -28,6 +28,8 @@ import {
   invoiceSendersTable,
   invoiceServicesTable,
   invoicesTable,
+  paymentAllocationsTable,
+  paymentsTable,
   usersTable
 } from './schema';
 
@@ -990,36 +992,6 @@ export const updateInvoiceInDb = async (
   return updatedInvoice ?? null;
 };
 
-export async function updateInvoiceStatusInDb(
-  userId: number,
-  id: number,
-  status: 'paid' | 'pending' | 'canceled'
-): Promise<{ id: number } | undefined> {
-  const timestampUpdates =
-    status === 'paid'
-      ? {
-          paidAt: sql<string>`COALESCE(${invoicesTable.paidAt}, CURRENT_TIMESTAMP)`,
-          voidedAt: null
-        }
-      : status === 'canceled'
-        ? {
-            lifecycleStatus: 'voided',
-            paidAt: null,
-            voidedAt: new Date().toISOString(),
-            publicInvoiceRevokedAt: sql<string>`COALESCE(${invoicesTable.publicInvoiceRevokedAt}, CURRENT_TIMESTAMP)`,
-            recipientSigningRevokedAt: sql<string>`COALESCE(${invoicesTable.recipientSigningRevokedAt}, CURRENT_TIMESTAMP)`
-          }
-        : { paidAt: null, voidedAt: null };
-
-  const invoices = await db
-    .update(invoicesTable)
-    .set({ status, ...timestampUpdates, updatedAt: new Date().toISOString() })
-    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
-    .returning({ id: invoicesTable.id });
-
-  return invoices.at(0);
-}
-
 export const issueInvoiceInDb = async (
   userId: number,
   id: number
@@ -1554,15 +1526,32 @@ export const getInvoicesTotalAmountFromDb = async (userId: number) => {
       subtotalAmount: invoicesTable.subtotalAmount,
       vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
+      paidAmount: sql<string>`COALESCE(SUM(${paymentsTable.amount}), 0)::numeric(12,2)`,
       status: invoicesTable.status
     })
     .from(invoicesTable)
+    .leftJoin(
+      paymentAllocationsTable,
+      and(
+        eq(paymentAllocationsTable.invoiceId, invoicesTable.id),
+        eq(paymentAllocationsTable.userId, userId)
+      )
+    )
+    .leftJoin(
+      paymentsTable,
+      and(
+        eq(paymentsTable.id, paymentAllocationsTable.paymentId),
+        eq(paymentsTable.userId, userId),
+        isNull(paymentsTable.deletedAt)
+      )
+    )
     .where(
       and(
         eq(invoicesTable.userId, userId),
         eq(invoicesTable.lifecycleStatus, 'issued')
       )
-    );
+    )
+    .groupBy(invoicesTable.id);
 
   return invoices;
 };
@@ -1570,18 +1559,30 @@ export const getInvoicesTotalAmountFromDb = async (userId: number) => {
 export const getInvoicesRevenueFromDb = async (userId: number) => {
   const invoices = await db
     .select({
-      subtotalAmount: invoicesTable.subtotalAmount,
-      vatAmount: invoicesTable.vatAmount,
-      totalAmount: invoicesTable.totalAmount,
-      date: invoicesTable.date
+      amount: paymentsTable.amount,
+      paymentDate: paymentsTable.paymentDate
     })
-    .from(invoicesTable)
+    .from(paymentsTable)
+    .innerJoin(
+      paymentAllocationsTable,
+      and(
+        eq(paymentAllocationsTable.paymentId, paymentsTable.id),
+        eq(paymentAllocationsTable.userId, userId)
+      )
+    )
+    .innerJoin(
+      invoicesTable,
+      and(
+        eq(invoicesTable.id, paymentAllocationsTable.invoiceId),
+        eq(invoicesTable.userId, userId)
+      )
+    )
     .where(
       and(
-        eq(invoicesTable.userId, userId),
-        eq(invoicesTable.status, 'paid'),
+        eq(paymentsTable.userId, userId),
+        isNull(paymentsTable.deletedAt),
         eq(invoicesTable.lifecycleStatus, 'issued'),
-        gte(invoicesTable.date, sql`NOW() - INTERVAL '1 year'`)
+        gte(paymentsTable.paymentDate, sql`CURRENT_DATE - INTERVAL '1 year'`)
       )
     );
 
@@ -1624,11 +1625,9 @@ export const getIncomeJournalRowsFromDb = async ({
   from: string;
   to: string;
 }) => {
-  const effectivePaidAt = sql<string>`COALESCE(${invoicesTable.paidAt}, ${invoicesTable.date}::timestamp with time zone)`;
-
   return db
     .select({
-      paidAt: effectivePaidAt,
+      paidAt: paymentsTable.paymentDate,
       date: invoicesTable.date,
       invoiceId: invoicesTable.invoiceId,
       receiverName: invoiceReceiversTable.name,
@@ -1637,9 +1636,24 @@ export const getIncomeJournalRowsFromDb = async ({
       subtotalAmount: invoicesTable.subtotalAmount,
       vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
+      receivedAmount: paymentsTable.amount,
       currency: invoicesTable.currency
     })
-    .from(invoicesTable)
+    .from(paymentsTable)
+    .innerJoin(
+      paymentAllocationsTable,
+      and(
+        eq(paymentAllocationsTable.paymentId, paymentsTable.id),
+        eq(paymentAllocationsTable.userId, userId)
+      )
+    )
+    .innerJoin(
+      invoicesTable,
+      and(
+        eq(invoicesTable.id, paymentAllocationsTable.invoiceId),
+        eq(invoicesTable.userId, userId)
+      )
+    )
     .innerJoin(
       invoiceReceiversTable,
       eq(invoicesTable.receiverId, invoiceReceiversTable.id)
@@ -1650,17 +1664,18 @@ export const getIncomeJournalRowsFromDb = async ({
     )
     .where(
       and(
-        eq(invoicesTable.userId, userId),
-        eq(invoicesTable.status, 'paid'),
+        eq(paymentsTable.userId, userId),
+        isNull(paymentsTable.deletedAt),
         eq(invoicesTable.lifecycleStatus, 'issued'),
-        gte(effectivePaidAt, `${from}T00:00:00.000Z`),
-        lte(effectivePaidAt, `${to}T23:59:59.999Z`)
+        gte(paymentsTable.paymentDate, from),
+        lte(paymentsTable.paymentDate, to)
       )
     )
     .groupBy(
       invoicesTable.id,
       invoiceReceiversTable.id,
-      invoicesTable.currency
+      invoicesTable.currency,
+      paymentsTable.id
     )
-    .orderBy(effectivePaidAt, invoicesTable.id);
+    .orderBy(paymentsTable.paymentDate, invoicesTable.id, paymentsTable.id);
 };

@@ -29,6 +29,12 @@ import {
   updateInvoiceOptions,
   updateInvoiceStatusOptions
 } from '../options/invoice';
+import {
+  createInvoicePaymentOptions,
+  deleteInvoicePaymentOptions,
+  getInvoiceWorkspaceOptions,
+  updateInvoicePaymentOptions
+} from '../options/invoice-workspace';
 
 const invoiceRoutes = (
   fastify: FastifyInstance,
@@ -45,6 +51,22 @@ const invoiceRoutes = (
   fastify.get('/api/:userId/invoices/next-number', getNextInvoiceNumberOptions);
 
   fastify.get('/api/:userId/invoices/:id', getInvoiceOptions);
+  fastify.get(
+    '/api/:userId/invoices/:id/workspace',
+    getInvoiceWorkspaceOptions
+  );
+  fastify.post(
+    '/api/:userId/invoices/:id/payments',
+    createInvoicePaymentOptions
+  );
+  fastify.put(
+    '/api/:userId/invoices/:id/payments/:paymentId',
+    updateInvoicePaymentOptions
+  );
+  fastify.delete(
+    '/api/:userId/invoices/:id/payments/:paymentId',
+    deleteInvoicePaymentOptions
+  );
 
   fastify.post('/api/:userId/invoices', postInvoiceOptions);
 

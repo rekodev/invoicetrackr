@@ -7,7 +7,6 @@ import { ReactNode, Suspense } from 'react';
 import { getUser } from '@/api/user';
 import { auth } from '@/auth';
 import AuthenticatedShell from '@/components/layout/authenticated-shell';
-import Breadcrumbs from '@/components/layout/breadcrumbs';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
 import { isResponseError } from '@/lib/utils/error';
 
@@ -34,12 +33,11 @@ export default async function UserLayout({
   }
 
   const response = await getUser(Number(session.user.id));
-  if (isResponseError(response)) redirect(LOGIN_PAGE);
+  if (isResponseError(response)) throw new Error('Failed to load account');
 
   return (
     <AuthenticatedShell user={response.data.user}>
       <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col p-6 pb-12">
-        <Breadcrumbs />
         <Suspense fallback={<Loading />}>{children}</Suspense>
       </main>
     </AuthenticatedShell>

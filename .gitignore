@@ -15,6 +15,7 @@ test-results/
 
 # next.js
 .next/
+.next-e2e/
 out/
 
 # production

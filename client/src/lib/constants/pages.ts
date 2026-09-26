@@ -7,6 +7,8 @@ export const HOME_PAGE = '/';
 export const CREATE_INVOICE_PAGE = '/create-invoice';
 export const DASHBOARD_PAGE = '/dashboard';
 export const INVOICES_PAGE = '/invoices';
+export const INVOICE_WORKSPACE_PAGE = (invoiceId: number) =>
+  `/invoices/${invoiceId}`;
 export const ADD_NEW_INVOICE_PAGE = '/invoices/new';
 export const EDIT_INVOICE_PAGE = (invoiceId: number) =>
   `/invoices/edit/${invoiceId}`;

@@ -1,28 +1,17 @@
 'use client';
 
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
-import { Button, Table, useOverlayState } from '@heroui/react';
+import { Table } from '@heroui/react';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
-import useInvoiceTableActionHandlers from '@/lib/hooks/invoice/use-invoice-table-action-handlers';
-import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
-import { Currency } from '@/lib/types/currency';
 import type { SortDescriptor } from '@/lib/types/table';
 
-import DeleteInvoiceModal from './delete-invoice-modal';
-import InvoiceModal from './invoice-modal';
-import InvoiceMoreActionsMenu from './invoice-more-actions-menu';
 import InvoiceTableBottomContent from './invoice-table-bottom-content';
 import InvoiceTableCell from './invoice-table-cell';
 import InvoiceTableTopContent from './invoice-table-top-content';
-import IssueInvoiceModal from './issue-invoice-modal';
-import RecipientDetailsRequestModal from './recipient-details-request-modal';
-import SendInvoiceEmailModal from './send-invoice-email-modal';
 
-const ROWS_PER_PAGE = 10;
 const INITIAL_VISIBLE_COLUMNS = [
   'id',
   'date',
@@ -33,27 +22,10 @@ const INITIAL_VISIBLE_COLUMNS = [
   'actions'
 ];
 
-type Props = {
-  userId: number;
-  invoices: Array<InvoiceBody>;
-  currency: Currency;
-  language: string;
-  userPreferredInvoiceLanguage?: string;
-  isEmailVerified: boolean;
-};
+type Props = { invoices: Array<InvoiceBody>; userId: number };
 
-const InvoiceTable = ({
-  userId,
-  invoices,
-  currency,
-  language,
-  userPreferredInvoiceLanguage,
-  isEmailVerified
-}: Props) => {
+export default function InvoiceTable({ invoices, userId }: Props) {
   const t = useTranslations('invoices.table');
-  const tActions = useTranslations('invoices.cell.actions');
-  const pdfTranslator = useTranslations('invoices.pdf');
-
   const columns = useMemo(
     () => [
       { name: t('columns.id'), uid: 'id', sortable: true },
@@ -70,194 +42,69 @@ const InvoiceTable = ({
     ],
     [t]
   );
-
   const statusOptions = [
     { name: t('status.paid'), uid: 'paid' },
     { name: t('status.canceled'), uid: 'canceled' },
     { name: t('status.pending'), uid: 'pending' }
   ];
-
-  const { isOpen, open: onOpen, setOpen: onOpenChange } = useOverlayState();
-  const [currentInvoice, setCurrentInvoice] = useState<InvoiceBody>();
-
   const [filterValue, setFilterValue] = useState('');
   const [visibleColumns, setVisibleColumns] = useState<Set<string> | 'all'>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
   const [statusFilter, setStatusFilter] = useState('all');
-  const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'date',
     direction: 'descending'
   });
   const [page, setPage] = useState(1);
-
-  const defaultInvoiceLanguage = userPreferredInvoiceLanguage || language;
-  const [invoiceLanguage, setInvoiceLanguage] = useState(
-    defaultInvoiceLanguage
-  );
-
-  const {
-    handleViewInvoice,
-    handleEditInvoice,
-    handleDeleteInvoice,
-    isDeleteInvoiceModalOpen,
-    handleCloseDeleteInvoiceModal,
-    isSendInvoiceEmailModalOpen,
-    handleCloseSendInvoiceEmailModal,
-    handleSendInvoiceEmail,
-    handleRequestRecipientDetails,
-    isRecipientDetailsModalOpen,
-    handleCloseRecipientDetailsModal
-  } = useInvoiceTableActionHandlers({ setCurrentInvoice, onOpen });
-
-  const handleViewInvoiceWithSavedLanguage = useCallback(
-    (invoice: InvoiceBody) => {
-      setInvoiceLanguage(
-        invoice.documentLanguage || defaultInvoiceLanguage
-      );
-      handleViewInvoice(invoice);
-    },
-    [defaultInvoiceLanguage, handleViewInvoice]
-  );
-
-  const invoiceCurrency = currentInvoice?.currency || currency;
-  const savedInvoiceLanguage =
-    currentInvoice?.documentLanguage || defaultInvoiceLanguage;
-
-  const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
-    currency: invoiceCurrency,
-    defaultTranslator: pdfTranslator,
-    invoiceLanguage,
-    invoiceData: currentInvoice,
-    senderSignatureImage: currentInvoice?.senderSignature as string,
-    receiverSignatureImage: currentInvoice?.receiverSignature as string
-  });
-
-  const { pdfDocument: emailPdfDocument } = useDynamicPdf({
-    currency: invoiceCurrency,
-    defaultTranslator: pdfTranslator,
-    invoiceLanguage: savedInvoiceLanguage,
-    invoiceData: isSendInvoiceEmailModalOpen ? currentInvoice : undefined,
-    senderSignatureImage: currentInvoice?.senderSignature as string,
-    receiverSignatureImage: currentInvoice?.receiverSignature as string,
-    generatePdfUrl: false
-  });
-
-  const hasSearchFilter = Boolean(filterValue);
-
-  const headerColumns = useMemo(() => {
-    if (visibleColumns === 'all') return columns;
-
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
-  }, [visibleColumns, columns]);
-
-  const filteredItems = useMemo(() => {
-    if (!invoices) return [];
-
-    let filteredInvoices = [...invoices];
-
-    if (hasSearchFilter) {
-      filteredInvoices = filteredInvoices.filter((invoice) =>
-        (invoice.invoiceId || '')
-          .toString()
+  const headerColumns =
+    visibleColumns === 'all'
+      ? columns
+      : columns.filter((column) => visibleColumns.has(column.uid));
+  const filtered = invoices.filter(
+    (invoice) =>
+      (!filterValue ||
+        `${invoice.invoiceId || ''} ${invoice.receiver.name}`
           .toLowerCase()
-          .includes(filterValue.toLowerCase())
-      );
-    }
-    if (
-      statusFilter !== 'all' &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredInvoices = filteredInvoices.filter((invoice) =>
-        Array.from(statusFilter).includes(invoice.status)
-      );
-    }
-
-    return filteredInvoices;
-  }, [
-    filterValue,
-    statusFilter,
-    hasSearchFilter,
-    invoices,
-    statusOptions.length
-  ]);
-
-  const pages =
-    filteredItems.length === 0 || !filteredItems
-      ? 1
-      : Math.ceil(filteredItems.length / rowsPerPage);
-
-  const items = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return filteredItems?.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
-
-  const sortedItems = useMemo(() => {
-    if (!items) return [];
-
-    return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column as 'date'];
-      const second = b[sortDescriptor.column as 'date'];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === 'descending' ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
-
-  const renderTopContent = () => (
-    <InvoiceTableTopContent
-      userId={userId}
-      columns={columns}
-      statusOptions={statusOptions}
-      filterValue={filterValue}
-      setFilterValue={setFilterValue}
-      visibleColumns={visibleColumns}
-      setPage={setPage}
-      setRowsPerPage={setRowsPerPage}
-      setStatusFilter={setStatusFilter}
-      setVisibleColumns={setVisibleColumns}
-      statusFilter={statusFilter}
-      invoicesLength={invoices?.length}
-    />
+          .includes(filterValue.toLowerCase())) &&
+      (statusFilter === 'all' ||
+        Array.from(statusFilter).includes(invoice.status))
   );
-
-  const renderBottomContent = () => (
-    <InvoiceTableBottomContent
-      page={page}
-      setPage={setPage}
-      pages={pages}
-      rowsPerPage={rowsPerPage}
-      filteredItemsLength={filteredItems?.length}
-    />
-  );
-
-  const renderEmptyContent = () => {
-    if (!invoices.length)
-      return (
-        <EmptyState
-          className="min-h-[360px]"
-          title={t('empty_state.title')}
-          description={t('empty_state.description')}
-        />
-      );
-
-    return (
-      <EmptyState
-        className="min-h-[360px]"
-        title={t('empty_state.no_results_title')}
-        description={t('empty_state.no_results_description')}
-      />
+  const sorted = [...filtered].sort((a, b) => {
+    const field = sortDescriptor.column;
+    const first = String(
+      field === 'receiver'
+        ? a.receiver.name
+        : (a[field as keyof InvoiceBody] ?? '')
     );
-  };
+    const second = String(
+      field === 'receiver'
+        ? b.receiver.name
+        : (b[field as keyof InvoiceBody] ?? '')
+    );
+    const order = first.localeCompare(second, undefined, { numeric: true });
+    return sortDescriptor.direction === 'descending' ? -order : order;
+  });
+  const pages = Math.max(1, Math.ceil(sorted.length / rowsPerPage));
+  const items = sorted.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   return (
     <section className="flex max-w-full flex-col gap-4 overflow-x-hidden">
-      {renderTopContent()}
+      <InvoiceTableTopContent
+        userId={userId}
+        columns={columns}
+        statusOptions={statusOptions}
+        filterValue={filterValue}
+        setFilterValue={setFilterValue}
+        visibleColumns={visibleColumns}
+        setVisibleColumns={setVisibleColumns}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
+        invoicesLength={invoices.length}
+      />
       <Table variant="secondary">
         <Table.ScrollContainer className="w-full max-w-full overflow-x-auto">
           <Table.Content
@@ -269,9 +116,9 @@ const InvoiceTable = ({
             <Table.Header>
               {headerColumns.map((column, index) => (
                 <Table.Column
-                  isRowHeader={index === 0}
                   key={column.uid}
                   id={column.uid}
+                  isRowHeader={index === 0}
                   allowsSorting={column.sortable}
                 >
                   {column.name}
@@ -279,21 +126,14 @@ const InvoiceTable = ({
               ))}
             </Table.Header>
             <Table.Body>
-              {sortedItems.length ? (
-                sortedItems.map((item) => (
-                  <Table.Row key={item.id} id={String(item.id)}>
+              {items.length ? (
+                items.map((invoice) => (
+                  <Table.Row key={invoice.id} id={String(invoice.id)}>
                     {headerColumns.map((column) => (
                       <Table.Cell key={column.uid}>
                         <InvoiceTableCell
-                          userId={userId}
-                          currency={currency}
-                          invoice={item}
+                          invoice={invoice}
                           columnKey={column.uid}
-                          onSendEmail={handleSendInvoiceEmail}
-                          onView={handleViewInvoiceWithSavedLanguage}
-                          onEdit={handleEditInvoice}
-                          onDelete={handleDeleteInvoice}
-                          onRequestDetails={handleRequestRecipientDetails}
                         />
                       </Table.Cell>
                     ))}
@@ -302,7 +142,19 @@ const InvoiceTable = ({
               ) : (
                 <Table.Row id="empty">
                   <Table.Cell colSpan={headerColumns.length}>
-                    {renderEmptyContent()}
+                    <EmptyState
+                      className="min-h-[360px]"
+                      title={t(
+                        invoices.length
+                          ? 'empty_state.no_results_title'
+                          : 'empty_state.title'
+                      )}
+                      description={t(
+                        invoices.length
+                          ? 'empty_state.no_results_description'
+                          : 'empty_state.description'
+                      )}
+                    />
                   </Table.Cell>
                 </Table.Row>
               )}
@@ -310,93 +162,13 @@ const InvoiceTable = ({
           </Table.Content>
         </Table.ScrollContainer>
       </Table>
-      {renderBottomContent()}
-
-      {currentInvoice && (
-        <InvoiceModal
-          invoiceLanguage={invoiceLanguage}
-          setInvoiceLanguage={setInvoiceLanguage}
-          userPreferredInvoiceLanguage={userPreferredInvoiceLanguage}
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-          invoiceData={currentInvoice}
-          pdfDocument={pdfDocument}
-          pdfUrl={pdfUrl}
-          isPdfDocumentLoading={isPdfDocumentLoading}
-          showFooterStatus
-          actions={
-            <>
-              {(currentInvoice.lifecycleStatus || 'draft') === 'draft' ? (
-                <IssueInvoiceModal
-                  userId={userId}
-                  invoiceData={currentInvoice}
-                  triggerVariant="button"
-                  onIssued={() => onOpenChange(false)}
-                />
-              ) : null}
-              {(currentInvoice.lifecycleStatus || 'draft') === 'issued' ? (
-                <Button
-                  size="sm"
-                  variant="primary"
-                  className="w-full whitespace-nowrap sm:w-auto"
-                  onPress={() => {
-                    onOpenChange(false);
-                    handleSendInvoiceEmail(currentInvoice);
-                  }}
-                >
-                  <PaperAirplaneIcon className="h-4 w-4" />
-                  {tActions('send_email')}
-                </Button>
-              ) : null}
-              <InvoiceMoreActionsMenu
-                invoice={currentInvoice}
-                showLabel
-                onRequestDetails={(invoice) => {
-                  onOpenChange(false);
-                  handleRequestRecipientDetails(invoice);
-                }}
-                onEdit={handleEditInvoice}
-                onDelete={(invoice) => {
-                  onOpenChange(false);
-                  handleDeleteInvoice(invoice);
-                }}
-              />
-            </>
-          }
-        />
-      )}
-      {currentInvoice && (
-        <DeleteInvoiceModal
-          userId={userId}
-          invoiceData={currentInvoice}
-          isOpen={isDeleteInvoiceModalOpen}
-          onClose={handleCloseDeleteInvoiceModal}
-        />
-      )}
-      {currentInvoice && emailPdfDocument && (
-        <SendInvoiceEmailModal
-          pdfDocument={emailPdfDocument}
-          isOpen={isSendInvoiceEmailModalOpen}
-          onClose={handleCloseSendInvoiceEmailModal}
-          invoice={currentInvoice}
-          currency={invoiceCurrency}
-          userId={userId}
-          isEmailVerified={isEmailVerified}
-        />
-      )}
-      {currentInvoice && (
-        <RecipientDetailsRequestModal
-          key={`${currentInvoice.id}-${currentInvoice.receiver.email || ''}`}
-          userId={userId}
-          invoice={currentInvoice}
-          isOpen={isRecipientDetailsModalOpen}
-          onOpenChange={(open) => {
-            if (!open) handleCloseRecipientDetailsModal();
-          }}
-        />
-      )}
+      <InvoiceTableBottomContent
+        page={page}
+        setPage={setPage}
+        pages={pages}
+        rowsPerPage={rowsPerPage}
+        filteredItemsLength={filtered.length}
+      />
     </section>
   );
-};
-
-export default InvoiceTable;
+}

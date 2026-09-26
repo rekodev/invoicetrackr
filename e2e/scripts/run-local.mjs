@@ -11,14 +11,15 @@ const composeArgs = [
 ];
 const environment = {
   ...process.env,
-  APP_BASE_URL: 'http://127.0.0.1:3100',
+  API_RATE_LIMIT_MAX: '1000',
+  APP_BASE_URL: 'http://localhost:3100',
   AUTH_SECRET: 'invoicetrackr-e2e-auth-secret-32-chars',
-  AUTH_URL: 'http://127.0.0.1:3100',
+  AUTH_URL: 'http://localhost:3100',
   DATABASE_DRIVER: 'pg',
   DATABASE_URL:
     'postgresql://invoicetrackr:invoicetrackr@127.0.0.1:55432/invoicetrackr_e2e',
-  E2E_BASE_URL: 'http://127.0.0.1:3100',
-  NEXT_PUBLIC_BASE_URL: 'http://127.0.0.1:3100',
+  E2E_BASE_URL: 'http://localhost:3100',
+  NEXT_PUBLIC_BASE_URL: 'http://localhost:3100',
   NODE_ENV: 'development',
   RESEND_EMAIL_API_KEY: 're_e2e_placeholder',
   SERVER_PORT: '5100'

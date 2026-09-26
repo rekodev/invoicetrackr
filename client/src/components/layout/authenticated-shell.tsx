@@ -26,6 +26,7 @@ import {
   ONBOARDING_PAGE
 } from '@/lib/constants/pages';
 
+import Breadcrumbs from './breadcrumbs';
 import LanguageSwitcher from './language-switcher';
 import MobileSidebar from './mobile-sidebar';
 import Sidebar from './sidebar';
@@ -138,7 +139,7 @@ export default function AuthenticatedShell({
       <div className="min-w-0 flex-1">
         <header
           className={cn(
-            'border-default-200 bg-background/90 sticky top-0 z-40 flex h-16 items-center border-b px-4 backdrop-blur md:justify-end md:px-6',
+            'border-default-200 bg-background/90 sticky top-0 z-40 flex h-16 items-center gap-4 border-b px-4 backdrop-blur md:px-6',
             isOnboarding ? 'justify-end' : 'justify-between'
           )}
         >
@@ -154,6 +155,7 @@ export default function AuthenticatedShell({
               <Bars3Icon className="size-5" />
             </Button>
           ) : null}
+          {!isOnboarding ? <Breadcrumbs /> : null}
           <div className="flex items-center gap-2">
             <LanguageSwitcher user={user} />
             <ThemeSwitcher />

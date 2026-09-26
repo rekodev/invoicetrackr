@@ -17,18 +17,18 @@ export class InvoicesPage {
   async copyRecipientDetailsLink(recipientName: string) {
     const row = this.rowFor(recipientName);
 
-    await row.getByRole('button', { name: 'More Actions' }).click();
+    await row.getByRole('link', { name: 'Details' }).click();
     await this.page
-      .getByRole('menuitem', { name: 'Request Recipient Details' })
+      .getByRole('button', { name: 'Request Recipient Details' })
       .click();
     await expect(
       this.page.getByRole('heading', { name: 'Request Recipient Details' })
     ).toBeVisible();
     await this.page.getByRole('button', { name: 'Copy Link' }).click();
 
-    await expect.poll(() => this.readClipboard()).toMatch(
-      /\/invoices\/details\/[a-f0-9]+$/
-    );
+    await expect
+      .poll(() => this.readClipboard())
+      .toMatch(/\/invoices\/details\/[a-f0-9]+$/);
 
     return this.readClipboard();
   }
@@ -39,9 +39,9 @@ export class InvoicesPage {
 
   async openDraftForEditing(recipientName: string) {
     await this.rowFor(recipientName)
-      .getByRole('button', { name: 'More Actions' })
+      .getByRole('link', { name: 'Details' })
       .click();
-    await this.page.getByRole('menuitem', { name: 'Edit Invoice' }).click();
+    await this.page.getByRole('link', { name: 'Edit draft' }).click();
     await expect(this.page).toHaveURL(/\/invoices\/edit\/\d+$/);
   }
 

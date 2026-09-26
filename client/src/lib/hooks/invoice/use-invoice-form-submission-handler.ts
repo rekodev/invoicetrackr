@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import type { SubmitHandler, UseFormSetError } from 'react-hook-form';
 
 import { addInvoiceAction, updateInvoiceAction } from '@/lib/actions/invoice';
-import { INVOICES_PAGE } from '@/lib/constants/pages';
+import { INVOICE_WORKSPACE_PAGE,INVOICES_PAGE } from '@/lib/constants/pages';
 import { calculateInvoiceTotals } from '@/lib/utils';
 
 type Props = {
@@ -80,7 +80,9 @@ const useInvoiceFormSubmissionHandler = ({
     }
 
     onSuccess?.();
-    redirectToInvoicesPage();
+    if (invoiceData?.id)
+      router.push(INVOICE_WORKSPACE_PAGE(Number(invoiceData.id)));
+    else redirectToInvoicesPage();
   };
 
   return { onSubmit, redirectToInvoicesPage };

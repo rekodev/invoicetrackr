@@ -10,7 +10,7 @@ export default function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
 
   const icon =
-    theme === 'light' ? (
+    mounted && theme === 'light' ? (
       <MoonIcon className="h-5 w-5" />
     ) : (
       <SunIcon className="h-5 w-5" />

@@ -10,6 +10,9 @@ import type {
   GetPublicInvoiceResponse,
   GetPublicInvoiceSigningResponse,
   GetRecipientDetailsResponse,
+  InvoicePaymentBody,
+  InvoicePaymentResponse,
+  InvoiceWorkspaceResponse,
   IssueInvoiceResponse,
   RecipientDetailsRequestResponse,
   RegenerateInvoiceSigningLinkResponse,
@@ -30,6 +33,41 @@ import api from './api-instance';
 
 export const getInvoice = async (userId: number, invoiceId: number) =>
   await api.get<GetInvoiceResponse>(`/api/${userId}/invoices/${invoiceId}`);
+
+export const getInvoiceWorkspace = (userId: number, invoiceId: number) =>
+  api.get<InvoiceWorkspaceResponse>(
+    `/api/${userId}/invoices/${invoiceId}/workspace`
+  );
+
+export const createInvoicePayment = (
+  userId: number,
+  invoiceId: number,
+  payment: InvoicePaymentBody
+) =>
+  api.post<InvoicePaymentResponse>(
+    `/api/${userId}/invoices/${invoiceId}/payments`,
+    payment
+  );
+
+export const updateInvoicePayment = (
+  userId: number,
+  invoiceId: number,
+  paymentId: number,
+  payment: InvoicePaymentBody
+) =>
+  api.put<InvoicePaymentResponse>(
+    `/api/${userId}/invoices/${invoiceId}/payments/${paymentId}`,
+    payment
+  );
+
+export const deleteInvoicePayment = (
+  userId: number,
+  invoiceId: number,
+  paymentId: number
+) =>
+  api.delete<{ message: string }>(
+    `/api/${userId}/invoices/${invoiceId}/payments/${paymentId}`
+  );
 
 export const issueInvoice = (userId: number, invoiceId: number) =>
   api.post<IssueInvoiceResponse>(`/api/${userId}/invoices/${invoiceId}/issue`);
@@ -161,7 +199,7 @@ export const updateInvoiceStatus = async ({
 }: {
   userId: number;
   invoiceId: number;
-  newStatus: 'paid' | 'pending' | 'canceled';
+  newStatus: 'canceled';
 }) =>
   api.put<UpdateInvoiceStatusResponse>(
     `/api/${userId}/invoices/${invoiceId}/status`,

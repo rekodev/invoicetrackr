@@ -56,7 +56,7 @@ const Breadcrumbs = () => {
     return null;
 
   return (
-    <HeroUIBreadcrumbs className="pb-6" isDisabled>
+    <HeroUIBreadcrumbs className="min-w-0 flex-1 overflow-hidden">
       {renderBreadcrumbs()}
     </HeroUIBreadcrumbs>
   );
