@@ -7,8 +7,7 @@ import {
   Input,
   type Key,
   Label,
-  ListBox,
-  Spinner
+  ListBox
 } from '@heroui/react';
 import type { CompanyLookupResult } from '@invoicetrackr/types';
 import Image from 'next/image';
@@ -46,10 +45,6 @@ const CompanyLookupPanel = ({
   const t = useTranslations('company_lookup');
   const [results, setResults] = useState<CompanyLookupResult[]>([]);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
-  const [status, setStatus] = useState<
-    'idle' | 'loading' | 'success' | 'error'
-  >('idle');
-  const [lookupError, setLookupError] = useState('');
   const requestIdRef = useRef(0);
   const trimmedQuery = value.trim();
 
@@ -59,9 +54,6 @@ const CompanyLookupPanel = ({
     if (trimmedQuery.length < MIN_QUERY_LENGTH || selectedCode) return;
 
     const timeout = window.setTimeout(async () => {
-      setStatus('loading');
-      setLookupError('');
-
       const response = await searchCompanyLookupsAction({
         userId,
         query: trimmedQuery
@@ -71,13 +63,10 @@ const CompanyLookupPanel = ({
 
       if (!response.ok) {
         setResults([]);
-        setLookupError(response.message);
-        setStatus('error');
         return;
       }
 
       setResults(response.results);
-      setStatus('success');
     }, SEARCH_DELAY_MS);
 
     return () => window.clearTimeout(timeout);
@@ -85,9 +74,8 @@ const CompanyLookupPanel = ({
 
   const handleInputChange = (nextValue: string) => {
     requestIdRef.current += 1;
+    setResults([]);
     setSelectedCode(null);
-    setLookupError('');
-    setStatus(nextValue.trim().length < MIN_QUERY_LENGTH ? 'idle' : 'loading');
     onInputChange(nextValue);
   };
 
@@ -101,34 +89,7 @@ const CompanyLookupPanel = ({
 
     requestIdRef.current += 1;
     setSelectedCode(result.companyCode);
-    setLookupError('');
-    setStatus('success');
     onApply(result);
-  };
-
-  const renderEmptyState = () => {
-    if (status === 'loading') {
-      return (
-        <div className="text-muted flex items-center justify-center gap-2 p-4 text-sm">
-          <Spinner size="sm" />
-          <span>{t('loading')}</span>
-        </div>
-      );
-    }
-
-    if (status === 'error') {
-      return (
-        <p role="alert" className="text-danger wrap-break-word p-4 text-sm">
-          {lookupError}
-        </p>
-      );
-    }
-
-    return (
-      <p className="text-muted p-4 text-sm">
-        {trimmedQuery.length < MIN_QUERY_LENGTH ? t('min_chars') : t('empty')}
-      </p>
-    );
   };
 
   return (
@@ -172,36 +133,38 @@ const CompanyLookupPanel = ({
           />
           <ComboBox.Trigger />
         </ComboBox.InputGroup>
-        <ComboBox.Popover className="w-(--trigger-width) max-w-(--trigger-width)">
-          <div className="text-muted border-b px-3 py-2 text-xs font-medium uppercase tracking-wide">
-            {t('results_header')}
-          </div>
-          <ListBox renderEmptyState={renderEmptyState}>
-            {results.map((result) => (
-              <ListBox.Item
-                key={result.companyCode}
-                id={result.companyCode}
-                textValue={`${result.legalName} ${result.companyCode}`}
-              >
-                <span className="bg-background-secondary flex size-9 shrink-0 items-center justify-center rounded-full">
-                  <BuildingOffice2Icon className="size-5" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <Label className="block truncate">{result.legalName}</Label>
-                  <span className="text-muted block truncate text-sm">
-                    {t('result_details', {
-                      companyCode: result.companyCode,
-                      vatNumber: result.vatNumber || t('no_vat')
-                    })}
-                    {' · '}
-                    {t('provider_short')}
+        {results.length > 0 ? (
+          <ComboBox.Popover className="w-(--trigger-width) max-w-(--trigger-width)">
+            <div className="text-muted border-b px-3 py-2 text-xs font-medium uppercase tracking-wide">
+              {t('results_header')}
+            </div>
+            <ListBox>
+              {results.map((result) => (
+                <ListBox.Item
+                  key={result.companyCode}
+                  id={result.companyCode}
+                  textValue={`${result.legalName} ${result.companyCode}`}
+                >
+                  <span className="bg-background-secondary flex size-9 shrink-0 items-center justify-center rounded-full">
+                    <BuildingOffice2Icon className="size-5" />
                   </span>
-                </span>
-                <ListBox.ItemIndicator />
-              </ListBox.Item>
-            ))}
-          </ListBox>
-        </ComboBox.Popover>
+                  <span className="min-w-0 flex-1">
+                    <Label className="block truncate">{result.legalName}</Label>
+                    <span className="text-muted block truncate text-sm">
+                      {t('result_details', {
+                        companyCode: result.companyCode,
+                        vatNumber: result.vatNumber || t('no_vat')
+                      })}
+                      {' · '}
+                      {t('provider_short')}
+                    </span>
+                  </span>
+                  <ListBox.ItemIndicator />
+                </ListBox.Item>
+              ))}
+            </ListBox>
+          </ComboBox.Popover>
+        ) : null}
         {errorMessage ? <FieldError>{errorMessage}</FieldError> : null}
       </ComboBox>
     </div>

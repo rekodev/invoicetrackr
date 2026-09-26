@@ -257,7 +257,7 @@ describe('<ClientFormDialog />', () => {
     expect(screen.getByLabelText(/Address/i)).toHaveValue('');
     expect(screen.getByLabelText(/Email/i)).toHaveValue('billing@example.com');
     expect(
-      screen.getByText(/Enter the registered address manually/)
-    ).toBeVisible();
+      screen.queryByText(/Enter the registered address manually/)
+    ).not.toBeInTheDocument();
   });
 });

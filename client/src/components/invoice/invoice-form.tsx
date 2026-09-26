@@ -123,7 +123,6 @@ const InvoiceForm = ({
   bankingInformationEntries
 }: Props) => {
   const t = useTranslations('components.invoice_form');
-  const tLookup = useTranslations('company_lookup');
   const locale = useLocale();
   const today = formatDate(new Date().toISOString());
   const defaultPaymentTermsDays = user.defaultPaymentTermsDays || 30;
@@ -292,10 +291,6 @@ const InvoiceForm = ({
     });
     setValue('receiver.address', '', { shouldDirty: true });
     clearErrors('receiver');
-    setError('receiver.address', {
-      type: 'manual',
-      message: tLookup('address_required')
-    });
   };
 
   const handlePaymentMethodSelect = (selection: PaymentMethodSelection) => {

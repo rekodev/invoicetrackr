@@ -131,7 +131,7 @@ describe('invoice company lookup', () => {
       'billing@example.com'
     );
     expect(
-      screen.getByText(/Enter the registered address manually/)
-    ).toBeVisible();
+      screen.queryByText(/Enter the registered address manually/)
+    ).not.toBeInTheDocument();
   });
 });

@@ -64,8 +64,7 @@ describe('<CompanyLookupPanel />', () => {
     expect(searchCompanyLookupsAction).not.toHaveBeenCalled();
 
     await act(async () => {
-      vi.advanceTimersByTime(500);
-      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(500);
     });
 
     expect(searchCompanyLookupsAction).toHaveBeenCalledWith({
@@ -97,18 +96,15 @@ describe('<CompanyLookupPanel />', () => {
       target: { value: 'first' }
     });
     await act(async () => {
-      vi.advanceTimersByTime(500);
-      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(500);
     });
     fireEvent.change(screen.getByRole('combobox'), {
       target: { value: 'second' }
     });
     await act(async () => {
-      vi.advanceTimersByTime(500);
-      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(500);
     });
-    fireEvent.click(screen.getByRole('button', { name: /Show suggestions/i }));
-    expect(screen.getByText(/No active companies matched/)).toBeVisible();
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
 
     await act(async () => {
       resolveFirst({ ok: true, results: [result] });
@@ -117,7 +113,7 @@ describe('<CompanyLookupPanel />', () => {
     expect(screen.queryByText('Ąžuolas UAB')).not.toBeInTheDocument();
   });
 
-  it('keeps manual entry available for provider errors', async () => {
+  it('keeps manual entry available and fails silently for provider errors', async () => {
     vi.mocked(searchCompanyLookupsAction).mockResolvedValue({
       ok: false,
       message: 'Company lookup is temporarily unavailable.'
@@ -128,13 +124,12 @@ describe('<CompanyLookupPanel />', () => {
       target: { value: 'ąžuolas' }
     });
     await act(async () => {
-      vi.advanceTimersByTime(500);
-      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(500);
     });
-    fireEvent.click(screen.getByRole('button', { name: /Show suggestions/i }));
-
+    expect(screen.getByRole('combobox')).toHaveValue('ąžuolas');
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     expect(
-      screen.getByText('Company lookup is temporarily unavailable.')
-    ).toBeVisible();
+      screen.queryByText('Company lookup is temporarily unavailable.')
+    ).not.toBeInTheDocument();
   });
 });

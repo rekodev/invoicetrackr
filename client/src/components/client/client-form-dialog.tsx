@@ -144,10 +144,6 @@ const ClientFormDialog = ({
     setValue('vatNumber', result.vatNumber || '', { shouldDirty: true });
     setValue('address', '', { shouldDirty: true });
     clearErrors(['name', 'businessNumber', 'vatNumber', 'address']);
-    setError('address', {
-      type: 'manual',
-      message: tLookup('address_required')
-    });
     setDuplicateWarning(undefined);
   };
 
