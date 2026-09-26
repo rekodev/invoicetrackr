@@ -79,19 +79,13 @@ describe('invoice email reservations', () => {
     expect(mockInsert).not.toHaveBeenCalled();
   });
 
-  it('refuses safe recovery after the provider window expired', async () => {
-    results.push([invoice], [{ ...existing, recoveryExpiresAt: '2026-09-26T09:59:00Z' }]);
+  it('requires an explicitly confirmed new attempt after the recovery window expires', async () => {
+    const expired = { ...existing, recoveryExpiresAt: '2026-09-26T09:59:00Z' };
+    results.push([invoice], [expired]);
     await expect(reserveInvoiceEmailAttemptInDb({ userId: 2, invoiceId: 7, deliveryId: 9 })).rejects.toThrow('email-recovery-expired');
     expect(mockUpdate).not.toHaveBeenCalled();
-  });
-
-  it('requires confirmation to replace an expired unknown send', async () => {
-    results.push([invoice], [], [{ ...existing, recoveryExpiresAt: '2026-09-26T09:59:00Z' }]);
+    results.push([invoice], [], [expired]);
     await expect(reserveInvoiceEmailAttemptInDb({ ...request, replacesDeliveryId: 9 })).rejects.toThrow('email-unresolved-attempt');
-  });
-
-  it('preserves old uncertainty and creates a new attempt only after confirmation', async () => {
-    const expired = { ...existing, recoveryExpiresAt: '2026-09-26T09:59:00Z' };
     results.push([invoice], [], [expired], [expired]);
     expect(await reserveInvoiceEmailAttemptInDb({ ...request, replacesDeliveryId: 9, confirmPossibleDuplicate: true })).toMatchObject({ claimed: true });
     expect(mockUpdate).toHaveBeenCalledTimes(1);

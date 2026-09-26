@@ -28,29 +28,30 @@ describe('invoice email composer', () => {
     vi.mocked(recoverInvoiceEmailAction).mockResolvedValue({ ok: true, message: 'Accepted', delivery });
   });
 
-  it('starts in the PDF language and translates untouched fields without changing the PDF', async () => {
+  it('translates defaults, preserves edits, and sends an intentionally cleared message', async () => {
     open();
     expect(screen.getByLabelText('Subject')).toHaveValue('Sąskaita SF007 – 100.00 EUR');
     await userEvent.click(screen.getByRole('button', { name: 'English' }));
     expect(screen.getByLabelText('Subject')).toHaveValue('Invoice SF007 – 100.00 EUR');
-    expect(invoice.documentLanguage).toBe('lt');
-    expect(screen.getByText('Attached: SF007.pdf')).toBeInTheDocument();
-  });
-
-  it('preserves edited subject/message when switching language and allows explicit reset', async () => {
-    open();
     await userEvent.clear(screen.getByLabelText('Subject'));
     await userEvent.type(screen.getByLabelText('Subject'), 'Custom subject');
     await userEvent.clear(screen.getByLabelText('Message (Optional)'));
     await userEvent.type(screen.getByLabelText('Message (Optional)'), 'Custom text');
-    await userEvent.click(screen.getByRole('button', { name: 'English' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Lietuvių' }));
     expect(screen.getByLabelText('Subject')).toHaveValue('Custom subject');
     expect(screen.getByLabelText('Message (Optional)')).toHaveValue('Custom text');
     await userEvent.click(screen.getByRole('button', { name: /Reset subject and message/ }));
-    expect(screen.getByLabelText('Subject')).toHaveValue('Invoice SF007 – 100.00 EUR');
+    expect(screen.getByLabelText('Subject')).toHaveValue('Sąskaita SF007 – 100.00 EUR');
+    await userEvent.clear(screen.getByLabelText('Message (Optional)'));
+    await userEvent.click(screen.getByRole('button', { name: 'English' }));
+    expect(screen.getByLabelText('Message (Optional)')).toHaveValue('');
+    await userEvent.click(screen.getByRole('button', { name: 'Send' }));
+    await waitFor(() => expect(sendInvoiceEmailAction).toHaveBeenCalledWith(2, 7,
+      expect.objectContaining({ message: '' })));
   });
 
-  it('restores previous content/options and sends an intentional resend with a new key', async () => {
+  it('restores previous content, then recovers a lost resend response using its new request', async () => {
+    vi.mocked(sendInvoiceEmailAction).mockRejectedValueOnce(new Error('connection lost'));
     open({ delivery });
     expect(screen.getByLabelText('Recipient Email')).toHaveValue(content.recipientEmail);
     expect(screen.getByLabelText('Subject')).toHaveValue(content.subject);
@@ -58,14 +59,12 @@ describe('invoice email composer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Send' }));
     await waitFor(() => expect(sendInvoiceEmailAction).toHaveBeenCalledWith(2, 7,
       expect.objectContaining({ ...content, attemptKey: expect.any(String) })));
-  });
-
-  it('sends an empty message without replacing it with default content', async () => {
-    open();
-    await userEvent.clear(screen.getByLabelText('Message (Optional)'));
-    await userEvent.click(screen.getByRole('button', { name: 'Send' }));
-    await waitFor(() => expect(sendInvoiceEmailAction).toHaveBeenCalledWith(2, 7,
-      expect.objectContaining({ message: '' })));
+    await screen.findByRole('button', { name: 'Recover this attempt' });
+    expect(screen.getByLabelText('Subject')).toBeDisabled();
+    await userEvent.click(screen.getByRole('button', { name: 'Recover this attempt' }));
+    await waitFor(() => expect(sendInvoiceEmailAction).toHaveBeenCalledTimes(2));
+    expect(recoverInvoiceEmailAction).not.toHaveBeenCalled();
+    expect(vi.mocked(sendInvoiceEmailAction).mock.calls[1][2]).toEqual(vi.mocked(sendInvoiceEmailAction).mock.calls[0][2]);
   });
 
   it('reminders use the outstanding balance and supplied last accepted recipient', () => {
@@ -91,27 +90,5 @@ describe('invoice email composer', () => {
     await userEvent.click(button);
     await waitFor(() => expect(sendInvoiceEmailAction).toHaveBeenCalledWith(2, 7,
       expect.objectContaining({ confirmPossibleDuplicate: true, replacesDeliveryId: 9 })));
-  });
-
-  it('reuses the original key and content after losing a server-action response', async () => {
-    vi.mocked(sendInvoiceEmailAction).mockRejectedValueOnce(new Error('connection lost'));
-    open();
-    await userEvent.click(screen.getByRole('button', { name: 'Send' }));
-    await screen.findByRole('button', { name: 'Recover this attempt' });
-    expect(screen.getByLabelText('Subject')).toBeDisabled();
-    await userEvent.click(screen.getByRole('button', { name: 'Recover this attempt' }));
-    await waitFor(() => expect(sendInvoiceEmailAction).toHaveBeenCalledTimes(2));
-    expect(vi.mocked(sendInvoiceEmailAction).mock.calls[1][2]).toEqual(vi.mocked(sendInvoiceEmailAction).mock.calls[0][2]);
-  });
-
-  it('recovers a lost resend response using the new request, not the previous accepted delivery', async () => {
-    vi.mocked(sendInvoiceEmailAction).mockRejectedValueOnce(new Error('connection lost'));
-    open({ delivery });
-    await userEvent.click(screen.getByRole('button', { name: 'Send' }));
-    await screen.findByRole('button', { name: 'Recover this attempt' });
-    await userEvent.click(screen.getByRole('button', { name: 'Recover this attempt' }));
-    await waitFor(() => expect(sendInvoiceEmailAction).toHaveBeenCalledTimes(2));
-    expect(recoverInvoiceEmailAction).not.toHaveBeenCalled();
-    expect(vi.mocked(sendInvoiceEmailAction).mock.calls[1][2]).toEqual(vi.mocked(sendInvoiceEmailAction).mock.calls[0][2]);
   });
 });

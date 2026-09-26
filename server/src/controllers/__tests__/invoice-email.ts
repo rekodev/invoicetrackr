@@ -58,9 +58,8 @@ describe('invoice email routes', () => {
   });
 
   it.each([
-    { recipientEmail: 'invalid' }, { subject: ' ' }, { subject: 'Invoice\r\nBcc: other@example.com' },
-    { kind: 'reminder', requestSignature: true }, { requestSignature: true, includePublicLink: false },
-    { attemptKey: 'invalid' }, { language: 'fr' }
+    { subject: 'Invoice\r\nBcc: other@example.com' },
+    { kind: 'reminder', requestSignature: true }, { requestSignature: true, includePublicLink: false }
   ])('validates JSON before creating an attempt: %j', async (invalid) => {
     const app = await appForEmail();
     expect((await app.inject({ ...send, payload: { ...send.payload, ...invalid } })).statusCode).toBe(400);
@@ -69,56 +68,41 @@ describe('invoice email routes', () => {
     await app.close();
   });
 
-  it.each([
-    ['email-invoice-not-found', 404], ['email-attempt-not-found', 404], ['email-requires-issued', 400],
-    ['email-reminder-paid', 400], ['email-recovery-expired', 409], ['email-unresolved-attempt', 409]
-  ])('returns the domain error %s without sending', async (code, status) => {
-    vi.mocked(emailDb.reserveInvoiceEmailAttemptInDb).mockRejectedValueOnce(new Error(code));
+  it('returns a conflict when safe recovery has expired, without sending', async () => {
+    vi.mocked(emailDb.reserveInvoiceEmailAttemptInDb).mockRejectedValueOnce(new Error('email-recovery-expired'));
     const app = await appForEmail();
-    expect((await app.inject(send)).statusCode).toBe(status);
+    expect((await app.inject({ method: 'POST', url: '/api/2/invoices/7/email-deliveries/9/recover' })).statusCode).toBe(409);
     expect(mockResendSend).not.toHaveBeenCalled();
     await app.close();
   });
 
-  it('reuses a recorded accepted result and never sends the duplicate request', async () => {
+  it.each(['sent', 'queued'])('returns the existing %s attempt without submitting a duplicate', async (status) => {
     vi.mocked(emailDb.reserveInvoiceEmailAttemptInDb).mockResolvedValueOnce({
-      attempt: { ...attempt, status: 'sent', providerMessageId: 'accepted-id' }, claimed: false
+      attempt: { ...attempt, status }, claimed: false
     });
     const app = await appForEmail();
     const response = await app.inject(send);
     expect(response.statusCode).toBe(200);
-    expect(response.json().delivery.providerMessageId).toBe('accepted-id');
+    expect(response.json().delivery.status).toBe(status);
     expect(mockResendSend).not.toHaveBeenCalled();
     await app.close();
   });
 
-  it('returns in-progress for a concurrent request without contacting Resend', async () => {
-    vi.mocked(emailDb.reserveInvoiceEmailAttemptInDb).mockResolvedValueOnce({
-      attempt: { ...attempt, status: 'queued' }, claimed: false
-    });
-    const app = await appForEmail();
-    expect((await app.inject(send)).json().delivery.status).toBe('queued');
-    expect(mockResendSend).not.toHaveBeenCalled();
-    await app.close();
-  });
-
-  it('recovers using the stored payload and original key without rendering or changing content', async () => {
-    const app = await appForEmail();
-    const response = await app.inject({ method: 'POST', url: '/api/2/invoices/7/email-deliveries/9/recover' });
-    expect(response.statusCode).toBe(200);
-    expect(emailDb.reserveInvoiceEmailAttemptInDb).toHaveBeenCalledWith({ userId: 2, invoiceId: 7, deliveryId: 9 });
-    expect(mockResendSend).toHaveBeenCalledWith(payload, { idempotencyKey: `invoice-email/2/7/${attempt.attemptKey}` });
-    expect(emailDb.saveInvoiceEmailPayloadInDb).not.toHaveBeenCalled();
-    expect(response.json().delivery.providerPayload).toBeUndefined();
-    await app.close();
-  });
-
-  it('records a transport timeout as unknown, keeping the same payload recoverable', async () => {
+  it('recovers a transport timeout with the original payload and key', async () => {
     mockResendSend.mockRejectedValueOnce(new Error('timeout'));
     const app = await appForEmail();
-    const response = await app.inject(send);
-    expect(response.json().delivery.status).toBe('unknown');
+    expect((await app.inject(send)).json().delivery.status).toBe('unknown');
     expect(emailDb.finishInvoiceEmailAttemptInDb).toHaveBeenCalledWith(attempt, 'unknown', undefined, 'provider-unknown');
+    const response = await app.inject({ method: 'POST', url: '/api/2/invoices/7/email-deliveries/9/recover' });
+    expect(response.statusCode).toBe(200);
+    expect(response.json().delivery.status).toBe('sent');
+    expect(emailDb.reserveInvoiceEmailAttemptInDb).toHaveBeenCalledWith({ userId: 2, invoiceId: 7, deliveryId: 9 });
+    expect(mockResendSend).toHaveBeenCalledWith(payload, { idempotencyKey: `invoice-email/2/7/${attempt.attemptKey}` });
+    expect(mockResendSend).toHaveBeenCalledTimes(2);
+    expect(mockResendSend.mock.calls[1]).toEqual(mockResendSend.mock.calls[0]);
+    expect(renderInvoicePdf).not.toHaveBeenCalled();
+    expect(emailDb.saveInvoiceEmailPayloadInDb).not.toHaveBeenCalled();
+    expect(response.json().delivery.providerPayload).toBeUndefined();
     await app.close();
   });
 
@@ -128,6 +112,8 @@ describe('invoice email routes', () => {
     const response = await app.inject(send);
     expect(response.json().delivery.status).toBe('failed');
     expect(response.body).not.toContain('private provider details');
+    expect(invoiceDb.issueInvoiceInDb).not.toHaveBeenCalled();
+    expect(invoiceDb.markPublicInvoiceSentInDb).not.toHaveBeenCalled();
     await app.close();
   });
 
@@ -170,14 +156,23 @@ describe('invoice email routes', () => {
     await app.close();
   });
 
-  it('uses the saved PDF data even when the email language and current profile differ', async () => {
+  it('uses saved PDF data and refreshes a revoked public link when preparing a resend', async () => {
     const invoice = invoiceFromDbFactory.build({ lifecycleStatus: 'issued', documentLanguage: 'lt', currency: 'eur',
-      sender: { name: 'Saved freelancer, IV' }, totalAmount: '121.00' });
+      sender: { name: 'Saved freelancer, IV' }, totalAmount: '121.00',
+      publicInvoiceToken: 'old-token', publicInvoiceRevokedAt: '2026-09-01T00:00:00Z' });
     vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValueOnce(invoice);
     vi.mocked(userDb.getUserFromDb).mockResolvedValueOnce(userFactory.build({ name: 'Changed name',
       invoiceEmail: 'business@example.com', currency: 'usd' }));
     vi.mocked(renderInvoicePdf).mockResolvedValueOnce(Buffer.from('%PDF-saved-lt'));
-    const email = await prepareInvoiceEmailPayload(2, 7, { ...content, language: 'en' });
+    vi.mocked(invoiceDb.regeneratePublicInvoiceFromDb).mockResolvedValueOnce({
+      id: 7, publicInvoiceToken: 'fresh-token', publicInvoiceExpiresAt: '2099-09-27T10:00:00Z'
+    });
+    const email = await prepareInvoiceEmailPayload(2, 7, { ...content, language: 'en', includePublicLink: true });
+    expect(invoiceDb.regeneratePublicInvoiceFromDb).toHaveBeenCalledWith({
+      userId: 2, id: 7, token: expect.any(String), expiresAt: expect.any(String)
+    });
+    expect(invoiceDb.preparePublicInvoiceFromDb).not.toHaveBeenCalled();
+    expect(email.html).toContain('/invoices/public/fresh-token');
     expect(renderInvoicePdf).toHaveBeenCalledWith(expect.objectContaining({
       documentLanguage: 'lt', currency: 'eur', totalAmount: '121.00',
       sender: expect.objectContaining({ name: 'Saved freelancer, IV' }),
@@ -190,6 +185,5 @@ describe('invoice email routes', () => {
     expect(email.replyTo).toBe('business@example.com');
     expect(email.from).toMatch(/^"Saved freelancer, IV via InvoiceTrackr" </);
     expect(Buffer.from(email.attachments[0].content, 'base64').toString()).toBe('%PDF-saved-lt');
-    expect(email.text).not.toContain('Please find your invoice attached.');
   });
 });

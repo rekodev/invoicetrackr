@@ -1,4 +1,4 @@
-import { getInvoiceEmailDefaults, switchInvoiceEmailLanguage } from '@invoicetrackr/emails/content';
+import { getInvoiceEmailDefaults } from '@invoicetrackr/emails/content';
 import { describe, expect, it } from 'vitest';
 
 const input = { invoiceNumber: 'SF007', totalAmount: '100.00', outstandingAmount: '60.00',
@@ -15,10 +15,5 @@ describe('invoice email defaults', () => {
   it('does not call an invoice overdue on its due date', () => {
     expect(getInvoiceEmailDefaults({ ...input, kind: 'reminder', language: 'en' }).message).not.toContain('overdue');
     expect(getInvoiceEmailDefaults({ ...input, today: '2026-09-27', kind: 'reminder', language: 'en' }).message).toContain('overdue');
-  });
-  it('preserves an intentionally cleared message when switching language', () => {
-    const previous = getInvoiceEmailDefaults({ ...input, kind: 'invoice', language: 'lt' });
-    const next = getInvoiceEmailDefaults({ ...input, kind: 'invoice', language: 'en' });
-    expect(switchInvoiceEmailLanguage({ ...previous, message: '' }, previous, next)).toEqual({ subject: next.subject, message: '' });
   });
 });

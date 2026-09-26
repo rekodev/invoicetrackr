@@ -24,13 +24,6 @@ describe('shared invoice PDF', () => {
   });
   afterEach(() => { pdfStyles.page.fontFamily = originalFont; });
 
-  it('renders the saved invoice as a PDF using its saved currency and language', async () => {
-    const invoice = invoiceFactory.build({ lifecycleStatus: 'issued', documentLanguage: 'en',
-      currency: 'eur', senderSignature: null, receiverSignature: null });
-    const buffer = await renderInvoicePdf(invoice);
-    expect(buffer.subarray(0, 5).toString()).toBe('%PDF-');
-  });
-
   it('preserves Lithuanian characters, VAT, notes, and saved party details in the document tree', () => {
     const invoice = invoiceFactory.build({ lifecycleStatus: 'issued', documentLanguage: 'lt', currency: 'eur',
       sender: { name: 'Živilė Šimkutė', vatNumber: 'LT123456789' }, notes: 'Ačiū už bendradarbiavimą',
@@ -52,10 +45,11 @@ describe('shared invoice PDF', () => {
       services: Array.from({ length: 60 }, (_, index) => ({ description: `Service ${index + 1} with a long description`,
         unit: 'hour', amount: 10, quantity: 1, vatRate: 21 })) });
     const buffer = await renderInvoicePdf(invoice);
+    expect(buffer.subarray(0, 5).toString()).toBe('%PDF-');
     expect(buffer.toString('latin1').match(/\/Type \/Page\b/g)?.length).toBeGreaterThan(1);
   });
 
-  it.each(['file:///etc/passwd', 'http://127.0.0.1/private', 'https://example.com/image.png'])('rejects unsafe stored image sources: %s', async (source) => {
+  it.each(['file:///etc/passwd', 'http://127.0.0.1/private', 'https://example.com/image.png'])('rejects unsafe stored image sources: %s', (source) => {
     const invoice = invoiceFactory.build({ senderSignature: source });
     expect(() => renderInvoicePdf(invoice)).toThrow();
   });
