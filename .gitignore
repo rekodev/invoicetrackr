@@ -12,8 +12,6 @@ coverage
 e2e/.auth/
 playwright-report/
 test-results/
-.github/assets/
-.agents/skills/native-walkthrough/
 
 # next.js
 .next/
