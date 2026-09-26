@@ -277,6 +277,10 @@ export default {
     }
   },
   error: {
+    companyLookup: {
+      unavailable:
+        'Company lookup is temporarily unavailable. Enter the details manually or try again.'
+    },
     user: {
       notFound: 'User not found',
       alreadyExists: 'User already exists',

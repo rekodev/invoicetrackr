@@ -23,6 +23,7 @@ import type { Client } from '@invoicetrackr/types';
 import type {
   BankAccountBody,
   ClientBody,
+  CompanyLookupResult,
   CryptoWalletBody,
   InvoiceBody,
   User
@@ -46,6 +47,7 @@ import {
   getDueDateAfterIssueDateChange
 } from '@/lib/utils/invoice-editor';
 
+import CompanyLookupPanel from '../company-lookup/company-lookup-panel';
 import SignaturePad from '../signature-pad';
 import CompleteProfile from '../ui/complete-profile';
 import InvoiceDueDatePreselectionChips from './invoice-due-date-preselection-chips';
@@ -121,6 +123,7 @@ const InvoiceForm = ({
   bankingInformationEntries
 }: Props) => {
   const t = useTranslations('components.invoice_form');
+  const tLookup = useTranslations('company_lookup');
   const locale = useLocale();
   const today = formatDate(new Date().toISOString());
   const defaultPaymentTermsDays = user.defaultPaymentTermsDays || 30;
@@ -150,8 +153,7 @@ const InvoiceForm = ({
       ? {
           ...invoiceData,
           services: [...invoiceData.services].sort(
-            (first, second) =>
-              (first.position ?? 0) - (second.position ?? 0)
+            (first, second) => (first.position ?? 0) - (second.position ?? 0)
           ),
           invoiceSeries:
             invoiceData.invoiceSeries ||
@@ -278,6 +280,22 @@ const InvoiceForm = ({
     setValue('receiver.email', receiver.email, { shouldDirty: true });
     clearErrors('receiver');
     setIsReceiverModalOpen(false);
+  };
+
+  const handleApplyReceiverLookup = (result: CompanyLookupResult) => {
+    setValue('receiver.name', result.legalName, { shouldDirty: true });
+    setValue('receiver.businessNumber', result.companyCode, {
+      shouldDirty: true
+    });
+    setValue('receiver.vatNumber', result.vatNumber || '', {
+      shouldDirty: true
+    });
+    setValue('receiver.address', '', { shouldDirty: true });
+    clearErrors('receiver');
+    setError('receiver.address', {
+      type: 'manual',
+      message: tLookup('address_required')
+    });
   };
 
   const handlePaymentMethodSelect = (selection: PaymentMethodSelection) => {
@@ -579,6 +597,12 @@ const InvoiceForm = ({
               </RadioGroup>
             )}
           />
+          {isReceiverBusiness ? (
+            <CompanyLookupPanel
+              userId={user.id || 0}
+              onApply={handleApplyReceiverLookup}
+            />
+          ) : null}
           <Controller
             name="receiver.name"
             control={control}

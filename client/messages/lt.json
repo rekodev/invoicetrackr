@@ -914,6 +914,20 @@
         "download_pdf": "Atsisiųsti PDF",
         "link_unavailable": "Sąskaitos nuoroda nepasiekiama"
     },
+    "company_lookup": {
+        "label": "Ieškoti Lietuvos įmonės",
+        "placeholder": "Įmonės pavadinimas arba 9 skaitmenų kodas",
+        "description": "Ieškokite veikiančių Lietuvos juridinių asmenų oficialiuose VMI atviruose duomenyse.",
+        "loading": "Ieškoma VMI atviruose duomenyse...",
+        "empty": "Veikiančių įmonių nerasta. Toliau duomenis įveskite rankiniu būdu.",
+        "results_label": "Įmonių paieškos rezultatai",
+        "result_details": "Kodas: {companyCode} · PVM: {vatNumber}",
+        "no_vat": "neregistruotas",
+        "address_notice": "Oficialus šaltinis nepateikia registruoto adreso. Pritaikius rezultatą adresas bus išvalytas, kad jį įvestumėte rankiniu būdu.",
+        "address_required": "Pritaikę VMI duomenis, registruotą adresą įveskite rankiniu būdu.",
+        "apply": "Pritaikyti įmonės duomenis",
+        "manual_fallback": "Jei paieška neveikia, duomenis visada galite įvesti rankiniu būdu."
+    },
     "clients": {
         "page_title": "Klientai",
         "edit": "Redaguoti",

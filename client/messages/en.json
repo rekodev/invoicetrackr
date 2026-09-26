@@ -914,6 +914,20 @@
         "download_pdf": "Download PDF",
         "link_unavailable": "Invoice Link Unavailable"
     },
+    "company_lookup": {
+        "label": "Look up a Lithuanian company",
+        "placeholder": "Company name or 9-digit code",
+        "description": "Search active Lithuanian legal entities in official VMI open data.",
+        "loading": "Searching VMI open data...",
+        "empty": "No active companies matched. Continue with manual entry.",
+        "results_label": "Company lookup results",
+        "result_details": "Code: {companyCode} · VAT: {vatNumber}",
+        "no_vat": "not registered",
+        "address_notice": "The official source does not provide a registered address. Applying this result clears the address so you can enter it manually.",
+        "address_required": "Enter the registered address manually after applying VMI data.",
+        "apply": "Apply company details",
+        "manual_fallback": "Manual entry remains available if lookup does not work."
+    },
     "clients": {
         "page_title": "Clients",
         "edit": "Edit",
