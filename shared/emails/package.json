@@ -4,10 +4,17 @@
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": { "content": ["dist/emails/invoice-email-content.d.ts"] }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./content": {
+      "types": "./dist/emails/invoice-email-content.d.ts",
+      "default": "./dist/emails/invoice-email-content.js"
     }
   },
   "scripts": {
@@ -16,9 +23,11 @@
     "dev:watch": "tsc --watch"
   },
   "dependencies": {
+    "@react-email/render": "2.0.9",
     "react-email": "^6.6.3",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "@invoicetrackr/types": "workspace:*"
   },
   "devDependencies": {
     "@react-email/ui": "6.6.3",

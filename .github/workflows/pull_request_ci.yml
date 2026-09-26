@@ -50,6 +50,9 @@ jobs:
           cd shared/emails
           pnpm build
 
+      - name: Build shared PDF package
+        run: pnpm run pdf build
+
       # Steps for the Client Folder
       - name: Run TypeScript Compiler (client)
         run: |

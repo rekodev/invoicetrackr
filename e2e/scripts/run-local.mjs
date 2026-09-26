@@ -42,6 +42,7 @@ try {
   run('docker', [...composeArgs, 'up', '--detach', '--wait']);
   run('pnpm', ['run', 'types', 'build']);
   run('pnpm', ['run', 'emails', 'build']);
+  run('pnpm', ['run', 'pdf', 'build']);
   run('pnpm', ['run', 'e2e:db:prepare']);
   run('pnpm', ['exec', 'playwright', 'install', 'chromium']);
   run('pnpm', ['exec', 'playwright', 'test', ...process.argv.slice(2)]);

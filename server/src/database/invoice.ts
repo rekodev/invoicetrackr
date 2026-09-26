@@ -1264,15 +1264,19 @@ export async function preparePublicInvoiceFromDb({
 
 export async function revokeInvoiceSigningFromDb({
   userId,
-  id
+  id,
+  onlyUnsigned = false
 }: {
   userId: number;
   id: number;
+  onlyUnsigned?: boolean;
 }): Promise<{ id: number } | undefined> {
   const invoices = await db
     .update(invoicesTable)
     .set({ recipientSigningRevokedAt: new Date().toISOString() })
-    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId),
+      ...(onlyUnsigned ? [isNull(invoicesTable.recipientSignedAt),
+        eq(invoicesTable.lifecycleStatus, 'issued'), sql`${invoicesTable.recipientSigningToken} is not null`] : [])))
     .returning({ id: invoicesTable.id });
 
   return invoices.at(0);
@@ -1374,12 +1378,10 @@ export async function markPublicInvoiceSentInDb({
   const invoices = await db
     .update(invoicesTable)
     .set({
-      lifecycleStatus: 'issued',
-      issuedAt: sql<string>`COALESCE(${invoicesTable.issuedAt}, ${now})`,
       publicInvoiceSentAt: now,
       ...(requestSignature ? { recipientSigningSentAt: now } : {})
     })
-    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId)))
+    .where(and(eq(invoicesTable.id, id), eq(invoicesTable.userId, userId), eq(invoicesTable.lifecycleStatus, 'issued')))
     .returning({ id: invoicesTable.id });
 
   return invoices.at(0);

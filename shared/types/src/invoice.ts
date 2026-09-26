@@ -331,19 +331,28 @@ export const signInvoiceBodySchema = z.object({
   file: z.any()
 });
 
-const multipartBooleanSchema = z.preprocess(
-  (value) => (value === 'true' ? true : value === 'false' ? false : value),
-  z.boolean()
-);
-
-export const sendInvoiceEmailBodySchema = z.object({
-  recipientEmail: z.email('validation.invoice.recipientEmail'),
-  subject: z.string().min(1, 'validation.invoice.subject'),
-  message: z.string().max(1000, 'validation.invoice.message').optional(),
-  includePublicLink: multipartBooleanSchema.optional(),
-  requestSignature: multipartBooleanSchema.optional(),
-  file: z.any().nullish()
+export const invoiceEmailContentSchema = z.object({
+  recipientEmail: z.email('validation.invoice.recipientEmail').max(255),
+  subject: z.string().trim().min(1, 'validation.invoice.subject').max(255).refine(
+    (value) => !/[\r\n]/.test(value), 'validation.invoice.subject'
+  ),
+  message: z.string().max(1000, 'validation.invoice.message').default(''),
+  language: z.enum(['lt', 'en']),
+  kind: z.enum(['invoice', 'reminder']).default('invoice'),
+  includePublicLink: z.boolean().default(true),
+  requestSignature: z.boolean().default(false)
 });
+
+export const sendInvoiceEmailBodySchema = invoiceEmailContentSchema.extend({
+  attemptKey: z.uuid(),
+  replacesDeliveryId: z.number().int().positive().optional(),
+  confirmPossibleDuplicate: z.boolean().default(false)
+}).refine((value) => !value.requestSignature || (value.kind === 'invoice' && value.includePublicLink), {
+  path: ['requestSignature'], message: 'validation.invoice.acknowledgmentRequiresLink'
+});
+
+export type InvoiceEmailContent = z.infer<typeof invoiceEmailContentSchema>;
+export type SendInvoiceEmailBody = z.infer<typeof sendInvoiceEmailBodySchema>;
 
 export const incomeJournalQuerySchema = z
   .object({

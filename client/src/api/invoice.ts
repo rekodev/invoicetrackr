@@ -19,7 +19,8 @@ import type {
   RegeneratePublicInvoiceLinkResponse,
   RevokeInvoiceSigningLinkResponse,
   RevokePublicInvoiceLinkResponse,
-  SendInvoiceEmailResponse,
+  SendInvoiceDeliveryResponse,
+  SendInvoiceEmailBody,
   SignInvoiceResponse,
   SubmitRecipientDetailsResponse,
   UpdateInvoiceResponse,
@@ -265,47 +266,8 @@ export const regeneratePublicInvoiceLink = async (
     `/api/${userId}/invoices/${invoiceId}/public-link/regenerate`
   );
 
-export const sendInvoiceEmail = async ({
-  id,
-  userId,
-  invoiceId,
-  recipientEmail,
-  subject,
-  message,
-  includePublicLink,
-  requestSignature,
-  blob
-}: {
-  id: number;
-  userId: number;
-  invoiceId: string;
-  recipientEmail: string;
-  subject: string;
-  message?: string;
-  includePublicLink?: boolean;
-  requestSignature?: boolean;
-  blob: Blob;
-}) => {
-  const formData = new FormData();
-  formData.append('recipientEmail', recipientEmail);
-  formData.append('subject', subject);
-  if (message) {
-    formData.append('message', message);
-  }
-  formData.append('includePublicLink', String(includePublicLink ?? true));
-  formData.append('requestSignature', String(!!requestSignature));
-  formData.append(
-    'pdfAttachment',
-    new File([blob], `${invoiceId}.pdf`, { type: 'application/pdf' })
-  );
+export const sendInvoiceEmail = (userId: number, id: number, body: SendInvoiceEmailBody) =>
+  api.post<SendInvoiceDeliveryResponse>(`/api/${userId}/invoices/${id}/send-email`, body);
 
-  return await api.post<SendInvoiceEmailResponse>(
-    `/api/${userId}/invoices/${id}/send-email`,
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }
-  );
-};
+export const recoverInvoiceEmail = (userId: number, id: number, deliveryId: number) =>
+  api.post<SendInvoiceDeliveryResponse>(`/api/${userId}/invoices/${id}/email-deliveries/${deliveryId}/recover`);

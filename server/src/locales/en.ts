@@ -38,6 +38,7 @@ export default {
       sentBy: 'This invoice was sent from %{senderName} via InvoiceTrackr.',
       invoiceNumber: 'Invoice Number:',
       amount: 'Amount:',
+      outstandingAmount: 'Outstanding amount:',
       dueDate: 'Due Date:',
       from: 'From:',
       attachmentTitle: 'Invoice Attached',
@@ -154,6 +155,7 @@ export default {
         message: 'Message is too long'
       },
       recipientEmail: 'Valid recipient email is required',
+      acknowledgmentRequiresLink: 'Acknowledgment is available only for invoice emails with a public link.',
       subject: 'Subject is required',
       message: 'Message must not exceed 1000 characters'
     },
@@ -230,6 +232,9 @@ export default {
       statusUpdated: 'Invoice status updated successfully',
       paymentRemoved: 'Payment removed',
       emailSent: 'Email sent successfully',
+      emailAccepted: 'Email accepted for sending.',
+      emailQueued: 'This email attempt is still in progress. Check its result before sending again.',
+      emailUnknown: 'The email result is unknown. Recover this attempt before sending another email.',
       issued: 'Invoice issued successfully',
       recipientDetailsRequested: 'Recipient details request is ready',
       recipientDetailsSubmitted: 'Invoice received and issued successfully',
@@ -325,6 +330,11 @@ export default {
         'Remove or correct recorded payments before cancelling this invoice',
       unableToRetrieveData: 'Unable to retrieve invoice data',
       unableToSendEmail: 'Unable to send email',
+      reminderRequiresBalance: 'Reminders require an issued invoice with an outstanding balance.',
+      emailPreparationFailed: 'Unable to prepare the saved invoice PDF and email. No email was sent.',
+      emailRecoveryExpired: 'Recovery has expired. The original may have arrived; confirm before sending a new email.',
+      emailUnresolvedAttempt: 'Recover the existing email attempt from email history before sending another email.',
+      emailAttemptConflict: 'This attempt cannot be changed. Reopen it from email history.',
       emailRequiresIssued: 'Issue this invoice before sending it by email.',
       unableToIssue:
         'Complete the recipient and payment details before issuing this invoice.',

@@ -64,6 +64,7 @@ jobs:
         run: |
           pnpm run types build
           pnpm run emails build
+          pnpm run pdf build
 
       - name: Prepare E2E database
         run: pnpm e2e:db:prepare

@@ -20,7 +20,6 @@ export const mockResendForward = vi.fn().mockResolvedValue({
   error: null
 });
 export const mockCreateAuditEvent = vi.fn().mockResolvedValue(undefined);
-export const mockRecordEmailDelivery = vi.fn().mockResolvedValue(undefined);
 
 // Mock fastify-i18n
 vi.mock('fastify-i18n', () => ({
@@ -60,7 +59,6 @@ vi.mock('../database/audit', () => ({
 }));
 
 vi.mock('../database/email-delivery', () => ({
-  recordEmailDeliveryInDb: mockRecordEmailDelivery,
   getInvoiceDeliveriesFromDb: vi.fn().mockResolvedValue([])
 }));
 
