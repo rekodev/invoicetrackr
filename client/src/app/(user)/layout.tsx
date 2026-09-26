@@ -7,6 +7,7 @@ import { ReactNode, Suspense } from 'react';
 import { getUser } from '@/api/user';
 import { auth } from '@/auth';
 import AuthenticatedShell from '@/components/layout/authenticated-shell';
+import Breadcrumbs from '@/components/layout/breadcrumbs';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
 import { isResponseError } from '@/lib/utils/error';
 
@@ -38,6 +39,7 @@ export default async function UserLayout({
   return (
     <AuthenticatedShell user={response.data.user}>
       <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col p-6 pb-12">
+        <Breadcrumbs />
         <Suspense fallback={<Loading />}>{children}</Suspense>
       </main>
     </AuthenticatedShell>

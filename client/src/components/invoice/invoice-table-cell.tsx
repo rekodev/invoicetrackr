@@ -1,5 +1,6 @@
 'use client';
 
+import { EyeIcon } from '@heroicons/react/24/outline';
 import { buttonVariants, Chip } from '@heroui/react';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import Link from 'next/link';
@@ -72,6 +73,7 @@ export default function InvoiceTableCell({ invoice, columnKey }: Props) {
           href={href}
           className={buttonVariants({ size: 'sm', variant: 'secondary' })}
         >
+          <EyeIcon aria-hidden="true" className="size-4" />
           {actions('tooltip_view')}
         </Link>
       );
