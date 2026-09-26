@@ -129,6 +129,9 @@ describe('<CompanyLookupPanel />', () => {
     expect(screen.getByRole('combobox')).toHaveValue('ąžuolas');
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     expect(
+      screen.queryByRole('button', { name: /Show suggestions/i })
+    ).not.toBeInTheDocument();
+    expect(
       screen.queryByText('Company lookup is temporarily unavailable.')
     ).not.toBeInTheDocument();
   });

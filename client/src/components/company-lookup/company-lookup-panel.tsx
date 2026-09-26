@@ -131,7 +131,7 @@ const CompanyLookupPanel = ({
             placeholder={placeholder || t('placeholder')}
             maxLength={100}
           />
-          <ComboBox.Trigger />
+          {results.length > 0 ? <ComboBox.Trigger /> : null}
         </ComboBox.InputGroup>
         {results.length > 0 ? (
           <ComboBox.Popover className="w-(--trigger-width) max-w-(--trigger-width)">
