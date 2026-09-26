@@ -45,7 +45,7 @@ describe('VMI company lookup provider', () => {
       })
     ]);
     expect(decodeURIComponent(String(fetchImpl.mock.calls[0][0]))).toContain(
-      'where(ja_kodas=123456789)'
+      'ja_kodas=123456789'
     );
     expect(fetchImpl.mock.calls[0][1]).toEqual(
       expect.objectContaining({ signal: expect.any(AbortSignal) })
@@ -59,7 +59,7 @@ describe('VMI company lookup provider', () => {
     await provider.search("  O'REILLY  LT  ");
 
     expect(decodeURIComponent(String(fetchImpl.mock.calls[0][0]))).toContain(
-      "where(contains(lower(pavadinimas),'o''reilly lt'))"
+      "contains(lower(pavadinimas),'o''reilly lt')"
     );
   });
 

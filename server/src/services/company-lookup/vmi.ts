@@ -135,7 +135,7 @@ const buildProviderUrl = (normalizedQuery: string) => {
     : `contains(lower(pavadinimas),'${escapeExpressionLiteral(normalizedQuery)}')`;
   const query = [
     'select(ja_kodas,pavadinimas,klnt_tipas,valstybe,ireg_data,isreg_data,anul_data,pvm_kodas_pref,pvm_kodas,pvm_iregistruota,pvm_isregistruota)',
-    `where(${condition})`,
+    condition,
     `limit(${PROVIDER_ROW_LIMIT})`
   ]
     .map(encodeURIComponent)
