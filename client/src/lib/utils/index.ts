@@ -7,4 +7,4 @@ export const validateInvoiceId = (invoiceId: string) => {
   return regex.test(invoiceId);
 };
 
-export { splitInvoiceId, getDaysUntilDueDate, calculateServiceTotal, calculateInvoiceTotals } from '@invoicetrackr/pdf/calculations';
+export { calculateInvoiceTotals, calculateServiceTotal, getDaysUntilDueDate, splitInvoiceId } from '@invoicetrackr/pdf/calculations';

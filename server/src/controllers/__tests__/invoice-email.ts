@@ -178,7 +178,11 @@ describe('invoice email routes', () => {
       invoiceEmail: 'business@example.com', currency: 'usd' }));
     vi.mocked(renderInvoicePdf).mockResolvedValueOnce(Buffer.from('%PDF-saved-lt'));
     const email = await prepareInvoiceEmailPayload(2, 7, { ...content, language: 'en' });
-    expect(renderInvoicePdf).toHaveBeenCalledWith(invoice);
+    expect(renderInvoicePdf).toHaveBeenCalledWith(expect.objectContaining({
+      documentLanguage: 'lt', currency: 'eur', totalAmount: '121.00',
+      sender: expect.objectContaining({ name: 'Saved freelancer, IV' }),
+      services: [expect.objectContaining({ amount: 100, quantity: 10, vatRate: 0 })]
+    }));
     expect(email.html).toContain('Invoice Details');
     expect(email.html).toContain('Saved freelancer');
     expect(email.html).not.toContain('Changed name');

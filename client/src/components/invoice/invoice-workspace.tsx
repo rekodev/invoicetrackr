@@ -152,7 +152,6 @@ export default function InvoiceWorkspace({
   const [isPending, startTransition] = useTransition();
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
     currency: 'eur',
-    defaultTranslator: pdfTranslator,
     invoiceLanguage: invoice.documentLanguage || preferredLanguage,
     invoiceData: invoice,
     senderSignatureImage: invoice.senderSignature as string,

@@ -20,7 +20,6 @@ type Props = {
 
 export default function PublicInvoicePageContent({ publicInvoice }: Props) {
   const t = useTranslations('invoice_signing');
-  const pdfTranslator = useTranslations('invoices.pdf');
   const [invoice, setInvoice] = useState<InvoiceBody>(publicInvoice.invoice);
   const [signature, setSignature] = useState<File | string | undefined>(
     publicInvoice.invoice.receiverSignature || undefined
@@ -45,7 +44,6 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
   const currency = publicInvoice.currency;
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
     currency,
-    defaultTranslator: pdfTranslator,
     invoiceLanguage,
     invoiceData: invoice,
     senderSignatureImage: invoice.senderSignature as string,

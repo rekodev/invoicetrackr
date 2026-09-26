@@ -1006,10 +1006,11 @@ export const prepareInvoiceEmailPayload = async (
     throw new BadRequestError(i18n.t('error.invoice.emailRequiresIssued'));
 
   const invoice = foundInvoice;
+  const document = toInvoiceBody(invoice);
   const requestSignature = includePublicLink && content.kind === 'invoice' && content.requestSignature;
 
   // Render before generating public/acknowledgment links or contacting the provider.
-  const attachment = (await renderInvoicePdf(invoice)).toString('base64');
+  const attachment = (await renderInvoicePdf(document)).toString('base64');
 
   let publicInvoiceToken =
     invoice.publicInvoiceToken || randomBytes(32).toString('hex');
@@ -1106,7 +1107,7 @@ export const prepareInvoiceEmailPayload = async (
     invoiceNumber: invoice.invoiceId || '',
     amount: `${invoice.totalAmount} ${(invoice.currency || DEFAULT_CURRENCY).toUpperCase()}`,
     dueDate: invoice.dueDate,
-    senderName: invoice.sender.name,
+    senderName: document.sender.name,
     message,
     outstandingAmount: balance ? `${balance.outstandingAmount} ${(invoice.currency || DEFAULT_CURRENCY).toUpperCase()}` : undefined,
     outstandingLabel: i18n.t('emails.invoice.outstandingAmount'),
@@ -1137,7 +1138,7 @@ export const prepareInvoiceEmailPayload = async (
   });
 
   const html = await renderEmail(htmlContent);
-  const senderName = invoice.sender.name.replace(/[\r\n<>"\\]/g, '').trim();
+  const senderName = document.sender.name.replace(/[\r\n<>"\\]/g, '').trim();
   const senderAddress = appEmailFrom.match(/<([^>]+)>/)?.[1] || appEmailFrom;
   return {
     to: recipientEmail,

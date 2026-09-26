@@ -27,23 +27,21 @@ describe('sendInvoiceEmail', () => {
     } as never);
   });
 
-  it('sends an issued invoice and its saved PDF as multipart data', async () => {
-    await sendInvoiceEmail({
-      id: 7,
-      userId: 1,
-      invoiceId: 'SF007',
+  it('sends email content as JSON for the server to attach the saved PDF', async () => {
+    const body = {
       recipientEmail: 'client@example.com',
       subject: 'Invoice SF007',
-      blob: new Blob(['pdf'], { type: 'application/pdf' })
-    });
+      message: '',
+      language: 'lt' as const,
+      kind: 'invoice' as const,
+      includePublicLink: true,
+      requestSignature: false,
+      attemptKey: '11111111-1111-4111-8111-111111111111',
+      confirmPossibleDuplicate: false
+    };
+    await sendInvoiceEmail(1, 7, body);
 
-    const [, body, config] = vi.mocked(api.post).mock.calls.at(0)!;
-
-    expect(body).toBeInstanceOf(FormData);
-    expect((body as FormData).get('pdfAttachment')).toBeInstanceOf(File);
-    expect(config).toEqual({
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    expect(api.post).toHaveBeenCalledWith('/api/1/invoices/7/send-email', body);
   });
 });
 

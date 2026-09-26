@@ -3,14 +3,12 @@
 import { createPdfTranslator } from '@invoicetrackr/pdf/translations';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { usePDF } from '@react-pdf/renderer';
-import type { createTranslator } from 'next-intl';
 import { JSX, useEffect, useMemo, useRef, useState } from 'react';
 
 import PDFDocument from '@/components/pdf/pdf-document';
 import { Currency } from '@/lib/types/currency';
 
 type Props = {
-  defaultTranslator: ReturnType<typeof createTranslator>;
   invoiceLanguage: string;
   currency: Currency;
   invoiceData?: InvoiceBody;
@@ -30,7 +28,7 @@ export default function useDynamicPdf({
   const pdfDocumentTranslator = useMemo(() => createPdfTranslator(invoiceLanguage), [invoiceLanguage]);
 
   const pdfDocument = useMemo(() => {
-    if (!invoiceData || !pdfDocumentTranslator) return null;
+    if (!invoiceData) return null;
 
     return (
       <PDFDocument
@@ -93,8 +91,7 @@ export default function useDynamicPdf({
       generatePdfUrl && isPdfDocumentReady ? pdfInstance.url : null,
     isPdfDocumentLoading:
       Boolean(invoiceData) &&
-      (!pdfDocumentTranslator ||
-        !pdfDocument ||
+      (!pdfDocument ||
         pdfInstance.loading ||
         !isPdfDocumentReady)
   };

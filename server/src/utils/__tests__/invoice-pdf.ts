@@ -35,7 +35,7 @@ describe('shared invoice PDF', () => {
     const invoice = invoiceFactory.build({ lifecycleStatus: 'issued', documentLanguage: 'lt', currency: 'eur',
       sender: { name: 'Živilė Šimkutė', vatNumber: 'LT123456789' }, notes: 'Ačiū už bendradarbiavimą',
       subtotalAmount: '100.00', vatAmount: '21.00', totalAmount: '121.00',
-      services: [{ description: 'Kūrybinės paslaugos', unit: 'hour', amount: '100.00', quantity: '1', vatRate: '21.00' }] });
+      services: [{ description: 'Kūrybinės paslaugos', unit: 'hour', amount: 100, quantity: 1, vatRate: 21 }] });
     const tree = PDFDocument({ invoiceData: invoice, language: 'lt', currency: 'eur',
       t: createPdfTranslator('lt'), senderSignatureImage: '' });
     expect(texts(tree)).toContain('PVM SĄSKAITA FAKTŪRA');
@@ -50,7 +50,7 @@ describe('shared invoice PDF', () => {
     const invoice = invoiceFactory.build({ lifecycleStatus: 'issued', documentLanguage: 'en', currency: 'eur',
       senderSignature: null, receiverSignature: null,
       services: Array.from({ length: 60 }, (_, index) => ({ description: `Service ${index + 1} with a long description`,
-        unit: 'hour', amount: '10.00', quantity: '1', vatRate: '21.00' })) });
+        unit: 'hour', amount: 10, quantity: 1, vatRate: 21 })) });
     const buffer = await renderInvoicePdf(invoice);
     expect(buffer.toString('latin1').match(/\/Type \/Page\b/g)?.length).toBeGreaterThan(1);
   });
