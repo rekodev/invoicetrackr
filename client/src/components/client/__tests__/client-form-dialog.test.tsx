@@ -18,25 +18,48 @@ vi.mock('@/lib/actions/client', () => ({
 }));
 
 vi.mock('@/components/company-lookup/company-lookup-panel', () => ({
-  default: ({ onApply }: { onApply: (_result: unknown) => void }) => (
-    <button
-      type="button"
-      onClick={() =>
-        onApply({
-          companyCode: '987654321',
-          legalName: 'VMI Client UAB',
-          vatNumber: null,
-          registeredAddress: null,
-          source: {
-            provider: 'vmi',
-            label: 'VMI open data via data.gov.lt — CC BY 4.0',
-            url: 'https://data.gov.lt/datasets/607/?resource_version=940'
-          }
-        })
-      }
-    >
-      Apply VMI fixture
-    </button>
+  default: ({
+    value,
+    label,
+    errorMessage,
+    onInputChange,
+    onApply
+  }: {
+    value: string;
+    label: string;
+    errorMessage?: string;
+    onInputChange: (_value: string) => void;
+    onApply: (_result: unknown) => void;
+  }) => (
+    <>
+      <label>
+        {label}
+        <input
+          aria-label={label}
+          value={value}
+          onChange={(event) => onInputChange(event.target.value)}
+        />
+      </label>
+      {errorMessage ? <span>{errorMessage}</span> : null}
+      <button
+        type="button"
+        onClick={() =>
+          onApply({
+            companyCode: '987654321',
+            legalName: 'VMI Client UAB',
+            vatNumber: null,
+            registeredAddress: null,
+            source: {
+              provider: 'vmi',
+              label: 'VMI open data via data.gov.lt — CC BY 4.0',
+              url: 'https://data.gov.lt/datasets/607/?resource_version=940'
+            }
+          })
+        }
+      >
+        Apply VMI fixture
+      </button>
+    </>
   )
 }));
 

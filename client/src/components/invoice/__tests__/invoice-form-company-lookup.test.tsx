@@ -14,28 +14,44 @@ vi.mock('@/lib/hooks/use-unsaved-changes-guard', () => ({
 }));
 vi.mock('@/components/company-lookup/company-lookup-panel', () => ({
   default: ({
+    value,
+    label,
+    onInputChange,
     onApply
   }: {
+    value: string;
+    label: string;
+    onInputChange: (_value: string) => void;
     onApply: (_result: CompanyLookupResult) => void;
   }) => (
-    <button
-      type="button"
-      onClick={() =>
-        onApply({
-          companyCode: '987654321',
-          legalName: 'VMI Invoice Client UAB',
-          vatNumber: null,
-          registeredAddress: null,
-          source: {
-            provider: 'vmi',
-            label: 'VMI open data via data.gov.lt — CC BY 4.0',
-            url: 'https://data.gov.lt/datasets/607/?resource_version=940'
-          }
-        })
-      }
-    >
-      Apply invoice VMI fixture
-    </button>
+    <>
+      <label>
+        {label}
+        <input
+          aria-label={label}
+          value={value}
+          onChange={(event) => onInputChange(event.target.value)}
+        />
+      </label>
+      <button
+        type="button"
+        onClick={() =>
+          onApply({
+            companyCode: '987654321',
+            legalName: 'VMI Invoice Client UAB',
+            vatNumber: null,
+            registeredAddress: null,
+            source: {
+              provider: 'vmi',
+              label: 'VMI open data via data.gov.lt — CC BY 4.0',
+              url: 'https://data.gov.lt/datasets/607/?resource_version=940'
+            }
+          })
+        }
+      >
+        Apply invoice VMI fixture
+      </button>
+    </>
   )
 }));
 vi.mock('../invoice-services-table', () => ({ default: () => null }));

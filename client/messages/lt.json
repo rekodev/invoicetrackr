@@ -915,18 +915,24 @@
         "link_unavailable": "Sąskaitos nuoroda nepasiekiama"
     },
     "company_lookup": {
+        "company_name": "Įmonės pavadinimas",
         "label": "Ieškoti Lietuvos įmonės",
         "placeholder": "Įmonės pavadinimas arba 9 skaitmenų kodas",
         "description": "Ieškokite veikiančių Lietuvos juridinių asmenų oficialiuose VMI atviruose duomenyse.",
         "loading": "Ieškoma VMI atviruose duomenyse...",
+        "min_chars": "Paieškai įveskite bent 3 simbolius.",
         "empty": "Veikiančių įmonių nerasta. Toliau duomenis įveskite rankiniu būdu.",
         "results_label": "Įmonių paieškos rezultatai",
+        "results_header": "VMI atvirų duomenų rezultatai",
         "result_details": "Kodas: {companyCode} · PVM: {vatNumber}",
         "no_vat": "neregistruotas",
+        "provider_badge": "VMI registras",
+        "provider_short": "VMI atviri duomenys",
+        "source_note": "VMI atviri duomenys · CC BY 4.0",
         "address_notice": "Oficialus šaltinis nepateikia registruoto adreso. Pritaikius rezultatą adresas bus išvalytas, kad jį įvestumėte rankiniu būdu.",
         "address_required": "Pritaikę VMI duomenis, registruotą adresą įveskite rankiniu būdu.",
         "apply": "Pritaikyti įmonės duomenis",
-        "manual_fallback": "Jei paieška neveikia, duomenis visada galite įvesti rankiniu būdu."
+        "manual_fallback": "Duomenis visada galite įvesti rankiniu būdu."
     },
     "clients": {
         "page_title": "Klientai",

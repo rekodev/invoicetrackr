@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { searchCompanyLookupsAction } from '@/lib/actions/company-lookup';
@@ -22,6 +23,24 @@ const result = {
   }
 };
 
+const renderPanel = (onApply = vi.fn()) => {
+  const Harness = () => {
+    const [value, setValue] = useState('');
+
+    return (
+      <CompanyLookupPanel
+        userId={1}
+        value={value}
+        label="Company name"
+        onInputChange={setValue}
+        onApply={onApply}
+      />
+    );
+  };
+
+  render(withIntl(<Harness />));
+};
+
 describe('<CompanyLookupPanel />', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -31,15 +50,15 @@ describe('<CompanyLookupPanel />', () => {
     vi.useRealTimers();
   });
 
-  it('debounces search, shows attribution and preview, then applies explicitly', async () => {
+  it('debounces search, shows VMI attribution, and applies on selection', async () => {
     vi.mocked(searchCompanyLookupsAction).mockResolvedValue({
       ok: true,
       results: [result]
     });
     const onApply = vi.fn();
-    render(withIntl(<CompanyLookupPanel userId={1} onApply={onApply} />));
+    renderPanel(onApply);
 
-    fireEvent.change(screen.getByRole('searchbox'), {
+    fireEvent.change(screen.getByRole('combobox'), {
       target: { value: 'ąžuolas' }
     });
     expect(searchCompanyLookupsAction).not.toHaveBeenCalled();
@@ -53,17 +72,11 @@ describe('<CompanyLookupPanel />', () => {
       userId: 1,
       query: 'ąžuolas'
     });
+    fireEvent.click(screen.getByRole('button', { name: /Show suggestions/i }));
     expect(screen.getByText('Ąžuolas UAB')).toBeInTheDocument();
-    expect(
-      screen.getByText(/VMI open data via data.gov.lt — CC BY 4.0/)
-    ).toBeInTheDocument();
+    expect(screen.getAllByText(/VMI open data/).length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByRole('option', { name: /Ąžuolas UAB/ }));
-    expect(screen.getAllByText('Ąžuolas UAB')).toHaveLength(2);
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Apply company details' })
-    );
-
     expect(onApply).toHaveBeenCalledWith(result);
   });
 
@@ -78,22 +91,23 @@ describe('<CompanyLookupPanel />', () => {
         })
       )
       .mockResolvedValueOnce({ ok: true, results: [] });
-    render(withIntl(<CompanyLookupPanel userId={1} onApply={vi.fn()} />));
+    renderPanel();
 
-    fireEvent.change(screen.getByRole('searchbox'), {
+    fireEvent.change(screen.getByRole('combobox'), {
       target: { value: 'first' }
     });
     await act(async () => {
       vi.advanceTimersByTime(500);
       await Promise.resolve();
     });
-    fireEvent.change(screen.getByRole('searchbox'), {
+    fireEvent.change(screen.getByRole('combobox'), {
       target: { value: 'second' }
     });
     await act(async () => {
       vi.advanceTimersByTime(500);
       await Promise.resolve();
     });
+    fireEvent.click(screen.getByRole('button', { name: /Show suggestions/i }));
     expect(screen.getByText(/No active companies matched/)).toBeVisible();
 
     await act(async () => {
@@ -108,19 +122,19 @@ describe('<CompanyLookupPanel />', () => {
       ok: false,
       message: 'Company lookup is temporarily unavailable.'
     });
-    render(withIntl(<CompanyLookupPanel userId={1} onApply={vi.fn()} />));
+    renderPanel();
 
-    fireEvent.change(screen.getByRole('searchbox'), {
+    fireEvent.change(screen.getByRole('combobox'), {
       target: { value: 'ąžuolas' }
     });
     await act(async () => {
       vi.advanceTimersByTime(500);
       await Promise.resolve();
     });
+    fireEvent.click(screen.getByRole('button', { name: /Show suggestions/i }));
 
     expect(
       screen.getByText('Company lookup is temporarily unavailable.')
     ).toBeVisible();
-    expect(screen.getByText(/Manual entry remains available/)).toBeVisible();
   });
 });

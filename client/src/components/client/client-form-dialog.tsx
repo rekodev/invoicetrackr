@@ -203,7 +203,6 @@ const ClientFormDialog = ({
               </Modal.Heading>
             </Modal.Header>
             <Modal.Body className="flex flex-col gap-2">
-              {renderTextField({ name: 'name', label: t('fields.name') })}
               <Controller
                 control={control}
                 name="businessType"
@@ -241,11 +240,27 @@ const ClientFormDialog = ({
                 )}
               />
               {isBusiness ? (
-                <CompanyLookupPanel
-                  userId={userId}
-                  onApply={handleApplyLookup}
+                <Controller
+                  control={control}
+                  name="name"
+                  render={({ field }) => (
+                    <CompanyLookupPanel
+                      userId={userId}
+                      value={field.value || ''}
+                      label={tLookup('company_name')}
+                      isInvalid={Boolean(errors.name)}
+                      errorMessage={errors.name?.message}
+                      onInputChange={(value) => {
+                        field.onChange(value);
+                        setDuplicateWarning(undefined);
+                      }}
+                      onApply={handleApplyLookup}
+                    />
+                  )}
                 />
-              ) : null}
+              ) : (
+                renderTextField({ name: 'name', label: t('fields.name') })
+              )}
               {renderTextField({
                 name: 'businessNumber',
                 label: t('fields.business_number')

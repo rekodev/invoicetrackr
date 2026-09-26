@@ -597,29 +597,37 @@ const InvoiceForm = ({
               </RadioGroup>
             )}
           />
-          {isReceiverBusiness ? (
-            <CompanyLookupPanel
-              userId={user.id || 0}
-              onApply={handleApplyReceiverLookup}
-            />
-          ) : null}
           <Controller
             name="receiver.name"
             control={control}
             render={({ field }) =>
-              renderTextField({
-                label: t('labels.receiver_name'),
-                isInvalid: !!errors.receiver?.name,
-                errorMessage: errors.receiver?.name?.message,
-                variant: 'primary',
-                inputProps: {
-                  ...field,
-                  'aria-label': t('a11y.receiver_name_label'),
-                  placeholder: t('placeholders.receiver_name'),
-                  type: 'text',
-                  maxLength: 255
-                }
-              })
+              isReceiverBusiness ? (
+                <CompanyLookupPanel
+                  userId={user.id || 0}
+                  value={field.value || ''}
+                  label={t('labels.receiver_name')}
+                  placeholder={t('placeholders.receiver_name')}
+                  variant="primary"
+                  isInvalid={Boolean(errors.receiver?.name)}
+                  errorMessage={errors.receiver?.name?.message}
+                  onInputChange={field.onChange}
+                  onApply={handleApplyReceiverLookup}
+                />
+              ) : (
+                renderTextField({
+                  label: t('labels.receiver_name'),
+                  isInvalid: !!errors.receiver?.name,
+                  errorMessage: errors.receiver?.name?.message,
+                  variant: 'primary',
+                  inputProps: {
+                    ...field,
+                    'aria-label': t('a11y.receiver_name_label'),
+                    placeholder: t('placeholders.receiver_name'),
+                    type: 'text',
+                    maxLength: 255
+                  }
+                })
+              )
             }
           />
           <Controller
