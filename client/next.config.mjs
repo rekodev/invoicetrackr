@@ -19,6 +19,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const nextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || '.next',
+  allowedDevOrigins: ['127.0.0.1'],
   output: 'standalone',
   outputFileTracingRoot: rootDirectory,
   transpilePackages: ['@invoicetrackr/types'],

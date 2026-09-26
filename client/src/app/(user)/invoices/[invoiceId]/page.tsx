@@ -2,7 +2,7 @@ import { notFound, unauthorized } from 'next/navigation';
 
 import { getInvoiceWorkspace } from '@/api/invoice';
 import { auth } from '@/auth';
-import InvoiceWorkspace from '@/components/invoice/invoice-workspace';
+import InvoiceWorkspace from '@/components/invoice/invoice-workspace-client';
 import { isResponseError } from '@/lib/utils/error';
 
 type Params = Promise<{ invoiceId: string }>;

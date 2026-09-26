@@ -503,6 +503,7 @@
             "partial": "Iš dalies apmokėta",
             "overdue": "Pradelsta",
             "invoice_total": "Sąskaitos suma",
+            "actions": "Veiksmai",
             "paid": "Gauta",
             "outstanding": "Liko apmokėti",
             "due": "Apmokėti iki {date}",

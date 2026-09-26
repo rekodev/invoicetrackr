@@ -11,6 +11,7 @@ const composeArgs = [
 ];
 const environment = {
   ...process.env,
+  API_RATE_LIMIT_MAX: '1000',
   APP_BASE_URL: 'http://127.0.0.1:3100',
   AUTH_SECRET: 'invoicetrackr-e2e-auth-secret-32-chars',
   AUTH_URL: 'http://127.0.0.1:3100',
@@ -19,6 +20,7 @@ const environment = {
     'postgresql://invoicetrackr:invoicetrackr@127.0.0.1:55432/invoicetrackr_e2e',
   E2E_BASE_URL: 'http://127.0.0.1:3100',
   NEXT_PUBLIC_BASE_URL: 'http://127.0.0.1:3100',
+  NEXT_DIST_DIR: '.next-e2e',
   NODE_ENV: 'development',
   RESEND_EMAIL_API_KEY: 're_e2e_placeholder',
   SERVER_PORT: '5100'

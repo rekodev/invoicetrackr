@@ -1,6 +1,15 @@
 'use client';
 
-import { ArrowDownTrayIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowDownTrayIcon,
+  BanknotesIcon,
+  LinkIcon,
+  NoSymbolIcon,
+  PaperAirplaneIcon,
+  PencilSquareIcon,
+  TrashIcon,
+  UserPlusIcon
+} from '@heroicons/react/24/outline';
 import {
   Button,
   buttonVariants,
@@ -21,7 +30,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { useState, useTransition } from 'react';
+import { type ReactNode, useState, useTransition } from 'react';
 
 import {
   deleteInvoiceAction,
@@ -52,6 +61,25 @@ type Props = {
   isEmailVerified: boolean;
   preferredLanguage: string;
 };
+
+function WorkspaceSection({
+  title,
+  children,
+  contentClassName = ''
+}: {
+  title: string;
+  children: ReactNode;
+  contentClassName?: string;
+}) {
+  return (
+    <Card className="border">
+      <Card.Content className="p-2">
+        <h2 className="text-base font-medium">{title}</h2>
+        <div className={contentClassName}>{children}</div>
+      </Card.Content>
+    </Card>
+  );
+}
 
 const today = () => {
   const parts = new Intl.DateTimeFormat('en-US', {
@@ -204,13 +232,6 @@ export default function InvoiceWorkspace({
 
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
-      <Link
-        href={INVOICES_PAGE}
-        className="text-muted inline-flex w-fit items-center gap-2 text-sm hover:underline"
-      >
-        <ArrowLeftIcon className="size-4" />
-        {t('back')}
-      </Link>
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold">
@@ -236,7 +257,7 @@ export default function InvoiceWorkspace({
         </Chip>
       </header>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="border-default-200 min-w-0 overflow-hidden rounded-lg border bg-white">
+        <Card className="min-w-0 overflow-hidden border p-0">
           {isPdfDocumentLoading ? (
             <div className="flex aspect-[794/1123] items-center justify-center">
               <Spinner />
@@ -249,212 +270,223 @@ export default function InvoiceWorkspace({
               setIsIFrameLoading={setIsIFrameLoading}
             />
           )}
-        </div>
+        </Card>
         <div className="flex min-w-0 flex-col gap-4">
-          <Card className="border">
-            <Card.Header>
-              <Card.Title>
-                {t('invoice_total')}: €{Number(invoice.totalAmount).toFixed(2)}
-              </Card.Title>
-            </Card.Header>
-            <Card.Content className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span>{t('paid')}</span>
-                <strong>€{balance.paidAmount}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>{t('outstanding')}</span>
-                <strong>€{balance.outstandingAmount}</strong>
-              </div>
-            </Card.Content>
-          </Card>
-          <Card className="border">
-            <Card.Content className="flex flex-col gap-2 py-4">
-              {isDraft ? (
-                <>
-                  <Link
-                    href={EDIT_INVOICE_PAGE(invoiceId)}
-                    className={buttonVariants({ variant: 'secondary' })}
-                  >
-                    {t('edit')}
-                  </Link>
-                  <IssueInvoiceModal
-                    userId={userId}
-                    invoiceData={invoice}
-                    triggerVariant="button"
-                    onIssued={() => router.refresh()}
-                  />
+          <WorkspaceSection
+            title={t('invoice_total')}
+            contentClassName="mt-2 flex flex-col gap-2"
+          >
+            <div className="flex justify-between gap-3">
+              <p className="text-muted text-sm">{t('paid')}</p>
+              <p className="font-medium tabular-nums">€{balance.paidAmount}</p>
+            </div>
+            <div className="flex justify-between gap-3">
+              <p className="text-muted text-sm">{t('outstanding')}</p>
+              <p className="font-medium tabular-nums">
+                €{balance.outstandingAmount}
+              </p>
+            </div>
+          </WorkspaceSection>
+          <WorkspaceSection
+            title={t('actions')}
+            contentClassName="mt-2 flex flex-col gap-2"
+          >
+            {isDraft ? (
+              <>
+                <Link
+                  href={EDIT_INVOICE_PAGE(invoiceId)}
+                  className={buttonVariants({
+                    variant: 'secondary',
+                    className: 'w-full justify-center'
+                  })}
+                >
+                  <PencilSquareIcon className="size-4" />
+                  {t('edit')}
+                </Link>
+                <IssueInvoiceModal
+                  userId={userId}
+                  invoiceData={invoice}
+                  triggerVariant="button"
+                  onIssued={() => router.refresh()}
+                />
+                <Button
+                  className="w-full justify-center"
+                  variant="tertiary"
+                  onPress={() => setRecipientDetailsOpen(true)}
+                >
+                  <UserPlusIcon className="size-4" />
+                  {tableActions('tooltip_request_details')}
+                </Button>
+              </>
+            ) : null}
+            {isIssued ? (
+              <>
+                <Button
+                  className="w-full justify-center"
+                  variant="primary"
+                  isDisabled={!isEmailVerified}
+                  onPress={() => setSendOpen(true)}
+                >
+                  <PaperAirplaneIcon className="size-4" />
+                  {t('send')}
+                </Button>
+                {!isEmailVerified ? (
+                  <p className="text-muted text-sm">
+                    {t('verify_email_to_send')}
+                  </p>
+                ) : null}
+                {Number(balance.outstandingAmount) > 0 ? (
                   <Button
+                    className="w-full justify-center"
+                    variant="secondary"
+                    onPress={() => openPayment()}
+                  >
+                    <BanknotesIcon className="size-4" />
+                    {t('record_payment')}
+                  </Button>
+                ) : null}
+                {data.canCopyPublicLink ? (
+                  <Button
+                    className="w-full justify-center"
                     variant="tertiary"
-                    onPress={() => setRecipientDetailsOpen(true)}
+                    onPress={async () => {
+                      await navigator.clipboard.writeText(
+                        `${window.location.origin}/invoices/public/${invoice.publicInvoiceToken}`
+                      );
+                      toast(t('copied'), { variant: 'success' });
+                    }}
                   >
-                    {tableActions('tooltip_request_details')}
+                    <LinkIcon className="size-4" />
+                    {t('copy_link')}
                   </Button>
-                </>
-              ) : null}
-              {isIssued ? (
-                <>
+                ) : null}
+              </>
+            ) : null}
+            {pdfDocument ? (
+              <PDFDownloadLink
+                className="block w-full"
+                document={pdfDocument}
+                fileName={`${invoice.invoiceId || `draft-${invoiceId}`}.pdf`}
+              >
+                {({ loading }) => (
                   <Button
-                    variant="primary"
-                    isDisabled={!isEmailVerified}
-                    onPress={() => setSendOpen(true)}
+                    className="w-full"
+                    variant="secondary"
+                    isDisabled={loading || isPdfDocumentLoading}
+                    onPress={() => {
+                      if (cookieConsent !== 'accepted') return;
+                      captureAnalyticsEvent(analyticsEvents.pdfDownloaded, {
+                        source: 'saved_invoice',
+                        invoice_status: invoice.status,
+                        line_count: invoice.services.length
+                      });
+                    }}
                   >
-                    {t('send')}
+                    <ArrowDownTrayIcon className="size-4" />
+                    {pdfTranslator('buttons.download_pdf')}
                   </Button>
-                  {!isEmailVerified ? (
-                    <p className="text-muted text-sm">
-                      {t('verify_email_to_send')}
-                    </p>
-                  ) : null}
-                  {Number(balance.outstandingAmount) > 0 ? (
-                    <Button variant="secondary" onPress={() => openPayment()}>
-                      {t('record_payment')}
-                    </Button>
-                  ) : null}
-                  {data.canCopyPublicLink ? (
-                    <Button
-                      variant="tertiary"
-                      onPress={async () => {
-                        await navigator.clipboard.writeText(
-                          `${window.location.origin}/invoices/public/${invoice.publicInvoiceToken}`
-                        );
-                        toast(t('copied'), { variant: 'success' });
-                      }}
-                    >
-                      {t('copy_link')}
-                    </Button>
-                  ) : null}
-                </>
-              ) : null}
-              {pdfDocument ? (
-                <PDFDownloadLink
-                  document={pdfDocument}
-                  fileName={`${invoice.invoiceId || `draft-${invoiceId}`}.pdf`}
-                >
-                  {({ loading }) => (
-                    <Button
-                      className="w-full"
-                      variant="secondary"
-                      isDisabled={loading || isPdfDocumentLoading}
-                      onPress={() => {
-                        if (cookieConsent !== 'accepted') return;
-                        captureAnalyticsEvent(analyticsEvents.pdfDownloaded, {
-                          source: 'saved_invoice',
-                          invoice_status: invoice.status,
-                          line_count: invoice.services.length
-                        });
-                      }}
-                    >
-                      <ArrowDownTrayIcon className="size-4" />
-                      {pdfTranslator('buttons.download_pdf')}
-                    </Button>
-                  )}
-                </PDFDownloadLink>
-              ) : null}
-              {isDraft ? (
-                <Button
-                  variant="danger-soft"
-                  onPress={() => setConfirmAction('delete')}
-                >
-                  {t('delete_draft')}
-                </Button>
-              ) : null}
-              {isIssued && payments.length === 0 ? (
-                <Button
-                  variant="danger-soft"
-                  onPress={() => setConfirmAction('cancel')}
-                >
-                  {t('cancel_invoice')}
-                </Button>
-              ) : null}
-            </Card.Content>
-          </Card>
-          <Card className="border">
-            <Card.Header>
-              <Card.Title>{t('payment_history')}</Card.Title>
-            </Card.Header>
-            <Card.Content>
-              {payments.length ? (
-                <ul className="divide-default-200 divide-y text-sm">
-                  {payments.map((payment) => (
-                    <li key={payment.id} className="space-y-1 py-3">
-                      <div className="flex justify-between gap-2">
-                        <strong>€{payment.amount}</strong>
-                        <span>{payment.paymentDate}</span>
+                )}
+              </PDFDownloadLink>
+            ) : null}
+            {isDraft ? (
+              <Button
+                className="w-full justify-center"
+                variant="danger-soft"
+                onPress={() => setConfirmAction('delete')}
+              >
+                <TrashIcon className="size-4" />
+                {t('delete_draft')}
+              </Button>
+            ) : null}
+            {isIssued && payments.length === 0 ? (
+              <Button
+                className="w-full justify-center"
+                variant="danger-soft"
+                onPress={() => setConfirmAction('cancel')}
+              >
+                <NoSymbolIcon className="size-4" />
+                {t('cancel_invoice')}
+              </Button>
+            ) : null}
+          </WorkspaceSection>
+          {payments.length > 0 ? (
+            <WorkspaceSection
+              title={t('payment_history')}
+              contentClassName="mt-2"
+            >
+              <ul className="divide-default-200 divide-y text-sm">
+                {payments.map((payment) => (
+                  <li key={payment.id} className="space-y-1 py-3">
+                    <div className="flex justify-between gap-2">
+                      <strong>€{payment.amount}</strong>
+                      <span>{payment.paymentDate}</span>
+                    </div>
+                    {payment.bankReference ? (
+                      <p className="text-muted">{payment.bankReference}</p>
+                    ) : null}
+                    {payment.notes ? (
+                      <p className="text-muted">{payment.notes}</p>
+                    ) : null}
+                    {isIssued ? (
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="tertiary"
+                          onPress={() => openPayment(payment)}
+                        >
+                          {t('edit_payment')}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="tertiary"
+                          onPress={() => {
+                            setPaymentToRemove(payment.id);
+                            setConfirmAction('remove-payment');
+                          }}
+                        >
+                          {t('remove_payment')}
+                        </Button>
                       </div>
-                      {payment.bankReference ? (
-                        <p className="text-muted">{payment.bankReference}</p>
-                      ) : null}
-                      {payment.notes ? (
-                        <p className="text-muted">{payment.notes}</p>
-                      ) : null}
-                      {isIssued ? (
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="tertiary"
-                            onPress={() => openPayment(payment)}
-                          >
-                            {t('edit_payment')}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="tertiary"
-                            onPress={() => {
-                              setPaymentToRemove(payment.id);
-                              setConfirmAction('remove-payment');
-                            }}
-                          >
-                            {t('remove_payment')}
-                          </Button>
-                        </div>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-muted text-sm">{t('no_payments')}</p>
-              )}
-            </Card.Content>
-          </Card>
-          <Card className="border">
-            <Card.Header>
-              <Card.Title>{t('delivery_history')}</Card.Title>
-            </Card.Header>
-            <Card.Content>
-              {deliveries.length ? (
-                <ul className="space-y-3 text-sm">
-                  {deliveries.map((delivery) => (
-                    <li key={delivery.id}>
-                      <p>
-                        {delivery.kind === 'reminder'
-                          ? t('reminder_email')
-                          : t('invoice_email')}{' '}
-                        · {t('sent_to', { recipient: delivery.recipient })}
-                      </p>
-                      <p className="text-muted">
-                        {delivery.status === 'failed' ||
-                        delivery.status === 'bounced'
-                          ? t('email_failed')
-                          : delivery.status === 'queued'
-                            ? t('email_queued')
-                            : t('email_sent')}
-                        {delivery.sentAt ? ' · ' : null}
-                        {delivery.sentAt
-                          ? new Intl.DateTimeFormat(locale, {
-                              dateStyle: 'medium',
-                              timeStyle: 'short'
-                            }).format(new Date(delivery.sentAt))
-                          : null}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-muted text-sm">{t('no_deliveries')}</p>
-              )}
-            </Card.Content>
-          </Card>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </WorkspaceSection>
+          ) : null}
+          {deliveries.length > 0 ? (
+            <WorkspaceSection
+              title={t('delivery_history')}
+              contentClassName="mt-2"
+            >
+              <ul className="space-y-3 text-sm">
+                {deliveries.map((delivery) => (
+                  <li key={delivery.id}>
+                    <p>
+                      {delivery.kind === 'reminder'
+                        ? t('reminder_email')
+                        : t('invoice_email')}{' '}
+                      · {t('sent_to', { recipient: delivery.recipient })}
+                    </p>
+                    <p className="text-muted">
+                      {delivery.status === 'failed' ||
+                      delivery.status === 'bounced'
+                        ? t('email_failed')
+                        : delivery.status === 'queued'
+                          ? t('email_queued')
+                          : t('email_sent')}
+                      {delivery.sentAt ? ' · ' : null}
+                      {delivery.sentAt
+                        ? new Intl.DateTimeFormat(locale, {
+                            dateStyle: 'medium',
+                            timeStyle: 'short'
+                          }).format(new Date(delivery.sentAt))
+                        : null}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </WorkspaceSection>
+          ) : null}
         </div>
       </div>
       {pdfDocument && (
@@ -493,7 +525,7 @@ export default function InvoiceWorkspace({
             </Modal.Header>
             <Modal.Body className="space-y-3">
               <p className="text-muted text-sm">{t('bank_transfer')}</p>
-              <TextField>
+              <TextField variant="secondary">
                 <Label>{t('payment_date')}</Label>
                 <Input
                   type="date"
@@ -502,7 +534,7 @@ export default function InvoiceWorkspace({
                   onChange={(event) => setPaymentDate(event.target.value)}
                 />
               </TextField>
-              <TextField>
+              <TextField variant="secondary">
                 <Label>{t('payment_amount')}</Label>
                 <Input
                   type="number"
@@ -512,14 +544,14 @@ export default function InvoiceWorkspace({
                   onChange={(event) => setAmount(event.target.value)}
                 />
               </TextField>
-              <TextField>
+              <TextField variant="secondary">
                 <Label>{t('payment_reference')}</Label>
                 <Input
                   value={bankReference}
                   onChange={(event) => setBankReference(event.target.value)}
                 />
               </TextField>
-              <TextField>
+              <TextField variant="secondary">
                 <Label>{t('payment_note')}</Label>
                 <Input
                   value={notes}

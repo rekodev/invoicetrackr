@@ -1,11 +1,5 @@
 import { CheckBadgeIcon } from '@heroicons/react/24/outline';
-import {
-  Button,
-  Modal,
-  toast,
-  Tooltip,
-  useOverlayState
-} from '@heroui/react';
+import { Button, Modal, toast, Tooltip, useOverlayState } from '@heroui/react';
 import type { InvoiceBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
@@ -47,7 +41,7 @@ const IssueInvoiceModal = ({
       aria-label={t('title')}
       className={
         triggerVariant === 'button'
-          ? 'w-full whitespace-nowrap sm:w-auto'
+          ? 'w-full justify-center whitespace-nowrap'
           : 'text-accent'
       }
       isIconOnly={triggerVariant === 'icon'}
@@ -56,7 +50,9 @@ const IssueInvoiceModal = ({
       variant={triggerVariant === 'button' ? 'primary' : 'tertiary'}
       onPress={state.open}
     >
-      <CheckBadgeIcon className="h-5 w-5" />
+      <CheckBadgeIcon
+        className={triggerVariant === 'button' ? 'size-4' : 'size-5'}
+      />
       {triggerVariant === 'button' ? t('confirm') : null}
     </Button>
   );
@@ -74,10 +70,7 @@ const IssueInvoiceModal = ({
   return (
     <>
       {trigger}
-      <Modal.Backdrop
-        isOpen={state.isOpen}
-        onOpenChange={state.setOpen}
-      >
+      <Modal.Backdrop isOpen={state.isOpen} onOpenChange={state.setOpen}>
         <Modal.Container>
           <Modal.Dialog>
             <Modal.CloseTrigger />
