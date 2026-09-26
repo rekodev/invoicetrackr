@@ -331,11 +331,6 @@ export const signInvoiceBodySchema = z.object({
   file: z.any()
 });
 
-const multipartBooleanSchema = z.preprocess(
-  (value) => (value === 'true' ? true : value === 'false' ? false : value),
-  z.boolean()
-);
-
 export const invoiceEmailContentSchema = z.object({
   recipientEmail: z.email('validation.invoice.recipientEmail').max(255),
   subject: z.string().trim().min(1, 'validation.invoice.subject').max(255).refine(

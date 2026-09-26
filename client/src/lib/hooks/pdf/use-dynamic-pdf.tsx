@@ -51,7 +51,9 @@ export default function useDynamicPdf({
 
   const [pdfInstance, updatePdfInstance] = usePDF();
   const latestPdfUrlRef = useRef<string | null>(pdfInstance.url || null);
-  latestPdfUrlRef.current = pdfInstance.url || null;
+  useEffect(() => {
+    latestPdfUrlRef.current = pdfInstance.url || null;
+  }, [pdfInstance.url]);
   const [pdfRequest, setPdfRequest] = useState<{
     document: JSX.Element;
     previousUrl: string | null;
