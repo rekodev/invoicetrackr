@@ -58,9 +58,6 @@ export default function useDynamicPdf({
     document: JSX.Element;
     previousUrl: string | null;
   }>();
-  const [completedPdfDocument, setCompletedPdfDocument] =
-    useState<JSX.Element | null>(null);
-
   useEffect(() => {
     if (!pdfDocument || !generatePdfUrl) return;
 
@@ -71,21 +68,12 @@ export default function useDynamicPdf({
     updatePdfInstance(pdfDocument);
   }, [generatePdfUrl, pdfDocument, updatePdfInstance]);
 
-  useEffect(() => {
-    if (
-      !pdfRequest ||
-      pdfInstance.loading ||
-      !pdfInstance.url ||
-      pdfInstance.url === pdfRequest.previousUrl
-    )
-      return;
-
-    setCompletedPdfDocument(pdfRequest.document);
-  }, [pdfInstance.loading, pdfInstance.url, pdfRequest]);
-
   const isPdfDocumentReady =
     !generatePdfUrl ||
-    (completedPdfDocument === pdfDocument && Boolean(pdfInstance.url));
+    (pdfRequest?.document === pdfDocument &&
+      !pdfInstance.loading &&
+      Boolean(pdfInstance.url) &&
+      pdfInstance.url !== pdfRequest?.previousUrl);
 
   return {
     pdfDocument,
