@@ -33,7 +33,7 @@ export default async function UserLayout({
   }
 
   const response = await getUser(Number(session.user.id));
-  if (isResponseError(response)) redirect(LOGIN_PAGE);
+  if (isResponseError(response)) throw new Error('Failed to load account');
 
   return (
     <AuthenticatedShell user={response.data.user}>
