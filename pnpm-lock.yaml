@@ -68,6 +68,12 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.80.0(react@19.2.8))
+      '@invoicetrackr/emails':
+        specifier: workspace:*
+        version: link:../shared/emails
+      '@invoicetrackr/pdf':
+        specifier: workspace:*
+        version: link:../shared/pdf
       '@invoicetrackr/types':
         specifier: workspace:*
         version: link:../shared/types
@@ -189,6 +195,9 @@ importers:
       '@invoicetrackr/emails':
         specifier: workspace:*
         version: link:../shared/emails
+      '@invoicetrackr/pdf':
+        specifier: workspace:*
+        version: link:../shared/pdf
       '@invoicetrackr/types':
         specifier: workspace:*
         version: link:../shared/types
@@ -257,6 +266,12 @@ importers:
 
   shared/emails:
     dependencies:
+      '@react-email/render':
+        specifier: 2.0.9
+        version: 2.0.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@invoicetrackr/types':
+        specifier: workspace:*
+        version: link:../types
       react:
         specifier: 19.2.8
         version: 19.2.8
@@ -285,6 +300,28 @@ importers:
       zod:
         specifier: ^4.1.12
         version: 4.1.12
+
+  shared/pdf:
+    dependencies:
+      '@invoicetrackr/types':
+        specifier: workspace:*
+        version: link:../types
+      '@react-pdf/renderer':
+        specifier: ^4.5.1
+        version: 4.5.1(react@19.2.8)
+      react:
+        specifier: 19.2.8
+        version: 19.2.8
+    devDependencies:
+      '@types/react':
+        specifier: 19.2.18
+        version: 19.2.18
+      '@types/node':
+        specifier: ^22.13.14
+        version: 22.19.1
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
 
 packages:
 

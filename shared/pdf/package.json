@@ -1,0 +1,56 @@
+{
+  "name": "@invoicetrackr/pdf",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "server": ["dist/server.d.ts"],
+      "calculations": ["dist/calculations.d.ts"],
+      "translations": ["dist/translations.d.ts"],
+      "styles": ["dist/styles.d.ts"],
+      "units": ["dist/units.d.ts"]
+    }
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
+    },
+    "./calculations": {
+      "types": "./dist/calculations.d.ts",
+      "default": "./dist/calculations.js"
+    },
+    "./translations": {
+      "types": "./dist/translations.d.ts",
+      "default": "./dist/translations.js"
+    },
+    "./styles": {
+      "types": "./dist/styles.d.ts",
+      "default": "./dist/styles.js"
+    },
+    "./units": {
+      "types": "./dist/units.d.ts",
+      "default": "./dist/units.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev:watch": "tsc --watch"
+  },
+  "dependencies": {
+    "@invoicetrackr/types": "workspace:*",
+    "@react-pdf/renderer": "^4.5.1",
+    "react": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@types/node": "^22.13.14",
+    "typescript": "^5.8.2"
+  }
+}

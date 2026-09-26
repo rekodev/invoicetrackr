@@ -1,6 +1,6 @@
 'use server';
 
-import type { InvoiceBody, InvoicePaymentBody } from '@invoicetrackr/types';
+import type { InvoiceBody, InvoicePaymentBody, SendInvoiceEmailBody } from '@invoicetrackr/types';
 import { revalidatePath } from 'next/cache';
 
 import {
@@ -11,6 +11,8 @@ import {
   deleteInvoicePayment,
   getNextInvoiceNumber,
   issueInvoice,
+  recoverInvoiceEmail,
+  sendInvoiceEmail,
   updateInvoice,
   updateInvoicePayment,
   updateInvoiceStatus
@@ -19,10 +21,27 @@ import {
 import {
   EDIT_INVOICE_PAGE,
   INVOICE_WORKSPACE_PAGE,
-  INVOICES_PAGE} from '../constants/pages';
+  INVOICES_PAGE
+} from '../constants/pages';
 import type { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
+
+export const sendInvoiceEmailAction = async (userId: number, invoiceId: number, body: SendInvoiceEmailBody) => {
+  const response = await sendInvoiceEmail(userId, invoiceId, body);
+  revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
+  if (isResponseError(response)) return { ok: false as const, message: response.data.message,
+    validationErrors: mapValidationErrors(response.data.errors), transportUnknown: response.status >= 500 || response.data.code === 'unknown_error' };
+  return { ok: true as const, ...response.data };
+};
+
+export const recoverInvoiceEmailAction = async (userId: number, invoiceId: number, deliveryId: number) => {
+  const response = await recoverInvoiceEmail(userId, invoiceId, deliveryId);
+  revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
+  if (isResponseError(response)) return { ok: false as const, message: response.data.message,
+    validationErrors: mapValidationErrors(response.data.errors), transportUnknown: response.status >= 500 || response.data.code === 'unknown_error' };
+  return { ok: true as const, ...response.data };
+};
 
 export const getNextInvoiceNumberAction = async ({
   userId,

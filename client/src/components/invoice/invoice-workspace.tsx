@@ -23,6 +23,7 @@ import {
   toast
 } from '@heroui/react';
 import type {
+  InvoiceEmailDelivery,
   InvoicePayment,
   InvoiceWorkspaceResponse
 } from '@invoicetrackr/types';
@@ -128,6 +129,13 @@ export default function InvoiceWorkspace({
               : table('status.pending');
   const [isIFrameLoading, setIsIFrameLoading] = useState(false);
   const [sendOpen, setSendOpen] = useState(false);
+  const [emailKind, setEmailKind] = useState<'invoice' | 'reminder'>('invoice');
+  const [emailDelivery, setEmailDelivery] = useState<InvoiceEmailDelivery>();
+  const openEmail = (kind: 'invoice' | 'reminder', delivery?: InvoiceEmailDelivery) => {
+    setEmailKind(kind);
+    setEmailDelivery(delivery);
+    setSendOpen(true);
+  };
   const [recipientDetailsOpen, setRecipientDetailsOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [editingPayment, setEditingPayment] = useState<InvoicePayment | null>(
@@ -325,7 +333,7 @@ export default function InvoiceWorkspace({
                   className="w-full justify-center"
                   variant="primary"
                   isDisabled={!isEmailVerified}
-                  onPress={() => setSendOpen(true)}
+                  onPress={() => openEmail('invoice')}
                 >
                   <PaperAirplaneIcon className="size-4" />
                   {t('send')}
@@ -334,6 +342,13 @@ export default function InvoiceWorkspace({
                   <p className="text-muted text-sm">
                     {t('verify_email_to_send')}
                   </p>
+                ) : null}
+                {Number(balance.outstandingAmount) > 0 ? (
+                  <Button className="w-full justify-center" variant="secondary"
+                    isDisabled={!isEmailVerified} onPress={() => openEmail('reminder')}>
+                    <PaperAirplaneIcon className="size-4" />
+                    {t('send_reminder')}
+                  </Button>
                 ) : null}
                 {Number(balance.outstandingAmount) > 0 ? (
                   <Button
@@ -465,23 +480,43 @@ export default function InvoiceWorkspace({
                       {delivery.kind === 'reminder'
                         ? t('reminder_email')
                         : t('invoice_email')}{' '}
-                      · {t('sent_to', { recipient: delivery.recipient })}
+                      · {t('recipient', { recipient: delivery.recipient })}
                     </p>
                     <p className="text-muted">
                       {delivery.status === 'failed' ||
                       delivery.status === 'bounced'
                         ? t('email_failed')
+                        : delivery.status === 'unknown'
+                          ? t('email_unknown')
                         : delivery.status === 'queued'
                           ? t('email_queued')
                           : t('email_sent')}
-                      {delivery.sentAt ? ' · ' : null}
-                      {delivery.sentAt
+                      {delivery.sentAt || delivery.createdAt ? ' · ' : null}
+                      {delivery.sentAt || delivery.createdAt
                         ? new Intl.DateTimeFormat(locale, {
                             dateStyle: 'medium',
                             timeStyle: 'short'
-                          }).format(new Date(delivery.sentAt))
+                          }).format(new Date((delivery.sentAt || delivery.createdAt)!))
                         : null}
                     </p>
+                    {delivery.providerMessageId ? <p className="text-muted break-all text-xs">
+                      {t('message_id', { id: delivery.providerMessageId })}
+                    </p> : null}
+                    {delivery.failureCode ? <p className="text-muted text-xs">
+                      {delivery.failureCode === 'reminder-no-longer-payable' ? t('email_reminder_paid')
+                        : delivery.failureCode === 'preparation-failed' ? t('email_preparation_failed')
+                        : ['provider-unknown', 'superseded-unknown'].includes(delivery.failureCode) ? t('email_unknown') : t('email_provider_failed')}
+                    </p> : null}
+                    {isIssued && (delivery.kind !== 'reminder' || Number(balance.outstandingAmount) > 0
+                      || (['queued', 'unknown'].includes(delivery.status)
+                        && !['superseded-unknown', 'reminder-no-longer-payable'].includes(delivery.failureCode || ''))) ? (
+                      <Button size="sm" variant="tertiary" isDisabled={!isEmailVerified}
+                        onPress={() => openEmail(delivery.kind === 'reminder' ? 'reminder' : 'invoice', delivery)}>
+                        {['queued', 'unknown'].includes(delivery.status)
+                          && !['superseded-unknown', 'reminder-no-longer-payable'].includes(delivery.failureCode || '')
+                          ? t('recover_email') : ['failed', 'bounced'].includes(delivery.status) ? t('retry_email') : t('resend_email')}
+                      </Button>
+                    ) : null}
                   </li>
                 ))}
               </ul>
@@ -489,18 +524,21 @@ export default function InvoiceWorkspace({
           ) : null}
         </div>
       </div>
-      {pdfDocument && (
+      {sendOpen && (
         <SendInvoiceEmailModal
-          isOpen={sendOpen}
           onClose={() => {
             setSendOpen(false);
             router.refresh();
           }}
-          pdfDocument={pdfDocument}
           userId={userId}
           invoice={invoice}
-          currency="eur"
           isEmailVerified={isEmailVerified}
+          kind={emailKind}
+          delivery={emailDelivery}
+          outstandingAmount={balance.outstandingAmount}
+          recipientEmail={emailKind === 'reminder'
+            ? deliveries.find((delivery) => ['sent', 'delivered'].includes(delivery.status))?.recipient
+            : undefined}
         />
       )}
       {isDraft && (

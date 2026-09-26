@@ -17,6 +17,7 @@ import {
   recipientDetailsBodySchema,
   recipientDetailsRequestResponseSchema,
   regeneratePublicInvoiceLinkResponseSchema,
+  sendInvoiceDeliveryResponseSchema,
   sendInvoiceEmailBodySchema,
   sendRecipientDetailsRequestBodySchema,
   signInvoiceResponseSchema,
@@ -45,12 +46,12 @@ import {
   regeneratePublicInvoice,
   revokeInvoiceSigning,
   revokePublicInvoice,
-  sendInvoiceEmail,
   signPublicInvoice,
   submitRecipientDetails,
   updateInvoice,
   updateInvoiceStatus
 } from '../controllers/invoice';
+import { recoverInvoiceEmail, sendInvoiceEmail } from '../controllers/invoice-email';
 import {
   authMiddleware,
   requireVerifiedEmail,
@@ -178,14 +179,24 @@ export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
 
 export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
   schema: {
+    params: z.object({ userId: z.string().regex(/^[1-9]\d*$/), id: z.string().regex(/^[1-9]\d*$/) }),
     response: {
-      200: messageResponseSchema
+      200: sendInvoiceDeliveryResponseSchema
     },
     body: sendInvoiceEmailBodySchema
   },
   preHandler: [...authenticatedAccess, requireVerifiedEmail],
-  preValidation: preValidateFileAndFields,
   handler: sendInvoiceEmail
+};
+
+export const recoverInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    params: z.object({ userId: z.string().regex(/^[1-9]\d*$/),
+      id: z.string().regex(/^[1-9]\d*$/), deliveryId: z.string().regex(/^[1-9]\d*$/) }),
+    response: { 200: sendInvoiceDeliveryResponseSchema }
+  },
+  preHandler: [...authenticatedAccess, requireVerifiedEmail],
+  handler: recoverInvoiceEmail
 };
 
 export const issueInvoiceOptions: RouteShorthandOptionsWithHandler = {

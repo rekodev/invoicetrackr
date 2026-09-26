@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/app.js",
-    "dev": "tsx watch --include ../shared/types/dist/**/* --include '../shared/emails/dist/**/*.js' src/app.ts",
+    "dev": "tsx watch --include ../shared/types/dist/**/* --include '../shared/emails/dist/**/*.js' --include '../shared/pdf/dist/**/*' src/app.ts",
     "tsc": "tsc -p tsconfig.json --noEmit",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
@@ -39,7 +39,8 @@
     "pg": "^8.16.3",
     "posthog-node": "^5.38.5",
     "resend": "^6.15.0",
-    "ws": "^8.18.3"
+    "ws": "^8.18.3",
+    "@invoicetrackr/pdf": "workspace:*"
   },
   "devDependencies": {
     "@types/pg": "^8.11.10",

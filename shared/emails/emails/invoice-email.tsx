@@ -13,6 +13,8 @@ import {
 type Props = {
   invoiceNumber: string;
   amount?: string;
+  outstandingAmount?: string;
+  outstandingLabel?: string;
   dueDate?: string;
   senderName: string;
   message: string;
@@ -43,6 +45,8 @@ type Props = {
 const InvoiceEmail = ({
   invoiceNumber,
   amount,
+  outstandingAmount,
+  outstandingLabel,
   dueDate,
   senderName,
   message,
@@ -67,7 +71,7 @@ const InvoiceEmail = ({
       footer={translations.footer}
       copyright={`© ${new Date().getFullYear()} ${translations.copyright}`}
     >
-      <Text className="mx-0 mb-[10px] mt-0 text-[15px] leading-[24px] text-[#34423C]">
+      <Text className="mx-0 mb-[10px] mt-0 text-[15px] leading-[24px] text-[#34423C]" style={{ whiteSpace: 'pre-wrap' }}>
         {message}
       </Text>
 
@@ -89,6 +93,10 @@ const InvoiceEmail = ({
             <span className="text-[#2BB673]">{amount}</span>
           </EmailDetail>
         )}
+
+        {outstandingAmount && outstandingLabel ? (
+          <EmailDetail label={outstandingLabel}>{outstandingAmount}</EmailDetail>
+        ) : null}
 
         {dueDate && (
           <EmailDetail label={translations.dueDate}>{dueDate}</EmailDetail>

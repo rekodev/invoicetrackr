@@ -20,6 +20,7 @@ COPY client/package.json ./client/package.json
 COPY server/package.json ./server/package.json
 COPY shared/types/package.json ./shared/types/package.json
 COPY shared/emails/package.json ./shared/emails/package.json
+COPY shared/pdf/package.json ./shared/pdf/package.json
 RUN pnpm install --frozen-lockfile
 
 # Stage 2: Build the types, emails, client and server
@@ -28,6 +29,7 @@ COPY --from=deps /app ./
 COPY . .
 RUN cd shared/types && pnpm run build && cd ../.. && \
     cd shared/emails && pnpm run build && cd ../.. && \
+    cd shared/pdf && pnpm run build && cd ../.. && \
     cd client && pnpm run build && cd .. && \
     cd server && pnpm run build
 

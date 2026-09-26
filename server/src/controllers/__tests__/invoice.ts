@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as clientDb from '../../database/client';
 import * as invoiceDb from '../../database/invoice';
+import * as emailDb from '../../database/invoice-email';
 import * as paymentDb from '../../database/invoice-payment';
 import * as userDb from '../../database/user';
 import en from '../../locales/en';
@@ -20,8 +21,11 @@ import {
 import { userFactory } from '../../test/factories/user';
 import { mockResendSend, mockUseI18n } from '../../test/setup';
 import * as invoiceController from '../invoice';
+import * as invoiceEmailController from '../invoice-email';
 
 vi.mock('../../database/invoice');
+vi.mock('../../database/invoice-email');
+vi.mock('@invoicetrackr/pdf/server', () => ({ renderInvoicePdf: vi.fn().mockResolvedValue(Buffer.from('%PDF-test')) }));
 vi.mock('../../database/invoice-payment');
 vi.mock('../../database/client');
 vi.mock('../../database/user');
@@ -968,6 +972,27 @@ describe('Invoice Controller', () => {
   });
 
   describe('POST /api/:userId/invoices/:id/send-email', () => {
+    beforeEach(() => {
+      vi.mocked(emailDb.reserveInvoiceEmailAttemptInDb).mockImplementation(async ({ content, attemptKey }) => {
+        const invoice = await invoiceDb.getInvoiceFromDb(testUserId, 1);
+        if (invoice?.lifecycleStatus !== 'issued') throw new Error('email-requires-issued');
+        return { claimed: true, attempt: {
+          id: 1, userId: testUserId, invoiceId: 1, attemptKey: attemptKey!, content: content!,
+          provider: 'resend', providerMessageId: null, kind: content!.kind, recipient: content!.recipientEmail,
+          status: 'queued', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+          sentAt: null, deliveredAt: null, failedAt: null, failureCode: null, providerPayload: null,
+          providerStartedAt: null, recoveryExpiresAt: null, leaseToken: 'lease', leaseUntil: null
+        } };
+      });
+      vi.mocked(emailDb.saveInvoiceEmailPayloadInDb).mockImplementation(async (attempt, payload) => ({
+        ...attempt, providerPayload: payload, providerStartedAt: new Date().toISOString(),
+        recoveryExpiresAt: new Date(Date.now() + 3600_000).toISOString()
+      }));
+      vi.mocked(emailDb.finishInvoiceEmailAttemptInDb).mockImplementation(async (attempt, status, providerMessageId, failureCode) => ({
+        ...attempt, status, providerMessageId: providerMessageId || null, failureCode: failureCode || null,
+        sentAt: status === 'sent' ? new Date().toISOString() : null
+      }));
+    });
     it('rejects a draft without issuing or sending it', async () => {
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
         invoiceFromDbFactory.build({
@@ -985,7 +1010,7 @@ describe('Invoice Controller', () => {
         fastifyApp.post(
           '/api/:userId/invoices/:id/send-email',
           { preHandler: mockAuthMiddleware },
-          invoiceController.sendInvoiceEmail
+          invoiceEmailController.sendInvoiceEmail
         );
       });
 
@@ -995,6 +1020,8 @@ describe('Invoice Controller', () => {
         payload: {
           recipientEmail: 'receiver@example.com',
           subject: 'Invoice SF001',
+          language: 'lt',
+          attemptKey: '5138c5b6-3792-424f-8a25-ca47bd0c2d76',
           includePublicLink: false
         }
       });
@@ -1029,7 +1056,7 @@ describe('Invoice Controller', () => {
         fastifyApp.post(
           '/api/:userId/invoices/:id/send-email',
           { preHandler: mockAuthMiddleware },
-          invoiceController.sendInvoiceEmail
+          invoiceEmailController.sendInvoiceEmail
         );
       });
 
@@ -1039,6 +1066,8 @@ describe('Invoice Controller', () => {
         payload: {
           recipientEmail: 'receiver@example.com',
           subject: 'Invoice SF001',
+          language: 'lt',
+          attemptKey: '5138c5b6-3792-424f-8a25-ca47bd0c2d76',
           includePublicLink: true
         }
       });
@@ -1069,14 +1098,14 @@ describe('Invoice Controller', () => {
       });
       mockResendSend.mockResolvedValueOnce({
         data: null,
-        error: { message: 'Provider unavailable' }
+        error: { name: 'validation_error', message: 'Provider rejected' }
       });
 
       const app = await createTestApp((fastifyApp) => {
         fastifyApp.post(
           '/api/:userId/invoices/:id/send-email',
           { preHandler: mockAuthMiddleware },
-          invoiceController.sendInvoiceEmail
+          invoiceEmailController.sendInvoiceEmail
         );
       });
 
@@ -1085,12 +1114,14 @@ describe('Invoice Controller', () => {
         url: `/api/${testUserId}/invoices/1/send-email`,
         payload: {
           recipientEmail: 'receiver@example.com',
-          subject: 'Invoice draft'
+          subject: 'Invoice SF001',
+          language: 'lt',
+          attemptKey: '5138c5b6-3792-424f-8a25-ca47bd0c2d76'
         }
       });
 
-      expect(response.statusCode).toBe(400);
-      expect(JSON.parse(response.body).code).toBe('BAD_REQUEST');
+      expect(response.statusCode).toBe(200);
+      expect(JSON.parse(response.body).delivery.status).toBe('failed');
       expect(invoiceDb.issueInvoiceInDb).not.toHaveBeenCalled();
       expect(invoiceDb.markPublicInvoiceSentInDb).not.toHaveBeenCalled();
 
@@ -1129,7 +1160,7 @@ describe('Invoice Controller', () => {
           {
             preHandler: mockAuthMiddleware
           },
-          invoiceController.sendInvoiceEmail
+          invoiceEmailController.sendInvoiceEmail
         );
       });
 
@@ -1139,6 +1170,8 @@ describe('Invoice Controller', () => {
         payload: {
           recipientEmail: 'receiver@example.com',
           subject: 'Invoice INV001',
+          language: 'lt',
+          attemptKey: '5138c5b6-3792-424f-8a25-ca47bd0c2d76',
           includePublicLink: true,
           requestSignature: false
         }
@@ -1162,7 +1195,8 @@ describe('Invoice Controller', () => {
           to: 'receiver@example.com',
           replyTo: 'billing@example.com',
           subject: 'Invoice INV001'
-        })
+        }),
+        { idempotencyKey: 'invoice-email/1/1/5138c5b6-3792-424f-8a25-ca47bd0c2d76' }
       );
 
       await app.close();

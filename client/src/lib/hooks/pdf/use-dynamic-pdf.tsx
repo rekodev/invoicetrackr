@@ -1,8 +1,9 @@
 'use client';
 
-import { InvoiceBody } from '@invoicetrackr/types';
+import { createPdfTranslator } from '@invoicetrackr/pdf/translations';
+import type { InvoiceBody } from '@invoicetrackr/types';
 import { usePDF } from '@react-pdf/renderer';
-import { createTranslator, useLocale } from 'next-intl';
+import type { createTranslator } from 'next-intl';
 import { JSX, useEffect, useMemo, useRef, useState } from 'react';
 
 import PDFDocument from '@/components/pdf/pdf-document';
@@ -19,7 +20,6 @@ type Props = {
 };
 
 export default function useDynamicPdf({
-  defaultTranslator,
   currency,
   invoiceLanguage,
   invoiceData,
@@ -27,41 +27,7 @@ export default function useDynamicPdf({
   receiverSignatureImage,
   generatePdfUrl = true
 }: Props) {
-  const locale = useLocale();
-  const [loadedTranslator, setLoadedTranslator] = useState<{
-    language: string;
-    translator: ReturnType<typeof createTranslator>;
-  }>();
-
-  useEffect(() => {
-    if (invoiceLanguage === locale) return;
-
-    let isCancelled = false;
-
-    import(`../../../../messages/${invoiceLanguage}.json`).then((mod) => {
-      if (isCancelled) return;
-
-      setLoadedTranslator({
-        language: invoiceLanguage,
-        translator: createTranslator({
-          locale: invoiceLanguage,
-          messages: mod.default,
-          namespace: 'invoices.pdf'
-        })
-      });
-    });
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [invoiceLanguage, locale]);
-
-  const pdfDocumentTranslator =
-    invoiceLanguage === locale
-      ? defaultTranslator
-      : loadedTranslator?.language === invoiceLanguage
-        ? loadedTranslator.translator
-        : undefined;
+  const pdfDocumentTranslator = useMemo(() => createPdfTranslator(invoiceLanguage), [invoiceLanguage]);
 
   const pdfDocument = useMemo(() => {
     if (!invoiceData || !pdfDocumentTranslator) return null;

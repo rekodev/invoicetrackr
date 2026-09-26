@@ -40,6 +40,7 @@ export default {
       sentBy: 'Šią sąskaitą faktūrą per InvoiceTrackr išsiuntė %{senderName}.',
       invoiceNumber: 'Sąskaitos numeris:',
       amount: 'Suma:',
+      outstandingAmount: 'Neapmokėta suma:',
       dueDate: 'Terminas:',
       from: 'Nuo:',
       attachmentTitle: 'Sąskaita prisegta',
@@ -159,6 +160,7 @@ export default {
         message: 'Žinutė per ilga'
       },
       recipientEmail: 'Tinkamas gavėjo el. pašto adresas yra privalomas',
+      acknowledgmentRequiresLink: 'Kliento patvirtinimo galima prašyti tik siunčiant sąskaitą su vieša nuoroda.',
       subject: 'Tema yra privaloma',
       message: 'Žinutė negali viršyti 1000 simbolių'
     },
@@ -239,6 +241,9 @@ export default {
       statusUpdated: 'Sąskaitos faktūros būsena atnaujinta sėkmingai',
       paymentRemoved: 'Mokėjimas pašalintas',
       emailSent: 'El. laiškas išsiųstas sėkmingai',
+      emailAccepted: 'El. laiškas priimtas siųsti.',
+      emailQueued: 'El. laiško siuntimas vykdomas. Prieš siųsdami dar kartą patikrinkite rezultatą.',
+      emailUnknown: 'El. laiško siuntimo rezultatas nežinomas. Prieš siųsdami kitą laišką atkurkite šio siuntimo rezultatą.',
       issued: 'Sąskaita faktūra išrašyta sėkmingai',
       recipientDetailsRequested: 'Gavėjo duomenų užklausa paruošta',
       recipientDetailsSubmitted: 'Sąskaita gauta ir sėkmingai išrašyta',
@@ -333,6 +338,11 @@ export default {
         'Prieš anuliuodami sąskaitą pašalinkite arba pataisykite mokėjimus',
       unableToRetrieveData: 'Nepavyko gauti sąskaitos faktūros duomenų',
       unableToSendEmail: 'Nepavyko išsiųsti el. laiško',
+      reminderRequiresBalance: 'Priminimą galima siųsti tik dėl išrašytos sąskaitos su neapmokėta suma.',
+      emailPreparationFailed: 'Nepavyko paruošti išsaugotos sąskaitos PDF ir el. laiško. Laiškas neišsiųstas.',
+      emailRecoveryExpired: 'Saugaus pakartojimo laikas baigėsi. Ankstesnis laiškas galėjo pasiekti gavėją; patvirtinkite naują siuntimą.',
+      emailUnresolvedAttempt: 'Prieš siųsdami kitą laišką atkurkite ankstesnio siuntimo rezultatą laiškų istorijoje.',
+      emailAttemptConflict: 'Šio siuntimo duomenų keisti negalima. Atidarykite jį iš laiškų istorijos.',
       emailRequiresIssued:
         'Prieš siųsdami sąskaitą el. paštu pirmiausia ją išrašykite.',
       unableToIssue:

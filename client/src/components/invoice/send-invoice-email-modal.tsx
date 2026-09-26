@@ -1,451 +1,192 @@
 'use client';
 
-import {
-  ClipboardDocumentIcon,
-  LinkIcon,
-  PaperAirplaneIcon
-} from '@heroicons/react/24/outline';
-import {
-  Alert,
-  Button,
-  Checkbox,
-  FieldError,
-  Input,
-  Label,
-  Modal,
-  TextArea,
-  TextField,
-  toast
-} from '@heroui/react';
-import { InvoiceBody } from '@invoicetrackr/types';
-import { BlobProvider } from '@react-pdf/renderer';
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { Alert, Button, Checkbox, FieldError, Input, Label, Modal, TextArea, TextField, toast } from '@heroui/react';
+import { getInvoiceEmailDefaults, invoiceEmailToday, switchInvoiceEmailLanguage } from '@invoicetrackr/emails/content';
+import type { InvoiceBody, InvoiceEmailContent, InvoiceEmailDelivery, SendInvoiceEmailBody } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { JSX, useEffect, useMemo, useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { regeneratePublicInvoiceLink, sendInvoiceEmail } from '@/api/invoice';
-import { Currency } from '@/lib/types/currency';
-import { getCurrencySymbol } from '@/lib/utils/currency';
-import { isResponseError } from '@/lib/utils/error';
+import { recoverInvoiceEmailAction, sendInvoiceEmailAction } from '@/lib/actions/invoice';
 
 type Props = {
-  isOpen: boolean;
-  pdfDocument: JSX.Element;
   onClose: () => void;
   userId: number;
   invoice: InvoiceBody;
-  currency: Currency;
   isEmailVerified: boolean;
+  kind: 'invoice' | 'reminder';
+  outstandingAmount: string;
+  recipientEmail?: string;
+  delivery?: InvoiceEmailDelivery;
 };
 
-type SendInvoiceForm = {
-  recipientEmail: string;
-  subject: string;
-  message?: string;
-  includePublicLink: boolean;
-  requestSignature: boolean;
-};
-
-export default function SendInvoiceEmailModal({
-  isOpen,
-  onClose,
-  pdfDocument,
-  userId,
-  invoice,
-  currency,
-  isEmailVerified
-}: Props) {
+export default function SendInvoiceEmailModal({ onClose, userId, invoice, isEmailVerified,
+  kind, outstandingAmount, recipientEmail, delivery }: Props) {
   const t = useTranslations('components.send_invoice_email');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [includePublicLink, setIncludePublicLink] = useState(true);
-  const [requestSignature, setRequestSignature] = useState(
-    Boolean(invoice.recipientSigningRequestedAt && !invoice.recipientSignedAt)
-  );
-  const [publicInvoiceToken, setPublicInvoiceToken] = useState(
-    invoice.publicInvoiceToken || ''
-  );
-  const [publicInvoiceExpiresAt, setPublicInvoiceExpiresAt] = useState(
-    invoice.publicInvoiceExpiresAt || ''
-  );
-  const [publicInvoiceRevokedAt, setPublicInvoiceRevokedAt] = useState(
-    invoice.publicInvoiceRevokedAt || ''
-  );
-  const defaultRecipientEmail =
-    invoice.receiver.email || invoice.recipientSigningEmail || '';
-  const defaultSubject = `Invoice ${invoice.invoiceId || t('draft')} ${
-    invoice.totalAmount
-      ? `- Amount: ${getCurrencySymbol(currency)}${invoice.totalAmount}`
-      : ''
-  }`;
-  const defaultRequestSignature = Boolean(
-    invoice.recipientSigningRequestedAt && !invoice.recipientSignedAt
-  );
-  const {
-    control,
-    handleSubmit,
-    reset,
-    setError,
-    watch,
-    formState: { errors }
-  } = useForm<SendInvoiceForm>({
-    defaultValues: {
-      recipientEmail: defaultRecipientEmail,
-      subject: defaultSubject,
-      message: '',
-      includePublicLink: true,
-      requestSignature: defaultRequestSignature
+  const defaults = (language: 'lt' | 'en') => getInvoiceEmailDefaults({ language, kind,
+    invoiceNumber: invoice.invoiceId || '', totalAmount: invoice.totalAmount, outstandingAmount,
+    currency: invoice.currency || 'eur', dueDate: invoice.dueDate, today: invoiceEmailToday() });
+  const initialLanguage = invoice.documentLanguage === 'en' ? 'en' : 'lt';
+  const { control, handleSubmit, getValues, setValue, setError, watch, formState: { errors } } = useForm<InvoiceEmailContent>({
+    defaultValues: delivery?.content || {
+      recipientEmail: delivery?.recipient || recipientEmail || invoice.receiver.email || '',
+      language: initialLanguage, kind, ...defaults(initialLanguage), includePublicLink: true,
+      requestSignature: kind === 'invoice' && Boolean(invoice.recipientSigningRequestedAt && !invoice.recipientSignedAt)
     }
   });
   // eslint-disable-next-line react-hooks/incompatible-library
-  const recipientEmail = watch('recipientEmail', defaultRecipientEmail);
-  const shouldRotateSigningLink = Boolean(
-    requestSignature &&
-      invoice.recipientSigningToken &&
-      (invoice.recipientSigningRevokedAt ||
-        (invoice.recipientSigningExpiresAt &&
-          new Date(invoice.recipientSigningExpiresAt).getTime() <=
-            Date.now()) ||
-        (invoice.recipientSigningEmail &&
-          invoice.recipientSigningEmail.toLowerCase() !==
-            recipientEmail.toLowerCase()))
-  );
-  const publicLinkExpiresAt = publicInvoiceExpiresAt
-    ? new Date(publicInvoiceExpiresAt)
-    : null;
-  const isPublicLinkExpired = Boolean(
-    publicLinkExpiresAt && publicLinkExpiresAt.getTime() <= Date.now()
-  );
+  const language = watch('language');
+  const includePublicLink = watch('includePublicLink');
+  const [result, setResult] = useState(delivery);
+  const [transportUnknown, setTransportUnknown] = useState(false);
+  const [confirmedDuplicate, setConfirmedDuplicate] = useState(false);
+  const requestRef = useRef<SendInvoiceEmailBody | null>(null);
+  const unresolved = result && ['queued', 'unknown'].includes(result.status)
+    && !['superseded-unknown', 'reminder-no-longer-payable'].includes(result.failureCode || '');
+  const expired = Boolean(result?.failureCode === 'superseded-unknown' || (unresolved && result?.recoveryExpiresAt && new Date(result.recoveryExpiresAt).getTime() <= Date.now()));
+  const recovering = (Boolean(unresolved) && !expired) || transportUnknown;
+  const frozen = isPending || recovering || (expired && !confirmedDuplicate);
 
-  const publicLinkStatus = useMemo(() => {
-    if (!publicInvoiceToken) return 'missing';
-    if (publicInvoiceRevokedAt) return 'revoked';
-    if (isPublicLinkExpired) return 'expired';
-
-    return 'active';
-  }, [isPublicLinkExpired, publicInvoiceRevokedAt, publicInvoiceToken]);
-
-  const publicInvoiceLink =
-    typeof window !== 'undefined' && publicInvoiceToken
-      ? `${window.location.origin}/invoices/public/${publicInvoiceToken}`
-      : '';
-
-  const handleCloseSendDialog = () => {
-    onClose();
-    reset();
-    setIncludePublicLink(true);
-    setRequestSignature(defaultRequestSignature);
+  const changeLanguage = (next: 'lt' | 'en') => {
+    const current = getValues();
+    const updated = switchInvoiceEmailLanguage(current, defaults(current.language), defaults(next));
+    setValue('language', next);
+    setValue('subject', updated.subject);
+    setValue('message', updated.message);
   };
 
-  useEffect(() => {
-    setIncludePublicLink(true);
-    setRequestSignature(defaultRequestSignature);
-    setPublicInvoiceToken(invoice.publicInvoiceToken || '');
-    setPublicInvoiceExpiresAt(invoice.publicInvoiceExpiresAt || '');
-    setPublicInvoiceRevokedAt(invoice.publicInvoiceRevokedAt || '');
-    reset({
-      recipientEmail: defaultRecipientEmail,
-      subject: defaultSubject,
-      message: '',
-      includePublicLink: true,
-      requestSignature: defaultRequestSignature
-    });
-  }, [
-    defaultRecipientEmail,
-    defaultRequestSignature,
-    defaultSubject,
-    invoice.id,
-    invoice.publicInvoiceExpiresAt,
-    invoice.publicInvoiceRevokedAt,
-    invoice.publicInvoiceToken,
-    reset
-  ]);
-
-  const onSubmit = (data: SendInvoiceForm, blob: Blob) =>
-    startTransition(async () => {
-      if (!isEmailVerified) return;
-
-      const response = await sendInvoiceEmail({
-        id: Number(invoice.id),
-        userId,
-        blob,
-        invoiceId: invoice.invoiceId || '',
-        recipientEmail: data.recipientEmail,
-        subject: data.subject,
-        message: data.message,
-        includePublicLink,
-        requestSignature: includePublicLink && requestSignature
-      });
-
-      toast(response.data.message, {
-        variant: isResponseError(response) ? 'danger' : 'success'
-      });
-
-      if (isResponseError(response)) {
-        response.data.errors.forEach((error) => {
-          setError(error.key as keyof SendInvoiceForm, {
-            message: error.value
-          });
-        });
-
-        return;
+  const submit = (content: InvoiceEmailContent) => startTransition(async () => {
+    if (!isEmailVerified || (expired && !confirmedDuplicate)) return;
+    let response: Awaited<ReturnType<typeof sendInvoiceEmailAction>>;
+    try {
+      if (recovering && result && !requestRef.current) {
+        response = await recoverInvoiceEmailAction(userId, Number(invoice.id), result.id);
+      } else {
+        if (!requestRef.current) requestRef.current = { ...content, attemptKey: crypto.randomUUID(),
+          confirmPossibleDuplicate: expired && confirmedDuplicate,
+          replacesDeliveryId: expired ? result?.id : undefined };
+        response = await sendInvoiceEmailAction(userId, Number(invoice.id), requestRef.current);
       }
-
-      handleCloseSendDialog();
+    } catch {
+      setTransportUnknown(true);
+      toast(t('unknown_result'), { variant: 'warning' });
       router.refresh();
-    });
-
-  const handleGeneratePublicLink = () =>
-    startTransition(async () => {
-      const response = await regeneratePublicInvoiceLink(
-        userId,
-        Number(invoice.id)
-      );
-
-      toast(response.data.message, {
-        variant: isResponseError(response) ? 'danger' : 'success'
+      return;
+    }
+    if (!response.ok) {
+      setTransportUnknown(response.transportUnknown);
+      if (!response.transportUnknown) requestRef.current = null;
+      Object.entries(response.validationErrors).forEach(([key, message]) => {
+        setError(key as keyof InvoiceEmailContent, { message });
       });
-
-      if (!isResponseError(response)) {
-        setPublicInvoiceToken(response.data.publicInvoiceToken);
-        setPublicInvoiceExpiresAt(response.data.publicInvoiceExpiresAt || '');
-        setPublicInvoiceRevokedAt('');
-      }
-    });
-
-  const handleCopyPublicLink = async () => {
-    if (!publicInvoiceLink) return;
-
-    await navigator.clipboard.writeText(publicInvoiceLink);
-    toast(t('public_link_copied'), { variant: 'success' });
-  };
-
-  const handleIncludePublicLinkChange = (selected: boolean) => {
-    setIncludePublicLink(selected);
-    if (!selected) setRequestSignature(false);
-  };
-
-  const handleRequestSignatureChange = (selected: boolean) => {
-    setRequestSignature(selected);
-    if (selected) setIncludePublicLink(true);
-  };
-
-  const invoiceAmount = invoice.totalAmount
-    ? `${getCurrencySymbol(currency)}${invoice.totalAmount}`
-    : '-';
-
-  const renderPublicLinkPreview = () => {
-    if (!includePublicLink) return null;
-
-    return (
-      <div className="bg-segment flex h-10 items-center gap-2 rounded-2xl border px-2">
-        <LinkIcon className="text-muted ml-1 h-4 w-4 shrink-0" />
-        {publicLinkStatus === 'active' ? (
-          <>
-            <code className="text-muted min-w-0 flex-1 truncate text-xs">
-              {publicInvoiceLink}
-            </code>
-            <Button
-              size="sm"
-              variant="tertiary"
-              className="h-8 min-h-8 px-3 text-xs"
-              isDisabled={!publicInvoiceLink}
-              onPress={handleCopyPublicLink}
-            >
-              <ClipboardDocumentIcon className="h-4 w-4" />
-              {t('copy_public_link')}
-            </Button>
-          </>
-        ) : (
-          <>
-            <span className="text-muted min-w-0 flex-1 truncate text-xs">
-              {t('public_link_generated_on_send')}
-            </span>
-            <Button
-              size="sm"
-              className="h-8 min-h-8 px-3 text-xs"
-              isDisabled={isPending}
-              onPress={handleGeneratePublicLink}
-            >
-              {publicLinkStatus === 'missing'
-                ? t('generate_public_link')
-                : t('regenerate_public_link')}
-            </Button>
-          </>
-        )}
-      </div>
-    );
-  };
-
-  const renderOptions = () => (
-    <div className="flex flex-col gap-2">
-      <Checkbox
-        id="include-public-link"
-        variant="secondary"
-        isSelected={includePublicLink}
-        onChange={handleIncludePublicLinkChange}
-        className="rounded-lg py-2"
-      >
-        <Checkbox.Control>
-          <Checkbox.Indicator />
-        </Checkbox.Control>
-        <Checkbox.Content>
-          <Label htmlFor="include-public-link">
-            {t('include_public_link')}
-          </Label>
-        </Checkbox.Content>
-      </Checkbox>
-      {renderPublicLinkPreview()}
-      <Checkbox
-        id="request-signature"
-        variant="secondary"
-        isSelected={requestSignature}
-        onChange={handleRequestSignatureChange}
-        className="rounded-lg py-2"
-      >
-        <Checkbox.Control>
-          <Checkbox.Indicator />
-        </Checkbox.Control>
-        <Checkbox.Content>
-          <Label htmlFor="request-signature">{t('request_signature')}</Label>
-        </Checkbox.Content>
-      </Checkbox>
-    </div>
-  );
+      toast(response.message, { variant: 'danger' });
+      router.refresh();
+      return;
+    }
+    setTransportUnknown(false);
+    setResult(response.delivery);
+    const accepted = ['sent', 'delivered'].includes(response.delivery.status);
+    const failed = ['failed', 'bounced'].includes(response.delivery.status);
+    toast(response.message, { variant: accepted ? 'success' : failed ? 'danger' : 'warning' });
+    if (failed) requestRef.current = null;
+    router.refresh();
+    if (accepted) onClose();
+  });
 
   return (
-    <Modal.Backdrop
-      isOpen={isOpen}
-      onOpenChange={(open) => {
-        if (!open) handleCloseSendDialog();
-      }}
-    >
+    <Modal.Backdrop isOpen onOpenChange={(open) => { if (!open && !isPending) onClose(); }}>
       <Modal.Container size="lg" scroll="outside">
         <Modal.Dialog>
-          <Modal.CloseTrigger />
-          <BlobProvider document={pdfDocument}>
-            {({ blob, loading: isPdfLoading }) => (
-              <form
-                onSubmit={handleSubmit((data) => {
-                  if (blob) onSubmit(data, blob);
-                })}
-                encType="multipart/form-data"
-              >
-                <Modal.Header>
-                  <div className="flex min-w-0 flex-col gap-1 pr-8">
-                    <Modal.Heading>
-                      {invoice.invoiceId || t('invoice')}
-                    </Modal.Heading>
-                    <p className="text-muted truncate text-sm">
-                      {invoice.receiver.name} - {invoiceAmount}
-                    </p>
-                  </div>
-                </Modal.Header>
-                <Modal.Body className="flex w-full flex-col gap-4">
-                  {!isEmailVerified ? (
-                    <Alert status="warning">
-                      <Alert.Indicator />
-                      <Alert.Content>
-                        <Alert.Description>
-                          {t('email_verification_required')}
-                        </Alert.Description>
-                      </Alert.Content>
-                    </Alert>
-                  ) : null}
-
-                  <Controller
-                    control={control}
-                    name="recipientEmail"
-                    render={({ field }) => (
-                      <TextField
-                        variant="secondary"
-                        isInvalid={!!errors.recipientEmail}
-                      >
-                        <Label>{t('recipient_email')}</Label>
-                        <Input
-                          name={field.name}
-                          value={field.value}
-                          placeholder={t('recipient_placeholder')}
-                          onBlur={field.onBlur}
-                          onChange={field.onChange}
-                        />
-                        <FieldError>
-                          {errors.recipientEmail?.message}
-                        </FieldError>
-                      </TextField>
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="subject"
-                    render={({ field }) => (
-                      <TextField
-                        variant="secondary"
-                        isInvalid={!!errors.subject}
-                      >
-                        <Label>{t('subject_label')}</Label>
-                        <Input
-                          name={field.name}
-                          value={field.value}
-                          placeholder={t('subject_placeholder')}
-                          onBlur={field.onBlur}
-                          onChange={field.onChange}
-                        />
-                        <FieldError>{errors.subject?.message}</FieldError>
-                      </TextField>
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="message"
-                    render={({ field }) => (
-                      <TextField
-                        variant="secondary"
-                        isInvalid={!!errors.message}
-                      >
-                        <Label>{t('message_label')}</Label>
-                        <TextArea
-                          name={field.name}
-                          value={field.value || ''}
-                          placeholder={t('message_placeholder')}
-                          onBlur={field.onBlur}
-                          onChange={field.onChange}
-                        />
-                        <FieldError>{errors.message?.message}</FieldError>
-                      </TextField>
-                    )}
-                  />
-
-                  {renderOptions()}
-                </Modal.Body>
-                <Modal.Footer className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                  <div className="flex w-full flex-col-reverse gap-2 sm:ml-auto sm:w-auto sm:flex-row">
-                    <Button
-                      onPress={handleCloseSendDialog}
-                      variant="ghost"
-                      className="w-full sm:w-auto"
-                    >
-                      {t('cancel')}
-                    </Button>
-                    <Button
-                      isDisabled={
-                        !isEmailVerified || isPdfLoading || !blob
-                      }
-                      isPending={isPending || isPdfLoading}
-                      type="submit"
-                      className="w-full sm:w-auto"
-                    >
-                      <PaperAirplaneIcon className="h-4 w-4" />
-                      {shouldRotateSigningLink
-                        ? t('replace_link_and_send')
-                        : t('send')}
-                    </Button>
-                  </div>
-                </Modal.Footer>
-              </form>
-            )}
-          </BlobProvider>
+          {!isPending ? <Modal.CloseTrigger /> : null}
+          <form onSubmit={handleSubmit(submit)}>
+            <Modal.Header>
+              <Modal.Heading>{kind === 'reminder' ? t('reminder_title') : t('invoice_title')} · {invoice.invoiceId}</Modal.Heading>
+              <p className="text-muted text-sm">{invoice.receiver.name}</p>
+            </Modal.Header>
+            <Modal.Body className="flex flex-col gap-4">
+              {!isEmailVerified ? <Alert status="warning"><Alert.Indicator /><Alert.Content>
+                <Alert.Description>{t('email_verification_required')}</Alert.Description>
+              </Alert.Content></Alert> : null}
+              {recovering ? <Alert status="warning"><Alert.Indicator /><Alert.Content>
+                <Alert.Description>{t('unknown_result')}</Alert.Description>
+              </Alert.Content></Alert> : null}
+              {expired ? <Alert status="warning"><Alert.Indicator /><Alert.Content>
+                <Alert.Description>{t('expired_result')}</Alert.Description>
+              </Alert.Content></Alert> : null}
+              {result?.status === 'failed' ? <p role="alert" className="text-muted text-sm">
+                {result.failureCode === 'preparation-failed' ? t('preparation_failed') : t('provider_failed')}
+              </p> : null}
+              {result?.failureCode === 'reminder-no-longer-payable' ? <p role="status" className="text-muted text-sm">
+                {t('reminder_paid')}
+              </p> : null}
+              <div role="group" aria-label={t('language')} className="flex items-center gap-2">
+                <span className="text-sm">{t('language')}</span>
+                {(['lt', 'en'] as const).map((value) => <Button key={value} size="sm" type="button"
+                  variant={value === language ? 'primary' : 'secondary'} aria-pressed={value === language}
+                  isDisabled={frozen} onPress={() => changeLanguage(value)}>
+                  {value === 'lt' ? 'Lietuvių' : 'English'}
+                </Button>)}
+              </div>
+              <Controller control={control} name="recipientEmail" render={({ field }) => (
+                <TextField variant="secondary" isDisabled={frozen} isInvalid={!!errors.recipientEmail}>
+                  <Label>{t('recipient_email')}</Label>
+                  <Input {...field} type="email" autoComplete="email" required />
+                  <FieldError>{errors.recipientEmail?.message}</FieldError>
+                </TextField>
+              )} />
+              <Controller control={control} name="subject" render={({ field }) => (
+                <TextField variant="secondary" isDisabled={frozen} isInvalid={!!errors.subject}>
+                  <Label>{t('subject_label')}</Label>
+                  <Input {...field} required maxLength={255} />
+                  <FieldError>{errors.subject?.message}</FieldError>
+                </TextField>
+              )} />
+              <Controller control={control} name="message" render={({ field }) => (
+                <TextField variant="secondary" isDisabled={frozen} isInvalid={!!errors.message}>
+                  <Label>{t('message_label')}</Label>
+                  <TextArea {...field} maxLength={1000} rows={5} />
+                  <FieldError>{errors.message?.message}</FieldError>
+                </TextField>
+              )} />
+              <Button type="button" variant="tertiary" size="sm" isDisabled={frozen} onPress={() => {
+                const next = defaults(language); setValue('subject', next.subject); setValue('message', next.message);
+              }}>{t('reset_template')}</Button>
+              <p className="text-muted text-sm">{t('attachment', { filename: `${invoice.invoiceId}.pdf` })}</p>
+              <Controller control={control} name="includePublicLink" render={({ field }) => (
+                <Checkbox isSelected={field.value} isDisabled={frozen} onChange={(selected) => {
+                  field.onChange(selected); if (!selected) setValue('requestSignature', false);
+                }}>
+                  <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+                  <Checkbox.Content><Label>{t('include_public_link')}</Label></Checkbox.Content>
+                </Checkbox>
+              )} />
+              {kind === 'invoice' ? <Controller control={control} name="requestSignature" render={({ field }) => (
+                <Checkbox isSelected={field.value} isDisabled={frozen || !includePublicLink} onChange={field.onChange}>
+                  <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+                  <Checkbox.Content><Label>{t('request_signature')}</Label></Checkbox.Content>
+                </Checkbox>
+              )} /> : null}
+              {expired ? <Checkbox isSelected={confirmedDuplicate} isDisabled={isPending} onChange={(selected) => {
+                setConfirmedDuplicate(selected);
+                requestRef.current = null;
+              }}>
+                <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+                <Checkbox.Content><Label>{t('confirm_duplicate')}</Label></Checkbox.Content>
+              </Checkbox> : null}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button type="button" variant="tertiary" isDisabled={isPending} onPress={onClose}>{t('cancel')}</Button>
+              <Button type="submit" isPending={isPending} isDisabled={!isEmailVerified || isPending
+                || (expired && !confirmedDuplicate) || (kind === 'reminder' && Number(outstandingAmount) <= 0 && !recovering)}>
+                <PaperAirplaneIcon className="size-4" />
+                {recovering ? t('recover') : expired ? t('send_again') : t('send')}
+              </Button>
+            </Modal.Footer>
+          </form>
         </Modal.Dialog>
       </Modal.Container>
     </Modal.Backdrop>

@@ -1,4 +1,5 @@
 export { default as InvoiceEmail } from './emails/invoice-email';
+export { render as renderEmail, toPlainText as emailToPlainText } from '@react-email/render';
 export { default as ResetPasswordEmail } from './emails/reset-password-email';
 export { default as VerifyEmailEmail } from './emails/verify-email-email';
 export { default as ContactMessageEmail } from './emails/contact-message-email';

@@ -28,7 +28,9 @@ vi.mock('@/lib/actions/invoice', () => ({
   saveInvoicePaymentAction: vi.fn(),
   updateInvoiceStatusAction: vi.fn(),
   issueInvoiceAction: vi.fn(),
-  createRecipientDetailsRequestAction: vi.fn()
+  createRecipientDetailsRequestAction: vi.fn(),
+  sendInvoiceEmailAction: vi.fn(),
+  recoverInvoiceEmailAction: vi.fn()
 }));
 vi.mock('@/components/pdf/pdf-viewer-wrapper', () => ({ default: () => null }));
 vi.mock('next/navigation', () => ({

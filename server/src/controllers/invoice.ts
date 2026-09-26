@@ -1,13 +1,17 @@
 import { MultipartFile } from '@fastify/multipart';
 import {
+  emailToPlainText,
   InvoiceEmail,
-  InvoiceSignedNotificationEmail
+  InvoiceSignedNotificationEmail,
+  renderEmail
 } from '@invoicetrackr/emails';
+import { renderInvoicePdf } from '@invoicetrackr/pdf/server';
 import {
   DEFAULT_CURRENCY,
   type IncomeJournalQuery,
   type InvoiceBody,
   invoiceBodySchema,
+  type InvoiceEmailContent,
   issuableInvoiceBodySchema,
   type PublicInvoice,
   type RecipientDetailsBody,
@@ -23,7 +27,6 @@ import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import { appEmailFrom, getAppUrl } from '../config/app';
 import { resend } from '../config/resend';
 import { getClientsFromDb } from '../database/client';
-import { recordEmailDeliveryInDb } from '../database/email-delivery';
 import {
   deleteInvoiceFromDb,
   findInvoiceByInvoiceId,
@@ -41,7 +44,6 @@ import {
   INVOICE_UPDATE_NOT_DRAFT,
   type InvoiceFromDb,
   issueInvoiceInDb,
-  markPublicInvoiceSentInDb,
   prepareInvoiceSigningFromDb,
   preparePublicInvoiceFromDb,
   prepareRecipientDetailsRequestInDb,
@@ -55,9 +57,11 @@ import {
 } from '../database/invoice';
 import {
   cancelInvoiceWithoutPaymentsInDb,
+  getInvoicePaymentsFromDb,
   PAYMENT_CANCEL_BLOCKED,
   PAYMENT_INVALID_STATE,
-  PAYMENT_NOT_FOUND
+  PAYMENT_NOT_FOUND,
+  summarizeInvoicePayments
 } from '../database/invoice-payment';
 import { getUserFromDb } from '../database/user';
 import en from '../locales/en';
@@ -68,6 +72,7 @@ import {
   BadRequestError,
   NotFoundError
 } from '../utils/error';
+import type { InvoiceEmailProviderPayload } from '../utils/invoice-email';
 
 const locales = { en, lt };
 
@@ -967,30 +972,27 @@ export const getLatestInvoices = async (
   reply.status(200).send({ invoices });
 };
 
-export const sendInvoiceEmail = async (
-  req: FastifyRequest<{
-    Params: { userId: string; id: string };
-    Body: {
-      recipientEmail: string;
-      subject: string;
-      message?: string;
-      includePublicLink?: boolean;
-      requestSignature?: boolean;
-      file?: MultipartFile;
-    };
-  }>,
-  reply: FastifyReply
-) => {
-  const id = Number(req.params.id);
-  const userId = Number(req.params.userId);
+export const prepareInvoiceEmailPayload = async (
+  userId: number,
+  id: number,
+  content: InvoiceEmailContent
+): Promise<InvoiceEmailProviderPayload> => {
   const {
     recipientEmail,
     subject,
     message,
-    includePublicLink = true,
-    file
-  } = req.body;
-  const i18n = await useI18n(req);
+    includePublicLink
+  } = content;
+  const i18n = {
+    t: (key: string, options: Record<string, string | number> = {}) => {
+      const text = key.split('.').reduce<unknown>((value, segment) =>
+        value && typeof value === 'object' ? (value as Record<string, unknown>)[segment] : undefined,
+        locales[content.language]);
+      return typeof text === 'string'
+        ? text.replace(/%\{(\w+)\}/g, (_, name: string) => String(options[name] ?? `%{${name}}`))
+        : key;
+    }
+  };
 
   const [foundInvoice, user] = await Promise.all([
     getInvoiceFromDb(userId, id),
@@ -1000,11 +1002,14 @@ export const sendInvoiceEmail = async (
   if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
   if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
 
-  if ((foundInvoice.lifecycleStatus || 'draft') !== 'issued')
+  if ((foundInvoice.lifecycleStatus || 'draft') !== 'issued' || foundInvoice.status === 'canceled')
     throw new BadRequestError(i18n.t('error.invoice.emailRequiresIssued'));
 
   const invoice = foundInvoice;
-  const requestSignature = includePublicLink && !!req.body.requestSignature;
+  const requestSignature = includePublicLink && content.kind === 'invoice' && content.requestSignature;
+
+  // Render before generating public/acknowledgment links or contacting the provider.
+  const attachment = (await renderInvoicePdf(invoice)).toString('base64');
 
   let publicInvoiceToken =
     invoice.publicInvoiceToken || randomBytes(32).toString('hex');
@@ -1091,27 +1096,25 @@ export const sendInvoiceEmail = async (
     ? getAppUrl(`/invoices/public/${publicInvoiceToken}`)
     : undefined;
 
-  const attachment = file
-    ? await file.toBuffer().then((buffer) => buffer.toString('base64'))
+  const balance = content.kind === 'reminder'
+    ? summarizeInvoicePayments(invoice.totalAmount, await getInvoicePaymentsFromDb(userId, id))
     : undefined;
+  if (content.kind === 'reminder' && (invoice.status === 'paid' || !balance || Number(balance.outstandingAmount) <= 0))
+    throw new BadRequestError(i18n.t('error.invoice.reminderRequiresBalance'));
 
   const htmlContent = InvoiceEmail({
     invoiceNumber: invoice.invoiceId || '',
     amount: `${invoice.totalAmount} ${(invoice.currency || DEFAULT_CURRENCY).toUpperCase()}`,
     dueDate: invoice.dueDate,
-    senderName: user.name || user.email,
-    message:
-      message ||
-      i18n.t(
-        attachment
-          ? 'emails.invoice.defaultMessage'
-          : 'emails.invoice.defaultLinkMessage'
-      ),
+    senderName: invoice.sender.name,
+    message,
+    outstandingAmount: balance ? `${balance.outstandingAmount} ${(invoice.currency || DEFAULT_CURRENCY).toUpperCase()}` : undefined,
+    outstandingLabel: i18n.t('emails.invoice.outstandingAmount'),
     hasAttachment: Boolean(attachment),
     translations: {
       title: i18n.t('emails.invoice.title'),
       detailsTitle: i18n.t('emails.invoice.detailsTitle'),
-      sentBy: i18n.t('emails.invoice.sentBy'),
+      sentBy: i18n.t('emails.invoice.sentBy').replace('%{senderName}', '{senderName}'),
       invoiceNumber: i18n.t('emails.invoice.invoiceNumber'),
       amount: i18n.t('emails.invoice.amount'),
       dueDate: i18n.t('emails.invoice.dueDate'),
@@ -1133,69 +1136,18 @@ export const sendInvoiceEmail = async (
     isSigningAvailable: requestSignature && !invoice.recipientSignedAt
   });
 
-  const { data, error } = await resend.emails.send({
+  const html = await renderEmail(htmlContent);
+  const senderName = invoice.sender.name.replace(/[\r\n<>"\\]/g, '').trim();
+  const senderAddress = appEmailFrom.match(/<([^>]+)>/)?.[1] || appEmailFrom;
+  return {
     to: recipientEmail,
-    from: appEmailFrom,
+    from: `"${senderName} via InvoiceTrackr" <${senderAddress}>`,
     replyTo: user.invoiceEmail || user.email,
     subject,
-    react: htmlContent,
-    attachments:
-      attachment && file?.filename
-        ? [
-            {
-              content: attachment,
-              filename: file.filename
-            }
-          ]
-        : undefined
-  });
-
-  if (error)
-    throw new BadRequestError(i18n.t('error.invoice.unableToSendEmail'));
-
-  await recordEmailDeliveryInDb({
-    userId,
-    invoiceId: id,
-    providerMessageId: data?.id,
-    kind: 'invoice',
-    recipient: recipientEmail
-  });
-
-  await markPublicInvoiceSentInDb({ userId, id, requestSignature });
-
-  if (
-    !requestSignature &&
-    invoice.recipientSigningToken &&
-    !invoice.recipientSignedAt
-  ) {
-    await revokeInvoiceSigningFromDb({ userId, id });
-  }
-
-  await captureAnalyticsEventForUser({
-    userId,
-    event: analyticsEvents.invoiceEmailed,
-    properties: {
-      include_public_link: includePublicLink,
-      request_signature: requestSignature,
-      has_attachment: Boolean(attachment)
-    }
-  });
-
-  await recordRequestAudit({
-    req,
-    userId,
-    action: 'invoice.email_sent',
-    entityType: 'invoice',
-    entityId: id,
-    newValue: {
-      recipientEmail,
-      includePublicLink,
-      requestSignature,
-      hasAttachment: Boolean(attachment)
-    }
-  });
-
-  reply.status(200).send({ message: i18n.t('success.invoice.emailSent') });
+    html,
+    text: emailToPlainText(html),
+    attachments: [{ content: attachment, filename: `${invoice.invoiceId}.pdf` }]
+  };
 };
 
 export const revokePublicInvoice = async (

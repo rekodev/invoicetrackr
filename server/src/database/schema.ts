@@ -1,3 +1,4 @@
+import type { InvoiceEmailContent } from '@invoicetrackr/types';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -16,6 +17,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+
+import type { InvoiceEmailProviderPayload } from '../utils/invoice-email';
 
 export const invoiceServicesTable = pgTable(
   'invoice_services',
@@ -755,6 +758,13 @@ export const emailDeliveriesTable = pgTable(
     invoiceId: integer('invoice_id'),
     provider: varchar({ length: 50 }).notNull(),
     providerMessageId: varchar('provider_message_id', { length: 255 }),
+    attemptKey: varchar('attempt_key', { length: 36 }),
+    content: jsonb('content').$type<InvoiceEmailContent>(),
+    providerPayload: jsonb('provider_payload').$type<InvoiceEmailProviderPayload>(),
+    providerStartedAt: timestamp('provider_started_at', { withTimezone: true, mode: 'string' }),
+    recoveryExpiresAt: timestamp('recovery_expires_at', { withTimezone: true, mode: 'string' }),
+    leaseToken: varchar('lease_token', { length: 36 }),
+    leaseUntil: timestamp('lease_until', { withTimezone: true, mode: 'string' }),
     kind: varchar({ length: 50 }).notNull(),
     recipient: varchar({ length: 255 }).notNull(),
     status: varchar({ length: 30 }).default('queued').notNull(),
@@ -772,9 +782,10 @@ export const emailDeliveriesTable = pgTable(
   (table) => [
     foreignKey({ columns: [table.userId], foreignColumns: [usersTable.id] }).onDelete('cascade'),
     foreignKey({ columns: [table.invoiceId], foreignColumns: [invoicesTable.id] }).onDelete('set null'),
+    uniqueIndex('email_deliveries_user_attempt_key').on(table.userId, table.attemptKey),
     uniqueIndex('email_deliveries_provider_message_key').on(table.provider, table.providerMessageId),
     index('email_deliveries_user_created_idx').on(table.userId, table.createdAt),
-    check('email_deliveries_status_check', sql`${table.status} IN ('queued', 'sent', 'delivered', 'failed', 'bounced')`)
+    check('email_deliveries_status_check', sql`${table.status} IN ('queued', 'sent', 'delivered', 'failed', 'bounced', 'unknown')`)
   ]
 );
 

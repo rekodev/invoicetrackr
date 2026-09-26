@@ -10,6 +10,7 @@ import { cryptoWalletBodySchema } from './crypto-wallet';
 import { clientBodySchema } from './client';
 import {
   invoiceBodySchema,
+  invoiceEmailContentSchema,
   invoiceReceiverBodySchema,
   publicInvoiceSchema,
   publicInvoiceSigningSchema
@@ -113,20 +114,33 @@ export const getInvoiceResponseSchema = z.object({
   invoice: invoiceBodySchema
 });
 
+export const invoiceEmailDeliverySchema = z.object({
+  id: z.number(),
+  recipient: z.string(),
+  kind: z.string(),
+  status: z.string(),
+  sentAt: z.string().nullish(),
+  createdAt: z.string().nullish(),
+  failedAt: z.string().nullish(),
+  providerMessageId: z.string().nullish(),
+  failureCode: z.string().nullish(),
+  content: invoiceEmailContentSchema.nullish(),
+  recoveryExpiresAt: z.string().nullish()
+});
+export type InvoiceEmailDelivery = z.infer<typeof invoiceEmailDeliverySchema>;
+
+export const sendInvoiceDeliveryResponseSchema = z.object({
+  message: z.string(),
+  delivery: invoiceEmailDeliverySchema
+});
+export type SendInvoiceDeliveryResponse = z.infer<typeof sendInvoiceDeliveryResponseSchema>;
+
 export const invoiceWorkspaceResponseSchema = z.object({
   invoice: invoiceBodySchema,
   canCopyPublicLink: z.boolean(),
   payments: z.array(invoicePaymentSchema),
   balance: invoicePaymentSummarySchema,
-  deliveries: z.array(
-    z.object({
-      id: z.number(),
-      recipient: z.string(),
-      kind: z.string(),
-      status: z.string(),
-      sentAt: z.string().nullish()
-    })
-  )
+  deliveries: z.array(invoiceEmailDeliverySchema)
 });
 
 export const invoicePaymentResponseSchema = z.object({
@@ -374,7 +388,7 @@ export type GetLatestInvoicesResponse = z.infer<
 >;
 export type UpdateInvoiceStatusResponse = MessageResponse;
 export type DeleteInvoiceResponse = MessageResponse;
-export type SendInvoiceEmailResponse = MessageResponse;
+export type SendInvoiceEmailResponse = SendInvoiceDeliveryResponse;
 export type RevokePublicInvoiceLinkResponse = MessageResponse;
 export type RegeneratePublicInvoiceLinkResponse = z.infer<
   typeof regeneratePublicInvoiceLinkResponseSchema

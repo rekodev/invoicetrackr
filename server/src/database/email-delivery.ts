@@ -10,7 +10,13 @@ export const getInvoiceDeliveriesFromDb = (userId: number, invoiceId: number) =>
       recipient: emailDeliveriesTable.recipient,
       kind: emailDeliveriesTable.kind,
       status: emailDeliveriesTable.status,
-      sentAt: emailDeliveriesTable.sentAt
+      sentAt: emailDeliveriesTable.sentAt,
+      createdAt: emailDeliveriesTable.createdAt,
+      failedAt: emailDeliveriesTable.failedAt,
+      providerMessageId: emailDeliveriesTable.providerMessageId,
+      failureCode: emailDeliveriesTable.failureCode,
+      content: emailDeliveriesTable.content,
+      recoveryExpiresAt: emailDeliveriesTable.recoveryExpiresAt
     })
     .from(emailDeliveriesTable)
     .where(
