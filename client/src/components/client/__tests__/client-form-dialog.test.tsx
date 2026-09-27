@@ -17,6 +17,52 @@ vi.mock('@/lib/actions/client', () => ({
   updateClientAction: mockUpdateClientAction
 }));
 
+vi.mock('@/components/company-lookup/company-lookup-panel', () => ({
+  default: ({
+    value,
+    label,
+    errorMessage,
+    onInputChange,
+    onApply
+  }: {
+    value: string;
+    label: string;
+    errorMessage?: string;
+    onInputChange: (_value: string) => void;
+    onApply: (_result: unknown) => void;
+  }) => (
+    <>
+      <label>
+        {label}
+        <input
+          aria-label={label}
+          value={value}
+          onChange={(event) => onInputChange(event.target.value)}
+        />
+      </label>
+      {errorMessage ? <span>{errorMessage}</span> : null}
+      <button
+        type="button"
+        onClick={() =>
+          onApply({
+            companyCode: '987654321',
+            legalName: 'VMI Client UAB',
+            vatNumber: null,
+            registeredAddress: null,
+            source: {
+              provider: 'vmi',
+              label: 'VMI open data via data.gov.lt — CC BY 4.0',
+              url: 'https://data.gov.lt/datasets/607/?resource_version=940'
+            }
+          })
+        }
+      >
+        Apply VMI fixture
+      </button>
+    </>
+  )
+}));
+
 describe('<ClientFormDialog />', () => {
   let props: ComponentProps<typeof ClientFormDialog>;
   const renderHelper = (component: JSX.Element) => render(withIntl(component));
@@ -184,5 +230,34 @@ describe('<ClientFormDialog />', () => {
     await userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
 
     expect(props.onClose).toHaveBeenCalled();
+  });
+
+  it('applies lookup fields, clears address and duplicate state, and preserves email', async () => {
+    const clientData = {
+      id: 1,
+      name: 'Old Client',
+      type: 'receiver' as const,
+      businessType: 'business' as const,
+      businessNumber: '123456789',
+      vatNumber: 'LT123',
+      address: 'Old address',
+      email: 'billing@example.com'
+    };
+    renderHelper(
+      <ClientFormDialog {...props} mode="edit" clientData={clientData} />
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Apply VMI fixture' })
+    );
+
+    expect(screen.getByLabelText(/Name/i)).toHaveValue('VMI Client UAB');
+    expect(screen.getByLabelText(/Business Number/i)).toHaveValue('987654321');
+    expect(screen.getByLabelText(/VAT Number/i)).toHaveValue('');
+    expect(screen.getByLabelText(/Address/i)).toHaveValue('');
+    expect(screen.getByLabelText(/Email/i)).toHaveValue('billing@example.com');
+    expect(
+      screen.queryByText(/Enter the registered address manually/)
+    ).not.toBeInTheDocument();
   });
 });

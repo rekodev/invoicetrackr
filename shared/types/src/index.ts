@@ -1,5 +1,6 @@
 // Common
 export * from './common';
+export * from './company-lookup';
 
 // Response
 export * from './response';

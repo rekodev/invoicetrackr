@@ -13,13 +13,15 @@ import {
   TextField,
   toast
 } from '@heroui/react';
-import type { ClientBody } from '@invoicetrackr/types';
+import type { ClientBody, CompanyLookupResult } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { addClientAction, updateClientAction } from '@/lib/actions/client';
 import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
+
+import CompanyLookupPanel from '../company-lookup/company-lookup-panel';
 
 const INITIAL_CLIENT_DATA: ClientFormData = {
   name: '',
@@ -62,6 +64,7 @@ const ClientFormDialog = ({
 }: Props) => {
   const t = useTranslations('clients.form_dialog');
   const tTypes = useTranslations('clients.form_dialog.business_types');
+  const tLookup = useTranslations('company_lookup');
   const isEditMode = mode === 'edit';
   const [duplicateWarning, setDuplicateWarning] = useState<string>();
 
@@ -70,10 +73,15 @@ const ClientFormDialog = ({
     handleSubmit,
     formState: { isDirty, isSubmitting, errors },
     setError,
-    reset
+    reset,
+    setValue,
+    clearErrors,
+    watch
   } = useForm<ClientFormData>({
     defaultValues: getInitialClientData(clientData)
   });
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const isBusiness = watch('businessType') === 'business';
 
   useEffect(() => {
     if (!isOpen) return;
@@ -130,6 +138,15 @@ const ClientFormDialog = ({
     handleClose();
   };
 
+  const handleApplyLookup = (result: CompanyLookupResult) => {
+    setValue('name', result.legalName, { shouldDirty: true });
+    setValue('businessNumber', result.companyCode, { shouldDirty: true });
+    setValue('vatNumber', result.vatNumber || '', { shouldDirty: true });
+    setValue('address', '', { shouldDirty: true });
+    clearErrors(['name', 'businessNumber', 'vatNumber', 'address']);
+    setDuplicateWarning(undefined);
+  };
+
   const renderTextField = ({
     name,
     label,
@@ -182,7 +199,6 @@ const ClientFormDialog = ({
               </Modal.Heading>
             </Modal.Header>
             <Modal.Body className="flex flex-col gap-2">
-              {renderTextField({ name: 'name', label: t('fields.name') })}
               <Controller
                 control={control}
                 name="businessType"
@@ -219,6 +235,28 @@ const ClientFormDialog = ({
                   </Select>
                 )}
               />
+              {isBusiness ? (
+                <Controller
+                  control={control}
+                  name="name"
+                  render={({ field }) => (
+                    <CompanyLookupPanel
+                      userId={userId}
+                      value={field.value || ''}
+                      label={tLookup('company_name')}
+                      isInvalid={Boolean(errors.name)}
+                      errorMessage={errors.name?.message}
+                      onInputChange={(value) => {
+                        field.onChange(value);
+                        setDuplicateWarning(undefined);
+                      }}
+                      onApply={handleApplyLookup}
+                    />
+                  )}
+                />
+              ) : (
+                renderTextField({ name: 'name', label: t('fields.name') })
+              )}
               {renderTextField({
                 name: 'businessNumber',
                 label: t('fields.business_number')

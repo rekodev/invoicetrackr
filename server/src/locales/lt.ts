@@ -286,6 +286,10 @@ export default {
     }
   },
   error: {
+    companyLookup: {
+      unavailable:
+        'Įmonių paieška laikinai nepasiekiama. Įveskite duomenis rankiniu būdu arba bandykite dar kartą.'
+    },
     user: {
       notFound: 'Vartotojas nerastas',
       alreadyExists: 'Vartotojas jau egzistuoja',

@@ -4,9 +4,10 @@ DECLARE
   new_payment_id INTEGER;
 BEGIN
   FOR invoice_row IN
-    SELECT id, user_id, total_amount, currency, paid_at, date
+    SELECT invoices.id, invoices.user_id, invoices.total_amount, invoices.currency, invoices.paid_at, invoices.date
     FROM invoices
-    WHERE lifecycle_status = 'issued' AND status = 'paid'
+    INNER JOIN users ON users.id = invoices.user_id
+    WHERE invoices.lifecycle_status = 'issued' AND invoices.status = 'paid'
   LOOP
     IF NOT EXISTS (
       SELECT 1 FROM payment_allocations

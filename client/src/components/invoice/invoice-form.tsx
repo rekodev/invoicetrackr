@@ -23,6 +23,7 @@ import type { Client } from '@invoicetrackr/types';
 import type {
   BankAccountBody,
   ClientBody,
+  CompanyLookupResult,
   CryptoWalletBody,
   InvoiceBody,
   User
@@ -46,6 +47,7 @@ import {
   getDueDateAfterIssueDateChange
 } from '@/lib/utils/invoice-editor';
 
+import CompanyLookupPanel from '../company-lookup/company-lookup-panel';
 import SignaturePad from '../signature-pad';
 import CompleteProfile from '../ui/complete-profile';
 import InvoiceDueDatePreselectionChips from './invoice-due-date-preselection-chips';
@@ -278,6 +280,18 @@ const InvoiceForm = ({
     setValue('receiver.email', receiver.email, { shouldDirty: true });
     clearErrors('receiver');
     setIsReceiverModalOpen(false);
+  };
+
+  const handleApplyReceiverLookup = (result: CompanyLookupResult) => {
+    setValue('receiver.name', result.legalName, { shouldDirty: true });
+    setValue('receiver.businessNumber', result.companyCode, {
+      shouldDirty: true
+    });
+    setValue('receiver.vatNumber', result.vatNumber || '', {
+      shouldDirty: true
+    });
+    setValue('receiver.address', '', { shouldDirty: true });
+    clearErrors('receiver');
   };
 
   const handlePaymentMethodSelect = (selection: PaymentMethodSelection) => {
@@ -583,19 +597,33 @@ const InvoiceForm = ({
             name="receiver.name"
             control={control}
             render={({ field }) =>
-              renderTextField({
-                label: t('labels.receiver_name'),
-                isInvalid: !!errors.receiver?.name,
-                errorMessage: errors.receiver?.name?.message,
-                variant: 'primary',
-                inputProps: {
-                  ...field,
-                  'aria-label': t('a11y.receiver_name_label'),
-                  placeholder: t('placeholders.receiver_name'),
-                  type: 'text',
-                  maxLength: 255
-                }
-              })
+              isReceiverBusiness ? (
+                <CompanyLookupPanel
+                  userId={user.id || 0}
+                  value={field.value || ''}
+                  label={t('labels.receiver_name')}
+                  placeholder={t('placeholders.receiver_name')}
+                  variant="primary"
+                  isInvalid={Boolean(errors.receiver?.name)}
+                  errorMessage={errors.receiver?.name?.message}
+                  onInputChange={field.onChange}
+                  onApply={handleApplyReceiverLookup}
+                />
+              ) : (
+                renderTextField({
+                  label: t('labels.receiver_name'),
+                  isInvalid: !!errors.receiver?.name,
+                  errorMessage: errors.receiver?.name?.message,
+                  variant: 'primary',
+                  inputProps: {
+                    ...field,
+                    'aria-label': t('a11y.receiver_name_label'),
+                    placeholder: t('placeholders.receiver_name'),
+                    type: 'text',
+                    maxLength: 255
+                  }
+                })
+              )
             }
           />
           <Controller

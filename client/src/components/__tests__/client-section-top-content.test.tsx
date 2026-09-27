@@ -16,6 +16,10 @@ vi.mock('@/lib/actions/client', () => ({
     mockUpdateClientAction(...args)
 }));
 
+vi.mock('@/components/company-lookup/company-lookup-panel', () => ({
+  default: () => null
+}));
+
 describe('<ClientSectionTopContent />', () => {
   let props: ComponentProps<typeof ClientSectionTopContent>;
   const renderHelper = (component: JSX.Element) => render(withIntl(component));

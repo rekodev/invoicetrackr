@@ -914,6 +914,16 @@
         "download_pdf": "Download PDF",
         "link_unavailable": "Invoice Link Unavailable"
     },
+    "company_lookup": {
+        "company_name": "Company name",
+        "placeholder": "Company name or 9-digit code",
+        "loading": "Searching VMI...",
+        "results_header": "VMI open data matches",
+        "result_details": "Code: {companyCode} · VAT: {vatNumber}",
+        "no_vat": "not registered",
+        "provider_badge": "VMI registry",
+        "provider_short": "VMI open data"
+    },
     "clients": {
         "page_title": "Clients",
         "edit": "Edit",
