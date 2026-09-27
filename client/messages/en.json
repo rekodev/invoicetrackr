@@ -917,6 +917,7 @@
     "company_lookup": {
         "company_name": "Company name",
         "placeholder": "Company name or 9-digit code",
+        "loading": "Searching VMI...",
         "results_header": "VMI open data matches",
         "result_details": "Code: {companyCode} · VAT: {vatNumber}",
         "no_vat": "not registered",

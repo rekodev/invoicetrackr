@@ -7,7 +7,8 @@ import {
   Input,
   type Key,
   Label,
-  ListBox
+  ListBox,
+  Spinner
 } from '@heroui/react';
 import type { CompanyLookupResult } from '@invoicetrackr/types';
 import Image from 'next/image';
@@ -45,6 +46,7 @@ const CompanyLookupPanel = ({
   const t = useTranslations('company_lookup');
   const [results, setResults] = useState<CompanyLookupResult[]>([]);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const requestIdRef = useRef(0);
   const trimmedQuery = value.trim();
 
@@ -63,10 +65,12 @@ const CompanyLookupPanel = ({
 
       if (!response.ok) {
         setResults([]);
+        setIsLoading(false);
         return;
       }
 
       setResults(response.results);
+      setIsLoading(false);
     }, SEARCH_DELAY_MS);
 
     return () => window.clearTimeout(timeout);
@@ -76,6 +80,7 @@ const CompanyLookupPanel = ({
     requestIdRef.current += 1;
     setResults([]);
     setSelectedCode(null);
+    setIsLoading(nextValue.trim().length >= MIN_QUERY_LENGTH);
     onInputChange(nextValue);
   };
 
@@ -89,6 +94,7 @@ const CompanyLookupPanel = ({
 
     requestIdRef.current += 1;
     setSelectedCode(result.companyCode);
+    setIsLoading(false);
     onApply(result);
   };
 
@@ -131,7 +137,13 @@ const CompanyLookupPanel = ({
             placeholder={placeholder || t('placeholder')}
             maxLength={100}
           />
-          {results.length > 0 ? <ComboBox.Trigger /> : null}
+          {isLoading ? (
+            <ComboBox.Trigger isDisabled>
+              <Spinner size="sm" aria-label={t('loading')} />
+            </ComboBox.Trigger>
+          ) : results.length > 0 ? (
+            <ComboBox.Trigger />
+          ) : null}
         </ComboBox.InputGroup>
         {results.length > 0 ? (
           <ComboBox.Popover className="w-(--trigger-width) max-w-(--trigger-width)">

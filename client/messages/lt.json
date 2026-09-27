@@ -917,6 +917,7 @@
     "company_lookup": {
         "company_name": "Įmonės pavadinimas",
         "placeholder": "Įmonės pavadinimas arba 9 skaitmenų kodas",
+        "loading": "Ieškoma VMI...",
         "results_header": "VMI atvirų duomenų rezultatai",
         "result_details": "Kodas: {companyCode} · PVM: {vatNumber}",
         "no_vat": "neregistruotas",

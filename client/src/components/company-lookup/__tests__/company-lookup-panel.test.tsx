@@ -62,6 +62,7 @@ describe('<CompanyLookupPanel />', () => {
       target: { value: 'ąžuolas' }
     });
     expect(searchCompanyLookupsAction).not.toHaveBeenCalled();
+    expect(screen.getByLabelText('Searching VMI...')).toBeInTheDocument();
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(500);
@@ -71,6 +72,7 @@ describe('<CompanyLookupPanel />', () => {
       userId: 1,
       query: 'ąžuolas'
     });
+    expect(screen.queryByLabelText('Searching VMI...')).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /Show suggestions/i }));
     expect(screen.getByText('Ąžuolas UAB')).toBeInTheDocument();
     expect(screen.getAllByText(/VMI open data/).length).toBeGreaterThan(0);
