@@ -117,8 +117,7 @@ describe('<CompanyLookupPanel />', () => {
 
   it('keeps manual entry available and fails silently for provider errors', async () => {
     vi.mocked(searchCompanyLookupsAction).mockResolvedValue({
-      ok: false,
-      message: 'Company lookup is temporarily unavailable.'
+      ok: false
     });
     renderPanel();
 
@@ -132,9 +131,6 @@ describe('<CompanyLookupPanel />', () => {
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /Show suggestions/i })
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText('Company lookup is temporarily unavailable.')
     ).not.toBeInTheDocument();
   });
 });

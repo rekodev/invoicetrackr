@@ -8,7 +8,7 @@ import { isResponseError } from '../utils/error';
 
 export type CompanyLookupActionResult =
   | { ok: true; results: CompanyLookupResult[] }
-  | { ok: false; message: string };
+  | { ok: false };
 
 export const searchCompanyLookupsAction = async ({
   userId,
@@ -20,7 +20,7 @@ export const searchCompanyLookupsAction = async ({
   const response = await searchCompanyLookups(userId, { query });
 
   if (isResponseError(response)) {
-    return { ok: false, message: response.data.message };
+    return { ok: false };
   }
 
   return { ok: true, results: response.data.results };

@@ -1,13 +1,19 @@
 import z from 'zod/v4';
 
+export const COMPANY_LOOKUP_SOURCE = {
+  provider: 'vmi',
+  label: 'VMI open data via data.gov.lt — CC BY 4.0',
+  url: 'https://data.gov.lt/datasets/607/?resource_version=940'
+} as const;
+
 export const companyLookupRequestSchema = z.object({
   query: z.string().trim().min(3).max(100)
 });
 
 export const companyLookupSourceSchema = z.object({
-  provider: z.literal('vmi'),
-  label: z.literal('VMI open data via data.gov.lt — CC BY 4.0'),
-  url: z.literal('https://data.gov.lt/datasets/607/?resource_version=940')
+  provider: z.literal(COMPANY_LOOKUP_SOURCE.provider),
+  label: z.literal(COMPANY_LOOKUP_SOURCE.label),
+  url: z.literal(COMPANY_LOOKUP_SOURCE.url)
 });
 
 export const companyLookupResultSchema = z.object({

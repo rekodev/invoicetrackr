@@ -152,7 +152,8 @@ const InvoiceForm = ({
       ? {
           ...invoiceData,
           services: [...invoiceData.services].sort(
-            (first, second) => (first.position ?? 0) - (second.position ?? 0)
+            (first, second) =>
+              (first.position ?? 0) - (second.position ?? 0)
           ),
           invoiceSeries:
             invoiceData.invoiceSeries ||

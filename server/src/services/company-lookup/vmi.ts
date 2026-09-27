@@ -1,15 +1,13 @@
-import type { CompanyLookupResult } from '@invoicetrackr/types';
+import {
+  COMPANY_LOOKUP_SOURCE,
+  type CompanyLookupResult
+} from '@invoicetrackr/types';
 import z from 'zod/v4';
 
 import { CompanyLookupProvider, CompanyLookupProviderError } from './types';
 
 const VMI_ENDPOINT =
   'https://get.data.gov.lt/datasets/gov/vmi/mm_registras/MokesciuMoketojas';
-const SOURCE = {
-  provider: 'vmi',
-  label: 'VMI open data via data.gov.lt — CC BY 4.0',
-  url: 'https://data.gov.lt/datasets/607/?resource_version=940'
-} as const;
 const CACHE_TTL_MS = 10 * 60 * 1000;
 const CACHE_MAX_ENTRIES = 200;
 const REQUEST_TIMEOUT_MS = 5_000;
@@ -115,7 +113,7 @@ const normalizeRows = (
         legalName: companyRows[0].pavadinimas.trim(),
         vatNumber: activeVatNumber(companyRows, today),
         registeredAddress: null,
-        source: SOURCE
+        source: COMPANY_LOOKUP_SOURCE
       })
     )
     .sort((first, second) => {
