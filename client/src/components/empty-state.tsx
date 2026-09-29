@@ -29,7 +29,7 @@ export default function EmptyState({
       )}
     >
       <div className="max-w-sm">
-        <p className="text-muted text-sm font-medium">{title}</p>
+        <p className="text-foreground text-base font-semibold">{title}</p>
         {description && (
           <p className="text-muted mt-1 text-sm">{description}</p>
         )}

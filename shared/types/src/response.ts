@@ -9,6 +9,7 @@ import { bankAccountBodySchema } from './bank-account';
 import { cryptoWalletBodySchema } from './crypto-wallet';
 import { clientBodySchema } from './client';
 import {
+  authenticatedInvoiceBodySchema,
   invoiceBodySchema,
   invoiceEmailContentSchema,
   invoiceReceiverBodySchema,
@@ -95,6 +96,26 @@ export const getClientResponseSchema = z.object({
   client: clientBodySchema
 });
 
+export const clientWorkspaceResponseSchema = z.object({
+  client: clientBodySchema,
+  totals: z.object({
+    invoicedAmount: z.string(),
+    paidAmount: z.string(),
+    outstandingAmount: z.string()
+  }),
+  invoices: z.array(z.object({
+    id: z.number(),
+    invoiceId: z.string().nullish(),
+    date: z.string(),
+    dueDate: z.string(),
+    lifecycleStatus: z.string(),
+    status: z.string(),
+    totalAmount: z.string(),
+    paidAmount: z.string().nullable(),
+    outstandingAmount: z.string().nullable()
+  }))
+});
+
 export const postClientResponseSchema = z.object({
   client: clientBodySchema,
   message: z.string()
@@ -107,11 +128,11 @@ export const updateClientResponseSchema = z.object({
 
 // Invoice response schemas
 export const getInvoicesResponseSchema = z.object({
-  invoices: z.array(invoiceBodySchema)
+  invoices: z.array(authenticatedInvoiceBodySchema)
 });
 
 export const getInvoiceResponseSchema = z.object({
-  invoice: invoiceBodySchema
+  invoice: authenticatedInvoiceBodySchema
 });
 
 export const invoiceEmailDeliverySchema = z.object({
@@ -136,7 +157,7 @@ export const sendInvoiceDeliveryResponseSchema = z.object({
 export type SendInvoiceDeliveryResponse = z.infer<typeof sendInvoiceDeliveryResponseSchema>;
 
 export const invoiceWorkspaceResponseSchema = z.object({
-  invoice: invoiceBodySchema,
+  invoice: authenticatedInvoiceBodySchema,
   canCopyPublicLink: z.boolean(),
   payments: z.array(invoicePaymentSchema),
   balance: invoicePaymentSummarySchema,
@@ -157,7 +178,7 @@ export const getPublicInvoiceResponseSchema = z.object({
 });
 
 export const postInvoiceResponseSchema = z.object({
-  invoice: invoiceBodySchema,
+  invoice: authenticatedInvoiceBodySchema,
   message: z.string()
 });
 
@@ -319,6 +340,7 @@ export type DeleteBankingInformationResponse = DeleteBankAccountResponse;
 
 export type GetClientsResponse = z.infer<typeof getClientsResponseSchema>;
 export type GetClientResponse = z.infer<typeof getClientResponseSchema>;
+export type ClientWorkspaceResponse = z.infer<typeof clientWorkspaceResponseSchema>;
 export type PostClientResponse = z.infer<typeof postClientResponseSchema>;
 export type UpdateClientResponse = z.infer<typeof updateClientResponseSchema>;
 export type ArchiveClientResponse = MessageResponse;

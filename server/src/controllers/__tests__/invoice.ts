@@ -1,4 +1,5 @@
 import {
+  authenticatedInvoiceBodySchema,
   DEFAULT_CURRENCY,
   invoiceBodySchema,
   invoiceServiceBodySchema
@@ -9,6 +10,7 @@ import * as clientDb from '../../database/client';
 import * as invoiceDb from '../../database/invoice';
 import * as paymentDb from '../../database/invoice-payment';
 import * as userDb from '../../database/user';
+import { postInvoiceOptions, updateInvoiceOptions } from '../../options/invoice';
 import en from '../../locales/en';
 import lt from '../../locales/lt';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
@@ -32,6 +34,14 @@ describe('Invoice Controller', () => {
   const mockInvoice = invoiceFactory.build({ id: 1 });
   const mockInvoiceForDb = invoiceFromDbFactory.build({ id: 1 });
   const mockInvoiceForDb2 = invoiceFromDbFactory.build({ id: 2 });
+
+  it('keeps the saved client relationship out of public invoice bodies', () => {
+    expect(invoiceBodySchema.parse({ ...mockInvoice, clientId: 9 })).not.toHaveProperty('clientId');
+  });
+
+  it('accepts an explicit multipart client unlink', () => {
+    expect(authenticatedInvoiceBodySchema.parse({ ...mockInvoice, clientId: '' }).clientId).toBeNull();
+  });
 
   beforeEach(() => {
     mockUseI18n.mockImplementation(async (request) => {
@@ -256,6 +266,7 @@ describe('Invoice Controller', () => {
 
   describe('POST /api/:userId/invoices', () => {
     it('should create a new invoice', async () => {
+      vi.mocked(clientDb.getClientFromDb).mockResolvedValue(clientFactory.build({ id: 1 }));
       vi.mocked(invoiceDb.findInvoiceByInvoiceId).mockResolvedValue(undefined);
       vi.mocked(invoiceDb.insertInvoiceInDb).mockResolvedValue(
         mockInvoiceForDb
@@ -297,11 +308,15 @@ describe('Invoice Controller', () => {
       const body = JSON.parse(response.body);
       expect(body.invoice).toBeDefined();
       expect(body.message).toBeDefined();
+      expect(invoiceDb.insertInvoiceInDb).toHaveBeenCalledWith(
+        expect.objectContaining({ clientId: 1 }), testUserId, undefined
+      );
 
       await app.close();
     });
 
     it('should return 403 when invoice already exists', async () => {
+      vi.mocked(clientDb.getClientFromDb).mockResolvedValue(clientFactory.build({ id: 1 }));
       vi.mocked(invoiceDb.findInvoiceByInvoiceId).mockResolvedValue({ id: 1 });
 
       const { postInvoice } = invoiceController;
@@ -330,6 +345,22 @@ describe('Invoice Controller', () => {
 
       expect(response.statusCode).toBe(403);
 
+      await app.close();
+    });
+
+    it('rejects a client outside the active owner list before saving', async () => {
+      vi.mocked(clientDb.getClientFromDb).mockResolvedValue(undefined);
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post('/api/:userId/invoices', {
+          ...postInvoiceOptions, preHandler: mockAuthMiddleware
+        });
+      });
+      const response = await app.inject({
+        method: 'POST', url: `/api/${testUserId}/invoices`,
+        payload: { ...mockInvoice, clientId: 99 }
+      });
+      expect(response.statusCode).toBe(400);
+      expect(invoiceDb.insertInvoiceInDb).not.toHaveBeenCalled();
       await app.close();
     });
   });
@@ -585,6 +616,24 @@ describe('Invoice Controller', () => {
   });
 
   describe('PUT /api/:userId/invoices/:id', () => {
+    it('rejects reassignment to a foreign or archived client', async () => {
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(
+        invoiceFromDbFactory.build({ id: 1, clientId: 1 })
+      );
+      vi.mocked(clientDb.getClientFromDb).mockResolvedValue(undefined);
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.put('/api/:userId/invoices/:id', {
+          ...updateInvoiceOptions, preHandler: mockAuthMiddleware
+        });
+      });
+      const response = await app.inject({
+        method: 'PUT', url: `/api/${testUserId}/invoices/1`,
+        payload: { ...mockInvoice, clientId: 99 }
+      });
+      expect(response.statusCode).toBe(400);
+      expect(invoiceDb.updateInvoiceInDb).not.toHaveBeenCalled();
+      await app.close();
+    });
     it('should update an existing invoice', async () => {
       vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(mockInvoiceForDb);
       const updatedInvoice = { ...mockInvoiceForDb, totalAmount: '1500' };

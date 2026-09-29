@@ -5,6 +5,7 @@ import * as clientDb from '../../database/client';
 import {
   archiveClientOptions,
   getClientOptions,
+  getClientWorkspaceOptions,
   getClientsOptions,
   postClientOptions,
   updateClientOptions
@@ -71,6 +72,41 @@ describe('Client Controller', () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.json().client.id).toBe(mockClient.id);
+    await app.close();
+  });
+
+  it('returns the authenticated client workspace with its invoice balances', async () => {
+    vi.mocked(clientDb.getClientWorkspaceFromDb).mockResolvedValue({
+      client: mockClient,
+      totals: { invoicedAmount: '100.00', paidAmount: '40.00', outstandingAmount: '60.00' },
+      invoices: [{ id: 7, invoiceId: 'SF007', date: '2026-09-01', dueDate: '2026-09-30',
+        lifecycleStatus: 'issued', status: 'pending', totalAmount: '100.00',
+        paidAmount: '40.00', outstandingAmount: '60.00' }]
+    });
+    const app = await createTestApp((fastifyApp) => {
+      fastifyApp.get('/api/:userId/clients/:id/workspace', {
+        ...getClientWorkspaceOptions,
+        preHandler: mockAuthMiddleware
+      });
+    });
+
+    const response = await app.inject({ method: 'GET', url: `/api/${testUserId}/clients/${mockClient.id}/workspace` });
+    expect(response.statusCode).toBe(200);
+    expect(response.json().totals.outstandingAmount).toBe('60.00');
+    expect(clientDb.getClientWorkspaceFromDb).toHaveBeenCalledWith(testUserId, mockClient.id);
+    await app.close();
+  });
+
+  it('hides missing, foreign, and archived client workspaces', async () => {
+    vi.mocked(clientDb.getClientWorkspaceFromDb).mockResolvedValue(undefined);
+    const app = await createTestApp((fastifyApp) => {
+      fastifyApp.get('/api/:userId/clients/:id/workspace', {
+        ...getClientWorkspaceOptions,
+        preHandler: mockAuthMiddleware
+      });
+    });
+    const response = await app.inject({ method: 'GET', url: `/api/${testUserId}/clients/999/workspace` });
+    expect(response.statusCode).toBe(404);
     await app.close();
   });
 

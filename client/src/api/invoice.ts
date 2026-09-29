@@ -1,5 +1,6 @@
 import type {
   AddInvoiceResponse,
+  AuthenticatedInvoiceBody,
   DeleteInvoiceResponse,
   GetInvoiceResponse,
   GetInvoicesResponse,
@@ -150,12 +151,13 @@ export const getNextInvoiceNumber = async (userId: number, series?: string) => {
   );
 };
 
-export const addInvoice = async (userId: number, invoiceData: InvoiceBody) => {
+export const addInvoice = async (userId: number, invoiceData: AuthenticatedInvoiceBody) => {
   const hasFile = invoiceData.senderSignature instanceof File;
 
   if (hasFile) {
     const { senderSignature, ...dataWithoutFile } = invoiceData;
     const formData = buildFormData(dataWithoutFile);
+    if (invoiceData.clientId === null) formData.append('clientId', '');
     formData.append('file', senderSignature);
 
     return await api.post<AddInvoiceResponse>(
@@ -172,13 +174,14 @@ export const addInvoice = async (userId: number, invoiceData: InvoiceBody) => {
 
 export const updateInvoice = async (
   userId: number,
-  invoiceData: InvoiceBody
+  invoiceData: AuthenticatedInvoiceBody
 ) => {
   const hasFile = invoiceData.senderSignature instanceof File;
 
   if (hasFile) {
     const { senderSignature, ...dataWithoutFile } = invoiceData;
     const formData = buildFormData(dataWithoutFile);
+    if (invoiceData.clientId === null) formData.append('clientId', '');
     formData.append('file', senderSignature);
 
     return await api.put<UpdateInvoiceResponse>(

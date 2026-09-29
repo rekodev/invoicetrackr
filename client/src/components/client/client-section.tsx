@@ -21,6 +21,7 @@ import { useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
 import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
+import { CLIENT_WORKSPACE_PAGE } from '@/lib/constants/pages';
 
 import ClientCard from '../client-card';
 import ArchiveClientModal from './archive-client-modal';
@@ -152,6 +153,7 @@ const ClientSection = ({ userId, clients }: Props) => {
         key={client.id}
         fullDetails
         client={client}
+        href={CLIENT_WORKSPACE_PAGE(Number(client.id))}
         actions={renderClientCardActions(client)}
       />
     );

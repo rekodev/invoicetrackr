@@ -7,6 +7,7 @@ import {
 } from '@invoicetrackr/emails';
 import { renderInvoicePdf } from '@invoicetrackr/pdf/server';
 import {
+  type AuthenticatedInvoiceBody,
   DEFAULT_CURRENCY,
   type IncomeJournalQuery,
   type InvoiceBody,
@@ -26,7 +27,7 @@ import { analyticsEvents } from '../analytics/events';
 import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import { appEmailFrom, getAppUrl } from '../config/app';
 import { resend } from '../config/resend';
-import { getClientsFromDb } from '../database/client';
+import { getClientFromDb, getClientsFromDb } from '../database/client';
 import {
   deleteInvoiceFromDb,
   findInvoiceByInvoiceId,
@@ -41,6 +42,7 @@ import {
   getPublicInvoiceSigningFromDb,
   getRecipientDetailsRequestFromDb,
   insertInvoiceInDb,
+  INVOICE_CLIENT_NOT_ACTIVE,
   INVOICE_UPDATE_NOT_DRAFT,
   type InvoiceFromDb,
   issueInvoiceInDb,
@@ -698,7 +700,7 @@ export const getNextInvoiceNumber = async (
 export const postInvoice = async (
   req: FastifyRequest<{
     Params: { userId: string };
-    Body: InvoiceBody & { file: MultipartFile };
+    Body: AuthenticatedInvoiceBody & { file: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {
@@ -706,6 +708,12 @@ export const postInvoice = async (
   const invoiceData = req.body;
   const signatureFile = req.body?.file;
   const i18n = await useI18n(req);
+
+  if (invoiceData.clientId) {
+    const client = await getClientFromDb(userId, invoiceData.clientId);
+    if (!client || client.archivedAt)
+      throw new BadRequestError(i18n.t('error.client.notFound'));
+  }
 
   let uploadedSignatureUrl: string | undefined;
 
@@ -726,11 +734,14 @@ export const postInvoice = async (
 
   const signatureUrl = uploadedSignatureUrl || invoiceData.senderSignature;
 
-  const insertedInvoice = await insertInvoiceInDb(
-    invoiceData,
-    userId,
-    signatureUrl
-  );
+  let insertedInvoice;
+  try {
+    insertedInvoice = await insertInvoiceInDb(invoiceData, userId, signatureUrl);
+  } catch (error) {
+    if (error instanceof Error && error.message === INVOICE_CLIENT_NOT_ACTIVE)
+      throw new BadRequestError(i18n.t('error.client.notFound'));
+    throw error;
+  }
 
   if (!insertedInvoice)
     throw new BadRequestError(i18n.t('error.invoice.unableToCreate'));
@@ -765,7 +776,7 @@ export const postInvoice = async (
 export const updateInvoice = async (
   req: FastifyRequest<{
     Params: { userId: string; id: string };
-    Body: InvoiceBody & { file: MultipartFile };
+    Body: AuthenticatedInvoiceBody & { file: MultipartFile };
   }>,
   reply: FastifyReply
 ) => {
@@ -780,6 +791,12 @@ export const updateInvoice = async (
   if (!foundInvoice) throw new NotFoundError(i18n.t('error.invoice.notFound'));
   if ((foundInvoice.lifecycleStatus || 'draft') !== 'draft')
     throw new BadRequestError(i18n.t('error.invoice.issuedImmutable'));
+
+  if (invoiceData.clientId && invoiceData.clientId !== foundInvoice.clientId) {
+    const client = await getClientFromDb(userId, invoiceData.clientId);
+    if (!client || client.archivedAt)
+      throw new BadRequestError(i18n.t('error.client.notFound'));
+  }
 
   if (invoiceData.invoiceId) {
     const existingInvoiceWithNumber = await findInvoiceByInvoiceId(
@@ -805,12 +822,14 @@ export const updateInvoice = async (
 
   const signatureUrl = uploadedSignatureUrl || invoiceData.senderSignature;
 
-  const updatedInvoice = await updateInvoiceInDb(
-    userId,
-    id,
-    invoiceData,
-    signatureUrl
-  );
+  let updatedInvoice;
+  try {
+    updatedInvoice = await updateInvoiceInDb(userId, id, invoiceData, signatureUrl);
+  } catch (error) {
+    if (error instanceof Error && error.message === INVOICE_CLIENT_NOT_ACTIVE)
+      throw new BadRequestError(i18n.t('error.client.notFound'));
+    throw error;
+  }
 
   if (updatedInvoice === INVOICE_UPDATE_NOT_DRAFT)
     throw new BadRequestError(i18n.t('error.invoice.issuedImmutable'));

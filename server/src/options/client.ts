@@ -1,4 +1,5 @@
 import {
+  clientWorkspaceResponseSchema,
   clientMutationBodySchema,
   getClientResponseSchema,
   getClientsResponseSchema,
@@ -11,6 +12,7 @@ import { RouteShorthandOptionsWithHandler } from 'fastify';
 import {
   archiveClient,
   getClient,
+  getClientWorkspace,
   getClients,
   postClient,
   updateClient
@@ -37,6 +39,12 @@ export const getClientOptions: RouteShorthandOptionsWithHandler = {
   },
   preHandler: authenticatedAccess,
   handler: getClient
+};
+
+export const getClientWorkspaceOptions: RouteShorthandOptionsWithHandler = {
+  schema: { response: { 200: clientWorkspaceResponseSchema } },
+  preHandler: authenticatedAccess,
+  handler: getClientWorkspace
 };
 
 export const postClientOptions: RouteShorthandOptionsWithHandler = {

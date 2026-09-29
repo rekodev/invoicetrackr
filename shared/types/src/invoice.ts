@@ -220,6 +220,15 @@ export const invoiceBodySchema = z
     }
   );
 
+// The saved client relationship is private to authenticated workspaces.
+export const authenticatedInvoiceBodySchema = invoiceBodySchema.safeExtend({
+  clientId: z.preprocess(
+    (value) => value === '' ? null : value,
+    z.coerce.number().int().positive().nullish()
+  )
+});
+export type AuthenticatedInvoiceBody = z.infer<typeof authenticatedInvoiceBodySchema>;
+
 export const issuableInvoiceBodySchema = invoiceBodySchema.superRefine(
   (data, ctx) => {
     const requiredReceiverFields = [

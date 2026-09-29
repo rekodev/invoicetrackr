@@ -8,6 +8,7 @@ import {
   archiveClientInDb,
   findPotentialDuplicateClientFromDb,
   getClientFromDb,
+  getClientWorkspaceFromDb,
   getClientsFromDb,
   insertClientInDb,
   updateClientInDb
@@ -39,6 +40,18 @@ export const getClient = async (
   if (!client) throw new NotFoundError(i18n.t('error.client.notFound'));
 
   reply.status(200).send({ client });
+};
+
+export const getClientWorkspace = async (
+  req: FastifyRequest<{ Params: { userId: string; id: string } }>,
+  reply: FastifyReply
+) => {
+  const workspace = await getClientWorkspaceFromDb(Number(req.params.userId), Number(req.params.id));
+  if (!workspace) {
+    const i18n = await useI18n(req);
+    throw new NotFoundError(i18n.t('error.client.notFound'));
+  }
+  reply.status(200).send(workspace);
 };
 
 export const postClient = async (

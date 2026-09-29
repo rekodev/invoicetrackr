@@ -7,6 +7,7 @@ import {
 import {
   archiveClientOptions,
   getClientOptions,
+  getClientWorkspaceOptions,
   getClientsOptions,
   postClientOptions,
   updateClientOptions
@@ -20,6 +21,7 @@ const clientRoutes = (
   fastify.get('/api/:userId/clients', getClientsOptions);
 
   fastify.get('/api/:userId/clients/:id', getClientOptions);
+  fastify.get('/api/:userId/clients/:id/workspace', getClientWorkspaceOptions);
 
   fastify.post('/api/:userId/clients', postClientOptions);
 
