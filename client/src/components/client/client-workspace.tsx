@@ -1,8 +1,11 @@
 'use client';
 
 import {
+  ArrowDownCircleIcon,
   ClipboardDocumentIcon,
+  DocumentTextIcon,
   EyeIcon,
+  ExclamationCircleIcon,
   PencilIcon,
   PlusIcon,
   TrashIcon
@@ -15,6 +18,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
+import MetricCard from '@/components/ui/metric-card';
 import { CLIENTS_PAGE, INVOICE_WORKSPACE_PAGE } from '@/lib/constants/pages';
 import { formatLocalizedDate } from '@/lib/utils/date';
 
@@ -23,6 +27,11 @@ import ClientFormDialog from './client-form-dialog';
 
 type Props = { userId: number; data: ClientWorkspaceResponse };
 const PAGE_SIZE = 8;
+const metrics = [
+  { key: 'invoicedAmount', icon: DocumentTextIcon, iconVariant: 'accent' },
+  { key: 'paidAmount', icon: ArrowDownCircleIcon, iconVariant: 'success' },
+  { key: 'outstandingAmount', icon: ExclamationCircleIcon, iconVariant: 'warning' }
+] as const;
 
 const todayInLithuania = () => {
   const parts = new Intl.DateTimeFormat('en-US', {
@@ -85,13 +94,14 @@ export default function ClientWorkspace({ userId, data }: Props) {
       </header>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        {(['invoicedAmount', 'paidAmount', 'outstandingAmount'] as const).map((key) => (
-          <Card key={key} className="border">
-            <Card.Content>
-              <p className="text-muted text-sm">{t(`totals.${key}`)}</p>
-              <p className="mt-1 text-2xl font-semibold tabular-nums">€{totals[key]}</p>
-            </Card.Content>
-          </Card>
+        {metrics.map(({ key, icon: Icon, iconVariant }) => (
+          <MetricCard
+            key={key}
+            icon={<Icon className="h-4 w-4" />}
+            iconVariant={iconVariant}
+            title={t(`totals.${key}`)}
+            text={`€${totals[key]}`}
+          />
         ))}
       </div>
 
