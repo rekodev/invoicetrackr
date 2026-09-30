@@ -1,6 +1,6 @@
 'use server';
 
-import type { InvoiceBody, InvoicePaymentBody, SendInvoiceEmailBody } from '@invoicetrackr/types';
+import type { AuthenticatedInvoiceBody, InvoicePaymentBody, SendInvoiceEmailBody } from '@invoicetrackr/types';
 import { revalidatePath } from 'next/cache';
 
 import {
@@ -19,6 +19,7 @@ import {
 } from '@/api/invoice';
 
 import {
+  CLIENTS_PAGE,
   EDIT_INVOICE_PAGE,
   INVOICE_WORKSPACE_PAGE,
   INVOICES_PAGE
@@ -69,7 +70,7 @@ export const addInvoiceAction = async ({
   invoiceData
 }: {
   userId: number;
-  invoiceData: InvoiceBody;
+  invoiceData: AuthenticatedInvoiceBody;
 }): Promise<ActionResponseModel> => {
   const response = await addInvoice(userId, invoiceData);
 
@@ -82,6 +83,7 @@ export const addInvoiceAction = async ({
   }
 
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(CLIENTS_PAGE, 'layout');
 
   return { ok: true, message: response.data.message };
 };
@@ -91,7 +93,7 @@ export const updateInvoiceAction = async ({
   invoiceData
 }: {
   userId: number;
-  invoiceData: InvoiceBody;
+  invoiceData: AuthenticatedInvoiceBody;
 }): Promise<ActionResponseModel> => {
   const response = await updateInvoice(userId, invoiceData);
 
@@ -106,6 +108,7 @@ export const updateInvoiceAction = async ({
   revalidatePath(EDIT_INVOICE_PAGE(Number(invoiceData.id)));
   revalidatePath(INVOICES_PAGE);
   revalidatePath(INVOICE_WORKSPACE_PAGE(Number(invoiceData.id)));
+  revalidatePath(CLIENTS_PAGE, 'layout');
 
   return { ok: true, message: response.data.message };
 };
@@ -131,6 +134,7 @@ export const updateInvoiceStatusAction = async ({
 
   revalidatePath(INVOICES_PAGE);
   revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
+  revalidatePath(CLIENTS_PAGE, 'layout');
 
   return { ok: true, message: response.data.message };
 };
@@ -139,6 +143,7 @@ export const issueInvoiceAction = async (userId: number, invoiceId: number) => {
   const response = await issueInvoice(userId, invoiceId);
   revalidatePath(INVOICES_PAGE);
   revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
+  revalidatePath(CLIENTS_PAGE, 'layout');
   return isResponseError(response)
     ? { ok: false, message: response.data.message }
     : { ok: true, message: response.data.message };
@@ -163,6 +168,7 @@ export const saveInvoicePaymentAction = async ({
   revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
   revalidatePath(INVOICES_PAGE);
   revalidatePath('/dashboard');
+  revalidatePath(CLIENTS_PAGE, 'layout');
   return { ok: true, message: '' };
 };
 
@@ -177,6 +183,7 @@ export const removeInvoicePaymentAction = async (
   revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
   revalidatePath(INVOICES_PAGE);
   revalidatePath('/dashboard');
+  revalidatePath(CLIENTS_PAGE, 'layout');
   return { ok: true, message: response.data.message };
 };
 
@@ -219,6 +226,7 @@ export const deleteInvoiceAction = async ({
   }
 
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(CLIENTS_PAGE, 'layout');
 
   return { ok: true, message: response.data.message };
 };

@@ -1,7 +1,7 @@
 'use client';
 
 import { toast } from '@heroui/react';
-import type { BankAccount, InvoiceBody, User } from '@invoicetrackr/types';
+import type { AuthenticatedInvoiceBody, BankAccount, User } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import type { SubmitHandler, UseFormSetError } from 'react-hook-form';
 
@@ -10,10 +10,10 @@ import { INVOICE_WORKSPACE_PAGE,INVOICES_PAGE } from '@/lib/constants/pages';
 import { calculateInvoiceTotals } from '@/lib/utils';
 
 type Props = {
-  invoiceData: InvoiceBody | undefined;
+  invoiceData: AuthenticatedInvoiceBody | undefined;
   user: User | undefined;
   bankingInformation?: BankAccount;
-  setError: UseFormSetError<InvoiceBody>;
+  setError: UseFormSetError<AuthenticatedInvoiceBody>;
   onSuccess?: () => void;
 };
 
@@ -30,7 +30,7 @@ const useInvoiceFormSubmissionHandler = ({
     router.push(INVOICES_PAGE);
   };
 
-  const onSubmit: SubmitHandler<InvoiceBody> = async (data) => {
+  const onSubmit: SubmitHandler<AuthenticatedInvoiceBody> = async (data) => {
     if (!user?.id) return;
 
     const invoiceTotals = calculateInvoiceTotals(data.services);
@@ -70,7 +70,7 @@ const useInvoiceFormSubmissionHandler = ({
     if (!response.ok) {
       if (response.validationErrors) {
         Object.entries(response.validationErrors).forEach(([key, message]) => {
-          setError(key as keyof InvoiceBody, {
+          setError(key as keyof AuthenticatedInvoiceBody, {
             message: message as string
           });
         });

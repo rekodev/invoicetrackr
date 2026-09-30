@@ -925,6 +925,26 @@
         "provider_short": "VMI atviri duomenys"
     },
     "clients": {
+        "workspace": {
+            "create_invoice": "Kurti sąskaitą",
+            "details": "Kliento duomenys",
+            "copy_details": "Kopijuoti duomenis",
+            "copied": "Kliento duomenys nukopijuoti",
+            "copy_failed": "Nepavyko nukopijuoti kliento duomenų",
+            "edit": "Redaguoti",
+            "archive": "Pašalinti",
+            "history": "Sąskaitų istorija",
+            "empty_title": "Šiam klientui sąskaitų dar nėra",
+            "empty_description": "Kurkite pirmą sąskaitą su jau pasirinktu klientu.",
+            "view": "Peržiūrėti",
+            "page": "Puslapis {page} iš {pages}",
+            "previous": "Ankstesnis",
+            "next": "Kitas",
+            "business_types": { "business": "Įmonė", "individual": "Fizinis asmuo" },
+            "totals": { "invoicedAmount": "Išrašyta", "paidAmount": "Gauta", "outstandingAmount": "Neapmokėta" },
+            "columns": { "number": "Sąskaita", "date": "Data", "total": "Suma", "received": "Gauta", "outstanding": "Neapmokėta", "state": "Būsena", "action": "" },
+            "states": { "draft": "Juodraštis", "voided": "Anuliuota", "paid": "Apmokėta", "overdue": "Pradelsta", "partial": "Apmokėta iš dalies", "pending": "Laukiama" }
+        },
         "page_title": "Klientai",
         "edit": "Redaguoti",
         "archive": "Pašalinti",

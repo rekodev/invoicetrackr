@@ -22,7 +22,7 @@ export const invoiceServicesRelations = relations(
 export const invoicesRelations = relations(invoicesTable, ({ one, many }) => ({
   invoiceServices: many(invoiceServicesTable),
   client: one(clientsTable, {
-    fields: [invoicesTable.receiverId],
+    fields: [invoicesTable.clientId],
     references: [clientsTable.id]
   }),
   user: one(usersTable, {

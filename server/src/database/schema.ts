@@ -51,6 +51,7 @@ export const invoicesTable = pgTable(
     date: date().notNull(),
     serviceDate: date('service_date').notNull(),
     userId: integer('user_id').notNull(),
+    clientId: integer('client_id'),
     senderId: integer('sender_id'),
     receiverId: integer('receiver_id'),
     subtotalAmount: numeric('subtotal_amount', {
@@ -176,6 +177,11 @@ export const invoicesTable = pgTable(
       name: 'fk_invoices_invoice_receivers'
     }).onDelete('cascade'),
     foreignKey({
+      columns: [table.clientId],
+      foreignColumns: [clientsTable.id],
+      name: 'fk_invoices_client_id'
+    }).onDelete('set null'),
+    foreignKey({
       columns: [table.bankAccountId],
       foreignColumns: [invoiceBankingInformationTable.id],
       name: 'fk_invoices_invoice_banking_information'
@@ -208,6 +214,7 @@ export const invoicesTable = pgTable(
     ),
     unique('invoices_user_invoice_id_key').on(table.userId, table.invoiceId),
     unique('invoices_id_user_id_key').on(table.id, table.userId),
+    index('invoices_user_client_idx').on(table.userId, table.clientId),
     unique('invoices_recipient_signing_token_key').on(
       table.recipientSigningToken
     ),

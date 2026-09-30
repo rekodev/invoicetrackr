@@ -925,6 +925,26 @@
         "provider_short": "VMI open data"
     },
     "clients": {
+        "workspace": {
+            "create_invoice": "Create Invoice",
+            "details": "Client Details",
+            "copy_details": "Copy Details",
+            "copied": "Client details copied",
+            "copy_failed": "Could not copy client details",
+            "edit": "Edit",
+            "archive": "Remove",
+            "history": "Invoice History",
+            "empty_title": "No invoices for this client yet",
+            "empty_description": "Create the first invoice with this client already selected.",
+            "view": "View",
+            "page": "Page {page} of {pages}",
+            "previous": "Previous",
+            "next": "Next",
+            "business_types": { "business": "Business", "individual": "Individual" },
+            "totals": { "invoicedAmount": "Invoiced", "paidAmount": "Received", "outstandingAmount": "Outstanding" },
+            "columns": { "number": "Invoice", "date": "Date", "total": "Total", "received": "Received", "outstanding": "Outstanding", "state": "State", "action": "" },
+            "states": { "draft": "Draft", "voided": "Voided", "paid": "Paid", "overdue": "Overdue", "partial": "Partially Paid", "pending": "Pending" }
+        },
         "page_title": "Clients",
         "edit": "Edit",
         "archive": "Remove",

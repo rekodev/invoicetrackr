@@ -276,13 +276,15 @@ const ClientFormDialog = ({
               })}
             </Modal.Body>
             <Modal.Footer>
-              <div className="flex w-full flex-col gap-3 overflow-x-hidden">
+              <div className="flex w-full flex-col gap-3">
                 {duplicateWarning ? (
-                  <Alert status="warning" className="w-full p-0">
+                  <Alert status="warning" className="bg-warning-soft shadow-none">
                     <Alert.Indicator />
-                    <Alert.Content>
+                    <Alert.Content className="min-w-0">
                       <Alert.Title>{t('duplicate_warning_title')}</Alert.Title>
-                      <Alert.Description>{duplicateWarning}</Alert.Description>
+                      <Alert.Description className="break-words">
+                        {duplicateWarning}
+                      </Alert.Description>
                     </Alert.Content>
                   </Alert>
                 ) : null}

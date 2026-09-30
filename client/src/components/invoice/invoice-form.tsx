@@ -21,6 +21,7 @@ import {
 } from '@heroui/react';
 import type { Client } from '@invoicetrackr/types';
 import type {
+  AuthenticatedInvoiceBody,
   BankAccountBody,
   ClientBody,
   CompanyLookupResult,
@@ -67,7 +68,8 @@ type Props = {
   clients: Array<ClientBody>;
   bankingInformationEntries: Array<BankAccountBody>;
   cryptoWallets: Array<CryptoWalletBody>;
-  invoiceData?: InvoiceBody;
+  invoiceData?: AuthenticatedInvoiceBody;
+  initialClient?: ClientBody;
   currency: Currency;
 };
 
@@ -118,6 +120,7 @@ const InvoiceForm = ({
   user,
   currency,
   invoiceData,
+  initialClient,
   cryptoWallets,
   clients,
   bankingInformationEntries
@@ -147,7 +150,7 @@ const InvoiceForm = ({
     invoiceData?.cryptoWallet ||
     cryptoWallets.find((wallet) => wallet.isDefault) ||
     cryptoWallets.at(0);
-  const methods = useForm<InvoiceBody>({
+  const methods = useForm<AuthenticatedInvoiceBody>({
     defaultValues: invoiceData
       ? {
           ...invoiceData,
@@ -178,7 +181,11 @@ const InvoiceForm = ({
             type: 'sender',
             vatNumber: user.vatNumber || ''
           },
-          receiver: INITIAL_RECEIVER_DATA,
+          receiver: initialClient ? {
+            ...initialClient,
+            type: 'receiver'
+          } : INITIAL_RECEIVER_DATA,
+          clientId: initialClient?.id,
           services: [
             {
               amount: 0,
@@ -266,6 +273,7 @@ const InvoiceForm = ({
   };
 
   const handleSelectReceiver = (receiver: ClientBody) => {
+    setValue('clientId', receiver.id, { shouldDirty: true });
     setValue('receiver.businessType', receiver.businessType, {
       shouldDirty: true
     });
@@ -273,7 +281,7 @@ const InvoiceForm = ({
     setValue('receiver.businessNumber', receiver.businessNumber, {
       shouldDirty: true
     });
-    setValue('receiver.vatNumber', isVatEnabled ? receiver.vatNumber : '', {
+    setValue('receiver.vatNumber', receiver.vatNumber || '', {
       shouldDirty: true
     });
     setValue('receiver.address', receiver.address, { shouldDirty: true });
@@ -283,6 +291,19 @@ const InvoiceForm = ({
   };
 
   const handleApplyReceiverLookup = (result: CompanyLookupResult) => {
+    const linkedClientId = getValues('clientId');
+    const linkedClient = clients.find((client) => client.id === linkedClientId);
+    const normalizeBusinessNumber = (value: string) =>
+      value.replace(/\s/g, '').toUpperCase();
+    if (
+      linkedClientId &&
+      (!linkedClient ||
+        linkedClient.businessType !== 'business' ||
+        normalizeBusinessNumber(linkedClient.businessNumber) !==
+          normalizeBusinessNumber(result.companyCode))
+    ) {
+      setValue('clientId', null, { shouldDirty: true });
+    }
     setValue('receiver.name', result.legalName, { shouldDirty: true });
     setValue('receiver.businessNumber', result.companyCode, {
       shouldDirty: true

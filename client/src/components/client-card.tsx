@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Card, Chip, cn } from '@heroui/react';
 import { Client } from '@invoicetrackr/types';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { JSX } from 'react';
 
@@ -25,6 +26,7 @@ type Props = {
   truncate?: boolean;
   fullDetails?: boolean;
   actions?: JSX.Element;
+  href?: string;
 };
 
 const ClientCard = ({
@@ -36,7 +38,8 @@ const ClientCard = ({
   amount,
   hideIcon,
   fullDetails,
-  actions
+  actions,
+  href
 }: Props) => {
   const t = useTranslations('clients.card');
   const tTypes = useTranslations('clients.form_dialog.business_types');
@@ -102,7 +105,7 @@ const ClientCard = ({
   const renderFullDetailsCard = () => (
     <Card
       className={cn(
-        'hover:border-secondary/50 relative h-full w-full overflow-hidden border transition hover:shadow-md',
+        'hover:border-secondary/50 group-hover:bg-accent/5 group-focus-within:bg-accent/5 relative h-full w-full overflow-hidden border transition hover:shadow-md',
         {
           'cursor-pointer': !!onClick,
           'border-secondary-600 bg-secondary/10': isSelected
@@ -183,7 +186,11 @@ const ClientCard = ({
   return (
     <div className="group relative" onClick={onClick}>
       {!!actions && actions}
-      {fullDetails ? renderFullDetailsCard() : renderCompactCard()}
+      {href ? (
+        <Link href={href} className="block h-full rounded-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          {fullDetails ? renderFullDetailsCard() : renderCompactCard()}
+        </Link>
+      ) : fullDetails ? renderFullDetailsCard() : renderCompactCard()}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import {
   clientMutationBodySchema,
+  clientWorkspaceResponseSchema,
   getClientResponseSchema,
   getClientsResponseSchema,
   messageResponseSchema,
@@ -12,6 +13,7 @@ import {
   archiveClient,
   getClient,
   getClients,
+  getClientWorkspace,
   postClient,
   updateClient
 } from '../controllers/client';
@@ -37,6 +39,12 @@ export const getClientOptions: RouteShorthandOptionsWithHandler = {
   },
   preHandler: authenticatedAccess,
   handler: getClient
+};
+
+export const getClientWorkspaceOptions: RouteShorthandOptionsWithHandler = {
+  schema: { response: { 200: clientWorkspaceResponseSchema } },
+  preHandler: authenticatedAccess,
+  handler: getClientWorkspace
 };
 
 export const postClientOptions: RouteShorthandOptionsWithHandler = {

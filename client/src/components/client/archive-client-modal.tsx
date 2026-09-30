@@ -12,9 +12,10 @@ type Props = {
   clientData: ClientBody;
   isOpen: boolean;
   onClose: () => void;
+  onArchived?: () => void;
 };
 
-const ArchiveClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
+const ArchiveClientModal = ({ userId, isOpen, onClose, onArchived, clientData }: Props) => {
   const t = useTranslations('clients.archive_modal');
   const [isPending, startTransition] = useTransition();
 
@@ -34,6 +35,7 @@ const ArchiveClientModal = ({ userId, isOpen, onClose, clientData }: Props) => {
       if (!response.ok) return;
 
       onClose();
+      onArchived?.();
     });
 
   const renderModalFooter = () => (

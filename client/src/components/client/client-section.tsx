@@ -20,6 +20,7 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
+import { CLIENT_WORKSPACE_PAGE } from '@/lib/constants/pages';
 import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 
 import ClientCard from '../client-card';
@@ -152,6 +153,7 @@ const ClientSection = ({ userId, clients }: Props) => {
         key={client.id}
         fullDetails
         client={client}
+        href={CLIENT_WORKSPACE_PAGE(Number(client.id))}
         actions={renderClientCardActions(client)}
       />
     );

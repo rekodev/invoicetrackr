@@ -1,4 +1,8 @@
-import type { InvoiceBody, PublicInvoiceSigning } from '@invoicetrackr/types';
+import type {
+  AuthenticatedInvoiceBody,
+  InvoiceBody,
+  PublicInvoiceSigning
+} from '@invoicetrackr/types';
 import {
   and,
   desc,
@@ -21,6 +25,7 @@ import { db } from './db';
 import {
   bankingInformationTable,
   businessProfilesTable,
+  clientsTable,
   invoiceBankingInformationTable,
   invoiceCryptoWalletsTable,
   invoiceNumberSequencesTable,
@@ -88,6 +93,7 @@ export type InvoiceFromDb = Omit<
   InvoiceBody,
   'sender' | 'receiver' | 'services' | 'bankingInformation' | 'cryptoWallet'
 > & {
+  clientId?: number | null;
   bankingInformation: Pick<
     typeof bankingInformationTable.$inferSelect,
     'id' | 'name' | 'code' | 'accountNumber'
@@ -104,6 +110,26 @@ export type InvoiceFromDb = Omit<
 };
 
 export const INVOICE_UPDATE_NOT_DRAFT = 'invoice-update-not-draft' as const;
+export const INVOICE_CLIENT_NOT_ACTIVE = 'invoice-client-not-active' as const;
+
+const assertActiveClient = async (
+  tx: InvoiceTransaction,
+  userId: number,
+  clientId: number
+) => {
+  const [client] = await tx
+    .select({ id: clientsTable.id })
+    .from(clientsTable)
+    .where(
+      and(
+        eq(clientsTable.id, clientId),
+        eq(clientsTable.userId, userId),
+        isNull(clientsTable.archivedAt)
+      )
+    )
+    .for('share');
+  if (!client) throw new Error(INVOICE_CLIENT_NOT_ACTIVE);
+};
 
 const normalizeInvoiceFromDb = (invoice: InvoiceFromDb): InvoiceFromDb => ({
   ...invoice,
@@ -276,6 +302,7 @@ export const getInvoicesFromDb = async (
   const invoices = await db
     .select({
       id: invoicesTable.id,
+      clientId: invoicesTable.clientId,
       invoiceId: invoicesTable.invoiceId,
       invoiceSeries: invoicesTable.invoiceSeries,
       currency: invoicesTable.currency,
@@ -404,6 +431,7 @@ export const getInvoiceFromDb = async (
   const invoices = await (transaction ? transaction : db)
     .select({
       id: invoicesTable.id,
+      clientId: invoicesTable.clientId,
       invoiceId: invoicesTable.invoiceId,
       invoiceSeries: invoicesTable.invoiceSeries,
       currency: invoicesTable.currency,
@@ -526,11 +554,13 @@ export const getInvoiceFromDb = async (
 };
 
 export const insertInvoiceInDb = async (
-  invoiceData: InvoiceBody,
+  invoiceData: AuthenticatedInvoiceBody,
   userId: number,
   senderSignature: string
 ): Promise<InvoiceFromDb | null> => {
   const invoice = await db.transaction(async (tx) => {
+    if (invoiceData.clientId)
+      await assertActiveClient(tx, userId, invoiceData.clientId);
     const totals = calculateInvoiceTotals(invoiceData.services);
     const invoiceSeries = normalizeInvoiceSeries(
       invoiceData.invoiceSeries ||
@@ -544,6 +574,7 @@ export const insertInvoiceInDb = async (
       .insert(invoicesTable)
       .values({
         userId,
+        clientId: invoiceData.clientId || null,
         date: invoiceData.date,
         serviceDate: invoiceData.serviceDate || invoiceData.date,
         notes: invoiceData.notes?.trim() || null,
@@ -680,7 +711,7 @@ export const insertInvoiceInDb = async (
 export const updateInvoiceInDb = async (
   userId: number,
   id: number,
-  invoiceData: InvoiceBody,
+  invoiceData: AuthenticatedInvoiceBody,
   senderSignature: string
 ): Promise<InvoiceFromDb | null | typeof INVOICE_UPDATE_NOT_DRAFT> => {
   const updatedInvoice = await db.transaction(async (tx) => {
@@ -690,6 +721,7 @@ export const updateInvoiceInDb = async (
     const currentInvoice = await tx
       .select({
         senderId: invoicesTable.senderId,
+        clientId: invoicesTable.clientId,
         receiverId: invoicesTable.receiverId,
         bankAccountId: invoicesTable.bankAccountId,
         cryptoWalletId: invoicesTable.cryptoWalletId,
@@ -724,6 +756,8 @@ export const updateInvoiceInDb = async (
       return INVOICE_UPDATE_NOT_DRAFT;
 
     const currentInvoiceData = currentInvoice[0];
+    if (invoiceData.clientId && invoiceData.clientId !== currentInvoiceData.clientId)
+      await assertActiveClient(tx, userId, invoiceData.clientId);
     const paidAt = currentInvoiceData.paidAt;
     const voidedAt = currentInvoiceData.voidedAt;
     const paymentMode =
@@ -871,6 +905,9 @@ export const updateInvoiceInDb = async (
       .update(invoicesTable)
       .set({
         userId,
+        clientId: invoiceData.clientId === undefined
+          ? currentInvoiceData.clientId
+          : invoiceData.clientId,
         invoiceId: currentInvoiceData.invoiceId,
         invoiceSeries:
           invoiceData.invoiceSeries || currentInvoiceData.invoiceSeries,

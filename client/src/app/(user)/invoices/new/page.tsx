@@ -8,7 +8,10 @@ import { auth } from '@/auth';
 import InvoiceForm from '@/components/invoice/invoice-form';
 import { isResponseError } from '@/lib/utils/error';
 
-const AddNewInvoicePage = async () => {
+type SearchParams = Promise<{ clientId?: string }>;
+
+const AddNewInvoicePage = async ({ searchParams }: { searchParams: SearchParams }) => {
+  const { clientId } = await searchParams;
   const session = await auth();
 
   if (!session?.user?.id) return null;
@@ -35,6 +38,9 @@ const AddNewInvoicePage = async () => {
   return (
     <section className="w-full">
       <InvoiceForm
+        initialClient={clientId && /^[1-9]\d*$/.test(clientId)
+          ? clientsResp.data.clients.find((client) => client.id === Number(clientId))
+          : undefined}
         user={userResp.data.user}
         bankingInformationEntries={
           bankingInformationEntriesResp.data.bankAccounts

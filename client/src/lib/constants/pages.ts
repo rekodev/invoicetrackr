@@ -13,6 +13,7 @@ export const ADD_NEW_INVOICE_PAGE = '/invoices/new';
 export const EDIT_INVOICE_PAGE = (invoiceId: number) =>
   `/invoices/edit/${invoiceId}`;
 export const CLIENTS_PAGE = '/clients';
+export const CLIENT_WORKSPACE_PAGE = (clientId: number) => `/clients/${clientId}`;
 export const EXPENSES_PAGE = '/expenses';
 export const PAYMENTS_PAGE = '/payments';
 export const REPORTS_PAGE = '/reports';

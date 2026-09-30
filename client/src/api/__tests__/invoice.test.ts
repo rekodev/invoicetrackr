@@ -1,7 +1,8 @@
+import type { AuthenticatedInvoiceBody } from '@invoicetrackr/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import api from '../api-instance';
-import { sendInvoiceEmail, submitRecipientDetails } from '../invoice';
+import { sendInvoiceEmail, submitRecipientDetails, updateInvoice } from '../invoice';
 
 vi.mock('../api-instance', () => ({
   default: {
@@ -19,6 +20,26 @@ const receiver = {
   email: 'client@example.com',
   type: 'receiver' as const
 };
+
+describe('updateInvoice', () => {
+  it('sends an explicit cleared client link with a signature upload', async () => {
+    const signature = new File(['signature'], 'signature.png', {
+      type: 'image/png'
+    });
+    const invoice = {
+      id: 7,
+      clientId: null,
+      senderSignature: signature
+    } as AuthenticatedInvoiceBody;
+
+    await updateInvoice(1, invoice);
+
+    const [, body] = vi.mocked(api.put).mock.calls.at(-1)!;
+    expect(body).toBeInstanceOf(FormData);
+    expect((body as FormData).get('clientId')).toBe('');
+    expect((body as FormData).get('file')).toBe(signature);
+  });
+});
 
 describe('sendInvoiceEmail', () => {
   beforeEach(() => {
