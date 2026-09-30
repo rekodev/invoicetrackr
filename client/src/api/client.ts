@@ -1,8 +1,8 @@
 import type {
   AddClientResponse,
   ArchiveClientResponse,
-  ClientWorkspaceResponse,
   ClientMutationBody,
+  ClientWorkspaceResponse,
   GetClientsResponse,
   UpdateClientResponse
 } from '@invoicetrackr/types';

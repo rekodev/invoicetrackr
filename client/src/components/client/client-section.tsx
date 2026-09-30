@@ -20,8 +20,8 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
-import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 import { CLIENT_WORKSPACE_PAGE } from '@/lib/constants/pages';
+import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
 
 import ClientCard from '../client-card';
 import ArchiveClientModal from './archive-client-modal';

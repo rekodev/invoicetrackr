@@ -53,7 +53,7 @@ describe('client workspace', () => {
 
   it('leads an empty workspace to a prefilled first invoice', () => {
     render(withIntl(<ClientWorkspace userId={1} data={{ ...data, invoices: [] }} />));
-    expect(screen.getByText('No Invoices for This Client Yet')).toBeInTheDocument();
+    expect(screen.getByText('No invoices for this client yet')).toBeInTheDocument();
     expect(screen.getAllByRole('link', { name: 'Create Invoice' })[1]).toHaveAttribute('href', '/invoices/new?clientId=3');
   });
 

@@ -934,7 +934,7 @@
             "edit": "Edit",
             "archive": "Remove",
             "history": "Invoice History",
-            "empty_title": "No Invoices for This Client Yet",
+            "empty_title": "No invoices for this client yet",
             "empty_description": "Create the first invoice with this client already selected.",
             "view": "View",
             "page": "Page {page} of {pages}",
