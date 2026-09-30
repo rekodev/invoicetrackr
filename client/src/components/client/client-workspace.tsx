@@ -87,7 +87,7 @@ export default function ClientWorkspace({ userId, data }: Props) {
       <div className="grid gap-4 sm:grid-cols-3">
         {(['invoicedAmount', 'paidAmount', 'outstandingAmount'] as const).map((key) => (
           <Card key={key} className="border">
-            <Card.Content className="p-3">
+            <Card.Content>
               <p className="text-muted text-sm">{t(`totals.${key}`)}</p>
               <p className="mt-1 text-2xl font-semibold tabular-nums">€{totals[key]}</p>
             </Card.Content>
@@ -96,7 +96,7 @@ export default function ClientWorkspace({ userId, data }: Props) {
       </div>
 
       <Card className="border">
-        <Card.Content className="p-3">
+        <Card.Content>
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 flex-1 space-y-3">
               <h2 className="text-base font-medium">{t('details')}</h2>
@@ -144,7 +144,7 @@ export default function ClientWorkspace({ userId, data }: Props) {
       </Card>
 
       <Card className="min-w-0 border">
-        <Card.Content className="p-3">
+        <Card.Content>
           <h2 className="mb-3 text-base font-medium">{t('history')}</h2>
           {invoices.length === 0 ? (
             <EmptyState
