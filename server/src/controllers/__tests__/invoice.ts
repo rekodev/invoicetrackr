@@ -359,7 +359,7 @@ describe('Invoice Controller', () => {
         method: 'POST', url: `/api/${testUserId}/invoices`,
         payload: { ...mockInvoice, clientId: 99 }
       });
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode, response.body).toBe(400);
       expect(invoiceDb.insertInvoiceInDb).not.toHaveBeenCalled();
       await app.close();
     });
@@ -630,7 +630,7 @@ describe('Invoice Controller', () => {
         method: 'PUT', url: `/api/${testUserId}/invoices/1`,
         payload: { ...mockInvoice, clientId: 99 }
       });
-      expect(response.statusCode).toBe(400);
+      expect(response.statusCode, response.body).toBe(400);
       expect(invoiceDb.updateInvoiceInDb).not.toHaveBeenCalled();
       await app.close();
     });
