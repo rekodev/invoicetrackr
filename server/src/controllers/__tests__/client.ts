@@ -5,8 +5,8 @@ import * as clientDb from '../../database/client';
 import {
   archiveClientOptions,
   getClientOptions,
-  getClientWorkspaceOptions,
   getClientsOptions,
+  getClientWorkspaceOptions,
   postClientOptions,
   updateClientOptions
 } from '../../options/client';

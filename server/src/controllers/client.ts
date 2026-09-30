@@ -8,8 +8,8 @@ import {
   archiveClientInDb,
   findPotentialDuplicateClientFromDb,
   getClientFromDb,
-  getClientWorkspaceFromDb,
   getClientsFromDb,
+  getClientWorkspaceFromDb,
   insertClientInDb,
   updateClientInDb
 } from '../database/client';

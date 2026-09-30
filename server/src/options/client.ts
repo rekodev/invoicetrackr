@@ -1,6 +1,6 @@
 import {
-  clientWorkspaceResponseSchema,
   clientMutationBodySchema,
+  clientWorkspaceResponseSchema,
   getClientResponseSchema,
   getClientsResponseSchema,
   messageResponseSchema,
@@ -12,8 +12,8 @@ import { RouteShorthandOptionsWithHandler } from 'fastify';
 import {
   archiveClient,
   getClient,
-  getClientWorkspace,
   getClients,
+  getClientWorkspace,
   postClient,
   updateClient
 } from '../controllers/client';

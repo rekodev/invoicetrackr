@@ -10,9 +10,9 @@ import * as clientDb from '../../database/client';
 import * as invoiceDb from '../../database/invoice';
 import * as paymentDb from '../../database/invoice-payment';
 import * as userDb from '../../database/user';
-import { postInvoiceOptions, updateInvoiceOptions } from '../../options/invoice';
 import en from '../../locales/en';
 import lt from '../../locales/lt';
+import { postInvoiceOptions, updateInvoiceOptions } from '../../options/invoice';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import { clientFactory } from '../../test/factories/client';
 import {

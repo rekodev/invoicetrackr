@@ -7,8 +7,8 @@ import {
 import {
   archiveClientOptions,
   getClientOptions,
-  getClientWorkspaceOptions,
   getClientsOptions,
+  getClientWorkspaceOptions,
   postClientOptions,
   updateClientOptions
 } from '../options/client';
