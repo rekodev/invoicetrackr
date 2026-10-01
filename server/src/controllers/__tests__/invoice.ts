@@ -3,6 +3,7 @@ import {
   authenticatedInvoiceBodySchema,
   DEFAULT_CURRENCY,
   invoiceBodySchema,
+  invoiceWriteBodySchema,
   invoiceServiceBodySchema
 } from '@invoicetrackr/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -44,6 +45,19 @@ describe('Invoice Controller', () => {
     expect(authenticatedInvoiceBodySchema.parse({ ...mockInvoice, clientId: '' }).clientId).toBeNull();
   });
 
+  it('keeps historical crypto invoices readable but rejects crypto on invoice writes', () => {
+    const historical = invoiceFactory.build({
+      paymentMode: 'crypto',
+      cryptoWallet: { label: 'Wallet', asset: 'USDC', network: 'Polygon', address: '0x123' }
+    });
+    expect(authenticatedInvoiceBodySchema.safeParse(historical).success).toBe(true);
+    const result = invoiceWriteBodySchema.safeParse(historical);
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ path: ['paymentMode'], message: 'validation.invoice.cryptoRetired' })
+    ]));
+  });
+
   beforeEach(() => {
     mockUseI18n.mockImplementation(async (request) => {
       const locale = request?.headers['accept-language'] === 'lt' ? lt : en;
@@ -75,8 +89,8 @@ describe('Invoice Controller', () => {
   describe('GET /api/:userId/invoices', () => {
     it('should return all invoices for a user', async () => {
       vi.mocked(invoiceDb.getInvoicesFromDb).mockResolvedValue([
-        mockInvoiceForDb,
-        mockInvoiceForDb2
+        { ...mockInvoiceForDb, paidAmount: '0.00', outstandingAmount: mockInvoiceForDb.totalAmount },
+        { ...mockInvoiceForDb2, paidAmount: '0.00', outstandingAmount: mockInvoiceForDb2.totalAmount }
       ]);
 
       const { getInvoices } = invoiceController;
@@ -368,20 +382,15 @@ describe('Invoice Controller', () => {
   });
 
   describe('POST /api/:userId/invoices/:id/issue', () => {
-    it('issues a complete crypto-payment draft', async () => {
+    it('issues a complete draft without payment instructions', async () => {
       const draft = invoiceFromDbFactory.build({
         id: 1,
         invoiceId: null,
         invoiceSeries: 'SF',
         lifecycleStatus: 'draft',
-        paymentMode: 'crypto',
+        paymentMode: 'disabled',
         bankingInformation: undefined,
-        cryptoWallet: {
-          label: 'Business wallet',
-          asset: 'USDC',
-          network: 'Polygon',
-          address: '0x1234567890'
-        }
+        cryptoWallet: null
       });
       const issued = {
         ...draft,
@@ -458,6 +467,21 @@ describe('Invoice Controller', () => {
       expect(response.statusCode).toBe(400);
       expect(invoiceDb.issueInvoiceInDb).not.toHaveBeenCalled();
 
+      await app.close();
+    });
+
+    it('requires an explicit replacement before issuing a legacy crypto draft', async () => {
+      vi.mocked(invoiceDb.getInvoiceFromDb).mockResolvedValue(invoiceFromDbFactory.build({
+        id: 1, lifecycleStatus: 'draft', paymentMode: 'crypto'
+      }));
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(userFactory.build({ id: testUserId }));
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post('/api/:userId/invoices/:id/issue', { preHandler: mockAuthMiddleware }, invoiceController.issueInvoice);
+      });
+      const response = await app.inject({ method: 'POST', url: `/api/${testUserId}/invoices/1/issue` });
+      expect(response.statusCode).toBe(400);
+      expect(response.json().message).toBe(en.validation.invoice.cryptoRetired);
+      expect(invoiceDb.issueInvoiceInDb).not.toHaveBeenCalled();
       await app.close();
     });
   });

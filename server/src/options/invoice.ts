@@ -1,5 +1,5 @@
 import {
-  authenticatedInvoiceBodySchema,
+  invoiceWriteBodySchema,
   getInvoiceResponseSchema,
   getInvoicesResponseSchema,
   getInvoicesRevenueResponseSchema,
@@ -104,7 +104,7 @@ export const getNextInvoiceNumberOptions: RouteShorthandOptionsWithHandler = {
 
 export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: authenticatedInvoiceBodySchema.safeExtend({ file: z.any().nullish() }),
+    body: invoiceWriteBodySchema.safeExtend({ file: z.any().nullish() }),
     response: {
       201: postInvoiceResponseSchema
     }
@@ -116,7 +116,7 @@ export const postInvoiceOptions: RouteShorthandOptionsWithHandler = {
 
 export const updateInvoiceOptions: RouteShorthandOptionsWithHandler = {
   schema: {
-    body: authenticatedInvoiceBodySchema.safeExtend({ file: z.any().nullish() }),
+    body: invoiceWriteBodySchema.safeExtend({ file: z.any().nullish() }),
     response: {
       200: updateInvoiceResponseSchema
     }

@@ -29,3 +29,11 @@ export const addDaysToDate = (date: string, days: number) => {
 
   return formatDate(nextDate.toISOString());
 };
+
+export const todayInLithuania = (now = new Date()) => {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Europe/Vilnius', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(now);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value;
+  return `${get('year')}-${get('month')}-${get('day')}`;
+};

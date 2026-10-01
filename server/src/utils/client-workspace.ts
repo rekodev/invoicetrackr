@@ -1,3 +1,5 @@
+import { fromCents, toCents } from './money';
+
 type ClientInvoiceRow = {
   id: number;
   invoiceId: string | null;
@@ -7,18 +9,6 @@ type ClientInvoiceRow = {
   status: string;
   totalAmount: string;
   paidAmount: string;
-};
-
-const toCents = (value: string) => {
-  const negative = value.startsWith('-');
-  const [whole, fraction = ''] = (negative ? value.slice(1) : value).split('.');
-  const cents = BigInt(whole) * 100n + BigInt(fraction.padEnd(2, '0').slice(0, 2));
-  return negative ? -cents : cents;
-};
-
-const fromCents = (value: bigint) => {
-  const absolute = value < 0n ? -value : value;
-  return `${value < 0n ? '-' : ''}${absolute / 100n}.${(absolute % 100n).toString().padStart(2, '0')}`;
 };
 
 export const summarizeClientInvoices = (rows: Array<ClientInvoiceRow>) => {

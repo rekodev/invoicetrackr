@@ -128,7 +128,10 @@ export const updateClientResponseSchema = z.object({
 
 // Invoice response schemas
 export const getInvoicesResponseSchema = z.object({
-  invoices: z.array(authenticatedInvoiceBodySchema)
+  invoices: z.array(authenticatedInvoiceBodySchema.safeExtend({
+    paidAmount: z.string().nullable(),
+    outstandingAmount: z.string().nullable()
+  }))
 });
 
 export const getInvoiceResponseSchema = z.object({
@@ -370,6 +373,7 @@ export type DeleteExpenseAttachmentResponse = MessageResponse;
 export type AddClientResponse = PostClientResponse;
 
 export type GetInvoicesResponse = z.infer<typeof getInvoicesResponseSchema>;
+export type InvoiceListItem = GetInvoicesResponse['invoices'][number];
 export type GetInvoiceResponse = z.infer<typeof getInvoiceResponseSchema>;
 export type InvoiceWorkspaceResponse = z.infer<
   typeof invoiceWorkspaceResponseSchema

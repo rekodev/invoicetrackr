@@ -25,7 +25,6 @@ import type {
   BankAccountBody,
   ClientBody,
   CompanyLookupResult,
-  CryptoWalletBody,
   InvoiceBody,
   User
 } from '@invoicetrackr/types';
@@ -55,9 +54,7 @@ import InvoiceDueDatePreselectionChips from './invoice-due-date-preselection-chi
 import InvoiceFormReceiverModal from './invoice-form-receiver-modal';
 import InvoiceServicesHeading from './invoice-services-heading';
 import InvoiceServicesTable from './invoice-services-table';
-import PaymentMethodDialog, {
-  type PaymentMethodSelection
-} from './payment-method-dialog';
+import PaymentMethodDialog from './payment-method-dialog';
 
 const InvoiceFormPreview = dynamic(() => import('./invoice-form-preview'), {
   ssr: false
@@ -67,7 +64,6 @@ type Props = {
   user: User;
   clients: Array<ClientBody>;
   bankingInformationEntries: Array<BankAccountBody>;
-  cryptoWallets: Array<CryptoWalletBody>;
   invoiceData?: AuthenticatedInvoiceBody;
   initialClient?: ClientBody;
   currency: Currency;
@@ -94,7 +90,7 @@ const INITIAL_RECEIVER_DATA: Client = {
   type: 'receiver'
 };
 
-const paymentModeOptions = ['manual', 'crypto', 'disabled'] as const;
+const paymentModeOptions = ['manual', 'disabled'] as const;
 
 const getMvpPaymentMode = (paymentMode?: InvoiceBody['paymentMode']) =>
   paymentMode === 'disabled' || paymentMode === 'crypto'
@@ -121,7 +117,6 @@ const InvoiceForm = ({
   currency,
   invoiceData,
   initialClient,
-  cryptoWallets,
   clients,
   bankingInformationEntries
 }: Props) => {
@@ -146,10 +141,6 @@ const InvoiceForm = ({
     invoiceData?.bankingInformation ||
     selectedBankAccount ||
     emptyBankingInformation;
-  const defaultCryptoWallet =
-    invoiceData?.cryptoWallet ||
-    cryptoWallets.find((wallet) => wallet.isDefault) ||
-    cryptoWallets.at(0);
   const methods = useForm<AuthenticatedInvoiceBody>({
     defaultValues: invoiceData
       ? {
@@ -197,7 +188,6 @@ const InvoiceForm = ({
             }
           ],
           bankingInformation: defaultBankingInformation,
-          cryptoWallet: defaultCryptoWallet,
           status: 'pending',
           invoiceSeries: user.defaultInvoiceSeries || 'SF',
           paymentMode: 'manual',
@@ -315,19 +305,11 @@ const InvoiceForm = ({
     clearErrors('receiver');
   };
 
-  const handlePaymentMethodSelect = (selection: PaymentMethodSelection) => {
-    if (selection.type === 'manual') {
-      setValue('paymentMode', 'manual', { shouldDirty: true });
-      setValue('bankingInformation', selection.bankAccount, {
-        shouldDirty: true
-      });
-      clearErrors('bankingInformation');
-    } else {
-      setValue('paymentMode', 'crypto', { shouldDirty: true });
-      setValue('cryptoWallet', selection.cryptoWallet, { shouldDirty: true });
-      clearErrors('cryptoWallet');
-    }
-
+  const handlePaymentMethodSelect = (bankAccount: BankAccountBody) => {
+    setValue('paymentMode', 'manual', { shouldDirty: true });
+    setValue('bankingInformation', bankAccount, { shouldDirty: true });
+    setValue('cryptoWallet', null, { shouldDirty: true });
+    clearErrors(['bankingInformation', 'paymentMode']);
     setIsPaymentMethodModalOpen(false);
   };
 
@@ -827,6 +809,9 @@ const InvoiceForm = ({
           {t('modals.use_saved_payment_details')}
         </Button>
       </div>
+      {paymentMode === 'crypto' ? (
+        <p role="alert" className="text-danger text-sm">{t('payment_settings.crypto_retired')}</p>
+      ) : null}
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         <Controller
           name="paymentMode"
@@ -844,6 +829,8 @@ const InvoiceForm = ({
                 );
 
                 field.onChange(selectedPaymentMode);
+                setValue('cryptoWallet', null, { shouldDirty: true });
+                clearErrors('paymentMode');
                 if (selectedPaymentMode === 'disabled') {
                   setValue('manualPaymentReference', '', {
                     shouldDirty: true
@@ -874,7 +861,7 @@ const InvoiceForm = ({
             {t('payment_settings.disabled_note')}
           </p>
         )}
-        {paymentMode !== 'disabled' && (
+        {paymentMode === 'manual' && (
           <Controller
             name="manualPaymentReference"
             control={control}
@@ -897,37 +884,6 @@ const InvoiceForm = ({
           />
         )}
         {paymentMode === 'manual' && renderBankingInformationFields()}
-        {paymentMode === 'crypto' && (
-          <>
-            {(['label', 'asset', 'network', 'address', 'memo'] as const).map(
-              (name) => (
-                <Controller
-                  key={name}
-                  name={`cryptoWallet.${name}`}
-                  control={control}
-                  render={({ field }) =>
-                    renderTextField({
-                      label: t(`labels.crypto_${name}`),
-                      isInvalid: !!errors.cryptoWallet?.[name],
-                      errorMessage: errors.cryptoWallet?.[name]?.message,
-                      inputProps: {
-                        ...field,
-                        value: field.value || '',
-                        'aria-label': t(`a11y.crypto_${name}_label`),
-                        type: 'text',
-                        maxLength:
-                          name === 'address' || name === 'memo' ? 255 : 100
-                      }
-                    })
-                  }
-                />
-              )
-            )}
-            <p className="text-muted text-xs leading-5 md:col-span-3">
-              {t('payment_settings.crypto_note')}
-            </p>
-          </>
-        )}
       </div>
     </div>
   );
@@ -1194,7 +1150,6 @@ const InvoiceForm = ({
         isOpen={isPaymentMethodModalOpen}
         onClose={() => setIsPaymentMethodModalOpen(false)}
         bankAccounts={bankingInformationEntries}
-        cryptoWallets={cryptoWallets}
         onSelect={handlePaymentMethodSelect}
       />
       {previewData && (

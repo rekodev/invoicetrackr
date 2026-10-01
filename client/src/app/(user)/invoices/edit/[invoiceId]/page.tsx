@@ -2,7 +2,6 @@ import { redirect, unauthorized } from 'next/navigation';
 
 import { getBankingInformationEntries } from '@/api/banking-information';
 import { getClients } from '@/api/client';
-import { getCryptoWallets } from '@/api/crypto-wallet';
 import { getInvoice } from '@/api/invoice';
 import { getUser } from '@/api/user';
 import { auth } from '@/auth';
@@ -27,20 +26,17 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
   const [
     invoiceResp,
     clientsResp,
-    bankingInformationEntriesResp,
-    cryptoWalletsResp
+    bankingInformationEntriesResp
   ] = await Promise.all([
     getInvoice(numericUserId, Number(invoiceId)),
     getClients(numericUserId),
-    getBankingInformationEntries(numericUserId),
-    getCryptoWallets(numericUserId)
+    getBankingInformationEntries(numericUserId)
   ]);
 
   if (
     isResponseError(invoiceResp) ||
     isResponseError(clientsResp) ||
-    isResponseError(bankingInformationEntriesResp) ||
-    isResponseError(cryptoWalletsResp)
+    isResponseError(bankingInformationEntriesResp)
   )
     throw new Error('Failed to load data');
 
@@ -57,7 +53,6 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
         bankingInformationEntries={
           bankingInformationEntriesResp.data.bankAccounts
         }
-        cryptoWallets={cryptoWalletsResp.data.cryptoWallets}
       />
     </section>
   );

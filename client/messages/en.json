@@ -519,7 +519,7 @@
             "delete_description": "This draft will be removed permanently.",
             "delete_draft": "Delete draft",
             "payment_history": "Payments",
-            "bank_transfer": "Bank transfer received",
+            "bank_transfer": "Record an actual EUR bank transfer received. Crypto receipts are not supported.",
             "delivery_history": "Email history",
             "invoice_email": "Invoice email",
             "reminder_email": "Reminder",
@@ -548,10 +548,19 @@
             "edit_payment": "Edit payment",
             "remove_payment": "Remove payment",
             "remove_title": "Remove this payment?",
-            "remove_description": "The invoice balance and status will be recalculated.",
+            "remove_description": "This payment will be permanently deleted. The invoice balance, status, and income reports will be recalculated.",
             "saved": "Payment saved",
             "cancel": "Keep invoice",
-            "close": "Close"
+            "close": "Close",
+            "crypto_retired": "Crypto payment instructions are no longer supported for new invoices. Choose bank transfer or no payment instructions before saving or issuing this draft.",
+            "eur_only": "Payment changes are supported only for EUR invoices. Existing payments remain visible.",
+            "payment_maximum": "Maximum amount: €{maximum}",
+            "amount_limit": "Enter an amount greater than zero and no more than €{maximum}.",
+            "amount_invalid": "Enter a positive amount with no more than two decimal places.",
+            "date_required": "Choose the payment date.",
+            "save_failed": "The result could not be confirmed. Refresh the workspace and check payment history before trying again.",
+            "refresh_workspace": "Refresh workspace",
+            "paid_date": "Fully paid on {date}"
         },
         "table": {
             "a11y": {
@@ -574,7 +583,9 @@
             "status": {
                 "paid": "Paid",
                 "canceled": "Canceled",
-                "pending": "Pending"
+                "pending": "Unpaid",
+                "partial": "Partially paid",
+                "no_payment_due": "No payment due"
             },
             "search_placeholder": "Search by receiver...",
             "rows_per_page": "Rows per Page:",
@@ -593,14 +604,18 @@
                 "a11y": {
                     "status_label": "Status",
                     "columns_label": "Table Columns"
-                }
+                },
+                "all": "All statuses",
+                "overdue_only": "Overdue only"
             },
             "empty_state": {
                 "title": "You Have No Invoices Yet",
                 "description": "Click the \"Add New +\" button to create your first invoice.",
                 "no_results_title": "No invoices match your filters",
                 "no_results_description": "Try changing the search term or status filter."
-            }
+            },
+            "paid_amount": "Received: {amount}",
+            "remaining_amount": "Remaining: {amount}"
         },
         "delete_modal": {
             "title": "Delete Invoice",
@@ -943,7 +958,15 @@
             "business_types": { "business": "Business", "individual": "Individual" },
             "totals": { "invoicedAmount": "Invoiced", "paidAmount": "Received", "outstandingAmount": "Outstanding" },
             "columns": { "number": "Invoice", "date": "Date", "total": "Total", "received": "Received", "outstanding": "Outstanding", "state": "State", "action": "" },
-            "states": { "draft": "Draft", "voided": "Voided", "paid": "Paid", "overdue": "Overdue", "partial": "Partially Paid", "pending": "Pending" }
+            "states": {
+                "draft": "Draft",
+                "voided": "Voided",
+                "paid": "Paid",
+                "overdue": "Overdue",
+                "partial": "Partially paid",
+                "pending": "Unpaid",
+                "no_payment_due": "No payment due"
+            }
         },
         "page_title": "Clients",
         "edit": "Edit",
@@ -1455,7 +1478,8 @@
                     "manual": "Bank Transfer",
                     "crypto": "Crypto Transfer",
                     "disabled": "No Payment Block"
-                }
+                },
+                "crypto_retired": "Crypto payment instructions are no longer supported for new invoices. Choose bank transfer or no payment instructions before saving or issuing this draft."
             },
             "numbering": {
                 "assigned_on_issue": "The final number is assigned when you issue or email the invoice.",
@@ -1484,7 +1508,7 @@
                 "crypto_wallet": "Crypto Wallet",
                 "no_clients": "You have no clients. Create one to get started.",
                 "no_bank_accounts": "You have no bank accounts. Create one to get started.",
-                "no_payment_methods": "You have no saved payment details yet. Add a bank account or crypto wallet to get started."
+                "no_payment_methods": "You have no saved payment details yet. Add a bank account to get started."
             },
             "free_invoice": {
                 "eyebrow": "Free Invoice Generator",

@@ -519,7 +519,7 @@
             "delete_description": "Juodraštis bus pašalintas visam laikui.",
             "delete_draft": "Ištrinti juodraštį",
             "payment_history": "Mokėjimai",
-            "bank_transfer": "Gautas banko pavedimas",
+            "bank_transfer": "Įrašykite faktiškai gautą banko pavedimą eurais. Mokėjimai kriptovaliuta nepalaikomi.",
             "delivery_history": "El. laiškų istorija",
             "invoice_email": "Sąskaitos laiškas",
             "reminder_email": "Priminimas",
@@ -548,10 +548,19 @@
             "edit_payment": "Redaguoti mokėjimą",
             "remove_payment": "Pašalinti mokėjimą",
             "remove_title": "Pašalinti šį mokėjimą?",
-            "remove_description": "Sąskaitos likutis ir būsena bus perskaičiuoti.",
+            "remove_description": "Mokėjimas bus pašalintas visam laikui. Sąskaitos likutis, būsena ir pajamų ataskaitos bus perskaičiuotos.",
             "saved": "Mokėjimas išsaugotas",
             "cancel": "Palikti sąskaitą",
-            "close": "Uždaryti"
+            "close": "Uždaryti",
+            "crypto_retired": "Naujose sąskaitose mokėjimo kriptovaliuta rekvizitai nebepalaikomi. Prieš išsaugodami ar išrašydami šį juodraštį pasirinkite banko pavedimą arba sąskaitą be mokėjimo rekvizitų.",
+            "eur_only": "Mokėjimus galima keisti tik EUR sąskaitose. Esami mokėjimai lieka matomi.",
+            "payment_maximum": "Didžiausia suma: {maximum} €",
+            "amount_limit": "Įveskite sumą, didesnę už nulį ir neviršijančią {maximum} €.",
+            "amount_invalid": "Įveskite teigiamą sumą su ne daugiau kaip dviem skaitmenimis po kablelio.",
+            "date_required": "Pasirinkite mokėjimo datą.",
+            "save_failed": "Nepavyko patvirtinti rezultato. Prieš bandydami dar kartą atnaujinkite sąskaitą ir patikrinkite mokėjimų istoriją.",
+            "refresh_workspace": "Atnaujinti sąskaitą",
+            "paid_date": "Visiškai apmokėta {date}"
         },
         "table": {
             "a11y": {
@@ -574,7 +583,9 @@
             "status": {
                 "paid": "Sumokėta",
                 "canceled": "Atšaukta",
-                "pending": "Laukiama"
+                "pending": "Neapmokėta",
+                "partial": "Iš dalies apmokėta",
+                "no_payment_due": "Mokėti nereikia"
             },
             "search_placeholder": "Ieškoti pagal gavėją...",
             "rows_per_page": "Eilučių puslapyje:",
@@ -593,14 +604,18 @@
                 "a11y": {
                     "status_label": "Būsena",
                     "columns_label": "Lentelės stulpeliai"
-                }
+                },
+                "all": "Visos būsenos",
+                "overdue_only": "Tik pradelstos"
             },
             "empty_state": {
                 "title": "Dar neturite sąskaitų faktūrų",
                 "description": "Spustelėkite mygtuką \"Pridėti naują +\", kad sukurtumėte pirmą sąskaitą faktūrą.",
                 "no_results_title": "Nėra sąskaitų faktūrų pagal pasirinktus filtrus",
                 "no_results_description": "Pabandykite pakeisti paiešką arba būsenos filtrą."
-            }
+            },
+            "paid_amount": "Gauta: {amount}",
+            "remaining_amount": "Liko: {amount}"
         },
         "delete_modal": {
             "title": "Ištrinti sąskaitą",
@@ -943,7 +958,15 @@
             "business_types": { "business": "Įmonė", "individual": "Fizinis asmuo" },
             "totals": { "invoicedAmount": "Išrašyta", "paidAmount": "Gauta", "outstandingAmount": "Neapmokėta" },
             "columns": { "number": "Sąskaita", "date": "Data", "total": "Suma", "received": "Gauta", "outstanding": "Neapmokėta", "state": "Būsena", "action": "" },
-            "states": { "draft": "Juodraštis", "voided": "Anuliuota", "paid": "Apmokėta", "overdue": "Pradelsta", "partial": "Apmokėta iš dalies", "pending": "Laukiama" }
+            "states": {
+                "draft": "Juodraštis",
+                "voided": "Anuliuota",
+                "paid": "Apmokėta",
+                "overdue": "Pradelsta",
+                "partial": "Iš dalies apmokėta",
+                "pending": "Neapmokėta",
+                "no_payment_due": "Mokėti nereikia"
+            }
         },
         "page_title": "Klientai",
         "edit": "Redaguoti",
@@ -1455,7 +1478,8 @@
                     "manual": "Bankinis pavedimas",
                     "crypto": "Kriptovaliutos pervedimas",
                     "disabled": "Nerodyti mokėjimo bloko"
-                }
+                },
+                "crypto_retired": "Naujose sąskaitose mokėjimo kriptovaliuta rekvizitai nebepalaikomi. Prieš išsaugodami ar išrašydami šį juodraštį pasirinkite banko pavedimą arba sąskaitą be mokėjimo rekvizitų."
             },
             "numbering": {
                 "assigned_on_issue": "Galutinis numeris suteikiamas išrašant arba siunčiant sąskaitą el. paštu.",
@@ -1484,7 +1508,7 @@
                 "crypto_wallet": "Kriptovaliutų piniginė",
                 "no_clients": "Neturite klientų. Sukurkite vieną, kad pradėtumėte.",
                 "no_bank_accounts": "Neturite banko sąskaitų. Sukurkite vieną, kad pradėtumėte.",
-                "no_payment_methods": "Dar neturite išsaugotų mokėjimo duomenų. Pridėkite banko sąskaitą arba kriptovaliutų piniginę."
+                "no_payment_methods": "Dar neturite išsaugotų mokėjimo duomenų. Pridėkite banko sąskaitą."
             },
             "free_invoice": {
                 "eyebrow": "Nemokamas sąskaitos generatorius",

@@ -1,35 +1,35 @@
-import { InvoiceBody } from '@invoicetrackr/types';
+import { todayInLithuania } from './date';
 
-export function getInvoiceDueStatus(invoice: InvoiceBody) {
-  function startOfDay(dateValue: string | Date): Date {
-    const d = new Date(dateValue);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }
+type PaymentStateInput = {
+  lifecycleStatus?: string;
+  totalAmount: string;
+  paidAmount: string | null;
+  outstandingAmount: string | null;
+};
 
-  const todayStart = startOfDay(new Date());
-  const dueDateStart = startOfDay(invoice.dueDate);
+export const getInvoicePaymentStatus = (invoice: PaymentStateInput) => {
+  const lifecycle = invoice.lifecycleStatus || 'draft';
+  if (lifecycle === 'draft' || lifecycle === 'voided') return lifecycle;
+  if (Number(invoice.totalAmount) === 0) return 'no_payment_due';
+  if (invoice.outstandingAmount === '0.00') return 'paid';
+  if (Number(invoice.paidAmount) > 0) return 'partial';
+  return 'pending';
+};
 
-  // Past due means: today is after the due date (midnight), i.e., at least 1 calendar day after
-  // So, pastDueDate is dueDate + 1 day
-  const pastDueDateStart = new Date(
-    dueDateStart.getTime() + 24 * 60 * 60 * 1000
-  );
-
-  const isPastDue =
-    (invoice.lifecycleStatus || 'draft') === 'issued' &&
-    todayStart.getTime() >= pastDueDateStart.getTime() &&
-    invoice.status !== 'paid';
-
-  let daysPastDue = 0;
-
-  if (isPastDue) {
-    const msPerDay = 24 * 60 * 60 * 1000;
-    daysPastDue =
-      Math.floor(
-        (todayStart.getTime() - pastDueDateStart.getTime()) / msPerDay
-      ) + 1;
-  }
-
+export function getInvoiceDueStatus(invoice: {
+  lifecycleStatus?: string;
+  dueDate: string;
+  totalAmount: string;
+  status?: string;
+  outstandingAmount?: string | null;
+}, now = new Date()) {
+  const today = todayInLithuania(now);
+  const outstanding = invoice.outstandingAmount === undefined
+    ? invoice.status !== 'paid' && Number(invoice.totalAmount) > 0
+    : Number(invoice.outstandingAmount) > 0;
+  const isPastDue = (invoice.lifecycleStatus || 'draft') === 'issued' && outstanding && invoice.dueDate < today;
+  const daysPastDue = isPastDue
+    ? Math.round((Date.parse(today) - Date.parse(invoice.dueDate)) / 86_400_000)
+    : 0;
   return { isPastDue, daysPastDue };
 }

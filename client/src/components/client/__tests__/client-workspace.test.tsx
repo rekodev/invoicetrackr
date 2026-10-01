@@ -47,6 +47,7 @@ describe('client workspace', () => {
     expect(screen.getAllByText('€40.00')).toHaveLength(2);
     expect(screen.getAllByText('€60.00')).toHaveLength(2);
     expect(screen.getAllByText('—')).toHaveLength(2);
+    expect(screen.getByText('Partially paid')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Create Invoice' })).toHaveAttribute('href', '/invoices/new?clientId=3');
     expect(screen.getAllByRole('link', { name: 'View' })[0]).toHaveAttribute('href', '/invoices/8');
   });

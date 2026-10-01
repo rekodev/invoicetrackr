@@ -37,15 +37,11 @@ import EditBankingInformationDialog from './edit-banking-information-dialog';
 type Props = {
   user: User;
   bankAccounts: Array<Omit<BankAccount, 'id'> & { id?: number }> | undefined;
-  isEmbedded?: boolean;
-  showAddAction?: boolean;
 };
 
 const BankingInformationForm = ({
   user,
-  bankAccounts,
-  isEmbedded = false,
-  showAddAction = true
+  bankAccounts
 }: Props) => {
   const t = useTranslations('profile.banking_information');
   const router = useRouter();
@@ -204,9 +200,9 @@ const BankingInformationForm = ({
     );
   };
 
-  const content = (
+  return (
     <>
-      {isEmbedded && showAddAction ? (
+      <Card className="w-full border">
         <div className="flex justify-end px-6 pt-6">
           <Button
             variant="secondary"
@@ -217,45 +213,23 @@ const BankingInformationForm = ({
             {t('actions.add')}
           </Button>
         </div>
-      ) : null}
-      <CardContent className="p-6">{renderCardBody()}</CardContent>
-      <CardFooter className="flex w-full items-center justify-between px-6 py-4">
-        <div className="flex w-full flex-col items-center">
-          <Button
-            isDisabled={
-              !selectedBankAccountId ||
-              selectedBankAccountId === String(user.selectedBankAccountId)
-            }
-            onPress={handleSave}
-            isPending={isPending}
-            className="w-full sm:w-auto sm:self-end"
-          >
-            {t('actions.save')}
-          </Button>
-        </div>
-      </CardFooter>
-    </>
-  );
-
-  return (
-    <>
-      {isEmbedded ? (
-        content
-      ) : (
-        <Card className="w-full border">
-          <div className="flex justify-end px-6 pt-6">
+        <CardContent className="p-6">{renderCardBody()}</CardContent>
+        <CardFooter className="flex w-full items-center justify-between px-6 py-4">
+          <div className="flex w-full flex-col items-center">
             <Button
-              variant="secondary"
-              className="w-full sm:w-auto"
-              onPress={handleAddNewBankAccount}
+              isDisabled={
+                !selectedBankAccountId ||
+                selectedBankAccountId === String(user.selectedBankAccountId)
+              }
+              onPress={handleSave}
+              isPending={isPending}
+              className="w-full sm:w-auto sm:self-end"
             >
-              <PlusIcon className="h-4 w-4" />
-              {t('actions.add')}
+              {t('actions.save')}
             </Button>
           </div>
-          {content}
-        </Card>
-      )}
+        </CardFooter>
+      </Card>
 
       {currentBankingInformation && isOpen && (
         <DeleteBankAccountDialog

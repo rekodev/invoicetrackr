@@ -80,6 +80,12 @@ export default {
     }
   },
   validation: {
+    payment: {
+      date: 'Choose a valid payment date.',
+      amount: 'Enter a positive amount with no more than two decimal places.',
+      reference: 'Reference must not exceed 255 characters.',
+      notes: 'Note must not exceed 2,000 characters.'
+    },
     general: 'Review fields and retry',
     reviewField: 'Review field',
     password: {
@@ -100,6 +106,7 @@ export default {
       dueDateAfterDate: 'Due date must be after invoice date',
       incomeJournalDateRange: 'End date must not be before start date',
       status: 'Valid status is required',
+      cryptoRetired: 'Choose bank transfer or no payment instructions before saving or issuing this draft.',
       paymentMode: 'Valid payment mode is required',
       businessType: '"Business" or "Individual" required',
       partyType: 'Valid party type is required',
@@ -328,6 +335,8 @@ export default {
       unableToUpdateStatus: 'Unable to update invoice status',
       paymentRequiresIssued:
         'Payments can only be recorded on an issued invoice',
+      paymentMaximum: 'Payment cannot exceed €%{maximum}.',
+      paymentCurrency: 'Payment changes are supported only for EUR invoices.',
       paymentExceedsBalance: 'Payment exceeds the remaining balance',
       paymentFutureDate: 'Payment date cannot be in the future',
       paymentCancelBlocked:

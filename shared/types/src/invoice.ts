@@ -227,10 +227,17 @@ export const authenticatedInvoiceBodySchema = invoiceBodySchema.safeExtend({
     z.coerce.number().int().positive().nullish()
   )
 });
+export const invoiceWriteBodySchema = authenticatedInvoiceBodySchema.refine(
+  (data) => data.paymentMode !== 'crypto',
+  { message: 'validation.invoice.cryptoRetired', path: ['paymentMode'] }
+);
 export type AuthenticatedInvoiceBody = z.infer<typeof authenticatedInvoiceBodySchema>;
 
 export const issuableInvoiceBodySchema = invoiceBodySchema.superRefine(
   (data, ctx) => {
+    if (data.paymentMode === 'crypto') ctx.addIssue({
+      code: 'custom', message: 'validation.invoice.cryptoRetired', path: ['paymentMode']
+    });
     const requiredReceiverFields = [
       ['name', data.receiver.name],
       ['businessNumber', data.receiver.businessNumber],

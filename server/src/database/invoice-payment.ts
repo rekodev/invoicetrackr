@@ -1,5 +1,7 @@
 import type { InvoicePaymentBody } from '@invoicetrackr/types';
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, isNull, sql } from 'drizzle-orm';
+
+import { fromCents, toCents } from '../utils/money';
 
 import { db } from './db';
 import {
@@ -14,8 +16,29 @@ export const PAYMENT_EXCEEDS_BALANCE = 'payment-exceeds-balance';
 export const PAYMENT_FUTURE_DATE = 'payment-future-date';
 export const PAYMENT_CANCEL_BLOCKED = 'payment-cancel-blocked';
 
-const cents = (amount: string) => Math.round(Number(amount) * 100);
-const money = (amount: number) => (amount / 100).toFixed(2);
+export const PAYMENT_UNSUPPORTED_CURRENCY = 'payment-unsupported-currency';
+
+export class PaymentExceedsBalanceError extends Error {
+  constructor(public readonly maximumAmount: string) {
+    super(PAYMENT_EXCEEDS_BALANCE);
+  }
+}
+
+export const getPaymentsByInvoiceQuery = (userId: number) => db
+  .select({
+    invoiceId: paymentAllocationsTable.invoiceId,
+    paidAmount: sql<string>`coalesce(sum(${paymentAllocationsTable.amount}), 0)::text`.as('paid_amount')
+  })
+  .from(paymentAllocationsTable)
+  .innerJoin(paymentsTable, and(
+    eq(paymentsTable.id, paymentAllocationsTable.paymentId),
+    eq(paymentsTable.userId, userId),
+    isNull(paymentsTable.deletedAt)
+  ))
+  .where(eq(paymentAllocationsTable.userId, userId))
+  .groupBy(paymentAllocationsTable.invoiceId)
+  .as('payments_by_invoice');
+
 const todayInLithuania = () => {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Europe/Vilnius',
@@ -36,7 +59,7 @@ export const getInvoicePaymentsFromDb = async (
     .select({
       id: paymentsTable.id,
       paymentDate: paymentsTable.paymentDate,
-      amount: paymentsTable.amount,
+      amount: paymentAllocationsTable.amount,
       bankReference: paymentsTable.bankReference,
       notes: paymentsTable.notes,
       createdAt: paymentsTable.createdAt
@@ -60,12 +83,13 @@ export const summarizeInvoicePayments = (
   payments: Array<{ amount: string }>
 ) => {
   const paid = payments.reduce(
-    (sum, payment) => sum + cents(payment.amount),
-    0
+    (sum, payment) => sum + toCents(payment.amount),
+    0n
   );
+  const outstanding = toCents(totalAmount) - paid;
   return {
-    paidAmount: money(paid),
-    outstandingAmount: money(Math.max(0, cents(totalAmount) - paid))
+    paidAmount: fromCents(paid),
+    outstandingAmount: fromCents(outstanding > 0n ? outstanding : 0n)
   };
 };
 
@@ -76,11 +100,12 @@ export const assertPaymentFits = (
   editingPaymentId?: number
 ) => {
   const otherPaid = existing.reduce(
-    (sum, row) => sum + (row.id === editingPaymentId ? 0 : cents(row.amount)),
-    0
+    (sum, row) => sum + (row.id === editingPaymentId ? 0n : toCents(row.amount)),
+    0n
   );
-  if (otherPaid + cents(amount) > cents(totalAmount))
-    throw new Error(PAYMENT_EXCEEDS_BALANCE);
+  const maximum = toCents(totalAmount) - otherPaid;
+  if (toCents(amount) > maximum)
+    throw new PaymentExceedsBalanceError(fromCents(maximum));
 };
 
 type PaymentChange = {
@@ -99,7 +124,8 @@ export const changeInvoicePaymentInDb = async (
       .select({
         id: invoicesTable.id,
         lifecycleStatus: invoicesTable.lifecycleStatus,
-        totalAmount: invoicesTable.totalAmount
+        totalAmount: invoicesTable.totalAmount,
+        currency: invoicesTable.currency
       })
       .from(invoicesTable)
       .where(
@@ -110,6 +136,7 @@ export const changeInvoicePaymentInDb = async (
     if (!invoice) throw new Error(PAYMENT_NOT_FOUND);
     if (invoice.lifecycleStatus !== 'issued')
       throw new Error(PAYMENT_INVALID_STATE);
+    if ((invoice.currency || 'eur') !== 'eur') throw new Error(PAYMENT_UNSUPPORTED_CURRENCY);
     if (change.payment && change.payment.paymentDate > todayInLithuania())
       throw new Error(PAYMENT_FUTURE_DATE);
 
@@ -117,7 +144,7 @@ export const changeInvoicePaymentInDb = async (
       .select({
         id: paymentsTable.id,
         paymentDate: paymentsTable.paymentDate,
-        amount: paymentsTable.amount
+        amount: paymentAllocationsTable.amount
       })
       .from(paymentsTable)
       .innerJoin(
@@ -218,7 +245,7 @@ export const changeInvoicePaymentInDb = async (
       });
     const balance = summarizeInvoicePayments(invoice.totalAmount, after);
     const paidAt =
-      balance.outstandingAmount === '0.00'
+      balance.outstandingAmount === '0.00' && after.length > 0
         ? `${after.reduce((latest, row) => (row.paymentDate > latest ? row.paymentDate : latest), '')}T00:00:00.000Z`
         : null;
     await tx

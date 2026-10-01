@@ -11,6 +11,8 @@ import {
   PAYMENT_FUTURE_DATE,
   PAYMENT_INVALID_STATE,
   PAYMENT_NOT_FOUND,
+  PAYMENT_UNSUPPORTED_CURRENCY,
+  PaymentExceedsBalanceError,
   summarizeInvoicePayments
 } from '../database/invoice-payment';
 import { recordRequestAudit } from '../utils/audit';
@@ -42,17 +44,26 @@ const recordPaymentAudit = async (
   }
 };
 
-const handlePaymentError = async (error: unknown, req: FastifyRequest) => {
+const handlePaymentError = async (error: unknown, req: FastifyRequest, reply: FastifyReply) => {
   const i18n = await useI18n(req);
   const code = error instanceof Error ? error.message : '';
   if (code === PAYMENT_NOT_FOUND)
     throw new NotFoundError(i18n.t('error.invoice.notFound'));
   if (code === PAYMENT_INVALID_STATE)
     throw new BadRequestError(i18n.t('error.invoice.paymentRequiresIssued'));
+  if (error instanceof PaymentExceedsBalanceError) {
+    const message = i18n.t('error.invoice.paymentMaximum', { maximum: error.maximumAmount });
+    return reply.status(400).send({ message, code: PAYMENT_EXCEEDS_BALANCE,
+      errors: [{ key: 'amount', value: message }] });
+  }
+  if (code === PAYMENT_UNSUPPORTED_CURRENCY)
+    throw new BadRequestError(i18n.t('error.invoice.paymentCurrency'));
   if (code === PAYMENT_EXCEEDS_BALANCE)
     throw new BadRequestError(i18n.t('error.invoice.paymentExceedsBalance'));
-  if (code === PAYMENT_FUTURE_DATE)
-    throw new BadRequestError(i18n.t('error.invoice.paymentFutureDate'));
+  if (code === PAYMENT_FUTURE_DATE) {
+    const message = i18n.t('error.invoice.paymentFutureDate');
+    return reply.status(400).send({ message, code, errors: [{ key: 'paymentDate', value: message }] });
+  }
   throw error;
 };
 
@@ -108,7 +119,7 @@ export const createInvoicePayment = async (
     );
     reply.status(201).send(result);
   } catch (error) {
-    await handlePaymentError(error, req);
+    await handlePaymentError(error, req, reply);
   }
 };
 
@@ -136,7 +147,7 @@ export const updateInvoicePayment = async (
     );
     reply.status(200).send(result);
   } catch (error) {
-    await handlePaymentError(error, req);
+    await handlePaymentError(error, req, reply);
   }
 };
 
@@ -165,6 +176,6 @@ export const deleteInvoicePayment = async (
       .status(200)
       .send({ message: i18n.t('success.invoice.paymentRemoved') });
   } catch (error) {
-    await handlePaymentError(error, req);
+    await handlePaymentError(error, req, reply);
   }
 };
