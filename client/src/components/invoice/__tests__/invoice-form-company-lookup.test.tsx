@@ -105,7 +105,6 @@ describe('invoice company lookup', () => {
               accountNumber: 'LT121000011101001000'
             }
           ]}
-          cryptoWallets={[]}
           currency="eur"
         />
       )
@@ -164,7 +163,6 @@ describe('invoice company lookup', () => {
               accountNumber: 'LT121000011101001000'
             }
           ]}
-          cryptoWallets={[]}
           currency="eur"
         />
       )

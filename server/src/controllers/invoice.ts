@@ -181,6 +181,9 @@ const assertInvoiceCanBeIssued = ({
 }) => {
   if ((invoice.lifecycleStatus || 'draft') !== 'draft') return;
 
+  if (invoice.paymentMode === 'crypto')
+    throw new BadRequestError(i18n.t('validation.invoice.cryptoRetired'));
+
   if (!hasCompleteFreelancerProfile(user))
     throw new BadRequestError(i18n.t('error.invoice.senderProfileIncomplete'));
 

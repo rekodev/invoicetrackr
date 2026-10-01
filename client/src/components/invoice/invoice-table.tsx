@@ -1,11 +1,12 @@
 'use client';
 
 import { Table } from '@heroui/react';
-import type { InvoiceBody } from '@invoicetrackr/types';
+import type { InvoiceListItem } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
+import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
 import type { SortDescriptor } from '@/lib/types/table';
 
 import InvoiceTableBottomContent from './invoice-table-bottom-content';
@@ -22,7 +23,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   'actions'
 ];
 
-type Props = { invoices: Array<InvoiceBody>; userId: number };
+type Props = { invoices: Array<InvoiceListItem>; userId: number };
 
 export default function InvoiceTable({ invoices, userId }: Props) {
   const t = useTranslations('invoices.table');
@@ -43,6 +44,9 @@ export default function InvoiceTable({ invoices, userId }: Props) {
     [t]
   );
   const statusOptions = [
+    { name: t('filters.all'), uid: 'all' },
+    { name: t('status.partial'), uid: 'partial' },
+    { name: t('status.no_payment_due'), uid: 'no_payment_due' },
     { name: t('status.paid'), uid: 'paid' },
     { name: t('status.canceled'), uid: 'canceled' },
     { name: t('status.pending'), uid: 'pending' }
@@ -52,6 +56,7 @@ export default function InvoiceTable({ invoices, userId }: Props) {
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
   const [statusFilter, setStatusFilter] = useState('all');
+  const [overdueOnly, setOverdueOnly] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'date',
@@ -69,19 +74,20 @@ export default function InvoiceTable({ invoices, userId }: Props) {
           .toLowerCase()
           .includes(filterValue.toLowerCase())) &&
       (statusFilter === 'all' ||
-        Array.from(statusFilter).includes(invoice.status))
+        (statusFilter === 'canceled' ? invoice.lifecycleStatus === 'voided' : getInvoicePaymentStatus(invoice) === statusFilter)) &&
+      (!overdueOnly || getInvoiceDueStatus(invoice).isPastDue)
   );
   const sorted = [...filtered].sort((a, b) => {
     const field = sortDescriptor.column;
     const first = String(
       field === 'receiver'
         ? a.receiver.name
-        : (a[field as keyof InvoiceBody] ?? '')
+        : field === 'status' ? getInvoicePaymentStatus(a) : (a[field as keyof InvoiceListItem] ?? '')
     );
     const second = String(
       field === 'receiver'
         ? b.receiver.name
-        : (b[field as keyof InvoiceBody] ?? '')
+        : field === 'status' ? getInvoicePaymentStatus(b) : (b[field as keyof InvoiceListItem] ?? '')
     );
     const order = first.localeCompare(second, undefined, { numeric: true });
     return sortDescriptor.direction === 'descending' ? -order : order;
@@ -101,6 +107,8 @@ export default function InvoiceTable({ invoices, userId }: Props) {
         setVisibleColumns={setVisibleColumns}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
+        overdueOnly={overdueOnly}
+        setOverdueOnly={setOverdueOnly}
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
         invoicesLength={invoices.length}

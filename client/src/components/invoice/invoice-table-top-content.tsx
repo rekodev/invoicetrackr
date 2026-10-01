@@ -31,6 +31,8 @@ type Props = {
   statusOptions: Array<{ name: string; uid: string }>;
   filterValue: string;
   setFilterValue: Dispatch<SetStateAction<string>>;
+  overdueOnly: boolean;
+  setOverdueOnly: Dispatch<SetStateAction<boolean>>;
   statusFilter: string;
   setStatusFilter: Dispatch<SetStateAction<string>>;
   visibleColumns: Set<string> | 'all';
@@ -48,6 +50,8 @@ const InvoiceTableTopContent = ({
   setFilterValue,
   visibleColumns,
   setVisibleColumns,
+  overdueOnly,
+  setOverdueOnly,
   statusFilter,
   setStatusFilter,
   setPage,
@@ -127,9 +131,12 @@ const InvoiceTableTopContent = ({
               <DropdownMenu
                 disallowEmptySelection
                 aria-label={t('table.filters.a11y.status_label')}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter as any}
+                selectedKeys={new Set([statusFilter])}
+                selectionMode="single"
+                onSelectionChange={(keys) => {
+                  setStatusFilter(keys === 'all' ? 'all' : String(Array.from(keys)[0] || 'all'));
+                  setPage(1);
+                }}
               >
                 {statusOptions.map((status) => (
                   <DropdownItem
@@ -145,6 +152,10 @@ const InvoiceTableTopContent = ({
               </DropdownMenu>
             </DropdownPopover>
           </Dropdown>
+          <Button variant={overdueOnly ? 'secondary' : 'tertiary'} aria-pressed={overdueOnly}
+            onPress={() => { setOverdueOnly((value) => !value); setPage(1); }}>
+            {t('table.filters.overdue_only')}
+          </Button>
           <Dropdown>
             <DropdownTrigger
               className={buttonVariants({
@@ -162,7 +173,7 @@ const InvoiceTableTopContent = ({
                 aria-label={t('table.filters.a11y.columns_label')}
                 selectedKeys={visibleColumns}
                 selectionMode="multiple"
-                onSelectionChange={setVisibleColumns as any}
+                onSelectionChange={(keys) => setVisibleColumns(keys === 'all' ? 'all' : new Set(Array.from(keys, String)))}
               >
                 {columns.map((column) => (
                   <DropdownItem

@@ -82,6 +82,12 @@ export default {
     }
   },
   validation: {
+    payment: {
+      date: 'Pasirinkite tinkamą mokėjimo datą.',
+      amount: 'Įveskite teigiamą sumą su ne daugiau kaip dviem skaitmenimis po kablelio.',
+      reference: 'Mokėjimo paskirtis negali viršyti 255 simbolių.',
+      notes: 'Pastaba negali viršyti 2 000 simbolių.'
+    },
     general: 'Peržiūrėkite laukus ir bandykite dar kartą',
     reviewField: 'Peržiūrėkite lauką',
     password: {
@@ -103,6 +109,7 @@ export default {
       incomeJournalDateRange:
         'Pabaigos data negali būti ankstesnė už pradžios datą',
       status: 'Tinkama būsena yra privaloma',
+      cryptoRetired: 'Prieš išsaugodami ar išrašydami juodraštį pasirinkite banko pavedimą arba sąskaitą be mokėjimo rekvizitų.',
       paymentMode: 'Tinkamas mokėjimo būdas yra privalomas',
       businessType: 'Reikalingas "Verslas" arba "Fizinis asmuo"',
       partyType: 'Tinkamas šalies tipas yra privalomas',
@@ -336,6 +343,8 @@ export default {
       unableToDelete: 'Nepavyko ištrinti sąskaitos faktūros',
       unableToUpdateStatus: 'Nepavyko atnaujinti sąskaitos faktūros būsenos',
       paymentRequiresIssued: 'Mokėjimą galima įrašyti tik išrašytai sąskaitai',
+      paymentMaximum: 'Mokėjimas negali viršyti %{maximum} €.',
+      paymentCurrency: 'Mokėjimus galima keisti tik EUR sąskaitose.',
       paymentExceedsBalance: 'Mokėjimas viršija likusią sumą',
       paymentFutureDate: 'Mokėjimo data negali būti ateityje',
       paymentCancelBlocked:

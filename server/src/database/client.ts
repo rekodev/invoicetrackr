@@ -2,13 +2,9 @@ import { and, desc, eq, isNull, ne, or, sql } from 'drizzle-orm';
 
 import { summarizeClientInvoices } from '../utils/client-workspace';
 import { db } from './db';
+import { getPaymentsByInvoiceQuery } from './invoice-payment';
 import type { SelectClient } from './schema';
-import {
-  clientsTable,
-  invoicesTable,
-  paymentAllocationsTable,
-  paymentsTable
-} from './schema';
+import { clientsTable, invoicesTable } from './schema';
 
 export const getClientWorkspaceFromDb = async (
   userId: number,
@@ -17,26 +13,7 @@ export const getClientWorkspaceFromDb = async (
   const client = await getClientFromDb(userId, clientId);
   if (!client || client.archivedAt) return undefined;
 
-  const paymentsByInvoice = db
-    .select({
-      invoiceId: paymentAllocationsTable.invoiceId,
-      paidAmount:
-        sql<string>`coalesce(sum(${paymentAllocationsTable.amount}), 0)::text`.as(
-          'paid_amount'
-        )
-    })
-    .from(paymentAllocationsTable)
-    .innerJoin(
-      paymentsTable,
-      and(
-        eq(paymentsTable.id, paymentAllocationsTable.paymentId),
-        eq(paymentsTable.userId, userId),
-        isNull(paymentsTable.deletedAt)
-      )
-    )
-    .where(eq(paymentAllocationsTable.userId, userId))
-    .groupBy(paymentAllocationsTable.invoiceId)
-    .as('payments_by_invoice');
+  const paymentsByInvoice = getPaymentsByInvoiceQuery(userId);
 
   const rows = await db
     .select({

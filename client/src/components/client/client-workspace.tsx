@@ -20,6 +20,7 @@ import { useState } from 'react';
 import EmptyState from '@/components/empty-state';
 import MetricCard from '@/components/ui/metric-card';
 import { CLIENTS_PAGE, INVOICE_WORKSPACE_PAGE } from '@/lib/constants/pages';
+import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
 import { formatLocalizedDate } from '@/lib/utils/date';
 
 import ArchiveClientModal from './archive-client-modal';
@@ -33,14 +34,6 @@ const metrics = [
   { key: 'outstandingAmount', icon: ExclamationCircleIcon, iconVariant: 'warning' }
 ] as const;
 
-const todayInLithuania = () => {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Europe/Vilnius', year: 'numeric', month: '2-digit', day: '2-digit'
-  }).formatToParts(new Date());
-  const get = (type: string) => parts.find((part) => part.type === type)?.value;
-  return `${get('year')}-${get('month')}-${get('day')}`;
-};
-
 export default function ClientWorkspace({ userId, data }: Props) {
   const t = useTranslations('clients.workspace');
   const fieldLabel = useTranslations('clients.form_dialog.fields');
@@ -53,7 +46,6 @@ export default function ClientWorkspace({ userId, data }: Props) {
   const createHref = `/invoices/new?clientId=${client.id}`;
   const pages = Math.ceil(invoices.length / PAGE_SIZE);
   const visible = invoices.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const today = todayInLithuania();
 
   const copyDetails = async () => {
     const lines = [
@@ -69,15 +61,6 @@ export default function ClientWorkspace({ userId, data }: Props) {
     } catch {
       toast(t('copy_failed'), { variant: 'danger' });
     }
-  };
-
-  const stateFor = (invoice: (typeof invoices)[number]) => {
-    if (invoice.lifecycleStatus === 'draft') return 'draft';
-    if (invoice.lifecycleStatus === 'voided') return 'voided';
-    if (invoice.outstandingAmount === '0.00') return 'paid';
-    if (invoice.dueDate < today) return 'overdue';
-    if (invoice.paidAmount !== '0.00') return 'partial';
-    return 'pending';
   };
 
   return (
@@ -184,7 +167,8 @@ export default function ClientWorkspace({ userId, data }: Props) {
                   </thead>
                   <tbody>
                     {visible.map((invoice) => {
-                      const state = stateFor(invoice);
+                      const state = getInvoicePaymentStatus(invoice);
+                      const overdue = getInvoiceDueStatus(invoice).isPastDue;
                       return (
                         <tr key={invoice.id} className="border-b last:border-0">
                           <td className="p-2 font-medium">{invoice.invoiceId || t('states.draft')}</td>
@@ -192,7 +176,10 @@ export default function ClientWorkspace({ userId, data }: Props) {
                           <td className="p-2 tabular-nums">€{invoice.totalAmount}</td>
                           <td className="p-2 tabular-nums">{invoice.paidAmount === null ? '—' : `€${invoice.paidAmount}`}</td>
                           <td className="p-2 tabular-nums">{invoice.outstandingAmount === null ? '—' : `€${invoice.outstandingAmount}`}</td>
-                          <td className="p-2"><Chip variant="soft" color={state === 'voided' || state === 'overdue' ? 'danger' : state === 'paid' ? 'success' : 'accent'}>{t(`states.${state}`)}</Chip></td>
+                          <td className="p-2"><div className="flex flex-wrap gap-1">
+                            <Chip variant="soft" color={state === 'voided' ? 'danger' : state === 'paid' ? 'success' : 'accent'}>{t(`states.${state}`)}</Chip>
+                            {overdue ? <Chip variant="soft" color="danger">{t('states.overdue')}</Chip> : null}
+                          </div></td>
                           <td className="p-2 text-right">
                             <Link
                               href={INVOICE_WORKSPACE_PAGE(invoice.id)}

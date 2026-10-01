@@ -94,4 +94,33 @@ describe('invoice workspace', () => {
       })
     );
   });
+
+  it('shows no payment due for a zero-total invoice without a paid date or payment action', () => {
+    render(withIntl(
+      <AnalyticsConsentContext.Provider value={{ consentStatus: 'declined', setConsentStatus: vi.fn() }}>
+        <InvoiceWorkspace userId={1} data={{ ...data,
+          invoice: { ...data.invoice, totalAmount: '0.00', dueDate: '2000-01-01' },
+          balance: { paidAmount: '0.00', outstandingAmount: '0.00' }, payments: []
+        }} isEmailVerified preferredLanguage="en" />
+      </AnalyticsConsentContext.Provider>
+    ));
+    expect(screen.getByText('No payment due')).toBeInTheDocument();
+    expect(screen.queryByText('Overdue')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Record payment' })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Fully paid on/)).not.toBeInTheDocument();
+  });
+
+  it('requires replacing legacy crypto instructions before issuing a draft', () => {
+    render(withIntl(
+      <AnalyticsConsentContext.Provider value={{ consentStatus: 'declined', setConsentStatus: vi.fn() }}>
+        <InvoiceWorkspace userId={1} data={{ ...data,
+          invoice: { ...data.invoice, lifecycleStatus: 'draft', paymentMode: 'crypto' },
+          payments: []
+        }} isEmailVerified preferredLanguage="en" />
+      </AnalyticsConsentContext.Provider>
+    ));
+    expect(screen.getByRole('alert')).toHaveTextContent('Choose bank transfer or no payment instructions');
+    expect(screen.getByRole('link', { name: 'Edit draft' })).toHaveAttribute('href', '/invoices/edit/7');
+    expect(screen.queryByRole('button', { name: 'Issue Invoice' })).not.toBeInTheDocument();
+  });
 });
