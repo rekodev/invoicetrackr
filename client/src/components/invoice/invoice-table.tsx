@@ -6,8 +6,8 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
-import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
 import type { SortDescriptor } from '@/lib/types/table';
+import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
 
 import InvoiceTableBottomContent from './invoice-table-bottom-content';
 import InvoiceTableCell from './invoice-table-cell';
