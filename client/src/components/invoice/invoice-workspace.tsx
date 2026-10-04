@@ -309,16 +309,6 @@ export default function InvoiceWorkspace({
                     {t('send_reminder')}
                   </Button>
                 ) : null}
-                {supportsPayments && Number(balance.outstandingAmount) > 0 ? (
-                  <Button
-                    className="w-full justify-center"
-                    variant="secondary"
-                    onPress={() => openPayment()}
-                  >
-                    <BanknotesIcon className="size-4" />
-                    {t('record_payment')}
-                  </Button>
-                ) : null}
                 {data.canCopyPublicLink ? (
                   <Button
                     className="w-full justify-center"
@@ -384,57 +374,74 @@ export default function InvoiceWorkspace({
               </Button>
             ) : null}
           </WorkspaceSection>
-          {payments.length > 0 ? (
-            <WorkspaceSection
-              title={t('payment_history')}
-              contentClassName="mt-2"
-            >
-              <ul className="space-y-3 text-sm">
-                {payments.map((payment) => (
-                  <li key={payment.id}>
-                    <Card variant="secondary">
-                      <Card.Header className="flex-row flex-wrap items-baseline justify-between gap-2">
-                        <Card.Title>{currencySymbol}{payment.amount}</Card.Title>
-                        <time className="text-muted" dateTime={payment.paymentDate}>{payment.paymentDate}</time>
-                      </Card.Header>
+          {isIssued || payments.length > 0 ? (
+            <Card className="gap-0 overflow-hidden border p-0" role="region" aria-labelledby={`invoice-payments-${invoiceId}`}>
+              <Card.Header className="gap-3 border-b p-5">
+                <div className="flex w-full flex-wrap items-center justify-between gap-2">
+                  <h2 id={`invoice-payments-${invoiceId}`} className="text-lg font-semibold">{t('payment_history')}</h2>
+                  <Chip size="sm" variant="soft">{t('payment_count', { count: payments.length })}</Chip>
+                </div>
+                {isIssued && supportsPayments && Number(balance.outstandingAmount) > 0 ? (
+                  <Button className="w-full" size="sm" variant="secondary" onPress={() => openPayment()}>
+                    <BanknotesIcon className="size-4" />
+                    {t('record_payment')}
+                  </Button>
+                ) : null}
+              </Card.Header>
+              {payments.length > 0 ? (
+                <ul className="divide-y">
+                  {payments.map((payment) => (
+                    <li key={payment.id} className="space-y-3 p-5">
+                      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                        <p className="text-xl font-semibold tabular-nums">{currencySymbol}{payment.amount}</p>
+                        <time className="text-muted text-xs tabular-nums" dateTime={payment.paymentDate}>{payment.paymentDate}</time>
+                      </div>
                       {payment.bankReference || payment.notes ? (
-                        <Card.Content className="space-y-1">
+                        <div className="space-y-1">
                           {payment.bankReference ? (
-                            <p className="text-muted break-words">{payment.bankReference}</p>
+                            <p className="text-sm font-medium break-words">{payment.bankReference}</p>
                           ) : null}
                           {payment.notes ? (
-                            <p className="text-muted break-words whitespace-pre-wrap">{payment.notes}</p>
+                            <p className="text-muted text-xs leading-relaxed break-words whitespace-pre-wrap">{payment.notes}</p>
                           ) : null}
-                        </Card.Content>
+                        </div>
                       ) : null}
                       {isIssued && supportsPayments ? (
-                        <Card.Footer className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2">
                           <Button
+                            aria-label={t('edit_payment')}
                             size="sm"
-                            variant="tertiary"
+                            variant="secondary"
                             isDisabled={isPending}
                             onPress={() => openPayment(payment)}
                           >
-                            {t('edit_payment')}
+                            <PencilSquareIcon className="size-4" />
+                            {t('edit_payment_short')}
                           </Button>
                           <Button
+                            aria-label={t('remove_payment')}
                             size="sm"
-                            variant="danger-soft"
+                            variant="ghost"
                             isDisabled={isPending}
                             onPress={() => {
                               setPaymentToRemove(payment.id);
                               setConfirmAction('remove-payment');
                             }}
                           >
-                            {t('remove_payment')}
+                            <TrashIcon className="size-4" />
+                            {t('remove_payment_short')}
                           </Button>
-                        </Card.Footer>
+                        </div>
                       ) : null}
-                    </Card>
-                  </li>
-                ))}
-              </ul>
-            </WorkspaceSection>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <Card.Content className="p-5">
+                  <p className="text-muted text-sm">{t('no_payments')}</p>
+                </Card.Content>
+              )}
+            </Card>
           ) : null}
           {deliveries.length > 0 ? (
             <WorkspaceSection

@@ -1,5 +1,5 @@
 import type { InvoiceWorkspaceResponse } from '@invoicetrackr/types';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsConsentContext } from '@/lib/analytics/consent-context';
@@ -86,6 +86,8 @@ describe('invoice workspace', () => {
     expect(screen.getByText('Partially paid')).toBeInTheDocument();
     expect(screen.getAllByText('€40.00')).toHaveLength(2);
     expect(screen.getByText('€60.00')).toBeInTheDocument();
+    expect(within(screen.getByRole('region', { name: 'Payments' })).getByRole('button', { name: 'Record payment' })).toBeInTheDocument();
+    expect(screen.getByText('1 payment')).toBeInTheDocument();
     expect(mockUseDynamicPdf).toHaveBeenCalledWith(
       expect.objectContaining({
         invoiceLanguage: 'lt',
@@ -93,6 +95,21 @@ describe('invoice workspace', () => {
         invoiceData: data.invoice
       })
     );
+  });
+
+  it('keeps payment recording in the empty payment section of an issued invoice', () => {
+    render(withIntl(
+      <AnalyticsConsentContext.Provider value={{ consentStatus: 'declined', setConsentStatus: vi.fn() }}>
+        <InvoiceWorkspace userId={1} data={{ ...data, payments: [],
+          balance: { paidAmount: '0.00', outstandingAmount: '100.00' }
+        }} isEmailVerified preferredLanguage="en" />
+      </AnalyticsConsentContext.Provider>
+    ));
+    const section = within(screen.getByRole('region', { name: 'Payments' }));
+    expect(section.getByText('0 payments')).toBeInTheDocument();
+    expect(section.getByText('No payments recorded yet.')).toBeInTheDocument();
+    expect(section.getByRole('button', { name: 'Record payment' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Record payment' })).toHaveLength(1);
   });
 
   it('shows no payment due for a zero-total invoice without a paid date or payment action', () => {

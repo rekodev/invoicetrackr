@@ -219,9 +219,8 @@ test.describe('invoices', () => {
 
     await page.getByRole('button', { name: 'Remove payment', exact: true }).click();
     await page.getByRole('dialog', { name: 'Remove this payment?' }).getByRole('button', { name: 'Remove payment', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'Payments' })).toHaveCount(
-      0
-    );
+    await expect(page.getByRole('region', { name: 'Payments' }).getByText('No payments recorded yet.')).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Payments' }).getByRole('button', { name: 'Record payment' })).toBeVisible();
     await expect(page.getByText('€350.50')).toBeVisible();
     const removedReport = await page.request.get(`/api/${user.id}/invoices/income-journal.csv?from=2000-12-31&to=2001-01-01`);
     expect((await removedReport.text()).split('\n').filter((line) => line.split(',')[2] === `"${number}"`)).toHaveLength(0);
