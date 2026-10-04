@@ -636,9 +636,9 @@
         },
         "income_journal": {
             "title": "Eksportuoti pajamų žurnalą",
-            "description": "CSV faile bus įtrauktos pasirinktu laikotarpiu apmokėtos sąskaitos faktūros. Neapmokėtos sąskaitos į pajamų žurnalą neįtraukiamos.",
-            "from": "Apmokėta nuo",
-            "to": "Apmokėta iki",
+            "description": "CSV faile bus įtraukti pasirinktu laikotarpiu gauti mokėjimai, įskaitant dalinius. Kiekviename įraše naudojama mokėjimo data ir gauta suma.",
+            "from": "Gauta nuo",
+            "to": "Gauta iki",
             "export": "Eksportuoti CSV",
             "cancel": "Atšaukti"
         },

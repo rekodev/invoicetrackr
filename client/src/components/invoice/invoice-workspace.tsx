@@ -389,42 +389,48 @@ export default function InvoiceWorkspace({
               title={t('payment_history')}
               contentClassName="mt-2"
             >
-              <ul className="divide-default-200 divide-y text-sm">
+              <ul className="space-y-3 text-sm">
                 {payments.map((payment) => (
-                  <li key={payment.id} className="space-y-1 py-3">
-                    <div className="flex justify-between gap-2">
-                      <strong>{currencySymbol}{payment.amount}</strong>
-                      <span>{payment.paymentDate}</span>
-                    </div>
-                    {payment.bankReference ? (
-                      <p className="text-muted">{payment.bankReference}</p>
-                    ) : null}
-                    {payment.notes ? (
-                      <p className="text-muted whitespace-pre-wrap">{payment.notes}</p>
-                    ) : null}
-                    {isIssued && supportsPayments ? (
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="tertiary"
-                          isDisabled={isPending}
-                          onPress={() => openPayment(payment)}
-                        >
-                          {t('edit_payment')}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="tertiary"
-                          isDisabled={isPending}
-                          onPress={() => {
-                            setPaymentToRemove(payment.id);
-                            setConfirmAction('remove-payment');
-                          }}
-                        >
-                          {t('remove_payment')}
-                        </Button>
-                      </div>
-                    ) : null}
+                  <li key={payment.id}>
+                    <Card variant="secondary">
+                      <Card.Header className="flex-row flex-wrap items-baseline justify-between gap-2">
+                        <Card.Title>{currencySymbol}{payment.amount}</Card.Title>
+                        <time className="text-muted" dateTime={payment.paymentDate}>{payment.paymentDate}</time>
+                      </Card.Header>
+                      {payment.bankReference || payment.notes ? (
+                        <Card.Content className="space-y-1">
+                          {payment.bankReference ? (
+                            <p className="text-muted break-words">{payment.bankReference}</p>
+                          ) : null}
+                          {payment.notes ? (
+                            <p className="text-muted break-words whitespace-pre-wrap">{payment.notes}</p>
+                          ) : null}
+                        </Card.Content>
+                      ) : null}
+                      {isIssued && supportsPayments ? (
+                        <Card.Footer className="flex flex-wrap gap-2">
+                          <Button
+                            size="sm"
+                            variant="tertiary"
+                            isDisabled={isPending}
+                            onPress={() => openPayment(payment)}
+                          >
+                            {t('edit_payment')}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="danger-soft"
+                            isDisabled={isPending}
+                            onPress={() => {
+                              setPaymentToRemove(payment.id);
+                              setConfirmAction('remove-payment');
+                            }}
+                          >
+                            {t('remove_payment')}
+                          </Button>
+                        </Card.Footer>
+                      ) : null}
+                    </Card>
                   </li>
                 ))}
               </ul>

@@ -636,9 +636,9 @@
         },
         "income_journal": {
             "title": "Export Income Journal",
-            "description": "The CSV includes invoices paid during the selected period. Unpaid invoices are excluded from the income journal.",
-            "from": "Paid From",
-            "to": "Paid To",
+            "description": "The CSV includes payments received during the selected period, including partial payments. Each entry uses the payment date and amount received.",
+            "from": "Received From",
+            "to": "Received To",
             "export": "Export CSV",
             "cancel": "Cancel"
         },

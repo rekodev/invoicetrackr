@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, FieldError, Input, Label, Modal, TextArea, TextField, toast } from '@heroui/react';
+import { Alert, Button, FieldError, Input, Label, Modal, TextArea, TextField, toast } from '@heroui/react';
 import type { InvoicePayment, InvoicePaymentBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
@@ -79,7 +79,12 @@ export default function InvoicePaymentDialog({ userId, invoiceId, outstandingAmo
           <form noValidate onSubmit={handleSubmit(save)}>
             <Modal.Body className="space-y-3">
               <p className="text-muted text-sm">{t('bank_transfer')}</p>
-              <p className="text-muted text-sm">{t('payment_maximum', { maximum: maximumAmount })}</p>
+              <Alert status="accent">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Title>{t('payment_maximum', { maximum: maximumAmount })}</Alert.Title>
+                </Alert.Content>
+              </Alert>
               <Controller name="paymentDate" control={control} rules={{ required: t('date_required') }} render={({ field }) => (
                 <TextField isRequired isDisabled={fieldsDisabled} isInvalid={!!errors.paymentDate}>
                   <Label>{t('payment_date')}</Label>
