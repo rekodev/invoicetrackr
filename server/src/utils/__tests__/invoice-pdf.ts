@@ -49,6 +49,16 @@ describe('shared invoice PDF', () => {
     expect(buffer.toString('latin1').match(/\/Type \/Page\b/g)?.length).toBeGreaterThan(1);
   });
 
+  it('retains the wallet instructions of a historical issued crypto invoice', () => {
+    const invoice = invoiceFactory.build({ lifecycleStatus: 'issued', paymentMode: 'crypto',
+      cryptoWallet: { label: 'Old wallet', asset: 'USDC', network: 'Polygon', address: '0xhistorical', memo: 'Saved memo' } });
+    const tree = PDFDocument({ invoiceData: invoice, language: 'en', currency: 'eur',
+      t: createPdfTranslator('en'), senderSignatureImage: '' });
+    expect(texts(tree)).toContain('USDC');
+    expect(texts(tree)).toContain('0xhistorical');
+    expect(texts(tree)).toContain('Saved memo');
+  });
+
   it.each(['file:///etc/passwd', 'http://127.0.0.1/private', 'https://example.com/image.png'])('rejects unsafe stored image sources: %s', (source) => {
     const invoice = invoiceFactory.build({ senderSignature: source });
     expect(() => renderInvoicePdf(invoice)).toThrow();

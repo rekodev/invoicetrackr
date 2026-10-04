@@ -22,6 +22,7 @@ import {
 } from '../utils/invoice';
 import { jsonAgg } from '../utils/json';
 import { db } from './db';
+import { getPaymentsByInvoiceQuery, summarizeInvoicePayments } from './invoice-payment';
 import {
   bankingInformationTable,
   businessProfilesTable,
@@ -298,9 +299,11 @@ export const findInvoiceByInvoiceId = async (
 
 export const getInvoicesFromDb = async (
   userId: number
-): Promise<Array<InvoiceFromDb>> => {
+): Promise<Array<InvoiceFromDb & { paidAmount: string | null; outstandingAmount: string | null }>> => {
+  const paymentsByInvoice = getPaymentsByInvoiceQuery(userId);
   const invoices = await db
     .select({
+      paidAmount: sql<string>`coalesce(${paymentsByInvoice.paidAmount}, '0.00')`,
       id: invoicesTable.id,
       clientId: invoicesTable.clientId,
       invoiceId: invoicesTable.invoiceId,
@@ -390,6 +393,7 @@ export const getInvoicesFromDb = async (
       )
     })
     .from(invoicesTable)
+    .leftJoin(paymentsByInvoice, eq(paymentsByInvoice.invoiceId, invoicesTable.id))
     .leftJoin(
       invoiceSendersTable,
       eq(invoicesTable.senderId, invoiceSendersTable.id)
@@ -413,6 +417,7 @@ export const getInvoicesFromDb = async (
     .where(eq(invoicesTable.userId, userId))
     .groupBy(
       invoicesTable.id,
+      paymentsByInvoice.paidAmount,
       invoiceSendersTable.id,
       invoiceReceiversTable.id,
       invoiceBankingInformationTable.id,
@@ -420,7 +425,12 @@ export const getInvoicesFromDb = async (
     )
     .orderBy(desc(invoicesTable.id));
 
-  return invoices.map(normalizeInvoiceFromDb);
+  return invoices.map((invoice) => ({
+    ...normalizeInvoiceFromDb(invoice),
+    ...(invoice.lifecycleStatus === 'issued'
+      ? summarizeInvoicePayments(invoice.totalAmount, [{ amount: invoice.paidAmount }])
+      : { paidAmount: null, outstandingAmount: null })
+  }));
 };
 
 export const getInvoiceFromDb = async (
@@ -1036,6 +1046,7 @@ export const issueInvoiceInDb = async (
   db.transaction(async (tx) => {
     const current = await tx
       .select({
+        paymentMode: invoicesTable.paymentMode,
         lifecycleStatus: invoicesTable.lifecycleStatus,
         invoiceId: invoicesTable.invoiceId,
         invoiceSeries: invoicesTable.invoiceSeries
@@ -1048,6 +1059,7 @@ export const issueInvoiceInDb = async (
     if (!invoice) return undefined;
     if (invoice.lifecycleStatus !== 'draft')
       return getInvoiceFromDb(userId, id, tx);
+    if (invoice.paymentMode === 'crypto') return undefined;
 
     const invoiceId =
       invoice.invoiceId ||
@@ -1165,6 +1177,7 @@ export const submitRecipientDetailsInDb = async ({
         userId: invoicesTable.userId,
         receiverId: invoicesTable.receiverId,
         invoiceId: invoicesTable.invoiceId,
+        paymentMode: invoicesTable.paymentMode,
         invoiceSeries: invoicesTable.invoiceSeries
       })
       .from(invoicesTable)
@@ -1179,7 +1192,7 @@ export const submitRecipientDetailsInDb = async ({
       )
       .for('update');
     const request = requests.at(0);
-    if (!request?.receiverId) return undefined;
+    if (!request?.receiverId || request.paymentMode === 'crypto') return undefined;
 
     await tx
       .update(invoiceReceiversTable)
@@ -1565,7 +1578,7 @@ export const getInvoicesTotalAmountFromDb = async (userId: number) => {
       subtotalAmount: invoicesTable.subtotalAmount,
       vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
-      paidAmount: sql<string>`COALESCE(SUM(${paymentsTable.amount}), 0)::numeric(12,2)`,
+      paidAmount: sql<string>`COALESCE(SUM(${paymentAllocationsTable.amount}) FILTER (WHERE ${paymentsTable.id} IS NOT NULL), 0)::numeric(12,2)`,
       status: invoicesTable.status
     })
     .from(invoicesTable)
@@ -1598,7 +1611,7 @@ export const getInvoicesTotalAmountFromDb = async (userId: number) => {
 export const getInvoicesRevenueFromDb = async (userId: number) => {
   const invoices = await db
     .select({
-      amount: paymentsTable.amount,
+      amount: paymentAllocationsTable.amount,
       paymentDate: paymentsTable.paymentDate
     })
     .from(paymentsTable)
@@ -1675,7 +1688,7 @@ export const getIncomeJournalRowsFromDb = async ({
       subtotalAmount: invoicesTable.subtotalAmount,
       vatAmount: invoicesTable.vatAmount,
       totalAmount: invoicesTable.totalAmount,
-      receivedAmount: paymentsTable.amount,
+      receivedAmount: paymentAllocationsTable.amount,
       currency: invoicesTable.currency
     })
     .from(paymentsTable)
@@ -1714,7 +1727,8 @@ export const getIncomeJournalRowsFromDb = async ({
       invoicesTable.id,
       invoiceReceiversTable.id,
       invoicesTable.currency,
-      paymentsTable.id
+      paymentsTable.id,
+      paymentAllocationsTable.amount
     )
     .orderBy(paymentsTable.paymentDate, invoicesTable.id, paymentsTable.id);
 };

@@ -163,13 +163,19 @@ export const saveInvoicePaymentAction = async ({
   const response = paymentId
     ? await updateInvoicePayment(userId, invoiceId, paymentId, payment)
     : await createInvoicePayment(userId, invoiceId, payment);
-  if (isResponseError(response))
-    return { ok: false, message: response.data.message };
+  // A failed response may arrive after the receipt was committed.
   revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
   revalidatePath(INVOICES_PAGE);
   revalidatePath('/dashboard');
   revalidatePath(CLIENTS_PAGE, 'layout');
-  return { ok: true, message: '' };
+  if (isResponseError(response))
+    return {
+      ok: false as const,
+      message: response.data.message,
+      validationErrors: mapValidationErrors(response.data.errors),
+      transportUnknown: response.status >= 500 || response.data.code === 'unknown_error'
+    };
+  return { ok: true as const, message: '' };
 };
 
 export const removeInvoicePaymentAction = async (

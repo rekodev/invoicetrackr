@@ -1,6 +1,9 @@
+import type { ClientWorkspaceResponse, GetInvoiceResponse, InvoiceWorkspaceResponse } from '../shared/types/src';
+
+import { getUserByEmailFromDb } from '../server/src/database/user';
 import { expect, test } from './fixtures/test';
 import { RecipientDetailsPage } from './pages/recipient-details.page';
-import { createInvoiceTestData } from './utils/test-data';
+import { createInvoiceTestData, e2eUser } from './utils/test-data';
 
 test.describe('invoices', () => {
   test('creates a draft invoice', async ({
@@ -75,7 +78,7 @@ test.describe('invoices', () => {
     await expect(page.getByText(invoice.recipientName)).toBeVisible();
   });
 
-  test('uses the workspace to issue an invoice and record a partial payment', async ({
+  test('records, settles, edits, and removes receipts with matching client balances and cash-basis reports', async ({
     invoiceForm,
     invoicesPage,
     page
@@ -83,7 +86,8 @@ test.describe('invoices', () => {
     const invoice = createInvoiceTestData('Workspace payment', {
       recipientBusinessNumber: '305000003',
       recipientAddress: 'Vilniaus g. 1, Vilnius',
-      recipientEmail: 'workspace.recipient@example.com'
+      recipientEmail: 'workspace.recipient@example.com',
+      secondServiceDescription: 'Additional invoiced work'
     });
 
     await invoiceForm.createDraft(invoice);
@@ -101,6 +105,29 @@ test.describe('invoices', () => {
       page.getByRole('heading', { name: 'Email history' })
     ).toHaveCount(0);
 
+    const workspaceUrl = page.url();
+    const invoiceId = Number(new URL(workspaceUrl).pathname.split('/').at(-1));
+    const user = await getUserByEmailFromDb(e2eUser.email);
+    if (!user) throw new Error('Missing authenticated test user');
+    const endpoint = `/api/${user.id}/invoices/${invoiceId}`;
+    const clientResponse = await page.request.post(`/api/${user.id}/clients`, {
+      data: {
+        name: invoice.recipientName,
+        type: 'receiver',
+        businessType: 'business',
+        businessNumber: `E2E${invoiceId}`,
+        address: 'Vilnius',
+        email: `payments-${invoiceId}@example.com`
+      }
+    });
+    expect(clientResponse.status()).toBe(201);
+    const { client } = await clientResponse.json();
+    const draft: GetInvoiceResponse = await (await page.request.get(endpoint)).json();
+    expect((await page.request.put(endpoint, {
+      data: { ...draft.invoice, clientId: client.id }
+    })).status()).toBe(200);
+    await page.reload();
+
     await page.getByRole('button', { name: 'Issue Invoice' }).click();
     const issueDialog = page.getByRole('dialog', { name: 'Issue Invoice' });
     await expect(issueDialog).toBeVisible();
@@ -113,6 +140,7 @@ test.describe('invoices', () => {
     await page.getByRole('button', { name: 'Record payment' }).click();
     const paymentDialog = page.getByRole('dialog', { name: 'Record payment' });
     await expect(paymentDialog).toBeVisible();
+    await paymentDialog.getByLabel('Payment date').fill('2000-12-31');
     await paymentDialog
       .getByRole('spinbutton', { name: 'Amount received' })
       .fill('50');
@@ -120,7 +148,13 @@ test.describe('invoices', () => {
 
     await expect(page.getByRole('heading', { name: 'Payments' })).toBeVisible();
     await expect(page.getByText('€50.00')).toHaveCount(2);
-    await expect(page.getByText('€200.00')).toBeVisible();
+    await expect(page.getByText('€300.50')).toBeVisible();
+    const partialExport = await page.request.get(`/api/${user.id}/invoices/income-journal.csv?from=2000-12-31&to=2000-12-31`);
+    expect(partialExport.status()).toBe(200);
+    const number = await page.getByRole('heading', { name: /^SF\d+/ }).textContent();
+    const partialRows = (await partialExport.text()).split('\n').filter((line) => line.split(',')[2] === `"${number}"`);
+    expect(partialRows).toHaveLength(1);
+    expect(partialRows[0].split(',')[6]).toBe('"50.00"');
     await expect(
       page.getByRole('heading', { name: 'Email history' })
     ).toHaveCount(0);
@@ -134,18 +168,117 @@ test.describe('invoices', () => {
       .fill('75');
     await editDialog.getByRole('button', { name: 'Save payment' }).click();
     await expect(page.getByText('€75.00')).toHaveCount(2);
-    await expect(page.getByText('€175.00')).toBeVisible();
+    await expect(page.getByText('€275.50')).toBeVisible();
+
+    await page.getByRole('button', { name: 'Record payment' }).click();
+    await paymentDialog.getByLabel('Payment date').fill('2001-01-01');
+    await paymentDialog.getByRole('button', { name: 'Save payment' }).click();
+    await expect(page.getByText('Paid', { exact: true })).toBeVisible();
+    await expect(page.getByText('Fully paid on 2001-01-01')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Record payment' })).toHaveCount(0);
+    const settled: InvoiceWorkspaceResponse = await (await page.request.get(`${endpoint}/workspace`)).json();
+    expect(new Date(settled.invoice.paidAt!).toISOString()).toBe('2001-01-01T00:00:00.000Z');
+    expect(settled.balance).toEqual({ paidAmount: '350.50', outstandingAmount: '0.00' });
+    const finalPayment = settled.payments.find((payment) => payment.paymentDate === '2001-01-01')!;
+    const correction = await page.request.put(`${endpoint}/payments/${finalPayment.id}`, {
+      data: { paymentDate: '2001-01-01', amount: '250.00' }
+    });
+    expect(correction.status()).toBe(200);
+    const corrected: InvoiceWorkspaceResponse = await (await page.request.get(`${endpoint}/workspace`)).json();
+    expect(corrected.invoice.paidAt).toBeNull();
+    expect(corrected.balance.outstandingAmount).toBe('25.50');
+    expect((await page.request.put(`${endpoint}/payments/${finalPayment.id}`, {
+      data: { paymentDate: '2001-01-01', amount: '275.50' }
+    })).status()).toBe(200);
+
+    const clientWorkspace: ClientWorkspaceResponse = await (await page.request.get(`/api/${user.id}/clients/${client.id}/workspace`)).json();
+    expect(clientWorkspace.totals).toEqual({ invoicedAmount: '350.50', paidAmount: '350.50', outstandingAmount: '0.00' });
+
+    const report = await page.request.get(`/api/${user.id}/invoices/income-journal.csv?from=2000-12-31&to=2001-01-01`);
+    const rows = (await report.text()).split('\n').filter((line) => line.split(',')[2] === `"${number}"`);
+    expect(rows.map((line) => line.split(',')[6])).toEqual(['"75.00"', '"275.50"']);
+
+    await page.goto('/invoices');
+    await expect(invoicesPage.rowFor(invoice.recipientName)).toContainText('Received: €350.50');
+    await expect(invoicesPage.rowFor(invoice.recipientName)).toContainText('Remaining: €0.00');
+    await page.goto(workspaceUrl);
 
     await page
       .getByRole('button', { name: 'Remove payment', exact: true })
+      .first()
       .click();
-    await page
-      .getByRole('dialog', { name: 'Remove this payment?' })
-      .getByRole('button', { name: 'Remove payment', exact: true })
-      .click();
-    await expect(page.getByRole('heading', { name: 'Payments' })).toHaveCount(
-      0
-    );
-    await expect(page.getByText('€250.00')).toBeVisible();
+    await page.getByRole('dialog', { name: 'Remove this payment?' })
+      .getByRole('button', { name: 'Remove payment', exact: true }).click();
+    await expect(page.getByText('Partially paid', { exact: true })).toBeVisible();
+    const reopened: InvoiceWorkspaceResponse = await (await page.request.get(`${endpoint}/workspace`)).json();
+    expect(reopened.invoice.paidAt).toBeNull();
+    expect(reopened.invoice.status).toBe('pending');
+    expect(reopened.balance.outstandingAmount).toBe('275.50');
+    const reopenedClient: ClientWorkspaceResponse = await (await page.request.get(`/api/${user.id}/clients/${client.id}/workspace`)).json();
+    expect(reopenedClient.totals.outstandingAmount).toBe('275.50');
+
+    await page.getByRole('button', { name: 'Remove payment', exact: true }).click();
+    await page.getByRole('dialog', { name: 'Remove this payment?' }).getByRole('button', { name: 'Remove payment', exact: true }).click();
+    await expect(page.getByRole('region', { name: 'Payments' }).getByText('No payments recorded yet.')).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Payments' }).getByRole('button', { name: 'Record payment' })).toBeVisible();
+    await expect(page.getByText('€350.50')).toBeVisible();
+    const removedReport = await page.request.get(`/api/${user.id}/invoices/income-journal.csv?from=2000-12-31&to=2001-01-01`);
+    expect((await removedReport.text()).split('\n').filter((line) => line.split(',')[2] === `"${number}"`)).toHaveLength(0);
+  });
+
+  test('serializes competing payments and refuses another owner’s payment IDs', async ({ invoiceForm, invoicesPage, page }) => {
+    const invoice = createInvoiceTestData('Concurrent payments', {
+      recipientBusinessNumber: '305000004', recipientAddress: 'Vilnius'
+    });
+    await invoiceForm.createDraft(invoice);
+    await invoicesPage.rowFor(invoice.recipientName).getByRole('link', { name: 'Details' }).click();
+    await page.getByRole('button', { name: 'Issue Invoice' }).click();
+    await page.getByRole('dialog', { name: 'Issue Invoice' }).getByRole('button', { name: 'Issue Invoice' }).click();
+    await expect(page.getByRole('button', { name: 'Record payment' })).toBeVisible();
+    const invoiceId = Number(new URL(page.url()).pathname.split('/').at(-1));
+    const user = await getUserByEmailFromDb(e2eUser.email);
+    if (!user) throw new Error('Missing authenticated test user');
+    const endpoint = `/api/${user.id}/invoices/${invoiceId}`;
+    const data = { paymentDate: '2000-01-01', amount: '200.00' };
+    const results = await Promise.all([
+      page.request.post(`${endpoint}/payments`, { data }),
+      page.request.post(`${endpoint}/payments`, { data })
+    ]);
+    expect(results.map((response) => response.status()).sort()).toEqual([201, 400]);
+    const rejected = await results.find((response) => response.status() === 400)!.json();
+    expect(rejected.errors[0]).toMatchObject({ key: 'amount', value: expect.stringContaining('50.00') });
+    const current: InvoiceWorkspaceResponse = await (await page.request.get(`${endpoint}/workspace`)).json();
+    expect(current.payments).toHaveLength(1);
+    expect(current.balance).toEqual({ paidAmount: '200.00', outstandingAmount: '50.00' });
+    expect((await page.request.post(`${endpoint}/payments`, { data: { ...data, paymentDate: '9999-01-01', amount: '1.00' } })).status()).toBe(400);
+    expect((await page.request.put(`/api/${user.id + 1}/invoices/${invoiceId}/payments/${current.payments[0].id}`, { data })).status()).toBe(401);
+    expect((await page.request.delete(`${endpoint}/payments/2147483647`)).status()).toBe(404);
+  });
+
+  test('keeps a zero-total invoice unpaid without accepting receipts', async ({ invoiceForm, invoicesPage, page }) => {
+    const invoice = createInvoiceTestData('No payment due', {
+      recipientBusinessNumber: '305000005', recipientAddress: 'Vilnius',
+      quantity: '0.0001', unitPrice: '0.01'
+    });
+    await invoiceForm.createDraft(invoice);
+    await invoicesPage.rowFor(invoice.recipientName).getByRole('link', { name: 'Details' }).click();
+    await expect(page).toHaveURL(/\/invoices\/\d+$/);
+    const invoiceId = Number(new URL(page.url()).pathname.split('/').at(-1));
+    const user = await getUserByEmailFromDb(e2eUser.email);
+    if (!user) throw new Error('Missing authenticated test user');
+    const endpoint = `/api/${user.id}/invoices/${invoiceId}`;
+    const data = { paymentDate: '2000-01-01', amount: '0.01' };
+    expect((await page.request.post(`${endpoint}/payments`, { data })).status()).toBe(400);
+    await page.getByRole('button', { name: 'Issue Invoice' }).click();
+    await page.getByRole('dialog', { name: 'Issue Invoice' }).getByRole('button', { name: 'Issue Invoice' }).click();
+    await expect(page.getByText('No payment due', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Record payment' })).toHaveCount(0);
+    expect((await page.request.post(`${endpoint}/payments`, { data })).status()).toBe(400);
+    const workspaceResponse = await page.request.get(`${endpoint}/workspace`);
+    expect(workspaceResponse.status()).toBe(200);
+    const workspace: InvoiceWorkspaceResponse = await workspaceResponse.json();
+    expect(workspace.invoice.paidAt).toBeNull();
+    expect(workspace.payments).toHaveLength(0);
+    expect(workspace.balance).toEqual({ paidAmount: '0.00', outstandingAmount: '0.00' });
   });
 });

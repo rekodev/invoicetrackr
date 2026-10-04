@@ -519,7 +519,8 @@
             "delete_description": "This draft will be removed permanently.",
             "delete_draft": "Delete draft",
             "payment_history": "Payments",
-            "bank_transfer": "Bank transfer received",
+            "payment_count": "{count, plural, one {# payment} other {# payments}}",
+            "bank_transfer": "Record an actual EUR bank transfer received.",
             "delivery_history": "Email history",
             "invoice_email": "Invoice email",
             "reminder_email": "Reminder",
@@ -546,12 +547,22 @@
             "payment_note": "Note (optional)",
             "save_payment": "Save payment",
             "edit_payment": "Edit payment",
+            "edit_payment_short": "Edit",
             "remove_payment": "Remove payment",
+            "remove_payment_short": "Remove",
             "remove_title": "Remove this payment?",
-            "remove_description": "The invoice balance and status will be recalculated.",
+            "remove_description": "This payment will be permanently deleted. The invoice balance, status, and income reports will be recalculated.",
             "saved": "Payment saved",
             "cancel": "Keep invoice",
-            "close": "Close"
+            "close": "Close",
+            "eur_only": "Payment changes are supported only for EUR invoices. Existing payments remain visible.",
+            "payment_maximum": "Maximum amount: €{maximum}",
+            "amount_limit": "Enter an amount greater than zero and no more than €{maximum}.",
+            "amount_invalid": "Enter a positive amount with no more than two decimal places.",
+            "date_required": "Choose the payment date.",
+            "save_failed": "The result could not be confirmed. Refresh the workspace and check payment history before trying again.",
+            "refresh_workspace": "Refresh workspace",
+            "paid_date": "Fully paid on {date}"
         },
         "table": {
             "a11y": {
@@ -574,7 +585,9 @@
             "status": {
                 "paid": "Paid",
                 "canceled": "Canceled",
-                "pending": "Pending"
+                "pending": "Unpaid",
+                "partial": "Partially paid",
+                "no_payment_due": "No payment due"
             },
             "search_placeholder": "Search by receiver...",
             "rows_per_page": "Rows per Page:",
@@ -593,14 +606,18 @@
                 "a11y": {
                     "status_label": "Status",
                     "columns_label": "Table Columns"
-                }
+                },
+                "all": "All statuses",
+                "overdue_only": "Overdue only"
             },
             "empty_state": {
                 "title": "You Have No Invoices Yet",
                 "description": "Click the \"Add New +\" button to create your first invoice.",
                 "no_results_title": "No invoices match your filters",
                 "no_results_description": "Try changing the search term or status filter."
-            }
+            },
+            "paid_amount": "Received: {amount}",
+            "remaining_amount": "Remaining: {amount}"
         },
         "delete_modal": {
             "title": "Delete Invoice",
@@ -622,9 +639,9 @@
         },
         "income_journal": {
             "title": "Export Income Journal",
-            "description": "The CSV includes invoices paid during the selected period. Unpaid invoices are excluded from the income journal.",
-            "from": "Paid From",
-            "to": "Paid To",
+            "description": "The CSV includes payments received during the selected period, including partial payments. Each entry uses the payment date and amount received.",
+            "from": "Received From",
+            "to": "Received To",
             "export": "Export CSV",
             "cancel": "Cancel"
         },
@@ -943,7 +960,15 @@
             "business_types": { "business": "Business", "individual": "Individual" },
             "totals": { "invoicedAmount": "Invoiced", "paidAmount": "Received", "outstandingAmount": "Outstanding" },
             "columns": { "number": "Invoice", "date": "Date", "total": "Total", "received": "Received", "outstanding": "Outstanding", "state": "State", "action": "" },
-            "states": { "draft": "Draft", "voided": "Voided", "paid": "Paid", "overdue": "Overdue", "partial": "Partially Paid", "pending": "Pending" }
+            "states": {
+                "draft": "Draft",
+                "voided": "Voided",
+                "paid": "Paid",
+                "overdue": "Overdue",
+                "partial": "Partially paid",
+                "pending": "Unpaid",
+                "no_payment_due": "No payment due"
+            }
         },
         "page_title": "Clients",
         "edit": "Edit",
@@ -1182,7 +1207,7 @@
         },
         "payment_methods": {
             "title": "Payment Methods",
-            "description": "Manage the bank accounts and crypto wallet instructions available on saved invoices.",
+            "description": "Manage the bank accounts available on saved invoices.",
             "selector_label": "Payment Method Category",
             "bank_accounts": "Bank Accounts",
             "crypto_wallets": "Crypto Wallets",
@@ -1484,7 +1509,7 @@
                 "crypto_wallet": "Crypto Wallet",
                 "no_clients": "You have no clients. Create one to get started.",
                 "no_bank_accounts": "You have no bank accounts. Create one to get started.",
-                "no_payment_methods": "You have no saved payment details yet. Add a bank account or crypto wallet to get started."
+                "no_payment_methods": "You have no saved payment details yet. Add a bank account to get started."
             },
             "free_invoice": {
                 "eyebrow": "Free Invoice Generator",

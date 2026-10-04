@@ -15,11 +15,8 @@ import {
   buttonVariants,
   Card,
   Chip,
-  Input,
-  Label,
   Modal,
   Spinner,
-  TextField,
   toast
 } from '@heroui/react';
 import type {
@@ -36,7 +33,6 @@ import { type ReactNode, useState, useTransition } from 'react';
 import {
   deleteInvoiceAction,
   removeInvoicePaymentAction,
-  saveInvoicePaymentAction,
   updateInvoiceStatusAction
 } from '@/lib/actions/invoice';
 import { captureAnalyticsEvent } from '@/lib/analytics/client';
@@ -44,9 +40,10 @@ import { analyticsEvents } from '@/lib/analytics/events';
 import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '@/lib/constants/pages';
 import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
-import { getInvoiceDueStatus } from '@/lib/utils/invoice';
+import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
 
 import PdfViewerWrapper from '../pdf/pdf-viewer-wrapper';
+import InvoicePaymentDialog from './invoice-payment-dialog';
 import IssueInvoiceModal from './issue-invoice-modal';
 import RecipientDetailsRequestModal from './recipient-details-request-modal';
 import SendInvoiceEmailModal from './send-invoice-email-modal';
@@ -82,18 +79,6 @@ function WorkspaceSection({
   );
 }
 
-const today = () => {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Europe/Vilnius',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).formatToParts(new Date());
-  const value = (type: string) =>
-    parts.find((part) => part.type === type)?.value;
-  return `${value('year')}-${value('month')}-${value('day')}`;
-};
-
 export default function InvoiceWorkspace({
   userId,
   data,
@@ -110,23 +95,18 @@ export default function InvoiceWorkspace({
   const { invoice, balance, payments, deliveries } = data;
   const invoiceId = Number(invoice.id);
   const lifecycle = invoice.lifecycleStatus || 'draft';
-  const due = getInvoiceDueStatus(invoice);
+  const due = getInvoiceDueStatus({ ...invoice, ...balance });
   const isIssued = lifecycle === 'issued';
   const isDraft = lifecycle === 'draft';
-  const isPaid = balance.outstandingAmount === '0.00' && isIssued;
-  const isPartial = Number(balance.paidAmount) > 0 && !isPaid;
-  const status =
-    lifecycle === 'voided'
-      ? table('lifecycle_status.voided')
-      : isDraft
-        ? table('lifecycle_status.draft')
-        : isPaid
-          ? table('status.paid')
-          : due.isPastDue
-            ? t('overdue')
-            : isPartial
-              ? t('partial')
-              : table('status.pending');
+  const paymentStatus = getInvoicePaymentStatus({ ...invoice, ...balance });
+  const isPaid = paymentStatus === 'paid';
+  const supportsPayments = (invoice.currency || 'eur') === 'eur';
+  const latestPaymentDate = payments.reduce((latest, payment) => payment.paymentDate > latest ? payment.paymentDate : latest, '');
+  const currencySymbol = (invoice.currency || 'eur') === 'eur' ? '€' : '$';
+  const needsPaymentReplacement = isDraft && invoice.paymentMode === 'crypto';
+  const status = isDraft || lifecycle === 'voided'
+    ? table(`lifecycle_status.${lifecycle}`)
+    : table(`status.${paymentStatus}`);
   const [isIFrameLoading, setIsIFrameLoading] = useState(false);
   const [sendOpen, setSendOpen] = useState(false);
   const [emailKind, setEmailKind] = useState<'invoice' | 'reminder'>('invoice');
@@ -144,14 +124,11 @@ export default function InvoiceWorkspace({
   const [confirmAction, setConfirmAction] = useState<
     'cancel' | 'delete' | 'remove-payment' | null
   >(null);
+  const [confirmError, setConfirmError] = useState('');
   const [paymentToRemove, setPaymentToRemove] = useState<number | null>(null);
-  const [paymentDate, setPaymentDate] = useState(today());
-  const [amount, setAmount] = useState(balance.outstandingAmount);
-  const [bankReference, setBankReference] = useState('');
-  const [notes, setNotes] = useState('');
   const [isPending, startTransition] = useTransition();
   const { pdfDocument, pdfUrl, isPdfDocumentLoading } = useDynamicPdf({
-    currency: 'eur',
+    currency: invoice.currency || 'eur',
     invoiceLanguage: invoice.documentLanguage || preferredLanguage,
     invoiceData: invoice,
     senderSignatureImage: invoice.senderSignature as string,
@@ -160,36 +137,13 @@ export default function InvoiceWorkspace({
 
   const openPayment = (payment?: InvoicePayment) => {
     setEditingPayment(payment || null);
-    setPaymentDate(payment?.paymentDate || today());
-    setAmount(payment?.amount || balance.outstandingAmount);
-    setBankReference(payment?.bankReference || '');
-    setNotes(payment?.notes || '');
     setPaymentOpen(true);
   };
 
-  const savePayment = () =>
-    startTransition(async () => {
-      const numericAmount = Number(amount);
-      if (!Number.isFinite(numericAmount) || numericAmount <= 0) return;
-      const response = await saveInvoicePaymentAction({
-        userId,
-        invoiceId,
-        paymentId: editingPayment?.id,
-        payment: {
-          paymentDate,
-          amount: numericAmount.toFixed(2),
-          bankReference,
-          notes
-        }
-      });
-      toast(response.ok ? t('saved') : response.message, {
-        variant: response.ok ? 'success' : 'danger'
-      });
-      if (response.ok) {
-        setPaymentOpen(false);
-        router.refresh();
-      }
-    });
+  const refreshPaymentWorkspace = () => {
+    setPaymentOpen(false);
+    router.refresh();
+  };
 
   const confirm = () =>
     startTransition(async () => {
@@ -202,7 +156,8 @@ export default function InvoiceWorkspace({
         toast(response.message, {
           variant: response.ok ? 'success' : 'danger'
         });
-        if (response.ok) router.refresh();
+        if (!response.ok) { setConfirmError(response.message); return; }
+        router.refresh();
       } else if (confirmAction === 'cancel') {
         const response = await updateInvoiceStatusAction({
           userId,
@@ -212,7 +167,8 @@ export default function InvoiceWorkspace({
         toast(response.message, {
           variant: response.ok ? 'success' : 'danger'
         });
-        if (response.ok) router.refresh();
+        if (!response.ok) { setConfirmError(response.message); return; }
+        router.refresh();
       } else if (confirmAction === 'delete') {
         const response = await deleteInvoiceAction({ userId, invoiceId });
         toast(response.message, {
@@ -220,6 +176,7 @@ export default function InvoiceWorkspace({
         });
         if (response.ok) router.push(INVOICES_PAGE);
       }
+      setConfirmError('');
       setConfirmAction(null);
       setPaymentToRemove(null);
     });
@@ -239,29 +196,34 @@ export default function InvoiceWorkspace({
 
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-2">
+      <header className="space-y-2">
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold">
             {invoice.invoiceId || t('draft')}
           </h1>
-          <p className="text-muted text-sm">
-            {invoice.receiver.name} · {t('due', { date: invoice.dueDate })}
-          </p>
+          <div className="flex flex-wrap gap-2">
+            <Chip
+              variant="soft"
+              color={
+                lifecycle === 'voided' ? 'danger' : isPaid ? 'success' : 'accent'
+              }
+            >
+              {status}
+            </Chip>
+            {due.isPastDue ? (
+              <Chip variant="soft" color="danger">
+                {t('overdue')}
+              </Chip>
+            ) : null}
+          </div>
         </div>
-        <Chip
-          variant="soft"
-          color={
-            lifecycle === 'voided'
-              ? 'danger'
-              : isPaid
-                ? 'success'
-                : due.isPastDue
-                  ? 'danger'
-                  : 'accent'
-          }
-        >
-          {status}
-        </Chip>
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+          <span>{invoice.receiver.name}</span>
+          <span className="text-muted" aria-hidden="true">
+            ·
+          </span>
+          <span className="text-muted">{t('due', { date: invoice.dueDate })}</span>
+        </p>
       </header>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <Card className="min-w-0 overflow-hidden border p-0">
@@ -285,14 +247,15 @@ export default function InvoiceWorkspace({
           >
             <div className="flex justify-between gap-3">
               <p className="text-muted text-sm">{t('paid')}</p>
-              <p className="font-medium tabular-nums">€{balance.paidAmount}</p>
+              <p className="font-medium tabular-nums">{currencySymbol}{balance.paidAmount}</p>
             </div>
             <div className="flex justify-between gap-3">
               <p className="text-muted text-sm">{t('outstanding')}</p>
               <p className="font-medium tabular-nums">
-                €{balance.outstandingAmount}
+                {currencySymbol}{balance.outstandingAmount}
               </p>
             </div>
+            {isPaid && latestPaymentDate ? <p className="text-muted text-sm">{t('paid_date', { date: latestPaymentDate })}</p> : null}
           </WorkspaceSection>
           <WorkspaceSection
             title={t('actions')}
@@ -310,15 +273,16 @@ export default function InvoiceWorkspace({
                   <PencilSquareIcon className="size-4" />
                   {t('edit')}
                 </Link>
-                <IssueInvoiceModal
+                {!needsPaymentReplacement && <IssueInvoiceModal
                   userId={userId}
                   invoiceData={invoice}
                   triggerVariant="button"
                   onIssued={() => router.refresh()}
-                />
+                />}
                 <Button
                   className="w-full justify-center"
                   variant="tertiary"
+                  isDisabled={needsPaymentReplacement}
                   onPress={() => setRecipientDetailsOpen(true)}
                 >
                   <UserPlusIcon className="size-4" />
@@ -349,16 +313,6 @@ export default function InvoiceWorkspace({
                     {t('send_reminder')}
                   </Button>
                 ) : null}
-                {Number(balance.outstandingAmount) > 0 ? (
-                  <Button
-                    className="w-full justify-center"
-                    variant="secondary"
-                    onPress={() => openPayment()}
-                  >
-                    <BanknotesIcon className="size-4" />
-                    {t('record_payment')}
-                  </Button>
-                ) : null}
                 {data.canCopyPublicLink ? (
                   <Button
                     className="w-full justify-center"
@@ -376,6 +330,7 @@ export default function InvoiceWorkspace({
                 ) : null}
               </>
             ) : null}
+            {isIssued && !supportsPayments ? <p className="text-muted text-sm">{t('eur_only')}</p> : null}
             {pdfDocument ? (
               <PDFDownloadLink
                 className="block w-full"
@@ -423,49 +378,75 @@ export default function InvoiceWorkspace({
               </Button>
             ) : null}
           </WorkspaceSection>
-          {payments.length > 0 ? (
-            <WorkspaceSection
-              title={t('payment_history')}
-              contentClassName="mt-2"
-            >
-              <ul className="divide-default-200 divide-y text-sm">
-                {payments.map((payment) => (
-                  <li key={payment.id} className="space-y-1 py-3">
-                    <div className="flex justify-between gap-2">
-                      <strong>€{payment.amount}</strong>
-                      <span>{payment.paymentDate}</span>
-                    </div>
-                    {payment.bankReference ? (
-                      <p className="text-muted">{payment.bankReference}</p>
-                    ) : null}
-                    {payment.notes ? (
-                      <p className="text-muted">{payment.notes}</p>
-                    ) : null}
-                    {isIssued ? (
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="tertiary"
-                          onPress={() => openPayment(payment)}
-                        >
-                          {t('edit_payment')}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="tertiary"
-                          onPress={() => {
-                            setPaymentToRemove(payment.id);
-                            setConfirmAction('remove-payment');
-                          }}
-                        >
-                          {t('remove_payment')}
-                        </Button>
+          {isIssued || payments.length > 0 ? (
+            <Card className="gap-0 overflow-hidden border p-0" role="region" aria-labelledby={`invoice-payments-${invoiceId}`}>
+              <Card.Header className="flex-row items-center justify-between gap-2 border-b p-4">
+                <div className="flex items-center gap-2">
+                  <h2 id={`invoice-payments-${invoiceId}`} className="text-lg font-semibold">{t('payment_history')}</h2>
+                  <Chip size="sm" variant="soft" aria-label={t('payment_count', { count: payments.length })}>{payments.length}</Chip>
+                </div>
+                {isIssued && supportsPayments && Number(balance.outstandingAmount) > 0 ? (
+                  <Button size="sm" variant="secondary" onPress={() => openPayment()}>
+                    <BanknotesIcon className="size-4" />
+                    {t('record_payment')}
+                  </Button>
+                ) : null}
+              </Card.Header>
+              {payments.length > 0 ? (
+                <ul className="divide-y">
+                  {payments.map((payment) => (
+                    <li key={payment.id} className="space-y-3 p-5">
+                      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                        <p className="text-xl font-semibold tabular-nums">{currencySymbol}{payment.amount}</p>
+                        <time className="text-muted text-xs tabular-nums" dateTime={payment.paymentDate}>{payment.paymentDate}</time>
                       </div>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            </WorkspaceSection>
+                      {payment.bankReference || payment.notes ? (
+                        <div className="space-y-1">
+                          {payment.bankReference ? (
+                            <p className="text-sm font-medium break-words">{payment.bankReference}</p>
+                          ) : null}
+                          {payment.notes ? (
+                            <p className="text-muted text-xs leading-relaxed break-words whitespace-pre-wrap">{payment.notes}</p>
+                          ) : null}
+                        </div>
+                      ) : null}
+                      {isIssued && supportsPayments ? (
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            aria-label={t('edit_payment')}
+                            size="sm"
+                            variant="secondary"
+                            isDisabled={isPending}
+                            onPress={() => openPayment(payment)}
+                          >
+                            <PencilSquareIcon className="size-4" />
+                            {t('edit_payment_short')}
+                          </Button>
+                          <Button
+                            aria-label={t('remove_payment')}
+                            className="hover:bg-danger-soft hover:text-danger-soft-foreground data-[hovered=true]:bg-danger-soft data-[hovered=true]:text-danger-soft-foreground"
+                            size="sm"
+                            variant="ghost"
+                            isDisabled={isPending}
+                            onPress={() => {
+                              setPaymentToRemove(payment.id);
+                              setConfirmAction('remove-payment');
+                            }}
+                          >
+                            <TrashIcon className="size-4" />
+                            {t('remove_payment_short')}
+                          </Button>
+                        </div>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <Card.Content className="p-5">
+                  <p className="text-muted text-sm">{t('no_payments')}</p>
+                </Card.Content>
+              )}
+            </Card>
           ) : null}
           {deliveries.length > 0 ? (
             <WorkspaceSection
@@ -540,7 +521,7 @@ export default function InvoiceWorkspace({
             : undefined}
         />
       )}
-      {isDraft && (
+      {isDraft && !needsPaymentReplacement && (
         <RecipientDetailsRequestModal
           userId={userId}
           invoice={invoice}
@@ -548,87 +529,34 @@ export default function InvoiceWorkspace({
           onOpenChange={setRecipientDetailsOpen}
         />
       )}
-      <Modal.Backdrop
-        isOpen={paymentOpen}
-        onOpenChange={(open) => !open && setPaymentOpen(false)}
-      >
-        <Modal.Container>
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
-            <Modal.Header>
-              <Modal.Heading>
-                {editingPayment ? t('edit_payment') : t('record_payment')}
-              </Modal.Heading>
-            </Modal.Header>
-            <Modal.Body className="space-y-3">
-              <p className="text-muted text-sm">{t('bank_transfer')}</p>
-              <TextField variant="secondary">
-                <Label>{t('payment_date')}</Label>
-                <Input
-                  type="date"
-                  value={paymentDate}
-                  max={today()}
-                  onChange={(event) => setPaymentDate(event.target.value)}
-                />
-              </TextField>
-              <TextField variant="secondary">
-                <Label>{t('payment_amount')}</Label>
-                <Input
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={amount}
-                  onChange={(event) => setAmount(event.target.value)}
-                />
-              </TextField>
-              <TextField variant="secondary">
-                <Label>{t('payment_reference')}</Label>
-                <Input
-                  value={bankReference}
-                  onChange={(event) => setBankReference(event.target.value)}
-                />
-              </TextField>
-              <TextField variant="secondary">
-                <Label>{t('payment_note')}</Label>
-                <Input
-                  value={notes}
-                  onChange={(event) => setNotes(event.target.value)}
-                />
-              </TextField>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="tertiary" onPress={() => setPaymentOpen(false)}>
-                {t('close')}
-              </Button>
-              <Button
-                isPending={isPending}
-                isDisabled={!paymentDate || !amount || Number(amount) <= 0}
-                onPress={savePayment}
-              >
-                {t('save_payment')}
-              </Button>
-            </Modal.Footer>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
+      {paymentOpen ? (
+        <InvoicePaymentDialog userId={userId} invoiceId={invoiceId}
+          outstandingAmount={balance.outstandingAmount} payment={editingPayment}
+          onClose={() => setPaymentOpen(false)}
+          onRefresh={refreshPaymentWorkspace}
+          onSaved={refreshPaymentWorkspace} />
+      ) : null}
       <Modal.Backdrop
         isOpen={Boolean(confirmAction)}
-        onOpenChange={(open) => !open && setConfirmAction(null)}
+        isDismissable={!isPending}
+        isKeyboardDismissDisabled={isPending}
+        onOpenChange={(open) => { if (!open && !isPending) { setConfirmError(''); setConfirmAction(null); } }}
       >
         <Modal.Container>
           <Modal.Dialog>
-            <Modal.CloseTrigger />
+            {!isPending ? <Modal.CloseTrigger /> : null}
             <Modal.Header>
               <Modal.Heading>{confirmTitle}</Modal.Heading>
             </Modal.Header>
             <Modal.Body>
               <p>{confirmDescription}</p>
+              {confirmError ? <p role="alert" className="text-danger text-sm">{confirmError}</p> : null}
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="tertiary" onPress={() => setConfirmAction(null)}>
+              <Button variant="tertiary" isDisabled={isPending} onPress={() => { setConfirmError(''); setConfirmAction(null); }}>
                 {t('close')}
               </Button>
-              <Button variant="danger" isPending={isPending} onPress={confirm}>
+              <Button variant="danger" isPending={isPending} isDisabled={isPending} onPress={confirm}>
                 {confirmAction === 'cancel'
                   ? t('cancel_invoice')
                   : confirmAction === 'delete'
