@@ -30,7 +30,7 @@ describe('invoice payment dialog', () => {
 
   it('allows editing the existing amount and blocks repeat saves while pending', async () => {
     const onSaved = vi.fn();
-    let complete!: (result: Awaited<ReturnType<typeof saveInvoicePaymentAction>>) => void;
+    let complete!: (_result: Awaited<ReturnType<typeof saveInvoicePaymentAction>>) => void;
     vi.mocked(saveInvoicePaymentAction).mockReturnValueOnce(new Promise((resolve) => { complete = resolve; }));
     render(withIntl(<InvoicePaymentDialog userId={1} invoiceId={7} outstandingAmount="60.00"
       payment={{ id: 3, amount: '40.00', paymentDate: '2000-01-01', createdAt: '2000-01-01T00:00:00Z' }}

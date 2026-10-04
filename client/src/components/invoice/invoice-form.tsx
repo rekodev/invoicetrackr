@@ -809,9 +809,6 @@ const InvoiceForm = ({
           {t('modals.use_saved_payment_details')}
         </Button>
       </div>
-      {paymentMode === 'crypto' ? (
-        <p role="alert" className="text-danger text-sm">{t('payment_settings.crypto_retired')}</p>
-      ) : null}
       <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         <Controller
           name="paymentMode"

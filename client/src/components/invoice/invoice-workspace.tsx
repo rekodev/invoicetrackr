@@ -269,9 +269,7 @@ export default function InvoiceWorkspace({
                   <PencilSquareIcon className="size-4" />
                   {t('edit')}
                 </Link>
-                {needsPaymentReplacement ? (
-                  <p role="alert" className="text-danger text-sm">{t('crypto_retired')}</p>
-                ) : <IssueInvoiceModal
+                {!needsPaymentReplacement && <IssueInvoiceModal
                   userId={userId}
                   invoiceData={invoice}
                   triggerVariant="button"

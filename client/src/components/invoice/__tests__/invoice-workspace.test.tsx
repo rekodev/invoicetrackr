@@ -119,7 +119,7 @@ describe('invoice workspace', () => {
         }} isEmailVerified preferredLanguage="en" />
       </AnalyticsConsentContext.Provider>
     ));
-    expect(screen.getByRole('alert')).toHaveTextContent('Choose bank transfer or no payment instructions');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Edit draft' })).toHaveAttribute('href', '/invoices/edit/7');
     expect(screen.queryByRole('button', { name: 'Issue Invoice' })).not.toBeInTheDocument();
   });

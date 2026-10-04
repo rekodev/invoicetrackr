@@ -519,7 +519,7 @@
             "delete_description": "Juodraštis bus pašalintas visam laikui.",
             "delete_draft": "Ištrinti juodraštį",
             "payment_history": "Mokėjimai",
-            "bank_transfer": "Įrašykite faktiškai gautą banko pavedimą eurais. Mokėjimai kriptovaliuta nepalaikomi.",
+            "bank_transfer": "Įrašykite faktiškai gautą banko pavedimą eurais.",
             "delivery_history": "El. laiškų istorija",
             "invoice_email": "Sąskaitos laiškas",
             "reminder_email": "Priminimas",
@@ -552,7 +552,6 @@
             "saved": "Mokėjimas išsaugotas",
             "cancel": "Palikti sąskaitą",
             "close": "Uždaryti",
-            "crypto_retired": "Naujose sąskaitose mokėjimo kriptovaliuta rekvizitai nebepalaikomi. Prieš išsaugodami ar išrašydami šį juodraštį pasirinkite banko pavedimą arba sąskaitą be mokėjimo rekvizitų.",
             "eur_only": "Mokėjimus galima keisti tik EUR sąskaitose. Esami mokėjimai lieka matomi.",
             "payment_maximum": "Didžiausia suma: {maximum} €",
             "amount_limit": "Įveskite sumą, didesnę už nulį ir neviršijančią {maximum} €.",
@@ -1205,7 +1204,7 @@
         },
         "payment_methods": {
             "title": "Mokėjimo būdai",
-            "description": "Tvarkykite banko sąskaitas ir kriptovaliutų piniginių instrukcijas, naudojamas išsaugotose sąskaitose.",
+            "description": "Tvarkykite banko sąskaitas, naudojamas išsaugotose sąskaitose.",
             "selector_label": "Mokėjimo būdų kategorija",
             "bank_accounts": "Banko sąskaitos",
             "crypto_wallets": "Kriptovaliutų piniginės",
@@ -1478,8 +1477,7 @@
                     "manual": "Bankinis pavedimas",
                     "crypto": "Kriptovaliutos pervedimas",
                     "disabled": "Nerodyti mokėjimo bloko"
-                },
-                "crypto_retired": "Naujose sąskaitose mokėjimo kriptovaliuta rekvizitai nebepalaikomi. Prieš išsaugodami ar išrašydami šį juodraštį pasirinkite banko pavedimą arba sąskaitą be mokėjimo rekvizitų."
+                }
             },
             "numbering": {
                 "assigned_on_issue": "Galutinis numeris suteikiamas išrašant arba siunčiant sąskaitą el. paštu.",

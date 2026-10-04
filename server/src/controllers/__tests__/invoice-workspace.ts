@@ -5,8 +5,8 @@ import * as paymentDb from '../../database/invoice-payment';
 import {
   createInvoicePaymentOptions,
   deleteInvoicePaymentOptions,
-  updateInvoicePaymentOptions,
-  getInvoiceWorkspaceOptions
+  getInvoiceWorkspaceOptions,
+  updateInvoicePaymentOptions
 } from '../../options/invoice-workspace';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import { invoiceFromDbFactory } from '../../test/factories/invoice';

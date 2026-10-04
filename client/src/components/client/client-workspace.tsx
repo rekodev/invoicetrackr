@@ -20,8 +20,8 @@ import { useState } from 'react';
 import EmptyState from '@/components/empty-state';
 import MetricCard from '@/components/ui/metric-card';
 import { CLIENTS_PAGE, INVOICE_WORKSPACE_PAGE } from '@/lib/constants/pages';
-import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
 import { formatLocalizedDate } from '@/lib/utils/date';
+import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
 
 import ArchiveClientModal from './archive-client-modal';
 import ClientFormDialog from './client-form-dialog';

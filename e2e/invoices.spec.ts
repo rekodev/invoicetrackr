@@ -117,7 +117,7 @@ test.describe('invoices', () => {
         businessType: 'business',
         businessNumber: `E2E${invoiceId}`,
         address: 'Vilnius',
-        email: 'payments@example.com'
+        email: `payments-${invoiceId}@example.com`
       }
     });
     expect(clientResponse.status()).toBe(201);
@@ -177,7 +177,7 @@ test.describe('invoices', () => {
     await expect(page.getByText('Fully paid on 2001-01-01')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Record payment' })).toHaveCount(0);
     const settled: InvoiceWorkspaceResponse = await (await page.request.get(`${endpoint}/workspace`)).json();
-    expect(settled.invoice.paidAt).toBe('2001-01-01T00:00:00.000Z');
+    expect(new Date(settled.invoice.paidAt!).toISOString()).toBe('2001-01-01T00:00:00.000Z');
     expect(settled.balance).toEqual({ paidAmount: '350.50', outstandingAmount: '0.00' });
     const finalPayment = settled.payments.find((payment) => payment.paymentDate === '2001-01-01')!;
     const correction = await page.request.put(`${endpoint}/payments/${finalPayment.id}`, {
@@ -263,6 +263,7 @@ test.describe('invoices', () => {
     });
     await invoiceForm.createDraft(invoice);
     await invoicesPage.rowFor(invoice.recipientName).getByRole('link', { name: 'Details' }).click();
+    await expect(page).toHaveURL(/\/invoices\/\d+$/);
     const invoiceId = Number(new URL(page.url()).pathname.split('/').at(-1));
     const user = await getUserByEmailFromDb(e2eUser.email);
     if (!user) throw new Error('Missing authenticated test user');
@@ -274,7 +275,9 @@ test.describe('invoices', () => {
     await expect(page.getByText('No payment due', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Record payment' })).toHaveCount(0);
     expect((await page.request.post(`${endpoint}/payments`, { data })).status()).toBe(400);
-    const workspace: InvoiceWorkspaceResponse = await (await page.request.get(`${endpoint}/workspace`)).json();
+    const workspaceResponse = await page.request.get(`${endpoint}/workspace`);
+    expect(workspaceResponse.status()).toBe(200);
+    const workspace: InvoiceWorkspaceResponse = await workspaceResponse.json();
     expect(workspace.invoice.paidAt).toBeNull();
     expect(workspace.payments).toHaveLength(0);
     expect(workspace.balance).toEqual({ paidAmount: '0.00', outstandingAmount: '0.00' });
