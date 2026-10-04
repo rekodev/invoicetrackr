@@ -1,5 +1,4 @@
 import {
-  invoiceWriteBodySchema,
   getInvoiceResponseSchema,
   getInvoicesResponseSchema,
   getInvoicesRevenueResponseSchema,
@@ -11,6 +10,7 @@ import {
   getRecipientDetailsResponseSchema,
   incomeJournalQuerySchema,
   invoiceNumberSeriesSchema,
+  invoiceWriteBodySchema,
   issueInvoiceResponseSchema,
   messageResponseSchema,
   postInvoiceResponseSchema,

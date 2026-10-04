@@ -3,8 +3,8 @@ import {
   authenticatedInvoiceBodySchema,
   DEFAULT_CURRENCY,
   invoiceBodySchema,
-  invoiceWriteBodySchema,
-  invoiceServiceBodySchema
+  invoiceServiceBodySchema,
+  invoiceWriteBodySchema
 } from '@invoicetrackr/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

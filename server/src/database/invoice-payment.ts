@@ -2,7 +2,6 @@ import type { InvoicePaymentBody } from '@invoicetrackr/types';
 import { and, desc, eq, isNull, sql } from 'drizzle-orm';
 
 import { fromCents, toCents } from '../utils/money';
-
 import { db } from './db';
 import {
   invoicesTable,
