@@ -12,7 +12,7 @@ import {
   updateExpenseAttachmentResponseSchema,
   updateExpenseResponseSchema
 } from '@invoicetrackr/types';
-import { RouteShorthandOptionsWithHandler } from 'fastify';
+import { FastifyRequest, RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
 import {
@@ -28,7 +28,11 @@ import {
   updateExpense
 } from '../controllers/expense';
 import { authMiddleware } from '../middleware/auth';
-import { preValidateFileAndFields } from '../utils/multipart';
+
+const preValidateExpenseAttachment = async (request: FastifyRequest) => {
+  if (!request.isMultipart()) return;
+  request.body = { file: await request.file({ limits: { fileSize: 10 * 1024 * 1024 + 1, files: 1 } }) };
+};
 
 const authenticatedAccess = [authMiddleware];
 const expenseAttachmentBodySchema = z.object({ file: z.any().nullish() });
@@ -135,7 +139,7 @@ export const postExpenseAttachmentOptions: RouteShorthandOptionsWithHandler = {
     }
   },
   preHandler: authenticatedAccess,
-  preValidation: preValidateFileAndFields,
+  preValidation: preValidateExpenseAttachment,
   handler: postExpenseAttachment
 };
 
@@ -149,7 +153,7 @@ export const replaceExpenseAttachmentOptions: RouteShorthandOptionsWithHandler =
       }
     },
     preHandler: authenticatedAccess,
-    preValidation: preValidateFileAndFields,
+    preValidation: preValidateExpenseAttachment,
     handler: replaceExpenseAttachment
   };
 

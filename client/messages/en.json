@@ -805,7 +805,8 @@
         },
         "actions": {
             "edit": "Edit Expense",
-            "delete": "Delete Expense"
+            "delete": "Delete Expense",
+            "view": "View expense"
         },
         "empty_state": {
             "title": "You Have No Expenses Yet",
@@ -857,7 +858,61 @@
             },
             "cancel": "Cancel",
             "submit_add": "Add Expense",
-            "submit_edit": "Save Changes"
+            "submit_edit": "Save Changes",
+            "saved": "Expense saved",
+            "save_failed": "Unable to save. Try again.",
+            "created_upload_pending": "Expense saved. The document has not been uploaded. Retry uploading or open the saved expense.",
+            "open_saved": "Open saved expense",
+            "retry_upload": "Retry upload"
+        },
+        "workspace": {
+            "back": "Back to expenses",
+            "edit": "Edit expense",
+            "delete": "Delete expense",
+            "not_set": "Not set",
+            "details": "Expense details",
+            "eur_amount": "Amount in EUR",
+            "created_at": "Created",
+            "updated_at": "Last updated",
+            "deduction_title": "How the deductible amount is calculated",
+            "deduction_formula": "{amount} × {percentage}% = {deductible}",
+            "deduction_explanation": "The saved deductible amount is the total multiplied by the share used for business, rounded to cents. VAT is shown separately and is not subtracted in this calculation.",
+            "documents": {
+                "title": "Supporting documents",
+                "add": "Add document",
+                "upload": "Upload",
+                "replace": "Replace document",
+                "remove": "Remove document",
+                "preview": "Preview",
+                "download": "Download",
+                "open_tab": "Open in new tab",
+                "missing": "No supporting documents",
+                "missing_description": "Attach a receipt, invoice, or other document supporting this expense.",
+                "file": "Document",
+                "select_file": "Select a file",
+                "dropzone_title": "Drop a document here or select a file",
+                "hint": "PDF, JPEG, or PNG. Maximum 10 MB per file.",
+                "invalid_type": "Select a PDF, JPEG, or PNG file.",
+                "too_large": "The document must be 10 MB or smaller.",
+                "load_failed": "Unable to load documents. Try again.",
+                "save_failed": "Unable to save the document. Try again.",
+                "preview_failed": "Unable to display this document. Retry, download it, or open it in a new tab.",
+                "popup_blocked": "Allow this site to open a new tab, then try again.",
+                "confirm_remove": "Remove “{name}” from this expense? This cannot be undone.",
+                "confirm_replace": "Replace “{name}” with “{replacement}”? The previous file will be removed.",
+                "uploaded": "Uploaded: {date}",
+                "updated": "Updated: {date}",
+                "cancel": "Cancel",
+                "retry": "Retry",
+                "close": "Close",
+                "loading": "Loading document",
+                "previous_page": "Previous page",
+                "next_page": "Next page",
+                "page_count": "Page {page} of {pages}",
+                "zoom_in": "Zoom in",
+                "zoom_out": "Zoom out",
+                "fit_width": "Fit to width"
+            }
         }
     },
     "invoice_signing": {

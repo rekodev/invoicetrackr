@@ -14,8 +14,9 @@ import {
   toast
 } from '@heroui/react';
 import type { ExpenseBody, ExpenseInput } from '@invoicetrackr/types';
+import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { type HTMLAttributes, useEffect, useMemo, useState } from 'react';
+import { type HTMLAttributes, useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
 
 import FileDropzone from '@/components/ui/file-dropzone';
@@ -28,11 +29,14 @@ import {
   EXPENSE_CATEGORIES,
   EXPENSE_PAYMENT_METHODS
 } from '@/lib/constants/expense';
+import { EXPENSE_WORKSPACE_PAGE } from '@/lib/constants/pages';
 
 type Props = {
   userId: number;
   isOpen: boolean;
   onClose: () => void;
+  onSaved?: (_expense: ExpenseBody) => void;
+  returnTo?: string;
   mode?: 'add' | 'edit';
   expenseData?: ExpenseBody;
 };
@@ -84,6 +88,8 @@ const ExpenseFormDialog = ({
   userId,
   isOpen,
   onClose,
+  onSaved,
+  returnTo,
   mode = 'add',
   expenseData
 }: Props) => {
@@ -93,6 +99,9 @@ const ExpenseFormDialog = ({
   const locale = useLocale();
   const isEditMode = mode === 'edit';
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [savedCreation, setSavedCreation] = useState<ExpenseBody | null>(null);
+  const [submitError, setSubmitError] = useState('');
+  const busy = useRef(false);
 
   const {
     control,
@@ -110,7 +119,10 @@ const ExpenseFormDialog = ({
     name: 'businessUsePercentage'
   });
   const handleClose = () => {
+    if (busy.current) return;
     setSelectedFile(null);
+    setSavedCreation(null);
+    setSubmitError('');
     onClose();
   };
   const deductiblePreview = useMemo(() => {
@@ -127,50 +139,52 @@ const ExpenseFormDialog = ({
     if (isEditMode && !expenseData) return;
 
     reset(getInitialExpenseData(expenseData));
+    setSavedCreation(null);
+    setSelectedFile(null);
+    setSubmitError('');
   }, [expenseData, isEditMode, isOpen, reset]);
 
   const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
-    const response =
-      isEditMode && expenseData?.id
-        ? await updateExpenseAction({
-            userId,
-            expenseId: expenseData.id,
-            expenseData: data
-          })
-        : await addExpenseAction({ userId, expenseData: data });
+    if (busy.current) return;
+    busy.current = true;
+    setSubmitError('');
+    try {
+      const response = savedCreation
+        ? { ok: true, message: '', data: savedCreation, validationErrors: undefined }
+        : isEditMode && expenseData?.id
+          ? await updateExpenseAction({ userId, expenseId: expenseData.id, expenseData: data })
+          : await addExpenseAction({ userId, expenseData: data });
 
-    if (!response.ok) {
-      if (response.validationErrors) {
-        Object.entries(response.validationErrors).forEach(([key, message]) => {
+      if (!response.ok) {
+        if (response.validationErrors) Object.entries(response.validationErrors).forEach(([key, message]) => {
           setError(key as keyof ExpenseFormData, { message });
         });
-      }
-
-      toast(response.message || '', { variant: 'danger' });
-      return;
-    }
-
-    const savedExpense = response.data as ExpenseBody | undefined;
-    const savedExpenseId = savedExpense?.id ?? expenseData?.id;
-
-    if (selectedFile && savedExpenseId) {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-
-      const uploadResponse = await uploadExpenseAttachmentAction({
-        userId,
-        expenseId: savedExpenseId,
-        formData
-      });
-
-      if (!uploadResponse.ok) {
-        toast(uploadResponse.message || '', { variant: 'danger' });
+        setSubmitError(response.message);
         return;
       }
+      const savedExpense = response.data;
+      if (!savedExpense?.id) return;
+      // Remember creation before attempting the independent upload, so retry only uploads.
+      if (!isEditMode) setSavedCreation(savedExpense);
+      if (!isEditMode && selectedFile) {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        const uploaded = await uploadExpenseAttachmentAction({ userId, expenseId: savedExpense.id, formData });
+        if (!uploaded.ok) {
+          setSubmitError(uploaded.message);
+          return;
+        }
+      }
+      toast(response.message || t('saved'), { variant: 'success' });
+      onSaved?.(savedExpense);
+      setSelectedFile(null);
+      setSavedCreation(null);
+      onClose();
+    } catch {
+      setSubmitError(t('save_failed'));
+    } finally {
+      busy.current = false;
     }
-
-    toast(response.message || '', { variant: 'success' });
-    handleClose();
   };
 
   const renderTextField = ({
@@ -193,7 +207,7 @@ const ExpenseFormDialog = ({
         control={control}
         name={name}
         render={({ field }) => (
-          <TextField variant="secondary" isInvalid={Boolean(error)}>
+          <TextField variant="secondary" isDisabled={isSubmitting || Boolean(savedCreation)} isInvalid={Boolean(error)}>
             <Label>{label}</Label>
             <Input
               name={field.name}
@@ -216,11 +230,13 @@ const ExpenseFormDialog = ({
   return (
     <Modal.Backdrop
       isOpen={isOpen}
+      isDismissable={!isSubmitting}
+      isKeyboardDismissDisabled={isSubmitting}
       onOpenChange={(open) => !open && handleClose()}
     >
       <Modal.Container scroll="outside" size="lg">
         <Modal.Dialog>
-          <Modal.CloseTrigger />
+          {!isSubmitting ? <Modal.CloseTrigger /> : null}
           <Modal.Header>
             <div>
               <Modal.Heading>
@@ -230,12 +246,17 @@ const ExpenseFormDialog = ({
             </div>
           </Modal.Header>
           <Modal.Body>
+            {submitError ? <p role="alert" className="text-danger text-sm">{submitError}</p> : null}
+            {savedCreation?.id ? <div className="space-y-2 text-sm">
+              <p>{t('created_upload_pending')}</p>
+              <Link className="underline" href={`${EXPENSE_WORKSPACE_PAGE(savedCreation.id)}${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ''}`}>{t('open_saved')}</Link>
+            </div> : null}
             <form
               id="expense-form"
               className="grid grid-cols-1 gap-4 sm:grid-cols-2"
               onSubmit={handleSubmit(onSubmit)}
             >
-              <FileDropzone
+              {!isEditMode ? <fieldset disabled={isSubmitting} className="sm:col-span-2"><FileDropzone
                 className="sm:col-span-2"
                 label={t('fields.attachment')}
                 title={t('upload.dropzone_title')}
@@ -243,8 +264,8 @@ const ExpenseFormDialog = ({
                 actionLabel={t('upload.select_file')}
                 selectedFile={selectedFile}
                 accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
-                onFileChange={setSelectedFile}
-              />
+                onFileChange={(file) => { if (!busy.current) setSelectedFile(file); }}
+              /></fieldset> : null}
               {renderTextField({
                 name: 'expenseDate',
                 label: t('fields.expense_date'),
@@ -273,6 +294,7 @@ const ExpenseFormDialog = ({
                 render={({ field }) => (
                   <Select
                     variant="secondary"
+                    isDisabled={isSubmitting || Boolean(savedCreation)}
                     value={field.value}
                     onChange={field.onChange}
                     isInvalid={Boolean(errors.category)}
@@ -337,6 +359,7 @@ const ExpenseFormDialog = ({
                 render={({ field }) => (
                   <Select
                     variant="secondary"
+                    isDisabled={isSubmitting || Boolean(savedCreation)}
                     value={field.value ?? 'bank_transfer'}
                     onChange={field.onChange}
                     isInvalid={Boolean(errors.paymentMethod)}
@@ -375,6 +398,7 @@ const ExpenseFormDialog = ({
                   <TextField
                     variant="secondary"
                     className="sm:col-span-2"
+                    isDisabled={isSubmitting || Boolean(savedCreation)}
                     isInvalid={Boolean(errors.notes)}
                   >
                     <Label>{t('fields.notes')}</Label>
@@ -396,6 +420,7 @@ const ExpenseFormDialog = ({
             <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
               <Button
                 variant="ghost"
+                isDisabled={isSubmitting}
                 className="w-full sm:w-auto"
                 onPress={handleClose}
               >
@@ -405,9 +430,10 @@ const ExpenseFormDialog = ({
                 type="submit"
                 form="expense-form"
                 isPending={isSubmitting}
+                isDisabled={isSubmitting}
                 className="w-full sm:w-auto"
               >
-                {isEditMode ? t('submit_edit') : t('submit_add')}
+                {savedCreation ? t('retry_upload') : isEditMode ? t('submit_edit') : t('submit_add')}
               </Button>
             </div>
           </Modal.Footer>

@@ -23,7 +23,9 @@ const nextConfig = {
   outputFileTracingRoot: rootDirectory,
   transpilePackages: ['@invoicetrackr/types', '@invoicetrackr/pdf'],
   experimental: {
-    authInterrupts: true
+    authInterrupts: true,
+    serverActions: { bodySizeLimit: '11mb' },
+    proxyClientMaxBodySize: '11mb'
   },
   images: {
     remotePatterns: [

@@ -1,19 +1,29 @@
 'use server';
 
-import type { ExpenseInput } from '@invoicetrackr/types';
+import type { ExpenseAttachment, ExpenseBody, ExpenseInput } from '@invoicetrackr/types';
 import { revalidatePath } from 'next/cache';
+import { getTranslations } from 'next-intl/server';
 
 import {
   addExpense,
   deleteExpense,
+  deleteExpenseAttachment,
+  getExpenseAttachment,
+  getExpenseAttachments,
+  replaceExpenseAttachment,
   updateExpense,
   uploadExpenseAttachment
 } from '@/api/expense';
 
-import { EXPENSES_PAGE } from '../constants/pages';
+import { EXPENSE_WORKSPACE_PAGE, EXPENSES_PAGE } from '../constants/pages';
 import type { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
+
+const revalidateExpense = (expenseId: number) => {
+  revalidatePath(EXPENSES_PAGE);
+  revalidatePath(EXPENSE_WORKSPACE_PAGE(expenseId));
+};
 
 type ExpenseMutationData = Omit<
   ExpenseInput,
@@ -31,7 +41,7 @@ export const addExpenseAction = async ({
 }: {
   userId: number;
   expenseData: ExpenseMutationData;
-}): Promise<ActionResponseModel> => {
+}): Promise<ActionResponseModel<ExpenseBody>> => {
   const response = await addExpense({ userId, expense: expenseData });
 
   if (isResponseError(response)) {
@@ -59,7 +69,7 @@ export const updateExpenseAction = async ({
   userId: number;
   expenseId: number;
   expenseData: ExpenseMutationData;
-}): Promise<ActionResponseModel> => {
+}): Promise<ActionResponseModel<ExpenseBody>> => {
   const response = await updateExpense({
     userId,
     expenseId,
@@ -74,7 +84,7 @@ export const updateExpenseAction = async ({
     };
   }
 
-  revalidatePath(EXPENSES_PAGE);
+  revalidateExpense(expenseId);
 
   return {
     ok: true,
@@ -99,7 +109,7 @@ export const deleteExpenseAction = async ({
     };
   }
 
-  revalidatePath(EXPENSES_PAGE);
+  revalidateExpense(expenseId);
 
   return { ok: true, message: response.data.message };
 };
@@ -112,13 +122,13 @@ export const uploadExpenseAttachmentAction = async ({
   userId: number;
   expenseId: number;
   formData: FormData;
-}): Promise<ActionResponseModel> => {
+}): Promise<ActionResponseModel<ExpenseAttachment>> => {
   const file = formData.get('file');
 
   if (!(file instanceof File)) {
     return {
       ok: false,
-      message: 'Select a document to upload'
+      message: (await getTranslations('expenses.workspace.documents'))('select_file')
     };
   }
 
@@ -131,7 +141,46 @@ export const uploadExpenseAttachmentAction = async ({
     };
   }
 
-  revalidatePath(EXPENSES_PAGE);
+  revalidateExpense(expenseId);
 
+  return { ok: true, message: response.data.message, data: response.data.attachment };
+};
+
+export const getExpenseAttachmentsAction = async (
+  userId: number, expenseId: number
+): Promise<ActionResponseModel<ExpenseAttachment[]>> => {
+  const response = await getExpenseAttachments(userId, expenseId);
+  if (isResponseError(response)) return { ok: false, message: response.data.message };
+  return { ok: true, message: '', data: response.data.attachments };
+};
+
+export const getExpenseAttachmentAction = async (
+  params: { userId: number; expenseId: number; attachmentId: number }
+): Promise<ActionResponseModel<ExpenseAttachment>> => {
+  const response = await getExpenseAttachment(params);
+  if (isResponseError(response)) return { ok: false, message: response.data.message };
+  return { ok: true, message: '', data: response.data.attachment };
+};
+
+export const replaceExpenseAttachmentAction = async ({
+  userId, expenseId, attachmentId, formData
+}: { userId: number; expenseId: number; attachmentId: number; formData: FormData }
+): Promise<ActionResponseModel<ExpenseAttachment>> => {
+  const file = formData.get('file');
+  if (!(file instanceof File)) return {
+    ok: false, message: (await getTranslations('expenses.workspace.documents'))('select_file')
+  };
+  const response = await replaceExpenseAttachment({ userId, expenseId, attachmentId, file });
+  if (isResponseError(response)) return { ok: false, message: response.data.message };
+  revalidateExpense(expenseId);
+  return { ok: true, message: response.data.message, data: response.data.attachment };
+};
+
+export const deleteExpenseAttachmentAction = async (
+  params: { userId: number; expenseId: number; attachmentId: number }
+): Promise<ActionResponseModel> => {
+  const response = await deleteExpenseAttachment(params);
+  if (isResponseError(response)) return { ok: false, message: response.data.message };
+  revalidateExpense(params.expenseId);
   return { ok: true, message: response.data.message };
 };

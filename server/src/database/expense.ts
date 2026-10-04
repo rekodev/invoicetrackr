@@ -9,7 +9,8 @@ import {
   InsertExpense,
   InsertExpenseAttachment,
   SelectExpense,
-  SelectExpenseAttachment} from './schema';
+  SelectExpenseAttachment
+} from './schema';
 
 const activeAttachmentWhere = (
   userId: number,
@@ -281,6 +282,27 @@ export const getExpenseAttachmentFromDb = async (
   return attachments.at(0);
 };
 
+type ExpenseTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+// Lock the expense so deletion cannot race document mutations.
+const lockActiveExpense = async (
+  tx: ExpenseTransaction,
+  userId: number,
+  expenseId: number
+) => {
+  const expenses = await tx
+    .select({ id: expensesTable.id })
+    .from(expensesTable)
+    .where(and(
+      eq(expensesTable.userId, userId),
+      eq(expensesTable.id, expenseId),
+      isNull(expensesTable.deletedAt)
+    ))
+    .for('update');
+
+  return expenses.at(0);
+};
+
 export const insertExpenseAttachmentInDb = async ({
   userId,
   attachment
@@ -288,68 +310,67 @@ export const insertExpenseAttachmentInDb = async ({
   userId: number;
   attachment: InsertExpenseAttachment;
 }): Promise<SelectExpenseAttachment | undefined> => {
-  const attachments = await db
-    .insert(expenseAttachmentsTable)
-    .values(attachment)
-    .returning();
+  return db.transaction(async (tx) => {
+    if (!await lockActiveExpense(tx, userId, attachment.expenseId)) return;
 
-  const insertedAttachment = attachments.at(0);
+    const inserted = (await tx.insert(expenseAttachmentsTable)
+      .values(attachment).returning()).at(0);
 
-  if (insertedAttachment) {
-    await insertExpenseAttachmentEventInDb({
-      userId,
-      expenseId: insertedAttachment.expenseId,
-      attachmentId: insertedAttachment.id,
-      action: 'created',
-      newValue: insertedAttachment
-    });
-  }
+    if (inserted) {
+      await insertExpenseAttachmentEventInDb(tx, {
+        userId,
+        expenseId: inserted.expenseId,
+        attachmentId: inserted.id,
+        action: 'created',
+        newValue: inserted
+      });
+    }
 
-  return insertedAttachment;
+    return inserted;
+  });
 };
 
 export const replaceExpenseAttachmentInDb = async ({
   userId,
   expenseId,
   attachmentId,
+  expectedStorageKey,
   attachment
 }: {
   userId: number;
   expenseId: number;
   attachmentId: number;
+  expectedStorageKey: string;
   attachment: Omit<InsertExpenseAttachment, 'expenseId'>;
 }): Promise<SelectExpenseAttachment | undefined> => {
-  const previousAttachment = await getExpenseAttachmentFromDb(
-    userId,
-    expenseId,
-    attachmentId
-  );
+  return db.transaction(async (tx) => {
+    if (!await lockActiveExpense(tx, userId, expenseId)) return;
 
-  if (!previousAttachment) return;
+    const condition = and(
+      eq(expenseAttachmentsTable.id, attachmentId),
+      eq(expenseAttachmentsTable.expenseId, expenseId),
+      isNull(expenseAttachmentsTable.deletedAt),
+      eq(expenseAttachmentsTable.storageKey, expectedStorageKey)
+    );
+    const previous = (await tx.select().from(expenseAttachmentsTable)
+      .where(condition)).at(0);
+    if (!previous) return;
 
-  const attachments = await db
-    .update(expenseAttachmentsTable)
-    .set({
-      ...attachment,
-      updatedAt: new Date().toISOString()
-    })
-    .where(eq(expenseAttachmentsTable.id, attachmentId))
-    .returning();
+    const updated = (await tx.update(expenseAttachmentsTable)
+      .set({ ...attachment, updatedAt: new Date().toISOString() })
+      .where(condition).returning()).at(0);
 
-  const updatedAttachment = attachments.at(0);
+    if (updated) {
+      await insertExpenseAttachmentEventInDb(tx, {
+        userId, expenseId, attachmentId,
+        action: 'replaced',
+        previousValue: previous,
+        newValue: updated
+      });
+    }
 
-  if (updatedAttachment) {
-    await insertExpenseAttachmentEventInDb({
-      userId,
-      expenseId,
-      attachmentId,
-      action: 'replaced',
-      previousValue: previousAttachment,
-      newValue: updatedAttachment
-    });
-  }
-
-  return updatedAttachment;
+    return updated;
+  });
 };
 
 export const deleteExpenseAttachmentFromDb = async (
@@ -357,59 +378,51 @@ export const deleteExpenseAttachmentFromDb = async (
   expenseId: number,
   attachmentId: number
 ): Promise<SelectExpenseAttachment | undefined> => {
-  const previousAttachment = await getExpenseAttachmentFromDb(
-    userId,
-    expenseId,
-    attachmentId
-  );
+  return db.transaction(async (tx) => {
+    if (!await lockActiveExpense(tx, userId, expenseId)) return;
 
-  if (!previousAttachment) return;
+    const condition = and(
+      eq(expenseAttachmentsTable.id, attachmentId),
+      eq(expenseAttachmentsTable.expenseId, expenseId),
+      isNull(expenseAttachmentsTable.deletedAt)
+    );
+    const previous = (await tx.select().from(expenseAttachmentsTable)
+      .where(condition)).at(0);
+    if (!previous) return;
 
-  const attachments = await db
-    .update(expenseAttachmentsTable)
-    .set({
-      deletedAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    })
-    .where(eq(expenseAttachmentsTable.id, attachmentId))
-    .returning();
+    const deleted = (await tx.update(expenseAttachmentsTable)
+      .set({ deletedAt: new Date().toISOString(), updatedAt: new Date().toISOString() })
+      .where(condition).returning()).at(0);
 
-  const deletedAttachment = attachments.at(0);
+    if (deleted) {
+      await insertExpenseAttachmentEventInDb(tx, {
+        userId, expenseId, attachmentId,
+        action: 'removed',
+        previousValue: previous,
+        newValue: deleted
+      });
+    }
 
-  if (deletedAttachment) {
-    await insertExpenseAttachmentEventInDb({
-      userId,
-      expenseId,
-      attachmentId,
-      action: 'removed',
-      previousValue: previousAttachment,
-      newValue: deletedAttachment
-    });
-  }
-
-  return deletedAttachment;
+    return deleted;
+  });
 };
 
-export const insertExpenseAttachmentEventInDb = async ({
-  userId,
-  expenseId,
-  attachmentId,
-  action,
-  previousValue,
-  newValue
-}: {
-  userId: number;
-  expenseId: number;
-  attachmentId?: number;
-  action: 'created' | 'replaced' | 'removed';
-  previousValue?: unknown;
-  newValue?: unknown;
-}) => {
-  await db.insert(auditEventsTable).values({
+const insertExpenseAttachmentEventInDb = async (
+  tx: ExpenseTransaction,
+  { userId, expenseId, attachmentId, action, previousValue, newValue }: {
+    userId: number;
+    expenseId: number;
+    attachmentId: number;
+    action: 'created' | 'replaced' | 'removed';
+    previousValue?: unknown;
+    newValue?: unknown;
+  }
+) => {
+  await tx.insert(auditEventsTable).values({
     userId,
     actorUserId: userId,
     entityType: 'expense_attachment',
-    entityId: attachmentId ? String(attachmentId) : null,
+    entityId: String(attachmentId),
     action: `expense_attachment.${action}`,
     previousValue: sanitizeAuditValue(previousValue),
     newValue: sanitizeAuditValue({ expenseId, value: newValue })

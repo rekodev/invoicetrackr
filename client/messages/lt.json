@@ -805,7 +805,8 @@
         },
         "actions": {
             "edit": "Redaguoti išlaidą",
-            "delete": "Ištrinti išlaidą"
+            "delete": "Ištrinti išlaidą",
+            "view": "Peržiūrėti išlaidą"
         },
         "empty_state": {
             "title": "Išlaidų dar nėra",
@@ -857,7 +858,61 @@
             },
             "cancel": "Atšaukti",
             "submit_add": "Pridėti išlaidą",
-            "submit_edit": "Išsaugoti"
+            "submit_edit": "Išsaugoti",
+            "saved": "Išlaida išsaugota",
+            "save_failed": "Nepavyko išsaugoti. Bandykite dar kartą.",
+            "created_upload_pending": "Išlaida išsaugota. Dokumentas neįkeltas. Bandykite įkelti dar kartą arba atidarykite išsaugotą išlaidą.",
+            "open_saved": "Atidaryti išsaugotą išlaidą",
+            "retry_upload": "Bandyti įkelti dar kartą"
+        },
+        "workspace": {
+            "back": "Grįžti į išlaidas",
+            "edit": "Redaguoti išlaidą",
+            "delete": "Ištrinti išlaidą",
+            "not_set": "Nenurodyta",
+            "details": "Išlaidos duomenys",
+            "eur_amount": "Suma eurais",
+            "created_at": "Sukurta",
+            "updated_at": "Paskutinį kartą atnaujinta",
+            "deduction_title": "Kaip apskaičiuojami leidžiami atskaitymai",
+            "deduction_formula": "{amount} × {percentage}% = {deductible}",
+            "deduction_explanation": "Išsaugota leidžiamų atskaitymų suma apskaičiuojama bendrą sumą padauginus iš veikloje naudojamos dalies ir suapvalinus iki centų. PVM rodomas atskirai ir šiame skaičiavime neatimamas.",
+            "documents": {
+                "title": "Išlaidą pagrindžiantys dokumentai",
+                "add": "Pridėti dokumentą",
+                "upload": "Įkelti",
+                "replace": "Pakeisti dokumentą",
+                "remove": "Pašalinti dokumentą",
+                "preview": "Peržiūrėti",
+                "download": "Atsisiųsti",
+                "open_tab": "Atidaryti naujame skirtuke",
+                "missing": "Nėra išlaidą pagrindžiančių dokumentų",
+                "missing_description": "Pridėkite kvitą, sąskaitą ar kitą šią išlaidą pagrindžiantį dokumentą.",
+                "file": "Dokumentas",
+                "select_file": "Pasirinkti failą",
+                "dropzone_title": "Vilkite dokumentą čia arba pasirinkite failą",
+                "hint": "PDF, JPEG arba PNG. Vieno failo dydis – iki 10 MB.",
+                "invalid_type": "Pasirinkite PDF, JPEG arba PNG failą.",
+                "too_large": "Dokumento dydis turi būti ne didesnis nei 10 MB.",
+                "load_failed": "Nepavyko įkelti dokumentų. Bandykite dar kartą.",
+                "save_failed": "Nepavyko išsaugoti dokumento. Bandykite dar kartą.",
+                "preview_failed": "Nepavyko parodyti dokumento. Bandykite dar kartą, atsisiųskite jį arba atidarykite naujame skirtuke.",
+                "popup_blocked": "Leiskite šiai svetainei atidaryti naują skirtuką ir bandykite dar kartą.",
+                "confirm_remove": "Pašalinti „{name}“ iš šios išlaidos? Šio veiksmo atšaukti negalima.",
+                "confirm_replace": "Pakeisti „{name}“ dokumentu „{replacement}“? Ankstesnis failas bus pašalintas.",
+                "uploaded": "Įkelta: {date}",
+                "updated": "Atnaujinta: {date}",
+                "cancel": "Atšaukti",
+                "retry": "Bandyti dar kartą",
+                "close": "Uždaryti",
+                "loading": "Įkeliamas dokumentas",
+                "previous_page": "Ankstesnis puslapis",
+                "next_page": "Kitas puslapis",
+                "page_count": "{page} puslapis iš {pages}",
+                "zoom_in": "Padidinti",
+                "zoom_out": "Sumažinti",
+                "fit_width": "Pritaikyti prie pločio"
+            }
         }
     },
     "invoice_signing": {

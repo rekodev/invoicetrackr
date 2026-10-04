@@ -15,6 +15,7 @@ export const EDIT_INVOICE_PAGE = (invoiceId: number) =>
 export const CLIENTS_PAGE = '/clients';
 export const CLIENT_WORKSPACE_PAGE = (clientId: number) => `/clients/${clientId}`;
 export const EXPENSES_PAGE = '/expenses';
+export const EXPENSE_WORKSPACE_PAGE = (expenseId: number) => `/expenses/${expenseId}`;
 export const PAYMENTS_PAGE = '/payments';
 export const REPORTS_PAGE = '/reports';
 export const SETTINGS_PAGE = '/settings';
