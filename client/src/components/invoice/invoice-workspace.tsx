@@ -2,6 +2,7 @@
 
 import {
   ArrowDownTrayIcon,
+  BanknotesIcon,
   LinkIcon,
   NoSymbolIcon,
   PaperAirplaneIcon,
@@ -378,10 +379,11 @@ export default function InvoiceWorkspace({
               <Card.Header className="flex-row items-center justify-between gap-2 border-b p-4">
                 <div className="flex items-center gap-2">
                   <h2 id={`invoice-payments-${invoiceId}`} className="text-lg font-semibold">{t('payment_history')}</h2>
-                  <span className="text-muted text-sm" aria-label={t('payment_count', { count: payments.length })}>({payments.length})</span>
+                  <Chip size="sm" variant="soft" aria-label={t('payment_count', { count: payments.length })}>{payments.length}</Chip>
                 </div>
                 {isIssued && supportsPayments && Number(balance.outstandingAmount) > 0 ? (
                   <Button size="sm" variant="secondary" onPress={() => openPayment()}>
+                    <BanknotesIcon className="size-4" />
                     {t('record_payment')}
                   </Button>
                 ) : null}
@@ -418,6 +420,7 @@ export default function InvoiceWorkspace({
                           </Button>
                           <Button
                             aria-label={t('remove_payment')}
+                            className="hover:bg-danger-soft hover:text-danger-soft-foreground data-[hovered=true]:bg-danger-soft data-[hovered=true]:text-danger-soft-foreground"
                             size="sm"
                             variant="ghost"
                             isDisabled={isPending}
