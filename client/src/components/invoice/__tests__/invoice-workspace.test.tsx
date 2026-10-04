@@ -87,7 +87,7 @@ describe('invoice workspace', () => {
     expect(screen.getAllByText('€40.00')).toHaveLength(2);
     expect(screen.getByText('€60.00')).toBeInTheDocument();
     expect(within(screen.getByRole('region', { name: 'Payments' })).getByRole('button', { name: 'Record payment' })).toBeInTheDocument();
-    expect(screen.getByText('1 payment')).toBeInTheDocument();
+    expect(screen.getByLabelText('1 payment')).toHaveTextContent('(1)');
     expect(mockUseDynamicPdf).toHaveBeenCalledWith(
       expect.objectContaining({
         invoiceLanguage: 'lt',
@@ -106,7 +106,7 @@ describe('invoice workspace', () => {
       </AnalyticsConsentContext.Provider>
     ));
     const section = within(screen.getByRole('region', { name: 'Payments' }));
-    expect(section.getByText('0 payments')).toBeInTheDocument();
+    expect(section.getByLabelText('0 payments')).toHaveTextContent('(0)');
     expect(section.getByText('No payments recorded yet.')).toBeInTheDocument();
     expect(section.getByRole('button', { name: 'Record payment' })).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: 'Record payment' })).toHaveLength(1);

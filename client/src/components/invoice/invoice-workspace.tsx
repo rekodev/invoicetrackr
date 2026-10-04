@@ -2,7 +2,6 @@
 
 import {
   ArrowDownTrayIcon,
-  BanknotesIcon,
   LinkIcon,
   NoSymbolIcon,
   PaperAirplaneIcon,
@@ -376,14 +375,13 @@ export default function InvoiceWorkspace({
           </WorkspaceSection>
           {isIssued || payments.length > 0 ? (
             <Card className="gap-0 overflow-hidden border p-0" role="region" aria-labelledby={`invoice-payments-${invoiceId}`}>
-              <Card.Header className="gap-3 border-b p-5">
-                <div className="flex w-full flex-wrap items-center justify-between gap-2">
+              <Card.Header className="flex-row items-center justify-between gap-2 border-b p-4">
+                <div className="flex items-center gap-2">
                   <h2 id={`invoice-payments-${invoiceId}`} className="text-lg font-semibold">{t('payment_history')}</h2>
-                  <Chip size="sm" variant="soft">{t('payment_count', { count: payments.length })}</Chip>
+                  <span className="text-muted text-sm" aria-label={t('payment_count', { count: payments.length })}>({payments.length})</span>
                 </div>
                 {isIssued && supportsPayments && Number(balance.outstandingAmount) > 0 ? (
-                  <Button className="w-full" size="sm" variant="secondary" onPress={() => openPayment()}>
-                    <BanknotesIcon className="size-4" />
+                  <Button size="sm" variant="secondary" onPress={() => openPayment()}>
                     {t('record_payment')}
                   </Button>
                 ) : null}
