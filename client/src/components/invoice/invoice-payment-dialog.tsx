@@ -79,7 +79,7 @@ export default function InvoicePaymentDialog({ userId, invoiceId, outstandingAmo
           <form noValidate onSubmit={handleSubmit(save)}>
             <Modal.Body className="space-y-3">
               <p className="text-muted text-sm">{t('bank_transfer')}</p>
-              <Alert status="accent">
+              <Alert status="accent" className="border border-accent/20 bg-accent-soft shadow-none">
                 <Alert.Indicator />
                 <Alert.Content>
                   <Alert.Title>{t('payment_maximum', { maximum: maximumAmount })}</Alert.Title>
