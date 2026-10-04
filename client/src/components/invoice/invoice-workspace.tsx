@@ -196,30 +196,34 @@ export default function InvoiceWorkspace({
 
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-2">
+      <header className="space-y-2">
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold">
             {invoice.invoiceId || t('draft')}
           </h1>
-          <p className="text-muted text-sm">
-            {invoice.receiver.name} · {t('due', { date: invoice.dueDate })}
-          </p>
+          <div className="flex flex-wrap gap-2">
+            <Chip
+              variant="soft"
+              color={
+                lifecycle === 'voided' ? 'danger' : isPaid ? 'success' : 'accent'
+              }
+            >
+              {status}
+            </Chip>
+            {due.isPastDue ? (
+              <Chip variant="soft" color="danger">
+                {t('overdue')}
+              </Chip>
+            ) : null}
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Chip
-            variant="soft"
-            color={
-              lifecycle === 'voided'
-                ? 'danger'
-                : isPaid
-                  ? 'success'
-                  : 'accent'
-            }
-          >
-            {status}
-          </Chip>
-          {due.isPastDue ? <Chip variant="soft" color="danger">{t('overdue')}</Chip> : null}
-        </div>
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+          <span>{invoice.receiver.name}</span>
+          <span className="text-muted" aria-hidden="true">
+            ·
+          </span>
+          <span className="text-muted">{t('due', { date: invoice.dueDate })}</span>
+        </p>
       </header>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <Card className="min-w-0 overflow-hidden border p-0">
