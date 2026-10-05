@@ -884,9 +884,7 @@
                 "upload": "Įkelti",
                 "replace": "Pakeisti dokumentą",
                 "remove": "Pašalinti dokumentą",
-                "preview": "Peržiūrėti",
                 "download": "Atsisiųsti",
-                "open_tab": "Atidaryti naujame skirtuke",
                 "missing": "Nėra išlaidą pagrindžiančių dokumentų",
                 "missing_description": "Pridėkite kvitą, sąskaitą ar kitą šią išlaidą pagrindžiantį dokumentą.",
                 "file": "Dokumentas",
@@ -897,22 +895,12 @@
                 "too_large": "Dokumento dydis turi būti ne didesnis nei 10 MB.",
                 "load_failed": "Nepavyko įkelti dokumentų. Bandykite dar kartą.",
                 "save_failed": "Nepavyko išsaugoti dokumento. Bandykite dar kartą.",
-                "preview_failed": "Nepavyko parodyti dokumento. Bandykite dar kartą, atsisiųskite jį arba atidarykite naujame skirtuke.",
-                "popup_blocked": "Leiskite šiai svetainei atidaryti naują skirtuką ir bandykite dar kartą.",
                 "confirm_remove": "Pašalinti „{name}“ iš šios išlaidos? Šio veiksmo atšaukti negalima.",
                 "confirm_replace": "Pakeisti „{name}“ dokumentu „{replacement}“? Ankstesnis failas bus pašalintas.",
                 "uploaded": "Įkelta: {date}",
                 "updated": "Atnaujinta: {date}",
                 "cancel": "Atšaukti",
-                "retry": "Bandyti dar kartą",
-                "close": "Uždaryti",
-                "loading": "Įkeliamas dokumentas",
-                "previous_page": "Ankstesnis puslapis",
-                "next_page": "Kitas puslapis",
-                "page_count": "{page} puslapis iš {pages}",
-                "zoom_in": "Padidinti",
-                "zoom_out": "Sumažinti",
-                "fit_width": "Pritaikyti prie pločio"
+                "retry": "Bandyti dar kartą"
             }
         }
     },

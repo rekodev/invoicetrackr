@@ -72,14 +72,16 @@ describe('expense details and documents', () => {
     await app.close();
   });
 
-  it('generates expiring inline and download URLs for authenticated assets', async () => {
+  it('generates only an expiring download URL for authenticated assets', async () => {
     const app = await appForDocuments();
     const before = Math.floor(Date.now() / 1000);
     const response = await app.inject({ method: 'GET', url: `${base}/3` });
     expect(response.statusCode).toBe(200);
     expect(expenseDb.getExpenseAttachmentFromDb).toHaveBeenCalledWith(1, 10, 3);
-    expect(storage.signed).toHaveBeenCalledWith('old-document', 'pdf', expect.objectContaining({ type: 'authenticated', attachment: false, expires_at: expect.any(Number) }));
-    expect(storage.signed).toHaveBeenCalledWith('old-document', 'pdf', expect.objectContaining({ attachment: true }));
+    expect(response.json().attachment).toMatchObject({ downloadUrl: 'https://storage/signed' });
+    expect(response.json().attachment).not.toHaveProperty('previewUrl');
+    expect(storage.signed).toHaveBeenCalledOnce();
+    expect(storage.signed).toHaveBeenCalledWith('old-document', 'pdf', expect.objectContaining({ type: 'authenticated', attachment: true, expires_at: expect.any(Number) }));
     expect(storage.signed.mock.calls[0][2].expires_at).toBeGreaterThanOrEqual(before + 300);
     expect(storage.signed.mock.calls[0][2].expires_at).toBeLessThanOrEqual(Math.floor(Date.now() / 1000) + 300);
     await app.close();

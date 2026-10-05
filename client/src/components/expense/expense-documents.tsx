@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowDownTrayIcon, ArrowTopRightOnSquareIcon, EllipsisHorizontalIcon, EyeIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, EllipsisHorizontalIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Chip, Dropdown, Label, Modal, Separator, toast } from '@heroui/react';
 import type { ExpenseAttachment } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
@@ -10,8 +10,6 @@ import { useEffect, useRef, useState, useTransition } from 'react';
 import EmptyState from '@/components/empty-state';
 import FileDropzone from '@/components/ui/file-dropzone';
 import { deleteExpenseAttachmentAction, getExpenseAttachmentAction, getExpenseAttachmentsAction, replaceExpenseAttachmentAction, uploadExpenseAttachmentAction } from '@/lib/actions/expense';
-
-import ExpenseDocumentViewer from './expense-document-viewer';
 
 type DocumentDialog = { kind: 'add' } | { kind: 'replace' | 'remove'; document: ExpenseAttachment };
 
@@ -26,7 +24,6 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState('');
   const [listError, setListError] = useState('');
-  const [preview, setPreview] = useState<ExpenseAttachment | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isLoading, startLoading] = useTransition();
   const busy = useRef(false);
@@ -66,7 +63,6 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
           const result = await deleteExpenseAttachmentAction({ userId, expenseId, attachmentId: operation.document.id });
           if (!result.ok) { setError(result.message); return; }
           setDocuments((current) => current?.filter((item) => item.id !== operation.document.id) ?? null);
-          if (preview?.id === operation.document.id) setPreview(null);
           toast(result.message, { variant: 'success' });
         } else {
           const result = operation.kind === 'replace'
@@ -77,7 +73,6 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
           setDocuments((current) => operation.kind === 'replace'
             ? current?.map((item) => item.id === saved.id ? saved : item) ?? null
             : current ? [saved, ...current] : null);
-          if (operation.kind === 'replace' && preview?.id === operation.document.id) setPreview(null);
           toast(result.message, { variant: 'success' });
         }
         setDialog(null); setFile(null);
@@ -86,22 +81,16 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
       finally { busy.current = false; }
     });
   };
-  const openFile = (document: ExpenseAttachment, download: boolean) => {
-    // Reserve a tab during the user gesture; asynchronous URL lookup must not be blocked as a popup.
-    const tab = download ? null : window.open('about:blank', '_blank');
-    if (tab) tab.opener = null;
+  const downloadFile = (document: ExpenseAttachment) => {
     startLoading(async () => {
       try {
         const result = await getExpenseAttachmentAction({ userId, expenseId, attachmentId: document.id });
-        const url = download ? result.data?.downloadUrl : result.data?.previewUrl;
-        if (!result.ok || !url) { tab?.close(); toast(result.message || t('load_failed'), { variant: 'danger' }); return; }
-        if (download) {
-          const link = window.document.createElement('a');
-          link.href = url; link.download = document.originalFileName;
-          window.document.body.appendChild(link); link.click(); link.remove();
-        } else if (tab) tab.location.href = url;
-        else toast(t('popup_blocked'), { variant: 'danger' });
-      } catch { tab?.close(); toast(t('load_failed'), { variant: 'danger' }); }
+        const url = result.data?.downloadUrl;
+        if (!result.ok || !url) { toast(result.message || t('load_failed'), { variant: 'danger' }); return; }
+        const link = window.document.createElement('a');
+        link.href = url; link.download = document.originalFileName;
+        window.document.body.appendChild(link); link.click(); link.remove();
+      } catch { toast(t('load_failed'), { variant: 'danger' }); }
     });
   };
   const date = (value?: string | null) => value ? new Intl.DateTimeFormat(locale, {
@@ -139,9 +128,7 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
             </Button>
             <Dropdown.Popover>
               <Dropdown.Menu aria-label={t('actions', { name: document.originalFileName })}>
-                <Dropdown.Item id="preview" textValue={t('preview')} onAction={() => setPreview(document)}><EyeIcon className="size-4" /><Label>{t('preview')}</Label></Dropdown.Item>
-                <Dropdown.Item id="download" textValue={t('download')} onAction={() => openFile(document, true)}><ArrowDownTrayIcon className="size-4" /><Label>{t('download')}</Label></Dropdown.Item>
-                <Dropdown.Item id="open-tab" textValue={t('open_tab')} onAction={() => openFile(document, false)}><ArrowTopRightOnSquareIcon className="size-4" /><Label>{t('open_tab')}</Label></Dropdown.Item>
+                <Dropdown.Item id="download" textValue={t('download')} onAction={() => downloadFile(document)}><ArrowDownTrayIcon className="size-4" /><Label>{t('download')}</Label></Dropdown.Item>
                 <Separator className="-ms-1.5 w-[calc(100%+0.75rem)]" />
                 <Dropdown.Item id="replace" textValue={t('replace')} onAction={() => openDialog({ kind: 'replace', document })}><PencilSquareIcon className="size-4" /><Label>{t('replace')}</Label></Dropdown.Item>
                 <Dropdown.Item id="remove" textValue={t('remove')} variant="danger" className="hover:bg-danger-soft data-[hovered=true]:bg-danger-soft" onAction={() => openDialog({ kind: 'remove', document })}><TrashIcon className="text-danger size-4" /><Label>{t('remove')}</Label></Dropdown.Item>
@@ -151,8 +138,6 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
         </li>)}
       </ul>}
     </Card.Content>
-    {preview ? <ExpenseDocumentViewer key={preview.id} userId={userId} expenseId={expenseId} document={preview}
-      onClose={() => setPreview(null)} onDownload={() => openFile(preview, true)} onOpenTab={() => openFile(preview, false)} isLinkPending={isLoading} /> : null}
     <Modal.Backdrop isOpen={Boolean(dialog)} isDismissable={!isPending} isKeyboardDismissDisabled={isPending} onOpenChange={(open) => !open && closeDialog()}>
       <Modal.Container size="lg"><Modal.Dialog>
         {!isPending ? <Modal.CloseTrigger /> : null}

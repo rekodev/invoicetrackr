@@ -70,10 +70,7 @@ const mapExpenseForResponse = (
   updatedAt: expense.updatedAt
 });
 
-const getSignedAttachmentUrl = (
-  attachment: SelectExpenseAttachment,
-  disposition?: 'attachment'
-) => cloudinary.utils.private_download_url(
+const getSignedAttachmentUrl = (attachment: SelectExpenseAttachment) => cloudinary.utils.private_download_url(
   attachment.storageKey,
   // Raw public IDs already include their extension; image IDs do not.
   attachment.resourceType === 'raw' ? '' : attachment.mimeType === 'application/pdf' ? 'pdf'
@@ -82,7 +79,7 @@ const getSignedAttachmentUrl = (
     expires_at: Math.floor(Date.now() / 1000) + 300,
     resource_type: attachment.resourceType === 'raw' ? 'raw' : 'image',
     type: 'authenticated',
-    attachment: disposition === 'attachment'
+    attachment: true
   }
 );
 
@@ -118,8 +115,7 @@ const mapAttachmentForResponse = (attachment: SelectExpenseAttachment) => ({
   malwareScanStatus: attachment.malwareScanStatus,
   uploadedAt: attachment.uploadedAt,
   updatedAt: attachment.updatedAt,
-  previewUrl: getSignedAttachmentUrl(attachment),
-  downloadUrl: getSignedAttachmentUrl(attachment, 'attachment')
+  downloadUrl: getSignedAttachmentUrl(attachment)
 });
 
 const readAndValidateAttachmentFile = async (

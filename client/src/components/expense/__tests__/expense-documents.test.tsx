@@ -14,7 +14,6 @@ vi.mock('@/lib/actions/expense', () => ({
   deleteExpenseAttachmentAction: vi.fn(), getExpenseAttachmentAction: vi.fn(), getExpenseAttachmentsAction: vi.fn(),
   replaceExpenseAttachmentAction: vi.fn(), uploadExpenseAttachmentAction: vi.fn()
 }));
-vi.mock('../expense-document-viewer', () => ({ default: ({ onClose }: { onClose: () => void }) => <button onClick={onClose}>Close preview</button> }));
 
 beforeEach(() => {
   vi.mocked(uploadExpenseAttachmentAction).mockResolvedValue({ ok: true, message: 'Uploaded', data: attachment });
@@ -29,13 +28,11 @@ const chooseDocumentAction = async (name: string) => {
 };
 
 describe('expense documents', () => {
-  it('keeps document actions in one menu and opens preview from that menu', async () => {
+  it('offers download and document management without an in-app preview', async () => {
     render(withIntl(<ExpenseDocuments userId={1} expenseId={10} attachments={[attachment]} />));
-    expect(screen.queryByRole('menuitem', { name: 'Preview' })).not.toBeInTheDocument();
-    await chooseDocumentAction('Preview');
-    expect(await screen.findByRole('button', { name: 'Close preview' })).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Close preview' }));
-    expect(screen.queryByRole('button', { name: 'Close preview' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Document actions: receipt.pdf' }));
+    expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual(['Download', 'Replace document', 'Remove document']);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('shows missing documents and refreshes after adding one file', async () => {
@@ -101,18 +98,6 @@ describe('expense documents', () => {
     expect(uploadExpenseAttachmentAction).toHaveBeenCalledOnce();
     complete({ ok: true, message: '', data: attachment });
     await waitFor(() => expect(navigation.refresh).toHaveBeenCalledOnce());
-  });
-
-  it('requests a fresh URL before opening a document in a new tab', async () => {
-    vi.mocked(getExpenseAttachmentAction).mockResolvedValue({ ok: true, message: '', data: { ...attachment, previewUrl: 'https://storage/fresh' } });
-    const tab = { opener: {}, location: { href: '' }, close: vi.fn() };
-    const open = vi.spyOn(window, 'open').mockReturnValue(tab as unknown as Window);
-    render(withIntl(<ExpenseDocuments userId={1} expenseId={10} attachments={[attachment]} />));
-    await chooseDocumentAction('Open in new tab');
-    await waitFor(() => expect(tab.location.href).toBe('https://storage/fresh'));
-    expect(getExpenseAttachmentAction).toHaveBeenCalledWith({ userId: 1, expenseId: 10, attachmentId: 3 });
-    expect(tab.opener).toBeNull();
-    open.mockRestore();
   });
 
   it('downloads using the newly fetched attachment URL', async () => {

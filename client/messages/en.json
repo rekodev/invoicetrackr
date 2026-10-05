@@ -884,9 +884,7 @@
                 "upload": "Upload",
                 "replace": "Replace document",
                 "remove": "Remove document",
-                "preview": "Preview",
                 "download": "Download",
-                "open_tab": "Open in new tab",
                 "missing": "No supporting documents",
                 "missing_description": "Attach a receipt, invoice, or other document supporting this expense.",
                 "file": "Document",
@@ -897,22 +895,12 @@
                 "too_large": "The document must be 10 MB or smaller.",
                 "load_failed": "Unable to load documents. Try again.",
                 "save_failed": "Unable to save the document. Try again.",
-                "preview_failed": "Unable to display this document. Retry, download it, or open it in a new tab.",
-                "popup_blocked": "Allow this site to open a new tab, then try again.",
                 "confirm_remove": "Remove “{name}” from this expense? This cannot be undone.",
                 "confirm_replace": "Replace “{name}” with “{replacement}”? The previous file will be removed.",
                 "uploaded": "Uploaded: {date}",
                 "updated": "Updated: {date}",
                 "cancel": "Cancel",
-                "retry": "Retry",
-                "close": "Close",
-                "loading": "Loading document",
-                "previous_page": "Previous page",
-                "next_page": "Next page",
-                "page_count": "Page {page} of {pages}",
-                "zoom_in": "Zoom in",
-                "zoom_out": "Zoom out",
-                "fit_width": "Fit to width"
+                "retry": "Retry"
             }
         }
     },
