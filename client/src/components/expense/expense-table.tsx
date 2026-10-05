@@ -338,21 +338,26 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
           <div className="flex max-w-64 items-center gap-2">
             <Link className="min-w-0 truncate text-sm font-medium hover:underline" title={expense.supplier} href={`${EXPENSE_WORKSPACE_PAGE(expense.id!)}?returnTo=${encodeURIComponent(returnTo)}`}>{expense.supplier}</Link>
             {expense.documentNumber ? (
-              <span className="text-muted max-w-20 shrink-0 truncate text-xs" title={expense.documentNumber}>
-                {expense.documentNumber}
-              </span>
+              <Chip size="sm" variant="soft" className="max-w-24 shrink-0 px-2" title={expense.documentNumber}>
+                <span className="truncate">{expense.documentNumber}</span>
+              </Chip>
             ) : null}
           </div>
         );
       case 'description':
         return (
-          <span className="block max-w-56 truncate text-sm" title={expense.description}>
-            {expense.description}
-          </span>
+          <Tooltip delay={0}>
+            <Tooltip.Trigger role={undefined} tabIndex={0} className="block max-w-48 truncate text-sm">
+              {expense.description}
+            </Tooltip.Trigger>
+            <Tooltip.Content className="max-w-sm whitespace-normal break-words text-sm">
+              {expense.description}
+            </Tooltip.Content>
+          </Tooltip>
         );
       case 'category':
         return (
-          <Chip size="sm" variant="soft" color="default">
+          <Chip size="sm" variant="soft" color="accent" className="px-2">
             {t(`categories.${expense.category}`)}
           </Chip>
         );
@@ -374,12 +379,12 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
           : t('payment_methods.not_set');
       case 'attachments':
         return attachmentCount > 0 ? (
-          <span className="text-foreground inline-flex items-center gap-1 text-xs">
+          <span className="text-foreground flex items-center gap-1 text-sm" aria-label={t('documents.attached', { count: attachmentCount })}>
             <PaperClipIcon className="h-4 w-4" />
-            {t('documents.attached', { count: attachmentCount })}
+            {attachmentCount}
           </span>
         ) : (
-          <span className="text-warning inline-flex items-center gap-1 text-xs font-medium">
+          <span className="text-warning flex items-center gap-1 text-xs font-medium">
             <ExclamationCircleIcon className="h-4 w-4" />
             {t('documents.missing')}
           </span>
