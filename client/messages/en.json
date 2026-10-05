@@ -870,7 +870,7 @@
             "edit": "Edit expense",
             "delete": "Delete expense",
             "not_set": "Not set",
-            "details": "Expense details",
+            "details": "Expense Details",
             "eur_amount": "Amount in EUR",
             "created_at": "Created",
             "updated_at": "Last updated",
@@ -879,7 +879,7 @@
             "deduction_explanation": "The saved deductible amount is the total multiplied by the share used for business, rounded to cents. VAT is shown separately and is not subtracted in this calculation.",
             "documents": {
                 "actions": "Document actions: {name}",
-                "title": "Supporting documents",
+                "title": "Supporting Documents",
                 "add": "Add document",
                 "upload": "Upload",
                 "replace": "Replace document",

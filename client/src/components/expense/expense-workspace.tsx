@@ -53,7 +53,7 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
     <header className="flex flex-wrap items-start justify-between gap-4">
       <div className="flex min-w-0 flex-wrap items-center gap-2">
         <h1 className="break-words text-2xl font-semibold">{expense.supplier}</h1>
-        <Chip variant="soft">{categories(expense.category)}</Chip>
+        <Chip variant="soft" color="accent">{categories(expense.category)}</Chip>
       </div>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onPress={() => setEditOpen(true)}><PencilSquareIcon className="size-4" />{t('edit')}</Button>
