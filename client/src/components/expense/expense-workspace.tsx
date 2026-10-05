@@ -70,7 +70,7 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
             <InformationCircleIcon className="size-4" />
           </Button>
           <Tooltip.Content className="max-w-sm space-y-2">
-            <p className="tabular-nums">{t('deduction_formula', { amount: money(expense.totalAmount), percentage, deductible: money(expense.deductibleAmount) })}</p>
+            <code className="bg-default block rounded-lg px-3 py-2 font-mono text-sm tabular-nums">{t('deduction_formula', { amount: money(expense.totalAmount), percentage, deductible: money(expense.deductibleAmount) })}</code>
             <p>{t('deduction_explanation')}</p>
           </Tooltip.Content>
         </Tooltip>

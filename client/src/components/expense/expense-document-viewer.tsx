@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowDownTrayIcon, ArrowLeftIcon, ArrowRightIcon, ArrowsRightLeftIcon, ArrowTopRightOnSquareIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Button, Modal, Spinner } from '@heroui/react';
 import type { ExpenseAttachment } from '@invoicetrackr/types';
 import dynamic from 'next/dynamic';
@@ -55,15 +56,17 @@ export default function ExpenseDocumentViewer({ userId, expenseId, document, onC
       <Modal.Header><Modal.Heading className="break-words pr-8">{document.originalFileName}</Modal.Heading></Modal.Header>
       <Modal.Body>
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          {isPdf ? <>
-            <Button size="sm" variant="secondary" isDisabled={page <= 1 || !pages || Boolean(error)} onPress={previous}>{t('previous_page')}</Button>
+          {isPdf ? <div className="flex flex-wrap items-center gap-2">
+            <Button size="sm" variant="secondary" isDisabled={page <= 1 || !pages || Boolean(error)} onPress={previous}><ArrowLeftIcon className="size-4" />{t('previous_page')}</Button>
             <span aria-live="polite" className="text-sm tabular-nums">{t('page_count', { page, pages })}</span>
-            <Button size="sm" variant="secondary" isDisabled={page >= pages || !pages || Boolean(error)} onPress={next}>{t('next_page')}</Button>
-          </> : null}
-          <Button size="sm" aria-label={t('zoom_out')} variant="secondary" isDisabled={zoom <= 50} onPress={() => setZoom((value) => value - 25)}>−</Button>
-          <span aria-live="polite" className="text-sm tabular-nums">{zoom}%</span>
-          <Button size="sm" aria-label={t('zoom_in')} variant="secondary" isDisabled={zoom >= 200} onPress={() => setZoom((value) => value + 25)}>+</Button>
-          <Button size="sm" variant="tertiary" onPress={() => setZoom(100)}>{t('fit_width')}</Button>
+            <Button size="sm" variant="secondary" isDisabled={page >= pages || !pages || Boolean(error)} onPress={next}>{t('next_page')}<ArrowRightIcon className="size-4" /></Button>
+          </div> : null}
+          <div className="ml-auto flex items-center gap-2">
+            <Button size="sm" isIconOnly aria-label={t('zoom_out')} variant="secondary" isDisabled={zoom <= 50} onPress={() => setZoom((value) => value - 25)}><MagnifyingGlassMinusIcon className="size-4" /></Button>
+            <span aria-live="polite" className="text-sm tabular-nums">{zoom}%</span>
+            <Button size="sm" isIconOnly aria-label={t('zoom_in')} variant="secondary" isDisabled={zoom >= 200} onPress={() => setZoom((value) => value + 25)}><MagnifyingGlassPlusIcon className="size-4" /></Button>
+            <Button size="sm" variant="tertiary" onPress={() => setZoom(100)}><ArrowsRightLeftIcon className="size-4" />{t('fit_width')}</Button>
+          </div>
         </div>
         <div ref={observeContainer} tabIndex={0} role="region" aria-label={t('preview')} className="min-h-64 overflow-auto"
           onKeyDown={(event) => {
@@ -89,9 +92,9 @@ export default function ExpenseDocumentViewer({ userId, expenseId, document, onC
         </div>
       </Modal.Body>
       <Modal.Footer className="flex flex-wrap gap-2">
-        <Button variant="secondary" isDisabled={isLinkPending} onPress={onDownload}>{t('download')}</Button>
-        <Button variant="secondary" isDisabled={isLinkPending} onPress={onOpenTab}>{t('open_tab')}</Button>
-        <Button variant="tertiary" onPress={onClose}>{t('close')}</Button>
+        <Button variant="secondary" isDisabled={isLinkPending} onPress={onDownload}><ArrowDownTrayIcon className="size-4" />{t('download')}</Button>
+        <Button variant="secondary" isDisabled={isLinkPending} onPress={onOpenTab}><ArrowTopRightOnSquareIcon className="size-4" />{t('open_tab')}</Button>
+        <Button variant="tertiary" onPress={onClose}><XMarkIcon className="size-4" />{t('close')}</Button>
       </Modal.Footer>
     </Modal.Dialog></Modal.Container>
   </Modal.Backdrop>;
