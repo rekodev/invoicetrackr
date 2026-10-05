@@ -19,7 +19,11 @@ describe('expense workspace', () => {
   it('shows saved details with the deduction explanation available on demand', async () => {
     render(withIntl(<ExpenseWorkspace userId={1} expense={expense} attachments={[]} returnTo={returnTo} />));
     expect(screen.queryByText('€100.00 × 50% = €50.00')).not.toBeInTheDocument();
-    await userEvent.hover(screen.getByRole('button', { name: 'How the deductible amount is calculated' }));
+    const user = userEvent.setup();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'How the deductible amount is calculated' })).toHaveFocus();
     expect(await screen.findByText('€100.00 × 50% = €50.00')).toBeInTheDocument();
     expect(screen.getByText('R-42')).toBeInTheDocument();
     expect(screen.getByText('For client work')).toBeInTheDocument();
@@ -34,7 +38,11 @@ describe('expense workspace', () => {
     ['0', '0.00', '0'], ['33.33', '33.33', '33.33'], ['100', '100.00', '100']
   ])('explains saved business use %s without recalculating', async (percentage, deductible, displayed) => {
     render(withIntl(<ExpenseWorkspace userId={1} expense={{ ...expense, businessUsePercentage: percentage, deductibleAmount: deductible }} attachments={[]} returnTo={returnTo} />));
-    await userEvent.hover(screen.getByRole('button', { name: 'How the deductible amount is calculated' }));
+    const user = userEvent.setup();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'How the deductible amount is calculated' })).toHaveFocus();
     expect(await screen.findByText(`€100.00 × ${displayed}% = €${deductible}`)).toBeInTheDocument();
   });
   it('keeps edit save and cancel on the same expense and returns deletion to list context', () => {

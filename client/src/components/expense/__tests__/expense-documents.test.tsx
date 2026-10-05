@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -23,8 +23,21 @@ beforeEach(() => {
   vi.mocked(getExpenseAttachmentsAction).mockResolvedValue({ ok: true, message: '', data: [attachment] });
 });
 const fileInput = () => document.querySelector('input[type="file"]') as HTMLInputElement;
+const chooseDocumentAction = async (name: string) => {
+  await userEvent.click(screen.getByRole('button', { name: 'Document actions: receipt.pdf' }));
+  await userEvent.click(screen.getByRole('menuitem', { name }));
+};
 
 describe('expense documents', () => {
+  it('keeps document actions in one menu and opens preview from that menu', async () => {
+    render(withIntl(<ExpenseDocuments userId={1} expenseId={10} attachments={[attachment]} />));
+    expect(screen.queryByRole('menuitem', { name: 'Preview' })).not.toBeInTheDocument();
+    await chooseDocumentAction('Preview');
+    expect(await screen.findByRole('button', { name: 'Close preview' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Close preview' }));
+    expect(screen.queryByRole('button', { name: 'Close preview' })).not.toBeInTheDocument();
+  });
+
   it('shows missing documents and refreshes after adding one file', async () => {
     render(withIntl(<ExpenseDocuments userId={1} expenseId={10} attachments={[]} />));
     expect(screen.getByText('No supporting documents')).toBeInTheDocument();
@@ -40,7 +53,7 @@ describe('expense documents', () => {
   it('preserves selected file and old document after a replacement failure', async () => {
     vi.mocked(replaceExpenseAttachmentAction).mockResolvedValueOnce({ ok: false, message: 'Storage unavailable' });
     render(withIntl(<ExpenseDocuments userId={1} expenseId={10} attachments={[attachment]} />));
-    await userEvent.click(screen.getByRole('button', { name: 'Replace document' }));
+    await chooseDocumentAction('Replace document');
     await userEvent.upload(fileInput(), new File(['pdf'], 'new.pdf', { type: 'application/pdf' }));
     expect(screen.getByText('Replace “receipt.pdf” with “new.pdf”? The previous file will be removed.')).toBeInTheDocument();
     await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Replace document' }));
@@ -56,7 +69,7 @@ describe('expense documents', () => {
   it('requires removal confirmation and preserves the document when removal fails', async () => {
     vi.mocked(deleteExpenseAttachmentAction).mockResolvedValueOnce({ ok: false, message: 'Unable to remove' });
     render(withIntl(<ExpenseDocuments userId={1} expenseId={10} attachments={[attachment]} />));
-    await userEvent.click(screen.getByRole('button', { name: 'Remove document' }));
+    await chooseDocumentAction('Remove document');
     expect(deleteExpenseAttachmentAction).not.toHaveBeenCalled();
     expect(screen.getByText('Remove “receipt.pdf” from this expense? This cannot be undone.')).toBeInTheDocument();
     await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Remove document' }));
@@ -95,7 +108,7 @@ describe('expense documents', () => {
     const tab = { opener: {}, location: { href: '' }, close: vi.fn() };
     const open = vi.spyOn(window, 'open').mockReturnValue(tab as unknown as Window);
     render(withIntl(<ExpenseDocuments userId={1} expenseId={10} attachments={[attachment]} />));
-    await userEvent.click(screen.getByRole('button', { name: 'Open in new tab' }));
+    await chooseDocumentAction('Open in new tab');
     await waitFor(() => expect(tab.location.href).toBe('https://storage/fresh'));
     expect(getExpenseAttachmentAction).toHaveBeenCalledWith({ userId: 1, expenseId: 10, attachmentId: 3 });
     expect(tab.opener).toBeNull();
@@ -110,7 +123,7 @@ describe('expense documents', () => {
       expect(link?.download).toBe('receipt.pdf');
     });
     render(withIntl(<ExpenseDocuments userId={1} expenseId={10} attachments={[attachment]} />));
-    fireEvent.click(screen.getByRole('button', { name: 'Download' }));
+    await chooseDocumentAction('Download');
     await waitFor(() => expect(click).toHaveBeenCalledOnce());
     click.mockRestore();
   });

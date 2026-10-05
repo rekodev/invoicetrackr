@@ -1,7 +1,7 @@
 'use client';
 
-import { ArrowDownTrayIcon, ArrowTopRightOnSquareIcon, EyeIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Button, Card, Chip, Modal, toast } from '@heroui/react';
+import { ArrowDownTrayIcon, ArrowTopRightOnSquareIcon, EllipsisHorizontalIcon, EyeIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { Button, Card, Chip, Dropdown, Label, Modal, Separator, toast } from '@heroui/react';
 import type { ExpenseAttachment } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
@@ -108,38 +108,46 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
     dateStyle: 'medium', timeStyle: 'short'
   }).format(new Date(value)) : null;
 
-  return <Card className="border">
-    <Card.Header className="flex flex-row flex-wrap items-center justify-between gap-2">
+  return <Card className="gap-0 overflow-hidden border p-0">
+    <Card.Header className="flex-row flex-wrap items-center justify-between gap-2 border-b p-4">
       <div className="flex items-center gap-2">
         <h2 className="font-medium">{t('title')}</h2>
         {documents ? <Chip size="sm" variant="soft">{documents.length}</Chip> : null}
       </div>
       {documents?.length !== 0 ? <Button size="sm" isIconOnly aria-label={t('add')} isDisabled={isPending} onPress={() => openDialog({ kind: 'add' })}><PlusIcon className="size-4" /></Button> : null}
     </Card.Header>
-    <Card.Content>
-      {documents === null ? <div className="space-y-2">
+    <Card.Content className="p-0">
+      {documents === null ? <div className="space-y-2 p-4">
         <p role="alert" className="text-danger text-sm">{listError || t('load_failed')}</p>
         <Button variant="secondary" size="sm" isPending={isLoading} isDisabled={isLoading} onPress={retryList}>{t('retry')}</Button>
       </div> : documents.length === 0 ? <EmptyState
         title={t('missing')}
         description={t('missing_description')}
-        className="min-h-0 px-0 py-6"
+        className="min-h-0 px-4 py-6"
         action={<Button size="sm" variant="secondary" isDisabled={isPending} onPress={() => openDialog({ kind: 'add' })}><PlusIcon className="size-4" />{t('add')}</Button>}
       /> : <ul className="divide-y">
-        {documents.map((document) => <li key={document.id} className="space-y-3 py-4 first:pt-0 last:pb-0">
-          <div className="space-y-1">
-            <p className="break-words font-medium">{document.originalFileName}</p>
+        {documents.map((document) => <li key={document.id} className="flex items-start gap-2 p-4">
+          <div className="min-w-0 flex-1 space-y-1">
+            <p className="truncate text-sm font-medium" title={document.originalFileName}>{document.originalFileName}</p>
             <p className="text-muted text-xs">{document.mimeType === 'application/pdf' ? 'PDF' : document.mimeType === 'image/png' ? 'PNG' : 'JPEG'} · {new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(document.fileSize / 1024)} KB</p>
             {document.uploadedAt ? <p className="text-muted text-xs">{t('uploaded', { date: date(document.uploadedAt)! })}</p> : null}
             {document.updatedAt && document.updatedAt !== document.uploadedAt ? <p className="text-muted text-xs">{t('updated', { date: date(document.updatedAt)! })}</p> : null}
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="secondary" onPress={() => setPreview(document)}><EyeIcon className="size-4" />{t('preview')}</Button>
-            <Button size="sm" variant="secondary" isDisabled={isLoading} onPress={() => openFile(document, true)}><ArrowDownTrayIcon className="size-4" />{t('download')}</Button>
-            <Button size="sm" variant="tertiary" isDisabled={isLoading} onPress={() => openFile(document, false)}><ArrowTopRightOnSquareIcon className="size-4" />{t('open_tab')}</Button>
-            <Button size="sm" variant="tertiary" isDisabled={isPending} onPress={() => openDialog({ kind: 'replace', document })}><PencilSquareIcon className="size-4" />{t('replace')}</Button>
-            <Button size="sm" variant="danger" isDisabled={isPending} onPress={() => openDialog({ kind: 'remove', document })}><TrashIcon className="size-4" />{t('remove')}</Button>
-          </div>
+          <Dropdown>
+            <Button size="sm" isIconOnly variant="tertiary" aria-label={t('actions', { name: document.originalFileName })} isDisabled={isLoading || isPending}>
+              <EllipsisHorizontalIcon className="size-4" />
+            </Button>
+            <Dropdown.Popover>
+              <Dropdown.Menu aria-label={t('actions', { name: document.originalFileName })}>
+                <Dropdown.Item id="preview" textValue={t('preview')} onAction={() => setPreview(document)}><EyeIcon className="size-4" /><Label>{t('preview')}</Label></Dropdown.Item>
+                <Dropdown.Item id="download" textValue={t('download')} onAction={() => openFile(document, true)}><ArrowDownTrayIcon className="size-4" /><Label>{t('download')}</Label></Dropdown.Item>
+                <Dropdown.Item id="open-tab" textValue={t('open_tab')} onAction={() => openFile(document, false)}><ArrowTopRightOnSquareIcon className="size-4" /><Label>{t('open_tab')}</Label></Dropdown.Item>
+                <Separator />
+                <Dropdown.Item id="replace" textValue={t('replace')} onAction={() => openDialog({ kind: 'replace', document })}><PencilSquareIcon className="size-4" /><Label>{t('replace')}</Label></Dropdown.Item>
+                <Dropdown.Item id="remove" textValue={t('remove')} variant="danger" onAction={() => openDialog({ kind: 'remove', document })}><TrashIcon className="size-4" /><Label>{t('remove')}</Label></Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
         </li>)}
       </ul>}
     </Card.Content>

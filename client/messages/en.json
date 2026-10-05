@@ -878,6 +878,7 @@
             "deduction_formula": "{amount} × {percentage}% = {deductible}",
             "deduction_explanation": "The saved deductible amount is the total multiplied by the share used for business, rounded to cents. VAT is shown separately and is not subtracted in this calculation.",
             "documents": {
+                "actions": "Document actions: {name}",
                 "title": "Supporting documents",
                 "add": "Add document",
                 "upload": "Upload",

@@ -878,6 +878,7 @@
             "deduction_formula": "{amount} × {percentage}% = {deductible}",
             "deduction_explanation": "Išsaugota leidžiamų atskaitymų suma apskaičiuojama bendrą sumą padauginus iš veikloje naudojamos dalies ir suapvalinus iki centų. PVM rodomas atskirai ir šiame skaičiavime neatimamas.",
             "documents": {
+                "actions": "Dokumento veiksmai: {name}",
                 "title": "Išlaidą pagrindžiantys dokumentai",
                 "add": "Pridėti dokumentą",
                 "upload": "Įkelti",
