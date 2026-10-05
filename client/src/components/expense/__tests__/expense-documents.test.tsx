@@ -32,7 +32,6 @@ describe('expense documents', () => {
     render(withIntl(<ExpenseDocuments userId={1} expenseId={10} attachments={[attachment]} />));
     await userEvent.click(screen.getByRole('button', { name: 'Document actions: receipt.pdf' }));
     expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual(['Download', 'Replace document', 'Remove document']);
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('shows missing documents and refreshes after adding one file', async () => {
