@@ -13,7 +13,11 @@ import {
   TextField,
   toast
 } from '@heroui/react';
-import type { ExpenseBody, ExpenseInput } from '@invoicetrackr/types';
+import {
+  type ExpenseBody,
+  type ExpenseInput,
+  SUPPORTED_CURRENCIES
+} from '@invoicetrackr/types';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { type HTMLAttributes, useEffect, useMemo, useRef, useState } from 'react';
@@ -62,7 +66,6 @@ const INITIAL_EXPENSE_DATA: ExpenseFormData = {
   category: 'software',
   currency: 'eur',
   totalAmount: '',
-  eurAmount: '',
   vatAmount: '',
   businessUsePercentage: 100,
   paymentMethod: 'bank_transfer',
@@ -149,11 +152,16 @@ const ExpenseFormDialog = ({
     busy.current = true;
     setSubmitError('');
     try {
+      const input = {
+        ...data,
+        // The server derives EUR amounts from the editable total.
+        eurAmount: data.currency === 'eur' ? undefined : data.eurAmount || undefined
+      };
       const response = savedCreation
         ? { ok: true, message: '', data: savedCreation, validationErrors: undefined }
         : isEditMode && expenseData?.id
-          ? await updateExpenseAction({ userId, expenseId: expenseData.id, expenseData: data })
-          : await addExpenseAction({ userId, expenseData: data });
+          ? await updateExpenseAction({ userId, expenseId: expenseData.id, expenseData: input })
+          : await addExpenseAction({ userId, expenseData: input });
 
       if (!response.ok) {
         if (response.validationErrors) Object.entries(response.validationErrors).forEach(([key, message]) => {
@@ -246,13 +254,13 @@ const ExpenseFormDialog = ({
             </div>
           </Modal.Header>
           <Modal.Body>
-            {submitError ? <p role="alert" className="text-danger text-sm">{submitError}</p> : null}
             {savedCreation?.id ? <div className="space-y-2 text-sm">
               <p>{t('created_upload_pending')}</p>
               <Link className="underline" href={`${EXPENSE_WORKSPACE_PAGE(savedCreation.id)}${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ''}`}>{t('open_saved')}</Link>
             </div> : null}
             <form
               id="expense-form"
+              noValidate
               className="grid grid-cols-1 gap-4 sm:grid-cols-2"
               onSubmit={handleSubmit(onSubmit)}
             >
@@ -387,10 +395,36 @@ const ExpenseFormDialog = ({
                   </Select>
                 )}
               />
-              <TextField variant="secondary">
-                <Label>{t('fields.currency')}</Label>
-                <Input value={t('currency_fixed')} readOnly />
-              </TextField>
+              <Controller
+                control={control}
+                name="currency"
+                render={({ field }) => (
+                  <Select
+                    variant="secondary"
+                    isDisabled={isSubmitting || Boolean(savedCreation)}
+                    value={field.value}
+                    onChange={field.onChange}
+                    isInvalid={Boolean(errors.currency)}
+                  >
+                    <Label>{t('fields.currency')}</Label>
+                    <Select.Trigger>
+                      <Select.Value />
+                      <Select.Indicator />
+                    </Select.Trigger>
+                    <Select.Popover>
+                      <ListBox>
+                        {SUPPORTED_CURRENCIES.map((currency) => (
+                          <ListBoxItem key={currency} id={currency} textValue={currency.toUpperCase()}>
+                            {currency.toUpperCase()}
+                            <ListBoxItem.Indicator />
+                          </ListBoxItem>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
+                    <FieldError>{errors.currency?.message}</FieldError>
+                  </Select>
+                )}
+              />
               <Controller
                 control={control}
                 name="notes"
@@ -417,24 +451,27 @@ const ExpenseFormDialog = ({
             </form>
           </Modal.Body>
           <Modal.Footer>
-            <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
-              <Button
-                variant="ghost"
-                isDisabled={isSubmitting}
-                className="w-full sm:w-auto"
-                onPress={handleClose}
-              >
-                {t('cancel')}
-              </Button>
-              <Button
-                type="submit"
-                form="expense-form"
-                isPending={isSubmitting}
-                isDisabled={isSubmitting}
-                className="w-full sm:w-auto"
-              >
-                {savedCreation ? t('retry_upload') : isEditMode ? t('submit_edit') : t('submit_add')}
-              </Button>
+            <div className="flex w-full flex-col gap-3">
+              {submitError ? <p role="alert" className="text-danger text-sm">{submitError}</p> : null}
+              <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+                <Button
+                  variant="ghost"
+                  isDisabled={isSubmitting}
+                  className="w-full sm:w-auto"
+                  onPress={handleClose}
+                >
+                  {t('cancel')}
+                </Button>
+                <Button
+                  type="submit"
+                  form="expense-form"
+                  isPending={isSubmitting}
+                  isDisabled={isSubmitting}
+                  className="w-full sm:w-auto"
+                >
+                  {savedCreation ? t('retry_upload') : isEditMode ? t('submit_edit') : t('submit_add')}
+                </Button>
+              </div>
             </div>
           </Modal.Footer>
         </Modal.Dialog>

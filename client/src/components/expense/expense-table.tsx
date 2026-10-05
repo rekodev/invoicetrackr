@@ -28,7 +28,9 @@ import {
   DropdownPopover,
   DropdownTrigger,
   Input,
+  Label,
   Table,
+  TextField,
   Tooltip
 } from '@heroui/react';
 import type { ExpenseBody } from '@invoicetrackr/types';
@@ -114,6 +116,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
   const listState = readExpenseListState(listParams);
   const { filterValue, categoryFilter, paymentMethodFilter, hasAttachmentFilter,
     dateFrom, dateTo, rowsPerPage, page: requestedPage, sortDescriptor } = listState;
+  const { column: sortColumn, direction: sortDirection } = sortDescriptor;
   const returnTo = expenseListHref(listParams);
   const updateQuery = (values: Record<string, string | number>) => {
     const params = new URLSearchParams(window.location.search);
@@ -282,7 +285,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
 
   const sortedItems = useMemo(() => {
     const sorted = [...filteredItems].sort((a, b) => {
-      const column = sortDescriptor.column as keyof ExpenseBody;
+      const column = sortColumn as keyof ExpenseBody;
       const first = a[column] ?? '';
       const second = b[column] ?? '';
       const firstValue =
@@ -296,10 +299,10 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
       const cmp =
         firstValue < secondValue ? -1 : firstValue > secondValue ? 1 : 0;
 
-      return sortDescriptor.direction === 'descending' ? -cmp : cmp;
+      return sortDirection === 'descending' ? -cmp : cmp;
     });
     return sorted.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-  }, [filteredItems, page, rowsPerPage, sortDescriptor.column, sortDescriptor.direction]);
+  }, [filteredItems, page, rowsPerPage, sortColumn, sortDirection]);
 
   const openAddDialog = () => {
     setCurrentExpense(undefined);
@@ -504,20 +507,22 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
             <div className="flex justify-start">
               <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:w-auto lg:items-center">
                 <div className="grid grid-cols-2 gap-2 sm:col-span-2 lg:flex">
-                  <Input
-                    variant="secondary"
-                    type="date"
-                    value={dateFrom}
-                    aria-label={t('filters.from')}
-                    onChange={(event) => setDateFrom(event.target.value)}
-                  />
-                  <Input
-                    variant="secondary"
-                    type="date"
-                    value={dateTo}
-                    aria-label={t('filters.to')}
-                    onChange={(event) => setDateTo(event.target.value)}
-                  />
+                  <TextField variant="secondary">
+                    <Label>{t('filters.from')}</Label>
+                    <Input
+                      type="date"
+                      value={dateFrom}
+                      onChange={(event) => setDateFrom(event.target.value)}
+                    />
+                  </TextField>
+                  <TextField variant="secondary">
+                    <Label>{t('filters.to')}</Label>
+                    <Input
+                      type="date"
+                      value={dateTo}
+                      onChange={(event) => setDateTo(event.target.value)}
+                    />
+                  </TextField>
                 </div>
                 <Dropdown>
                   <DropdownTrigger

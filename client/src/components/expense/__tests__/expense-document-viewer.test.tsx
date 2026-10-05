@@ -16,8 +16,8 @@ vi.mock('next/dynamic', () => ({ default: () => ({ page, width, onLoaded, onErro
 beforeEach(() => {
   vi.mocked(getExpenseAttachmentAction).mockResolvedValue({ ok: true, message: '', data: { ...attachment, previewUrl: 'https://storage/fresh' } });
   vi.stubGlobal('ResizeObserver', class {
-    constructor(private callback: ResizeObserverCallback) {}
-    observe() { this.callback([{ contentRect: { width: 700 } } as ResizeObserverEntry], this as unknown as ResizeObserver); }
+    constructor(private _callback: ResizeObserverCallback) {}
+    observe() { this._callback([{ contentRect: { width: 700 } } as ResizeObserverEntry], this as unknown as ResizeObserver); }
     disconnect() {}
   });
 });

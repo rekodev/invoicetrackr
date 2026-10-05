@@ -33,13 +33,12 @@ export default function ExpenseDocumentViewer({ userId, expenseId, document, onC
   }, []);
   useEffect(() => {
     let active = true;
-    setUrl(null); setError(''); setImageLoading(true);
     const load = async () => {
       try {
         const result = await getExpenseAttachmentAction({ userId, expenseId, attachmentId: document.id });
         if (!active) return;
         if (!result.ok || !result.data?.previewUrl) { setError(result.message || t('load_failed')); return; }
-        setUrl(result.data.previewUrl);
+        setError(''); setImageLoading(true); setUrl(result.data.previewUrl);
       } catch { if (active) setError(t('load_failed')); }
     };
     void load();
@@ -74,7 +73,10 @@ export default function ExpenseDocumentViewer({ userId, expenseId, document, onC
           }}>
           {error ? <div className="space-y-3">
             <p role="alert" className="text-danger">{error}</p>
-            <Button variant="secondary" onPress={() => { setPages(0); setPage(1); setAttempt((value) => value + 1); }}>{t('retry')}</Button>
+            <Button variant="secondary" onPress={() => {
+              setUrl(null); setError(''); setImageLoading(true);
+              setPages(0); setPage(1); setAttempt((value) => value + 1);
+            }}>{t('retry')}</Button>
           </div> : !url || !width ? <Spinner aria-label={t('loading')} /> : isPdf ?
             <PdfPreview key={`${url}-${attempt}`} url={url} page={page} width={Math.max(1, width * zoom / 100)} onLoaded={setPages} onError={fail} /> :
             <>

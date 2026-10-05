@@ -28,6 +28,10 @@ describe('expense form dialog', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Retry upload' }));
     await waitFor(() => expect(onClose).toHaveBeenCalledOnce());
     expect(addExpenseAction).toHaveBeenCalledOnce();
+    expect(addExpenseAction).toHaveBeenCalledWith({
+      userId: 1,
+      expenseData: expect.objectContaining({ totalAmount: '100.00', eurAmount: undefined })
+    });
     expect(uploadExpenseAttachmentAction).toHaveBeenCalledTimes(2);
     expect(uploadExpenseAttachmentAction).toHaveBeenLastCalledWith(expect.objectContaining({ expenseId: 10 }));
   });
@@ -37,8 +41,35 @@ describe('expense form dialog', () => {
     const onSaved = vi.fn();
     render(withIntl(<ExpenseFormDialog userId={1} mode="edit" expenseData={expense} isOpen onClose={vi.fn()} onSaved={onSaved} />));
     expect(document.querySelector('input[type="file"]')).toBeNull();
+    fireEvent.change(screen.getByLabelText('Total Amount'), { target: { value: '120.00' } });
     await userEvent.click(screen.getByRole('button', { name: 'Save Changes' }));
     await waitFor(() => expect(onSaved).toHaveBeenCalledWith(expense));
     expect(uploadExpenseAttachmentAction).not.toHaveBeenCalled();
+    expect(updateExpenseAction).toHaveBeenCalledWith({
+      userId: 1,
+      expenseId: expense.id,
+      expenseData: expect.objectContaining({ totalAmount: '120.00', eurAmount: undefined })
+    });
+  });
+
+  it('renders server validation errors on the rejected fields and allows correction', async () => {
+    vi.mocked(addExpenseAction).mockResolvedValueOnce({
+      ok: false,
+      message: 'Review fields and retry',
+      validationErrors: { supplier: 'Enter a supplier', totalAmount: 'Enter a valid amount' }
+    }).mockResolvedValueOnce({ ok: true, message: 'Created', data: expense });
+    const onClose = vi.fn();
+    render(withIntl(<ExpenseFormDialog userId={1} isOpen onClose={onClose} />));
+    await userEvent.click(screen.getByRole('button', { name: 'Add Expense' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Review fields and retry');
+    expect(screen.getByLabelText('Supplier')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByLabelText('Total Amount')).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByText('Enter a supplier')).toBeVisible();
+    expect(screen.getByText('Enter a valid amount')).toBeVisible();
+    expect(onClose).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText('Supplier'), { target: { value: 'Telia' } });
+    fireEvent.change(screen.getByLabelText('Total Amount'), { target: { value: '100.00' } });
+    await userEvent.click(screen.getByRole('button', { name: 'Add Expense' }));
+    await waitFor(() => expect(onClose).toHaveBeenCalledOnce());
   });
 });

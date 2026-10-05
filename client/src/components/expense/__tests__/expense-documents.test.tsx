@@ -104,9 +104,10 @@ describe('expense documents', () => {
 
   it('downloads using the newly fetched attachment URL', async () => {
     vi.mocked(getExpenseAttachmentAction).mockResolvedValue({ ok: true, message: '', data: { ...attachment, downloadUrl: 'https://storage/download-fresh' } });
-    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
-      expect(this.href).toBe('https://storage/download-fresh');
-      expect(this.download).toBe('receipt.pdf');
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {
+      const link = document.querySelector<HTMLAnchorElement>('a[download]');
+      expect(link?.href).toBe('https://storage/download-fresh');
+      expect(link?.download).toBe('receipt.pdf');
     });
     render(withIntl(<ExpenseDocuments userId={1} expenseId={10} attachments={[attachment]} />));
     fireEvent.click(screen.getByRole('button', { name: 'Download' }));
