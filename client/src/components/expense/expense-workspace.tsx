@@ -1,6 +1,6 @@
 'use client';
 
-import { ChartPieIcon, DocumentTextIcon, InformationCircleIcon, PencilSquareIcon, ReceiptPercentIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { CalculatorIcon, ChartPieIcon, DocumentTextIcon, InformationCircleIcon, PencilSquareIcon, ReceiptPercentIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Chip, Tooltip } from '@heroui/react';
 import type { ExpenseAttachment, ExpenseBody } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
@@ -69,8 +69,11 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
           <Button size="sm" isIconOnly variant="ghost" aria-label={t('deduction_title')}>
             <InformationCircleIcon className="size-4" />
           </Button>
-          <Tooltip.Content className="max-w-sm space-y-2">
-            <code className="bg-default block rounded-lg px-3 py-2 font-mono text-sm tabular-nums">{t('deduction_formula', { amount: money(expense.totalAmount), percentage, deductible: money(expense.deductibleAmount) })}</code>
+          <Tooltip.Content className="max-w-sm space-y-3 break-normal p-4">
+            <div className="bg-default flex items-center gap-2 rounded-lg px-3 py-2">
+              <CalculatorIcon className="text-muted size-4 shrink-0" />
+              <code className="font-mono text-xs tabular-nums">{t('deduction_formula', { amount: money(expense.totalAmount), percentage, deductible: money(expense.deductibleAmount) })}</code>
+            </div>
             <p>{t('deduction_explanation')}</p>
           </Tooltip.Content>
         </Tooltip>

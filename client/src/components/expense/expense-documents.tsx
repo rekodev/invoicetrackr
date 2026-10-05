@@ -144,7 +144,7 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
                 <Dropdown.Item id="open-tab" textValue={t('open_tab')} onAction={() => openFile(document, false)}><ArrowTopRightOnSquareIcon className="size-4" /><Label>{t('open_tab')}</Label></Dropdown.Item>
                 <Separator className="-ms-1.5 w-[calc(100%+0.75rem)]" />
                 <Dropdown.Item id="replace" textValue={t('replace')} onAction={() => openDialog({ kind: 'replace', document })}><PencilSquareIcon className="size-4" /><Label>{t('replace')}</Label></Dropdown.Item>
-                <Dropdown.Item id="remove" textValue={t('remove')} variant="danger" onAction={() => openDialog({ kind: 'remove', document })}><TrashIcon className="text-danger size-4" /><Label>{t('remove')}</Label></Dropdown.Item>
+                <Dropdown.Item id="remove" textValue={t('remove')} variant="danger" className="hover:bg-danger-soft data-[hovered=true]:bg-danger-soft" onAction={() => openDialog({ kind: 'remove', document })}><TrashIcon className="text-danger size-4" /><Label>{t('remove')}</Label></Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown.Popover>
           </Dropdown>
