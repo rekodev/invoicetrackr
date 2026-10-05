@@ -77,15 +77,17 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
       </>} text={money(expense.deductibleAmount)} />
     </div>
     <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]">
-      <Card className="border"><Card.Content className="space-y-4">
-        <h2 className="font-medium">{t('details')}</h2>
+      <Card className="border">
+        <Card.Header><h2 className="font-medium">{t('details')}</h2></Card.Header>
+        <Card.Content className="p-2">
         <dl className="grid gap-4 sm:grid-cols-2">
           {details.map(([label, value]) => <div key={label} className="min-w-0">
             <dt className="text-muted text-xs font-medium">{label}</dt>
             <dd className="whitespace-pre-wrap break-words text-sm">{value}</dd>
           </div>)}
         </dl>
-      </Card.Content></Card>
+        </Card.Content>
+      </Card>
       <ExpenseDocuments userId={userId} expenseId={expense.id!} attachments={attachments} />
     </div>
     {editOpen ? <ExpenseFormDialog userId={userId} mode="edit" expenseData={expense} isOpen onClose={() => setEditOpen(false)} onSaved={() => router.refresh()} /> : null}

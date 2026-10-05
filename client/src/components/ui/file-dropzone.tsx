@@ -1,11 +1,11 @@
 'use client';
 
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
-import { Button, Card, cn,Label } from '@heroui/react';
+import { Button, Card, cn, Label } from '@heroui/react';
 import { type DragEvent as ReactDragEvent, useRef, useState } from 'react';
 
 type Props = {
-  label: string;
+  label?: string;
   title: string;
   hint: string;
   actionLabel: string;
@@ -36,7 +36,7 @@ const FileDropzone = ({
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <Label>{label}</Label>
+      {label ? <Label>{label}</Label> : null}
       <Card
         className={cn(
           'border-foreground/25 flex min-h-56 items-center justify-center border border-dashed shadow-none',

@@ -153,7 +153,7 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
           {dialog?.kind === 'remove' ? <p className="break-words">{t('confirm_remove', { name: dialog.document.originalFileName })}</p> : <>
             {dialog?.kind === 'replace' ? <p className="break-words">{t('confirm_replace', { name: dialog.document.originalFileName, replacement: file?.name ?? t('select_file') })}</p> : null}
             <fieldset disabled={isPending}>
-              <FileDropzone label={t('file')} title={t('dropzone_title')} hint={t('hint')} actionLabel={t('select_file')}
+              <FileDropzone title={t('dropzone_title')} hint={t('hint')} actionLabel={t('select_file')}
                 accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" selectedFile={file}
                 onFileChange={(value) => { if (!busy.current) { setFile(value); setError(''); } }} />
             </fieldset>
