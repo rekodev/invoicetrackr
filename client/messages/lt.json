@@ -615,9 +615,7 @@
                 "description": "Spustelėkite mygtuką \"Pridėti naują +\", kad sukurtumėte pirmą sąskaitą faktūrą.",
                 "no_results_title": "Nėra sąskaitų faktūrų pagal pasirinktus filtrus",
                 "no_results_description": "Pabandykite pakeisti paiešką arba būsenos filtrą."
-            },
-            "paid_amount": "Gauta: {amount}",
-            "remaining_amount": "Liko: {amount}"
+            }
         },
         "delete_modal": {
             "title": "Ištrinti sąskaitą",

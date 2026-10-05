@@ -30,15 +30,7 @@ export default function InvoiceTableCell({ invoice, columnKey }: Props) {
     case 'totalAmount': {
       const symbol = (invoice.currency || 'eur') === 'eur' ? '€' : '$';
       return (
-        <div className="space-y-1 tabular-nums">
-          <span>{symbol}{Number(invoice.totalAmount).toFixed(2)}</span>
-          {invoice.paidAmount !== null && invoice.outstandingAmount !== null ? (
-            <div className="text-muted text-xs">
-              <p>{t('paid_amount', { amount: `${symbol}${invoice.paidAmount}` })}</p>
-              <p>{t('remaining_amount', { amount: `${symbol}${invoice.outstandingAmount}` })}</p>
-            </div>
-          ) : null}
-        </div>
+        <span className="tabular-nums">{symbol}{Number(invoice.totalAmount).toFixed(2)}</span>
       );
     }
     case 'date':

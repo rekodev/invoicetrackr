@@ -615,9 +615,7 @@
                 "description": "Click the \"Add New +\" button to create your first invoice.",
                 "no_results_title": "No invoices match your filters",
                 "no_results_description": "Try changing the search term or status filter."
-            },
-            "paid_amount": "Received: {amount}",
-            "remaining_amount": "Remaining: {amount}"
+            }
         },
         "delete_modal": {
             "title": "Delete Invoice",

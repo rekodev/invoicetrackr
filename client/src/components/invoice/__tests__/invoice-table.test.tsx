@@ -33,8 +33,9 @@ describe('invoice list', () => {
     );
     expect(screen.getByText('Test Client')).toBeInTheDocument();
     expect(screen.getByText('Partially paid')).toBeInTheDocument();
-    expect(screen.getByText('Received: €40.00')).toBeInTheDocument();
-    expect(screen.getByText('Remaining: €80.00')).toBeInTheDocument();
+    expect(screen.getByText('€120.00')).toBeInTheDocument();
+    expect(screen.queryByText('Received: €40.00')).not.toBeInTheDocument();
+    expect(screen.queryByText('Remaining: €80.00')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Record payment' })).not.toBeInTheDocument();
   });
 
