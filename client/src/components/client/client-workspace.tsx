@@ -70,10 +70,20 @@ export default function ClientWorkspace({ userId, data }: Props) {
           <h1 className="text-2xl font-semibold">{client.name}</h1>
           <Chip variant="soft" color="accent">{t(`business_types.${client.businessType}`)}</Chip>
         </div>
-        <Link href={createHref} className={buttonVariants({ variant: 'primary' })}>
-          <PlusIcon aria-hidden="true" className="h-4 w-4" />
-          {t('create_invoice')}
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href={createHref} className={buttonVariants({ variant: 'primary' })}>
+            <PlusIcon aria-hidden="true" className="h-4 w-4" />
+            {t('create_invoice')}
+          </Link>
+          <Button variant="secondary" onPress={() => setEditOpen(true)}>
+            <PencilIcon aria-hidden="true" className="h-4 w-4" />
+            {t('edit')}
+          </Button>
+          <Button variant="danger" onPress={() => setArchiveOpen(true)}>
+            <TrashIcon aria-hidden="true" className="h-4 w-4" />
+            {t('archive')}
+          </Button>
+        </div>
       </header>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -91,20 +101,10 @@ export default function ClientWorkspace({ userId, data }: Props) {
       <Card className="border">
         <Card.Header className="flex-row flex-wrap items-center justify-between gap-4">
           <h2 className="text-base font-medium">{t('details')}</h2>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" onPress={copyDetails}>
-              <ClipboardDocumentIcon aria-hidden="true" className="h-4 w-4" />
-              {t('copy_details')}
-            </Button>
-            <Button variant="secondary" onPress={() => setEditOpen(true)}>
-              <PencilIcon aria-hidden="true" className="h-4 w-4" />
-              {t('edit')}
-            </Button>
-            <Button variant="tertiary" onPress={() => setArchiveOpen(true)}>
-              <TrashIcon aria-hidden="true" className="h-4 w-4" />
-              {t('archive')}
-            </Button>
-          </div>
+          <Button variant="secondary" onPress={copyDetails}>
+            <ClipboardDocumentIcon aria-hidden="true" className="h-4 w-4" />
+            {t('copy_details')}
+          </Button>
         </Card.Header>
         <Card.Content className="p-2">
           <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
