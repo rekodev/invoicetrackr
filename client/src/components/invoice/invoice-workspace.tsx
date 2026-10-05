@@ -71,8 +71,10 @@ function WorkspaceSection({
 }) {
   return (
     <Card className="border">
-      <Card.Content className="p-2">
+      <Card.Header>
         <h2 className="text-base font-medium">{title}</h2>
+      </Card.Header>
+      <Card.Content className="p-2">
         <div className={contentClassName}>{children}</div>
       </Card.Content>
     </Card>

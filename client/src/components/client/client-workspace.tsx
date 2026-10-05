@@ -89,50 +89,48 @@ export default function ClientWorkspace({ userId, data }: Props) {
       </div>
 
       <Card className="border">
-        <Card.Content>
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="min-w-0 flex-1 space-y-3">
-              <h2 className="text-base font-medium">{t('details')}</h2>
-              <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-                <div>
-                  <dt className="text-muted text-xs font-medium">{fieldLabel('business_number')}</dt>
-                  <dd className="text-sm break-words">{client.businessNumber}</dd>
-                </div>
-                {client.vatNumber ? (
-                  <div>
-                    <dt className="text-muted text-xs font-medium">{fieldLabel('vat_number')}</dt>
-                    <dd className="text-sm break-words">{client.vatNumber}</dd>
-                  </div>
-                ) : null}
-                <div>
-                  <dt className="text-muted text-xs font-medium">{fieldLabel('address')}</dt>
-                  <dd className="text-sm break-words">{client.address}</dd>
-                </div>
-                {client.email ? (
-                  <div>
-                    <dt className="text-muted text-xs font-medium">{fieldLabel('email')}</dt>
-                    <dd className="text-sm break-all">
-                      <a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a>
-                    </dd>
-                  </div>
-                ) : null}
-              </dl>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="secondary" onPress={copyDetails}>
-                <ClipboardDocumentIcon aria-hidden="true" className="h-4 w-4" />
-                {t('copy_details')}
-              </Button>
-              <Button variant="secondary" onPress={() => setEditOpen(true)}>
-                <PencilIcon aria-hidden="true" className="h-4 w-4" />
-                {t('edit')}
-              </Button>
-              <Button variant="tertiary" onPress={() => setArchiveOpen(true)}>
-                <TrashIcon aria-hidden="true" className="h-4 w-4" />
-                {t('archive')}
-              </Button>
-            </div>
+        <Card.Header className="flex-row flex-wrap items-center justify-between gap-4">
+          <h2 className="text-base font-medium">{t('details')}</h2>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" onPress={copyDetails}>
+              <ClipboardDocumentIcon aria-hidden="true" className="h-4 w-4" />
+              {t('copy_details')}
+            </Button>
+            <Button variant="secondary" onPress={() => setEditOpen(true)}>
+              <PencilIcon aria-hidden="true" className="h-4 w-4" />
+              {t('edit')}
+            </Button>
+            <Button variant="tertiary" onPress={() => setArchiveOpen(true)}>
+              <TrashIcon aria-hidden="true" className="h-4 w-4" />
+              {t('archive')}
+            </Button>
           </div>
+        </Card.Header>
+        <Card.Content className="p-2">
+          <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+            <div>
+              <dt className="text-muted text-xs font-medium">{fieldLabel('business_number')}</dt>
+              <dd className="text-sm break-words">{client.businessNumber}</dd>
+            </div>
+            {client.vatNumber ? (
+              <div>
+                <dt className="text-muted text-xs font-medium">{fieldLabel('vat_number')}</dt>
+                <dd className="text-sm break-words">{client.vatNumber}</dd>
+              </div>
+            ) : null}
+            <div>
+              <dt className="text-muted text-xs font-medium">{fieldLabel('address')}</dt>
+              <dd className="text-sm break-words">{client.address}</dd>
+            </div>
+            {client.email ? (
+              <div>
+                <dt className="text-muted text-xs font-medium">{fieldLabel('email')}</dt>
+                <dd className="text-sm break-all">
+                  <a href={`mailto:${client.email}`} className="hover:underline">{client.email}</a>
+                </dd>
+              </div>
+            ) : null}
+          </dl>
         </Card.Content>
       </Card>
 
