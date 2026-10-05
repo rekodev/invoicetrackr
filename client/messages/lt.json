@@ -765,8 +765,8 @@
             "rows_per_page": "Eilučių puslapyje:"
         },
         "filters": {
-            "from": "Data nuo",
-            "to": "Data iki",
+            "from": "Nuo",
+            "to": "Iki",
             "category": "Kategorija",
             "payment_method": "Apmokėjimo būdas",
             "all_categories": "Visos kategorijos",

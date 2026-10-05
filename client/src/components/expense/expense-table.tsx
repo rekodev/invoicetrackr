@@ -335,10 +335,10 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
         return formatLocalizedDate(expense.expenseDate, locale);
       case 'supplier':
         return (
-          <div className="flex min-w-44 flex-col">
-            <Link className="text-sm font-medium hover:underline" href={`${EXPENSE_WORKSPACE_PAGE(expense.id!)}?returnTo=${encodeURIComponent(returnTo)}`}>{expense.supplier}</Link>
+          <div className="flex max-w-64 items-center gap-2">
+            <Link className="min-w-0 truncate text-sm font-medium hover:underline" title={expense.supplier} href={`${EXPENSE_WORKSPACE_PAGE(expense.id!)}?returnTo=${encodeURIComponent(returnTo)}`}>{expense.supplier}</Link>
             {expense.documentNumber ? (
-              <span className="text-muted text-xs">
+              <span className="text-muted max-w-20 shrink-0 truncate text-xs" title={expense.documentNumber}>
                 {expense.documentNumber}
               </span>
             ) : null}
@@ -346,13 +346,13 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
         );
       case 'description':
         return (
-          <span className="line-clamp-2 min-w-52 text-sm">
+          <span className="block max-w-56 truncate text-sm" title={expense.description}>
             {expense.description}
           </span>
         );
       case 'category':
         return (
-          <Chip variant="soft" color="default">
+          <Chip size="sm" variant="soft" color="default">
             {t(`categories.${expense.category}`)}
           </Chip>
         );
@@ -503,18 +503,20 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
             </div>
             <div className="flex justify-start">
               <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:w-auto lg:items-center">
-                <div className="grid grid-cols-2 gap-2 sm:col-span-2 lg:flex">
-                  <TextField variant="secondary">
-                    <Label>{t('filters.from')}</Label>
+                <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
+                  <TextField variant="secondary" className="flex-row items-center gap-2">
+                    <Label className="shrink-0 whitespace-nowrap">{t('filters.from')}</Label>
                     <Input
+                      className="w-36"
                       type="date"
                       value={dateFrom}
                       onChange={(event) => setDateFrom(event.target.value)}
                     />
                   </TextField>
-                  <TextField variant="secondary">
-                    <Label>{t('filters.to')}</Label>
+                  <TextField variant="secondary" className="flex-row items-center gap-2">
+                    <Label className="shrink-0 whitespace-nowrap">{t('filters.to')}</Label>
                     <Input
+                      className="w-36"
                       type="date"
                       value={dateTo}
                       onChange={(event) => setDateTo(event.target.value)}
@@ -683,7 +685,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                 sortedItems.map((expense) => (
                   <Table.Row key={expense.id} id={String(expense.id)}>
                     {headerColumns.map((column) => (
-                      <Table.Cell key={column.uid}>
+                      <Table.Cell key={column.uid} className="whitespace-nowrap py-2">
                         {renderCell(expense, column.uid)}
                       </Table.Cell>
                     ))}

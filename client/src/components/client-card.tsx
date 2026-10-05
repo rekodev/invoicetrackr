@@ -105,7 +105,7 @@ const ClientCard = ({
   const renderFullDetailsCard = () => (
     <Card
       className={cn(
-        'hover:border-secondary/50 group-hover:bg-accent/5 group-focus-within:bg-accent/5 relative h-full w-full overflow-hidden border transition hover:shadow-md',
+        'hover:border-secondary/50 group-hover:bg-accent/5 group-has-[:focus-visible]:bg-accent/5 relative h-full w-full overflow-hidden border transition hover:shadow-md',
         {
           'cursor-pointer': !!onClick,
           'border-secondary-600 bg-secondary/10': isSelected

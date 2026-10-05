@@ -765,8 +765,8 @@
             "rows_per_page": "Rows per Page:"
         },
         "filters": {
-            "from": "From Date",
-            "to": "To Date",
+            "from": "From",
+            "to": "To",
             "category": "Category",
             "payment_method": "Payment Method",
             "all_categories": "All Categories",
