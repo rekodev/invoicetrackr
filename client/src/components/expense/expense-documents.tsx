@@ -1,12 +1,13 @@
 'use client';
 
 import { ArrowDownTrayIcon, ArrowTopRightOnSquareIcon, EyeIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Button, Card, Modal, toast } from '@heroui/react';
+import { Button, Card, Chip, Modal, toast } from '@heroui/react';
 import type { ExpenseAttachment } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useRef, useState, useTransition } from 'react';
 
+import EmptyState from '@/components/empty-state';
 import FileDropzone from '@/components/ui/file-dropzone';
 import { deleteExpenseAttachmentAction, getExpenseAttachmentAction, getExpenseAttachmentsAction, replaceExpenseAttachmentAction, uploadExpenseAttachmentAction } from '@/lib/actions/expense';
 
@@ -108,17 +109,23 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
   }).format(new Date(value)) : null;
 
   return <Card className="border">
-    <Card.Header className="flex flex-wrap items-center justify-between gap-2">
-      <h2 className="font-medium">{t('title')}{documents ? ` (${documents.length})` : ''}</h2>
-      <Button size="sm" isDisabled={isPending} onPress={() => openDialog({ kind: 'add' })}><PlusIcon className="size-4" />{t('add')}</Button>
+    <Card.Header className="flex flex-row flex-wrap items-center justify-between gap-2">
+      <div className="flex items-center gap-2">
+        <h2 className="font-medium">{t('title')}</h2>
+        {documents ? <Chip size="sm" variant="soft">{documents.length}</Chip> : null}
+      </div>
+      {documents?.length !== 0 ? <Button size="sm" isIconOnly aria-label={t('add')} isDisabled={isPending} onPress={() => openDialog({ kind: 'add' })}><PlusIcon className="size-4" /></Button> : null}
     </Card.Header>
     <Card.Content>
       {documents === null ? <div className="space-y-2">
         <p role="alert" className="text-danger text-sm">{listError || t('load_failed')}</p>
         <Button variant="secondary" size="sm" isPending={isLoading} isDisabled={isLoading} onPress={retryList}>{t('retry')}</Button>
-      </div> : documents.length === 0 ? <div className="space-y-2">
-        <p className="text-warning font-medium">{t('missing')}</p><p className="text-muted text-sm">{t('missing_description')}</p>
-      </div> : <ul className="divide-y">
+      </div> : documents.length === 0 ? <EmptyState
+        title={t('missing')}
+        description={t('missing_description')}
+        className="min-h-0 px-0 py-6"
+        action={<Button size="sm" variant="secondary" isDisabled={isPending} onPress={() => openDialog({ kind: 'add' })}><PlusIcon className="size-4" />{t('add')}</Button>}
+      /> : <ul className="divide-y">
         {documents.map((document) => <li key={document.id} className="space-y-3 py-4 first:pt-0 last:pb-0">
           <div className="space-y-1">
             <p className="break-words font-medium">{document.originalFileName}</p>

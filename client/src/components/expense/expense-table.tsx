@@ -283,26 +283,23 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
     }
   }, [requestedPage, page]);
 
-  const sortedItems = useMemo(() => {
-    const sorted = [...filteredItems].sort((a, b) => {
-      const column = sortColumn as keyof ExpenseBody;
-      const first = a[column] ?? '';
-      const second = b[column] ?? '';
-      const firstValue =
-        column === 'totalAmount' || column === 'deductibleAmount'
-          ? Number(first)
-          : String(first);
-      const secondValue =
-        column === 'totalAmount' || column === 'deductibleAmount'
-          ? Number(second)
-          : String(second);
-      const cmp =
-        firstValue < secondValue ? -1 : firstValue > secondValue ? 1 : 0;
+  const sortedItems = filteredItems.toSorted((a, b) => {
+    const column = sortColumn as keyof ExpenseBody;
+    const first = a[column] ?? '';
+    const second = b[column] ?? '';
+    const firstValue =
+      column === 'totalAmount' || column === 'deductibleAmount'
+        ? Number(first)
+        : String(first);
+    const secondValue =
+      column === 'totalAmount' || column === 'deductibleAmount'
+        ? Number(second)
+        : String(second);
+    const cmp =
+      firstValue < secondValue ? -1 : firstValue > secondValue ? 1 : 0;
 
-      return sortDirection === 'descending' ? -cmp : cmp;
-    });
-    return sorted.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-  }, [filteredItems, page, rowsPerPage, sortColumn, sortDirection]);
+    return sortDirection === 'descending' ? -cmp : cmp;
+  }).slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   const openAddDialog = () => {
     setCurrentExpense(undefined);

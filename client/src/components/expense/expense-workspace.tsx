@@ -1,9 +1,8 @@
 'use client';
 
-import { ArrowLeftIcon, ChartPieIcon, DocumentTextIcon, PencilSquareIcon, ReceiptPercentIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Button, buttonVariants, Card, Chip } from '@heroui/react';
+import { ChartPieIcon, DocumentTextIcon, InformationCircleIcon, PencilSquareIcon, ReceiptPercentIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { Button, Card, Chip, Tooltip } from '@heroui/react';
 import type { ExpenseAttachment, ExpenseBody } from '@invoicetrackr/types';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -51,11 +50,8 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
   ];
 
   return <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
-    <Link href={returnTo} className={buttonVariants({ variant: 'tertiary', className: 'self-start' })}>
-      <ArrowLeftIcon className="size-4" />{t('back')}
-    </Link>
     <header className="flex flex-wrap items-start justify-between gap-4">
-      <div className="min-w-0 space-y-2">
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
         <h1 className="break-words text-2xl font-semibold">{expense.supplier}</h1>
         <Chip variant="soft">{categories(expense.category)}</Chip>
       </div>
@@ -67,14 +63,20 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
     <div className="grid gap-3 sm:grid-cols-3">
       <MetricCard icon={<ReceiptPercentIcon className="size-4" />} iconVariant="accent" title={fields('total_amount')} text={money(expense.totalAmount)} />
       <MetricCard icon={<ChartPieIcon className="size-4" />} iconVariant="accent" title={fields('business_use_percentage')} text={`${percentage}%`} />
-      <MetricCard icon={<DocumentTextIcon className="size-4" />} iconVariant="success" title={fields('deductible_amount')} text={money(expense.deductibleAmount)} />
+      <MetricCard icon={<DocumentTextIcon className="size-4" />} iconVariant="success" title={<>
+        {fields('deductible_amount')}
+        <Tooltip delay={0}>
+          <Button size="sm" isIconOnly variant="ghost" aria-label={t('deduction_title')}>
+            <InformationCircleIcon className="size-4" />
+          </Button>
+          <Tooltip.Content className="max-w-sm space-y-2">
+            <p className="tabular-nums">{t('deduction_formula', { amount: money(expense.totalAmount), percentage, deductible: money(expense.deductibleAmount) })}</p>
+            <p>{t('deduction_explanation')}</p>
+          </Tooltip.Content>
+        </Tooltip>
+      </>} text={money(expense.deductibleAmount)} />
     </div>
-    <Card className="border"><Card.Content className="space-y-2">
-      <h2 className="font-medium">{t('deduction_title')}</h2>
-      <p className="tabular-nums">{t('deduction_formula', { amount: money(expense.totalAmount), percentage, deductible: money(expense.deductibleAmount) })}</p>
-      <p className="text-muted text-sm">{t('deduction_explanation')}</p>
-    </Card.Content></Card>
-    <div className="grid items-start gap-5 lg:grid-cols-2">
+    <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]">
       <Card className="border"><Card.Content className="space-y-4">
         <h2 className="font-medium">{t('details')}</h2>
         <dl className="grid gap-4 sm:grid-cols-2">
