@@ -19,6 +19,7 @@ const DeleteInvoiceModal = ({
   invoiceData
 }: Props) => {
   const t = useTranslations('invoices.delete_modal');
+  const workspace = useTranslations('invoices.workspace');
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = () =>
@@ -68,7 +69,9 @@ const DeleteInvoiceModal = ({
             <Modal.Heading>{t('title')}</Modal.Heading>
           </Modal.Header>
           <Modal.Body>
-            {t('description', { invoiceId: invoiceData.invoiceId || '' })}
+            {invoiceData.invoiceId
+              ? t('description', { invoiceId: invoiceData.invoiceId })
+              : workspace('delete_description')}
           </Modal.Body>
           {renderModalFooter()}
         </Modal.Dialog>

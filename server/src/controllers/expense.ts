@@ -70,18 +70,37 @@ const mapExpenseForResponse = (
   updatedAt: expense.updatedAt
 });
 
-const getSignedAttachmentUrl = (
-  attachment: SelectExpenseAttachment,
-  disposition?: 'attachment'
-) =>
-  cloudinary.url(attachment.storageKey, {
+const getSignedAttachmentUrl = (attachment: SelectExpenseAttachment) => cloudinary.utils.private_download_url(
+  attachment.storageKey,
+  // Raw public IDs already include their extension; image IDs do not.
+  attachment.resourceType === 'raw' ? '' : attachment.mimeType === 'application/pdf' ? 'pdf'
+    : attachment.mimeType === 'image/png' ? 'png' : 'jpg',
+  {
     expires_at: Math.floor(Date.now() / 1000) + 300,
-    resource_type: attachment.resourceType,
-    secure: true,
-    sign_url: true,
+    resource_type: attachment.resourceType === 'raw' ? 'raw' : 'image',
     type: 'authenticated',
-    ...(disposition ? { flags: disposition } : {})
-  });
+    attachment: true
+  }
+);
+
+// Database mutations are committed before storage cleanup. A cleanup error must
+// not invite a retry of an already successful mutation.
+const cleanupAttachment = async (
+  req: FastifyRequest,
+  storageKey: string,
+  resourceType: string
+) => {
+  try {
+    const result = await cloudinary.uploader.destroy(storageKey, {
+      resource_type: resourceType, type: 'authenticated'
+    });
+    if (result.result !== 'ok' && result.result !== 'not found') {
+      req.log.error({ storageKey, result: result.result }, 'Expense document cleanup failed');
+    }
+  } catch (error) {
+    req.log.error({ err: error, storageKey }, 'Expense document cleanup failed');
+  }
+};
 
 const mapAttachmentForResponse = (attachment: SelectExpenseAttachment) => ({
   id: attachment.id,
@@ -96,8 +115,7 @@ const mapAttachmentForResponse = (attachment: SelectExpenseAttachment) => ({
   malwareScanStatus: attachment.malwareScanStatus,
   uploadedAt: attachment.uploadedAt,
   updatedAt: attachment.updatedAt,
-  previewUrl: getSignedAttachmentUrl(attachment),
-  downloadUrl: getSignedAttachmentUrl(attachment, 'attachment')
+  downloadUrl: getSignedAttachmentUrl(attachment)
 });
 
 const readAndValidateAttachmentFile = async (
@@ -112,9 +130,17 @@ const readAndValidateAttachmentFile = async (
     throw new BadRequestError(invalidTypeMessage);
   }
 
-  const buffer = await file.toBuffer();
+  let buffer: Buffer;
+  try {
+    buffer = await file.toBuffer();
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'FST_REQ_FILE_TOO_LARGE') {
+      throw new BadRequestError(tooLargeMessage);
+    }
+    throw error;
+  }
 
-  if (buffer.length > maxExpenseAttachmentSizeBytes) {
+  if (file.file.truncated || buffer.length > maxExpenseAttachmentSizeBytes) {
     throw new BadRequestError(tooLargeMessage);
   }
 
@@ -127,6 +153,21 @@ const readAndValidateAttachmentFile = async (
     fileSize: buffer.length
   };
 };
+
+const mapUploadedAttachmentForDb = (
+  file: Awaited<ReturnType<typeof readAndValidateAttachmentFile>>,
+  uploadedAttachment: UploadApiResponse
+) => ({
+  storageKey: uploadedAttachment.public_id,
+  secureUrl: uploadedAttachment.secure_url,
+  resourceType: uploadedAttachment.resource_type,
+  originalFileName: file.originalFileName,
+  sanitizedFileName: file.sanitizedFileName,
+  mimeType: file.mimeType,
+  fileSize: file.fileSize,
+  checksum: file.checksum,
+  malwareScanStatus: 'not_configured'
+});
 
 const uploadExpenseAttachment = async ({
   userId,
@@ -149,8 +190,7 @@ const uploadExpenseAttachment = async ({
       type: 'authenticated',
       use_filename: true,
       unique_filename: true,
-      filename_override: file.sanitizedFileName,
-      access_mode: 'authenticated'
+      filename_override: file.sanitizedFileName
     }
   );
 
@@ -344,23 +384,22 @@ export const postExpenseAttachment = async (
     expenseId,
     file
   });
-  const attachment = await insertExpenseAttachmentInDb({
-    userId,
-    attachment: {
-      expenseId,
-      storageKey: uploadedAttachment.public_id,
-      secureUrl: uploadedAttachment.secure_url,
-      resourceType: uploadedAttachment.resource_type,
-      originalFileName: file.originalFileName,
-      sanitizedFileName: file.sanitizedFileName,
-      mimeType: file.mimeType,
-      fileSize: file.fileSize,
-      checksum: file.checksum,
-      malwareScanStatus: 'not_configured'
-    }
-  });
+  let attachment: SelectExpenseAttachment | undefined;
+  try {
+    attachment = await insertExpenseAttachmentInDb({
+      userId,
+      attachment: {
+        expenseId,
+        ...mapUploadedAttachmentForDb(file, uploadedAttachment)
+      }
+    });
+  } catch (error) {
+    await cleanupAttachment(req, uploadedAttachment.public_id, uploadedAttachment.resource_type);
+    throw error;
+  }
 
   if (!attachment) {
+    await cleanupAttachment(req, uploadedAttachment.public_id, uploadedAttachment.resource_type);
     throw new BadRequestError(i18n.t('error.expenseAttachment.unableToUpload'));
   }
 
@@ -402,31 +441,26 @@ export const replaceExpenseAttachment = async (
     expenseId,
     file
   });
-  const attachment = await replaceExpenseAttachmentInDb({
-    userId,
-    expenseId,
-    attachmentId,
-    attachment: {
-      storageKey: uploadedAttachment.public_id,
-      secureUrl: uploadedAttachment.secure_url,
-      resourceType: uploadedAttachment.resource_type,
-      originalFileName: file.originalFileName,
-      sanitizedFileName: file.sanitizedFileName,
-      mimeType: file.mimeType,
-      fileSize: file.fileSize,
-      checksum: file.checksum,
-      malwareScanStatus: 'not_configured'
-    }
-  });
-
-  await cloudinary.uploader.destroy(existingAttachment.storageKey, {
-    resource_type: existingAttachment.resourceType,
-    type: 'authenticated'
-  });
+  let attachment: SelectExpenseAttachment | undefined;
+  try {
+    attachment = await replaceExpenseAttachmentInDb({
+      userId,
+      expenseId,
+      attachmentId,
+      expectedStorageKey: existingAttachment.storageKey,
+      attachment: mapUploadedAttachmentForDb(file, uploadedAttachment)
+    });
+  } catch (error) {
+    await cleanupAttachment(req, uploadedAttachment.public_id, uploadedAttachment.resource_type);
+    throw error;
+  }
 
   if (!attachment) {
+    await cleanupAttachment(req, uploadedAttachment.public_id, uploadedAttachment.resource_type);
     throw new BadRequestError(i18n.t('error.expenseAttachment.unableToUpload'));
   }
+
+  await cleanupAttachment(req, existingAttachment.storageKey, existingAttachment.resourceType);
 
   reply.status(200).send({
     attachment: mapAttachmentForResponse(attachment),
@@ -454,10 +488,7 @@ export const deleteExpenseAttachment = async (
     throw new NotFoundError(i18n.t('error.expenseAttachment.notFound'));
   }
 
-  await cloudinary.uploader.destroy(deletedAttachment.storageKey, {
-    resource_type: deletedAttachment.resourceType,
-    type: 'authenticated'
-  });
+  await cleanupAttachment(req, deletedAttachment.storageKey, deletedAttachment.resourceType);
 
   reply
     .status(200)

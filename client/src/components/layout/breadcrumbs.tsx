@@ -4,14 +4,16 @@ import {
   Breadcrumbs as HeroUIBreadcrumbs,
   BreadcrumbsItem
 } from '@heroui/react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 import {
+  EXPENSES_PAGE,
   HOME_PAGE,
   ONBOARDING_PAGE,
   VERIFY_EMAIL_PAGE
 } from '@/lib/constants/pages';
+import { safeExpenseReturnTo } from '@/lib/utils/expense-navigation';
 
 const splitPathnameToSegments = (pathname: string): Array<string> => {
   return pathname.slice(1).split('/');
@@ -20,6 +22,7 @@ const splitPathnameToSegments = (pathname: string): Array<string> => {
 const Breadcrumbs = () => {
   const t = useTranslations('breadcrumbs');
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const renderBreadcrumbs = () => {
     if (!pathname) return null;
@@ -30,7 +33,10 @@ const Breadcrumbs = () => {
     return splitPathnameToSegments(pathname).map((segment, index, segments) => {
       const splitSegments = segment.split('-');
       const joinedSegments = splitSegments.join('_');
-      const href = `/${segments.slice(0, index + 1).join('/')}`;
+      const segmentPath = `/${segments.slice(0, index + 1).join('/')}`;
+      const href = segmentPath === EXPENSES_PAGE && segments.length === 2
+        ? safeExpenseReturnTo(searchParams.get('returnTo') ?? undefined)
+        : segmentPath;
 
       if (splitSegments.length > 1) {
         return (

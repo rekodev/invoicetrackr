@@ -1,6 +1,8 @@
 import z from 'zod/v4';
 
-export const currencySchema = z.enum(['eur']);
+export const SUPPORTED_CURRENCIES = ['eur'] as const;
+
+export const currencySchema = z.enum(SUPPORTED_CURRENCIES);
 
 export type Currency = z.infer<typeof currencySchema>;
 

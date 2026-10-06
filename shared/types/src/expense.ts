@@ -90,7 +90,6 @@ export const expenseAttachmentSchema = z.object({
   malwareScanStatus: z.string(),
   uploadedAt: z.string().nullish(),
   updatedAt: z.string().nullish(),
-  previewUrl: z.string().optional(),
   downloadUrl: z.string().optional()
 });
 

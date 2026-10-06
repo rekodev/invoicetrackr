@@ -9,7 +9,9 @@ import { issueInvoiceAction } from '@/lib/actions/invoice';
 type Props = {
   userId: number;
   invoiceData: InvoiceBody;
-  triggerVariant?: 'button' | 'icon';
+  triggerVariant?: 'button' | 'icon' | 'none';
+  isOpen?: boolean;
+  onOpenChange?: (_open: boolean) => void;
   onIssued?: () => void;
 };
 
@@ -17,11 +19,13 @@ const IssueInvoiceModal = ({
   userId,
   invoiceData,
   triggerVariant = 'icon',
-  onIssued
+  onIssued,
+  isOpen,
+  onOpenChange
 }: Props) => {
   const t = useTranslations('invoices.issue_modal');
   const [isPending, startTransition] = useTransition();
-  const state = useOverlayState();
+  const state = useOverlayState({ isOpen, onOpenChange });
 
   const handleIssue = () =>
     startTransition(async () => {
@@ -69,7 +73,7 @@ const IssueInvoiceModal = ({
 
   return (
     <>
-      {trigger}
+      {triggerVariant !== 'none' ? trigger : null}
       <Modal.Backdrop isOpen={state.isOpen} onOpenChange={state.setOpen}>
         <Modal.Container>
           <Modal.Dialog>

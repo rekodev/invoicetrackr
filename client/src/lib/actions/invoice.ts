@@ -9,6 +9,7 @@ import {
   createRecipientDetailsRequest,
   deleteInvoice,
   deleteInvoicePayment,
+  getInvoiceWorkspace,
   getNextInvoiceNumber,
   issueInvoice,
   recoverInvoiceEmail,
@@ -27,6 +28,13 @@ import {
 import type { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
+
+export const getInvoiceWorkspaceAction = async (userId: number, invoiceId: number) => {
+  const response = await getInvoiceWorkspace(userId, invoiceId);
+  return isResponseError(response)
+    ? { ok: false as const, message: response.data.message }
+    : { ok: true as const, data: response.data };
+};
 
 const invoiceEmailActionResult = (invoiceId: number, response: Awaited<ReturnType<typeof sendInvoiceEmail>>) => {
   revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));

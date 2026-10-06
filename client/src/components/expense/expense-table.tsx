@@ -4,6 +4,7 @@ import {
   CreditCardIcon,
   DocumentTextIcon,
   ExclamationCircleIcon,
+  EyeIcon,
   MagnifyingGlassIcon,
   PaperClipIcon,
   PencilSquareIcon,
@@ -27,12 +28,16 @@ import {
   DropdownPopover,
   DropdownTrigger,
   Input,
+  Label,
   Table,
+  TextField,
   Tooltip
 } from '@heroui/react';
 import type { ExpenseBody } from '@invoicetrackr/types';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { type Key, type ReactElement, useMemo, useState } from 'react';
+import { type Key, type ReactElement, useEffect, useMemo, useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
 import MetricCard from '@/components/ui/metric-card';
@@ -40,14 +45,15 @@ import {
   EXPENSE_CATEGORIES,
   EXPENSE_PAYMENT_METHODS
 } from '@/lib/constants/expense';
+import { EXPENSE_WORKSPACE_PAGE } from '@/lib/constants/pages';
 import type { SortDescriptor } from '@/lib/types/table';
 import { formatLocalizedDate } from '@/lib/utils/date';
+import { expenseListHref, readExpenseListState } from '@/lib/utils/expense-navigation';
 
 import DeleteExpenseModal from './delete-expense-modal';
 import ExpenseFormDialog from './expense-form-dialog';
 import ExpenseTableBottomContent from './expense-table-bottom-content';
 
-const ROWS_PER_PAGE = 10;
 const CURRENT_YEAR = new Date().getFullYear();
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -105,21 +111,34 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
     [t]
   );
 
-  const [filterValue, setFilterValue] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [paymentMethodFilter, setPaymentMethodFilter] = useState('all');
-  const [hasAttachmentFilter, setHasAttachmentFilter] = useState(false);
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
-  const [visibleColumns] = useState<Set<string> | 'all'>(
-    new Set(INITIAL_VISIBLE_COLUMNS)
-  );
-  const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: 'expenseDate',
-    direction: 'descending'
+  const searchParams = useSearchParams();
+  const listParams = new URLSearchParams(searchParams.toString());
+  const listState = readExpenseListState(listParams);
+  const { filterValue, categoryFilter, paymentMethodFilter, hasAttachmentFilter,
+    dateFrom, dateTo, rowsPerPage, page: requestedPage, sortDescriptor } = listState;
+  const { column: sortColumn, direction: sortDirection } = sortDescriptor;
+  const returnTo = expenseListHref(listParams);
+  const updateQuery = (values: Record<string, string | number>) => {
+    const params = new URLSearchParams(window.location.search);
+    Object.entries(values).forEach(([key, value]) => {
+      if (value === '' || value === 'all' || (key === 'page' && value === 1)) params.delete(key);
+      else params.set(key, String(value));
+    });
+    window.history.replaceState(null, '', expenseListHref(params));
+  };
+  const setFilterValue = (value: string) => updateQuery({ q: value, page: 1 });
+  const setCategoryFilter = (value: string) => updateQuery({ category: value, page: 1 });
+  const setPaymentMethodFilter = (value: string) => updateQuery({ method: value, page: 1 });
+  const setHasAttachmentFilter = (value: boolean) => updateQuery({ documents: value ? '1' : '', page: 1 });
+  const setDateFrom = (value: string) => updateQuery({ from: value, page: 1 });
+  const setDateTo = (value: string) => updateQuery({ to: value, page: 1 });
+  const setRowsPerPage = (value: number) => updateQuery({ pageSize: value, page: 1 });
+  const setPage = (value: number | ((_page: number) => number)) =>
+    updateQuery({ page: typeof value === 'function' ? value(page) : value });
+  const setSortDescriptor = (value: SortDescriptor) => updateQuery({
+    sort: String(value.column), direction: value.direction, page: 1
   });
-  const [page, setPage] = useState(1);
+  const [visibleColumns] = useState<Set<string> | 'all'>(new Set(INITIAL_VISIBLE_COLUMNS));
   const [currentExpense, setCurrentExpense] = useState<ExpenseBody>();
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -160,50 +179,35 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
       ? {
           key: 'dateFrom',
           label: `${t('filters.from')}: ${formatLocalizedDate(dateFrom, locale)}`,
-          onClear: () => {
-            setDateFrom('');
-            setPage(1);
-          }
+          onClear: () => setDateFrom('')
         }
       : null,
     dateTo
       ? {
           key: 'dateTo',
           label: `${t('filters.to')}: ${formatLocalizedDate(dateTo, locale)}`,
-          onClear: () => {
-            setDateTo('');
-            setPage(1);
-          }
+          onClear: () => setDateTo('')
         }
       : null,
     categoryFilter !== 'all'
       ? {
           key: 'category',
           label: t(`categories.${categoryFilter}`),
-          onClear: () => {
-            setCategoryFilter('all');
-            setPage(1);
-          }
+          onClear: () => setCategoryFilter('all')
         }
       : null,
     paymentMethodFilter !== 'all'
       ? {
           key: 'paymentMethod',
           label: t(`payment_methods.${paymentMethodFilter}`),
-          onClear: () => {
-            setPaymentMethodFilter('all');
-            setPage(1);
-          }
+          onClear: () => setPaymentMethodFilter('all')
         }
       : null,
     hasAttachmentFilter
       ? {
           key: 'hasAttachment',
           label: t('filters.has_attachment'),
-          onClear: () => {
-            setHasAttachmentFilter(false);
-            setPage(1);
-          }
+          onClear: () => setHasAttachmentFilter(false)
         }
       : null
   ].filter(Boolean) as Array<{
@@ -270,32 +274,32 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
       ? 1
       : Math.ceil(filteredItems.length / rowsPerPage);
 
-  const items = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+  const page = Math.min(requestedPage, pages);
+  useEffect(() => {
+    if (requestedPage !== page) {
+      const params = new URLSearchParams(window.location.search);
+      params.set('page', String(page));
+      window.history.replaceState(null, '', expenseListHref(params));
+    }
+  }, [requestedPage, page]);
 
-    return filteredItems.slice(start, end);
-  }, [filteredItems, page, rowsPerPage]);
+  const sortedItems = filteredItems.toSorted((a, b) => {
+    const column = sortColumn as keyof ExpenseBody;
+    const first = a[column] ?? '';
+    const second = b[column] ?? '';
+    const firstValue =
+      column === 'totalAmount' || column === 'deductibleAmount'
+        ? Number(first)
+        : String(first);
+    const secondValue =
+      column === 'totalAmount' || column === 'deductibleAmount'
+        ? Number(second)
+        : String(second);
+    const cmp =
+      firstValue < secondValue ? -1 : firstValue > secondValue ? 1 : 0;
 
-  const sortedItems = useMemo(() => {
-    return [...items].sort((a, b) => {
-      const column = sortDescriptor.column as keyof ExpenseBody;
-      const first = a[column] ?? '';
-      const second = b[column] ?? '';
-      const firstValue =
-        column === 'totalAmount' || column === 'deductibleAmount'
-          ? Number(first)
-          : String(first);
-      const secondValue =
-        column === 'totalAmount' || column === 'deductibleAmount'
-          ? Number(second)
-          : String(second);
-      const cmp =
-        firstValue < secondValue ? -1 : firstValue > secondValue ? 1 : 0;
-
-      return sortDescriptor.direction === 'descending' ? -cmp : cmp;
-    });
-  }, [items, sortDescriptor]);
+    return sortDirection === 'descending' ? -cmp : cmp;
+  }).slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   const openAddDialog = () => {
     setCurrentExpense(undefined);
@@ -312,19 +316,9 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
     setIsDeleteModalOpen(true);
   };
 
-  const clearFilters = () => {
-    setCategoryFilter('all');
-    setPaymentMethodFilter('all');
-    setHasAttachmentFilter(false);
-    setDateFrom('');
-    setDateTo('');
-    setPage(1);
-  };
-
-  const onSearchChange = (value: string) => {
-    setFilterValue(value);
-    setPage(1);
-  };
+  const clearFilters = () => updateQuery({
+    category: 'all', method: 'all', documents: '', from: '', to: '', page: 1
+  });
 
   const renderTooltip = (content: string, children: ReactElement) => (
     <Tooltip delay={0}>
@@ -341,24 +335,29 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
         return formatLocalizedDate(expense.expenseDate, locale);
       case 'supplier':
         return (
-          <div className="flex min-w-44 flex-col">
-            <span className="text-sm font-medium">{expense.supplier}</span>
+          <div className="flex max-w-64 items-center gap-2">
+            <Link className="min-w-0 truncate text-sm font-medium hover:underline" title={expense.supplier} href={`${EXPENSE_WORKSPACE_PAGE(expense.id!)}?returnTo=${encodeURIComponent(returnTo)}`}>{expense.supplier}</Link>
             {expense.documentNumber ? (
-              <span className="text-muted text-xs">
-                {expense.documentNumber}
-              </span>
+              <Chip size="sm" variant="soft" className="max-w-24 shrink-0 px-2" title={expense.documentNumber}>
+                <span className="truncate">{expense.documentNumber}</span>
+              </Chip>
             ) : null}
           </div>
         );
       case 'description':
         return (
-          <span className="line-clamp-2 min-w-52 text-sm">
-            {expense.description}
-          </span>
+          <Tooltip delay={0}>
+            <Tooltip.Trigger role={undefined} tabIndex={0} className="block max-w-48 truncate text-sm">
+              {expense.description}
+            </Tooltip.Trigger>
+            <Tooltip.Content className="max-w-sm whitespace-normal break-words text-sm">
+              {expense.description}
+            </Tooltip.Content>
+          </Tooltip>
         );
       case 'category':
         return (
-          <Chip variant="soft" color="default">
+          <Chip size="sm" variant="soft" color="accent" className="px-2">
             {t(`categories.${expense.category}`)}
           </Chip>
         );
@@ -380,12 +379,12 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
           : t('payment_methods.not_set');
       case 'attachments':
         return attachmentCount > 0 ? (
-          <span className="text-foreground inline-flex items-center gap-1 text-xs">
+          <span className="text-foreground flex items-center gap-1 text-sm" aria-label={t('documents.attached', { count: attachmentCount })}>
             <PaperClipIcon className="h-4 w-4" />
-            {t('documents.attached', { count: attachmentCount })}
+            {attachmentCount}
           </span>
         ) : (
-          <span className="text-warning inline-flex items-center gap-1 text-xs font-medium">
+          <span className="text-warning flex items-center gap-1 text-xs font-medium">
             <ExclamationCircleIcon className="h-4 w-4" />
             {t('documents.missing')}
           </span>
@@ -393,6 +392,10 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
       case 'actions':
         return (
           <div className="relative flex items-center justify-end gap-2">
+            <Link aria-label={t('actions.view')} className="text-muted hover:text-foreground"
+              href={`${EXPENSE_WORKSPACE_PAGE(expense.id!)}?returnTo=${encodeURIComponent(returnTo)}`}>
+              <EyeIcon className="h-5 w-5" />
+            </Link>
             {renderTooltip(
               t('actions.edit'),
               <button
@@ -488,13 +491,13 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                     variant="secondary"
                     placeholder={t('top_content.search_placeholder')}
                     value={filterValue}
-                    onChange={(event) => onSearchChange(event.target.value)}
+                    onChange={(event) => setFilterValue(event.target.value)}
                   />
                 </div>
                 {filterValue && (
                   <CloseButton
                     aria-label={t('top_content.clear_search')}
-                    onPress={() => onSearchChange('')}
+                    onPress={() => setFilterValue('')}
                   />
                 )}
               </div>
@@ -505,27 +508,25 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
             </div>
             <div className="flex justify-start">
               <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:w-auto lg:items-center">
-                <div className="grid grid-cols-2 gap-2 sm:col-span-2 lg:flex">
-                  <Input
-                    variant="secondary"
-                    type="date"
-                    value={dateFrom}
-                    aria-label={t('filters.from')}
-                    onChange={(event) => {
-                      setDateFrom(event.target.value);
-                      setPage(1);
-                    }}
-                  />
-                  <Input
-                    variant="secondary"
-                    type="date"
-                    value={dateTo}
-                    aria-label={t('filters.to')}
-                    onChange={(event) => {
-                      setDateTo(event.target.value);
-                      setPage(1);
-                    }}
-                  />
+                <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
+                  <TextField variant="secondary" className="flex-row items-center gap-2">
+                    <Label className="shrink-0 whitespace-nowrap">{t('filters.from')}</Label>
+                    <Input
+                      className="w-36"
+                      type="date"
+                      value={dateFrom}
+                      onChange={(event) => setDateFrom(event.target.value)}
+                    />
+                  </TextField>
+                  <TextField variant="secondary" className="flex-row items-center gap-2">
+                    <Label className="shrink-0 whitespace-nowrap">{t('filters.to')}</Label>
+                    <Input
+                      className="w-36"
+                      type="date"
+                      value={dateTo}
+                      onChange={(event) => setDateTo(event.target.value)}
+                    />
+                  </TextField>
                 </div>
                 <Dropdown>
                   <DropdownTrigger
@@ -545,10 +546,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                       aria-label={t('filters.category')}
                       selectionMode="single"
                       selectedKeys={[categoryFilter]}
-                      onSelectionChange={(keys) => {
-                        setCategoryFilter(String(Array.from(keys)[0] ?? 'all'));
-                        setPage(1);
-                      }}
+                      onSelectionChange={(keys) => setCategoryFilter(String(Array.from(keys)[0] ?? 'all'))}
                     >
                       <DropdownItem key="all" id="all">
                         {t('filters.all_categories')}
@@ -579,12 +577,11 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                       aria-label={t('filters.payment_method')}
                       selectionMode="single"
                       selectedKeys={[paymentMethodFilter]}
-                      onSelectionChange={(keys) => {
+                      onSelectionChange={(keys) =>
                         setPaymentMethodFilter(
                           String(Array.from(keys)[0] ?? 'all')
-                        );
-                        setPage(1);
-                      }}
+                        )
+                      }
                     >
                       <DropdownItem key="all" id="all">
                         {t('filters.all_payment_methods')}
@@ -604,10 +601,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                     className: 'gap-2'
                   })}
                   isSelected={hasAttachmentFilter}
-                  onChange={(isSelected) => {
-                    setHasAttachmentFilter(isSelected);
-                    setPage(1);
-                  }}
+                  onChange={setHasAttachmentFilter}
                 >
                   <Checkbox.Control>
                     <Checkbox.Indicator className="[&_svg]:h-full [&_svg]:w-full" />
@@ -657,11 +651,8 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
             {t('table.rows_per_page')}
             <select
               className="section-eyebrow text-muted bg-transparent outline-none"
-              onChange={(event) => {
-                setRowsPerPage(Number(event.target.value));
-                setPage(1);
-              }}
-              defaultValue={ROWS_PER_PAGE}
+              onChange={(event) => setRowsPerPage(Number(event.target.value))}
+              value={rowsPerPage}
             >
               <option value="5">5</option>
               <option value="10">10</option>
@@ -699,7 +690,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                 sortedItems.map((expense) => (
                   <Table.Row key={expense.id} id={String(expense.id)}>
                     {headerColumns.map((column) => (
-                      <Table.Cell key={column.uid}>
+                      <Table.Cell key={column.uid} className="whitespace-nowrap py-2">
                         {renderCell(expense, column.uid)}
                       </Table.Cell>
                     ))}
@@ -728,6 +719,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
       <ExpenseFormDialog
         userId={userId}
         isOpen={isFormDialogOpen}
+        returnTo={returnTo}
         onClose={() => setIsFormDialogOpen(false)}
         mode={currentExpense ? 'edit' : 'add'}
         expenseData={currentExpense}

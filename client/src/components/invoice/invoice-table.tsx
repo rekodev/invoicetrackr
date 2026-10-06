@@ -23,9 +23,9 @@ const INITIAL_VISIBLE_COLUMNS = [
   'actions'
 ];
 
-type Props = { invoices: Array<InvoiceListItem>; userId: number };
+type Props = { invoices: Array<InvoiceListItem>; userId: number; isEmailVerified?: boolean; preferredLanguage?: string };
 
-export default function InvoiceTable({ invoices, userId }: Props) {
+export default function InvoiceTable({ invoices, userId, isEmailVerified = false, preferredLanguage = 'lt' }: Props) {
   const t = useTranslations('invoices.table');
   const columns = useMemo(
     () => [
@@ -77,7 +77,7 @@ export default function InvoiceTable({ invoices, userId }: Props) {
         (statusFilter === 'canceled' ? invoice.lifecycleStatus === 'voided' : getInvoicePaymentStatus(invoice) === statusFilter)) &&
       (!overdueOnly || getInvoiceDueStatus(invoice).isPastDue)
   );
-  const sorted = [...filtered].sort((a, b) => {
+  const sorted = filtered.toSorted((a, b) => {
     const field = sortDescriptor.column;
     const first = String(
       field === 'receiver'
@@ -142,6 +142,9 @@ export default function InvoiceTable({ invoices, userId }: Props) {
                         <InvoiceTableCell
                           invoice={invoice}
                           columnKey={column.uid}
+                          userId={userId}
+                          isEmailVerified={isEmailVerified}
+                          preferredLanguage={preferredLanguage}
                         />
                       </Table.Cell>
                     ))}

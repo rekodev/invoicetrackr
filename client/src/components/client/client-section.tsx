@@ -117,7 +117,7 @@ const ClientSection = ({ userId, clients }: Props) => {
   const renderClientCardActions = (clientData: ClientBody) => (
     <>
       {renderMobileClientCardActions(clientData)}
-      <div className="pointer-events-none absolute right-2 top-2 z-10 hidden gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100 sm:flex">
+      <div className="pointer-events-none absolute right-2 top-2 z-10 hidden gap-2 opacity-0 transition group-has-[:focus-visible]:pointer-events-auto group-has-[:focus-visible]:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100 sm:flex">
         <Button
           isIconOnly
           className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"

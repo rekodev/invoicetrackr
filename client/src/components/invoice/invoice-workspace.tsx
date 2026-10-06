@@ -71,8 +71,10 @@ function WorkspaceSection({
 }) {
   return (
     <Card className="border">
-      <Card.Content className="p-2">
+      <Card.Header>
         <h2 className="text-base font-medium">{title}</h2>
+      </Card.Header>
+      <Card.Content className="p-2">
         <div className={contentClassName}>{children}</div>
       </Card.Content>
     </Card>
@@ -205,14 +207,14 @@ export default function InvoiceWorkspace({
             <Chip
               variant="soft"
               color={
-                lifecycle === 'voided' ? 'danger' : isPaid ? 'success' : 'accent'
+                lifecycle === 'voided' ? 'danger' : !isIssued ? 'accent' : isPaid ? 'success' : 'warning'
               }
             >
               {status}
             </Chip>
             {due.isPastDue ? (
               <Chip variant="soft" color="danger">
-                {t('overdue')}
+                {tableActions('past_due', { days: due.daysPastDue })}
               </Chip>
             ) : null}
           </div>

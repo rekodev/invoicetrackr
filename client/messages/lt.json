@@ -615,9 +615,7 @@
                 "description": "Spustelėkite mygtuką \"Pridėti naują +\", kad sukurtumėte pirmą sąskaitą faktūrą.",
                 "no_results_title": "Nėra sąskaitų faktūrų pagal pasirinktus filtrus",
                 "no_results_description": "Pabandykite pakeisti paiešką arba būsenos filtrą."
-            },
-            "paid_amount": "Gauta: {amount}",
-            "remaining_amount": "Liko: {amount}"
+            }
         },
         "delete_modal": {
             "title": "Ištrinti sąskaitą",
@@ -665,11 +663,16 @@
                 "details_link_copied": "Gavėjo duomenų nuoroda nukopijuota.",
                 "details_request_emailed": "Gavėjo duomenų užklausa išsiųsta el. paštu.",
                 "tooltip_copy_public_link": "Kopijuoti viešą sąskaitos nuorodą",
-                "tooltip_view": "Išsami informacija",
+                "tooltip_view": "Peržiūrėti sąskaitą",
                 "tooltip_edit": "Redaguoti sąskaitą faktūrą",
                 "tooltip_delete": "Ištrinti sąskaitą faktūrą",
                 "tooltip_download": "Atsisiųsti",
                 "more_actions": "Daugiau veiksmų",
+                "load_failed": "Nepavyko įkelti sąskaitos veiksmų. Bandykite dar kartą.",
+                "download_failed": "Nepavyko atsisiųsti sąskaitos. Bandykite dar kartą.",
+                "copy_failed": "Nepavyko nukopijuoti sąskaitos nuorodos. Bandykite dar kartą.",
+                "action_failed": "Nepavyko atnaujinti sąskaitos. Bandykite dar kartą.",
+                "retry": "Bandyti dar kartą",
                 "mark_as_paid": "Pažymėti kaip sumokėtą",
                 "mark_as_pending": "Pažymėti kaip laukiamą",
                 "status_locked": "Šios sąskaitos būsenos keisti negalima.",
@@ -765,8 +768,8 @@
             "rows_per_page": "Eilučių puslapyje:"
         },
         "filters": {
-            "from": "Data nuo",
-            "to": "Data iki",
+            "from": "Nuo",
+            "to": "Iki",
             "category": "Kategorija",
             "payment_method": "Apmokėjimo būdas",
             "all_categories": "Visos kategorijos",
@@ -805,7 +808,8 @@
         },
         "actions": {
             "edit": "Redaguoti išlaidą",
-            "delete": "Ištrinti išlaidą"
+            "delete": "Ištrinti išlaidą",
+            "view": "Peržiūrėti išlaidą"
         },
         "empty_state": {
             "title": "Išlaidų dar nėra",
@@ -857,7 +861,50 @@
             },
             "cancel": "Atšaukti",
             "submit_add": "Pridėti išlaidą",
-            "submit_edit": "Išsaugoti"
+            "submit_edit": "Išsaugoti",
+            "saved": "Išlaida išsaugota",
+            "save_failed": "Nepavyko išsaugoti. Bandykite dar kartą.",
+            "created_upload_pending": "Išlaida išsaugota. Dokumentas neįkeltas. Bandykite įkelti dar kartą arba atidarykite išsaugotą išlaidą.",
+            "open_saved": "Atidaryti išsaugotą išlaidą",
+            "retry_upload": "Bandyti įkelti dar kartą"
+        },
+        "workspace": {
+            "back": "Grįžti į išlaidas",
+            "edit": "Redaguoti išlaidą",
+            "delete": "Ištrinti išlaidą",
+            "not_set": "Nenurodyta",
+            "details": "Išlaidos duomenys",
+            "eur_amount": "Suma eurais",
+            "created_at": "Sukurta",
+            "updated_at": "Paskutinį kartą atnaujinta",
+            "deduction_title": "Kaip apskaičiuojami leidžiami atskaitymai",
+            "deduction_formula": "{amount} × {percentage}% = {deductible}",
+            "deduction_explanation": "Išsaugota leidžiamų atskaitymų suma apskaičiuojama bendrą sumą padauginus iš veikloje naudojamos dalies ir suapvalinus iki centų. PVM rodomas atskirai ir šiame skaičiavime neatimamas.",
+            "documents": {
+                "actions": "Dokumento veiksmai: {name}",
+                "title": "Išlaidą pagrindžiantys dokumentai",
+                "add": "Pridėti dokumentą",
+                "upload": "Įkelti",
+                "replace": "Pakeisti dokumentą",
+                "remove": "Pašalinti dokumentą",
+                "download": "Atsisiųsti",
+                "missing": "Nėra išlaidą pagrindžiančių dokumentų",
+                "missing_description": "Pridėkite kvitą, sąskaitą ar kitą šią išlaidą pagrindžiantį dokumentą.",
+                "file": "Dokumentas",
+                "select_file": "Pasirinkti failą",
+                "dropzone_title": "Vilkite dokumentą čia arba pasirinkite failą",
+                "hint": "PDF, JPEG arba PNG. Vieno failo dydis – iki 10 MB.",
+                "invalid_type": "Pasirinkite PDF, JPEG arba PNG failą.",
+                "too_large": "Dokumento dydis turi būti ne didesnis nei 10 MB.",
+                "load_failed": "Nepavyko įkelti dokumentų. Bandykite dar kartą.",
+                "save_failed": "Nepavyko išsaugoti dokumento. Bandykite dar kartą.",
+                "confirm_remove": "Pašalinti „{name}“ iš šios išlaidos? Šio veiksmo atšaukti negalima.",
+                "confirm_replace": "Pakeisti „{name}“ dokumentu „{replacement}“? Ankstesnis failas bus pašalintas.",
+                "uploaded": "Įkelta: {date}",
+                "updated": "Atnaujinta: {date}",
+                "cancel": "Atšaukti",
+                "retry": "Bandyti dar kartą"
+            }
         }
     },
     "invoice_signing": {
