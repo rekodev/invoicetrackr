@@ -80,7 +80,7 @@ describe('invoice list', () => {
     expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'More Actions' }));
     expect(
-      await screen.findByRole('menuitem', { name: 'Send invoice', exact: true })
+      await screen.findByRole('menuitem', { name: 'Send invoice' })
     ).toBeInTheDocument();
     expect(getInvoiceWorkspaceAction).toHaveBeenCalledWith(1, 7);
     expect(
@@ -105,7 +105,7 @@ describe('invoice list', () => {
   });
 
   it('groups draft edit and delete below the regular actions and opens the existing issue dialog', async () => {
-    const draft = { ...invoice, lifecycleStatus: 'draft' };
+    const draft: InvoiceListItem = { ...invoice, lifecycleStatus: 'draft' };
     vi.mocked(getInvoiceWorkspaceAction).mockResolvedValue({
       ok: true,
       data: {
@@ -140,7 +140,7 @@ describe('invoice list', () => {
   });
 
   it('keeps legacy crypto drafts editable without offering issue or recipient completion', async () => {
-    const draft = {
+    const draft: InvoiceListItem = {
       ...invoice,
       lifecycleStatus: 'draft',
       paymentMode: 'crypto' as const
