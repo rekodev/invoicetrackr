@@ -106,9 +106,9 @@ describe('invoice workspace', () => {
         <InvoiceWorkspace userId={1} data={{ ...data, invoice: overdueInvoice, balance, payments: [] }} isEmailVerified preferredLanguage="en" />
       </AnalyticsConsentContext.Provider>
     ));
-    expect(screen.getByText('Unpaid')).toHaveClass('chip--warning');
+    expect(screen.getByText('Unpaid').closest('.chip')).toHaveClass('chip--warning');
     const { daysPastDue } = getInvoiceDueStatus({ ...overdueInvoice, ...balance });
-    expect(screen.getByText(`${daysPastDue}d past due`)).toHaveClass('chip--danger');
+    expect(screen.getByText(`${daysPastDue}d past due`).closest('.chip')).toHaveClass('chip--danger');
     expect(screen.queryByText('Overdue')).not.toBeInTheDocument();
   });
 
