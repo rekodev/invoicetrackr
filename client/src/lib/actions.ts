@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { AuthError, User } from 'next-auth';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 import {
   createNewUserPassword,
@@ -168,7 +168,8 @@ export const getRequestHeadersAction = async () => {
       .join('; ');
   }
 
-  headers['Accept-Language'] = cookieStore.get('locale')?.value || 'en';
+  // Match the locale the UI resolved (cookie, then Accept-Language).
+  headers['Accept-Language'] = await getLocale();
 
   return headers;
 };
