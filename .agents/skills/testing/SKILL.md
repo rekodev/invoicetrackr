@@ -5,9 +5,18 @@ description: "Where and how InvoiceTrackr tests are written: Vitest server and c
 
 # Testing (InvoiceTrackr)
 
-Use the global **test-design** skill for whether to add a test and how big
-it should be. This skill covers where tests live here, the local mechanics,
-and the commands.
+## How tests are written here
+
+- Before adding a test, look for one that already builds the state you need
+  (same component render, registered route, fixtures, or E2E journey) and
+  extend it instead of copying its setup.
+- Prefer fewer, fuller tests: checks that share a setup or user flow go in
+  one test, even if they verify different things ("the delete button is
+  styled as danger" and "clicking it opens the confirm dialog" are one test).
+- Split only for clearly separate cases: different starting state, success
+  vs. failure branches, or a different journey.
+- Small table-driven tests (`it.each`) are for critical logic: money and VAT
+  math, numbering, lifecycle guards, permissions, parsing.
 
 ## Finding the existing home
 

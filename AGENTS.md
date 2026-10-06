@@ -23,6 +23,7 @@ MVP non-goals: MB/UAB/company workflows, verslo liudijimas, payroll, inventory, 
 - Issued invoices are immutable legal documents; invoice numbers are allocated server-side. Read the `invoice-domain` skill before touching invoices, totals, payments, or PDFs.
 - Every user-facing string ships in both `lt` and `en`.
 - Mutations go through server actions, not direct API calls from components.
+- Never edit production secrets or point local commands at the production database.
 
 ## Skills
 
@@ -35,4 +36,4 @@ MVP non-goals: MB/UAB/company workflows, verslo liudijimas, payroll, inventory, 
 | Any user-facing copy or locale behaviour | `i18n` |
 | Writing or extending tests (Vitest, Playwright) | `testing` |
 | Env vars, Docker, CI, Dokku deploys | `env-deploy` |
-| Branches, commits, PRs, Linear issues, roadmap | `linear-git` + `create-pr` |
+| Branches, commits, PRs, Linear issues, roadmap | `linear-git` |
