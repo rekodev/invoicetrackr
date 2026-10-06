@@ -11,7 +11,7 @@ type Props = {
   invoiceData: InvoiceBody;
   triggerVariant?: 'button' | 'icon' | 'none';
   isOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  onOpenChange?: (_open: boolean) => void;
   onIssued?: () => void;
 };
 
