@@ -92,7 +92,7 @@ test.describe('invoices', () => {
 
     await invoiceForm.createDraft(invoice);
     const row = invoicesPage.rowFor(invoice.recipientName);
-    await row.getByRole('link', { name: 'Details' }).click();
+    await row.getByRole('link', { name: 'View invoice' }).click();
     await expect(page).toHaveURL(/\/invoices\/\d+$/);
     await expect(
       page.getByRole('heading', { name: 'Draft invoice' })
@@ -199,8 +199,10 @@ test.describe('invoices', () => {
     expect(rows.map((line) => line.split(',')[6])).toEqual(['"75.00"', '"275.50"']);
 
     await page.goto('/invoices');
-    await expect(invoicesPage.rowFor(invoice.recipientName)).toContainText('Received: €350.50');
-    await expect(invoicesPage.rowFor(invoice.recipientName)).toContainText('Remaining: €0.00');
+    await expect(invoicesPage.rowFor(invoice.recipientName)).toContainText('€350.50');
+    await expect(invoicesPage.rowFor(invoice.recipientName)).toContainText('Paid');
+    await expect(invoicesPage.rowFor(invoice.recipientName)).not.toContainText('Received:');
+    await expect(invoicesPage.rowFor(invoice.recipientName)).not.toContainText('Remaining:');
     await page.goto(workspaceUrl);
 
     await page
@@ -231,7 +233,7 @@ test.describe('invoices', () => {
       recipientBusinessNumber: '305000004', recipientAddress: 'Vilnius'
     });
     await invoiceForm.createDraft(invoice);
-    await invoicesPage.rowFor(invoice.recipientName).getByRole('link', { name: 'Details' }).click();
+    await invoicesPage.rowFor(invoice.recipientName).getByRole('link', { name: 'View invoice' }).click();
     await page.getByRole('button', { name: 'Issue Invoice' }).click();
     await page.getByRole('dialog', { name: 'Issue Invoice' }).getByRole('button', { name: 'Issue Invoice' }).click();
     await expect(page.getByRole('button', { name: 'Record payment' })).toBeVisible();
@@ -261,7 +263,7 @@ test.describe('invoices', () => {
       quantity: '0.0001', unitPrice: '0.01'
     });
     await invoiceForm.createDraft(invoice);
-    await invoicesPage.rowFor(invoice.recipientName).getByRole('link', { name: 'Details' }).click();
+    await invoicesPage.rowFor(invoice.recipientName).getByRole('link', { name: 'View invoice' }).click();
     await expect(page).toHaveURL(/\/invoices\/\d+$/);
     const invoiceId = Number(new URL(page.url()).pathname.split('/').at(-1));
     const user = await getUserByEmailFromDb(e2eUser.email);

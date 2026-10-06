@@ -14,5 +14,14 @@ export default async function InvoicesPageContent() {
 
   if (isResponseError(invoicesResp)) throw new Error('Failed to fetch data');
 
-  return <InvoiceTable invoices={invoicesResp.data.invoices} userId={userId} />;
+  return (
+    <InvoiceTable
+      invoices={invoicesResp.data.invoices}
+      userId={userId}
+      isEmailVerified={Boolean(session.user.emailVerifiedAt)}
+      preferredLanguage={
+        session.user.preferredInvoiceLanguage || session.user.language
+      }
+    />
+  );
 }

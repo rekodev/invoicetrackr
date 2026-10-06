@@ -3,6 +3,7 @@ import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { AnalyticsConsentContext } from '@/lib/analytics/consent-context';
+import { getInvoiceDueStatus } from '@/lib/utils/invoice';
 import { withIntl } from '@/test/with-intl';
 
 import InvoiceWorkspace from '../invoice-workspace';
@@ -95,6 +96,20 @@ describe('invoice workspace', () => {
         invoiceData: data.invoice
       })
     );
+  });
+
+  it('shows warning unpaid status and the exact overdue duration', () => {
+    const overdueInvoice = { ...data.invoice, dueDate: '2000-01-01' };
+    const balance = { paidAmount: '0.00', outstandingAmount: '100.00' };
+    render(withIntl(
+      <AnalyticsConsentContext.Provider value={{ consentStatus: 'declined', setConsentStatus: vi.fn() }}>
+        <InvoiceWorkspace userId={1} data={{ ...data, invoice: overdueInvoice, balance, payments: [] }} isEmailVerified preferredLanguage="en" />
+      </AnalyticsConsentContext.Provider>
+    ));
+    expect(screen.getByText('Unpaid')).toHaveClass('chip--warning');
+    const { daysPastDue } = getInvoiceDueStatus({ ...overdueInvoice, ...balance });
+    expect(screen.getByText(`${daysPastDue}d past due`)).toHaveClass('chip--danger');
+    expect(screen.queryByText('Overdue')).not.toBeInTheDocument();
   });
 
   it('keeps payment recording in the empty payment section of an issued invoice', () => {

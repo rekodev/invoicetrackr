@@ -1,17 +1,34 @@
 'use client';
 
-import { buttonVariants, Chip } from '@heroui/react';
+import { Chip } from '@heroui/react';
 import type { InvoiceListItem } from '@invoicetrackr/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 import { INVOICE_WORKSPACE_PAGE } from '@/lib/constants/pages';
 import { formatDate } from '@/lib/utils/date';
-import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
+import {
+  getInvoiceDueStatus,
+  getInvoicePaymentStatus
+} from '@/lib/utils/invoice';
 
-type Props = { invoice: InvoiceListItem; columnKey: string };
+import InvoiceTableActions from './invoice-table-actions';
 
-export default function InvoiceTableCell({ invoice, columnKey }: Props) {
+type Props = {
+  invoice: InvoiceListItem;
+  columnKey: string;
+  userId: number;
+  isEmailVerified: boolean;
+  preferredLanguage: string;
+};
+
+export default function InvoiceTableCell({
+  invoice,
+  columnKey,
+  userId,
+  isEmailVerified,
+  preferredLanguage
+}: Props) {
   const t = useTranslations('invoices.table');
   const actions = useTranslations('invoices.cell.actions');
   const href = INVOICE_WORKSPACE_PAGE(Number(invoice.id));
@@ -30,7 +47,10 @@ export default function InvoiceTableCell({ invoice, columnKey }: Props) {
     case 'totalAmount': {
       const symbol = (invoice.currency || 'eur') === 'eur' ? '€' : '$';
       return (
-        <span className="tabular-nums">{symbol}{Number(invoice.totalAmount).toFixed(2)}</span>
+        <span className="tabular-nums">
+          {symbol}
+          {Number(invoice.totalAmount).toFixed(2)}
+        </span>
       );
     }
     case 'date':
@@ -54,22 +74,27 @@ export default function InvoiceTableCell({ invoice, columnKey }: Props) {
       if (lifecycle !== 'issued') return <span className="text-muted">—</span>;
       return (
         <div className="flex flex-wrap gap-1">
-          <Chip variant="soft" color={paymentStatus === 'paid' ? 'success' : 'warning'}>
+          <Chip
+            variant="soft"
+            color={paymentStatus === 'paid' ? 'success' : 'warning'}
+          >
             {t(`status.${paymentStatus}`)}
           </Chip>
           {dueStatus.isPastDue ? (
-            <Chip variant="soft" color="danger">{actions('past_due', { days: dueStatus.daysPastDue })}</Chip>
+            <Chip variant="soft" color="danger">
+              {actions('past_due', { days: dueStatus.daysPastDue })}
+            </Chip>
           ) : null}
         </div>
       );
     case 'actions':
       return (
-        <Link
-          href={href}
-          className={buttonVariants({ size: 'sm', variant: 'secondary' })}
-        >
-          {actions('tooltip_view')}
-        </Link>
+        <InvoiceTableActions
+          invoice={invoice}
+          userId={userId}
+          isEmailVerified={isEmailVerified}
+          preferredLanguage={preferredLanguage}
+        />
       );
     default:
       return null;
