@@ -11,7 +11,6 @@ content, currency, and language must not silently change. Most rules below
 exist to protect that guarantee, so when a change seems to require bending
 one, stop and explain the tradeoff to the user instead of working around it.
 
-Scope source of truth is the Linear doc **Freelancer Finance MVP Roadmap**.
 MVP non-goals (MB/UAB workflows, payment links, open banking, direct VMI
 submission, qualified e-signatures, multi-currency accounting) should not be
 introduced as side effects.
@@ -64,7 +63,7 @@ enforced by schema refine), `issuedAt`, `paidAt`, `voidedAt`.
   `manual`). Draft saving uses the looser `invoiceWriteBodySchema`.
 - Fixing an issued invoice must go through an explicit correction/revision
   or void-and-reissue flow — never by editing the issued row. If the needed
-  flow doesn't exist yet, say so and check the roadmap before building one.
+  flow doesn't exist yet, say so and ask the user before building one.
 
 ## Numbering
 

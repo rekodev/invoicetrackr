@@ -1,6 +1,6 @@
 ---
 name: linear-git
-description: "Linear and Git conventions for InvoiceTrackr: issues, the roadmap, branch/commit/PR naming, and PR descriptions. Use for any Linear, branch, commit, push, or PR work in this repo."
+description: "Git conventions for InvoiceTrackr: REK issue IDs, branch/commit/PR naming, and PR descriptions. Use for any branch, commit, push, or PR work in this repo."
 ---
 
 # Git & Linear Workflow (InvoiceTrackr)
@@ -9,34 +9,22 @@ These are the repo's conventions. If you also have a personal
 branch/commit/PR skill, use it for the mechanics, but these rules win in this
 repo.
 
-## Linear
+## Issues
 
-- Workspace `rekodev`, project **InvoiceTrackr**, team key **`REK`**.
-  Issue IDs come from the team key (`REK-123`), not the project name.
-- Source of truth for MVP ordering, scope, checklist state, and post-MVP
-  backlog: the Linear document **Freelancer Finance MVP Roadmap**
-  (`ae430e3e-e7bc-4817-b042-a858ad336e28`). Read it before answering "what
-  is next", changing roadmap scope, or updating issue status. Local dated
-  audit docs are stale unless the live roadmap confirms them.
-- Use the direct Linear connector (`mcp__linear`) for live reads/writes when
-  available; app-proxied Linear connectors can be stale or need
-  reauthentication. If no Linear tool is available, say so instead of
-  guessing roadmap state.
-- Move an issue to **Done** only after its PR is merged or the user
-  explicitly confirms, and update the roadmap checklist if relevant.
-- PR auto-linking needs the Linear GitHub integration; without it, IDs in
-  titles are plain-text references (still include them).
+Issues live in Linear under the team key **`REK`**, so IDs look like
+`REK-123`. Merging a PR that references an issue closes it automatically;
+no manual status updates are needed.
 
 ## Naming
 
 | Thing | Format | Example |
 | --- | --- | --- |
-| Branch | `<type>/rek-<n>-<slug>` with `feat/`, `fix/`, `chore/`, `docs/` | `feat/rek-117-expense-workspace` |
-| Commit | conventional with the ID as scope | `feat(REK-170): add VMI company lookup` |
-| PR title | `[REK-<n>] Imperative summary` | `[REK-48] Add invoice domain foundation` |
-| Migration | `NNNN_rek_<n>_<slug>.sql` | `0046_rek_83_client_workspace.sql` |
+| Branch | `<type>/rek-<n>-<slug>` with `feat/`, `fix/`, `chore/`, `docs/` | `feat/rek-123-short-slug` |
+| Commit | conventional with the ID as scope | `feat(REK-123): add client archiving` |
+| PR title | `[REK-<n>] Imperative summary` | `[REK-123] Add client archiving` |
+| Migration | `NNNN_rek_<n>_<slug>.sql` | `0047_rek_123_client_archiving.sql` |
 
-Several issues: `[REK-95, REK-96, REK-97] …`. No issue given and none is
+Several issues: `[REK-123, REK-124] …`. No issue given and none is
 obvious from the branch or diff: don't invent one; use a clean title and
 commit message without an ID.
 

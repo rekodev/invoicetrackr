@@ -10,7 +10,7 @@ usually compiles fine and fails at runtime (unregistered route, response
 fields silently stripped by the serializer, untranslated message key), so
 walk every layer below even for a "small" change.
 
-The cleanest full reference is commit `0d1ace0` (REK-170, VMI company lookup).
+The cleanest full reference is commit `0d1ace0` (VMI company lookup).
 Read its files when in doubt:
 `git show 0d1ace0 --stat` then open the files listed in each step.
 

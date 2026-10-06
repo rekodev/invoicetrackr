@@ -4,8 +4,6 @@
 
 InvoiceTrackr is a Lithuania-first invoicing and finance app for solo freelancers under individuali veikla pagal pažymą. Lithuanian is the primary language and English a polished secondary. The public free invoice generator shows off output quality; the logged-in product sells saved workflow: invoice history, clients, numbering series, sending, manual bank-transfer payment tracking, expenses, tax estimates, annual summaries, and accountant exports.
 
-The live Linear document **Freelancer Finance MVP Roadmap** is the source of truth for MVP scope and order (see the `linear-git` skill).
-
 MVP non-goals: MB/UAB/company workflows, verslo liudijimas, payroll, inventory, double-entry accounting, direct VMI submission, open banking, online payment links, qualified e-signatures, multi-user/accountant portals, broad multi-currency accounting, and subscription-first packaging (no trials, pricing cards, or online payment promises). Logged-in MVP is EUR-first. Don't introduce these as side effects. Analytics is PostHog: product funnels, consent-aware tracking, and key server-side events.
 
 ## Repository
@@ -36,4 +34,4 @@ MVP non-goals: MB/UAB/company workflows, verslo liudijimas, payroll, inventory, 
 | Any user-facing copy or locale behaviour | `i18n` |
 | Writing or extending tests (Vitest, Playwright) | `testing` |
 | Env vars, Docker, CI, Dokku deploys | `env-deploy` |
-| Branches, commits, PRs, Linear issues, roadmap | `linear-git` |
+| Branches, commits, PRs, issue IDs | `linear-git` |
