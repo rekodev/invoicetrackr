@@ -24,8 +24,7 @@ Good references: `components/client/client-form-dialog.tsx` (form dialog),
 
 ## Splitting a feature into files
 
-Don't build a feature as one large component file. Split it along the
-existing structure:
+Where each piece of a feature goes:
 
 - UI pieces → `components/<domain>/` (one component per file; extract
   sub-components when a file mixes several concerns).
@@ -45,8 +44,6 @@ existing structure:
 - Wrap slow content in `<Suspense fallback={<XSkeleton />}>` using a
   skeleton from `components/ui/skeletons/`; routes may also have
   `loading.tsx`.
-- Add `'use client'` only to the leaf that needs state, effects, event
-  handlers, or browser APIs. Keep data fetching out of client components.
 - Server components use `getTranslations('ns')` from `next-intl/server`;
   client components use `useTranslations('ns')`.
 
@@ -99,8 +96,6 @@ If the backend endpoint doesn't exist yet, use the **fastify-endpoint** skill.
   pass the key to `field.onChange`.
 - `<form noValidate onSubmit={handleSubmit(onSubmit)}>`; disable submit
   while `isSubmitting` (and usually when `!isDirty` in edit mode).
-- Keep client validation light (required/format hints). The server's Zod
-  schema is authoritative and its errors map back via `setError`.
 - Import only **types** from `@invoicetrackr/types` in client code.
 
 ## Dialogs, feedback, states
@@ -110,10 +105,9 @@ If the backend endpoint doesn't exist yet, use the **fastify-endpoint** skill.
   `Modal.Body` / `Modal.Footer`, with `Modal.CloseTrigger`.
 - Feedback: `toast(message, { variant })` from `@heroui/react`; inline
   persistent warnings with `Alert`.
-- Every data view handles loading (skeleton), empty (`EmptyState` with a
-  clear next action), error, disabled, and success. Destructive or
-  irreversible actions (issue, void, delete) get a confirmation modal that
-  says what can't be undone.
+- Loading states use skeletons from `components/ui/skeletons/`; empty
+  states use `EmptyState` with a clear next action. Issue, void, and delete
+  get a confirmation modal that says what can't be undone.
 
 ## Styling
 
@@ -123,8 +117,6 @@ If the backend endpoint doesn't exist yet, use the **fastify-endpoint** skill.
   `bg-blue-600`), custom gradients, or ad-hoc backgrounds.
 - Prefer the component's built-in look; add only layout utilities
   (`flex`, `gap-4`, `grid`, responsive breakpoints) via `className`.
-- This is a working app, not a marketing site: dense, scannable, clear
-  primary action per screen.
 
 ## Copy and locale
 

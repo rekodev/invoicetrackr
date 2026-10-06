@@ -7,8 +7,7 @@ description: "InvoiceTrackr env vars, Docker build, CI, and Dokku deploys. Use w
 
 ## Environments
 
-- **Local**: root `.env.local` copied from `.env.example`. Never edit
-  production secrets to point local code at another database.
+- **Local**: root `.env.local` copied from `.env.example`.
 - **Production**: VPS process env vars managed by Dokku (`dokku config`).
   Root `.env` is only a compatibility fallback.
 - **E2E**: env is hard-coded in `e2e/scripts/run-local.mjs` and the CI e2e
@@ -57,7 +56,6 @@ PostHog keys, auth secrets) stay as Dokku/VPS env vars and only need
       VPS (don't do it yourself)
 - [ ] E2E needs it? → add a placeholder in `e2e/scripts/run-local.mjs` and the
       CI e2e job env
-- [ ] Never print secret values in logs, responses, commits, or PRs
 
 ## Deploy flow
 
@@ -74,8 +72,4 @@ PostHog keys, auth secrets) stay as Dokku/VPS env vars and only need
 
 - Dev: `pnpm dev` (builds shared types/emails/pdf, then watches everything).
 - Migrations: confirm `.env.local` has the development `DATABASE_URL`, then
-  `pnpm run server migrate`. If the target database is ambiguous, ask first.
-
-Don't install dependencies, run migrations, or change environment state
-without a clear need, and never switch production configuration for local
-testing.
+  `pnpm run server migrate`.

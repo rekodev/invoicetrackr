@@ -5,14 +5,9 @@ description: "Where and how InvoiceTrackr tests are written: Vitest server and c
 
 # Testing (InvoiceTrackr)
 
-Apply the global **test-design** skill first: extend existing tests before
-adding new ones, combine checks that share a setup or journey, and keep small
-table-driven tests for critical logic (money, numbering, lifecycle guards,
-permissions, parsing). This skill covers where tests live here and the local
-mechanics.
-
-Write tests; don't run them unless the user asks. At handoff, name the
-narrowest command (see **Running**).
+Use the global **test-design** skill for whether to add a test and how big
+it should be. This skill covers where tests live here, the local mechanics,
+and the commands.
 
 ## Finding the existing home
 
@@ -144,8 +139,6 @@ e2e/
   test with unique data — never rely on leftovers.
 
 ## Running
-
-Only when asked.
 
 - Server file: `pnpm --filter @invoicetrackr/server test:run -- src/controllers/__tests__/client.ts`
 - Client file: `pnpm --filter @invoicetrackr/client test:run -- src/components/client/__tests__/client-form-dialog.test.tsx`

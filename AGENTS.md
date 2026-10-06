@@ -20,11 +20,9 @@ MVP non-goals: MB/UAB/company workflows, verslo liudijimas, payroll, inventory, 
 ## Always
 
 - Client code imports only **types** from `@invoicetrackr/types`, never Zod schemas.
-- Keep schema, database, API, action, and UI types aligned in the same change.
 - Issued invoices are immutable legal documents; invoice numbers are allocated server-side. Read the `invoice-domain` skill before touching invoices, totals, payments, or PDFs.
 - Every user-facing string ships in both `lt` and `en`.
 - Mutations go through server actions, not direct API calls from components.
-- Never edit production secrets or point local commands at production.
 
 ## Skills
 

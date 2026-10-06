@@ -86,15 +86,12 @@ description: "Change the InvoiceTrackr database schema with a hand-written Drizz
    test factories in `server/src/test/factories/`, and any UI.
 
 6. **Tests.** Update factories and fixtures for new required fields, and
-   cover rules the constraint encodes via the **testing** skill. Write tests; don't run
-   them unless asked.
+   cover rules the constraint encodes via the **testing** skill.
 
 ## Running it locally
 
-Only when the user asks (it changes local DB state):
-
 1. Confirm root `.env.local` points `DATABASE_URL` at the **development**
-   database — never production. If unclear, ask.
+   database.
 2. `pnpm run server migrate`
 
 Never run `migrate:prod` or point drizzle-kit at production from a laptop.

@@ -76,7 +76,6 @@ export const createThing = async (
   `NotFoundError`, `ForbiddenError`, `ConflictError`, `InternalServerError`)
   with a translated message. The global `errorHandler` shapes the response
   as `{ message, errors, code }`, which the client relies on.
-- Status codes: `200` for GET/PUT/DELETE, `201` for POST that creates.
 - User-visible success responses include `message: i18n.t('success.…')`;
   the client shows it in a toast.
 - Mutations of business records record an audit event (`recordRequestAudit`)
@@ -186,4 +185,3 @@ export const createThingAction = async ({ userId, thing }: {...}):
 - [ ] `en` + `lt` server locale keys
 - [ ] Controller coverage added via the **testing** skill
 - [ ] Client `api/` function + server action + `revalidatePath`
-- [ ] Do not run tests/typecheck unless asked; name the targeted command

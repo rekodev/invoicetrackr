@@ -1,6 +1,6 @@
 ---
 name: linear-git
-description: "Interacting with Linear and Git for InvoiceTrackr: issues, roadmap, branch/commit/PR naming, and PR descriptions. Use with create-pr for any Linear, branch, commit, or PR work."
+description: "Interacting with Linear for InvoiceTrackr: issues, the roadmap, and REK naming for branches, commits, and PRs. Use with create-pr for any Linear, branch, commit, or PR work."
 ---
 
 # Git & Linear Workflow (InvoiceTrackr)
@@ -23,7 +23,7 @@ the InvoiceTrackr-specific Linear and naming rules.
   reauthentication. If no Linear tool is available, say so instead of
   guessing roadmap state.
 - Move an issue to **Done** only after its PR is merged or the user
-  explicitly confirms.
+  explicitly confirms, and update the roadmap checklist if relevant.
 - PR auto-linking needs the Linear GitHub integration; without it, IDs in
   titles are plain-text references (still include them).
 
@@ -36,28 +36,5 @@ the InvoiceTrackr-specific Linear and naming rules.
 | PR title | `[REK-<n>] Imperative summary` | `[REK-48] Add invoice domain foundation` |
 | Migration | `NNNN_rek_<n>_<slug>.sql` | `0046_rek_83_client_workspace.sql` |
 
-Several issues: `[REK-95, REK-96, REK-97] …`. No issue given and none is
-obvious from the branch/diff: don't invent one — ask, or use a clean title
-without an ID.
-
-## PR description
-
-- Start with `### Overview`: a short summary that mentions the issue ID,
-  then bullet points of the key changes.
-- Optional `### Visual demonstration` (per create-pr) and
-  `### Additional changes` for intentional ride-along fixes.
-- Do **not** add `Validation:`, `Refs`, test plans, typecheck/lint/build
-  results, migration-journal, locale-JSON, whitespace-check, or
-  skipped-check notes. CI and reviewers own validation visibility; report
-  verification to the user in chat instead.
-
-## Flow
-
-1. Implement, then stop and tell the user the change is ready for local
-   review/testing. Don't commit or open a PR until they ask.
-2. On a publish request, check `gh auth status` early. If a GitHub
-   connector write fails, use the authenticated local `gh` CLI.
-3. Follow create-pr for branching from `main`, staging only intended files,
-   pushing, and creating the PR with the naming above.
-4. After merge (or explicit confirmation), update the Linear issue and, if
-   relevant, the roadmap checklist.
+Several issues: `[REK-95, REK-96, REK-97] …`. Put the IDs in the PR's
+`### Overview` text too.
