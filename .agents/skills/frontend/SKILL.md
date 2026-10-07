@@ -1,6 +1,6 @@
 ---
 name: frontend
-description: "InvoiceTrackr client conventions: server vs client components, server actions, HeroUI forms, feedback and UI states, styling, and splitting features into files. Use for any UI work in client/."
+description: "InvoiceTrackr client conventions: server vs client components, server actions, feedback and UI states, styling, and splitting features into files. Use for any UI work in client/."
 ---
 
 # InvoiceTrackr Frontend
@@ -8,10 +8,46 @@ description: "InvoiceTrackr client conventions: server vs client components, ser
 Use alongside **heroui-react** — that skill documents HeroUI v3 component
 APIs (fetch its docs when unsure of a prop); this one documents how this app
 uses them. Match the closest existing screen before inventing structure.
-Good references: `components/client/client-form-dialog.tsx` (form dialog),
+Good references: `components/client/client-form-dialog.tsx` (form dialog, see **forms**),
 `components/client/client-workspace.tsx` (cards + metrics),
 `app/(user)/clients/[clientId]/page.tsx` (server page),
 `components/company-lookup/company-lookup-panel.tsx` (interactive widget).
+
+## Reuse existing patterns (required)
+
+The app should look and behave the same on every page. Before building any
+section, card, table, alert, chip, tooltip, header, or empty state:
+
+1. **Find the closest existing instance.** Search with `rg` for the
+   component or similar copy. Use the catalog below first.
+2. **Reuse it as-is.** Use the same component, variants, class names,
+   spacing, and copy structure. A new page is not a reason for a new look.
+3. **Prefer the shared component.** If the same markup already appears on
+   two or more pages, extract it to `components/ui/` and use it from both,
+   rather than adding a third copy.
+4. **Introduce a new pattern only when nothing fits.** Say so explicitly
+   in the handoff, and say why the existing patterns didn't work.
+
+Don't invent page-specific styling: no ad-hoc colours, custom paddings,
+stacked label/subtitle variants, or underlined inline action links when an
+established pattern exists.
+
+| Need | Existing pattern |
+| --- | --- |
+| Page spacing | Stacked sections `flex flex-col gap-5`; side-by-side cards/columns `grid gap-5` (`invoice-workspace.tsx`, `client-workspace.tsx`, dashboard) — same value both directions |
+| Stat/metric cards | `MetricCard` (`components/ui/metric-card.tsx`) in `grid gap-5 sm:grid-cols-3`, one-line title, as in `client-workspace.tsx`, `expense-workspace.tsx` |
+| Explaining a figure | Info tooltip: ghost/tertiary icon `Button` + `InformationCircleIcon` + `Tooltip` (`expense-workspace.tsx`, `invoice-services-heading.tsx`) |
+| Section card | `Card className="border"`; `Card.Header className="flex-row flex-wrap items-center justify-between gap-4"` with `h2 text-base font-medium` (+ muted `text-sm` line) left and actions right |
+| Section actions | Small `Button`/`buttonVariants` (`outline` or `secondary`, `size: 'sm'`) right-aligned in the header; never underlined text links |
+| Data tables | Plain `<table>` with `thead text-muted border-b`, rows `border-b last:border-0`, amounts `text-right tabular-nums` (`client-workspace.tsx`); full lists use HeroUI `Table` (`invoice-table.tsx`) |
+| Status / state labels | `Chip variant="soft"` with `color` (`danger` overdue, `success` paid, `accent` neutral), never coloured plain text |
+| Warnings and notices | HeroUI `Alert status=…` (no custom colours): `Alert.Title` (general), `Alert.Description` with a lead-in line and a bulleted `list-disc` list when there are several points, and exactly **one** small action button on the right. When the points lead to different pages, the action is a `Review ▾` menu with one `Dropdown.Item href` per point (`dashboard/attention-strip.tsx`). On mobile the action moves under the text (`sm:hidden` / `hidden sm:block`) |
+| Empty states | `EmptyState` with one clear next action |
+| Key/value details | `dl` with `dt text-muted text-xs font-medium` / `dd text-sm` (`client-workspace.tsx`) |
+| Money and dates | `formatMoney` (`lib/utils/currency.ts`), `formatLocalizedDate` (`lib/utils/date.ts`) |
+
+When you add or settle a pattern that other pages should follow, add a row
+to this table in the same change.
 
 ## Layout of `client/src`
 
@@ -52,57 +88,23 @@ Where each piece of a feature goes:
 Client components call a server action from `lib/actions/<domain>.ts`
 (which calls `api/`, maps errors, and `revalidatePath`s) — never `api/`
 directly. Actions return `ActionResponseModel`
-(`{ ok, message, code?, validationErrors?, data? }`). Handle it the same way
-everywhere:
+(`{ ok, message, code?, validationErrors?, data? }`); show `message` in a
+`toast` with `variant: ok ? 'success' : 'danger'`. Server messages are
+already translated. If the backend endpoint doesn't exist yet, use the
+**fastify-endpoint** skill.
 
-```tsx
-const response = await updateThingAction({ userId, thing: data });
+## Forms
 
-toast(response.message || '', { variant: response.ok ? 'success' : 'danger' });
-
-if (!response.ok) {
-  Object.entries(response.validationErrors ?? {}).forEach(([key, message]) =>
-    setError(key as keyof FormData, { message })
-  );
-  return;
-}
-onClose();
-```
-
-Server messages are already translated, so show them as-is. Special `code`s
-(e.g. `CONFLICT` for duplicate-client confirmation) get their own UI branch.
-If the backend endpoint doesn't exist yet, use the **fastify-endpoint** skill.
-
-## Forms (HeroUI v3 + React Hook Form)
-
-- `useForm<FormData>({ defaultValues })`; reset when a dialog opens with new
-  data (`useEffect` on `isOpen` → `reset(...)`).
-- Wrap every HeroUI field in `Controller`. Validation state and props go on
-  the **wrapper** (`TextField isInvalid`, `isDisabled`, `isRequired`), with
-  `<Label>`, `<Input>`/`<TextArea>`, and `<FieldError>` inside:
-
-```tsx
-<Controller control={control} name="name" render={({ field }) => (
-  <TextField variant="secondary" isInvalid={Boolean(errors.name)}>
-    <Label>{t('name')}</Label>
-    <Input name={field.name} value={field.value ?? ''}
-      onChange={field.onChange} onBlur={field.onBlur} />
-    {errors.name?.message ? <FieldError>{errors.name.message}</FieldError> : null}
-  </TextField>
-)} />
-```
-
-- `Select` / `ListBox` callbacks give **selected keys**, not DOM events —
-  pass the key to `field.onChange`.
-- `<form noValidate onSubmit={handleSubmit(onSubmit)}>`; disable submit
-  while `isSubmitting` (and usually when `!isDirty` in edit mode).
-- Import only **types** from `@invoicetrackr/types` in client code.
+All forms use React Hook Form with HeroUI fields — follow the **forms**
+skill (field wrappers, defaults/reset, server validation errors, submit
+states, and form tests).
 
 ## Dialogs, feedback, states
 
 - Modals use the compound API: `Modal.Backdrop` (owns `isOpen` /
   `onOpenChange`) → `Modal.Container` → `Modal.Dialog` → `Modal.Header` /
-  `Modal.Body` / `Modal.Footer`, with `Modal.CloseTrigger`.
+  `Modal.Body` / `Modal.Footer`, with `Modal.CloseTrigger` (form dialogs:
+  see **forms**).
 - Feedback: `toast(message, { variant })` from `@heroui/react`; inline
   persistent warnings with `Alert`.
 - Loading states use skeletons from `components/ui/skeletons/`; empty

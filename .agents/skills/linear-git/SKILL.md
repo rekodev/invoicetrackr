@@ -24,6 +24,11 @@ no manual status updates are needed.
 | PR title | `[REK-<n>] Imperative summary` | `[REK-123] Add client archiving` |
 | Migration | `NNNN_rek_<n>_<slug>.sql` | `0047_rek_123_client_archiving.sql` |
 
+Build branch names yourself from this table. Don't use Linear's suggested
+`gitBranchName` (e.g. `rekojsx/rek-123-…`): never prefix a branch with a
+username; always start with the change type (`feat/`, `fix/`, `chore/`,
+`docs/`) and keep the slug short.
+
 Several issues: `[REK-123, REK-124] …`. No issue given and none is
 obvious from the branch or diff: don't invent one; use a clean title and
 commit message without an ID.
