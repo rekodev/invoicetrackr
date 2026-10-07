@@ -454,46 +454,76 @@
     },
     "dashboard": {
         "cards": {
-            "paid": "Sumokėta",
-            "pending": "Laukiama",
-            "total_invoices": "Viso sąskaitų faktūrų",
-            "total_clients": "Viso klientų"
-        },
-        "revenue_chart": {
-            "title": "Naujausios įplaukos",
-            "chart_label": "Sąskaitų faktūrų įplaukos pagal mėnesį",
-            "revenue": "Įplaukos",
-            "months": {
-                "january": "Sausis",
-                "february": "Vasaris",
-                "march": "Kovas",
-                "april": "Balandis",
-                "may": "Gegužė",
-                "june": "Birželis",
-                "july": "Liepa",
-                "august": "Rugpjūtis",
-                "september": "Rugsėjis",
-                "october": "Spalis",
-                "november": "Lapkritis",
-                "december": "Gruodis"
+            "received_income": "Gautos pajamos · {year}",
+            "invoiced": "Išrašyta sąskaitų · {year}",
+            "outstanding": "Neapmokėta · visos atviros",
+            "a11y": {
+                "view_records": "Peržiūrėti įrašus: {title}"
             }
         },
-        "latest_invoices": {
-            "title": "Naujausios sąskaitos faktūros",
-            "subtitle": "Naujausia veikla",
-            "view_all": "Žiūrėti visas",
-            "empty_state": {
-                "title": "Sukurkite pirmą sąskaitą faktūrą",
-                "description": "Dar neturite sąskaitų faktūrų. Sukurkite pirmą ir ji bus rodoma čia.",
-                "action": "Pridėti naują"
+        "attention": {
+            "title": "Reikia dėmesio",
+            "description": "Atkreipkite dėmesį į šiuos dalykus:",
+            "review": "Peržiūrėti",
+            "drafts": "{count, plural, one {# sąskaitos juodraštis dar neišrašytas} few {# sąskaitų juodraščiai dar neišrašyti} other {# sąskaitų juodraščių dar neišrašyta}}",
+            "expenses_missing_documents": "{count, plural, one {# šių metų išlaidos neturi dokumento} few {# šių metų išlaidų įrašai neturi dokumento} other {# šių metų išlaidų įrašų neturi dokumento}}",
+            "overdue_without_email": "{count, plural, one {# pradelsta sąskaita neturi kliento el. pašto} few {# pradelstos sąskaitos neturi kliento el. pašto} other {# pradelstų sąskaitų neturi kliento el. pašto}}",
+            "email_unverified": "Patvirtinkite el. paštą, kad galėtumėte siųsti priminimus apie mokėjimą",
+            "actions": {
+                "drafts": "Peržiūrėti juodraščius",
+                "overdue_without_email": "Peržiūrėti pradelstas",
+                "expenses_missing_documents": "Peržiūrėti išlaidas",
+                "email_unverified": "Patvirtinti el. paštą"
+            }
+        },
+        "overdue": {
+            "title": "Pradelstos sąskaitos",
+            "summary": "{count, plural, one {# sąskaita} few {# sąskaitos} other {# sąskaitų}} · pradelsta {amount}",
+            "view_all": "Visos pradelstos",
+            "columns": {
+                "invoice": "Sąskaita",
+                "client": "Klientas",
+                "outstanding": "Neapmokėta",
+                "due_date": "Apmokėjimo terminas",
+                "days_overdue": "Pradelsta",
+                "actions": "Veiksmai"
             },
-            "statuses": {
-                "draft": "Juodraštis",
-                "paid": "Sumokėta",
-                "pending": "Laukiama",
-                "overdue": "Pradelsta",
-                "canceled": "Atšaukta"
+            "days": "{count, plural, one {# d.} few {# d.} other {# d.}}",
+            "send_reminder": "Siųsti priminimą",
+            "send_reminder_label": "Siųsti priminimą dėl {invoice}",
+            "reminder_unavailable": "Patvirtinkite el. paštą, kad galėtumėte siųsti priminimus",
+            "load_failed": "Nepavyko įkelti sąskaitos. Bandykite dar kartą.",
+            "no_number": "Be numerio",
+            "empty": {
+                "title": "Pradelstų sąskaitų nėra",
+                "description": "Visos išrašytos sąskaitos apmokėtos arba jų apmokėjimo terminas dar nesibaigė."
             }
+        },
+        "monthly": {
+            "title": "Pinigai pagal mėnesius",
+            "subtitle": "Gautos pajamos ir užregistruotos išlaidos {year} m.",
+            "summary": {
+                "expenses": "Išlaidos",
+                "deductible_expenses": "Atskaitomos išlaidos"
+            },
+            "chart_label": "Gautos pajamos ir išlaidos pagal mėnesius",
+            "columns": {
+                "month": "Mėnuo",
+                "income": "Gauta",
+                "expenses": "Išlaidos",
+                "net": "Skirtumas"
+            },
+            "total": "Iš viso",
+            "a11y": {
+                "income_link": "Apmokėtos sąskaitos: {month}",
+                "expenses_link": "Išlaidos: {month}"
+            }
+        },
+        "empty": {
+            "title": "Kol kas nėra duomenų",
+            "description": "Išrašykite sąskaitą arba užregistruokite išlaidas, ir čia matysite pajamas, likučius bei pradelstus mokėjimus.",
+            "create_invoice": "Sukurti sąskaitą",
+            "add_expense": "Pridėti išlaidas"
         }
     },
     "invoices": {
@@ -586,6 +616,7 @@
                 "paid": "Sumokėta",
                 "canceled": "Atšaukta",
                 "pending": "Neapmokėta",
+                "open": "Neapmokėtas likutis",
                 "partial": "Iš dalies apmokėta",
                 "no_payment_due": "Mokėti nereikia"
             },
@@ -608,7 +639,11 @@
                     "columns_label": "Lentelės stulpeliai"
                 },
                 "all": "Visos būsenos",
-                "overdue_only": "Tik pradelstos"
+                "overdue_only": "Tik pradelstos",
+                "issued_range": "Išrašyta: {range}",
+                "paid_range": "Apmokėta: {range}",
+                "remove_filter": "Pašalinti filtrą {filter}",
+                "clear_dates": "Išvalyti datas"
             },
             "empty_state": {
                 "title": "Dar neturite sąskaitų faktūrų",
@@ -775,6 +810,7 @@
             "all_categories": "Visos kategorijos",
             "all_payment_methods": "Visi būdai",
             "has_attachment": "Turi dokumentą",
+            "deductible_only": "Tik atskaitomos",
             "clear": "Išvalyti filtrus",
             "clear_short": "Išvalyti",
             "clear_count": "Išvalyti ({count})",
@@ -1004,9 +1040,24 @@
             "page": "Puslapis {page} iš {pages}",
             "previous": "Ankstesnis",
             "next": "Kitas",
-            "business_types": { "business": "Įmonė", "individual": "Fizinis asmuo" },
-            "totals": { "invoicedAmount": "Išrašyta", "paidAmount": "Gauta", "outstandingAmount": "Neapmokėta" },
-            "columns": { "number": "Sąskaita", "date": "Data", "total": "Suma", "received": "Gauta", "outstanding": "Neapmokėta", "state": "Būsena", "action": "" },
+            "business_types": {
+                "business": "Įmonė",
+                "individual": "Fizinis asmuo"
+            },
+            "totals": {
+                "invoicedAmount": "Išrašyta",
+                "paidAmount": "Gauta",
+                "outstandingAmount": "Neapmokėta"
+            },
+            "columns": {
+                "number": "Sąskaita",
+                "date": "Data",
+                "total": "Suma",
+                "received": "Gauta",
+                "outstanding": "Neapmokėta",
+                "state": "Būsena",
+                "action": ""
+            },
             "states": {
                 "draft": "Juodraštis",
                 "voided": "Anuliuota",

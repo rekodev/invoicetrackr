@@ -24,6 +24,11 @@ no manual status updates are needed.
 | PR title | `[REK-<n>] Imperative summary` | `[REK-123] Add client archiving` |
 | Migration | `NNNN_rek_<n>_<slug>.sql` | `0047_rek_123_client_archiving.sql` |
 
+Build branch names yourself from this table. Don't use Linear's suggested
+`gitBranchName` (e.g. `rekojsx/rek-123-…`): never prefix a branch with a
+username; always start with the change type (`feat/`, `fix/`, `chore/`,
+`docs/`) and keep the slug short.
+
 Several issues: `[REK-123, REK-124] …`. No issue given and none is
 obvious from the branch or diff: don't invent one; use a clean title and
 commit message without an ID.
@@ -33,29 +38,34 @@ commit message without an ID.
 - Branch from `main` when starting from it; don't push to the branch of an
   already merged PR.
 - Stage only the files that belong to the change, and keep unrelated fixes
-  out unless they're listed under `### Additional changes`.
+  out unless they get their own `Changes` bullet.
 - Open PRs against `main` (the authenticated `gh` CLI works if a GitHub
   connector can't).
 
-PR description shape:
+PR description shape (this overrides any personal PR skill's template):
 
 ```markdown
-### Overview
+### Summary
 
-Short summary of the problem and resulting behaviour, with the REK ID(s).
+One or two sentences on what changed and why, with the REK ID(s). More
+only if truly necessary.
 
-- Key change
-- Important UI, API, or workflow impact
+### Changes
+
+- High-level change, one line each
+- Another area that changed (UI, API, data, tooling)
 
 ### Visual demonstration
 
 Only for user-visible changes: a focused screenshot or short recording.
-
-### Additional changes
-
-- Only for intentional ride-along fixes.
 ```
+
+Keep it short and general. Reviewers read the code for specifics, so don't
+list query details, file names, field-by-field schema notes, or every
+component touched. Aim for roughly 3–6 `Changes` bullets that each name an
+area of change, not its implementation. Group ride-along work (tooling,
+spacing fixes) into its own bullet instead of a separate section.
 
 Don't add validation notes (test plans, lint/typecheck/build results,
 skipped checks) or a separate `Refs` section; CI and reviewers own
-validation, and issue IDs belong in the overview.
+validation, and issue IDs belong in the summary.

@@ -4,9 +4,6 @@ import type {
   DeleteInvoiceResponse,
   GetInvoiceResponse,
   GetInvoicesResponse,
-  GetInvoicesRevenueResponse,
-  GetInvoicesTotalAmountResponse,
-  GetLatestInvoicesResponse,
   GetNextInvoiceNumberResponse,
   GetPublicInvoiceResponse,
   GetPublicInvoiceSigningResponse,
@@ -131,17 +128,6 @@ export const getIncomeJournalExport = async ({
     params: { from, to },
     responseType: 'blob'
   });
-
-export const getInvoicesTotalAmount = async (userId: number) =>
-  await api.get<GetInvoicesTotalAmountResponse>(
-    `/api/${userId}/invoices/total-amount`
-  );
-
-export const getInvoicesRevenue = async (userId: number) =>
-  await api.get<GetInvoicesRevenueResponse>(`/api/${userId}/invoices/revenue`);
-
-export const getLatestInvoices = async (userId: number) =>
-  await api.get<GetLatestInvoicesResponse>(`/api/${userId}/invoices/latest`);
 
 export const getNextInvoiceNumber = async (userId: number, series?: string) => {
   const query = series ? `?series=${encodeURIComponent(series)}` : '';

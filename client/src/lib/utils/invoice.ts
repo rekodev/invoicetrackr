@@ -33,3 +33,9 @@ export function getInvoiceDueStatus(invoice: {
     : 0;
   return { isPastDue, daysPastDue };
 }
+
+export const getReminderRecipient = (
+  deliveries: Array<{ status: string; recipient: string }>
+) =>
+  deliveries.find((delivery) => ['sent', 'delivered'].includes(delivery.status))
+    ?.recipient;

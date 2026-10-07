@@ -60,7 +60,7 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
         <Button variant="danger" onPress={() => setDeleteOpen(true)}><TrashIcon className="size-4" />{t('delete')}</Button>
       </div>
     </header>
-    <div className="grid gap-3 sm:grid-cols-3">
+    <div className="grid gap-5 sm:grid-cols-3">
       <MetricCard icon={<ReceiptPercentIcon className="size-4" />} iconVariant="accent" title={fields('total_amount')} text={money(expense.totalAmount)} />
       <MetricCard icon={<ChartPieIcon className="size-4" />} iconVariant="accent" title={fields('business_use_percentage')} text={`${percentage}%`} />
       <MetricCard icon={<DocumentTextIcon className="size-4" />} iconVariant="success" title={<>

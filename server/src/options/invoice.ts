@@ -1,9 +1,6 @@
 import {
   getInvoiceResponseSchema,
   getInvoicesResponseSchema,
-  getInvoicesRevenueResponseSchema,
-  getInvoicesTotalAmountResponseSchema,
-  getLatestInvoicesResponseSchema,
   getNextInvoiceNumberResponseSchema,
   getPublicInvoiceResponseSchema,
   getPublicInvoiceSigningResponseSchema,
@@ -33,9 +30,6 @@ import {
   getIncomeJournal,
   getInvoice,
   getInvoices,
-  getInvoicesRevenue,
-  getInvoicesTotalAmount,
-  getLatestInvoices,
   getNextInvoiceNumber,
   getPublicInvoice,
   getPublicInvoiceSigning,
@@ -145,36 +139,6 @@ export const deleteInvoiceOptions: RouteShorthandOptionsWithHandler = {
   },
   preHandler: authenticatedAccess,
   handler: deleteInvoice
-};
-
-export const getInvoicesTotalAmountOptions: RouteShorthandOptionsWithHandler = {
-  schema: {
-    response: {
-      200: getInvoicesTotalAmountResponseSchema
-    }
-  },
-  preHandler: authenticatedAccess,
-  handler: getInvoicesTotalAmount
-};
-
-export const getInvoicesRevenueOptions: RouteShorthandOptionsWithHandler = {
-  schema: {
-    response: {
-      200: getInvoicesRevenueResponseSchema
-    }
-  },
-  preHandler: authenticatedAccess,
-  handler: getInvoicesRevenue
-};
-
-export const getLatestInvoicesOptions: RouteShorthandOptionsWithHandler = {
-  schema: {
-    response: {
-      200: getLatestInvoicesResponseSchema
-    }
-  },
-  preHandler: authenticatedAccess,
-  handler: getLatestInvoices
 };
 
 export const sendInvoiceEmailOptions: RouteShorthandOptionsWithHandler = {

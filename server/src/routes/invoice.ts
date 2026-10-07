@@ -10,9 +10,6 @@ import {
   getIncomeJournalOptions,
   getInvoiceOptions,
   getInvoicesOptions,
-  getInvoicesRevenueOptions,
-  getInvoicesTotalAmountOptions,
-  getLatestInvoicesOptions,
   getNextInvoiceNumberOptions,
   getPublicInvoiceOptions,
   getPublicInvoiceSigningOptions,
@@ -83,15 +80,6 @@ const invoiceRoutes = (
   fastify.put('/api/:userId/invoices/:id/status', updateInvoiceStatusOptions);
 
   fastify.delete('/api/:userId/invoices/:id', deleteInvoiceOptions);
-
-  fastify.get(
-    '/api/:userId/invoices/total-amount',
-    getInvoicesTotalAmountOptions
-  );
-
-  fastify.get('/api/:userId/invoices/revenue', getInvoicesRevenueOptions);
-
-  fastify.get('/api/:userId/invoices/latest', getLatestInvoicesOptions);
 
   fastify.post('/api/:userId/invoices/:id/send-email', sendInvoiceEmailOptions);
   fastify.post('/api/:userId/invoices/:id/email-deliveries/:deliveryId/recover', recoverInvoiceEmailOptions);

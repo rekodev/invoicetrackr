@@ -299,11 +299,12 @@ export const findInvoiceByInvoiceId = async (
 
 export const getInvoicesFromDb = async (
   userId: number
-): Promise<Array<InvoiceFromDb & { paidAmount: string | null; outstandingAmount: string | null }>> => {
+): Promise<Array<InvoiceFromDb & { paidAmount: string | null; outstandingAmount: string | null; paymentDates: string[] }>> => {
   const paymentsByInvoice = getPaymentsByInvoiceQuery(userId);
   const invoices = await db
     .select({
       paidAmount: sql<string>`coalesce(${paymentsByInvoice.paidAmount}, '0.00')`,
+      paymentDates: sql<string[]>`coalesce(${paymentsByInvoice.paymentDates}, '{}'::text[])`,
       id: invoicesTable.id,
       clientId: invoicesTable.clientId,
       invoiceId: invoicesTable.invoiceId,
@@ -418,6 +419,7 @@ export const getInvoicesFromDb = async (
     .groupBy(
       invoicesTable.id,
       paymentsByInvoice.paidAmount,
+      paymentsByInvoice.paymentDates,
       invoiceSendersTable.id,
       invoiceReceiversTable.id,
       invoiceBankingInformationTable.id,
@@ -427,6 +429,7 @@ export const getInvoicesFromDb = async (
 
   return invoices.map((invoice) => ({
     ...normalizeInvoiceFromDb(invoice),
+    paymentDates: invoice.paymentDates,
     ...(invoice.lifecycleStatus === 'issued'
       ? summarizeInvoicePayments(invoice.totalAmount, [{ amount: invoice.paidAmount }])
       : { paidAmount: null, outstandingAmount: null })
@@ -1570,102 +1573,6 @@ export const deleteInvoiceFromDb = async (
     .returning({ id: invoicesTable.id });
 
   return invoices.at(0);
-};
-
-export const getInvoicesTotalAmountFromDb = async (userId: number) => {
-  const invoices = await db
-    .select({
-      subtotalAmount: invoicesTable.subtotalAmount,
-      vatAmount: invoicesTable.vatAmount,
-      totalAmount: invoicesTable.totalAmount,
-      paidAmount: sql<string>`COALESCE(SUM(${paymentAllocationsTable.amount}) FILTER (WHERE ${paymentsTable.id} IS NOT NULL), 0)::numeric(12,2)`,
-      status: invoicesTable.status
-    })
-    .from(invoicesTable)
-    .leftJoin(
-      paymentAllocationsTable,
-      and(
-        eq(paymentAllocationsTable.invoiceId, invoicesTable.id),
-        eq(paymentAllocationsTable.userId, userId)
-      )
-    )
-    .leftJoin(
-      paymentsTable,
-      and(
-        eq(paymentsTable.id, paymentAllocationsTable.paymentId),
-        eq(paymentsTable.userId, userId),
-        isNull(paymentsTable.deletedAt)
-      )
-    )
-    .where(
-      and(
-        eq(invoicesTable.userId, userId),
-        eq(invoicesTable.lifecycleStatus, 'issued')
-      )
-    )
-    .groupBy(invoicesTable.id);
-
-  return invoices;
-};
-
-export const getInvoicesRevenueFromDb = async (userId: number) => {
-  const invoices = await db
-    .select({
-      amount: paymentAllocationsTable.amount,
-      paymentDate: paymentsTable.paymentDate
-    })
-    .from(paymentsTable)
-    .innerJoin(
-      paymentAllocationsTable,
-      and(
-        eq(paymentAllocationsTable.paymentId, paymentsTable.id),
-        eq(paymentAllocationsTable.userId, userId)
-      )
-    )
-    .innerJoin(
-      invoicesTable,
-      and(
-        eq(invoicesTable.id, paymentAllocationsTable.invoiceId),
-        eq(invoicesTable.userId, userId)
-      )
-    )
-    .where(
-      and(
-        eq(paymentsTable.userId, userId),
-        isNull(paymentsTable.deletedAt),
-        eq(invoicesTable.lifecycleStatus, 'issued'),
-        gte(paymentsTable.paymentDate, sql`CURRENT_DATE - INTERVAL '1 year'`)
-      )
-    );
-
-  return invoices;
-};
-
-export const getLatestInvoicesFromDb = async (userId: number) => {
-  const invoices = await db
-    .select({
-      id: invoicesTable.id,
-      subtotalAmount: invoicesTable.subtotalAmount,
-      vatAmount: invoicesTable.vatAmount,
-      totalAmount: invoicesTable.totalAmount,
-      invoiceId: invoicesTable.invoiceId,
-      date: invoicesTable.date,
-      dueDate: invoicesTable.dueDate,
-      status: invoicesTable.status,
-      lifecycleStatus: invoicesTable.lifecycleStatus,
-      name: invoiceReceiversTable.name,
-      email: invoiceReceiversTable.email
-    })
-    .from(invoicesTable)
-    .where(eq(invoicesTable.userId, userId))
-    .leftJoin(
-      invoiceReceiversTable,
-      eq(invoicesTable.receiverId, invoiceReceiversTable.id)
-    )
-    .orderBy(desc(invoicesTable.id))
-    .limit(5);
-
-  return invoices;
 };
 
 export const getIncomeJournalRowsFromDb = async ({

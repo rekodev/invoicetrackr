@@ -3,18 +3,14 @@ import {
   BasicCardSkeleton
 } from './basic-card-skeleton';
 
-export const DashboardCardsSkeleton = () => (
-  <BasicCardGridSkeleton
-    count={4}
-    className="md:grid-cols-2 lg:grid-cols-4"
-    cardClassName="min-h-[122px]"
-  />
+export const MoneyWorkbenchSkeleton = () => (
+  <div aria-hidden="true" className="flex flex-col gap-5">
+    <BasicCardGridSkeleton
+      count={3}
+      className="gap-5 sm:grid-cols-3"
+      cardClassName="min-h-[122px]"
+    />
+    <BasicCardSkeleton className="min-h-[240px]" />
+    <BasicCardSkeleton className="min-h-[448px]" />
+  </div>
 );
-
-export const RevenueChartSkeleton = () => (
-  <BasicCardSkeleton className="min-h-[448px]" />
-);
-
-export function LatestInvoicesSkeleton() {
-  return <BasicCardSkeleton className="min-h-[448px] xl:max-w-lg" />;
-}

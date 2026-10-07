@@ -89,8 +89,8 @@ describe('Invoice Controller', () => {
   describe('GET /api/:userId/invoices', () => {
     it('should return all invoices for a user', async () => {
       vi.mocked(invoiceDb.getInvoicesFromDb).mockResolvedValue([
-        { ...mockInvoiceForDb, paidAmount: '0.00', outstandingAmount: mockInvoiceForDb.totalAmount },
-        { ...mockInvoiceForDb2, paidAmount: '0.00', outstandingAmount: mockInvoiceForDb2.totalAmount }
+        { ...mockInvoiceForDb, paidAmount: '0.00', outstandingAmount: mockInvoiceForDb.totalAmount, paymentDates: [] },
+        { ...mockInvoiceForDb2, paidAmount: '40.00', outstandingAmount: mockInvoiceForDb2.totalAmount, paymentDates: ['2026-04-02'] }
       ]);
 
       const { getInvoices } = invoiceController;
@@ -115,6 +115,7 @@ describe('Invoice Controller', () => {
       expect(body.invoices).toBeDefined();
       expect(Array.isArray(body.invoices)).toBe(true);
       expect(body.invoices.length).toBe(2);
+      expect(body.invoices[1].paymentDates).toEqual(['2026-04-02']);
       expect(invoiceDb.getInvoicesFromDb).toHaveBeenCalledWith(testUserId);
 
       await app.close();
@@ -898,83 +899,6 @@ describe('Invoice Controller', () => {
       const body = JSON.parse(response.body);
       expect(body.message).toBeDefined();
 
-      await app.close();
-    });
-  });
-
-  describe('GET /api/:userId/invoices/total-amount', () => {
-    it('should return total amount and client data', async () => {
-      const mockInvoiceTotals = [
-        {
-          status: 'pending',
-          subtotalAmount: '1000.00',
-          vatAmount: '0.00',
-          totalAmount: '1000.00',
-          paidAmount: '300.00'
-        },
-        {
-          status: 'paid',
-          subtotalAmount: '2000.00',
-          vatAmount: '0.00',
-          totalAmount: '2000.00',
-          paidAmount: '2000.00'
-        }
-      ];
-      const mockClient = clientFactory.build();
-
-      vi.mocked(invoiceDb.getInvoicesTotalAmountFromDb).mockResolvedValue(
-        mockInvoiceTotals
-      );
-      vi.mocked(clientDb.getClientsFromDb).mockResolvedValue([mockClient]);
-
-      const { getInvoicesTotalAmount } = invoiceController;
-
-      const app = await createTestApp((fastifyApp) => {
-        fastifyApp.get(
-          '/api/:userId/invoices/total-amount',
-          {
-            preHandler: mockAuthMiddleware
-          },
-          getInvoicesTotalAmount
-        );
-      });
-
-      const response = await app.inject({
-        method: 'GET',
-        url: `/api/${testUserId}/invoices/total-amount`
-      });
-
-      expect(response.statusCode).toBe(200);
-      const body = JSON.parse(response.body);
-      expect(body).toBeDefined();
-
-      await app.close();
-    });
-  });
-
-  describe('GET /api/:userId/invoices/revenue', () => {
-    it('uses received payment amounts and dates for partial payments', async () => {
-      vi.mocked(invoiceDb.getInvoicesRevenueFromDb).mockResolvedValue([
-        { amount: '40.00', paymentDate: '2026-05-20' },
-        { amount: '60.00', paymentDate: '2026-06-03' }
-      ]);
-
-      const app = await createTestApp((fastifyApp) => {
-        fastifyApp.get(
-          '/api/:userId/invoices/revenue',
-          { preHandler: mockAuthMiddleware },
-          invoiceController.getInvoicesRevenue
-        );
-      });
-      const response = await app.inject({
-        method: 'GET',
-        url: '/api/1/invoices/revenue'
-      });
-      expect(response.statusCode).toBe(200);
-      expect(JSON.parse(response.body).revenueByMonth).toMatchObject({
-        4: 40,
-        5: 60
-      });
       await app.close();
     });
   });

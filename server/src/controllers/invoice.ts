@@ -27,16 +27,13 @@ import { analyticsEvents } from '../analytics/events';
 import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import { appEmailFrom, getAppUrl } from '../config/app';
 import { resend } from '../config/resend';
-import { getClientFromDb, getClientsFromDb } from '../database/client';
+import { getClientFromDb } from '../database/client';
 import {
   deleteInvoiceFromDb,
   findInvoiceByInvoiceId,
   getIncomeJournalRowsFromDb,
   getInvoiceFromDb,
   getInvoicesFromDb,
-  getInvoicesRevenueFromDb,
-  getInvoicesTotalAmountFromDb,
-  getLatestInvoicesFromDb,
   getNextInvoiceNumberFromDb,
   getPublicInvoiceFromDb,
   getPublicInvoiceSigningFromDb,
@@ -927,71 +924,6 @@ export const deleteInvoice = async (
   });
 
   reply.status(200).send({ message: i18n.t('success.invoice.deleted') });
-};
-
-export const getInvoicesTotalAmount = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
-  reply: FastifyReply
-) => {
-  const userId = Number(req.params.userId);
-  const i18n = await useI18n(req);
-  const invoices = await getInvoicesTotalAmountFromDb(userId);
-  const clients = await getClientsFromDb(userId);
-
-  if (!invoices)
-    throw new BadRequestError(i18n.t('error.invoice.unableToRetrieveData'));
-
-  reply.status(200).send({ invoices, totalClients: clients?.length });
-};
-
-export const getInvoicesRevenue = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
-  reply: FastifyReply
-) => {
-  const userId = Number(req.params.userId);
-  const i18n = await useI18n(req);
-  const invoices = await getInvoicesRevenueFromDb(userId);
-
-  if (!invoices)
-    throw new BadRequestError(i18n.t('error.invoice.unableToRetrieveData'));
-
-  const revenueByMonth = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-    6: 0,
-    7: 0,
-    8: 0,
-    9: 0,
-    10: 0,
-    11: 0
-  };
-
-  invoices.forEach((payment) => {
-    const month = Number(payment.paymentDate.slice(5, 7)) - 1;
-    revenueByMonth[month as keyof typeof revenueByMonth] += Number(
-      payment.amount
-    );
-  });
-
-  reply.status(200).send({ revenueByMonth });
-};
-
-export const getLatestInvoices = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
-  reply: FastifyReply
-) => {
-  const userId = Number(req.params.userId);
-  const i18n = await useI18n(req);
-  const invoices = await getLatestInvoicesFromDb(userId);
-
-  if (!invoices)
-    throw new BadRequestError(i18n.t('error.invoice.unableToRetrieveData'));
-
-  reply.status(200).send({ invoices });
 };
 
 export const prepareInvoiceEmailPayload = async (

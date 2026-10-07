@@ -22,19 +22,13 @@ import {
   Spinner,
   toast
 } from '@heroui/react';
-import type {
-  InvoiceListItem,
-  InvoiceWorkspaceResponse
-} from '@invoicetrackr/types';
+import type { InvoiceListItem } from '@invoicetrackr/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useContext, useState, useTransition } from 'react';
 
-import {
-  getInvoiceWorkspaceAction,
-  updateInvoiceStatusAction
-} from '@/lib/actions/invoice';
+import { updateInvoiceStatusAction } from '@/lib/actions/invoice';
 import { captureAnalyticsEvent } from '@/lib/analytics/client';
 import { AnalyticsConsentContext } from '@/lib/analytics/consent-context';
 import { analyticsEvents } from '@/lib/analytics/events';
@@ -42,7 +36,9 @@ import {
   EDIT_INVOICE_PAGE,
   INVOICE_WORKSPACE_PAGE
 } from '@/lib/constants/pages';
+import { useInvoiceWorkspaceLoader } from '@/lib/hooks/invoice/use-invoice-workspace-loader';
 import { downloadInvoice } from '@/lib/utils/download-invoice';
+import { getReminderRecipient } from '@/lib/utils/invoice';
 
 import DeleteInvoiceModal from './delete-invoice-modal';
 import InvoicePaymentDialog from './invoice-payment-dialog';
@@ -74,28 +70,16 @@ export default function InvoiceTableActions({
   const workspace = useTranslations('invoices.workspace');
   const router = useRouter();
   const consent = useContext(AnalyticsConsentContext);
-  const [data, setData] = useState<InvoiceWorkspaceResponse | null>(null);
   const [dialog, setDialog] = useState<Dialog | null>(null);
-  const [error, setError] = useState('');
   const [loading, startLoading] = useTransition();
   const [downloading, startDownload] = useTransition();
   const [pending, startMutation] = useTransition();
   const invoiceId = Number(invoice.id);
-
-  const load = async () => {
-    try {
-      const result = await getInvoiceWorkspaceAction(userId, invoiceId);
-      if (!result.ok) {
-        setError(result.message);
-        return null;
-      }
-      setData(result.data);
-      return result.data;
-    } catch {
-      setError(t('load_failed'));
-      return null;
-    }
-  };
+  const { data, setData, error, setError, load } = useInvoiceWorkspaceLoader({
+    userId,
+    invoiceId,
+    fallbackError: t('load_failed')
+  });
   const close = () => {
     setDialog(null);
     setError('');
@@ -358,9 +342,7 @@ export default function InvoiceTableActions({
           outstandingAmount={data.balance.outstandingAmount}
           recipientEmail={
             dialog === 'reminder'
-              ? data.deliveries.find((delivery) =>
-                  ['sent', 'delivered'].includes(delivery.status)
-                )?.recipient
+              ? getReminderRecipient(data.deliveries)
               : undefined
           }
           onClose={refresh}

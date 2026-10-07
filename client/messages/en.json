@@ -454,46 +454,76 @@
     },
     "dashboard": {
         "cards": {
-            "paid": "Paid",
-            "pending": "Pending",
-            "total_invoices": "Total Invoices",
-            "total_clients": "Total Clients"
-        },
-        "revenue_chart": {
-            "title": "Recent Revenue",
-            "chart_label": "Invoice Revenue by Month",
-            "revenue": "Revenue",
-            "months": {
-                "january": "January",
-                "february": "February",
-                "march": "March",
-                "april": "April",
-                "may": "May",
-                "june": "June",
-                "july": "July",
-                "august": "August",
-                "september": "September",
-                "october": "October",
-                "november": "November",
-                "december": "December"
+            "received_income": "Received Income · {year}",
+            "invoiced": "Invoiced · {year}",
+            "outstanding": "Outstanding · All Open",
+            "a11y": {
+                "view_records": "View records behind {title}"
             }
         },
-        "latest_invoices": {
-            "title": "Latest Invoices",
-            "subtitle": "Most recent activity",
-            "view_all": "View All",
-            "empty_state": {
-                "title": "Create Your First Invoice",
-                "description": "You have no invoices yet. Start by creating one and it will appear here.",
-                "action": "Add New"
+        "attention": {
+            "title": "Needs Attention",
+            "description": "A few things need your attention:",
+            "review": "Review",
+            "drafts": "{count, plural, one {# draft invoice is not issued yet} other {# draft invoices are not issued yet}}",
+            "expenses_missing_documents": "{count, plural, one {# expense this year has no document} other {# expenses this year have no document}}",
+            "overdue_without_email": "{count, plural, one {# overdue invoice has no client email} other {# overdue invoices have no client email}}",
+            "email_unverified": "Verify your email to send payment reminders",
+            "actions": {
+                "drafts": "Review drafts",
+                "overdue_without_email": "View overdue invoices",
+                "expenses_missing_documents": "Review expenses",
+                "email_unverified": "Verify email"
+            }
+        },
+        "overdue": {
+            "title": "Overdue Invoices",
+            "summary": "{count, plural, one {# invoice} other {# invoices}} · {amount} overdue",
+            "view_all": "View all overdue",
+            "columns": {
+                "invoice": "Invoice",
+                "client": "Client",
+                "outstanding": "Outstanding",
+                "due_date": "Due Date",
+                "days_overdue": "Overdue",
+                "actions": "Actions"
             },
-            "statuses": {
-                "draft": "Draft",
-                "paid": "Paid",
-                "pending": "Pending",
-                "overdue": "Overdue",
-                "canceled": "Canceled"
+            "days": "{count, plural, one {# day} other {# days}}",
+            "send_reminder": "Send reminder",
+            "send_reminder_label": "Send reminder for {invoice}",
+            "reminder_unavailable": "Verify your email to send reminders",
+            "load_failed": "Could not load the invoice. Try again.",
+            "no_number": "Unnumbered",
+            "empty": {
+                "title": "Nothing Overdue",
+                "description": "Every issued invoice is paid or still within its due date."
             }
+        },
+        "monthly": {
+            "title": "Money by Month",
+            "subtitle": "Received income and recorded expenses in {year}",
+            "summary": {
+                "expenses": "Expenses",
+                "deductible_expenses": "Deductible Expenses"
+            },
+            "chart_label": "Received income and expenses by month",
+            "columns": {
+                "month": "Month",
+                "income": "Received",
+                "expenses": "Expenses",
+                "net": "Net"
+            },
+            "total": "Total",
+            "a11y": {
+                "income_link": "Invoices paid: {month}",
+                "expenses_link": "Expenses: {month}"
+            }
+        },
+        "empty": {
+            "title": "Your Workbench Is Empty",
+            "description": "Issue an invoice or record an expense, and income, balances, and overdue payments will appear here.",
+            "create_invoice": "Create invoice",
+            "add_expense": "Add expense"
         }
     },
     "invoices": {
@@ -586,6 +616,7 @@
                 "paid": "Paid",
                 "canceled": "Canceled",
                 "pending": "Unpaid",
+                "open": "Open balance",
                 "partial": "Partially paid",
                 "no_payment_due": "No payment due"
             },
@@ -608,7 +639,11 @@
                     "columns_label": "Table Columns"
                 },
                 "all": "All statuses",
-                "overdue_only": "Overdue only"
+                "overdue_only": "Overdue only",
+                "issued_range": "Issued: {range}",
+                "paid_range": "Paid: {range}",
+                "remove_filter": "Remove {filter} filter",
+                "clear_dates": "Clear dates"
             },
             "empty_state": {
                 "title": "You Have No Invoices Yet",
@@ -775,6 +810,7 @@
             "all_categories": "All Categories",
             "all_payment_methods": "All Methods",
             "has_attachment": "Has Document",
+            "deductible_only": "Deductible only",
             "clear": "Clear Filters",
             "clear_short": "Clear",
             "clear_count": "Clear ({count})",
@@ -1004,9 +1040,24 @@
             "page": "Page {page} of {pages}",
             "previous": "Previous",
             "next": "Next",
-            "business_types": { "business": "Business", "individual": "Individual" },
-            "totals": { "invoicedAmount": "Invoiced", "paidAmount": "Received", "outstandingAmount": "Outstanding" },
-            "columns": { "number": "Invoice", "date": "Date", "total": "Total", "received": "Received", "outstanding": "Outstanding", "state": "State", "action": "" },
+            "business_types": {
+                "business": "Business",
+                "individual": "Individual"
+            },
+            "totals": {
+                "invoicedAmount": "Invoiced",
+                "paidAmount": "Received",
+                "outstandingAmount": "Outstanding"
+            },
+            "columns": {
+                "number": "Invoice",
+                "date": "Date",
+                "total": "Total",
+                "received": "Received",
+                "outstanding": "Outstanding",
+                "state": "State",
+                "action": ""
+            },
             "states": {
                 "draft": "Draft",
                 "voided": "Voided",

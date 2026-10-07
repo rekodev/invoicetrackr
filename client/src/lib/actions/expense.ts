@@ -15,13 +15,14 @@ import {
   uploadExpenseAttachment
 } from '@/api/expense';
 
-import { EXPENSE_WORKSPACE_PAGE, EXPENSES_PAGE } from '../constants/pages';
+import { DASHBOARD_PAGE, EXPENSE_WORKSPACE_PAGE, EXPENSES_PAGE } from '../constants/pages';
 import type { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
 
 const revalidateExpense = (expenseId: number) => {
   revalidatePath(EXPENSES_PAGE);
+  revalidatePath(DASHBOARD_PAGE);
   revalidatePath(EXPENSE_WORKSPACE_PAGE(expenseId));
 };
 
@@ -53,6 +54,7 @@ export const addExpenseAction = async ({
   }
 
   revalidatePath(EXPENSES_PAGE);
+  revalidatePath(DASHBOARD_PAGE);
 
   return {
     ok: true,

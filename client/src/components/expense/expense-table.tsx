@@ -115,7 +115,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
   const listParams = new URLSearchParams(searchParams.toString());
   const listState = readExpenseListState(listParams);
   const { filterValue, categoryFilter, paymentMethodFilter, hasAttachmentFilter,
-    dateFrom, dateTo, rowsPerPage, page: requestedPage, sortDescriptor } = listState;
+    deductibleOnly, dateFrom, dateTo, rowsPerPage, page: requestedPage, sortDescriptor } = listState;
   const { column: sortColumn, direction: sortDirection } = sortDescriptor;
   const returnTo = expenseListHref(listParams);
   const updateQuery = (values: Record<string, string | number>) => {
@@ -130,6 +130,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
   const setCategoryFilter = (value: string) => updateQuery({ category: value, page: 1 });
   const setPaymentMethodFilter = (value: string) => updateQuery({ method: value, page: 1 });
   const setHasAttachmentFilter = (value: boolean) => updateQuery({ documents: value ? '1' : '', page: 1 });
+  const setDeductibleOnly = (value: boolean) => updateQuery({ deductible: value ? '1' : '', page: 1 });
   const setDateFrom = (value: string) => updateQuery({ from: value, page: 1 });
   const setDateTo = (value: string) => updateQuery({ to: value, page: 1 });
   const setRowsPerPage = (value: number) => updateQuery({ pageSize: value, page: 1 });
@@ -209,6 +210,13 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
           label: t('filters.has_attachment'),
           onClear: () => setHasAttachmentFilter(false)
         }
+      : null,
+    deductibleOnly
+      ? {
+          key: 'deductible',
+          label: t('filters.deductible_only'),
+          onClear: () => setDeductibleOnly(false)
+        }
       : null
   ].filter(Boolean) as Array<{
     key: string;
@@ -245,6 +253,12 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
       );
     }
 
+    if (deductibleOnly) {
+      filteredExpenses = filteredExpenses.filter(
+        (expense) => Number(expense.deductibleAmount || 0) > 0
+      );
+    }
+
     if (dateFrom) {
       filteredExpenses = filteredExpenses.filter(
         (expense) => expense.expenseDate >= dateFrom
@@ -262,6 +276,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
     categoryFilter,
     dateFrom,
     dateTo,
+    deductibleOnly,
     expenses,
     filterValue,
     hasAttachmentFilter,
@@ -317,7 +332,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
   };
 
   const clearFilters = () => updateQuery({
-    category: 'all', method: 'all', documents: '', from: '', to: '', page: 1
+    category: 'all', method: 'all', documents: '', deductible: '', from: '', to: '', page: 1
   });
 
   const renderTooltip = (content: string, children: ReactElement) => (
@@ -457,8 +472,8 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
   };
 
   return (
-    <section className="flex max-w-full flex-col gap-4 overflow-x-hidden">
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+    <section className="flex max-w-full flex-col gap-5 overflow-x-hidden">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
         <MetricCard
           icon={<ReceiptPercentIcon className="h-4 w-4" />}
           iconVariant="accent"

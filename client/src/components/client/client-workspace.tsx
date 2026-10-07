@@ -86,7 +86,7 @@ export default function ClientWorkspace({ userId, data }: Props) {
         </div>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-3">
         {metrics.map(({ key, icon: Icon, iconVariant }) => (
           <MetricCard
             key={key}
