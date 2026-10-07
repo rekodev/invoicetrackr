@@ -72,7 +72,7 @@ describe('invoice list', () => {
       invoiceId: 'SF010',
       paymentDates: ['2025-12-30']
     };
-    const draft = {
+    const draft: InvoiceListItem = {
       ...invoice,
       id: 11,
       invoiceId: 'SF011',
