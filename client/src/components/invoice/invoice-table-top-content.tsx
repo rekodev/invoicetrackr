@@ -13,20 +13,17 @@ import {
   DropdownMenu,
   DropdownPopover,
   DropdownTrigger,
-  Input,
-  useOverlayState
+  Input
 } from '@heroui/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 
-import { ADD_NEW_INVOICE_PAGE } from '@/lib/constants/pages';
+import { ADD_NEW_INVOICE_PAGE, REPORTS_PAGE } from '@/lib/constants/pages';
 import { capitalize } from '@/lib/utils';
 
-import IncomeJournalExportModal from './income-journal-export-modal';
-
 type Props = {
-  userId: number;
   columns: Array<{ name: string; uid: string; sortable?: boolean }>;
   statusOptions: Array<{ name: string; uid: string }>;
   filterValue: string;
@@ -43,7 +40,6 @@ type Props = {
 };
 
 const InvoiceTableTopContent = ({
-  userId,
   columns,
   statusOptions,
   filterValue,
@@ -60,11 +56,6 @@ const InvoiceTableTopContent = ({
 }: Props) => {
   const t = useTranslations('invoices');
   const router = useRouter();
-  const {
-    isOpen: isIncomeJournalModalOpen,
-    open: openIncomeJournalModal,
-    setOpen: onIncomeJournalModalOpenChange
-  } = useOverlayState();
 
   const totalInvoicesText = invoicesLength
     ? invoicesLength === 1
@@ -189,14 +180,16 @@ const InvoiceTableTopContent = ({
               </DropdownMenu>
             </DropdownPopover>
           </Dropdown>
-          <Button
-            variant="secondary"
-            className="w-full sm:w-auto"
-            onPress={openIncomeJournalModal}
+          <Link
+            href={REPORTS_PAGE}
+            className={buttonVariants({
+              variant: 'secondary',
+              className: 'w-full sm:w-auto'
+            })}
           >
             <DocumentArrowDownIcon className="h-4 w-4" />
-            {t('income_journal.export')}
-          </Button>
+            {t('top_content.journal')}
+          </Link>
           <Button className="w-full sm:w-auto" onPress={handleAddNewInvoice}>
             <PlusIcon className="h-4 w-4" />
             {t('top_content.add_new')}
@@ -218,11 +211,6 @@ const InvoiceTableTopContent = ({
           </select>
         </label>
       </div>
-      <IncomeJournalExportModal
-        userId={userId}
-        isOpen={isIncomeJournalModalOpen}
-        onOpenChange={onIncomeJournalModalOpenChange}
-      />
     </div>
   );
 };

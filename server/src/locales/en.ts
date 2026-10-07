@@ -64,19 +64,36 @@ export default {
       },
       footer: 'This email was sent by InvoiceTrackr',
       copyright: 'InvoiceTrackr. All rights reserved.'
+    }
+  },
+  journal: {
+    filename: 'income-expense-journal',
+    title: 'INCOME AND EXPENSE JOURNAL — %{period}',
+    ownerName: 'Name and surname',
+    certificateNumber: 'Individual activity certificate No.',
+    columns: {
+      index: 'No.',
+      date: 'Date (YYYY-MM-DD)',
+      documentNumber: 'Document No.',
+      incomeDescription: 'Income description (client / service)',
+      income: 'Income (€)',
+      vat: 'VAT (€)',
+      incomeNet: 'Income excl. VAT (€)',
+      expenseDescription: 'Expense description (supplier / purpose)',
+      expenses: 'Expenses (€)',
+      notes: 'Notes'
     },
-    incomeJournal: {
-      filename: 'income-journal',
-      paymentDate: 'Payment date',
-      invoiceDate: 'Invoice date',
-      documentNumber: 'Document number',
-      client: 'Client',
-      clientCode: 'Client code',
-      services: 'Services / goods',
-      subtotal: 'Invoice subtotal (%{currency})',
-      vatTotal: 'Invoice VAT total (%{currency})',
-      grandTotal: 'Invoice total (%{currency})',
-      receivedAmount: 'Received amount (%{currency})'
+    total: 'TOTAL:',
+    netResult: 'NET RESULT (Income − Expenses):',
+    businessUseNote: 'Business use %{percentage}% of €%{total}',
+    summarySheet: 'Summary',
+    summaryColumns: {
+      month: 'Month',
+      income: 'Income (€)',
+      vat: 'VAT (€)',
+      incomeNet: 'Income excl. VAT (€)',
+      expenses: 'Expenses (€)',
+      net: 'Net result (€)'
     }
   },
   validation: {
@@ -104,7 +121,6 @@ export default {
       date: 'Valid date is required',
       dueDate: 'Valid date is required',
       dueDateAfterDate: 'Due date must be after invoice date',
-      incomeJournalDateRange: 'End date must not be before start date',
       status: 'Valid status is required',
       cryptoRetired: 'Choose bank transfer or no payment instructions before saving or issuing this draft.',
       paymentMode: 'Valid payment mode is required',

@@ -70,7 +70,7 @@ export const normalizeExpenseForDb = (expense: ExpenseInput) => {
     vatAmount: normalizeOptionalMoney(expense.vatAmount),
     businessUsePercentage,
     deductibleAmount: calculateDeductibleAmount(
-      totalAmount,
+      eurAmount,
       businessUsePercentage
     ),
     paymentMethod: expense.paymentMethod || null,

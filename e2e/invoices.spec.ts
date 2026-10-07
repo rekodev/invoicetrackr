@@ -1,4 +1,4 @@
-import type { ClientWorkspaceResponse, GetInvoiceResponse, InvoiceWorkspaceResponse } from '../shared/types/src';
+import type { ClientWorkspaceResponse, GetInvoiceResponse, InvoiceWorkspaceResponse, JournalResponse } from '../shared/types/src';
 
 import { getUserByEmailFromDb } from '../server/src/database/user';
 import { expect, test } from './fixtures/test';
@@ -154,11 +154,11 @@ test.describe('invoices', () => {
     await expect(page.getByRole('heading', { name: 'Payments' })).toBeVisible();
     await expect(page.getByText('€50.00')).toHaveCount(2);
     await expect(page.getByText('€300.50')).toBeVisible();
-    const partialExport = await page.request.get(`/api/${user.id}/invoices/income-journal.csv?from=2000-12-31&to=2000-12-31`);
-    expect(partialExport.status()).toBe(200);
-    const partialRows = (await partialExport.text()).split('\n').filter((line) => line.split(',')[2] === `"${number}"`);
-    expect(partialRows).toHaveLength(1);
-    expect(partialRows[0].split(',')[6]).toBe('"50.00"');
+    const journalAmounts = async (year: number) => {
+      const journal: JournalResponse = await (await page.request.get(`/api/${user.id}/journal?year=${year}&month=${year === 2000 ? 12 : 1}`)).json();
+      return journal.rows.filter((row) => row.documentNumber === number).map((row) => row.amount);
+    };
+    expect(await journalAmounts(2000)).toEqual(['50.00']);
     await expect(
       page.getByRole('heading', { name: 'Email history' })
     ).toHaveCount(0);
@@ -198,9 +198,14 @@ test.describe('invoices', () => {
     const clientWorkspace: ClientWorkspaceResponse = await (await page.request.get(`/api/${user.id}/clients/${client.id}/workspace`)).json();
     expect(clientWorkspace.totals).toEqual({ invoicedAmount: '350.50', paidAmount: '350.50', outstandingAmount: '0.00' });
 
-    const report = await page.request.get(`/api/${user.id}/invoices/income-journal.csv?from=2000-12-31&to=2001-01-01`);
-    const rows = (await report.text()).split('\n').filter((line) => line.split(',')[2] === `"${number}"`);
-    expect(rows.map((line) => line.split(',')[6])).toEqual(['"75.00"', '"275.50"']);
+    expect([...await journalAmounts(2000), ...await journalAmounts(2001)]).toEqual(['75.00', '275.50']);
+    await page.goto('/reports?year=2001&month=1');
+    await expect(page.getByRole('heading', { name: 'Income and Expense Journal' })).toBeVisible();
+    await expect(page.getByRole('link', { name: `Open invoice ${number}` })).toBeVisible();
+    const csvExport = await page.request.get('/reports/export?year=2001&month=1&format=csv');
+    expect(csvExport.status()).toBe(200);
+    expect(csvExport.headers()['content-disposition']).toBe('attachment; filename="income-expense-journal-2001-01.csv"');
+    expect(await csvExport.text()).toContain(`"${number}","${invoice.recipientName}`);
 
     await page.goto('/dashboard');
     await expect(page.getByText('Overdue Invoices', { exact: true })).toBeVisible();
@@ -232,8 +237,7 @@ test.describe('invoices', () => {
     await expect(page.getByRole('region', { name: 'Payments' }).getByText('No payments recorded yet.')).toBeVisible();
     await expect(page.getByRole('region', { name: 'Payments' }).getByRole('button', { name: 'Record payment' })).toBeVisible();
     await expect(page.getByText('€350.50')).toBeVisible();
-    const removedReport = await page.request.get(`/api/${user.id}/invoices/income-journal.csv?from=2000-12-31&to=2001-01-01`);
-    expect((await removedReport.text()).split('\n').filter((line) => line.split(',')[2] === `"${number}"`)).toHaveLength(0);
+    expect([...await journalAmounts(2000), ...await journalAmounts(2001)]).toEqual([]);
   });
 
   test('serializes competing payments and refuses another owner’s payment IDs', async ({ invoiceForm, invoicesPage, page }) => {

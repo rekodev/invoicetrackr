@@ -8,10 +8,8 @@ import {
   desc,
   eq,
   gt,
-  gte,
   inArray,
   isNull,
-  lte,
   or,
   sql
 } from 'drizzle-orm';
@@ -34,8 +32,6 @@ import {
   invoiceSendersTable,
   invoiceServicesTable,
   invoicesTable,
-  paymentAllocationsTable,
-  paymentsTable,
   usersTable
 } from './schema';
 
@@ -1573,69 +1569,4 @@ export const deleteInvoiceFromDb = async (
     .returning({ id: invoicesTable.id });
 
   return invoices.at(0);
-};
-
-export const getIncomeJournalRowsFromDb = async ({
-  userId,
-  from,
-  to
-}: {
-  userId: number;
-  from: string;
-  to: string;
-}) => {
-  return db
-    .select({
-      paidAt: paymentsTable.paymentDate,
-      date: invoicesTable.date,
-      invoiceId: invoicesTable.invoiceId,
-      receiverName: invoiceReceiversTable.name,
-      receiverBusinessNumber: invoiceReceiversTable.businessNumber,
-      descriptions: sql<string>`STRING_AGG(${invoiceServicesTable.description}, '; ' ORDER BY ${invoiceServicesTable.id})`,
-      subtotalAmount: invoicesTable.subtotalAmount,
-      vatAmount: invoicesTable.vatAmount,
-      totalAmount: invoicesTable.totalAmount,
-      receivedAmount: paymentAllocationsTable.amount,
-      currency: invoicesTable.currency
-    })
-    .from(paymentsTable)
-    .innerJoin(
-      paymentAllocationsTable,
-      and(
-        eq(paymentAllocationsTable.paymentId, paymentsTable.id),
-        eq(paymentAllocationsTable.userId, userId)
-      )
-    )
-    .innerJoin(
-      invoicesTable,
-      and(
-        eq(invoicesTable.id, paymentAllocationsTable.invoiceId),
-        eq(invoicesTable.userId, userId)
-      )
-    )
-    .innerJoin(
-      invoiceReceiversTable,
-      eq(invoicesTable.receiverId, invoiceReceiversTable.id)
-    )
-    .innerJoin(
-      invoiceServicesTable,
-      eq(invoiceServicesTable.invoiceId, invoicesTable.id)
-    )
-    .where(
-      and(
-        eq(paymentsTable.userId, userId),
-        isNull(paymentsTable.deletedAt),
-        eq(invoicesTable.lifecycleStatus, 'issued'),
-        gte(paymentsTable.paymentDate, from),
-        lte(paymentsTable.paymentDate, to)
-      )
-    )
-    .groupBy(
-      invoicesTable.id,
-      invoiceReceiversTable.id,
-      invoicesTable.currency,
-      paymentsTable.id,
-      paymentAllocationsTable.amount
-    )
-    .orderBy(paymentsTable.paymentDate, invoicesTable.id, paymentsTable.id);
 };

@@ -64,7 +64,7 @@ export const getExpensesByMonthFromDb = async (userId: number, year: number) => 
     .select({
       month,
       total: sql<string>`sum(${expensesTable.eurAmount})::text`,
-      deductible: sql<string>`sum(round(${expensesTable.eurAmount} * ${expensesTable.businessUsePercentage} / 100, 2))::text`
+      deductible: sql<string>`sum(${expensesTable.deductibleAmount})::text`
     })
     .from(expensesTable)
     .where(

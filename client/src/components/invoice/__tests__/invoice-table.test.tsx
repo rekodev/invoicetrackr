@@ -16,7 +16,6 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(window.location.search)
 }));
 afterEach(() => window.history.replaceState(null, '', '/'));
-vi.mock('@/api/invoice', () => ({ getIncomeJournalExport: vi.fn() }));
 vi.mock('@/lib/actions/invoice', () => ({
   getInvoiceWorkspaceAction: vi.fn(),
   updateInvoiceStatusAction: vi.fn(),

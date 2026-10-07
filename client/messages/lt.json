@@ -74,10 +74,66 @@
         }
     },
     "reports": {
-        "empty": {
-            "heading": "Ataskaitos",
-            "title": "Ataskaitos ruošiamos",
-            "description": "Čia rasite pajamų žurnalus, mokesčių prognozes, metines suvestines ir eksportą buhalteriui."
+        "journal": {
+            "heading": "Pajamų ir išlaidų žurnalas",
+            "description": "Pasirinkto laikotarpio gauti mokėjimai ir leidžiamos atskaityti išlaidos, paruošti metinei apskaitai ar buhalteriui.",
+            "filters": {
+                "year": "Metai",
+                "month": "Mėnuo",
+                "all_months": "Visi mėnesiai"
+            },
+            "cards": {
+                "income": "Gautos pajamos · {period}",
+                "expenses": "Atskaitomos išlaidos · {period}",
+                "net": "Grynasis rezultatas · {period}"
+            },
+            "export": {
+                "csv": "Eksportuoti CSV",
+                "xlsx": "Eksportuoti XLSX"
+            },
+            "table": {
+                "title": "Žurnalo įrašai · {count}",
+                "subtitle": "Pajamos pagal apmokėjimo datą, išlaidos pagal išlaidų datą",
+                "columns": {
+                    "date": "Data",
+                    "document": "Dokumentas",
+                    "type": "Tipas",
+                    "description": "Aprašymas",
+                    "income": "Pajamos",
+                    "vat": "PVM",
+                    "expenses": "Išlaidos"
+                },
+                "type": {
+                    "income": "Pajamos",
+                    "expense": "Išlaidos"
+                },
+                "no_document": "Be numerio",
+                "business_use": "Veiklai {percentage}% iš {amount}",
+                "total": "Iš viso"
+            },
+            "empty": {
+                "title": "Šiuo laikotarpiu įrašų nėra",
+                "description": "Užregistruokite mokėjimus išrašytoms sąskaitoms arba pridėkite išlaidų, ir jos atsiras žurnale.",
+                "create_invoice": "Sukurti sąskaitą",
+                "add_expense": "Pridėti išlaidas"
+            },
+            "guide": {
+                "title": "Kaip naudotis žurnalu",
+                "subtitle": "Ką kiekvienas stulpelis reiškia metinei apskaitai",
+                "items": {
+                    "income": "Pajamos registruojamos mokėjimo gavimo dieną, o ne sąskaitos datą. Daliniai mokėjimai rodomi kaip atskiri įrašai.",
+                    "vat": "PVM – tai sąskaitos PVM dalis, tenkanti kiekvienam mokėjimui. Jei nesate PVM mokėtojas, ji visada lygi nuliui.",
+                    "expenses": "Išlaidos rodomos atskaitoma suma eurais: suma eurais, padauginta iš veiklai tenkančios dalies. Kai atskaitoma tik dalis, šalia nurodoma visa suma.",
+                    "declaration": "Pajamų ir išlaidų sumas naudokite metinei pajamų deklaracijai (GPM311) arba perduokite eksportą buhalteriui. InvoiceTrackr nieko neteikia VMI.",
+                    "formats": "XLSX failas atitinka įprastą žurnalo formą ir turi mėnesių suvestinės lapą. CSV faile tie patys stulpeliai, tinkami importuoti į kitas programas.",
+                    "sources": "Saugokite sąskaitas ir išlaidų dokumentus. Kiekvienas įrašas veda į įrašą, iš kurio jis sudarytas."
+                }
+            },
+            "a11y": {
+                "open_invoice": "Atidaryti sąskaitą {number}",
+                "open_expense": "Atidaryti išlaidas: {supplier}",
+                "export": "Eksporto parinktys"
+            }
         }
     },
     "general_error": "Ajajai! Kažkas negerai...",
@@ -516,8 +572,10 @@
             "total": "Iš viso",
             "a11y": {
                 "income_link": "Apmokėtos sąskaitos: {month}",
-                "expenses_link": "Išlaidos: {month}"
-            }
+                "expenses_link": "Išlaidos: {month}",
+                "journal_link": "Žurnalas: {month}"
+            },
+            "journal": "Atidaryti žurnalą"
         },
         "empty": {
             "title": "Kol kas nėra duomenų",
@@ -668,15 +726,8 @@
             "search_placeholder": "Ieškoti pagal sąskaitos faktūros ID...",
             "add_new": "Pridėti naują",
             "total_singular": "Viso 1 sąskaita faktūra",
-            "total_plural": "Viso {count} sąskaitų faktūrų"
-        },
-        "income_journal": {
-            "title": "Eksportuoti pajamų žurnalą",
-            "description": "CSV faile bus įtraukti pasirinktu laikotarpiu gauti mokėjimai, įskaitant dalinius. Kiekviename įraše naudojama mokėjimo data ir gauta suma.",
-            "from": "Gauta nuo",
-            "to": "Gauta iki",
-            "export": "Eksportuoti CSV",
-            "cancel": "Atšaukti"
+            "total_plural": "Viso {count} sąskaitų faktūrų",
+            "journal": "Pajamų žurnalas"
         },
         "bottom_content": {
             "previous": "Ankstesnis",
