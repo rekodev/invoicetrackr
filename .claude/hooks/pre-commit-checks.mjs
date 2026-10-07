@@ -29,12 +29,18 @@ const command = readCommand();
 if (!manualRun && !/\bgit\b[^|;&]*\bcommit\b/.test(command)) process.exit(0);
 if (/--dry-run|\s-h\b|--help/.test(command)) process.exit(0);
 
-const includesWorkingTree = /\s(-[a-zA-Z]*a[a-zA-Z]*|--all)\b/.test(command);
+const includesWorkingTree =
+  manualRun ||
+  /\bgit\b[^|;&]*\badd\b/.test(command) ||
+  /\bcommit\b[^|;&]*\s(-[a-zA-Z]*a[a-zA-Z]*|--all)\b/.test(command);
 const changedFiles = [
   ...new Set([
     ...git(['diff', '--cached', '--name-only', '--diff-filter=ACMR']).split('\n'),
     ...(includesWorkingTree
-      ? git(['diff', '--name-only', '--diff-filter=ACMR']).split('\n')
+      ? [
+          ...git(['diff', '--name-only', '--diff-filter=ACMR']).split('\n'),
+          ...git(['ls-files', '--others', '--exclude-standard']).split('\n')
+        ]
       : [])
   ])
 ].filter(Boolean);
