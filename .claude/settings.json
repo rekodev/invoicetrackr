@@ -11,6 +11,18 @@
             "statusMessage": "Checking for new comments"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit*)",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-commit-checks.mjs\"",
+            "timeout": 600,
+            "statusMessage": "Typechecking and linting staged changes"
+          }
+        ]
       }
     ]
   }

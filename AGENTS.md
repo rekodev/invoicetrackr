@@ -23,6 +23,7 @@ MVP non-goals: MB/UAB/company workflows, verslo liudijimas, payroll, inventory, 
 - Mutations go through server actions, not direct API calls from components.
 - UI reuses existing patterns (cards, section headers, tables, chips, alerts, tooltips) before inventing new ones; see the `frontend` skill's pattern catalog.
 - Never edit production secrets or point local commands at the production database.
+- Commits made through Claude Code run `.claude/hooks/pre-commit-checks.mjs`. It typechecks the affected packages and lints the staged files, and skips both if they already passed for the same content. Run it ahead of time with `node .claude/hooks/pre-commit-checks.mjs --run`. If it blocks a commit, fix the reported errors and retry. Tests are left to CI.
 
 ## Skills
 
