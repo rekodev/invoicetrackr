@@ -130,7 +130,8 @@ export const updateClientResponseSchema = z.object({
 export const getInvoicesResponseSchema = z.object({
   invoices: z.array(authenticatedInvoiceBodySchema.safeExtend({
     paidAmount: z.string().nullable(),
-    outstandingAmount: z.string().nullable()
+    outstandingAmount: z.string().nullable(),
+    paymentDates: z.array(z.string())
   }))
 });
 
@@ -254,37 +255,6 @@ export const getNextInvoiceNumberResponseSchema = z.object({
   nextNumber: z.number()
 });
 
-export const getInvoicesTotalAmountResponseSchema = z.object({
-  invoices: z.array(
-    z.object({
-      totalAmount: z.string(),
-      paidAmount: z.string(),
-      status: z.string()
-    })
-  ),
-  totalClients: z.number()
-});
-
-export const getInvoicesRevenueResponseSchema = z.object({
-  revenueByMonth: z.record(z.string(), z.number())
-});
-
-export const getLatestInvoicesResponseSchema = z.object({
-  invoices: z.array(
-    z.object({
-      id: z.number(),
-      invoiceId: z.string().nullable(),
-      totalAmount: z.string(),
-      date: z.string(),
-      dueDate: z.string(),
-      status: z.string(),
-      lifecycleStatus: z.string(),
-      name: z.string(),
-      email: z.string()
-    })
-  )
-});
-
 // Contact response schema
 export const postContactResponseSchema = messageResponseSchema;
 
@@ -402,15 +372,6 @@ export type UpdateInvoiceResponse = z.infer<typeof updateInvoiceResponseSchema>;
 export type SignInvoiceResponse = z.infer<typeof signInvoiceResponseSchema>;
 export type GetNextInvoiceNumberResponse = z.infer<
   typeof getNextInvoiceNumberResponseSchema
->;
-export type GetInvoicesTotalAmountResponse = z.infer<
-  typeof getInvoicesTotalAmountResponseSchema
->;
-export type GetInvoicesRevenueResponse = z.infer<
-  typeof getInvoicesRevenueResponseSchema
->;
-export type GetLatestInvoicesResponse = z.infer<
-  typeof getLatestInvoicesResponseSchema
 >;
 export type UpdateInvoiceStatusResponse = MessageResponse;
 export type DeleteInvoiceResponse = MessageResponse;

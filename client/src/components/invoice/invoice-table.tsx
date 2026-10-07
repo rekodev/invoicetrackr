@@ -1,13 +1,21 @@
 'use client';
 
-import { Table } from '@heroui/react';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import { Button, Chip, Table } from '@heroui/react';
 import type { InvoiceListItem } from '@invoicetrackr/types';
-import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
+import { useEffect, useMemo, useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
 import type { SortDescriptor } from '@/lib/types/table';
-import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
+import { formatLocalizedDate } from '@/lib/utils/date';
+import { getInvoicePaymentStatus } from '@/lib/utils/invoice';
+import {
+  matchesInvoiceListFilters,
+  readInvoiceListState,
+  writeInvoiceListState
+} from '@/lib/utils/invoice-navigation';
 
 import InvoiceTableBottomContent from './invoice-table-bottom-content';
 import InvoiceTableCell from './invoice-table-cell';
@@ -27,6 +35,11 @@ type Props = { invoices: Array<InvoiceListItem>; userId: number; isEmailVerified
 
 export default function InvoiceTable({ invoices, userId, isEmailVerified = false, preferredLanguage = 'lt' }: Props) {
   const t = useTranslations('invoices.table');
+  const locale = useLocale();
+  const searchParams = useSearchParams();
+  const [initialState] = useState(() =>
+    readInvoiceListState(new URLSearchParams(searchParams?.toString()))
+  );
   const columns = useMemo(
     () => [
       { name: t('columns.id'), uid: 'id', sortable: true },
@@ -45,18 +58,27 @@ export default function InvoiceTable({ invoices, userId, isEmailVerified = false
   );
   const statusOptions = [
     { name: t('filters.all'), uid: 'all' },
+    { name: t('status.open'), uid: 'open' },
     { name: t('status.partial'), uid: 'partial' },
     { name: t('status.no_payment_due'), uid: 'no_payment_due' },
     { name: t('status.paid'), uid: 'paid' },
     { name: t('status.canceled'), uid: 'canceled' },
     { name: t('status.pending'), uid: 'pending' }
   ];
-  const [filterValue, setFilterValue] = useState('');
+  const [filterValue, setFilterValue] = useState(initialState.filterValue);
   const [visibleColumns, setVisibleColumns] = useState<Set<string> | 'all'>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [overdueOnly, setOverdueOnly] = useState(false);
+  const [statusFilter, setStatusFilter] = useState(initialState.statusFilter);
+  const [overdueOnly, setOverdueOnly] = useState(initialState.overdueOnly);
+  const [issuedRange, setIssuedRange] = useState({
+    from: initialState.issuedFrom,
+    to: initialState.issuedTo
+  });
+  const [paidRange, setPaidRange] = useState({
+    from: initialState.paidFrom,
+    to: initialState.paidTo
+  });
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'date',
@@ -67,15 +89,42 @@ export default function InvoiceTable({ invoices, userId, isEmailVerified = false
     visibleColumns === 'all'
       ? columns
       : columns.filter((column) => visibleColumns.has(column.uid));
-  const filtered = invoices.filter(
-    (invoice) =>
-      (!filterValue ||
-        `${invoice.invoiceId || ''} ${invoice.receiver.name}`
-          .toLowerCase()
-          .includes(filterValue.toLowerCase())) &&
-      (statusFilter === 'all' ||
-        (statusFilter === 'canceled' ? invoice.lifecycleStatus === 'voided' : getInvoicePaymentStatus(invoice) === statusFilter)) &&
-      (!overdueOnly || getInvoiceDueStatus(invoice).isPastDue)
+  const filters = {
+    filterValue,
+    statusFilter,
+    overdueOnly,
+    issuedFrom: issuedRange.from,
+    issuedTo: issuedRange.to,
+    paidFrom: paidRange.from,
+    paidTo: paidRange.to
+  };
+  const listHref = writeInvoiceListState(filters);
+  useEffect(() => {
+    if (`${window.location.pathname}${window.location.search}` !== listHref)
+      window.history.replaceState(null, '', listHref);
+  }, [listHref]);
+  const formatRange = (range: { from: string; to: string }) =>
+    [range.from, range.to]
+      .map((date) => (date ? formatLocalizedDate(date, locale) : '…'))
+      .join(' – ');
+  const rangeFilters = [
+    issuedRange.from || issuedRange.to
+      ? {
+          key: 'issued',
+          label: t('filters.issued_range', { range: formatRange(issuedRange) }),
+          onClear: () => setIssuedRange({ from: '', to: '' })
+        }
+      : null,
+    paidRange.from || paidRange.to
+      ? {
+          key: 'paid',
+          label: t('filters.paid_range', { range: formatRange(paidRange) }),
+          onClear: () => setPaidRange({ from: '', to: '' })
+        }
+      : null
+  ].filter((filter) => filter !== null);
+  const filtered = invoices.filter((invoice) =>
+    matchesInvoiceListFilters(invoice, filters)
   );
   const sorted = filtered.toSorted((a, b) => {
     const field = sortDescriptor.column;
@@ -113,6 +162,36 @@ export default function InvoiceTable({ invoices, userId, isEmailVerified = false
         setRowsPerPage={setRowsPerPage}
         invoicesLength={invoices.length}
       />
+      {rangeFilters.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2">
+          {rangeFilters.map((filter) => (
+            <Chip key={filter.key} color="accent" variant="soft" className="gap-1">
+              <span>{filter.label}</span>
+              <button
+                type="button"
+                aria-label={t('filters.remove_filter', { filter: filter.label })}
+                className="hover:text-foreground"
+                onClick={() => {
+                  filter.onClear();
+                  setPage(1);
+                }}
+              >
+                <XMarkIcon className="h-3.5 w-3.5" />
+              </button>
+            </Chip>
+          ))}
+          <Button
+            variant="ghost"
+            onPress={() => {
+              setIssuedRange({ from: '', to: '' });
+              setPaidRange({ from: '', to: '' });
+              setPage(1);
+            }}
+          >
+            {t('filters.clear_dates')}
+          </Button>
+        </div>
+      ) : null}
       <Table variant="secondary">
         <Table.ScrollContainer className="w-full max-w-full overflow-x-auto">
           <Table.Content

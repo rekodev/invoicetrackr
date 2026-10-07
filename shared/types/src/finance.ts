@@ -1,6 +1,6 @@
 import z from 'zod/v4';
 
-const moneySchema = z.string().regex(/^\d+(?:\.\d{1,2})?$/);
+export const moneySchema = z.string().regex(/^\d+(?:\.\d{1,2})?$/);
 const isoCurrencySchema = z.string().length(3).transform((value) => value.toLowerCase());
 
 export const businessProfileSchema = z.object({

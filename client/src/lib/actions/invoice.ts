@@ -21,6 +21,7 @@ import {
 
 import {
   CLIENTS_PAGE,
+  DASHBOARD_PAGE,
   EDIT_INVOICE_PAGE,
   INVOICE_WORKSPACE_PAGE,
   INVOICES_PAGE
@@ -91,6 +92,7 @@ export const addInvoiceAction = async ({
   }
 
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(DASHBOARD_PAGE);
   revalidatePath(CLIENTS_PAGE, 'layout');
 
   return { ok: true, message: response.data.message };
@@ -115,6 +117,7 @@ export const updateInvoiceAction = async ({
 
   revalidatePath(EDIT_INVOICE_PAGE(Number(invoiceData.id)));
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(DASHBOARD_PAGE);
   revalidatePath(INVOICE_WORKSPACE_PAGE(Number(invoiceData.id)));
   revalidatePath(CLIENTS_PAGE, 'layout');
 
@@ -141,6 +144,7 @@ export const updateInvoiceStatusAction = async ({
   }
 
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(DASHBOARD_PAGE);
   revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
   revalidatePath(CLIENTS_PAGE, 'layout');
 
@@ -150,6 +154,7 @@ export const updateInvoiceStatusAction = async ({
 export const issueInvoiceAction = async (userId: number, invoiceId: number) => {
   const response = await issueInvoice(userId, invoiceId);
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(DASHBOARD_PAGE);
   revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
   revalidatePath(CLIENTS_PAGE, 'layout');
   return isResponseError(response)
@@ -174,7 +179,7 @@ export const saveInvoicePaymentAction = async ({
   // A failed response may arrive after the receipt was committed.
   revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
   revalidatePath(INVOICES_PAGE);
-  revalidatePath('/dashboard');
+  revalidatePath(DASHBOARD_PAGE);
   revalidatePath(CLIENTS_PAGE, 'layout');
   if (isResponseError(response))
     return {
@@ -196,7 +201,7 @@ export const removeInvoicePaymentAction = async (
     return { ok: false, message: response.data.message };
   revalidatePath(INVOICE_WORKSPACE_PAGE(invoiceId));
   revalidatePath(INVOICES_PAGE);
-  revalidatePath('/dashboard');
+  revalidatePath(DASHBOARD_PAGE);
   revalidatePath(CLIENTS_PAGE, 'layout');
   return { ok: true, message: response.data.message };
 };
@@ -214,6 +219,7 @@ export const createRecipientDetailsRequestAction = async (
     sendEmail
   );
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(DASHBOARD_PAGE);
   return isResponseError(response)
     ? { ok: false, message: response.data.message }
     : {
@@ -240,6 +246,7 @@ export const deleteInvoiceAction = async ({
   }
 
   revalidatePath(INVOICES_PAGE);
+  revalidatePath(DASHBOARD_PAGE);
   revalidatePath(CLIENTS_PAGE, 'layout');
 
   return { ok: true, message: response.data.message };

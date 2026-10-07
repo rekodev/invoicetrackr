@@ -26,7 +26,8 @@ export class PaymentExceedsBalanceError extends Error {
 export const getPaymentsByInvoiceQuery = (userId: number) => db
   .select({
     invoiceId: paymentAllocationsTable.invoiceId,
-    paidAmount: sql<string>`coalesce(sum(${paymentAllocationsTable.amount}), 0)::text`.as('paid_amount')
+    paidAmount: sql<string>`coalesce(sum(${paymentAllocationsTable.amount}), 0)::text`.as('paid_amount'),
+    paymentDates: sql<string[]>`array_agg(distinct ${paymentsTable.paymentDate}::text order by ${paymentsTable.paymentDate}::text)`.as('payment_dates')
   })
   .from(paymentAllocationsTable)
   .innerJoin(paymentsTable, and(
@@ -38,7 +39,7 @@ export const getPaymentsByInvoiceQuery = (userId: number) => db
   .groupBy(paymentAllocationsTable.invoiceId)
   .as('payments_by_invoice');
 
-const todayInLithuania = () => {
+export const todayInLithuania = () => {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Europe/Vilnius',
     year: 'numeric',

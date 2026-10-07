@@ -4,7 +4,7 @@ import type {
 } from '@invoicetrackr/types';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { getInvoiceWorkspaceAction } from '@/lib/actions/invoice';
 import { withIntl } from '@/test/with-intl';
@@ -12,8 +12,10 @@ import { withIntl } from '@/test/with-intl';
 import InvoiceTable from '../invoice-table';
 
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() })
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(window.location.search)
 }));
+afterEach(() => window.history.replaceState(null, '', '/'));
 vi.mock('@/api/invoice', () => ({ getIncomeJournalExport: vi.fn() }));
 vi.mock('@/lib/actions/invoice', () => ({
   getInvoiceWorkspaceAction: vi.fn(),
@@ -37,7 +39,8 @@ const invoice = {
   date: '2026-09-20',
   dueDate: '2026-10-20',
   lifecycleStatus: 'issued',
-  status: 'pending'
+  status: 'pending',
+  paymentDates: ['2026-09-25']
 } as InvoiceListItem;
 
 describe('invoice list', () => {
@@ -60,6 +63,49 @@ describe('invoice list', () => {
     expect(
       screen.queryByRole('button', { name: 'Record payment' })
     ).not.toBeInTheDocument();
+  });
+
+  it('restores dashboard filters from the URL, shows them as chips, and keeps the URL in sync', async () => {
+    const paidLastYear = {
+      ...invoice,
+      id: 10,
+      invoiceId: 'SF010',
+      paymentDates: ['2025-12-30']
+    };
+    const draft = {
+      ...invoice,
+      id: 11,
+      invoiceId: 'SF011',
+      lifecycleStatus: 'draft',
+      paidAmount: null,
+      outstandingAmount: null,
+      paymentDates: []
+    };
+    window.history.replaceState(
+      null,
+      '',
+      '/invoices?status=open&paidFrom=2026-01-01&paidTo=2026-12-31'
+    );
+    render(
+      withIntl(<InvoiceTable invoices={[invoice, paidLastYear, draft]} userId={1} />)
+    );
+
+    expect(screen.getByRole('link', { name: 'SF007' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'SF010' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'SF011' })).not.toBeInTheDocument();
+    expect(screen.getByText('Paid: Jan 1, 2026 – Dec 31, 2026')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Overdue only' }));
+    expect(window.location.search).toBe(
+      '?status=open&overdue=1&paidFrom=2026-01-01&paidTo=2026-12-31'
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: 'Remove Paid: Jan 1, 2026 – Dec 31, 2026 filter'
+      })
+    );
+    expect(window.location.search).toBe('?status=open&overdue=1');
   });
 
   it('loads issued actions on demand and hides cancel when receipts exist', async () => {

@@ -124,7 +124,7 @@ test.describe('invoices', () => {
     const { client } = await clientResponse.json();
     const draft: GetInvoiceResponse = await (await page.request.get(endpoint)).json();
     expect((await page.request.put(endpoint, {
-      data: { ...draft.invoice, clientId: client.id }
+      data: { ...draft.invoice, clientId: client.id, date: '2000-12-01', dueDate: '2000-12-15' }
     })).status()).toBe(200);
     await page.reload();
 
@@ -137,6 +137,11 @@ test.describe('invoices', () => {
     await expect(
       page.getByRole('button', { name: 'Record payment' })
     ).toBeVisible();
+    const number = await page.getByRole('heading', { name: /^SF\d+/ }).textContent();
+    await page.goto('/dashboard');
+    await expect(page.getByRole('link', { name: number!, exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: `Send reminder for ${number}` })).toBeVisible();
+    await page.goto(workspaceUrl);
     await page.getByRole('button', { name: 'Record payment' }).click();
     const paymentDialog = page.getByRole('dialog', { name: 'Record payment' });
     await expect(paymentDialog).toBeVisible();
@@ -151,7 +156,6 @@ test.describe('invoices', () => {
     await expect(page.getByText('€300.50')).toBeVisible();
     const partialExport = await page.request.get(`/api/${user.id}/invoices/income-journal.csv?from=2000-12-31&to=2000-12-31`);
     expect(partialExport.status()).toBe(200);
-    const number = await page.getByRole('heading', { name: /^SF\d+/ }).textContent();
     const partialRows = (await partialExport.text()).split('\n').filter((line) => line.split(',')[2] === `"${number}"`);
     expect(partialRows).toHaveLength(1);
     expect(partialRows[0].split(',')[6]).toBe('"50.00"');
@@ -197,6 +201,10 @@ test.describe('invoices', () => {
     const report = await page.request.get(`/api/${user.id}/invoices/income-journal.csv?from=2000-12-31&to=2001-01-01`);
     const rows = (await report.text()).split('\n').filter((line) => line.split(',')[2] === `"${number}"`);
     expect(rows.map((line) => line.split(',')[6])).toEqual(['"75.00"', '"275.50"']);
+
+    await page.goto('/dashboard');
+    await expect(page.getByText('Overdue invoices', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: `Send reminder for ${number}` })).toHaveCount(0);
 
     await page.goto('/invoices');
     await expect(invoicesPage.rowFor(invoice.recipientName)).toContainText('€350.50');

@@ -1,35 +1,22 @@
 import { Suspense } from 'react';
 
 import { auth } from '@/auth';
-import DashboardCards from '@/components/dashboard/dashboard-cards';
-import LatestInvoices from '@/components/dashboard/latest-invoices';
-import RevenueChart from '@/components/dashboard/revenue-chart';
-import {
-  DashboardCardsSkeleton,
-  LatestInvoicesSkeleton,
-  RevenueChartSkeleton
-} from '@/components/ui/skeletons/dashboard-skeleton';
+import MoneyWorkbench from '@/components/dashboard/money-workbench';
+import { MoneyWorkbenchSkeleton } from '@/components/ui/skeletons/dashboard-skeleton';
 
 const DashboardPage = async () => {
   const session = await auth();
 
   if (!session?.user?.id) return null;
 
-  const userId = Number(session.user.id);
-
   return (
-    <main className="flex flex-col gap-6">
-      <Suspense fallback={<DashboardCardsSkeleton />}>
-        <DashboardCards userId={userId} currency={session.user.currency} />
+    <main className="flex flex-col gap-5">
+      <Suspense fallback={<MoneyWorkbenchSkeleton />}>
+        <MoneyWorkbench
+          userId={Number(session.user.id)}
+          isEmailVerified={Boolean(session.user.emailVerifiedAt)}
+        />
       </Suspense>
-      <section className="flex flex-col gap-12 lg:gap-6 xl:flex-row">
-        <Suspense fallback={<RevenueChartSkeleton />}>
-          <RevenueChart userId={userId} />
-        </Suspense>
-        <Suspense fallback={<LatestInvoicesSkeleton />}>
-          <LatestInvoices userId={userId} currency={session.user.currency} />
-        </Suspense>
-      </section>
     </main>
   );
 };

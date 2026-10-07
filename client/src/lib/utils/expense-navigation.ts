@@ -21,6 +21,7 @@ export const readExpenseListState = (params: URLSearchParams) => {
     categoryFilter: EXPENSE_CATEGORIES.some((item) => item === category) ? category : 'all',
     paymentMethodFilter: EXPENSE_PAYMENT_METHODS.some((item) => item === method) ? method : 'all',
     hasAttachmentFilter: params.get('documents') === '1',
+    deductibleOnly: params.get('deductible') === '1',
     dateFrom: date('from'),
     dateTo: date('to'),
     page: positiveInteger('page', 1),
