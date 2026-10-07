@@ -25,7 +25,6 @@ const buildExpensePayload = (
   category: 'software',
   currency: DEFAULT_CURRENCY,
   totalAmount: '100.00',
-  eurAmount: '100.00',
   vatAmount: '21.00',
   businessUsePercentage: '50',
   paymentMethod: 'card',

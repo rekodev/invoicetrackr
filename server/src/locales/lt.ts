@@ -86,7 +86,7 @@ export default {
       notes: 'Pastabos'
     },
     total: 'IŠ VISO:',
-    netResult: 'GRYNASIS REZULTATAS (Pajamos − Išlaidos):',
+    netResult: 'GRYNASIS REZULTATAS (Pajamos be PVM − Išlaidos):',
     businessUseNote: 'Veiklai %{percentage}% iš %{total} €',
     summarySheet: 'Suvestinė',
     summaryColumns: {

@@ -91,6 +91,10 @@
                 "csv": "Eksportuoti CSV",
                 "xlsx": "Eksportuoti XLSX"
             },
+            "export_error": {
+                "title": "Eksportuoti nepavyko",
+                "description": "Nepavyko paruošti žurnalo failo. Bandykite dar kartą, o jei nepavyks – prisijunkite iš naujo."
+            },
             "table": {
                 "title": "Žurnalo įrašai · {count}",
                 "subtitle": "Pajamos pagal apmokėjimo datą, išlaidos pagal išlaidų datą",
@@ -122,7 +126,7 @@
                 "subtitle": "Ką kiekvienas stulpelis reiškia metinei apskaitai",
                 "items": {
                     "income": "Pajamos registruojamos mokėjimo gavimo dieną, o ne sąskaitos datą. Daliniai mokėjimai rodomi kaip atskiri įrašai.",
-                    "vat": "PVM – tai sąskaitos PVM dalis, tenkanti kiekvienam mokėjimui. Jei nesate PVM mokėtojas, ji visada lygi nuliui.",
+                    "vat": "PVM – tai sąskaitos PVM dalis, tenkanti kiekvienam mokėjimui. Jei nesate PVM mokėtojas, ji visada lygi nuliui. Grynasis rezultatas skaičiuojamas nuo pajamų be PVM, kaip ir metinėje deklaracijoje.",
                     "expenses": "Išlaidos rodomos atskaitoma suma eurais: suma eurais, padauginta iš veiklai tenkančios dalies. Kai atskaitoma tik dalis, šalia nurodoma visa suma.",
                     "declaration": "Pajamų ir išlaidų sumas naudokite metinei pajamų deklaracijai (GPM311) arba perduokite eksportą buhalteriui. InvoiceTrackr nieko neteikia VMI.",
                     "formats": "XLSX failas atitinka įprastą žurnalo formą ir turi mėnesių suvestinės lapą. CSV faile tie patys stulpeliai, tinkami importuoti į kitas programas.",

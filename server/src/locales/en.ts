@@ -84,7 +84,7 @@ export default {
       notes: 'Notes'
     },
     total: 'TOTAL:',
-    netResult: 'NET RESULT (Income − Expenses):',
+    netResult: 'NET RESULT (Income excl. VAT − Expenses):',
     businessUseNote: 'Business use %{percentage}% of €%{total}',
     summarySheet: 'Summary',
     summaryColumns: {

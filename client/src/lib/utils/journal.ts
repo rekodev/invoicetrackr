@@ -39,6 +39,9 @@ const journalSearch = ({ year, month }: JournalQuery) =>
 export const journalHref = (query: JournalQuery) =>
   `${REPORTS_PAGE}?${journalSearch(query)}`;
 
+export const journalExportErrorHref = (query: JournalQuery) =>
+  `${journalHref(query)}&export_error=1`;
+
 export const journalExportHref = (
   query: JournalQuery,
   format: JournalExportFormat

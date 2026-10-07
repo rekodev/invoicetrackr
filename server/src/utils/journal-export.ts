@@ -130,7 +130,7 @@ const totalsRow = (labels: JournalExportLabels, totals: JournalTotals) => ({
 
 const netRow = (labels: JournalExportLabels, totals: JournalTotals) => ({
   index: labels.netResult,
-  income: totals.net
+  incomeNet: totals.net
 });
 
 const quoteCsv = (value: string) => `"${value.replace(/"/g, '""')}"`;
@@ -241,7 +241,7 @@ const addJournalSheet = (
   const net = netRow(labels, totals);
   const netExcelRow = sheet.addRow({
     index: net.index,
-    income: toExcelMoney(net.income)
+    incomeNet: toExcelMoney(net.incomeNet)
   });
   netExcelRow.font = { bold: true };
   sheet.mergeCells(netExcelRow.number, 1, netExcelRow.number, 4);

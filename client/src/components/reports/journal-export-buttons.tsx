@@ -17,7 +17,6 @@ const JournalExportButtons = async ({ query }: Props) => {
         <a
           key={format}
           href={journalExportHref(query, format)}
-          download
           className={buttonVariants({ variant: 'outline', size: 'sm' })}
         >
           <ArrowDownTrayIcon className="h-4 w-4" />

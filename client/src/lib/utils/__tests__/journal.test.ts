@@ -4,6 +4,7 @@ import {
   currentJournalYear,
   formatJournalPeriod,
   isJournalExportFormat,
+  journalExportErrorHref,
   journalExportHref,
   journalHref,
   journalYears,
@@ -29,6 +30,7 @@ describe('journal utils', () => {
     expect(journalExportHref({ year: 2026, month: 3 }, 'xlsx')).toBe(
       '/reports/export?year=2026&month=3&format=xlsx'
     );
+    expect(journalExportErrorHref({ year: 2026 })).toBe('/reports?year=2026&export_error=1');
     expect(journalYears(2022, 2022)).toEqual([2022, 2021, 2020]);
     expect(journalYears(2021, 2018)).toEqual([2021, 2020, 2019, 2018]);
     expect(formatJournalPeriod({ year: 2026 }, 'en')).toBe('2026');

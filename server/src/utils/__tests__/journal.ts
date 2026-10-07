@@ -110,7 +110,7 @@ describe('journal', () => {
     expect(share).toBe(BigInt(Math.round(Number(expected) * 100)));
   });
 
-  it('merges income and deductible expenses chronologically and reconciles totals', () => {
+  it('merges income and deductible expenses chronologically and nets income excl. VAT against expenses', () => {
     const { rows, totals } = buildJournal(
       [
         incomeRow(),
@@ -154,7 +154,7 @@ describe('journal', () => {
       incomeVat: '21.00',
       incomeNet: '150.00',
       expenses: '35.50',
-      net: '135.50'
+      net: '114.50'
     });
 
     const months = buildJournalMonths(rows, journalPeriod(2026));
@@ -208,7 +208,7 @@ describe('journal export', () => {
       '"3","2026-03-10","SF001","MB Šaltinis (305000000) — Svetainės kūrimas","121.00","21.00","100.00","","",""'
     );
     expect(lines[4]).toBe('"TOTAL:","","","","121.00","21.00","100.00","","32.30",""');
-    expect(lines[5]).toBe('"NET RESULT:","","","","88.70","","","","",""');
+    expect(lines[5]).toBe('"NET RESULT:","","","","","","67.70","","",""');
     expect(lines[6]).toBe('');
   });
 
@@ -235,11 +235,11 @@ describe('journal export', () => {
 
     expect(journal.getRow(8).getCell(1).value).toBe('TOTAL:');
     expect(journal.getRow(8).getCell(9).value).toBe(32.3);
-    expect(journal.getRow(9).getCell(5).value).toBe(88.7);
+    expect(journal.getRow(9).getCell(7).value).toBe(67.7);
 
     expect(summary.name).toBe('Summary');
-    expect(summary.getRow(4).values).toEqual([undefined, '2026-03', 121, 21, 100, 32.3, 88.7]);
+    expect(summary.getRow(4).values).toEqual([undefined, '2026-03', 121, 21, 100, 32.3, 67.7]);
     expect(summary.getRow(14).getCell(1).value).toBe('TOTAL:');
-    expect(summary.getRow(14).getCell(6).value).toBe(88.7);
+    expect(summary.getRow(14).getCell(6).value).toBe(67.7);
   });
 });

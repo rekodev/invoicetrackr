@@ -117,6 +117,8 @@ const ExpenseFormDialog = ({
   });
 
   const totalAmount = useWatch({ control, name: 'totalAmount' });
+  const currency = useWatch({ control, name: 'currency' });
+  const eurAmount = useWatch({ control, name: 'eurAmount' });
   const businessUsePercentage = useWatch({
     control,
     name: 'businessUsePercentage'
@@ -129,13 +131,15 @@ const ExpenseFormDialog = ({
     onClose();
   };
   const deductiblePreview = useMemo(() => {
-    const total = Number(totalAmount || 0);
+    const total = Number(
+      (currency !== 'eur' && eurAmount) || totalAmount || 0
+    );
     const percentage = Number(businessUsePercentage || 0);
 
     if (Number.isNaN(total) || Number.isNaN(percentage)) return 0;
 
     return Math.max(0, (total * percentage) / 100);
-  }, [businessUsePercentage, totalAmount]);
+  }, [businessUsePercentage, currency, eurAmount, totalAmount]);
 
   useEffect(() => {
     if (!isOpen) return;

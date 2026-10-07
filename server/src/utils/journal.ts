@@ -127,7 +127,7 @@ export const sumJournalRows = (rows: JournalRow[]): JournalTotals => {
     incomeVat: fromCents(incomeVat),
     incomeNet: fromCents(income - incomeVat),
     expenses: fromCents(expenses),
-    net: fromCents(income - expenses)
+    net: fromCents(income - incomeVat - expenses)
   };
 };
 

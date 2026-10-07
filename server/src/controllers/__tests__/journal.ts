@@ -100,7 +100,7 @@ describe('Journal Controller', () => {
         incomeVat: '10.50',
         incomeNet: '50.00',
         expenses: '20.00',
-        net: '40.50'
+        net: '30.00'
       }
     });
     const range = { userId: 1, from: '2026-03-01', to: '2026-03-31' };
