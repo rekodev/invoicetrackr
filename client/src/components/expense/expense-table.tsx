@@ -472,8 +472,8 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
   };
 
   return (
-    <section className="flex max-w-full flex-col gap-4 overflow-x-hidden">
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+    <section className="flex max-w-full flex-col gap-5 overflow-x-hidden">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
         <MetricCard
           icon={<ReceiptPercentIcon className="h-4 w-4" />}
           iconVariant="accent"

@@ -4,7 +4,7 @@ import { BasicCardGridSkeleton } from './basic-card-skeleton';
 
 export function ClientSectionSkeleton() {
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-5">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-end">
           <Skeleton className="h-10 w-full rounded-2xl sm:max-w-[44%]" />
@@ -17,7 +17,7 @@ export function ClientSectionSkeleton() {
       </div>
       <BasicCardGridSkeleton
         count={6}
-        className="xl:grid-cols-3"
+        className="gap-5 xl:grid-cols-3"
         cardClassName="min-h-[182px]"
       />
     </section>

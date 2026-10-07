@@ -78,19 +78,19 @@ export default function PublicInvoicePageContent({ publicInvoice }: Props) {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8">
+    <main className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-8">
       <InvoiceSigningHeader
         invoice={invoice}
         isAcknowledged={isAcknowledged}
       />
 
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <InvoiceSigningSummary
           currency={currency}
           invoice={invoice}
           onOpenPdf={openPdfModal}
         />
-        <aside className="flex flex-col gap-4">
+        <aside className="flex flex-col gap-5">
           <InvoiceSigningPanel
             invoice={invoice}
             isAcknowledged={isAcknowledged}

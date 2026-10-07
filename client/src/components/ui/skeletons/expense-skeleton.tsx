@@ -5,10 +5,10 @@ import {
 
 export function ExpenseTableSkeleton() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <BasicCardGridSkeleton
         count={3}
-        className="gap-3 md:grid-cols-3"
+        className="gap-5 md:grid-cols-3"
         cardClassName="min-h-[122px]"
       />
       <BasicCardSkeleton className="min-h-[480px]" />

@@ -25,7 +25,7 @@ export function PublicInvoicePageSkeleton() {
     <main className="mx-auto w-full max-w-7xl px-4 py-8">
       <BasicCardGridSkeleton
         count={2}
-        className="lg:grid-cols-[minmax(0,1fr)_360px]"
+        className="gap-5 lg:grid-cols-[minmax(0,1fr)_360px]"
         cardClassName="min-h-[720px]"
       />
     </main>

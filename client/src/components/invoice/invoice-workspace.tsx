@@ -242,7 +242,7 @@ export default function InvoiceWorkspace({
             />
           )}
         </Card>
-        <div className="flex min-w-0 flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-5">
           <WorkspaceSection
             title={t('invoice_total')}
             contentClassName="mt-2 flex flex-col gap-2"

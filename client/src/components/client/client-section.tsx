@@ -180,7 +180,7 @@ const ClientSection = ({ userId, clients }: Props) => {
 
     return (
       <>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {filteredItems?.map((client, index) => renderClient(client, index))}
         </div>
         <ClientSectionBottomContent
@@ -193,7 +193,7 @@ const ClientSection = ({ userId, clients }: Props) => {
   };
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-5">
       <ClientSectionTopContent
         userId={userId}
         clients={filteredItems}
