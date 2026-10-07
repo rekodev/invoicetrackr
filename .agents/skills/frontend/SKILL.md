@@ -35,7 +35,7 @@ established pattern exists.
 | Need | Existing pattern |
 | --- | --- |
 | Page spacing | Stacked sections `flex flex-col gap-5`; side-by-side cards/columns `grid gap-5` (`invoice-workspace.tsx`, `client-workspace.tsx`, dashboard) — same value both directions |
-| Stat/metric cards | `MetricCard` (`components/ui/metric-card.tsx`) in `grid gap-5 sm:grid-cols-3`, one-line title, as in `client-workspace.tsx`, `expense-workspace.tsx` |
+| Stat/metric cards | `MetricCard` (`components/ui/metric-card.tsx`) in `grid gap-5 sm:grid-cols-3`, one-line title (`expense-table.tsx`, `client-workspace.tsx`, dashboard) |
 | Explaining a figure | Info tooltip: ghost/tertiary icon `Button` + `InformationCircleIcon` + `Tooltip` (`expense-workspace.tsx`, `invoice-services-heading.tsx`) |
 | Section card | `Card className="border"`; `Card.Header className="flex-row flex-wrap items-center justify-between gap-4"` with `h2 text-base font-medium` (+ muted `text-sm` line) left and actions right |
 | Section actions | Small `Button`/`buttonVariants` (`outline` or `secondary`, `size: 'sm'`) right-aligned in the header; never underlined text links |
@@ -44,6 +44,7 @@ established pattern exists.
 | Warnings and notices | HeroUI `Alert status=…` (no custom colours): `Alert.Title` (general), `Alert.Description` with a lead-in line and a bulleted `list-disc` list when there are several points, and exactly **one** small action button on the right. When the points lead to different pages, the action is a `Review ▾` menu with one `Dropdown.Item href` per point (`dashboard/attention-strip.tsx`). On mobile the action moves under the text (`sm:hidden` / `hidden sm:block`) |
 | Empty states | `EmptyState` with one clear next action |
 | Key/value details | `dl` with `dt text-muted text-xs font-medium` / `dd text-sm` (`client-workspace.tsx`) |
+| Labels and qualifiers | Casing by text type (Title Case names, sentence-case sentences in English) and inline ` · ` qualifiers instead of extra headings or subtitles. See **i18n** |
 | Money and dates | `formatMoney` (`lib/utils/currency.ts`), `formatLocalizedDate` (`lib/utils/date.ts`) |
 
 When you add or settle a pattern that other pages should follow, add a row

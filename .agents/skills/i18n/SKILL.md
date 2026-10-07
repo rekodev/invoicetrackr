@@ -93,6 +93,24 @@ Clear, concise product English. Lithuanian-specific terms may keep the
 Lithuanian name with a gloss where users expect it (e.g. "Income journal
 (pajamų žurnalas)").
 
+- **Casing follows the type of text, not where it appears.**
+  - Anything that names something is Title Case in English: headings,
+    titles, labels, tabs, column headers, menu and navigation items, chip
+    and status names. Examples: "Overdue Invoices", "Due Date".
+  - Anything that reads as a sentence or instruction stays sentence case:
+    descriptions, helper and body text, list items, toasts, errors,
+    confirmations.
+  - Lithuanian always uses sentence case, whatever the text type.
+- **Supplementary detail on a label stays inline.** Period, scope, count,
+  unit or status that qualifies a name goes in the same message after a
+  spaced middle dot, and is styled exactly like the label:
+  `"Total Expenses · {year}"`, `"Outstanding · All Open"`,
+  `"Invoices · {count}"`. Don't add a separate heading or subtitle for it,
+  and don't wrap the qualifier in its own span.
+- **Match an existing string first.** Before adding a new label, find the
+  closest existing one in `en.json` and copy its casing and separator
+  style. Consistency across pages beats local preference.
+
 ## Checklist
 
 - [ ] Key added to both `en` and `lt` files for each surface touched
