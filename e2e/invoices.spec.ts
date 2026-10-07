@@ -203,7 +203,7 @@ test.describe('invoices', () => {
     expect(rows.map((line) => line.split(',')[6])).toEqual(['"75.00"', '"275.50"']);
 
     await page.goto('/dashboard');
-    await expect(page.getByText('Overdue invoices', { exact: true })).toBeVisible();
+    await expect(page.getByText('Overdue Invoices', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: `Send reminder for ${number}` })).toHaveCount(0);
 
     await page.goto('/invoices');

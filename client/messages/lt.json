@@ -454,11 +454,9 @@
     },
     "dashboard": {
         "cards": {
-            "received_income": "Gautos pajamos",
-            "invoiced": "Išrašyta sąskaitų",
-            "outstanding": "Neapmokėta",
-            "outstanding_scope": "visos atviros",
-            "period": "{year} m. suvestinė",
+            "received_income": "Gautos pajamos · {year}",
+            "invoiced": "Išrašyta sąskaitų · {year}",
+            "outstanding": "Neapmokėta · visos atviros",
             "a11y": {
                 "view_records": "Peržiūrėti įrašus: {title}"
             }

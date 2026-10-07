@@ -14,45 +14,47 @@ const MoneySummaryCards = async ({ totals, year }: Props) => {
   const locale = await getLocale();
   const range = yearRange(year);
 
+  const cards = [
+    {
+      key: 'received_income',
+      title: t('received_income', { year }),
+      amount: totals.receivedIncome,
+      href: dashboardLinks.receivedIncome(range),
+      icon: <BanknotesIcon className="h-4 w-4" />,
+      iconVariant: 'success' as const
+    },
+    {
+      key: 'invoiced',
+      title: t('invoiced', { year }),
+      amount: totals.invoiced,
+      href: dashboardLinks.invoiced(range),
+      icon: <DocumentTextIcon className="h-4 w-4" />,
+      iconVariant: 'accent' as const
+    },
+    {
+      key: 'outstanding',
+      title: t('outstanding'),
+      amount: totals.outstanding,
+      href: dashboardLinks.outstanding(),
+      icon: <ClockIcon className="h-4 w-4" />,
+      iconVariant: 'warning' as const
+    }
+  ];
+
   return (
-    <section className="flex flex-col gap-3" aria-labelledby="money-summary-heading">
-      <h2 id="money-summary-heading" className="section-eyebrow text-muted">
-        {t('period', { year })}
-      </h2>
-      <div className="grid gap-5 sm:grid-cols-3">
+    <div className="grid gap-5 sm:grid-cols-3">
+      {cards.map((card) => (
         <DashboardCard
-          icon={<BanknotesIcon className="h-4 w-4" />}
-          iconVariant="success"
-          title={t('received_income')}
-          text={formatMoney(totals.receivedIncome, locale)}
-          href={dashboardLinks.receivedIncome(range)}
-          linkLabel={t('a11y.view_records', { title: t('received_income') })}
+          key={card.key}
+          icon={card.icon}
+          iconVariant={card.iconVariant}
+          title={card.title}
+          text={formatMoney(card.amount, locale)}
+          href={card.href}
+          linkLabel={t('a11y.view_records', { title: card.title })}
         />
-        <DashboardCard
-          icon={<DocumentTextIcon className="h-4 w-4" />}
-          iconVariant="accent"
-          title={t('invoiced')}
-          text={formatMoney(totals.invoiced, locale)}
-          href={dashboardLinks.invoiced(range)}
-          linkLabel={t('a11y.view_records', { title: t('invoiced') })}
-        />
-        <DashboardCard
-          icon={<ClockIcon className="h-4 w-4" />}
-          iconVariant="warning"
-          title={
-            <>
-              {t('outstanding')}
-              <span className="font-normal">· {t('outstanding_scope')}</span>
-            </>
-          }
-          text={formatMoney(totals.outstanding, locale)}
-          href={dashboardLinks.outstanding()}
-          linkLabel={t('a11y.view_records', {
-            title: `${t('outstanding')} (${t('outstanding_scope')})`
-          })}
-        />
-      </div>
-    </section>
+      ))}
+    </div>
   );
 };
 

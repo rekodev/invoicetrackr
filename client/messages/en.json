@@ -454,17 +454,15 @@
     },
     "dashboard": {
         "cards": {
-            "received_income": "Received income",
-            "invoiced": "Invoiced",
-            "outstanding": "Outstanding",
-            "outstanding_scope": "all open",
-            "period": "{year} totals",
+            "received_income": "Received Income · {year}",
+            "invoiced": "Invoiced · {year}",
+            "outstanding": "Outstanding · All Open",
             "a11y": {
                 "view_records": "View records behind {title}"
             }
         },
         "attention": {
-            "title": "Needs attention",
+            "title": "Needs Attention",
             "description": "A few things need your attention:",
             "review": "Review",
             "drafts": "{count, plural, one {# draft invoice is not issued yet} other {# draft invoices are not issued yet}}",
@@ -479,14 +477,14 @@
             }
         },
         "overdue": {
-            "title": "Overdue invoices",
+            "title": "Overdue Invoices",
             "summary": "{count, plural, one {# invoice} other {# invoices}} · {amount} overdue",
             "view_all": "View all overdue",
             "columns": {
                 "invoice": "Invoice",
                 "client": "Client",
                 "outstanding": "Outstanding",
-                "due_date": "Due date",
+                "due_date": "Due Date",
                 "days_overdue": "Overdue",
                 "actions": "Actions"
             },
@@ -497,16 +495,16 @@
             "load_failed": "Could not load the invoice. Try again.",
             "no_number": "Unnumbered",
             "empty": {
-                "title": "Nothing overdue",
+                "title": "Nothing Overdue",
                 "description": "Every issued invoice is paid or still within its due date."
             }
         },
         "monthly": {
-            "title": "Money by month",
+            "title": "Money by Month",
             "subtitle": "Received income and recorded expenses in {year}",
             "summary": {
                 "expenses": "Expenses",
-                "deductible_expenses": "Deductible expenses"
+                "deductible_expenses": "Deductible Expenses"
             },
             "chart_label": "Received income and expenses by month",
             "columns": {
@@ -522,7 +520,7 @@
             }
         },
         "empty": {
-            "title": "Your workbench is empty",
+            "title": "Your Workbench Is Empty",
             "description": "Issue an invoice or record an expense, and income, balances, and overdue payments will appear here.",
             "create_invoice": "Create invoice",
             "add_expense": "Add expense"
