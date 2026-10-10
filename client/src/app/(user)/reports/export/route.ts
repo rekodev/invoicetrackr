@@ -19,10 +19,7 @@ export async function GET(request: NextRequest) {
 
   const params = request.nextUrl.searchParams;
   const format = params.get('format');
-  const query = parseJournalQuery({
-    year: params.get('year') ?? undefined,
-    month: params.get('month') ?? undefined
-  });
+  const query = parseJournalQuery(Object.fromEntries(params));
   const failed = () =>
     NextResponse.redirect(new URL(journalExportErrorHref(query), request.url));
 

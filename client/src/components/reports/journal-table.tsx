@@ -19,6 +19,16 @@ type Props = {
 
 const cell = 'px-2 py-1.5';
 const amountCell = `${cell} text-right tabular-nums`;
+const footerAmountCell = 'px-2 py-2 text-right tabular-nums';
+const COLUMNS = [
+  ['date', cell],
+  ['document', cell],
+  ['type', cell],
+  ['description', cell],
+  ['income', amountCell],
+  ['vat', amountCell],
+  ['expenses', amountCell]
+] as const;
 
 const JournalTable = async ({ rows, totals, actions }: Props) => {
   const t = await getTranslations('reports.journal');
@@ -41,13 +51,11 @@ const JournalTable = async ({ rows, totals, actions }: Props) => {
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="text-muted border-b">
             <tr>
-              <th scope="col" className={`${cell} font-medium`}>{t('table.columns.date')}</th>
-              <th scope="col" className={`${cell} font-medium`}>{t('table.columns.document')}</th>
-              <th scope="col" className={`${cell} font-medium`}>{t('table.columns.type')}</th>
-              <th scope="col" className={`${cell} font-medium`}>{t('table.columns.description')}</th>
-              <th scope="col" className={`${amountCell} font-medium`}>{t('table.columns.income')}</th>
-              <th scope="col" className={`${amountCell} font-medium`}>{t('table.columns.vat')}</th>
-              <th scope="col" className={`${amountCell} font-medium`}>{t('table.columns.expenses')}</th>
+              {COLUMNS.map(([key, className]) => (
+                <th key={key} scope="col" className={`${className} font-medium`}>
+                  {t(`table.columns.${key}`)}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -103,9 +111,9 @@ const JournalTable = async ({ rows, totals, actions }: Props) => {
           <tfoot className="bg-default border-t font-semibold">
             <tr>
               <th scope="row" colSpan={4} className="px-2 py-2">{t('table.total')}</th>
-              <td className="px-2 py-2 text-right tabular-nums">{money(totals.income)}</td>
-              <td className="px-2 py-2 text-right tabular-nums">{money(totals.incomeVat)}</td>
-              <td className="px-2 py-2 text-right tabular-nums">{money(totals.expenses)}</td>
+              <td className={footerAmountCell}>{money(totals.income)}</td>
+              <td className={footerAmountCell}>{money(totals.incomeVat)}</td>
+              <td className={footerAmountCell}>{money(totals.expenses)}</td>
             </tr>
           </tfoot>
         </table>

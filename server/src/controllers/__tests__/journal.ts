@@ -139,7 +139,7 @@ describe('Journal Controller', () => {
     expect(response.headers['content-disposition']).toBe(
       'attachment; filename="pajamu-islaidu-zurnalas-2026-03.csv"'
     );
-    expect(response.body).toContain('﻿"Eil. Nr.","Data (YYYY-MM-DD)"');
+    expect(response.body).toContain('\uFEFF"Eil. Nr.","Data (YYYY-MM-DD)"');
     expect(response.body).toContain('"Veiklai 50% iš 40.00 €"');
     expect(response.body).toContain('"IŠ VISO:","","","","60.50","10.50","50.00","","20.00",""');
     expect(mockCreateAuditEvent).toHaveBeenCalledWith(

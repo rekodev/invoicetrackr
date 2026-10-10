@@ -12,11 +12,8 @@ import { buildJournal, journalPeriod } from '../utils/journal';
 import {
   buildJournalCsv,
   buildJournalXlsx,
-  JournalExportLabels,
   journalPeriodLabel
 } from '../utils/journal-export';
-
-type I18n = Awaited<ReturnType<typeof useI18n>>;
 
 const loadJournal = async (userId: number, { year, month }: JournalQuery) => {
   const period = journalPeriod(year, month);
@@ -28,40 +25,6 @@ const loadJournal = async (userId: number, { year, month }: JournalQuery) => {
 
   return { period, ...buildJournal(incomeRows, expenseRows) };
 };
-
-const journalExportLabels = (
-  i18n: I18n,
-  periodLabel: string
-): JournalExportLabels => ({
-  title: i18n.t('journal.title', { period: periodLabel }),
-  ownerName: i18n.t('journal.ownerName'),
-  certificateNumber: i18n.t('journal.certificateNumber'),
-  columns: {
-    index: i18n.t('journal.columns.index'),
-    date: i18n.t('journal.columns.date'),
-    documentNumber: i18n.t('journal.columns.documentNumber'),
-    incomeDescription: i18n.t('journal.columns.incomeDescription'),
-    income: i18n.t('journal.columns.income'),
-    vat: i18n.t('journal.columns.vat'),
-    incomeNet: i18n.t('journal.columns.incomeNet'),
-    expenseDescription: i18n.t('journal.columns.expenseDescription'),
-    expenses: i18n.t('journal.columns.expenses'),
-    notes: i18n.t('journal.columns.notes')
-  },
-  total: i18n.t('journal.total'),
-  netResult: i18n.t('journal.netResult'),
-  summarySheet: i18n.t('journal.summarySheet'),
-  summaryColumns: {
-    month: i18n.t('journal.summaryColumns.month'),
-    income: i18n.t('journal.summaryColumns.income'),
-    vat: i18n.t('journal.summaryColumns.vat'),
-    incomeNet: i18n.t('journal.summaryColumns.incomeNet'),
-    expenses: i18n.t('journal.summaryColumns.expenses'),
-    net: i18n.t('journal.summaryColumns.net')
-  },
-  businessUseNote: (percentage, total) =>
-    i18n.t('journal.businessUseNote', { percentage, total })
-});
 
 const CONTENT_TYPES = {
   csv: 'text/csv; charset=utf-8',
@@ -99,7 +62,8 @@ export const exportJournal = async (
   const input = {
     ...journal,
     owner,
-    labels: journalExportLabels(i18n, periodLabel)
+    t: (key: string, values?: Record<string, string>) =>
+      i18n.t(`journal.${key}`, values)
   };
   const file =
     format === 'xlsx' ? await buildJournalXlsx(input) : buildJournalCsv(input);

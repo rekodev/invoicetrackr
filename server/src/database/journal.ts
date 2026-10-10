@@ -38,7 +38,11 @@ export const getJournalIncomeRowsFromDb = async ({
       documentNumber: invoicesTable.invoiceId,
       receiverName: invoiceReceiversTable.name,
       receiverBusinessNumber: invoiceReceiversTable.businessNumber,
-      descriptions: sql<string>`STRING_AGG(${invoiceServicesTable.description}, '; ' ORDER BY ${invoiceServicesTable.id})`,
+      descriptions: sql<string>`coalesce((
+        select string_agg(${invoiceServicesTable.description}, '; ' order by ${invoiceServicesTable.id})
+        from ${invoiceServicesTable}
+        where ${invoiceServicesTable.invoiceId} = ${invoicesTable.id}
+      ), '')`,
       receivedAmount: paymentAllocationsTable.amount,
       paidBefore: paidBeforeAnyPeriod,
       vatAmount: invoicesTable.vatAmount,
@@ -63,10 +67,6 @@ export const getJournalIncomeRowsFromDb = async ({
       invoiceReceiversTable,
       eq(invoicesTable.receiverId, invoiceReceiversTable.id)
     )
-    .innerJoin(
-      invoiceServicesTable,
-      eq(invoiceServicesTable.invoiceId, invoicesTable.id)
-    )
     .where(
       and(
         eq(paymentsTable.userId, userId),
@@ -75,12 +75,6 @@ export const getJournalIncomeRowsFromDb = async ({
         gte(paymentsTable.paymentDate, from),
         lte(paymentsTable.paymentDate, to)
       )
-    )
-    .groupBy(
-      invoicesTable.id,
-      invoiceReceiversTable.id,
-      paymentsTable.id,
-      paymentAllocationsTable.id
     )
     .orderBy(paymentsTable.paymentDate, invoicesTable.id, paymentsTable.id);
 };

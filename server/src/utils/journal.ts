@@ -6,7 +6,7 @@ import type {
   JournalTotals
 } from '@invoicetrackr/types';
 
-import { fromCents, toCents } from './money';
+import { fromCents, roundPositiveDivision, toCents } from './money';
 
 export type JournalIncomeDbRow = {
   paymentId: number;
@@ -33,7 +33,7 @@ export type JournalExpenseDbRow = {
   deductibleAmount: string;
 };
 
-export type JournalMonth = { month: number } & JournalTotals;
+type JournalMonth = { month: number } & JournalTotals;
 
 const pad = (value: number) => String(value).padStart(2, '0');
 
@@ -52,9 +52,6 @@ export const journalPeriod = (year: number, month?: number): JournalPeriod => {
   };
 };
 
-const divideHalfUp = (numerator: bigint, denominator: bigint) =>
-  (numerator * 2n + denominator) / (denominator * 2n);
-
 export const paymentVatShare = ({
   vatAmount,
   totalAmount,
@@ -72,7 +69,7 @@ export const paymentVatShare = ({
   const before = toCents(paidBefore);
   const after = before + toCents(receivedAmount);
   const vatUpTo = (paid: bigint) =>
-    divideHalfUp(vat * (paid > total ? total : paid), total);
+    roundPositiveDivision(vat * (paid > total ? total : paid), total);
 
   return vatUpTo(after) - vatUpTo(before);
 };
@@ -108,7 +105,7 @@ const toExpenseRow = (row: JournalExpenseDbRow): JournalExpenseRow => ({
   businessUsePercentage: row.businessUsePercentage
 });
 
-export const sumJournalRows = (rows: JournalRow[]): JournalTotals => {
+const sumJournalRows = (rows: JournalRow[]): JournalTotals => {
   let income = 0n;
   let incomeVat = 0n;
   let expenses = 0n;

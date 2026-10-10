@@ -1,6 +1,8 @@
 import ExcelJS from 'exceljs';
 import { describe, expect, it } from 'vitest';
 
+import en from '../../locales/en';
+import { translate } from '../../test/i18n';
 import {
   buildJournal,
   buildJournalMonths,
@@ -13,7 +15,7 @@ import {
   buildJournalCsv,
   buildJournalXlsx,
   JournalExportInput,
-  JournalExportLabels
+  JournalTranslate
 } from '../journal-export';
 
 const incomeRow = (
@@ -47,35 +49,8 @@ const expenseRow = (
   ...overrides
 });
 
-const labels: JournalExportLabels = {
-  title: 'INCOME AND EXPENSE JOURNAL — 2026',
-  ownerName: 'Name and surname',
-  certificateNumber: 'Certificate No.',
-  columns: {
-    index: 'No.',
-    date: 'Date',
-    documentNumber: 'Document No.',
-    incomeDescription: 'Income description',
-    income: 'Income (€)',
-    vat: 'VAT (€)',
-    incomeNet: 'Income excl. VAT (€)',
-    expenseDescription: 'Expense description',
-    expenses: 'Expenses (€)',
-    notes: 'Notes'
-  },
-  total: 'TOTAL:',
-  netResult: 'NET RESULT:',
-  summarySheet: 'Summary',
-  summaryColumns: {
-    month: 'Month',
-    income: 'Income (€)',
-    vat: 'VAT (€)',
-    incomeNet: 'Income excl. VAT (€)',
-    expenses: 'Expenses (€)',
-    net: 'Net (€)'
-  },
-  businessUseNote: (percentage, total) => `Business use ${percentage}% of €${total}`
-};
+const t: JournalTranslate = (key, values) =>
+  translate(en, `journal.${key}`, values);
 
 describe('journal', () => {
   it.each([
@@ -189,7 +164,7 @@ describe('journal export', () => {
       rows,
       totals,
       owner: { legalName: 'Artūras Žemaitis', activityCertificateNumber: '1093657' },
-      labels
+      t
     };
   };
 
@@ -197,7 +172,7 @@ describe('journal export', () => {
     const csv = buildJournalCsv(exportInput());
     const lines = csv.split('\r\n');
 
-    expect(csv.startsWith('﻿"No.","Date","Document No."')).toBe(true);
+    expect(csv.startsWith('\uFEFF"No.","Date (YYYY-MM-DD)","Document No."')).toBe(true);
     expect(lines[1]).toBe(
       '"1","2026-03-05","EXP-1","","","","","Telia — Internetas","20.00","Business use 50% of €40.00"'
     );
@@ -208,7 +183,9 @@ describe('journal export', () => {
       '"3","2026-03-10","SF001","MB Šaltinis (305000000) — Svetainės kūrimas","121.00","21.00","100.00","","",""'
     );
     expect(lines[4]).toBe('"TOTAL:","","","","121.00","21.00","100.00","","32.30",""');
-    expect(lines[5]).toBe('"NET RESULT:","","","","","","67.70","","",""');
+    expect(lines[5]).toBe(
+      '"NET RESULT (Income excl. VAT − Expenses):","","","","","","67.70","","",""'
+    );
     expect(lines[6]).toBe('');
   });
 
@@ -219,10 +196,12 @@ describe('journal export', () => {
 
     const [journal, summary] = workbook.worksheets;
     expect(journal.name).toBe('2026');
-    expect(journal.getCell('A1').value).toBe(labels.title);
+    expect(journal.getCell('A1').value).toBe('INCOME AND EXPENSE JOURNAL — 2026');
     expect(journal.getCell('C2').value).toBe('Artūras Žemaitis');
     expect(journal.getCell('H2').value).toBe('1093657');
-    expect(journal.getRow(4).getCell(4).value).toBe('Income description');
+    expect(journal.getRow(4).getCell(4).value).toBe(
+      'Income description (client / service)'
+    );
 
     const income = journal.getRow(7);
     expect(income.getCell(2).value).toEqual(new Date(Date.UTC(2026, 2, 10)));
