@@ -15,6 +15,8 @@
             "clients": "Klientai",
             "payments": "Mokėjimai",
             "reports": "Ataskaitos",
+            "journal": "Žurnalas",
+            "taxes": "Mokesčiai",
             "settings": "Nustatymai",
             "freelancer_profile": "Veiklos profilis",
             "banking_information": "Banko sąskaitos",
@@ -137,6 +139,87 @@
                 "open_invoice": "Atidaryti sąskaitą {number}",
                 "open_expense": "Atidaryti išlaidas: {supplier}",
                 "export": "Eksporto parinktys"
+            }
+        },
+        "tabs": {
+            "a11y_label": "Ataskaitų puslapiai"
+        },
+        "taxes": {
+            "heading": "Mokesčių įvertis",
+            "description": "Apytikslis individualios veiklos GPM, VSD ir PSD, apskaičiuotas pagal pasirinktais metais gautas pajamas ir užregistruotas išlaidas.",
+            "year": "Mokestiniai metai",
+            "setup": {
+                "title": "Patvirtinkite {year} m. prielaidas",
+                "description": "Sveikatos draudimas, pensijų kaupimas ir veiklos datos keičia rezultatą, todėl patvirtinkite jas prieš rodydami įvertį.",
+                "action": "Patvirtinti prielaidas"
+            },
+            "unsupported": {
+                "title": "{year} m. dar nepalaikomi",
+                "description": "Mokesčių įvertis šiuo metu skaičiuojamas už {years} m."
+            },
+            "methods": {
+                "actual": "Faktinės išlaidos",
+                "thirty_percent": "30 % pajamų"
+            },
+            "assumptions": {
+                "title": "Prielaidos · {year}",
+                "edit": "Redaguoti",
+                "expense_method": "Jūsų išlaidų metodas",
+                "psd_coverage": "PSD per darbovietę",
+                "pension": "Papildomas pensijų kaupimas",
+                "activity_period": "Veiklos laikotarpis",
+                "full_year": "Visi metai",
+                "from": "Nuo {date}",
+                "until": "Iki {date}",
+                "range": "{start} – {end}",
+                "other_income": "Kitos metinės pajamos",
+                "months": "{count, plural, one {# mėnuo} few {# mėnesiai} other {# mėnesių}}",
+                "yes": "Taip",
+                "no": "Ne"
+            },
+            "dialog": {
+                "title": "Mokesčių prielaidos · {year}",
+                "fields": {
+                    "expense_method": "Jūsų išlaidų metodas",
+                    "expense_method_help": "Pažymi metodą, kurį planuojate deklaruoti. Įvertis visada skaičiuojamas abiem metodais.",
+                    "psd_coverage": "Esu draudžiamas PSD per darbovietę",
+                    "psd_coverage_help": "Jei dirbate pagal darbo sutartį, mėnesinė minimali PSD įmoka veiklai netaikoma.",
+                    "pension": "Papildomai kaupiu 3 % pensijai",
+                    "start": "Veiklos pradžios data",
+                    "end": "Veiklos pabaigos data",
+                    "dates_help": "Palikite tuščią, jei veikla vyko visus metus.",
+                    "other_income": "Kitos metinės apmokestinamosios pajamos (€)",
+                    "other_income_help": "Darbo užmokestis ir kitos 20–32 % apmokestinamos pajamos. Reikia tik tada, kai veiklos pelnas viršija 42 500 €."
+                },
+                "cancel": "Atšaukti",
+                "save": "Išsaugoti prielaidas"
+            },
+            "comparison": {
+                "title": "Išlaidų metodų palyginimas",
+                "subtitle": "Abu metodai naudoja tas pačias pajamas. Pasirinkimas deklaracijoje lieka jūsų.",
+                "your_method": "Jūsų metodas",
+                "lower": "Mažesnė apytikslė suma",
+                "rows": {
+                    "income": "Pajamos be PVM",
+                    "deductions": "Atskaitymai",
+                    "contribution_base": "VSD ir PSD bazė (90 %)",
+                    "vsd": "VSD",
+                    "psd": "PSD",
+                    "psd_minimum": "Taikyta mėnesinė minimali įmoka",
+                    "gpm_profit": "Apmokestinamasis pelnas GPM",
+                    "gpm_before_credit": "GPM prieš kreditą",
+                    "gpm_credit": "GPM kreditas",
+                    "gpm": "GPM",
+                    "combined_bands": "Apmokestinama kartu su kitomis pajamomis 20–32 %",
+                    "total": "Apytikslė suma",
+                    "effective_rate": "{rate} % pajamų"
+                }
+            },
+            "disclaimer": {
+                "title": "Tai tik įvertis",
+                "description": "Apskaičiuota pagal jūsų įrašus ir prielaidas, taikant {version} taisykles. Tai nėra VMI ar „Sodros“ prievolė, o deklaracijoje suma gali skirtis.",
+                "not_covered": "Neįvertinta: pensininkų ir neįgaliųjų taisyklės, pirmųjų veiklos metų lengvatos ir užsienio pajamos.",
+                "sources": "Šaltiniai"
             }
         }
     },

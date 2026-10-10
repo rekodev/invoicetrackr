@@ -7,6 +7,7 @@ import { auth } from '@/auth';
 import JournalFilters from '@/components/reports/journal-filters';
 import JournalGuide from '@/components/reports/journal-guide';
 import JournalWorkspace from '@/components/reports/journal-workspace';
+import ReportsTabs from '@/components/reports/reports-tabs';
 import { JournalSkeleton } from '@/components/ui/skeletons/journal-skeleton';
 import { currentJournalYear, parseJournalQuery } from '@/lib/utils/journal';
 
@@ -31,6 +32,7 @@ export default async function ReportsPage({
 
   return (
     <section className="flex flex-col gap-5">
+      <ReportsTabs active="journal" />
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
           <h1 className="text-3xl font-semibold">{t('heading')}</h1>

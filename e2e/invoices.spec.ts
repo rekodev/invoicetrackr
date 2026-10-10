@@ -206,6 +206,17 @@ test.describe('invoices', () => {
     expect(csvExport.status()).toBe(200);
     expect(csvExport.headers()['content-disposition']).toBe('attachment; filename="income-expense-journal-2001-01.csv"');
     expect(await csvExport.text()).toContain(`"${number}","${invoice.recipientName}`);
+    await page.goto('/reports/taxes?year=2001');
+    await expect(page.getByText('2001 Is Not Supported Yet')).toBeVisible();
+    await page.goto('/reports/taxes?year=2026');
+    await page.getByRole('button', { name: 'Confirm assumptions' }).click();
+    const assumptions = page.getByRole('dialog', { name: 'Tax Assumptions · 2026' });
+    await assumptions.getByRole('checkbox', { name: /PSD coverage through employment/ }).click();
+    await assumptions.getByRole('button', { name: 'Save assumptions' }).click();
+    await expect(page.getByRole('heading', { name: 'Assumptions · 2026' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '30% of income' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Actual expenses' })).toBeVisible();
+    await expect(page.getByText('Estimated Total')).toHaveCount(2);
 
     await page.goto('/dashboard');
     await expect(page.getByText('Overdue Invoices', { exact: true })).toBeVisible();
