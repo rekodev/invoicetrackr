@@ -16,3 +16,4 @@ export * from './expense';
 export * from './finance';
 export * from './dashboard';
 export * from './journal';
+export * from './tax';

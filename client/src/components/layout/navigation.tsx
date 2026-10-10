@@ -3,12 +3,15 @@
 import {
   AdjustmentsHorizontalIcon,
   BuildingLibraryIcon,
+  CalculatorIcon,
+  ChartBarSquareIcon,
   Cog6ToothIcon,
   DocumentTextIcon,
   HomeIcon,
   IdentificationIcon,
   KeyIcon,
   ReceiptPercentIcon,
+  TableCellsIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
 import { Accordion, Link } from '@heroui/react';
@@ -26,6 +29,8 @@ import {
   FREELANCER_PROFILE_PAGE,
   INVOICES_PAGE,
   PAYMENT_METHODS_PAGE,
+  REPORT_PAGES,
+  REPORTS_PAGE,
   SETTINGS_PAGE
 } from '@/lib/constants/pages';
 
@@ -33,14 +38,30 @@ type NavLink = {
   key: string;
   href: string;
   icon: ComponentType<SVGProps<SVGSVGElement>>;
+  exact?: boolean;
   children?: Array<NavLink>;
 };
+
+const REPORT_PAGE_ICONS = {
+  journal: TableCellsIcon,
+  taxes: CalculatorIcon
+} satisfies Record<(typeof REPORT_PAGES)[number]['key'], NavLink['icon']>;
 
 const navigation: Array<NavLink> = [
   { key: 'dashboard', href: DASHBOARD_PAGE, icon: HomeIcon },
   { key: 'invoices', href: INVOICES_PAGE, icon: DocumentTextIcon },
   { key: 'clients', href: CLIENTS_PAGE, icon: UserGroupIcon },
   { key: 'expenses', href: EXPENSES_PAGE, icon: ReceiptPercentIcon },
+  {
+    key: 'reports',
+    href: REPORTS_PAGE,
+    icon: ChartBarSquareIcon,
+    children: REPORT_PAGES.map((page) => ({
+      ...page,
+      icon: REPORT_PAGE_ICONS[page.key],
+      exact: page.href === REPORTS_PAGE
+    }))
+  },
   {
     key: 'settings',
     href: SETTINGS_PAGE,
@@ -83,7 +104,9 @@ export default function Navigation({ isMobile, onCloseMobileSidebar }: Props) {
   const pathname = usePathname();
 
   const renderNavLink = (item: NavLink): ReactNode => {
-    const isActive = isCurrentPath(pathname, item.href);
+    const isActive = item.exact
+      ? pathname === item.href
+      : isCurrentPath(pathname, item.href);
 
     return (
       <Link

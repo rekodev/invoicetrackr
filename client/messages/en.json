@@ -15,6 +15,8 @@
             "clients": "Clients",
             "payments": "Payments",
             "reports": "Reports",
+            "journal": "Journal",
+            "taxes": "Taxes",
             "settings": "Settings",
             "freelancer_profile": "Freelancer Profile",
             "banking_information": "Bank Accounts",
@@ -137,6 +139,87 @@
                 "open_invoice": "Open invoice {number}",
                 "open_expense": "Open expense from {supplier}",
                 "export": "Export options"
+            }
+        },
+        "tabs": {
+            "a11y_label": "Report pages"
+        },
+        "taxes": {
+            "heading": "Tax Estimate",
+            "description": "Estimated GPM, VSD and PSD for your individual activity, based on income received and expenses recorded in the selected year.",
+            "year": "Tax Year",
+            "setup": {
+                "title": "Confirm Your {year} Assumptions",
+                "description": "Health insurance coverage, pension accumulation and activity dates change the result, so confirm them before we show an estimate.",
+                "action": "Confirm assumptions"
+            },
+            "unsupported": {
+                "title": "{year} Is Not Supported Yet",
+                "description": "Tax estimates are currently available for {years}."
+            },
+            "methods": {
+                "actual": "Actual expenses",
+                "thirty_percent": "30% of income"
+            },
+            "assumptions": {
+                "title": "Assumptions · {year}",
+                "edit": "Edit",
+                "expense_method": "Your Expense Method",
+                "psd_coverage": "PSD Through Employment",
+                "pension": "Additional Pension Accumulation",
+                "activity_period": "Activity Period",
+                "full_year": "Full year",
+                "from": "From {date}",
+                "until": "Until {date}",
+                "range": "{start} – {end}",
+                "other_income": "Other Annual Income",
+                "months": "{count, plural, one {# month} other {# months}}",
+                "yes": "Yes",
+                "no": "No"
+            },
+            "dialog": {
+                "title": "Tax Assumptions · {year}",
+                "fields": {
+                    "expense_method": "Your Expense Method",
+                    "expense_method_help": "Labels the method you plan to declare. Both methods are always estimated.",
+                    "psd_coverage": "I have PSD coverage through employment",
+                    "psd_coverage_help": "If you are employed, the monthly PSD minimum does not apply to your activity.",
+                    "pension": "I accumulate an additional 3% for my pension",
+                    "start": "Activity Start Date",
+                    "end": "Activity End Date",
+                    "dates_help": "Leave empty if the activity ran for the whole year.",
+                    "other_income": "Other Annual Taxable Income (€)",
+                    "other_income_help": "Salary and other income taxed at 20–32%. Only needed when your activity profit exceeds €42,500."
+                },
+                "cancel": "Cancel",
+                "save": "Save assumptions"
+            },
+            "comparison": {
+                "title": "Expense Method Comparison",
+                "subtitle": "Both methods use the same income. The choice in your declaration stays yours.",
+                "your_method": "Your Method",
+                "lower": "Lower Estimated Total",
+                "rows": {
+                    "income": "Income Excl. VAT",
+                    "deductions": "Deductions",
+                    "contribution_base": "VSD and PSD Base (90%)",
+                    "vsd": "VSD",
+                    "psd": "PSD",
+                    "psd_minimum": "Monthly minimum applied",
+                    "gpm_profit": "Taxable Profit for GPM",
+                    "gpm_before_credit": "GPM Before Credit",
+                    "gpm_credit": "GPM Credit",
+                    "gpm": "GPM",
+                    "combined_bands": "Taxed together with your other income at 20–32%",
+                    "total": "Estimated Total",
+                    "effective_rate": "{rate}% of income"
+                }
+            },
+            "disclaimer": {
+                "title": "This Is an Estimate",
+                "description": "Calculated from your records and assumptions using the {version} rules. It is not a VMI or Sodra liability, and your declaration may differ.",
+                "not_covered": "Not covered: pensioner and disability rules, first-year relief and foreign income.",
+                "sources": "Sources"
             }
         }
     },

@@ -18,6 +18,11 @@ export const EXPENSES_PAGE = '/expenses';
 export const EXPENSE_WORKSPACE_PAGE = (expenseId: number) => `/expenses/${expenseId}`;
 export const PAYMENTS_PAGE = '/payments';
 export const REPORTS_PAGE = '/reports';
+export const REPORTS_TAXES_PAGE = '/reports/taxes';
+export const REPORT_PAGES = [
+  { key: 'journal', href: REPORTS_PAGE },
+  { key: 'taxes', href: REPORTS_TAXES_PAGE }
+] as const;
 export const SETTINGS_PAGE = '/settings';
 export const FREELANCER_PROFILE_PAGE = '/settings/freelancer-profile';
 export const PAYMENT_METHODS_PAGE = '/settings/payment-methods';
