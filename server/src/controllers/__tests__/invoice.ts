@@ -1,7 +1,6 @@
 import fastifyMultipart from '@fastify/multipart';
 import {
   authenticatedInvoiceBodySchema,
-  DEFAULT_CURRENCY,
   invoiceBodySchema,
   invoiceServiceBodySchema,
   invoiceWriteBodySchema
@@ -13,7 +12,6 @@ import * as invoiceDb from '../../database/invoice';
 import * as paymentDb from '../../database/invoice-payment';
 import * as userDb from '../../database/user';
 import en from '../../locales/en';
-import lt from '../../locales/lt';
 import { postInvoiceOptions, updateInvoiceOptions } from '../../options/invoice';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import { clientFactory } from '../../test/factories/client';
@@ -22,7 +20,8 @@ import {
   invoiceFromDbFactory
 } from '../../test/factories/invoice';
 import { userFactory } from '../../test/factories/user';
-import { mockResendSend, mockUseI18n } from '../../test/setup';
+import { mockLocalizedI18n } from '../../test/i18n';
+import { mockResendSend } from '../../test/setup';
 import * as invoiceController from '../invoice';
 
 vi.mock('../../database/invoice');
@@ -59,31 +58,7 @@ describe('Invoice Controller', () => {
   });
 
   beforeEach(() => {
-    mockUseI18n.mockImplementation(async (request) => {
-      const locale = request?.headers['accept-language'] === 'lt' ? lt : en;
-
-      return {
-        t: (key: string, options?: Record<string, string>) => {
-          const value = key
-            .split('.')
-            .reduce<unknown>(
-              (result, segment) =>
-                typeof result === 'object' && result !== null
-                  ? (result as Record<string, unknown>)[segment]
-                  : undefined,
-              locale
-            );
-
-          if (typeof value !== 'string') return key;
-
-          return Object.entries(options || {}).reduce(
-            (translation, [name, replacement]) =>
-              translation.replace(`%{${name}}`, replacement),
-            value
-          );
-        }
-      } as never;
-    });
+    mockLocalizedI18n();
   });
 
   describe('GET /api/:userId/invoices', () => {
@@ -117,105 +92,6 @@ describe('Invoice Controller', () => {
       expect(body.invoices.length).toBe(2);
       expect(body.invoices[1].paymentDates).toEqual(['2026-04-02']);
       expect(invoiceDb.getInvoicesFromDb).toHaveBeenCalledWith(testUserId);
-
-      await app.close();
-    });
-  });
-
-  describe('GET /api/:userId/invoices/income-journal.csv', () => {
-    it('should export paid income journal rows as CSV', async () => {
-      vi.mocked(invoiceDb.getIncomeJournalRowsFromDb).mockResolvedValue([
-        {
-          paidAt: '2026-05-20T10:00:00.000Z',
-          date: '2026-05-15',
-          invoiceId: 'SF001',
-          receiverName: 'Test Client',
-          receiverBusinessNumber: '123456789',
-          descriptions: 'Consulting, implementation',
-          subtotalAmount: '100.00',
-          vatAmount: '21.00',
-          totalAmount: '121.00',
-          receivedAmount: '61.00',
-          currency: DEFAULT_CURRENCY
-        },
-        {
-          paidAt: '2026-05-25',
-          date: '2026-05-15',
-          invoiceId: 'SF001',
-          receiverName: 'Test Client',
-          receiverBusinessNumber: '123456789',
-          descriptions: 'Consulting, implementation',
-          subtotalAmount: '100.00',
-          vatAmount: '21.00',
-          totalAmount: '121.00',
-          receivedAmount: '60.00',
-          currency: DEFAULT_CURRENCY
-        }
-      ]);
-
-      const { getIncomeJournal } = invoiceController;
-
-      const app = await createTestApp((fastifyApp) => {
-        fastifyApp.get(
-          '/api/:userId/invoices/income-journal.csv',
-          {
-            preHandler: mockAuthMiddleware
-          },
-          getIncomeJournal
-        );
-      });
-
-      const response = await app.inject({
-        method: 'GET',
-        url: `/api/${testUserId}/invoices/income-journal.csv?from=2026-05-01&to=2026-05-31`,
-        headers: { 'accept-language': 'en' }
-      });
-
-      expect(response.statusCode).toBe(200);
-      expect(response.headers['content-type']).toContain('text/csv');
-      expect(response.headers['content-disposition']).toBe(
-        'attachment; filename="income-journal-2026-05-01-2026-05-31.csv"'
-      );
-      expect(response.body).toContain('\uFEFF"Payment date"');
-      expect(response.body).toContain('"Consulting, implementation"');
-      expect(response.body).toContain('"Received amount (EUR)"');
-      expect(response.body.match(/"SF001"/g)).toHaveLength(2);
-      expect(response.body).toContain('"61.00"');
-      expect(response.body).toContain('"60.00"');
-      expect(invoiceDb.getIncomeJournalRowsFromDb).toHaveBeenCalledWith({
-        userId: testUserId,
-        from: '2026-05-01',
-        to: '2026-05-31'
-      });
-
-      await app.close();
-    });
-
-    it('should export Lithuanian headers and filename for Lithuanian users', async () => {
-      vi.mocked(invoiceDb.getIncomeJournalRowsFromDb).mockResolvedValue([]);
-
-      const { getIncomeJournal } = invoiceController;
-
-      const app = await createTestApp((fastifyApp) => {
-        fastifyApp.get(
-          '/api/:userId/invoices/income-journal.csv',
-          {
-            preHandler: mockAuthMiddleware
-          },
-          getIncomeJournal
-        );
-      });
-
-      const response = await app.inject({
-        method: 'GET',
-        url: `/api/${testUserId}/invoices/income-journal.csv?from=2026-05-01&to=2026-05-31`,
-        headers: { 'accept-language': 'lt' }
-      });
-
-      expect(response.headers['content-disposition']).toBe(
-        'attachment; filename="pajamu-zurnalas-2026-05-01-2026-05-31.csv"'
-      );
-      expect(response.body).toContain('\uFEFF"Apmokėjimo data"');
 
       await app.close();
     });

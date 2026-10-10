@@ -72,12 +72,12 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
           <Tooltip.Content className="max-w-sm space-y-3 break-normal p-4">
             <div className="bg-default flex items-center gap-2 rounded-lg px-3 py-2">
               <CalculatorIcon className="text-muted size-4 shrink-0" />
-              <code className="font-mono text-xs tabular-nums">{t('deduction_formula', { amount: money(expense.totalAmount), percentage, deductible: money(expense.deductibleAmount) })}</code>
+              <code className="font-mono text-xs tabular-nums">{t('deduction_formula', { amount: money(expense.eurAmount, 'eur'), percentage, deductible: money(expense.deductibleAmount, 'eur') })}</code>
             </div>
             <p>{t('deduction_explanation')}</p>
           </Tooltip.Content>
         </Tooltip>
-      </>} text={money(expense.deductibleAmount)} />
+      </>} text={money(expense.deductibleAmount, 'eur')} />
     </div>
     <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]">
       <Card className="border">

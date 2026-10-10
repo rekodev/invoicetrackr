@@ -9,7 +9,6 @@ import { renderInvoicePdf } from '@invoicetrackr/pdf/server';
 import {
   type AuthenticatedInvoiceBody,
   DEFAULT_CURRENCY,
-  type IncomeJournalQuery,
   type InvoiceBody,
   invoiceBodySchema,
   type InvoiceEmailContent,
@@ -31,7 +30,6 @@ import { getClientFromDb } from '../database/client';
 import {
   deleteInvoiceFromDb,
   findInvoiceByInvoiceId,
-  getIncomeJournalRowsFromDb,
   getInvoiceFromDb,
   getInvoicesFromDb,
   getNextInvoiceNumberFromDb,
@@ -98,12 +96,6 @@ const uploadSignatureFile = async (
 
   return uploadedSignature.url.replace('http://', 'https://');
 };
-
-const escapeCsvValue = (value: string | null | undefined) =>
-  `"${String(value || '').replace(/"/g, '""')}"`;
-
-const formatCsvDate = (value: string | null | undefined) =>
-  value ? value.slice(0, 10) : '';
 
 const UNSIGNED_SIGNING_LINK_VALIDITY_DAYS = 30;
 const SIGNED_SIGNING_LINK_VALIDITY_DAYS = 90;
@@ -601,70 +593,6 @@ export const getInvoices = async (
   const invoices = await getInvoicesFromDb(userId);
 
   reply.status(200).send({ invoices });
-};
-
-export const getIncomeJournal = async (
-  req: FastifyRequest<{
-    Params: { userId: string };
-    Querystring: IncomeJournalQuery;
-  }>,
-  reply: FastifyReply
-) => {
-  const userId = Number(req.params.userId);
-  const { from, to } = req.query;
-  const i18n = await useI18n(req);
-  const rows = await getIncomeJournalRowsFromDb({ userId, from, to });
-  const currency =
-    rows.at(0)?.currency?.toUpperCase() || DEFAULT_CURRENCY.toUpperCase();
-  const headers = [
-    i18n.t('emails.incomeJournal.paymentDate'),
-    i18n.t('emails.incomeJournal.invoiceDate'),
-    i18n.t('emails.incomeJournal.documentNumber'),
-    i18n.t('emails.incomeJournal.client'),
-    i18n.t('emails.incomeJournal.clientCode'),
-    i18n.t('emails.incomeJournal.services'),
-    i18n.t('emails.incomeJournal.receivedAmount', { currency }),
-    i18n.t('emails.incomeJournal.subtotal', { currency }),
-    i18n.t('emails.incomeJournal.vatTotal', { currency }),
-    i18n.t('emails.incomeJournal.grandTotal', { currency })
-  ];
-  const filename = i18n.t('emails.incomeJournal.filename');
-  const csvRows = rows.map((row) =>
-    [
-      formatCsvDate(row.paidAt),
-      row.date,
-      row.invoiceId,
-      row.receiverName,
-      row.receiverBusinessNumber,
-      row.descriptions,
-      row.receivedAmount,
-      row.subtotalAmount,
-      row.vatAmount,
-      row.totalAmount
-    ]
-      .map(escapeCsvValue)
-      .join(',')
-  );
-
-  await recordRequestAudit({
-    req,
-    userId,
-    action: 'report.income_journal_exported',
-    entityType: 'report',
-    entityId: `${from}:${to}`,
-    newValue: { from, to, rowCount: rows.length }
-  });
-
-  reply
-    .header('Content-Type', 'text/csv; charset=utf-8')
-    .header(
-      'Content-Disposition',
-      `attachment; filename="${filename}-${from}-${to}.csv"`
-    )
-    .status(200)
-    .send(
-      `\uFEFF${[headers.map(escapeCsvValue).join(','), ...csvRows].join('\n')}`
-    );
 };
 
 export const getInvoice = async (

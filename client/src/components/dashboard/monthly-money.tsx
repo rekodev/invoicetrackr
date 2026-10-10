@@ -1,4 +1,4 @@
-import { Card } from '@heroui/react';
+import { buttonVariants, Card } from '@heroui/react';
 import type { DashboardMonth } from '@invoicetrackr/types';
 import Link from 'next/link';
 import { getLocale, getTranslations } from 'next-intl/server';
@@ -10,6 +10,8 @@ import {
   subtractMoney,
   yearRange
 } from '@/lib/utils/dashboard';
+import { formatMonthName } from '@/lib/utils/date';
+import { journalHref } from '@/lib/utils/journal';
 
 import MonthlyMoneyChart from './monthly-money-chart';
 
@@ -25,10 +27,9 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
   const t = await getTranslations('dashboard.monthly');
   const locale = await getLocale();
   const range = yearRange(year);
-  const monthName = new Intl.DateTimeFormat(locale, { month: 'long', timeZone: 'UTC' });
   const rows = monthly.map((month) => ({
     ...month,
-    name: monthName.format(new Date(Date.UTC(year, month.month - 1, 1))),
+    name: formatMonthName(year, month.month, locale),
     range: monthRange(year, month.month),
     net: subtractMoney(month.receivedIncome, month.expenses)
   }));
@@ -68,6 +69,12 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
             </div>
           ))}
         </dl>
+        <Link
+          href={journalHref({ year })}
+          className={buttonVariants({ variant: 'outline', size: 'sm' })}
+        >
+          {t('journal')}
+        </Link>
       </Card.Header>
       <Card.Content className="flex flex-col gap-6">
         <MonthlyMoneyChart
@@ -88,7 +95,15 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
             <tbody>
               {rows.map((row) => (
                 <tr key={row.month} className="border-b last:border-0">
-                  <th scope="row" className={`${cell} font-normal capitalize`}>{row.name}</th>
+                  <th scope="row" className={`${cell} font-normal capitalize`}>
+                    <Link
+                      href={journalHref({ year, month: row.month })}
+                      aria-label={t('a11y.journal_link', { month: row.name })}
+                      className="hover:underline"
+                    >
+                      {row.name}
+                    </Link>
+                  </th>
                   <td className={`${cell} text-right tabular-nums`}>
                     <Link
                       href={dashboardLinks.receivedIncome(row.range)}

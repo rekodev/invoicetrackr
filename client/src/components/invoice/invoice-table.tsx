@@ -147,7 +147,6 @@ export default function InvoiceTable({ invoices, userId, isEmailVerified = false
   return (
     <section className="flex max-w-full flex-col gap-4 overflow-x-hidden">
       <InvoiceTableTopContent
-        userId={userId}
         columns={columns}
         statusOptions={statusOptions}
         filterValue={filterValue}

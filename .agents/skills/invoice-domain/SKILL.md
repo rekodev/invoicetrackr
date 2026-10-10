@@ -115,10 +115,16 @@ enforced by schema refine), `issuedAt`, `paidAt`, `voidedAt`.
 
 ## Income journal and PDFs
 
-- The income journal CSV (`/invoices/income-journal.csv`,
-  `getIncomeJournalRowsFromDb`) is what the freelancer hands to VMI /
-  their accountant. Changes to which invoices or amounts it includes are
-  tax-relevant — call them out explicitly.
+- The income and expense journal (pajamų ir išlaidų žurnalas) on
+  `/reports` is what the freelancer hands to VMI / their accountant:
+  `GET /api/:userId/journal` and `/journal/export` (CSV/XLSX), queries in
+  `server/src/database/journal.ts`, math in `server/src/utils/journal.ts`,
+  files in `server/src/utils/journal-export.ts`. Income is one row per
+  payment allocation on an issued invoice, dated by payment date, with a
+  pro-rated VAT share; expenses use the stored EUR `deductible_amount`;
+  the net result is income excluding VAT minus deductible expenses.
+  Changes to which records or amounts it includes are tax-relevant — call
+  them out explicitly.
 - The PDF is rendered from the stored invoice in its frozen
   `documentLanguage`. Lithuanian output should read as a legally serious
   "PVM sąskaita faktūra" / "Sąskaita faktūra" with seller/buyer codes,

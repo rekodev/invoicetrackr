@@ -1,5 +1,7 @@
 import type { InvoiceServiceBody } from '@invoicetrackr/types';
 
+import { roundPositiveDivision } from './money';
+
 export type InvoiceTotals = {
   subtotalAmount: string;
   vatAmount: string;
@@ -28,9 +30,6 @@ const parseScaledDecimal = (
 
   return BigInt(match[1]) * factor + BigInt(fraction || '0');
 };
-
-const roundPositiveDivision = (value: bigint, divisor: bigint) =>
-  (value + divisor / 2n) / divisor;
 
 const toMoney = (amountInCents: bigint) =>
   `${amountInCents / 100n}.${String(amountInCents % 100n).padStart(2, '0')}`;

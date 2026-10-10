@@ -1,6 +1,7 @@
 import { and, count, eq, gte, isNull, lte, notExists, sql } from 'drizzle-orm';
 
 import type { OpenInvoiceRow } from '../utils/dashboard';
+import { journalPeriod } from '../utils/journal';
 import { db } from './db';
 import { getPaymentsByInvoiceQuery } from './invoice-payment';
 import {
@@ -12,16 +13,11 @@ import {
   paymentsTable
 } from './schema';
 
-const yearRange = (year: number) => ({
-  from: `${year}-01-01`,
-  to: `${year}-12-31`
-});
-
 export const getReceivedIncomeByMonthFromDb = async (
   userId: number,
   year: number
 ) => {
-  const { from, to } = yearRange(year);
+  const { from, to } = journalPeriod(year);
   const month = sql<number>`extract(month from ${paymentsTable.paymentDate})::int`;
 
   return db
@@ -57,14 +53,14 @@ export const getReceivedIncomeByMonthFromDb = async (
 };
 
 export const getExpensesByMonthFromDb = async (userId: number, year: number) => {
-  const { from, to } = yearRange(year);
+  const { from, to } = journalPeriod(year);
   const month = sql<number>`extract(month from ${expensesTable.expenseDate})::int`;
 
   return db
     .select({
       month,
       total: sql<string>`sum(${expensesTable.eurAmount})::text`,
-      deductible: sql<string>`sum(round(${expensesTable.eurAmount} * ${expensesTable.businessUsePercentage} / 100, 2))::text`
+      deductible: sql<string>`sum(${expensesTable.deductibleAmount})::text`
     })
     .from(expensesTable)
     .where(
@@ -79,7 +75,7 @@ export const getExpensesByMonthFromDb = async (userId: number, year: number) => 
 };
 
 export const getInvoicedTotalFromDb = async (userId: number, year: number) => {
-  const { from, to } = yearRange(year);
+  const { from, to } = journalPeriod(year);
   const [row] = await db
     .select({
       total: sql<string>`coalesce(sum(${invoicesTable.totalAmount}), 0)::text`
@@ -148,7 +144,7 @@ export const getExpensesMissingDocumentsCountFromDb = async (
   userId: number,
   year: number
 ) => {
-  const { from, to } = yearRange(year);
+  const { from, to } = journalPeriod(year);
   const [row] = await db
     .select({ count: count(expensesTable.id) })
     .from(expensesTable)

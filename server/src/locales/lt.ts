@@ -66,19 +66,36 @@ export default {
       },
       footer: 'Šis el. laiškas buvo išsiųstas InvoiceTrackr',
       copyright: 'InvoiceTrackr. Visos teisės saugomos.'
+    }
+  },
+  journal: {
+    filename: 'pajamu-islaidu-zurnalas',
+    title: 'PAJAMŲ IR IŠLAIDŲ ŽURNALAS — %{period}',
+    ownerName: 'Vardas Pavardė',
+    certificateNumber: 'Individualios veiklos pažymos Nr.',
+    columns: {
+      index: 'Eil. Nr.',
+      date: 'Data (YYYY-MM-DD)',
+      documentNumber: 'Dok. Nr.',
+      incomeDescription: 'Pajamų aprašymas (klientas / paslauga)',
+      income: 'Pajamos (€)',
+      vat: 'PVM (€)',
+      incomeNet: 'Pajamos be PVM (€)',
+      expenseDescription: 'Išlaidų aprašymas (tiekėjas / paskirtis)',
+      expenses: 'Išlaidos (€)',
+      notes: 'Pastabos'
     },
-    incomeJournal: {
-      filename: 'pajamu-zurnalas',
-      paymentDate: 'Apmokėjimo data',
-      invoiceDate: 'Sąskaitos data',
-      documentNumber: 'Dokumento numeris',
-      client: 'Pirkėjas',
-      clientCode: 'Pirkėjo kodas',
-      services: 'Paslaugos / prekės',
-      subtotal: 'Sąskaitos suma be PVM (%{currency})',
-      vatTotal: 'Sąskaitos PVM suma (%{currency})',
-      grandTotal: 'Sąskaitos bendra suma (%{currency})',
-      receivedAmount: 'Gauta suma (%{currency})'
+    total: 'IŠ VISO:',
+    netResult: 'GRYNASIS REZULTATAS (Pajamos be PVM − Išlaidos):',
+    businessUseNote: 'Veiklai %{percentage}% iš %{total} €',
+    summarySheet: 'Suvestinė',
+    summaryColumns: {
+      month: 'Mėnuo',
+      income: 'Pajamos (€)',
+      vat: 'PVM (€)',
+      incomeNet: 'Pajamos be PVM (€)',
+      expenses: 'Išlaidos (€)',
+      net: 'Grynasis rezultatas (€)'
     }
   },
   validation: {
@@ -106,8 +123,6 @@ export default {
       date: 'Reikalinga tinkama data',
       dueDate: 'Reikalinga tinkama data',
       dueDateAfterDate: 'Terminas neturi būti ankstesnis už sąskaitos datą',
-      incomeJournalDateRange:
-        'Pabaigos data negali būti ankstesnė už pradžios datą',
       status: 'Tinkama būsena yra privaloma',
       cryptoRetired: 'Prieš išsaugodami ar išrašydami juodraštį pasirinkite banko pavedimą arba sąskaitą be mokėjimo rekvizitų.',
       paymentMode: 'Tinkamas mokėjimo būdas yra privalomas',

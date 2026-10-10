@@ -370,16 +370,6 @@ export const sendInvoiceEmailBodySchema = invoiceEmailContentSchema.extend({
 export type InvoiceEmailContent = z.infer<typeof invoiceEmailContentSchema>;
 export type SendInvoiceEmailBody = z.infer<typeof sendInvoiceEmailBodySchema>;
 
-export const incomeJournalQuerySchema = z
-  .object({
-    from: z.iso.date(),
-    to: z.iso.date()
-  })
-  .refine((data) => data.from <= data.to, {
-    message: 'validation.invoice.incomeJournalDateRange',
-    path: ['to']
-  });
-
 // Types
 export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
 export type InvoiceNumberSeries = z.infer<typeof invoiceNumberSeriesSchema>;
@@ -411,4 +401,3 @@ export type InvoiceBody = z.infer<typeof invoiceBodySchema>;
 export type PublicInvoiceSigning = z.infer<typeof publicInvoiceSigningSchema>;
 export type PublicInvoice = z.infer<typeof publicInvoiceSchema>;
 export type PublicInvoicePayment = z.infer<typeof publicInvoicePaymentSchema>;
-export type IncomeJournalQuery = z.infer<typeof incomeJournalQuerySchema>;

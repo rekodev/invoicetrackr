@@ -74,10 +74,70 @@
         }
     },
     "reports": {
-        "empty": {
-            "heading": "Reports",
-            "title": "Reports Are Being Prepared",
-            "description": "Income journals, tax estimates, annual summaries, and accountant exports will live here."
+        "journal": {
+            "heading": "Income and Expense Journal",
+            "description": "Payments received and deductible expenses for the selected period, ready for year-end records or your accountant.",
+            "filters": {
+                "year": "Year",
+                "month": "Month",
+                "all_months": "All Months"
+            },
+            "cards": {
+                "income": "Received Income · {period}",
+                "expenses": "Deductible Expenses · {period}",
+                "net": "Net Result · {period}"
+            },
+            "export": {
+                "csv": "Export CSV",
+                "xlsx": "Export XLSX"
+            },
+            "export_error": {
+                "title": "Export Failed",
+                "description": "We couldn't prepare the journal file. Try again, and if it keeps failing, sign in again."
+            },
+            "table": {
+                "title": "Journal Entries · {count}",
+                "subtitle": "Income by payment date, expenses by expense date",
+                "columns": {
+                    "date": "Date",
+                    "document": "Document",
+                    "type": "Type",
+                    "description": "Description",
+                    "income": "Income",
+                    "vat": "VAT",
+                    "expenses": "Expenses"
+                },
+                "type": {
+                    "income": "Income",
+                    "expense": "Expense"
+                },
+                "no_document": "No number",
+                "business_use": "{percentage}% business use of {amount}",
+                "total": "Total"
+            },
+            "empty": {
+                "title": "No Records for This Period",
+                "description": "Record payments on issued invoices or add expenses, and they will appear in the journal.",
+                "create_invoice": "Create invoice",
+                "add_expense": "Add expense"
+            },
+            "guide": {
+                "title": "How to Use the Journal",
+                "subtitle": "What each column means for your year-end records",
+                "items": {
+                    "income": "Income is recorded on the date a payment was received, not the invoice date. Partial payments appear as separate entries.",
+                    "vat": "VAT is the share of the invoice's VAT included in each payment. It is always zero if you are not a VAT payer. The net result uses income excluding VAT, as in the annual declaration.",
+                    "expenses": "Expenses show the deductible amount in euros: the EUR amount multiplied by the business-use percentage. When only part is deductible, the full amount is shown next to it.",
+                    "declaration": "Use the income and expense totals for your annual income declaration (GPM311) or hand the export to your accountant. InvoiceTrackr does not submit anything to VMI.",
+                    "formats": "The XLSX workbook follows the familiar journal layout and includes a monthly summary sheet. The CSV has the same columns for importing into other tools.",
+                    "sources": "Keep your invoices and expense documents. Each entry links to the record it comes from."
+                }
+            },
+            "a11y": {
+                "open_invoice": "Open invoice {number}",
+                "open_expense": "Open expense from {supplier}",
+                "export": "Export options"
+            }
         }
     },
     "general_error": "Uh oh! Something went wrong...",
@@ -516,8 +576,10 @@
             "total": "Total",
             "a11y": {
                 "income_link": "Invoices paid: {month}",
-                "expenses_link": "Expenses: {month}"
-            }
+                "expenses_link": "Expenses: {month}",
+                "journal_link": "Journal: {month}"
+            },
+            "journal": "View Journal"
         },
         "empty": {
             "title": "Your Workbench Is Empty",
@@ -668,15 +730,8 @@
             "search_placeholder": "Search by invoice ID...",
             "add_new": "Add New",
             "total_singular": "Total 1 invoice",
-            "total_plural": "Total {count} invoices"
-        },
-        "income_journal": {
-            "title": "Export Income Journal",
-            "description": "The CSV includes payments received during the selected period, including partial payments. Each entry uses the payment date and amount received.",
-            "from": "Received From",
-            "to": "Received To",
-            "export": "Export CSV",
-            "cancel": "Cancel"
+            "total_plural": "Total {count} invoices",
+            "journal": "Income Journal"
         },
         "bottom_content": {
             "previous": "Previous",

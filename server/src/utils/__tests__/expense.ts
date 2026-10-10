@@ -21,7 +21,7 @@ describe('expense utilities', () => {
   });
 
   describe('normalizeExpenseForDb', () => {
-    it('normalizes monetary fields and business-use percentage', () => {
+    it('normalizes monetary fields and deducts the business-use share of the EUR amount', () => {
       expect(
         normalizeExpenseForDb({
           expenseDate: '2026-07-08',
@@ -45,12 +45,12 @@ describe('expense utilities', () => {
         eurAmount: '9.50',
         vatAmount: '1.00',
         businessUsePercentage: '33.30',
-        deductibleAmount: '3.33',
+        deductibleAmount: '3.16',
         notes: 'Notes'
       });
     });
 
-    it('defaults currency and eurAmount while calculating deductible amount from totalAmount', () => {
+    it('defaults currency and eurAmount to the total before calculating the deductible amount', () => {
       expect(
         normalizeExpenseForDb({
           expenseDate: '2026-07-08',
