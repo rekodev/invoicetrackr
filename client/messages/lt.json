@@ -603,6 +603,26 @@
                 "view_records": "Peržiūrėti įrašus: {title}"
             }
         },
+        "safe_to_spend": {
+            "title": "Galima išleisti · įvertis",
+            "tax_breakdown": "Mokesčių skaičiavimas",
+            "set_up": "Nustatyti mokesčių įvertį",
+            "not_set_up": "Nenustatyta",
+            "unsupported": "Įvertis skaičiuojamas tik {years} m.",
+            "shortfall": "Trūksta {amount}",
+            "rows": {
+                "received_income": "Gautos pajamos",
+                "vat_collected": "Surinktas PVM",
+                "expenses": "Išlaidos",
+                "tax_reserve": "Mokesčių rezervas",
+                "safe_to_spend": "Galima išleisti"
+            },
+            "info": {
+                "title": "Kaip tai apskaičiuojama",
+                "reserve": "Rezervas – visų metų GPM, VSD ir PSD įvertis iš mokesčių puslapio, įskaitant minimalią PSD už kiekvieną veiklos mėnesį, todėl metų pradžioje jis atsargus.",
+                "payments": "Jau sumokėti mokesčiai kol kas neatimami. Tai įvertis, o ne VMI ar „Sodros“ prievolė."
+            }
+        },
         "attention": {
             "title": "Reikia dėmesio",
             "description": "Atkreipkite dėmesį į šiuos dalykus:",

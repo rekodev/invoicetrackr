@@ -10,7 +10,13 @@ import {
   getReceivedIncomeByMonthFromDb
 } from '../database/dashboard';
 import { todayInLithuania } from '../database/invoice-payment';
-import { buildMonthlySummary, summarizeOpenInvoices } from '../utils/dashboard';
+import {
+  buildMonthlySummary,
+  calculateSafeToSpend,
+  summarizeOpenInvoices
+} from '../utils/dashboard';
+import { loadJournal } from './journal';
+import { loadTaxEstimate } from './tax';
 
 export const getDashboardSummary = async (
   req: FastifyRequest<{
@@ -29,14 +35,16 @@ export const getDashboardSummary = async (
     invoiced,
     openInvoices,
     draftCount,
-    expensesMissingDocuments
+    expensesMissingDocuments,
+    journal
   ] = await Promise.all([
     getReceivedIncomeByMonthFromDb(userId, year),
     getExpensesByMonthFromDb(userId, year),
     getInvoicedTotalFromDb(userId, year),
     getOpenInvoicesFromDb(userId),
     getDraftCountFromDb(userId),
-    getExpensesMissingDocumentsCountFromDb(userId, year)
+    getExpensesMissingDocumentsCountFromDb(userId, year),
+    loadJournal(userId, { year })
   ]);
 
   const { monthly, receivedIncome, expenses, deductibleExpenses } =
@@ -48,6 +56,11 @@ export const getDashboardSummary = async (
     overdueWithoutEmail,
     overdueInvoices
   } = summarizeOpenInvoices(openInvoices, today);
+  const estimate = await loadTaxEstimate(
+    userId,
+    year,
+    async () => journal.totals
+  );
 
   reply.status(200).send({
     year,
@@ -62,6 +75,12 @@ export const getDashboardSummary = async (
     monthly,
     overdueInvoices,
     overdueCount,
-    attention: { draftCount, expensesMissingDocuments, overdueWithoutEmail }
+    attention: { draftCount, expensesMissingDocuments, overdueWithoutEmail },
+    safeToSpend: calculateSafeToSpend({
+      receivedIncome,
+      vatCollected: journal.totals.incomeVat,
+      expenses,
+      estimate
+    })
   });
 };

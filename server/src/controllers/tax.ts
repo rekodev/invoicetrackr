@@ -1,4 +1,8 @@
-import type { TaxEstimateQuery, TaxProfileBody } from '@invoicetrackr/types';
+import type {
+  JournalTotals,
+  TaxEstimateQuery,
+  TaxProfileBody
+} from '@invoicetrackr/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
@@ -12,29 +16,21 @@ import {
 import { SUPPORTED_TAX_YEARS, TAX_RULES } from '../utils/tax-rules';
 import { loadJournal } from './journal';
 
-export const getTaxEstimate = async (
-  req: FastifyRequest<{
-    Params: { userId: string };
-    Querystring: TaxEstimateQuery;
-  }>,
-  reply: FastifyReply
+export const loadTaxEstimate = async (
+  userId: number,
+  year: number,
+  loadTotals: () => Promise<Pick<JournalTotals, 'incomeNet' | 'expenses'>>
 ) => {
-  const userId = Number(req.params.userId);
-  const { year } = req.query;
   const rules = TAX_RULES[year];
   const base = { year, supportedYears: SUPPORTED_TAX_YEARS };
 
-  if (!rules) {
-    return reply.status(200).send({ ...base, status: 'unsupported_year' });
-  }
+  if (!rules) return { ...base, status: 'unsupported_year' as const };
 
   const profile = await getTaxProfileFromDb(userId, year);
 
-  if (!profile) {
-    return reply.status(200).send({ ...base, status: 'needs_profile' });
-  }
+  if (!profile) return { ...base, status: 'needs_profile' as const };
 
-  const { totals } = await loadJournal(userId, { year });
+  const totals = await loadTotals();
   const inputs = {
     income: totals.incomeNet,
     actualExpenses: totals.expenses,
@@ -45,14 +41,32 @@ export const getTaxEstimate = async (
     )
   };
 
-  reply.status(200).send({
+  return {
     ...base,
-    status: 'ready',
+    status: 'ready' as const,
     profile,
     activeMonths: inputs.activeMonths,
     ...calculateTaxEstimate(inputs, profile, rules),
     rules: summarizeTaxRules(rules)
-  });
+  };
+};
+
+export const getTaxEstimate = async (
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Querystring: TaxEstimateQuery;
+  }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const { year } = req.query;
+  const estimate = await loadTaxEstimate(
+    userId,
+    year,
+    async () => (await loadJournal(userId, { year })).totals
+  );
+
+  reply.status(200).send(estimate);
 };
 
 export const saveTaxProfile = async (

@@ -603,6 +603,26 @@
                 "view_records": "View records behind {title}"
             }
         },
+        "safe_to_spend": {
+            "title": "Safe to Spend · Estimate",
+            "tax_breakdown": "Tax Breakdown",
+            "set_up": "Set Up Tax Estimate",
+            "not_set_up": "Not set up",
+            "unsupported": "Estimates cover {years} only",
+            "shortfall": "Short by {amount}",
+            "rows": {
+                "received_income": "Received Income",
+                "vat_collected": "VAT Collected",
+                "expenses": "Expenses",
+                "tax_reserve": "Tax Reserve",
+                "safe_to_spend": "Safe to Spend"
+            },
+            "info": {
+                "title": "How This Is Calculated",
+                "reserve": "The reserve is the full-year GPM, VSD and PSD estimate from the tax page, including the minimum PSD for every active month, so it stays cautious early in the year.",
+                "payments": "Taxes you have already paid are not deducted yet. This is an estimate, not a VMI or Sodra liability."
+            }
+        },
         "attention": {
             "title": "Needs Attention",
             "description": "A few things need your attention:",

@@ -221,6 +221,12 @@ test.describe('invoices', () => {
 
     await page.goto('/dashboard');
     await expect(page.getByText('Overdue Invoices', { exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Safe to Spend · Estimate' })).toBeVisible();
+    await page.getByRole('button', { name: 'How This Is Calculated' }).click();
+    const breakdown = page.getByRole('dialog');
+    await expect(breakdown.getByText('Tax Reserve', { exact: true })).toBeVisible();
+    await expect(breakdown.getByRole('link', { name: 'Tax Breakdown' })).toHaveAttribute('href', '/reports/taxes?year=2026');
+    await page.keyboard.press('Escape');
     await expect(page.getByRole('button', { name: `Send reminder for ${number}` })).toHaveCount(0);
 
     await page.goto('/invoices');

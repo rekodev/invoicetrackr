@@ -1,6 +1,8 @@
 import type {
   DashboardMonth,
-  DashboardOverdueInvoice
+  DashboardOverdueInvoice,
+  DashboardSafeToSpend,
+  TaxExpenseMethod
 } from '@invoicetrackr/types';
 
 import { fromCents, toCents } from './money';
@@ -96,5 +98,49 @@ export const summarizeOpenInvoices = (rows: OpenInvoiceRow[], today: string) => 
     overdueWithoutEmail: overdueInvoices.filter((invoice) => !invoice.clientEmail)
       .length,
     overdueInvoices: overdueInvoices.slice(0, OVERDUE_PREVIEW_LIMIT)
+  };
+};
+
+type SafeToSpendInputs = {
+  receivedIncome: string;
+  vatCollected: string;
+  expenses: string;
+  estimate:
+    | { status: 'unsupported_year' | 'needs_profile' }
+    | {
+        status: 'ready';
+        profile: { expenseMethod: TaxExpenseMethod };
+        methods: { actual: { total: string }; thirtyPercent: { total: string } };
+      };
+};
+
+export const calculateSafeToSpend = ({
+  receivedIncome,
+  vatCollected,
+  expenses,
+  estimate
+}: SafeToSpendInputs): DashboardSafeToSpend => {
+  const base = { receivedIncome, vatCollected, expenses };
+
+  if (estimate.status !== 'ready') return { ...base, status: estimate.status };
+
+  const { expenseMethod } = estimate.profile;
+  const taxReserve =
+    expenseMethod === 'actual'
+      ? estimate.methods.actual.total
+      : estimate.methods.thirtyPercent.total;
+  const remaining =
+    toCents(receivedIncome) -
+    toCents(vatCollected) -
+    toCents(expenses) -
+    toCents(taxReserve);
+
+  return {
+    ...base,
+    status: 'ready',
+    expenseMethod,
+    taxReserve,
+    safeToSpend: fromCents(remaining > 0n ? remaining : 0n),
+    shortfall: fromCents(remaining < 0n ? -remaining : 0n)
   };
 };
