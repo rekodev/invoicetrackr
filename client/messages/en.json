@@ -17,6 +17,7 @@
             "reports": "Reports",
             "journal": "Journal",
             "taxes": "Taxes",
+            "annual": "Annual Package",
             "settings": "Settings",
             "freelancer_profile": "Freelancer Profile",
             "banking_information": "Bank Accounts",
@@ -60,6 +61,7 @@
         "reports": "Reports",
         "journal": "Journal",
         "taxes": "Taxes",
+        "annual": "Annual Package",
         "settings": "Settings",
         "login": "Log In",
         "new": "New",
@@ -219,6 +221,99 @@
                 "description": "Calculated from your records and assumptions using the {version} rules. It is not a VMI or Sodra liability, and your declaration may differ.",
                 "not_covered": "Not covered: pensioner and disability rules, first-year relief and foreign income.",
                 "sources": "Sources"
+            }
+        },
+        "annual": {
+            "heading": "Annual Tax Package",
+            "description": "Download one workbook with the year's totals, tax estimate, journal and supporting records for your declaration or accountant.",
+            "year": "Year",
+            "review": "Review",
+            "export_error": {
+                "title": "Export Failed",
+                "description": "We couldn't prepare the annual package. Try again, and if it keeps failing, sign in again."
+            },
+            "alerts": {
+                "blocking": {
+                    "title": "The Package Will Be Marked Incomplete",
+                    "description": "You can still download it. Resolve these first so the figures are final:"
+                },
+                "recommendation": {
+                    "title": "Worth Reviewing Before You Send It",
+                    "description": "These don't block the package, but they may change your figures:"
+                }
+            },
+            "warnings": {
+                "year_in_progress": {
+                    "text": "{year} isn't over yet, so the figures only cover records to date."
+                },
+                "missing_tax_profile": {
+                    "text": "Your {year} tax assumptions aren't confirmed, so the package has no tax estimate.",
+                    "action": "Confirm Tax Assumptions"
+                },
+                "unsupported_tax_year": {
+                    "text": "Tax estimates don't cover {year} yet, so the package has no tax estimate."
+                },
+                "missing_owner_details": {
+                    "text": "Your legal name or individual activity certificate number is missing from your profile.",
+                    "action": "Complete Profile"
+                },
+                "draft_invoices": {
+                    "text": "{count, plural, one {# draft invoice dated in {year} was never issued.} other {# draft invoices dated in {year} were never issued.}}",
+                    "action": "Review Drafts"
+                },
+                "outstanding_invoices": {
+                    "text": "{count, plural, one {# issued invoice still has an unpaid balance.} other {# issued invoices still have an unpaid balance.}}",
+                    "action": "Review Unpaid Invoices"
+                },
+                "expenses_missing_documents": {
+                    "text": "{count, plural, one {# expense has no attached document.} other {# expenses have no attached document.}}",
+                    "action": "Add Documents"
+                }
+            },
+            "cards": {
+                "income": "Received Income · {year}",
+                "expenses": "Deductible Expenses · {year}",
+                "outstanding": "Outstanding",
+                "tax": "Estimated Taxes",
+                "not_available": "Not available"
+            },
+            "contents": {
+                "title": "Workbook · {year}",
+                "complete": "Complete",
+                "incomplete": "Incomplete",
+                "subtitle": "Prepared from your records as of {date}",
+                "download": "Download XLSX",
+                "disclaimer": "Tax figures are estimates, not a VMI or Sodra liability. The package helps you or your accountant prepare the declaration and doesn't replace professional tax advice.",
+                "sheets": {
+                    "summary": {
+                        "name": "Summary",
+                        "description": "Year totals, invoiced and outstanding amounts, and the estimate under both expense methods."
+                    },
+                    "warnings": {
+                        "name": "Warnings",
+                        "description": "Every issue shown on this page, marked blocking or recommendation."
+                    },
+                    "journal": {
+                        "name": "Journal",
+                        "description": "The income and expense journal in the familiar layout."
+                    },
+                    "monthly": {
+                        "name": "Monthly",
+                        "description": "Income, VAT, expenses and net result for each month."
+                    },
+                    "invoices": {
+                        "name": "Invoices",
+                        "description": "Issued and voided invoices dated in the year, with paid and outstanding amounts."
+                    },
+                    "payments": {
+                        "name": "Payments",
+                        "description": "Payments received in the year, by invoice."
+                    },
+                    "expenses": {
+                        "name": "Expenses",
+                        "description": "Expenses with category, business use, deductible amount and document count."
+                    }
+                }
             }
         }
     },

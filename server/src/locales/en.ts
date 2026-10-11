@@ -96,6 +96,122 @@ export default {
       net: 'Net result (€)'
     }
   },
+  annualPackage: {
+    filename: 'annual-tax-package',
+    title: 'ANNUAL TAX PACKAGE — %{year}',
+    preparedOn: 'Prepared on',
+    incomplete: 'INCOMPLETE — see the Warnings sheet before relying on these figures.',
+    sheets: {
+      summary: 'Summary',
+      warnings: 'Warnings',
+      journal: 'Journal',
+      monthly: 'Monthly',
+      invoices: 'Invoices',
+      payments: 'Payments',
+      expenses: 'Expenses'
+    },
+    sections: {
+      totals: 'Income and expenses',
+      tax: 'Tax estimate'
+    },
+    summary: {
+      income: 'Received income incl. VAT (€)',
+      incomeVat: 'VAT in received income (€)',
+      incomeNet: 'Received income excl. VAT (€)',
+      expenses: 'Deductible expenses (€)',
+      net: 'Net result (€)',
+      invoiced: 'Invoiced, issued invoices dated in the year (€)',
+      outstanding: 'Outstanding on those invoices as of %{date} (€)'
+    },
+    expenseMethod: 'Your expense method',
+    methods: {
+      actual: 'Actual expenses',
+      thirty_percent: '30% of income'
+    },
+    taxRows: {
+      income: 'Income excl. VAT (€)',
+      deductions: 'Deductions (€)',
+      vsd: 'VSD (€)',
+      psd: 'PSD (€)',
+      gpm: 'GPM (€)',
+      total: 'Estimated total (€)'
+    },
+    taxUnavailable: {
+      needs_profile: 'Not available: confirm your tax assumptions for this year in InvoiceTrackr.',
+      unsupported_year: 'Not available: tax estimates do not support this year yet.'
+    },
+    disclaimer:
+      'Prepared from your InvoiceTrackr records. The tax figures are estimates, not a VMI or Sodra liability, and do not replace professional tax advice.',
+    total: 'TOTAL',
+    columns: {
+      index: 'No.',
+      invoiceNumber: 'Invoice No.',
+      date: 'Date',
+      dueDate: 'Due date',
+      paymentDate: 'Payment date',
+      client: 'Client',
+      clientCode: 'Client code',
+      status: 'Status',
+      total: 'Total (€)',
+      vat: 'VAT (€)',
+      paid: 'Paid (€)',
+      outstanding: 'Outstanding (€)',
+      amount: 'Amount (€)',
+      method: 'Payment method',
+      reference: 'Bank reference',
+      supplier: 'Supplier',
+      documentNumber: 'Document No.',
+      description: 'Description',
+      category: 'Category',
+      originalAmount: 'Original amount',
+      eurAmount: 'Amount (€)',
+      businessUse: 'Business use (%)',
+      deductible: 'Deductible (€)',
+      documents: 'Documents',
+      severity: 'Severity',
+      issue: 'Issue'
+    },
+    statuses: {
+      pending: 'Unpaid',
+      paid: 'Paid',
+      canceled: 'Canceled',
+      voided: 'Voided (not counted)'
+    },
+    paymentMethods: {
+      bank_transfer: 'Bank transfer',
+      card: 'Card',
+      cash: 'Cash',
+      other: 'Other'
+    },
+    categories: {
+      software: 'Software',
+      equipment: 'Equipment',
+      telecommunications: 'Telecommunications',
+      office: 'Office',
+      travel: 'Travel',
+      transport: 'Transport',
+      professional_services: 'Professional services',
+      marketing: 'Marketing',
+      education: 'Education',
+      bank_fees: 'Bank fees',
+      insurance: 'Insurance',
+      other: 'Other'
+    },
+    severity: {
+      blocking: 'Blocking',
+      recommendation: 'Recommendation'
+    },
+    warnings: {
+      none: 'No issues found.',
+      year_in_progress: 'The year is not over yet. Figures cover records up to the preparation date.',
+      missing_tax_profile: 'Tax assumptions for this year are not confirmed, so the package has no tax estimate.',
+      unsupported_tax_year: 'Tax estimates do not support this year yet, so the package has no tax estimate.',
+      missing_owner_details: 'Your legal name or individual activity certificate number is missing from your profile.',
+      draft_invoices: 'Draft invoices dated in this year that were never issued: %{count}.',
+      outstanding_invoices: 'Issued invoices with an unpaid balance: %{count}.',
+      expenses_missing_documents: 'Expenses without an attached document: %{count}.'
+    }
+  },
   validation: {
     payment: {
       date: 'Choose a valid payment date.',

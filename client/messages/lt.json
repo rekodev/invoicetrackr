@@ -17,6 +17,7 @@
             "reports": "Ataskaitos",
             "journal": "Žurnalas",
             "taxes": "Mokesčiai",
+            "annual": "Metinė ataskaita",
             "settings": "Nustatymai",
             "freelancer_profile": "Veiklos profilis",
             "banking_information": "Banko sąskaitos",
@@ -60,6 +61,7 @@
         "reports": "Ataskaitos",
         "journal": "Žurnalas",
         "taxes": "Mokesčiai",
+        "annual": "Metinė ataskaita",
         "settings": "Nustatymai",
         "login": "Prisijungti",
         "new": "Nauja",
@@ -219,6 +221,99 @@
                 "description": "Apskaičiuota pagal jūsų įrašus ir prielaidas, taikant {version} taisykles. Tai nėra VMI ar „Sodros“ prievolė, o deklaracijoje suma gali skirtis.",
                 "not_covered": "Neįvertinta: pensininkų ir neįgaliųjų taisyklės, pirmųjų veiklos metų lengvatos ir užsienio pajamos.",
                 "sources": "Šaltiniai"
+            }
+        },
+        "annual": {
+            "heading": "Metinė mokesčių ataskaita",
+            "description": "Atsisiųskite vieną failą su metų sumomis, mokesčių įverčiu, žurnalu ir pagrindžiančiais įrašais deklaracijai arba buhalteriui.",
+            "year": "Metai",
+            "review": "Peržiūrėti",
+            "export_error": {
+                "title": "Eksportuoti nepavyko",
+                "description": "Nepavyko paruošti metinės ataskaitos. Bandykite dar kartą, o jei nepavyks – prisijunkite iš naujo."
+            },
+            "alerts": {
+                "blocking": {
+                    "title": "Ataskaita bus pažymėta kaip nebaigta",
+                    "description": "Ją vis tiek galite atsisiųsti. Kad skaičiai būtų galutiniai, pirmiau sutvarkykite:"
+                },
+                "recommendation": {
+                    "title": "Verta peržiūrėti prieš siunčiant",
+                    "description": "Tai ataskaitos neblokuoja, bet gali pakeisti jūsų skaičius:"
+                }
+            },
+            "warnings": {
+                "year_in_progress": {
+                    "text": "{year} m. dar nesibaigė, todėl skaičiai apima tik iki šiol užregistruotus įrašus."
+                },
+                "missing_tax_profile": {
+                    "text": "{year} m. mokesčių prielaidos nepatvirtintos, todėl ataskaitoje nėra mokesčių įverčio.",
+                    "action": "Patvirtinti prielaidas"
+                },
+                "unsupported_tax_year": {
+                    "text": "Mokesčių įvertis {year} m. dar nepalaikomas, todėl ataskaitoje jo nėra."
+                },
+                "missing_owner_details": {
+                    "text": "Profilyje trūksta jūsų vardo ir pavardės arba individualios veiklos pažymos numerio.",
+                    "action": "Papildyti profilį"
+                },
+                "draft_invoices": {
+                    "text": "{count, plural, one {# {year} m. datos juodraštis nebuvo išrašytas.} few {# {year} m. datos juodraščiai nebuvo išrašyti.} other {# {year} m. datos juodraščių nebuvo išrašyta.}}",
+                    "action": "Peržiūrėti juodraščius"
+                },
+                "outstanding_invoices": {
+                    "text": "{count, plural, one {# išrašyta sąskaita turi neapmokėtą likutį.} few {# išrašytos sąskaitos turi neapmokėtą likutį.} other {# išrašytų sąskaitų turi neapmokėtą likutį.}}",
+                    "action": "Peržiūrėti neapmokėtas"
+                },
+                "expenses_missing_documents": {
+                    "text": "{count, plural, one {# išlaidų įrašas neturi pridėto dokumento.} few {# išlaidų įrašai neturi pridėto dokumento.} other {# išlaidų įrašų neturi pridėto dokumento.}}",
+                    "action": "Pridėti dokumentus"
+                }
+            },
+            "cards": {
+                "income": "Gautos pajamos · {year}",
+                "expenses": "Atskaitomos išlaidos · {year}",
+                "outstanding": "Neapmokėta",
+                "tax": "Apskaičiuoti mokesčiai",
+                "not_available": "Nėra"
+            },
+            "contents": {
+                "title": "Failas · {year}",
+                "complete": "Baigta",
+                "incomplete": "Nebaigta",
+                "subtitle": "Parengta pagal jūsų įrašus {date}",
+                "download": "Atsisiųsti XLSX",
+                "disclaimer": "Mokesčių sumos yra įvertis, o ne VMI ar „Sodros“ prievolė. Ataskaita padeda jums arba buhalteriui parengti deklaraciją, bet neatstoja profesionalios mokesčių konsultacijos.",
+                "sheets": {
+                    "summary": {
+                        "name": "Suvestinė",
+                        "description": "Metų sumos, išrašytos ir neapmokėtos sumos bei įvertis abiem išlaidų metodais."
+                    },
+                    "warnings": {
+                        "name": "Įspėjimai",
+                        "description": "Visos šiame puslapyje rodomos problemos, pažymėtos kaip blokuojančios arba rekomendacijos."
+                    },
+                    "journal": {
+                        "name": "Žurnalas",
+                        "description": "Pajamų ir išlaidų žurnalas įprasta forma."
+                    },
+                    "monthly": {
+                        "name": "Mėnesiai",
+                        "description": "Kiekvieno mėnesio pajamos, PVM, išlaidos ir grynasis rezultatas."
+                    },
+                    "invoices": {
+                        "name": "Sąskaitos",
+                        "description": "Išrašytos ir anuliuotos šių metų datos sąskaitos su apmokėtomis ir neapmokėtomis sumomis."
+                    },
+                    "payments": {
+                        "name": "Mokėjimai",
+                        "description": "Per metus gauti mokėjimai pagal sąskaitas."
+                    },
+                    "expenses": {
+                        "name": "Išlaidos",
+                        "description": "Išlaidos su kategorija, veiklos dalimi, atskaitoma suma ir dokumentų skaičiumi."
+                    }
+                }
             }
         }
     },

@@ -5,7 +5,7 @@ import type {
 } from '@invoicetrackr/types';
 
 import { fromCents, toCents } from './money';
-import type { TaxEstimate } from './tax';
+import { selectedMethodEstimate, type TaxEstimate } from './tax';
 
 export const OVERDUE_PREVIEW_LIMIT = 5;
 
@@ -124,10 +124,7 @@ export const calculateSafeToSpend = ({
   if (estimate.status !== 'ready') return { ...base, status: estimate.status };
 
   const { expenseMethod } = estimate.profile;
-  const taxReserve =
-    expenseMethod === 'actual'
-      ? estimate.methods.actual.total
-      : estimate.methods.thirtyPercent.total;
+  const taxReserve = selectedMethodEstimate(estimate).total;
   const remaining =
     toCents(receivedIncome) -
     toCents(vatCollected) -

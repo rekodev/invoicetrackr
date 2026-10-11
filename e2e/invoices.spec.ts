@@ -206,6 +206,12 @@ test.describe('invoices', () => {
     expect(csvExport.status()).toBe(200);
     expect(csvExport.headers()['content-disposition']).toBe('attachment; filename="income-expense-journal-2001-01.csv"');
     expect(await csvExport.text()).toContain(`"${number}","${invoice.recipientName}`);
+    await page.goto('/reports/annual?year=2001');
+    await expect(page.getByText('The Package Will Be Marked Incomplete')).toBeVisible();
+    await expect(page.getByText("Tax estimates don't cover 2001 yet, so the package has no tax estimate.")).toBeVisible();
+    const annualExport = await page.request.get('/reports/annual/export?year=2001');
+    expect(annualExport.status()).toBe(200);
+    expect(annualExport.headers()['content-disposition']).toBe('attachment; filename="annual-tax-package-2001.xlsx"');
     await page.goto('/reports/taxes?year=2001');
     await expect(page.getByText('2001 Is Not Supported Yet')).toBeVisible();
     await page.goto('/reports/taxes?year=2026');

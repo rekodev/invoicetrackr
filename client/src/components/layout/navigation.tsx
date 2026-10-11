@@ -2,6 +2,7 @@
 
 import {
   AdjustmentsHorizontalIcon,
+  ArchiveBoxIcon,
   BuildingLibraryIcon,
   CalculatorIcon,
   ChartBarSquareIcon,
@@ -43,7 +44,8 @@ type NavLink = {
 
 const REPORT_PAGE_ICONS = {
   journal: TableCellsIcon,
-  taxes: CalculatorIcon
+  taxes: CalculatorIcon,
+  annual: ArchiveBoxIcon
 } satisfies Record<(typeof REPORT_PAGES)[number]['key'], NavLink['icon']>;
 
 const navigation: Array<NavLink> = [

@@ -136,8 +136,8 @@ export const buildJournalCsv = ({ rows, totals, t }: JournalExportInput) => {
   return `\uFEFF${[header.join(','), ...body].join('\r\n')}\r\n`;
 };
 
-const MONEY_FORMAT = '#,##0.00';
-const DATE_FORMAT = 'yyyy-mm-dd';
+export const MONEY_FORMAT = '#,##0.00';
+export const DATE_FORMAT = 'yyyy-mm-dd';
 
 const COLUMN_WIDTHS: Record<ColumnKey, number> = {
   index: 8,
@@ -152,7 +152,7 @@ const COLUMN_WIDTHS: Record<ColumnKey, number> = {
   notes: 30
 };
 
-const toExcelDate = (value: string) => {
+export const toExcelDate = (value: string) => {
   const [year, month, day] = value.split('-').map(Number);
   return new Date(Date.UTC(year, month - 1, day));
 };
@@ -165,12 +165,13 @@ const toExcelValues = (line: TableLine) =>
     ])
   );
 
-const addJournalSheet = (
+export const addJournalSheet = (
   workbook: ExcelJS.Workbook,
-  { period, rows, totals, owner, t }: JournalExportInput
+  { period, rows, totals, owner, t }: JournalExportInput,
+  name = journalPeriodLabel(period)
 ) => {
   const periodLabel = journalPeriodLabel(period);
-  const sheet = workbook.addWorksheet(periodLabel);
+  const sheet = workbook.addWorksheet(name);
 
   sheet.columns = COLUMN_KEYS.map((key) => ({
     key,
@@ -212,11 +213,12 @@ const addJournalSheet = (
   });
 };
 
-const addSummarySheet = (
+export const addSummarySheet = (
   workbook: ExcelJS.Workbook,
-  { period, rows, totals, t }: JournalExportInput
+  { period, rows, totals, t }: JournalExportInput,
+  name = t('summarySheet')
 ) => {
-  const sheet = workbook.addWorksheet(t('summarySheet'));
+  const sheet = workbook.addWorksheet(name);
 
   sheet.columns = SUMMARY_KEYS.map((key) => ({
     key,
