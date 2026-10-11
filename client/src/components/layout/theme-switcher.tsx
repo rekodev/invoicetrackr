@@ -29,7 +29,7 @@ export default function ThemeSwitcher() {
   return (
     <Button
       isDisabled={!mounted}
-      variant="outline"
+      variant="secondary"
       isIconOnly
       onPress={handleClick}
     >

@@ -3,7 +3,9 @@
 import {
   type AccountSettingsBody,
   DEFAULT_CURRENCY,
+  type DeleteUserAccountBody,
   User,
+  type UserLanguageBody,
   VerifyEmailResponse
 } from '@invoicetrackr/types';
 import { revalidatePath } from 'next/cache';
@@ -11,21 +13,23 @@ import { revalidatePath } from 'next/cache';
 import {
   changeUserPassword,
   completeUserOnboarding,
+  deleteUserAccount,
   deleteUserProfilePicture,
   resendVerificationEmail,
   updateUser,
   updateUserAccountSettings,
+  updateUserLanguage,
   updateUserProfilePicture,
   verifyEmailToken
 } from '@/api/user';
 
 import { updateSessionAction } from '../actions';
 import {
-  ACCOUNT_SETTINGS_PAGE,
+  ACCOUNT_PAGE,
   CHANGE_PASSWORD_PAGE,
-  FREELANCER_PROFILE_PAGE,
-  ONBOARDING_PAGE
-} from '../constants/pages';
+  INVOICE_DEFAULTS_PAGE,
+  ONBOARDING_PAGE,
+  PROFILE_PAGE} from '../constants/pages';
 import { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
@@ -68,8 +72,8 @@ export async function updateUserAction({
     }
   });
 
-  revalidatePath(FREELANCER_PROFILE_PAGE);
-  revalidatePath(ACCOUNT_SETTINGS_PAGE);
+  revalidatePath(PROFILE_PAGE);
+  revalidatePath(INVOICE_DEFAULTS_PAGE);
   return { ok: true, message: response.data.message };
 }
 
@@ -106,7 +110,6 @@ export async function completeUserOnboardingAction({
 export async function updateUserAccountSettingsAction({
   userId,
   invoiceEmail,
-  language,
   preferredInvoiceLanguage,
   isVatPayer,
   defaultInvoiceVatMode,
@@ -116,7 +119,6 @@ export async function updateUserAccountSettingsAction({
 }: {
   userId: number;
   invoiceEmail: AccountSettingsBody['invoiceEmail'];
-  language: AccountSettingsBody['language'];
   preferredInvoiceLanguage?: AccountSettingsBody['preferredInvoiceLanguage'];
   isVatPayer: AccountSettingsBody['isVatPayer'];
   defaultInvoiceVatMode: AccountSettingsBody['defaultInvoiceVatMode'];
@@ -130,7 +132,6 @@ export async function updateUserAccountSettingsAction({
 
   const response = await updateUserAccountSettings(userId, {
     invoiceEmail,
-    language,
     currency: DEFAULT_CURRENCY,
     preferredInvoiceLanguage,
     isVatPayer,
@@ -151,7 +152,6 @@ export async function updateUserAccountSettingsAction({
   await updateSessionAction({
     newSession: {
       invoiceEmail,
-      language,
       preferredInvoiceLanguage,
       currency: DEFAULT_CURRENCY,
       isVatPayer,
@@ -162,7 +162,7 @@ export async function updateUserAccountSettingsAction({
     }
   });
 
-  revalidatePath(ACCOUNT_SETTINGS_PAGE);
+  revalidatePath(INVOICE_DEFAULTS_PAGE);
   return { ok: true, message: response.data.message };
 }
 
@@ -185,7 +185,7 @@ export async function updateUserProfilePictureAction({
   await updateSessionAction({
     newSession: { image: response.data.user.profilePictureUrl }
   });
-  revalidatePath(FREELANCER_PROFILE_PAGE);
+  revalidatePath(PROFILE_PAGE);
   return {
     ok: true,
     message: response.data.message,
@@ -205,7 +205,7 @@ export async function deleteUserProfilePictureAction({
   }
 
   await updateSessionAction({ newSession: { image: null } });
-  revalidatePath(FREELANCER_PROFILE_PAGE);
+  revalidatePath(PROFILE_PAGE);
 
   return {
     ok: true,
@@ -291,4 +291,40 @@ export async function verifyEmailTokenAction({
     status: response.data.status,
     emailVerifiedAt: response.data.emailVerifiedAt
   };
+}
+
+export async function updateUserLanguageAction({
+  userId,
+  language
+}: { userId: number } & UserLanguageBody): Promise<ActionResponseModel> {
+  const response = await updateUserLanguage(userId, { language });
+
+  if (isResponseError(response)) {
+    return {
+      ok: false,
+      message: response.data.message,
+      validationErrors: mapValidationErrors(response.data.errors)
+    };
+  }
+
+  await updateSessionAction({ newSession: { language } });
+  revalidatePath(ACCOUNT_PAGE);
+  return { ok: true, message: response.data.message };
+}
+
+export async function deleteUserAccountAction({
+  userId,
+  confirmEmail
+}: { userId: number } & DeleteUserAccountBody): Promise<ActionResponseModel> {
+  const response = await deleteUserAccount(userId, { confirmEmail });
+
+  if (isResponseError(response)) {
+    return {
+      ok: false,
+      message: response.data.message,
+      validationErrors: mapValidationErrors(response.data.errors)
+    };
+  }
+
+  return { ok: true, message: response.data.message };
 }

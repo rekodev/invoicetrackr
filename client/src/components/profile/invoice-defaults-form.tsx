@@ -15,27 +15,18 @@ import {
   TextField,
   toast
 } from '@heroui/react';
-import type { DefaultInvoiceVatMode, User } from '@invoicetrackr/types';
+import type { User } from '@invoicetrackr/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
+import SectionHeading from '@/components/ui/section-heading';
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 import { availableLanguages } from '@/lib/constants/languages';
-import { FREELANCER_PROFILE_PAGE } from '@/lib/constants/pages';
+import { PROFILE_PAGE } from '@/lib/constants/pages';
+import { getInvoiceDefaultsValues } from '@/lib/utils/user';
 
-import DeleteAccountModal from './delete-account-modal';
-
-type AccountSettingsFormModel = {
-  invoiceEmail: string;
-  language: string;
-  preferredInvoiceLanguage: string;
-  defaultInvoiceVatMode: DefaultInvoiceVatMode;
-  defaultInvoiceSeries: string;
-  defaultPaymentTermsDays: 7 | 14 | 30;
-  defaultInvoiceIncludeLogo: boolean;
-};
+type InvoiceDefaultsFormModel = ReturnType<typeof getInvoiceDefaultsValues>;
 
 type Props = {
   user: User;
@@ -50,7 +41,7 @@ const defaultInvoiceVatModeOptions = [
 
 const paymentTermsOptions = [7, 14, 30] as const;
 
-const AccountSettingsForm = ({ user }: Props) => {
+const InvoiceDefaultsForm = ({ user }: Props) => {
   const baseT = useTranslations();
   const t = useTranslations('profile.account_settings');
   const isVatPayer = Boolean(user?.isVatPayer);
@@ -60,29 +51,16 @@ const AccountSettingsForm = ({ user }: Props) => {
     formState: { isDirty, errors, isSubmitting },
     setError,
     reset
-  } = useForm<AccountSettingsFormModel>({
-    defaultValues: {
-      invoiceEmail: user.invoiceEmail || user.email || '',
-      language: user?.language,
-      preferredInvoiceLanguage: user?.preferredInvoiceLanguage || user.language,
-      defaultInvoiceVatMode: isVatPayer
-        ? user?.defaultInvoiceVatMode || 'no_vat'
-        : 'no_vat',
-      defaultInvoiceSeries: user?.defaultInvoiceSeries || 'SF',
-      defaultPaymentTermsDays: user?.defaultPaymentTermsDays || 30,
-      defaultInvoiceIncludeLogo: user?.defaultInvoiceIncludeLogo ?? true
-    }
+  } = useForm<InvoiceDefaultsFormModel>({
+    defaultValues: getInvoiceDefaultsValues(user)
   });
-  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
-    useState(false);
 
-  const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) => {
+  const onSubmit: SubmitHandler<InvoiceDefaultsFormModel> = async (data) => {
     if (!user?.id) return;
 
     const response = await updateUserAccountSettingsAction({
       userId: Number(user.id),
       invoiceEmail: data.invoiceEmail,
-      language: data.language,
       preferredInvoiceLanguage: data.preferredInvoiceLanguage,
       isVatPayer,
       defaultInvoiceVatMode: isVatPayer ? data.defaultInvoiceVatMode : 'no_vat',
@@ -98,7 +76,7 @@ const AccountSettingsForm = ({ user }: Props) => {
     if (!response.ok) {
       if (response.validationErrors) {
         Object.entries(response.validationErrors).forEach(([key, message]) => {
-          setError(key as keyof AccountSettingsFormModel, { message });
+          setError(key as keyof InvoiceDefaultsFormModel, { message });
         });
       }
 
@@ -114,53 +92,12 @@ const AccountSettingsForm = ({ user }: Props) => {
 
   const renderCardBodyAndFooter = () => (
     <>
-      <CardContent className="grid grid-cols-1 gap-4 px-6 pb-2 pt-6 md:grid-cols-2">
-        <div className="flex flex-col gap-1 md:col-span-2">
-          <h3 className="text-lg font-medium">{t('general.title')}</h3>
-          <p className="text-muted text-sm">{t('general.description')}</p>
-        </div>
-        <Controller
-          control={control}
-          name="language"
-          render={({ field }) => (
-            <Select
-              className="w-full"
-              variant="secondary"
-              value={field.value}
-              onChange={field.onChange}
-              isInvalid={!!errors.language}
-            >
-              <Label>{t('language')}</Label>
-              <Select.Trigger>
-                <Select.Value />
-                <Select.Indicator />
-              </Select.Trigger>
-              <Select.Popover>
-                <ListBox>
-                  {availableLanguages.map((language) => (
-                    <ListBoxItem
-                      key={language.code}
-                      id={language.code}
-                      textValue={baseT(language.nameTranslationKey)}
-                    >
-                      {baseT(language.nameTranslationKey)}
-                      <ListBoxItem.Indicator />
-                    </ListBoxItem>
-                  ))}
-                </ListBox>
-              </Select.Popover>
-              <FieldError>{errors.language?.message}</FieldError>
-            </Select>
-          )}
+      <CardContent className="grid grid-cols-1 gap-4 px-6 pb-6 pt-6 md:grid-cols-2">
+        <SectionHeading
+          title={t('invoice_defaults.title')}
+          description={t('invoice_defaults.description')}
+          className="mb-1 md:col-span-2"
         />
-      </CardContent>
-      <CardContent className="grid grid-cols-1 gap-4 px-6 pb-6 pt-2 md:grid-cols-2">
-        <div className="flex flex-col gap-1 md:col-span-2">
-          <h3 className="text-lg font-medium">{t('invoice_defaults.title')}</h3>
-          <p className="text-muted text-sm">
-            {t('invoice_defaults.description')}
-          </p>
-        </div>
         <Controller
           control={control}
           name="invoiceEmail"
@@ -259,7 +196,7 @@ const AccountSettingsForm = ({ user }: Props) => {
                 <p className="text-muted text-xs">
                   {t('invoice_defaults.vat_locked_note')}{' '}
                   <Link
-                    href={FREELANCER_PROFILE_PAGE}
+                    href={PROFILE_PAGE}
                     className="text-foreground underline underline-offset-2"
                   >
                     {t('invoice_defaults.personal_information_link')}
@@ -304,7 +241,7 @@ const AccountSettingsForm = ({ user }: Props) => {
               onChange={(key) => {
                 const selectedDays = Number(
                   key
-                ) as AccountSettingsFormModel['defaultPaymentTermsDays'];
+                ) as InvoiceDefaultsFormModel['defaultPaymentTermsDays'];
 
                 field.onChange(selectedDays);
               }}
@@ -358,14 +295,6 @@ const AccountSettingsForm = ({ user }: Props) => {
       <CardFooter className="w-full flex-col justify-between px-6 py-4">
         <div className="flex w-full flex-col-reverse gap-2 self-end sm:w-auto sm:flex-row">
           <Button
-            className="w-full sm:w-auto"
-            variant="danger-soft"
-            type="button"
-            onPress={() => setIsDeleteAccountModalOpen(true)}
-          >
-            {t('delete_account.action')}
-          </Button>
-          <Button
             isDisabled={!isDirty}
             isPending={isSubmitting}
             type="submit"
@@ -379,23 +308,14 @@ const AccountSettingsForm = ({ user }: Props) => {
   );
 
   return (
-    <>
-      <form
-        className="w-full"
-        aria-label={t('a11y.form_label')}
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Card className="w-full border">
-          {renderCardBodyAndFooter()}
-        </Card>
-      </form>
-      <DeleteAccountModal
-        userId={Number(user.id)}
-        isOpen={isDeleteAccountModalOpen}
-        onClose={() => setIsDeleteAccountModalOpen(false)}
-      />
-    </>
+    <form
+      className="w-full"
+      aria-label={t('a11y.form_label')}
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <Card className="w-full border">{renderCardBodyAndFooter()}</Card>
+    </form>
   );
 };
 
-export default AccountSettingsForm;
+export default InvoiceDefaultsForm;

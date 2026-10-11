@@ -7,13 +7,13 @@ import { withIntl } from '@/test/with-intl';
 
 import DeleteAccountModal from '../delete-account-modal';
 
-const { mockDeleteUserAccount, mockLogOutAction } = vi.hoisted(() => ({
-  mockDeleteUserAccount: vi.fn(),
+const { mockDeleteUserAccountAction, mockLogOutAction } = vi.hoisted(() => ({
+  mockDeleteUserAccountAction: vi.fn(),
   mockLogOutAction: vi.fn()
 }));
 
-vi.mock('@/api/user', () => ({
-  deleteUserAccount: mockDeleteUserAccount
+vi.mock('@/lib/actions/user', () => ({
+  deleteUserAccountAction: mockDeleteUserAccountAction
 }));
 
 vi.mock('@/lib/actions', () => ({
@@ -23,56 +23,77 @@ vi.mock('@/lib/actions', () => ({
 describe('<DeleteAccountModal />', () => {
   let props: ComponentProps<typeof DeleteAccountModal>;
   const renderHelper = (component: JSX.Element) => render(withIntl(component));
+  const deleteButton = () =>
+    screen.getByRole('button', { name: /Delete my account/i });
+  const emailField = () =>
+    screen.getByLabelText('Type owner@example.com to confirm');
 
   beforeEach(() => {
     props = {
       userId: 1,
+      email: 'owner@example.com',
       isOpen: true,
       onClose: vi.fn()
     };
   });
 
-  it('renders correctly', () => {
+  it('explains the consequences and stays disabled until the account email is typed', async () => {
     renderHelper(<DeleteAccountModal {...props} />);
 
-    expect(screen.getByText(/Delete my account/i)).toBeDefined();
-    expect(screen.getByRole('button', { name: /Cancel/i })).toBeDefined();
+    expect(screen.getByText('Removed Right Away')).toBeDefined();
     expect(
-      screen.getByRole('button', { name: /Delete my account/i })
+      screen.getByText('Database backups, which are overwritten within 30 days')
     ).toBeDefined();
+    expect(
+      screen
+        .getByRole('link', { name: /Download My Data/i })
+        .getAttribute('href')
+    ).toBe('/settings/account/export');
+    expect(deleteButton().hasAttribute('disabled')).toBe(true);
+
+    await userEvent.type(emailField(), 'someone@example.com');
+    expect(deleteButton().hasAttribute('disabled')).toBe(true);
+
+    await userEvent.clear(emailField());
+    await userEvent.type(emailField(), ' Owner@Example.com ');
+    expect(deleteButton().hasAttribute('disabled')).toBe(false);
   });
 
-  it('successfully deletes account', async () => {
-    mockDeleteUserAccount.mockResolvedValue({
-      status: 200,
-      data: { message: 'Account deleted' }
+  it('deletes the account with the typed email and signs out', async () => {
+    mockDeleteUserAccountAction.mockResolvedValue({
+      ok: true,
+      message: 'Account deleted'
     });
 
     renderHelper(<DeleteAccountModal {...props} />);
 
-    await userEvent.click(
-      screen.getByRole('button', { name: /Delete my account/i })
-    );
+    await userEvent.type(emailField(), 'owner@example.com');
+    await userEvent.click(deleteButton());
 
-    expect(mockDeleteUserAccount).toHaveBeenCalledWith(1);
-    expect(mockLogOutAction).toHaveBeenCalled();
+    expect(mockDeleteUserAccountAction).toHaveBeenCalledWith({
+      userId: 1,
+      confirmEmail: 'owner@example.com'
+    });
     expect(props.onClose).toHaveBeenCalled();
+    expect(mockLogOutAction).toHaveBeenCalled();
   });
 
-  it('handles error when deletion fails', async () => {
-    mockDeleteUserAccount.mockResolvedValue({
-      status: 400,
-      data: { errors: [], message: 'Failed to delete' }
+  it('keeps the dialog open and shows the server error under the email', async () => {
+    mockDeleteUserAccountAction.mockResolvedValue({
+      ok: false,
+      message: 'The email does not match your account email'
     });
 
     renderHelper(<DeleteAccountModal {...props} />);
 
-    await userEvent.click(
-      screen.getByRole('button', { name: /Delete my account/i })
-    );
+    await userEvent.type(emailField(), 'owner@example.com');
+    await userEvent.click(deleteButton());
 
-    expect(mockDeleteUserAccount).toHaveBeenCalled();
-    // expect(mockLogOutAction).not.toHaveBeenCalled();
+    expect(
+      screen.getAllByText('The email does not match your account email').length
+    ).toBeGreaterThan(0);
+    expect(props.onClose).not.toHaveBeenCalled();
+    expect(mockLogOutAction).not.toHaveBeenCalled();
   });
 
   it('calls onClose when cancel button is clicked', async () => {

@@ -2,8 +2,10 @@ import { MultipartFile } from '@fastify/multipart';
 import { ResetPasswordEmail, VerifyEmailEmail } from '@invoicetrackr/emails';
 import {
   type AccountSettingsBody,
+  type DeleteUserAccountBody,
   OAuthUserBody,
   UserBody,
+  type UserLanguageBody,
   UserProfileUpdateBody
 } from '@invoicetrackr/types';
 import bcrypt from 'bcryptjs';
@@ -16,6 +18,7 @@ import { analyticsEvents } from '../analytics/events';
 import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import { appEmailFrom, getAppUrl } from '../config/app';
 import { resend } from '../config/resend';
+import { getAccountFilesFromDb } from '../database/account-export';
 import {
   getEmailVerificationTokenFromDb,
   getLatestEmailVerificationTokenForUserFromDb,
@@ -37,16 +40,20 @@ import {
   updateUserAccountSettingsInDb,
   updateUserAnalyticsConsentInDb,
   updateUserInDb,
+  updateUserLanguageInDb,
   updateUserProfilePictureInDb,
   updateUserSelectedBankAccountInDb,
   verifyUserEmailInDb
 } from '../database/user';
+import { destroyAccountStorage } from '../services/account-storage';
+import { accountStorageAssets } from '../utils/account-data';
 import { recordRequestAudit } from '../utils/audit';
 import {
   BadRequestError,
   NotFoundError,
   UnauthorizedError
 } from '../utils/error';
+import { businessLogoFolder } from '../utils/storage';
 
 const EMAIL_VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const EMAIL_VERIFICATION_RESEND_COOLDOWN_MS = 15 * 60 * 1000;
@@ -440,11 +447,28 @@ export const completeUserOnboarding = async (
 };
 
 export const deleteUser = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Body: DeleteUserAccountBody;
+  }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
+  const [user, accountFiles] = await Promise.all([
+    getUserEmailVerificationStatusFromDb(userId),
+    getAccountFilesFromDb(userId)
+  ]);
+
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
+
+  if (
+    req.body.confirmEmail.trim().toLowerCase() !== user.email.toLowerCase()
+  ) {
+    throw new BadRequestError(i18n.t('error.user.deleteConfirmEmailMismatch'));
+  }
+
+  const storageAssets = accountStorageAssets(accountFiles);
 
   await recordRequestAudit({
     req,
@@ -458,6 +482,11 @@ export const deleteUser = async (
 
   if (!deletedUserId)
     throw new BadRequestError(i18n.t('error.user.unableToDelete'));
+
+  await destroyAccountStorage(
+    { assets: storageAssets, folders: [`${businessLogoFolder(userId)}/`] },
+    req.log
+  );
 
   reply.status(200).send({ message: i18n.t('success.user.deleted') });
 };
@@ -554,7 +583,7 @@ export const updateUserProfilePicture = async (
     uploadedLogo = await cloudinary.uploader.upload(
       `data:${logo.mimetype};base64,${logoBuffer.toString('base64')}`,
       {
-        folder: `invoicetrackr/business-logos/${userId}`,
+        folder: businessLogoFolder(userId),
         public_id: crypto.randomUUID(),
         resource_type: 'image'
       }
@@ -662,7 +691,6 @@ export const updateUserAccountSettings = async (
   const {
     invoiceEmail,
     currency,
-    language,
     preferredInvoiceLanguage,
     isVatPayer,
     defaultInvoiceVatMode,
@@ -675,7 +703,6 @@ export const updateUserAccountSettings = async (
   const updatedUser = await updateUserAccountSettingsInDb(
     userId,
     invoiceEmail,
-    language,
     currency,
     preferredInvoiceLanguage,
     isVatPayer,
@@ -700,6 +727,34 @@ export const updateUserAccountSettings = async (
   reply
     .status(200)
     .send({ message: i18n.t('success.user.accountSettingsUpdated') });
+};
+
+export const updateUserLanguage = async (
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Body: UserLanguageBody;
+  }>,
+  reply: FastifyReply
+) => {
+  const userId = Number(req.params.userId);
+  const i18n = await useI18n(req);
+
+  const updatedUser = await updateUserLanguageInDb(userId, req.body.language);
+
+  if (!updatedUser) throw new NotFoundError(i18n.t('error.user.notFound'));
+
+  await recordRequestAudit({
+    req,
+    userId,
+    action: 'account.language_updated',
+    entityType: 'account',
+    entityId: userId,
+    newValue: req.body
+  });
+
+  reply
+    .status(200)
+    .send({ message: i18n.t('success.user.languageUpdated') });
 };
 
 export const changeUserPassword = async (

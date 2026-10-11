@@ -6,7 +6,7 @@ import type {
 } from '@invoicetrackr/types';
 
 import {
-  FREELANCER_PROFILE_PAGE,
+  PROFILE_PAGE,
   REPORTS_TAXES_PAGE
 } from '@/lib/constants/pages';
 
@@ -23,7 +23,7 @@ const WARNING_LINKS: Partial<
   Record<AnnualPackageWarningCode, (_year: number) => string>
 > = {
   missing_tax_profile: taxEstimateHref,
-  missing_owner_details: () => FREELANCER_PROFILE_PAGE,
+  missing_owner_details: () => PROFILE_PAGE,
   draft_invoices: (year) => dashboardLinks.drafts(yearRange(year)),
   outstanding_invoices: (year) => dashboardLinks.outstanding(yearRange(year)),
   expenses_missing_documents: (year) =>

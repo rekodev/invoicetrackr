@@ -20,8 +20,10 @@ import {
   updateExpenseInDb
 } from '../database/expense';
 import { SelectExpense, SelectExpenseAttachment } from '../database/schema';
+import { destroyStorageAsset, signedDownloadUrl } from '../services/storage';
 import { BadRequestError, NotFoundError } from '../utils/error';
 import { normalizeExpenseForDb } from '../utils/expense';
+import { attachmentAsset, attachmentFormat } from '../utils/storage';
 
 const allowedMimeTypes = new Set([
   'application/pdf',
@@ -70,37 +72,18 @@ const mapExpenseForResponse = (
   updatedAt: expense.updatedAt
 });
 
-const getSignedAttachmentUrl = (attachment: SelectExpenseAttachment) => cloudinary.utils.private_download_url(
-  attachment.storageKey,
-  // Raw public IDs already include their extension; image IDs do not.
-  attachment.resourceType === 'raw' ? '' : attachment.mimeType === 'application/pdf' ? 'pdf'
-    : attachment.mimeType === 'image/png' ? 'png' : 'jpg',
-  {
-    expires_at: Math.floor(Date.now() / 1000) + 300,
-    resource_type: attachment.resourceType === 'raw' ? 'raw' : 'image',
-    type: 'authenticated',
-    attachment: true
-  }
-);
+const getSignedAttachmentUrl = (attachment: SelectExpenseAttachment) =>
+  signedDownloadUrl(attachmentAsset(attachment), attachmentFormat(attachment));
 
-// Database mutations are committed before storage cleanup. A cleanup error must
-// not invite a retry of an already successful mutation.
-const cleanupAttachment = async (
+const cleanupAttachment = (
   req: FastifyRequest,
   storageKey: string,
   resourceType: string
-) => {
-  try {
-    const result = await cloudinary.uploader.destroy(storageKey, {
-      resource_type: resourceType, type: 'authenticated'
-    });
-    if (result.result !== 'ok' && result.result !== 'not found') {
-      req.log.error({ storageKey, result: result.result }, 'Expense document cleanup failed');
-    }
-  } catch (error) {
-    req.log.error({ err: error, storageKey }, 'Expense document cleanup failed');
-  }
-};
+) =>
+  destroyStorageAsset(
+    { publicId: storageKey, resourceType, type: 'authenticated' },
+    req.log
+  );
 
 const mapAttachmentForResponse = (attachment: SelectExpenseAttachment) => ({
   id: attachment.id,

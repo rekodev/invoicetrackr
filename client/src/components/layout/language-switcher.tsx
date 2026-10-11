@@ -15,7 +15,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
 import { getLocaleCookieAction, setLocaleCookieAction } from '@/lib/actions';
-import { updateUserAccountSettingsAction } from '@/lib/actions/user';
+import { updateUserLanguageAction } from '@/lib/actions/user';
 import { availableLanguages } from '@/lib/constants/languages';
 
 type Props = {
@@ -62,17 +62,9 @@ export default function LanguageSwitcher({ user }: Props) {
     await setLocaleCookieAction(selectedLanguage || 'en');
 
     if (user?.id) {
-      await updateUserAccountSettingsAction({
+      await updateUserLanguageAction({
         userId: Number(user.id),
-        invoiceEmail: user.invoiceEmail || user.email || '',
-        language: selectedLanguage,
-        preferredInvoiceLanguage:
-          user.preferredInvoiceLanguage || selectedLanguage,
-        isVatPayer: user.isVatPayer,
-        defaultInvoiceVatMode: user.defaultInvoiceVatMode || 'no_vat',
-        defaultInvoiceSeries: user.defaultInvoiceSeries || 'SF',
-        defaultPaymentTermsDays: user.defaultPaymentTermsDays || 30,
-        defaultInvoiceIncludeLogo: user.defaultInvoiceIncludeLogo ?? true
+        language: selectedLanguage
       });
     }
   };

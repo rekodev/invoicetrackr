@@ -2,10 +2,10 @@ import { unauthorized } from 'next/navigation';
 
 import { getUser } from '@/api/user';
 import { auth } from '@/auth';
-import AccountSettingsForm from '@/components/profile/account-settings-form';
+import InvoiceDefaultsForm from '@/components/profile/invoice-defaults-form';
 import { isResponseError } from '@/lib/utils/error';
 
-const AccountSettingsPage = async () => {
+const InvoiceDefaultsPage = async () => {
   const session = await auth();
 
   if (!session?.user?.id) unauthorized();
@@ -14,11 +14,11 @@ const AccountSettingsPage = async () => {
   if (isResponseError(response)) unauthorized();
 
   return (
-    <AccountSettingsForm
+    <InvoiceDefaultsForm
       key={`${session.user.language}-${session.user.isVatPayer}`}
       user={response.data.user}
     />
   );
 };
 
-export default AccountSettingsPage;
+export default InvoiceDefaultsPage;

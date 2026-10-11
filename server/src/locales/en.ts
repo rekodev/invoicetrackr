@@ -96,6 +96,22 @@ export default {
       net: 'Net result (€)'
     }
   },
+  accountExport: {
+    filename: 'invoicetrackr-data',
+    readme: [
+      'InvoiceTrackr data export',
+      'Exported on %{date} for %{email}.',
+      '',
+      'data.json: your profile, business details, bank accounts, crypto wallets, clients,',
+      'invoices (with lines, sender and recipient snapshots), payments, email delivery',
+      'history, expenses, tax profiles, tax estimates and tax payments.',
+      'files/expenses: the documents attached to your expenses, one folder per expense ID.',
+      'files/logo and files/signature: your business logo and saved signature, if set.',
+      '',
+      'Amounts are in euros, dates are ISO 8601. Access links, passwords and internal',
+      'storage keys are not included.'
+    ].join('\n')
+  },
   annualPackage: {
     filename: 'annual-tax-package',
     title: 'ANNUAL TAX PACKAGE — %{year}',
@@ -343,6 +359,7 @@ export default {
       currency: 'Currency is required',
       language: 'Language is required',
       preferredInvoiceLanguage: 'Preferred invoice language is required',
+      deleteConfirmEmail: 'Enter your account email to confirm',
       defaultInvoiceVatMode: 'Default VAT behavior is required',
       vatNumberRequired: 'VAT number is required for VAT payers'
     },
@@ -360,6 +377,7 @@ export default {
       profilePictureUpdated: 'Business logo updated successfully',
       profilePictureRemoved: 'Business logo removed successfully',
       accountSettingsUpdated: 'Account settings updated successfully',
+      languageUpdated: 'Language updated',
       passwordChanged: 'Password changed successfully',
       resetLinkSent: 'Reset link has been sent to the entered email',
       verificationEmailSent: 'Verification email has been sent',
@@ -438,6 +456,9 @@ export default {
       unableToUpdate: 'Unable to update user information',
       unableToDelete:
         'Unable to delete account at this time. Please try again later',
+      deleteConfirmEmailMismatch: 'The email does not match your account email',
+      unableToExport:
+        'Unable to prepare your data export. Please try again later',
       unableToUpdateProfilePicture: 'Unable to update business logo',
       businessLogoRequired: 'Choose a business logo to upload',
       businessLogoInvalidType: 'Use a JPEG, PNG, or WebP image',

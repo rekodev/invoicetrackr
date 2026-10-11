@@ -10,6 +10,8 @@ export const mockUseI18n = vi.fn(async (_request?: FastifyRequest) => ({
 
 export const mockCloudinaryUpload = vi.fn();
 export const mockCloudinaryDestroy = vi.fn();
+export const mockCloudinaryDeleteByPrefix = vi.fn();
+export const mockCloudinaryPrivateDownloadUrl = vi.fn();
 
 export const mockResendSend = vi.fn().mockResolvedValue({
   data: { id: 'mock-email-id' },
@@ -35,6 +37,12 @@ vi.mock('cloudinary', () => ({
     uploader: {
       upload: mockCloudinaryUpload,
       destroy: mockCloudinaryDestroy
+    },
+    api: {
+      delete_resources_by_prefix: mockCloudinaryDeleteByPrefix
+    },
+    utils: {
+      private_download_url: mockCloudinaryPrivateDownloadUrl
     }
   }
 }));

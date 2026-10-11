@@ -10,6 +10,7 @@ import {
   createNewUserPasswordOptions,
   deleteUserOptions,
   deleteUserProfilePictureOptions,
+  exportAccountDataOptions,
   getUserOptions,
   getUserResetPasswordTokenOptions,
   loginUserOptions,
@@ -19,6 +20,7 @@ import {
   resetUserPasswordOptions,
   updateUserAccountSettingsOptions,
   updateUserAnalyticsConsentOptions,
+  updateUserLanguageOptions,
   updateUserOptions,
   updateUserProfilePictureOptions,
   updateUserSelectedBankAccountOptions,
@@ -47,6 +49,8 @@ const userRoutes = (
 
   fastify.delete('/api/users/:userId', deleteUserOptions);
 
+  fastify.get('/api/users/:userId/export', exportAccountDataOptions);
+
   fastify.put(
     '/api/users/:userId/selected-bank-account',
     updateUserSelectedBankAccountOptions
@@ -66,6 +70,8 @@ const userRoutes = (
     '/api/users/:userId/account-settings',
     updateUserAccountSettingsOptions
   );
+
+  fastify.put('/api/users/:userId/language', updateUserLanguageOptions);
 
   fastify.put(
     '/api/users/:userId/analytics-consent',

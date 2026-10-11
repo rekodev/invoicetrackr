@@ -18,12 +18,12 @@
             "journal": "Žurnalas",
             "taxes": "Mokesčiai",
             "settings": "Nustatymai",
-            "freelancer_profile": "Veiklos profilis",
+            "profile": "Profilis",
             "banking_information": "Banko sąskaitos",
             "payment_methods": "Mokėjimo būdai",
-            "account_settings": "Sąskaitų nustatymai",
+            "invoice_defaults": "Sąskaitų nustatymai",
             "change_password": "Slaptažodis",
-            "my_profile": "Veiklos profilis",
+            "account": "Paskyra",
             "log_out": "Atsijungti",
             "signed_in_as": "Prisijungęs vartotojas",
             "a11y": {
@@ -43,7 +43,8 @@
         }
     },
     "breadcrumbs": {
-        "account_settings": "Paskyros nustatymai",
+        "account": "Paskyra",
+        "invoice_defaults": "Sąskaitų nustatymai",
         "banking_information": "Bankinė informacija",
         "payment_methods": "Mokėjimo būdai",
         "change_password": "Pakeisti slaptažodį",
@@ -64,7 +65,6 @@
         "login": "Prisijungti",
         "new": "Nauja",
         "onboarding": "Įvedimas",
-        "freelancer_profile": "Veiklos profilis",
         "privacy_policy": "Privatumo politika",
         "profile": "Profilis",
         "sign_up": "Registruotis",
@@ -1401,13 +1401,13 @@
         "personal_information": {
             "form": {
                 "a11y": {
-                    "form_label": "Individualios veiklos profilio forma",
+                    "form_label": "Profilio forma",
                     "business_logo": "Veiklos logotipo peržiūra",
                     "business_logo_input": "Pasirinkti veiklos logotipą",
                     "dismiss_business_logo": "Pašalinti pasirinktą veiklos logotipą",
                     "remove_business_logo": "Pašalinti esamą veiklos logotipą"
                 },
-                "title": "Individualios veiklos profilis",
+                "title": "Profilis",
                 "description": "Veiklos duomenys, naudojami kaip numatytosios reikšmės būsimose sąskaitose.",
                 "business_logo": "Veiklos logotipas",
                 "business_logo_description": "JPEG, PNG arba WebP iki 5 MB. Išsaugomas su būsimomis sąskaitomis.",
@@ -1443,16 +1443,10 @@
         },
         "account_settings": {
             "a11y": {
-                "form_label": "Paskyros nustatymų forma"
+                "form_label": "Sąskaitų numatytųjų forma"
             },
-            "title": "Paskyros Nustatymai",
-            "language": "Kalba",
             "preferred_invoice_language": "Pageidaujama Sąskaitos Kalba",
             "preferred_invoice_language_tooltip": "Tai numatytoji sąskaitų eksporto ir el. laiškų kalba. Galite keisti kiekvienai sąskaitai atskirai.",
-            "general": {
-                "title": "Bendra",
-                "description": "Jūsų paskyros kalbos ir regiono nustatymai."
-            },
             "invoice_defaults": {
                 "title": "Sąskaitų numatytieji nustatymai",
                 "description": "Naudojama kuriant naujas išsaugotas sąskaitas. Esamos sąskaitos išlaiko savo reikšmes.",
@@ -1465,7 +1459,7 @@
                 "payment_terms_days": "{days} d.",
                 "include_logo": "Įtraukti logotipą į naujas sąskaitas",
                 "vat_locked_note": "Jei norite rinktis PVM nustatymus, pažymėkite save kaip PVM mokėtoją",
-                "personal_information_link": "individualios veiklos profilyje",
+                "personal_information_link": "profilyje",
                 "vat_modes": {
                     "no_vat": "Be PVM",
                     "standard_21": "Standartinis 21 %",
@@ -1477,22 +1471,13 @@
                 "en": "Anglų",
                 "lt": "Lietuvių"
             },
-            "delete_account": {
-                "action": "Ištrinti paskyrą",
-                "dialog": {
-                    "title": "Ištrinti paskyrą",
-                    "description": "Ar tikrai norite ištrinti savo paskyrą? Šis veiksmas yra negrįžtamas ir visi jūsų duomenys bus prarasti.",
-                    "confirm_button": "Taip, ištrinti mano paskyrą",
-                    "cancel_button": "Atšaukti"
-                }
-            },
             "save_changes": "Išsaugoti pakeitimus"
         },
         "change_password": {
             "a11y": {
                 "form_label": "Slaptažodžio keitimo forma"
             },
-            "title": "Pakeisti Slaptažodį",
+            "title": "Slaptažodis",
             "current_password": "Dabartinis Slaptažodis",
             "current_password_placeholder": "Įveskite dabartinį slaptažodį",
             "new_password": "Naujas Slaptažodis",
@@ -1500,13 +1485,14 @@
             "confirm_new_password": "Patvirtinti Naują Slaptažodį",
             "confirm_new_password_placeholder": "Patvirtinkite naują slaptažodį",
             "save_changes": "Išsaugoti pakeitimus",
-            "password_requirements": "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną skaičių, didžiąją raidę, mažąją raidę ir specialų simbolį."
+            "password_requirements": "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną skaičių, didžiąją raidę, mažąją raidę ir specialų simbolį.",
+            "description": "Pakeiskite slaptažodį, kuriuo prisijungiate."
         },
         "banking_information": {
             "a11y": {
                 "form_label": "Bankinės informacijos forma"
             },
-            "title": "Banko sąskaitos",
+            "title": "Mokėjimo būdai",
             "description": "Pasirinkite numatytąją banko sąskaitą būsimoms sąskaitoms faktūroms. Esamos sąskaitos išlaiko išsaugotus mokėjimo duomenis.",
             "actions": {
                 "add": "Pridėti naują",
@@ -1575,6 +1561,59 @@
             "bank_accounts": "Banko sąskaitos",
             "crypto_wallets": "Kriptovaliutų piniginės",
             "add_new": "Pridėti naują"
+        },
+        "account": {
+            "title": "Paskyra",
+            "description": "Jūsų kalba, duomenų kopija ir paskyros ištrynimas.",
+            "language": {
+                "title": "Kalba",
+                "description": "Programėlės ir jums siunčiamų el. laiškų kalba.",
+                "label": "Kalba",
+                "save": "Išsaugoti"
+            },
+            "data": {
+                "title": "Jūsų duomenys",
+                "description": "Atsisiųskite savo įrašų kopiją arba ištrinkite paskyrą.",
+                "export": {
+                    "title": "Atsisiųsti duomenis",
+                    "description": "ZIP failas su visais jūsų įrašais JSON formatu, išlaidų dokumentais, logotipu ir parašu. Jis paruošiamas jūsų prašymu ir nesaugomas.",
+                    "action": "Atsisiųsti mano duomenis",
+                    "error": "Nepavyko paruošti duomenų eksporto. Pabandykite po kelių minučių."
+                },
+                "delete": {
+                    "title": "Ištrinti paskyrą",
+                    "description": "Visam laikui pašalinkite paskyrą ir visus jos įrašus. Šio veiksmo atšaukti negalima.",
+                    "action": "Ištrinti paskyrą"
+                }
+            },
+            "delete_account": {
+                "dialog": {
+                    "title": "Ištrinti paskyrą",
+                    "description": "Paskyra ištrinama iš karto, jos atkurti nebus galima.",
+                    "removed": {
+                        "title": "Pašalinama iš karto",
+                        "account": "Prisijungimo, profilio ir veiklos duomenys",
+                        "records": "Klientai, sąskaitos faktūros, mokėjimai, išlaidos ir mokesčių įrašai",
+                        "files": "Įkelti išlaidų dokumentai, logotipas ir parašai",
+                        "sessions": "Prisijungimai visuose jūsų įrenginiuose"
+                    },
+                    "kept": {
+                        "title": "Kas lieka",
+                        "audit": "Paskyros veiksmų saugumo žurnalas be jūsų asmens duomenų",
+                        "backups": "Duomenų bazės atsarginės kopijos, kurios perrašomos per 30 dienų"
+                    },
+                    "records_duty": {
+                        "title": "Pasilikite savo kopiją",
+                        "description": "Lietuvos teisės aktai reikalauja sąskaitas faktūras ir pajamų bei išlaidų apskaitos įrašus saugoti iki 10 metų. Prieš ištrindami atsisiųskite savo duomenis.",
+                        "export": "Atsisiųsti mano duomenis"
+                    },
+                    "confirm_email": {
+                        "label": "Patvirtinimui įveskite {email}"
+                    },
+                    "confirm_button": "Ištrinti mano paskyrą",
+                    "cancel_button": "Atšaukti"
+                }
+            }
         }
     },
     "forgot_password": {
@@ -2027,7 +2066,7 @@
             },
             "data_retention": {
                 "heading": "6. Duomenų saugojimas",
-                "content": "Saugome jūsų asmeninę informaciją tiek, kiek reikia šioje Privatumo politikoje nurodytiems tikslams įgyvendinti, nebent ilgesnis saugojimo laikotarpis reikalingas arba leidžiamas pagal įstatymus. Kai ištri nate savo paskyrą, mes ištriname arba anonimuojame jūsų asmeninę informaciją, išskyrus atvejus, kai privalome ją išsaugoti dėl teisinių, mokesčių ar apskaitos tikslų."
+                "content": "Jūsų asmeninę informaciją saugome, kol paskyra aktyvi, o savo duomenų kopiją bet kada galite atsisiųsti paskyros nustatymuose. Kai ištrinate paskyrą, iš karto ištriname jūsų profilį, veiklos duomenis, klientus, sąskaitas faktūras, mokėjimus, išlaidas, mokesčių įrašus ir įkeltus failus, o jūs atjungiami visuose įrenginiuose. Lieka du dalykai: paskyros veiksmų saugumo žurnalas be jūsų asmens duomenų ir duomenų bazės atsarginės kopijos, kurios perrašomos per 30 dienų. Už savo sąskaitų faktūrų ir apskaitos įrašų kopijų saugojimą tiek, kiek reikalauja Lietuvos teisės aktai, atsakote jūs."
             },
             "your_rights": {
                 "heading": "7. Jūsų teisės ir pasirinkimai",

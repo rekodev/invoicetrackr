@@ -3,6 +3,7 @@ import {
   type AnalyticsConsentStatus,
   CompleteOnboardingResponse,
   CreateNewPasswordResponse,
+  type DeleteUserAccountBody,
   DeleteUserAccountResponse,
   GetUserResetPasswordTokenResponse,
   GetUserResponse,
@@ -15,6 +16,7 @@ import {
   UpdateUserLogoResponse,
   UpdateUserResponse,
   User,
+  type UserLanguageBody,
   VerifyEmailTokenResponse
 } from '@invoicetrackr/types';
 
@@ -129,7 +131,6 @@ export const updateUserAccountSettings = async (
   userId: number,
   {
     invoiceEmail,
-    language,
     currency,
     preferredInvoiceLanguage,
     isVatPayer,
@@ -139,7 +140,6 @@ export const updateUserAccountSettings = async (
     defaultInvoiceIncludeLogo
   }: {
     invoiceEmail: AccountSettingsBody['invoiceEmail'];
-    language: AccountSettingsBody['language'];
     currency: AccountSettingsBody['currency'];
     preferredInvoiceLanguage?: AccountSettingsBody['preferredInvoiceLanguage'];
     isVatPayer: AccountSettingsBody['isVatPayer'];
@@ -153,7 +153,6 @@ export const updateUserAccountSettings = async (
     `/api/users/${userId}/account-settings`,
     {
       invoiceEmail,
-      language,
       currency,
       preferredInvoiceLanguage,
       isVatPayer,
@@ -164,6 +163,15 @@ export const updateUserAccountSettings = async (
     }
   );
 
+export const updateUserLanguage = async (
+  userId: number,
+  body: UserLanguageBody
+) =>
+  await api.put<UpdateUserAccountSettingsResponse>(
+    `/api/users/${userId}/language`,
+    body
+  );
+
 export const updateUserAnalyticsConsent = async (
   userId: number,
   analyticsConsentStatus: AnalyticsConsentStatus
@@ -172,8 +180,16 @@ export const updateUserAnalyticsConsent = async (
     analyticsConsentStatus
   });
 
-export const deleteUserAccount = async (userId: number) =>
-  await api.delete<DeleteUserAccountResponse>(`/api/users/${userId}`);
+export const deleteUserAccount = async (
+  userId: number,
+  body: DeleteUserAccountBody
+) =>
+  await api.delete<DeleteUserAccountResponse>(`/api/users/${userId}`, body);
+
+export const getAccountDataExport = async (userId: number) =>
+  await api.get<ArrayBuffer>(`/api/users/${userId}/export`, {
+    responseType: 'arraybuffer'
+  });
 
 export const changeUserPassword = async ({
   userId,

@@ -10,6 +10,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
+import SectionHeading from '@/components/ui/section-heading';
 import { changeUserPasswordAction } from '@/lib/actions/user';
 
 import PasswordInput from './password-input';
@@ -70,7 +71,8 @@ export default function ChangePasswordForm({ userId }: Props) {
 
     return (
       <>
-        <CardContent className="grid grid-cols-1 gap-4 p-6">
+        <CardContent className="grid grid-cols-1 gap-5 p-6">
+          <SectionHeading title={t('title')} description={t('description')} />
           <PasswordInput
             autoComplete="new-password"
             placeholder={t('current_password_placeholder')}

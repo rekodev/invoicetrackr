@@ -89,7 +89,6 @@ export default function PaymentMethodDialog({
             {view === 'add' ? (
               <BankAccountForm
                 userId={userId}
-                variant="inline"
                 shouldSelectOnCreate={!bankAccounts.length}
                 onCancel={() => setView('list')}
                 onSuccess={(bankAccount) => bankAccount && onSelect(bankAccount)}

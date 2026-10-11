@@ -4,13 +4,16 @@ import {
   UserBody,
   UserProfileUpdateBody
 } from '@invoicetrackr/types';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, or, sql } from 'drizzle-orm';
 
 import { db } from './db';
 import {
+  auditEventsTable,
   businessProfilesTable,
   InsertUser,
+  invoicesTable,
   passwordResetTokensTable,
+  paymentAllocationsTable,
   usersTable
 } from './schema';
 
@@ -227,7 +230,6 @@ export const updateUserProfilePictureInDb = async (
 export const updateUserAccountSettingsInDb = async (
   userId: number,
   invoiceEmail: string,
-  language: string,
   _currency: string,
   preferredInvoiceLanguage?: string,
   isVatPayer = false,
@@ -251,26 +253,60 @@ export const updateUserAccountSettingsInDb = async (
     updateData.preferredInvoiceLanguage = preferredInvoiceLanguage;
   }
 
-  await db.transaction(async (tx) => {
-    await tx.update(usersTable).set({ language }).where(eq(usersTable.id, userId));
-    await tx
-      .update(businessProfilesTable)
-      .set(updateData)
-      .where(eq(businessProfilesTable.userId, userId));
-  });
+  await db
+    .update(businessProfilesTable)
+    .set(updateData)
+    .where(eq(businessProfilesTable.userId, userId));
 
   return getUserFromDb(userId);
 };
 
+export const updateUserLanguageInDb = async (userId: number, language: string) =>
+  (
+    await db
+      .update(usersTable)
+      .set({ language })
+      .where(eq(usersTable.id, userId))
+      .returning({ id: usersTable.id })
+  ).at(0);
+
 export const deleteUserFromDb = async (
   id: number
-): Promise<{ id: number } | undefined> => {
-  const users = await db
-    .delete(usersTable)
-    .where(eq(usersTable.id, id))
-    .returning({ id: usersTable.id });
+): Promise<{ id: number } | undefined> =>
+  db.transaction(async (tx) => {
+    // REK-138: invoices have no foreign key to users, so they are removed
+    // explicitly. Their allocations are ON DELETE restrict and must go first.
+    await tx
+      .delete(paymentAllocationsTable)
+      .where(eq(paymentAllocationsTable.userId, id));
+    await tx.delete(invoicesTable).where(eq(invoicesTable.userId, id));
+    await tx
+      .update(auditEventsTable)
+      .set({
+        ipAddress: null,
+        userAgent: null,
+        previousValue: null,
+        newValue: null
+      })
+      .where(
+        or(eq(auditEventsTable.userId, id), eq(auditEventsTable.actorUserId, id))
+      );
 
-  return users.at(0);
+    const users = await tx
+      .delete(usersTable)
+      .where(eq(usersTable.id, id))
+      .returning({ id: usersTable.id });
+
+    return users.at(0);
+  });
+
+export const userExistsInDb = async (id: number) => {
+  const users = await db
+    .select({ id: usersTable.id })
+    .from(usersTable)
+    .where(eq(usersTable.id, id));
+
+  return users.length > 0;
 };
 
 export const getUserPasswordHashFromDb = async (id: number) => {

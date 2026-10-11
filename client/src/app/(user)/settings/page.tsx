@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
-import { FREELANCER_PROFILE_PAGE } from '@/lib/constants/pages';
+import { PROFILE_PAGE } from '@/lib/constants/pages';
 
 export default function SettingsPage() {
-  redirect(FREELANCER_PROFILE_PAGE);
+  redirect(PROFILE_PAGE);
 }

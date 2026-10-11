@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  BuildingLibraryIcon,
   LockClosedIcon,
   PencilSquareIcon,
   PlusIcon,
@@ -26,11 +27,13 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from 'react';
 
 import { updateUserSelectedBankAccount } from '@/api/user';
+import SectionHeading from '@/components/ui/section-heading';
 import { updateSessionAction } from '@/lib/actions';
-import { ADD_NEW_BANK_ACCOUNT_PAGE } from '@/lib/constants/pages';
 import { isResponseError } from '@/lib/utils/error';
 
 import EmptyState from '../ui/empty-state';
+import IconContainer from '../ui/icon-container';
+import AddBankAccountDialog from './add-bank-account-dialog';
 import DeleteBankAccountDialog from './delete-bank-account-dialog';
 import EditBankingInformationDialog from './edit-banking-information-dialog';
 
@@ -53,6 +56,7 @@ const BankingInformationForm = ({
     close: onEditClose,
     open: onEditOpen
   } = useOverlayState();
+  const addDialog = useOverlayState();
 
   const [selectedBankAccountId, setSelectedBankAccountId] = useState(
     String(user.selectedBankAccountId || bankAccounts?.at(0)?.id || '')
@@ -67,10 +71,6 @@ const BankingInformationForm = ({
       String(user.selectedBankAccountId || bankAccounts?.at(0)?.id || '')
     );
   }, [bankAccounts, user.selectedBankAccountId]);
-
-  const handleAddNewBankAccount = () => {
-    router.push(ADD_NEW_BANK_ACCOUNT_PAGE);
-  };
 
   const handleSave = async () =>
     startTransition(async () => {
@@ -121,8 +121,8 @@ const BankingInformationForm = ({
           'border-accent border-2': isSelected
         })}
       >
-        <CardContent className="flex flex-row items-center gap-2 pr-24">
-          <Radio value={String(id || 0)} className="min-w-0">
+        <CardContent className="flex flex-row items-center gap-3">
+          <Radio value={String(id || 0)} className="min-w-0 flex-1">
             <Radio.Control>
               <Radio.Indicator />
             </Radio.Control>
@@ -132,7 +132,7 @@ const BankingInformationForm = ({
               <small className="text-muted mt-1">{accountNumber}</small>
             </Radio.Content>
           </Radio>
-          <div className="pointer-events-none absolute right-2 top-2 flex gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
+          <div className="pointer-events-none flex gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
             <Button
               isIconOnly
               size="sm"
@@ -162,6 +162,9 @@ const BankingInformationForm = ({
               )}
             </Button>
           </div>
+          <IconContainer size="lg">
+            <BuildingLibraryIcon className="size-5" />
+          </IconContainer>
         </CardContent>
       </Card>
     );
@@ -203,17 +206,18 @@ const BankingInformationForm = ({
   return (
     <>
       <Card className="w-full border">
-        <div className="flex justify-end px-6 pt-6">
+        <div className="flex flex-col gap-4 px-6 pt-6 sm:flex-row sm:items-start sm:justify-between">
+          <SectionHeading title={t('title')} description={t('description')} />
           <Button
             variant="secondary"
-            className="w-full sm:w-auto"
-            onPress={handleAddNewBankAccount}
+            className="w-full shrink-0 sm:w-auto"
+            onPress={addDialog.open}
           >
             <PlusIcon className="h-4 w-4" />
             {t('actions.add')}
           </Button>
         </div>
-        <CardContent className="p-6">{renderCardBody()}</CardContent>
+        <CardContent className="px-6 pb-6 pt-5">{renderCardBody()}</CardContent>
         <CardFooter className="flex w-full items-center justify-between px-6 py-4">
           <div className="flex w-full flex-col items-center">
             <Button
@@ -231,6 +235,12 @@ const BankingInformationForm = ({
         </CardFooter>
       </Card>
 
+      <AddBankAccountDialog
+        userId={Number(user.id)}
+        selectedBankAccountId={user.selectedBankAccountId}
+        isOpen={addDialog.isOpen}
+        onClose={addDialog.close}
+      />
       {currentBankingInformation && isOpen && (
         <DeleteBankAccountDialog
           userId={Number(user.id)}

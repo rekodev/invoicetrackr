@@ -2,8 +2,6 @@
 
 import {
   Button,
-  Card,
-  cn,
   FieldError,
   Input,
   Label,
@@ -11,12 +9,10 @@ import {
   toast
 } from '@heroui/react';
 import { BankAccountBody } from '@invoicetrackr/types';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { addBankingInformationAction } from '@/lib/actions/banking-information';
-import { PAYMENT_METHODS_PAGE } from '@/lib/constants/pages';
 
 const INITIAL_BANK_ACCOUNT_DATA: BankAccountBody = {
   name: '',
@@ -30,10 +26,9 @@ type Props = {
   defaultValues?: BankAccountBody;
   onCancel?: () => void;
   onSkip?: () => void;
-  onSuccess?: (_bankAccount?: BankAccountBody) => void;
+  onSuccess: (_bankAccount?: BankAccountBody) => void;
   isUserOnboarding?: boolean;
   shouldSelectOnCreate?: boolean;
-  variant?: 'card' | 'inline';
 };
 
 export default function BankAccountForm({
@@ -44,11 +39,9 @@ export default function BankAccountForm({
   isUserOnboarding,
   onCancel,
   onSkip,
-  shouldSelectOnCreate,
-  variant = 'card'
+  shouldSelectOnCreate
 }: Props) {
   const t = useTranslations('profile.banking_information.form');
-  const router = useRouter();
   const {
     control,
     handleSubmit,
@@ -93,20 +86,7 @@ export default function BankAccountForm({
       response.data as { bankAccount?: BankAccountBody } | undefined
     )?.bankAccount;
 
-    if (onSuccess) {
-      onSuccess(bankAccount);
-    } else {
-      router.push(PAYMENT_METHODS_PAGE);
-    }
-  };
-
-  const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
-      return;
-    }
-
-    router.push(PAYMENT_METHODS_PAGE);
+    onSuccess(bankAccount);
   };
 
   const renderTextField = ({
@@ -143,12 +123,7 @@ export default function BankAccountForm({
 
   const formContent = (
     <>
-      <div
-        className={cn(
-          'grid grid-cols-1 gap-4',
-          variant === 'card' ? 'p-6 sm:grid-cols-2' : 'p-0'
-        )}
-      >
+      <div className="grid grid-cols-1 gap-4">
         {renderTextField({
           name: 'name',
           label: t('bank_name'),
@@ -165,18 +140,13 @@ export default function BankAccountForm({
           placeholder: t('bank_account_number_placeholder')
         })}
       </div>
-      <div
-        className={cn(
-          'flex justify-end gap-2',
-          variant === 'card' ? 'px-6 py-4' : 'px-0 pb-0 pt-4'
-        )}
-      >
+      <div className="flex justify-end gap-2 pt-4">
         <div className="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row">
           {!isUserOnboarding && (
             <Button
               variant="danger-soft"
               className="w-full sm:w-auto"
-              onPress={handleCancel}
+              onPress={onCancel}
             >
               {t('actions.cancel')}
             </Button>
@@ -204,23 +174,13 @@ export default function BankAccountForm({
     </>
   );
 
-  if (variant === 'inline') {
-    return (
-      <form
-        aria-label={t('a11y.form_label')}
-        className="w-full"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        {formContent}
-      </form>
-    );
-  }
-
   return (
-    <Card className="w-full border">
-      <form aria-label={t('a11y.form_label')} onSubmit={handleSubmit(onSubmit)}>
-        {formContent}
-      </form>
-    </Card>
+    <form
+      aria-label={t('a11y.form_label')}
+      className="w-full"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      {formContent}
+    </form>
   );
 }
