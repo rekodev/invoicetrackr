@@ -211,7 +211,8 @@ test.describe('invoices', () => {
     await page.goto('/reports/taxes?year=2026');
     await page.getByRole('button', { name: 'Confirm assumptions' }).click();
     const assumptions = page.getByRole('dialog', { name: 'Tax Assumptions · 2026' });
-    await assumptions.getByRole('checkbox', { name: /PSD coverage through employment/ }).click();
+    await assumptions.getByText('I have PSD coverage through employment').click();
+    await expect(assumptions.getByRole('checkbox', { name: /PSD coverage through employment/ })).toBeChecked();
     await assumptions.getByRole('button', { name: 'Save assumptions' }).click();
     await expect(page.getByRole('heading', { name: 'Assumptions · 2026' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '30% of income' })).toBeVisible();
