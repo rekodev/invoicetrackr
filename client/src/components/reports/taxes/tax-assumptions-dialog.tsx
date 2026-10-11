@@ -151,6 +151,7 @@ const TaxAssumptionsDialog = ({
                 name="expenseMethod"
                 render={({ field }) => (
                   <RadioGroup
+                    variant="secondary"
                     value={field.value}
                     onChange={field.onChange}
                     isInvalid={Boolean(errors.expenseMethod)}
@@ -159,11 +160,11 @@ const TaxAssumptionsDialog = ({
                     <Description>{t('fields.expense_method_help')}</Description>
                     {TAX_EXPENSE_METHODS.map((method) => (
                       <Radio key={method} value={method}>
+                        <Radio.Control>
+                          <Radio.Indicator />
+                        </Radio.Control>
                         <Radio.Content>
-                          <Radio.Control>
-                            <Radio.Indicator />
-                          </Radio.Control>
-                          {tMethods(method)}
+                          <Label>{tMethods(method)}</Label>
                         </Radio.Content>
                       </Radio>
                     ))}

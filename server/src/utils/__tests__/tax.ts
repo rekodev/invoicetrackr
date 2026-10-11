@@ -162,4 +162,23 @@ describe('2026 individual activity tax rules', () => {
       total: '965.76'
     });
   });
+
+  it.each([
+    ['thirty_percent', '15000.00', '0', 12, false, '9450.00', '1183.14', '965.76', '10500.00', '525.00'],
+    ['actual', '30000.00', '5000.00', 12, false, '22500.00', '2817.00', '1570.50', '20612.50', '1114.79'],
+    ['thirty_percent', '70000.00', '0', 12, false, '44100.00', '5521.32', '3078.18', '49000.00', '9800.00'],
+    ['thirty_percent', '8000.00', '0', 9, true, '5040.00', '782.21', '724.32', '5600.00', '280.00']
+  ] as const)(
+    'matches the Sodra/VMI 2026 calculator: %s, income %s, expenses %s, %i months, pension %s',
+    (method, income, expenses, months, hasAdditionalPensionAccumulation, contributionBase, vsd, psd, gpmProfit, gpm) => {
+      expect(
+        calculateMethodEstimate(
+          method,
+          inputs(income, expenses, months),
+          profile({ hasAdditionalPensionAccumulation }),
+          rules
+        )
+      ).toMatchObject({ contributionBase, vsd, psd, gpmProfit, gpm });
+    }
+  );
 });
