@@ -128,6 +128,10 @@ export const accountSettingsBodySchema = userBodyBaseSchema
     language: z.string().max(2).min(2)
   });
 
+export const deleteUserAccountBodySchema = z.object({
+  confirmEmail: z.string().trim().min(1, 'validation.user.deleteConfirmEmail')
+});
+
 export const onboardingCompletionSchema = z.object({
   onboardingCompletedAt: z.string()
 });
@@ -137,6 +141,7 @@ export type UserBody = z.infer<typeof userBodySchema>;
 export type User = UserBody;
 export type UserProfileUpdateBody = z.infer<typeof userProfileUpdateBodySchema>;
 export type AccountSettingsBody = z.infer<typeof accountSettingsBodySchema>;
+export type DeleteUserAccountBody = z.infer<typeof deleteUserAccountBodySchema>;
 export type DefaultInvoiceVatMode = UserBody['defaultInvoiceVatMode'];
 export type UserWithPassword = UserBody;
 export type ResetPasswordTokenGet = z.infer<typeof resetPasswordTokenGetSchema>;

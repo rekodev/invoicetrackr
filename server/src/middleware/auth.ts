@@ -4,7 +4,10 @@ import { useI18n } from 'fastify-i18n';
 import { decode } from 'next-auth/jwt';
 
 import { loadEnv } from '../config/env';
-import { getUserEmailVerificationStatusFromDb } from '../database/user';
+import {
+  getUserEmailVerificationStatusFromDb,
+  userExistsInDb
+} from '../database/user';
 import { ForbiddenError, UnauthorizedError } from '../utils/error';
 
 loadEnv();
@@ -28,6 +31,10 @@ export const authMiddleware = async (
   });
 
   if (!decodedToken || decodedToken.sub !== req.params.userId) {
+    throw new UnauthorizedError();
+  }
+
+  if (!(await userExistsInDb(Number(decodedToken.sub)))) {
     throw new UnauthorizedError();
   }
 };

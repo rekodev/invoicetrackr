@@ -10,6 +10,7 @@ import {
   createNewUserPasswordOptions,
   deleteUserOptions,
   deleteUserProfilePictureOptions,
+  exportAccountDataOptions,
   getUserOptions,
   getUserResetPasswordTokenOptions,
   loginUserOptions,
@@ -46,6 +47,8 @@ const userRoutes = (
   );
 
   fastify.delete('/api/users/:userId', deleteUserOptions);
+
+  fastify.get('/api/users/:userId/export', exportAccountDataOptions);
 
   fastify.put(
     '/api/users/:userId/selected-bank-account',

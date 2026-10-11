@@ -3,6 +3,7 @@ import {
   type AnalyticsConsentStatus,
   CompleteOnboardingResponse,
   CreateNewPasswordResponse,
+  type DeleteUserAccountBody,
   DeleteUserAccountResponse,
   GetUserResetPasswordTokenResponse,
   GetUserResponse,
@@ -172,8 +173,18 @@ export const updateUserAnalyticsConsent = async (
     analyticsConsentStatus
   });
 
-export const deleteUserAccount = async (userId: number) =>
-  await api.delete<DeleteUserAccountResponse>(`/api/users/${userId}`);
+export const deleteUserAccount = async (
+  userId: number,
+  body: DeleteUserAccountBody
+) =>
+  await api.delete<DeleteUserAccountResponse>(`/api/users/${userId}`, {
+    data: body
+  });
+
+export const getAccountDataExport = async (userId: number) =>
+  await api.get<ArrayBuffer>(`/api/users/${userId}/export`, {
+    responseType: 'arraybuffer'
+  });
 
 export const changeUserPassword = async ({
   userId,

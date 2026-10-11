@@ -3,9 +3,11 @@ import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import bcrypt from 'bcryptjs';
 import { describe, expect, it, vi } from 'vitest';
 
+import * as accountExportDb from '../../database/account-export';
 import * as emailVerificationDb from '../../database/email-verification';
 import * as userDb from '../../database/user';
 import {
+  deleteUserOptions,
   deleteUserProfilePictureOptions,
   updateUserProfilePictureOptions
 } from '../../options/user';
@@ -15,6 +17,7 @@ import {
   userWithPasswordFactory
 } from '../../test/factories/user';
 import {
+  mockCloudinaryDestroy,
   mockCloudinaryUpload,
   mockResendSend,
   mockUseI18n
@@ -23,6 +26,7 @@ import * as userController from '../user';
 
 vi.mock('../../database/user');
 vi.mock('../../database/email-verification');
+vi.mock('../../database/account-export');
 vi.mock('bcryptjs');
 
 describe('User Controller', () => {
@@ -466,30 +470,84 @@ describe('User Controller', () => {
   });
 
   describe('DELETE /api/:userId', () => {
-    it('should delete user', async () => {
-      vi.mocked(userDb.deleteUserFromDb).mockResolvedValue({ id: testUserId });
-
-      const { deleteUser } = userController;
-
-      const app = await createTestApp((fastifyApp) => {
-        fastifyApp.delete(
-          '/api/:userId',
-          {
-            preHandler: mockAuthMiddleware
-          },
-          deleteUser
-        );
+    const createDeleteApp = () =>
+      createTestApp((fastifyApp) => {
+        fastifyApp.delete('/api/:userId', {
+          ...deleteUserOptions,
+          preHandler: mockAuthMiddleware
+        });
       });
 
+    it('rejects a confirmation email that does not match the account', async () => {
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
+
+      const app = await createDeleteApp();
       const response = await app.inject({
         method: 'DELETE',
-        url: `/api/${testUserId}`
+        url: `/api/${testUserId}`,
+        payload: { confirmEmail: 'someone@example.com' }
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(JSON.parse(response.body).message).toBe(
+        'error.user.deleteConfirmEmailMismatch'
+      );
+      expect(userDb.deleteUserFromDb).not.toHaveBeenCalled();
+
+      await app.close();
+    });
+
+    it('deletes the account, then removes its stored files', async () => {
+      const signatureUrl =
+        'https://res.cloudinary.com/demo/image/upload/v1700000000/signature.png';
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
+      vi.mocked(userDb.deleteUserFromDb).mockResolvedValue({ id: testUserId });
+      vi.mocked(accountExportDb.getAccountFilesFromDb).mockResolvedValue({
+        attachments: [
+          {
+            id: 3,
+            expenseId: 10,
+            storageKey: 'invoicetrackr/expense-documents/1/10/receipt.pdf',
+            resourceType: 'raw',
+            mimeType: 'application/pdf',
+            sanitizedFileName: 'receipt.pdf',
+            deletedAt: null,
+            expenseDeletedAt: null
+          }
+        ],
+        profile: {
+          logoUrl:
+            'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/business-logos/1/logo.png',
+          logoStorageKey: 'invoicetrackr/business-logos/1/logo',
+          signatureUrl
+        },
+        signatures: [{ senderSignature: signatureUrl, receiverSignature: null }]
+      });
+      mockCloudinaryDestroy.mockResolvedValue({ result: 'ok' });
+
+      const app = await createDeleteApp();
+      const response = await app.inject({
+        method: 'DELETE',
+        url: `/api/${testUserId}`,
+        payload: { confirmEmail: ' TEST@example.com ' }
       });
 
       expect(response.statusCode).toBe(200);
-      const body = JSON.parse(response.body);
-      expect(body.message).toBeDefined();
       expect(userDb.deleteUserFromDb).toHaveBeenCalledWith(testUserId);
+      expect(mockCloudinaryDestroy.mock.calls).toEqual([
+        [
+          'invoicetrackr/expense-documents/1/10/receipt.pdf',
+          { resource_type: 'raw', type: 'authenticated' }
+        ],
+        [
+          'invoicetrackr/business-logos/1/logo',
+          { resource_type: 'image', type: 'upload' }
+        ],
+        ['signature', { resource_type: 'image', type: 'upload' }]
+      ]);
+      expect(
+        vi.mocked(userDb.deleteUserFromDb).mock.invocationCallOrder[0]
+      ).toBeLessThan(mockCloudinaryDestroy.mock.invocationCallOrder[0]);
 
       await app.close();
     });

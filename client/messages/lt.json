@@ -1477,12 +1477,46 @@
                 "en": "Anglų",
                 "lt": "Lietuvių"
             },
+            "data": {
+                "title": "Jūsų duomenys",
+                "description": "Atsisiųskite savo įrašų kopiją arba ištrinkite paskyrą.",
+                "export": {
+                    "title": "Atsisiųsti duomenis",
+                    "description": "ZIP failas su visais jūsų įrašais JSON formatu, išlaidų dokumentais, logotipu ir parašu. Jis paruošiamas jūsų prašymu ir nesaugomas.",
+                    "action": "Atsisiųsti mano duomenis",
+                    "error": "Nepavyko paruošti duomenų eksporto. Pabandykite po kelių minučių."
+                },
+                "delete": {
+                    "title": "Ištrinti paskyrą",
+                    "description": "Visam laikui pašalinkite paskyrą ir visus jos įrašus. Šio veiksmo atšaukti negalima.",
+                    "action": "Ištrinti paskyrą"
+                }
+            },
             "delete_account": {
-                "action": "Ištrinti paskyrą",
                 "dialog": {
                     "title": "Ištrinti paskyrą",
-                    "description": "Ar tikrai norite ištrinti savo paskyrą? Šis veiksmas yra negrįžtamas ir visi jūsų duomenys bus prarasti.",
-                    "confirm_button": "Taip, ištrinti mano paskyrą",
+                    "description": "Paskyra ištrinama iš karto, jos atkurti nebus galima.",
+                    "removed": {
+                        "title": "Pašalinama iš karto",
+                        "account": "Prisijungimo, profilio ir veiklos duomenys",
+                        "records": "Klientai, sąskaitos faktūros, mokėjimai, išlaidos ir mokesčių įrašai",
+                        "files": "Įkelti išlaidų dokumentai, logotipas ir parašai",
+                        "sessions": "Prisijungimai visuose jūsų įrenginiuose"
+                    },
+                    "kept": {
+                        "title": "Kas lieka",
+                        "audit": "Paskyros veiksmų saugumo žurnalas be jūsų asmens duomenų",
+                        "backups": "Duomenų bazės atsarginės kopijos, kurios perrašomos per 30 dienų"
+                    },
+                    "records_duty": {
+                        "title": "Pasilikite savo kopiją",
+                        "description": "Lietuvos teisės aktai reikalauja sąskaitas faktūras ir pajamų bei išlaidų apskaitos įrašus saugoti iki 10 metų. Prieš ištrindami atsisiųskite savo duomenis.",
+                        "export": "Atsisiųsti mano duomenis"
+                    },
+                    "confirm_email": {
+                        "label": "Patvirtinimui įveskite {email}"
+                    },
+                    "confirm_button": "Ištrinti mano paskyrą",
                     "cancel_button": "Atšaukti"
                 }
             },
@@ -2027,7 +2061,7 @@
             },
             "data_retention": {
                 "heading": "6. Duomenų saugojimas",
-                "content": "Saugome jūsų asmeninę informaciją tiek, kiek reikia šioje Privatumo politikoje nurodytiems tikslams įgyvendinti, nebent ilgesnis saugojimo laikotarpis reikalingas arba leidžiamas pagal įstatymus. Kai ištri nate savo paskyrą, mes ištriname arba anonimuojame jūsų asmeninę informaciją, išskyrus atvejus, kai privalome ją išsaugoti dėl teisinių, mokesčių ar apskaitos tikslų."
+                "content": "Jūsų asmeninę informaciją saugome, kol paskyra aktyvi, o savo duomenų kopiją bet kada galite atsisiųsti paskyros nustatymuose. Kai ištrinate paskyrą, iš karto ištriname jūsų profilį, veiklos duomenis, klientus, sąskaitas faktūras, mokėjimus, išlaidas, mokesčių įrašus ir įkeltus failus, o jūs atjungiami visuose įrenginiuose. Lieka du dalykai: paskyros veiksmų saugumo žurnalas be jūsų asmens duomenų ir duomenų bazės atsarginės kopijos, kurios perrašomos per 30 dienų. Už savo sąskaitų faktūrų ir apskaitos įrašų kopijų saugojimą tiek, kiek reikalauja Lietuvos teisės aktai, atsakote jūs."
             },
             "your_rights": {
                 "heading": "7. Jūsų teisės ir pasirinkimai",

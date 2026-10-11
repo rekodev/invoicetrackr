@@ -1477,12 +1477,46 @@
                 "en": "English",
                 "lt": "Lithuanian"
             },
+            "data": {
+                "title": "Your Data",
+                "description": "Download a copy of your records or delete your account.",
+                "export": {
+                    "title": "Download Your Data",
+                    "description": "A ZIP file with all your records as JSON, plus your expense documents, logo and signature. It is prepared when you ask and is not stored.",
+                    "action": "Download My Data",
+                    "error": "We couldn't prepare your data export. Try again in a few minutes."
+                },
+                "delete": {
+                    "title": "Delete Account",
+                    "description": "Permanently remove your account and all its records. This can't be undone.",
+                    "action": "Delete Account"
+                }
+            },
             "delete_account": {
-                "action": "Delete Account",
                 "dialog": {
                     "title": "Delete Account",
-                    "description": "Are you sure you want to delete your account? This action is irreversible and all your data will be lost.",
-                    "confirm_button": "Yes, delete my account",
+                    "description": "Your account is deleted immediately and can't be restored.",
+                    "removed": {
+                        "title": "Removed Right Away",
+                        "account": "Your login, profile and business details",
+                        "records": "Clients, invoices, payments, expenses and tax records",
+                        "files": "Uploaded expense documents, your logo and signatures",
+                        "sessions": "Sign-ins on all your devices"
+                    },
+                    "kept": {
+                        "title": "What Remains",
+                        "audit": "A security log of account actions, with your personal details removed",
+                        "backups": "Database backups, which are overwritten within 30 days"
+                    },
+                    "records_duty": {
+                        "title": "Keep Your Own Copy",
+                        "description": "Lithuanian rules require you to keep invoices and income and expense records for up to 10 years. Download your data before deleting.",
+                        "export": "Download My Data"
+                    },
+                    "confirm_email": {
+                        "label": "Type {email} to confirm"
+                    },
+                    "confirm_button": "Delete My Account",
                     "cancel_button": "Cancel"
                 }
             },
@@ -2027,7 +2061,7 @@
             },
             "data_retention": {
                 "heading": "6. Data Retention",
-                "content": "We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law. When you delete your account, we will delete or anonymize your personal information, except where we are required to retain it for legal, tax, or accounting purposes."
+                "content": "We keep your personal information while your account is active, and you can download a copy of your data from Account Settings at any time. When you delete your account, we immediately delete your profile, business details, clients, invoices, payments, expenses, tax records and uploaded files, and sign you out on all devices. Two things remain: a security log of account actions with your personal details removed, and database backups, which are overwritten within 30 days. You remain responsible for keeping your own copies of invoices and accounting records for as long as Lithuanian law requires."
             },
             "your_rights": {
                 "heading": "7. Your Rights and Choices",

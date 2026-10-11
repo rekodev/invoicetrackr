@@ -98,6 +98,23 @@ export default {
       net: 'Grynasis rezultatas (€)'
     }
   },
+  accountExport: {
+    filename: 'invoicetrackr-duomenys',
+    readme: [
+      'InvoiceTrackr duomenų eksportas',
+      'Eksportuota %{date} paskyrai %{email}.',
+      '',
+      'data.json: jūsų profilis, veiklos duomenys, banko sąskaitos, kriptovaliutų piniginės,',
+      'klientai, sąskaitos faktūros (su eilutėmis, pardavėjo ir pirkėjo duomenimis), mokėjimai,',
+      'el. laiškų siuntimo istorija, išlaidos, mokesčių profiliai, mokesčių skaičiavimai ir',
+      'sumokėti mokesčiai.',
+      'files/expenses: prie išlaidų pridėti dokumentai, po aplanką kiekvienam išlaidų ID.',
+      'files/logo ir files/signature: jūsų veiklos logotipas ir išsaugotas parašas, jei nustatyti.',
+      '',
+      'Sumos nurodytos eurais, datos ISO 8601 formatu. Prieigos nuorodos, slaptažodžiai ir',
+      'vidiniai saugyklos raktai neįtraukti.'
+    ].join('\n')
+  },
   annualPackage: {
     filename: 'metine-ataskaita',
     title: 'METINĖ MOKESČIŲ ATASKAITA — %{year}',
@@ -349,6 +366,7 @@ export default {
       currency: 'Valiuta yra privaloma',
       language: 'Kalba yra privaloma',
       preferredInvoiceLanguage: 'Pageidaujama sąskaitos kalba yra privaloma',
+      deleteConfirmEmail: 'Patvirtinimui įveskite paskyros el. pašto adresą',
       defaultInvoiceVatMode: 'Numatytasis PVM taikymas yra privalomas',
       vatNumberRequired: 'PVM mokėtojo kodas yra privalomas PVM mokėtojams'
     },
@@ -445,6 +463,10 @@ export default {
       unableToCreate: 'Nepavyko sukurti vartotojo',
       unableToUpdate: 'Nepavyko atnaujinti vartotojo informacijos',
       unableToDelete: 'Šiuo metu nepavyko ištrinti paskyros. Bandykite vėliau',
+      deleteConfirmEmailMismatch:
+        'El. pašto adresas nesutampa su paskyros el. pašto adresu',
+      unableToExport:
+        'Šiuo metu nepavyko paruošti duomenų eksporto. Bandykite vėliau',
       unableToUpdateProfilePicture: 'Nepavyko atnaujinti veiklos logotipo',
       businessLogoRequired: 'Pasirinkite veiklos logotipą',
       businessLogoInvalidType: 'Naudokite JPEG, PNG arba WebP paveikslėlį',

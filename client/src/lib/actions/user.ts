@@ -3,6 +3,7 @@
 import {
   type AccountSettingsBody,
   DEFAULT_CURRENCY,
+  type DeleteUserAccountBody,
   User,
   VerifyEmailResponse
 } from '@invoicetrackr/types';
@@ -11,6 +12,7 @@ import { revalidatePath } from 'next/cache';
 import {
   changeUserPassword,
   completeUserOnboarding,
+  deleteUserAccount,
   deleteUserProfilePicture,
   resendVerificationEmail,
   updateUser,
@@ -291,4 +293,21 @@ export async function verifyEmailTokenAction({
     status: response.data.status,
     emailVerifiedAt: response.data.emailVerifiedAt
   };
+}
+
+export async function deleteUserAccountAction({
+  userId,
+  confirmEmail
+}: { userId: number } & DeleteUserAccountBody): Promise<ActionResponseModel> {
+  const response = await deleteUserAccount(userId, { confirmEmail });
+
+  if (isResponseError(response)) {
+    return {
+      ok: false,
+      message: response.data.message,
+      validationErrors: mapValidationErrors(response.data.errors)
+    };
+  }
+
+  return { ok: true, message: response.data.message };
 }

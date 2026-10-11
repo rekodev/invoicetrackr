@@ -2,6 +2,7 @@ import { MultipartFile } from '@fastify/multipart';
 import { ResetPasswordEmail, VerifyEmailEmail } from '@invoicetrackr/emails';
 import {
   type AccountSettingsBody,
+  type DeleteUserAccountBody,
   OAuthUserBody,
   UserBody,
   UserProfileUpdateBody
@@ -16,6 +17,7 @@ import { analyticsEvents } from '../analytics/events';
 import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import { appEmailFrom, getAppUrl } from '../config/app';
 import { resend } from '../config/resend';
+import { getAccountFilesFromDb } from '../database/account-export';
 import {
   getEmailVerificationTokenFromDb,
   getLatestEmailVerificationTokenForUserFromDb,
@@ -41,6 +43,8 @@ import {
   updateUserSelectedBankAccountInDb,
   verifyUserEmailInDb
 } from '../database/user';
+import { destroyStorageAssets } from '../services/account-storage';
+import { accountStorageAssets } from '../utils/account-data';
 import { recordRequestAudit } from '../utils/audit';
 import {
   BadRequestError,
@@ -440,11 +444,27 @@ export const completeUserOnboarding = async (
 };
 
 export const deleteUser = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Body: DeleteUserAccountBody;
+  }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
   const i18n = await useI18n(req);
+  const user = await getUserFromDb(userId);
+
+  if (!user) throw new NotFoundError(i18n.t('error.user.notFound'));
+
+  if (
+    req.body.confirmEmail.trim().toLowerCase() !== user.email.toLowerCase()
+  ) {
+    throw new BadRequestError(i18n.t('error.user.deleteConfirmEmailMismatch'));
+  }
+
+  const storageAssets = accountStorageAssets(
+    await getAccountFilesFromDb(userId)
+  );
 
   await recordRequestAudit({
     req,
@@ -458,6 +478,8 @@ export const deleteUser = async (
 
   if (!deletedUserId)
     throw new BadRequestError(i18n.t('error.user.unableToDelete'));
+
+  await destroyStorageAssets(storageAssets, req.log);
 
   reply.status(200).send({ message: i18n.t('success.user.deleted') });
 };

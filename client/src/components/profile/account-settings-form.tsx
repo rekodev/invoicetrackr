@@ -18,14 +18,11 @@ import {
 import type { DefaultInvoiceVatMode, User } from '@invoicetrackr/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateUserAccountSettingsAction } from '@/lib/actions/user';
 import { availableLanguages } from '@/lib/constants/languages';
 import { FREELANCER_PROFILE_PAGE } from '@/lib/constants/pages';
-
-import DeleteAccountModal from './delete-account-modal';
 
 type AccountSettingsFormModel = {
   invoiceEmail: string;
@@ -73,8 +70,6 @@ const AccountSettingsForm = ({ user }: Props) => {
       defaultInvoiceIncludeLogo: user?.defaultInvoiceIncludeLogo ?? true
     }
   });
-  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
-    useState(false);
 
   const onSubmit: SubmitHandler<AccountSettingsFormModel> = async (data) => {
     if (!user?.id) return;
@@ -358,14 +353,6 @@ const AccountSettingsForm = ({ user }: Props) => {
       <CardFooter className="w-full flex-col justify-between px-6 py-4">
         <div className="flex w-full flex-col-reverse gap-2 self-end sm:w-auto sm:flex-row">
           <Button
-            className="w-full sm:w-auto"
-            variant="danger-soft"
-            type="button"
-            onPress={() => setIsDeleteAccountModalOpen(true)}
-          >
-            {t('delete_account.action')}
-          </Button>
-          <Button
             isDisabled={!isDirty}
             isPending={isSubmitting}
             type="submit"
@@ -379,22 +366,13 @@ const AccountSettingsForm = ({ user }: Props) => {
   );
 
   return (
-    <>
-      <form
-        className="w-full"
-        aria-label={t('a11y.form_label')}
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Card className="w-full border">
-          {renderCardBodyAndFooter()}
-        </Card>
-      </form>
-      <DeleteAccountModal
-        userId={Number(user.id)}
-        isOpen={isDeleteAccountModalOpen}
-        onClose={() => setIsDeleteAccountModalOpen(false)}
-      />
-    </>
+    <form
+      className="w-full"
+      aria-label={t('a11y.form_label')}
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <Card className="w-full border">{renderCardBodyAndFooter()}</Card>
+    </form>
   );
 };
 

@@ -2,6 +2,7 @@ import {
   accountSettingsBodySchema,
   completeOnboardingResponseSchema,
   currentPasswordSchema,
+  deleteUserAccountBodySchema,
   getUserResponseSchema,
   loginPasswordSchema,
   loginUserResponseSchema,
@@ -19,6 +20,7 @@ import {
 import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
+import { exportAccountData } from '../controllers/account-data';
 import {
   changeUserPassword,
   completeUserOnboarding,
@@ -125,12 +127,24 @@ export const completeUserOnboardingOptions: RouteShorthandOptionsWithHandler = {
 
 export const deleteUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
+    body: deleteUserAccountBodySchema,
     response: {
       200: messageResponseSchema
     }
   },
   preHandler: authMiddleware,
   handler: deleteUser
+};
+
+export const exportAccountDataOptions: RouteShorthandOptionsWithHandler = {
+  config: {
+    rateLimit: {
+      max: 3,
+      timeWindow: '1 hour'
+    }
+  },
+  preHandler: authMiddleware,
+  handler: exportAccountData
 };
 
 export const updateUserSelectedBankAccountOptions: RouteShorthandOptionsWithHandler =
