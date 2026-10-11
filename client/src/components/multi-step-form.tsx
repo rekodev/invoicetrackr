@@ -87,7 +87,6 @@ export default function MultiStepForm({ existingUserData }: Props) {
               {t('banking.optional_note')}
             </p>
             <BankAccountForm
-              variant="inline"
               userId={existingUserData?.id}
               userSelectedBankAccountId={
                 existingUserData?.selectedBankAccountId

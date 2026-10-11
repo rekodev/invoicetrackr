@@ -16,6 +16,7 @@ import {
   UpdateUserLogoResponse,
   UpdateUserResponse,
   User,
+  type UserLanguageBody,
   VerifyEmailTokenResponse
 } from '@invoicetrackr/types';
 
@@ -130,7 +131,6 @@ export const updateUserAccountSettings = async (
   userId: number,
   {
     invoiceEmail,
-    language,
     currency,
     preferredInvoiceLanguage,
     isVatPayer,
@@ -140,7 +140,6 @@ export const updateUserAccountSettings = async (
     defaultInvoiceIncludeLogo
   }: {
     invoiceEmail: AccountSettingsBody['invoiceEmail'];
-    language: AccountSettingsBody['language'];
     currency: AccountSettingsBody['currency'];
     preferredInvoiceLanguage?: AccountSettingsBody['preferredInvoiceLanguage'];
     isVatPayer: AccountSettingsBody['isVatPayer'];
@@ -154,7 +153,6 @@ export const updateUserAccountSettings = async (
     `/api/users/${userId}/account-settings`,
     {
       invoiceEmail,
-      language,
       currency,
       preferredInvoiceLanguage,
       isVatPayer,
@@ -163,6 +161,15 @@ export const updateUserAccountSettings = async (
       defaultPaymentTermsDays,
       defaultInvoiceIncludeLogo
     }
+  );
+
+export const updateUserLanguage = async (
+  userId: number,
+  body: UserLanguageBody
+) =>
+  await api.put<UpdateUserAccountSettingsResponse>(
+    `/api/users/${userId}/language`,
+    body
   );
 
 export const updateUserAnalyticsConsent = async (
@@ -177,9 +184,7 @@ export const deleteUserAccount = async (
   userId: number,
   body: DeleteUserAccountBody
 ) =>
-  await api.delete<DeleteUserAccountResponse>(`/api/users/${userId}`, {
-    data: body
-  });
+  await api.delete<DeleteUserAccountResponse>(`/api/users/${userId}`, body);
 
 export const getAccountDataExport = async (userId: number) =>
   await api.get<ArrayBuffer>(`/api/users/${userId}/export`, {

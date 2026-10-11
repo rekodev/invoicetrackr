@@ -48,7 +48,7 @@ describe('<DeleteAccountModal />', () => {
       screen
         .getByRole('link', { name: /Download My Data/i })
         .getAttribute('href')
-    ).toBe('/settings/account-settings/export');
+    ).toBe('/settings/account/export');
     expect(deleteButton().hasAttribute('disabled')).toBe(true);
 
     await userEvent.type(emailField(), 'someone@example.com');

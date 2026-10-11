@@ -9,6 +9,7 @@ import * as userDb from '../../database/user';
 import {
   deleteUserOptions,
   deleteUserProfilePictureOptions,
+  updateUserLanguageOptions,
   updateUserProfilePictureOptions
 } from '../../options/user';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
@@ -17,6 +18,7 @@ import {
   userWithPasswordFactory
 } from '../../test/factories/user';
 import {
+  mockCloudinaryDeleteByPrefix,
   mockCloudinaryDestroy,
   mockCloudinaryUpload,
   mockResendSend,
@@ -518,7 +520,6 @@ describe('User Controller', () => {
         profile: {
           logoUrl:
             'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/business-logos/1/logo.png',
-          logoStorageKey: 'invoicetrackr/business-logos/1/logo',
           signatureUrl
         },
         signatures: [{ senderSignature: signatureUrl, receiverSignature: null }]
@@ -539,12 +540,11 @@ describe('User Controller', () => {
           'invoicetrackr/expense-documents/1/10/receipt.pdf',
           { resource_type: 'raw', type: 'authenticated' }
         ],
-        [
-          'invoicetrackr/business-logos/1/logo',
-          { resource_type: 'image', type: 'upload' }
-        ],
         ['signature', { resource_type: 'image', type: 'upload' }]
       ]);
+      expect(mockCloudinaryDeleteByPrefix).toHaveBeenCalledWith(
+        'invoicetrackr/business-logos/1/'
+      );
       expect(
         vi.mocked(userDb.deleteUserFromDb).mock.invocationCallOrder[0]
       ).toBeLessThan(mockCloudinaryDestroy.mock.invocationCallOrder[0]);
@@ -688,6 +688,43 @@ describe('User Controller', () => {
     });
   });
 
+  describe('PUT /api/users/:userId/language', () => {
+    it('updates only the language and rejects an invalid code', async () => {
+      vi.mocked(userDb.updateUserLanguageInDb).mockResolvedValue({
+        id: testUserId
+      });
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.put('/api/users/:userId/language', {
+          ...updateUserLanguageOptions,
+          preHandler: mockAuthMiddleware
+        });
+      });
+
+      const invalid = await app.inject({
+        method: 'PUT',
+        url: `/api/users/${testUserId}/language`,
+        payload: { language: 'english' }
+      });
+      expect(invalid.statusCode).toBe(400);
+      expect(userDb.updateUserLanguageInDb).not.toHaveBeenCalled();
+
+      const response = await app.inject({
+        method: 'PUT',
+        url: `/api/users/${testUserId}/language`,
+        payload: { language: 'lt' }
+      });
+      expect(response.statusCode).toBe(200);
+      expect(userDb.updateUserLanguageInDb).toHaveBeenCalledWith(
+        testUserId,
+        'lt'
+      );
+      expect(userDb.updateUserAccountSettingsInDb).not.toHaveBeenCalled();
+
+      await app.close();
+    });
+  });
+
   describe('PUT /api/:userId/account-settings', () => {
     it('should update user account settings with invoice defaults', async () => {
       vi.mocked(userDb.updateUserAccountSettingsInDb).mockResolvedValue(
@@ -711,7 +748,6 @@ describe('User Controller', () => {
         url: `/api/${testUserId}/account-settings`,
         payload: {
           invoiceEmail: 'invoices@example.com',
-          language: 'lt',
           currency: DEFAULT_CURRENCY,
           preferredInvoiceLanguage: 'lt',
           isVatPayer: true,
@@ -726,7 +762,6 @@ describe('User Controller', () => {
       expect(userDb.updateUserAccountSettingsInDb).toHaveBeenCalledWith(
         testUserId,
         'invoices@example.com',
-        'lt',
         'eur',
         'lt',
         true,

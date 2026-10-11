@@ -1,10 +1,11 @@
 'use client';
 
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { Alert, Button, buttonVariants, Card } from '@heroui/react';
+import { Alert, Button, buttonVariants } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
+import SectionHeading from '@/components/ui/section-heading';
 import { accountDataExportHref } from '@/lib/utils/account-data';
 
 import DeleteAccountModal from './delete-account-modal';
@@ -16,7 +17,7 @@ type Props = {
 };
 
 const AccountDataSection = ({ userId, email, hasExportError }: Props) => {
-  const t = useTranslations('profile.account_settings.data');
+  const t = useTranslations('profile.account.data');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const renderRow = (
@@ -33,25 +34,26 @@ const AccountDataSection = ({ userId, email, hasExportError }: Props) => {
   );
 
   return (
-    <Card className="w-full border">
-      <Card.Header className="flex flex-col gap-1 px-6 pt-6">
-        <h2 className="text-lg font-medium">{t('title')}</h2>
-        <p className="text-muted text-sm">{t('description')}</p>
-      </Card.Header>
-      <Card.Content className="divide-y px-6 pb-2">
-        {hasExportError ? (
-          <Alert status="danger" className="mb-4">
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Title>{t('export.error')}</Alert.Title>
-            </Alert.Content>
-          </Alert>
-        ) : null}
+    <section className="flex flex-col">
+      <SectionHeading
+        title={t('title')}
+        description={t('description')}
+        as="h4"
+      />
+      {hasExportError ? (
+        <Alert status="danger" className="mt-3">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>{t('export.error')}</Alert.Title>
+          </Alert.Content>
+        </Alert>
+      ) : null}
+      <div className="divide-y">
         {renderRow(
           'export',
           <a
             href={accountDataExportHref}
-            className={buttonVariants({ size: 'sm', variant: 'outline' })}
+            className={buttonVariants({ variant: 'outline' })}
           >
             <ArrowDownTrayIcon className="size-4" />
             {t('export.action')}
@@ -60,21 +62,20 @@ const AccountDataSection = ({ userId, email, hasExportError }: Props) => {
         {renderRow(
           'delete',
           <Button
-            size="sm"
             variant="danger-soft"
             onPress={() => setIsDeleteModalOpen(true)}
           >
             {t('delete.action')}
           </Button>
         )}
-      </Card.Content>
+      </div>
       <DeleteAccountModal
         userId={userId}
         email={email}
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
       />
-    </Card>
+    </section>
   );
 };
 

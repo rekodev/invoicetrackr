@@ -1,15 +1,14 @@
-import { strToU8, type Zippable,zipSync } from 'fflate';
+import { strToU8, type Zippable, zipSync } from 'fflate';
 
 import type {
   AccountExportData,
   AccountFiles
 } from '../database/account-export';
-
-export type StorageAsset = {
-  publicId: string;
-  resourceType: 'image' | 'raw';
-  type: 'upload' | 'authenticated';
-};
+import {
+  attachmentAsset,
+  attachmentFormat,
+  type StorageAsset
+} from './storage';
 
 export type ExportFile =
   | { path: string; asset: StorageAsset; format: string }
@@ -30,29 +29,12 @@ export const parseCloudinaryUrl = (url: string | null | undefined) => {
   return {
     asset: {
       publicId,
-      resourceType: resourceType as StorageAsset['resourceType'],
+      resourceType,
       type: type as StorageAsset['type']
     },
     format
   };
 };
-
-const attachmentAsset = (
-  attachment: AccountFiles['attachments'][number]
-): StorageAsset => ({
-  publicId: attachment.storageKey,
-  resourceType: attachment.resourceType === 'raw' ? 'raw' : 'image',
-  type: 'authenticated'
-});
-
-const attachmentFormat = (attachment: AccountFiles['attachments'][number]) =>
-  attachment.resourceType === 'raw'
-    ? ''
-    : attachment.mimeType === 'application/pdf'
-      ? 'pdf'
-      : attachment.mimeType === 'image/png'
-        ? 'png'
-        : 'jpg';
 
 const withExtension = (name: string, format: string) =>
   format && !name.toLowerCase().endsWith(`.${format}`)
@@ -72,13 +54,13 @@ export const accountExportFiles = ({
     }));
 
   const publicFiles = [
-    ['files/logo', profile?.logoUrl],
-    ['files/signature', profile?.signatureUrl]
-  ].flatMap(([name, url]) => {
+    { name: 'files/logo', url: profile?.logoUrl },
+    { name: 'files/signature', url: profile?.signatureUrl }
+  ].flatMap(({ name, url }) => {
     const parsed = parseCloudinaryUrl(url);
 
     return parsed && url
-      ? [{ path: withExtension(name!, parsed.format), url }]
+      ? [{ path: withExtension(name, parsed.format), url }]
       : [];
   });
 
@@ -97,11 +79,7 @@ export const accountStorageAssets = ({
 
   attachments.forEach((attachment) => add(attachmentAsset(attachment)));
 
-  if (profile?.logoStorageKey)
-    add({ publicId: profile.logoStorageKey, resourceType: 'image', type: 'upload' });
-
   [
-    profile?.logoUrl,
     profile?.signatureUrl,
     ...signatures.flatMap(({ senderSignature, receiverSignature }) => [
       senderSignature,
@@ -129,7 +107,7 @@ export const buildAccountExportZip = ({
   };
 
   files.forEach(({ path, content }) => {
-    entries[path] = content;
+    entries[path] = [content, { level: 0 }];
   });
 
   return Buffer.from(zipSync(entries));

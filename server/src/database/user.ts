@@ -230,7 +230,6 @@ export const updateUserProfilePictureInDb = async (
 export const updateUserAccountSettingsInDb = async (
   userId: number,
   invoiceEmail: string,
-  language: string,
   _currency: string,
   preferredInvoiceLanguage?: string,
   isVatPayer = false,
@@ -254,16 +253,22 @@ export const updateUserAccountSettingsInDb = async (
     updateData.preferredInvoiceLanguage = preferredInvoiceLanguage;
   }
 
-  await db.transaction(async (tx) => {
-    await tx.update(usersTable).set({ language }).where(eq(usersTable.id, userId));
-    await tx
-      .update(businessProfilesTable)
-      .set(updateData)
-      .where(eq(businessProfilesTable.userId, userId));
-  });
+  await db
+    .update(businessProfilesTable)
+    .set(updateData)
+    .where(eq(businessProfilesTable.userId, userId));
 
   return getUserFromDb(userId);
 };
+
+export const updateUserLanguageInDb = async (userId: number, language: string) =>
+  (
+    await db
+      .update(usersTable)
+      .set({ language })
+      .where(eq(usersTable.id, userId))
+      .returning({ id: usersTable.id })
+  ).at(0);
 
 export const deleteUserFromDb = async (
   id: number

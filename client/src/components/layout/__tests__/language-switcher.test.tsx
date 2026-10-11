@@ -25,7 +25,7 @@ vi.mock('@/lib/actions', () => ({
 }));
 
 vi.mock('@/lib/actions/user', () => ({
-  updateUserAccountSettingsAction: vi.fn()
+  updateUserLanguageAction: vi.fn()
 }));
 
 describe('<LanguageSwitcher />', () => {

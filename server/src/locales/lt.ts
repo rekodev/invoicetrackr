@@ -384,6 +384,7 @@ export default {
       profilePictureUpdated: 'Veiklos logotipas atnaujintas sėkmingai',
       profilePictureRemoved: 'Veiklos logotipas pašalintas sėkmingai',
       accountSettingsUpdated: 'Paskyros nustatymai atnaujinti sėkmingai',
+      languageUpdated: 'Kalba atnaujinta',
       passwordChanged: 'Slaptažodis pakeistas sėkmingai',
       resetLinkSent:
         'Slaptažodžio atstatymo nuoroda išsiųsta į nurodytą el. paštą',

@@ -22,9 +22,8 @@ import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { logOutAction } from '@/lib/actions';
 import {
-  FREELANCER_PROFILE_PAGE,
-  ONBOARDING_PAGE
-} from '@/lib/constants/pages';
+  ONBOARDING_PAGE,
+  PROFILE_PAGE} from '@/lib/constants/pages';
 
 import Breadcrumbs from './breadcrumbs';
 import LanguageSwitcher from './language-switcher';
@@ -90,7 +89,7 @@ export default function AuthenticatedShell({
   const accountMenu = (
     <Dropdown>
       <DropdownTrigger aria-label={t('a11y.profile_actions_label')}>
-        <Avatar className="cursor-pointer">
+        <Avatar className="size-9.5 cursor-pointer border">
           <Avatar.Image
             alt={user.name || user.email || 'User'}
             src={user.profilePictureUrl}
@@ -108,8 +107,9 @@ export default function AuthenticatedShell({
                 {user.email}
               </span>
             </DropdownItem>
-            <DropdownItem key="profile" href={FREELANCER_PROFILE_PAGE}>
-              {t('my_profile')}
+            <Separator className="-ms-1.5 w-[calc(100%+0.75rem)]" />
+            <DropdownItem key="profile" href={PROFILE_PAGE}>
+              {t('profile')}
             </DropdownItem>
             <DropdownItem
               key="logout"

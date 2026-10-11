@@ -41,7 +41,7 @@ test('exports account data, then deletes the account after email confirmation', 
     }
   ]);
   await new LoginPage(page).login(accountUser.email, accountUser.password);
-  await page.goto('/settings/account-settings');
+  await page.goto('/settings/account');
 
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('link', { name: 'Download My Data' }).click();

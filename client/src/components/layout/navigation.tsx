@@ -12,6 +12,7 @@ import {
   KeyIcon,
   ReceiptPercentIcon,
   TableCellsIcon,
+  UserCircleIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
 import { Accordion, Link } from '@heroui/react';
@@ -21,14 +22,15 @@ import { useTranslations } from 'next-intl';
 import type { ComponentType, ReactNode, SVGProps } from 'react';
 
 import {
-  ACCOUNT_SETTINGS_PAGE,
+  ACCOUNT_PAGE,
   CHANGE_PASSWORD_PAGE,
   CLIENTS_PAGE,
   DASHBOARD_PAGE,
   EXPENSES_PAGE,
-  FREELANCER_PROFILE_PAGE,
+  INVOICE_DEFAULTS_PAGE,
   INVOICES_PAGE,
   PAYMENT_METHODS_PAGE,
+  PROFILE_PAGE,
   REPORT_PAGES,
   REPORTS_PAGE,
   SETTINGS_PAGE
@@ -66,8 +68,8 @@ const navigation: Array<NavLink> = [
     icon: Cog6ToothIcon,
     children: [
       {
-        key: 'freelancer_profile',
-        href: FREELANCER_PROFILE_PAGE,
+        key: 'profile',
+        href: PROFILE_PAGE,
         icon: IdentificationIcon
       },
       {
@@ -76,14 +78,19 @@ const navigation: Array<NavLink> = [
         icon: BuildingLibraryIcon
       },
       {
-        key: 'account_settings',
-        href: ACCOUNT_SETTINGS_PAGE,
+        key: 'invoice_defaults',
+        href: INVOICE_DEFAULTS_PAGE,
         icon: AdjustmentsHorizontalIcon
       },
       {
         key: 'change_password',
         href: CHANGE_PASSWORD_PAGE,
         icon: KeyIcon
+      },
+      {
+        key: 'account',
+        href: ACCOUNT_PAGE,
+        icon: UserCircleIcon
       }
     ]
   }

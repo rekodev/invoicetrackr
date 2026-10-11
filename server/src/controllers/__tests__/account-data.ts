@@ -5,14 +5,12 @@ import * as accountExportDb from '../../database/account-export';
 import { exportAccountDataOptions } from '../../options/user';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import { mockLocalizedI18n } from '../../test/i18n';
-import { mockCreateAuditEvent } from '../../test/setup';
-
-const storage = vi.hoisted(() => ({ signed: vi.fn() }));
+import {
+  mockCloudinaryPrivateDownloadUrl,
+  mockCreateAuditEvent
+} from '../../test/setup';
 
 vi.mock('../../database/account-export');
-vi.mock('cloudinary', () => ({
-  v2: { utils: { private_download_url: storage.signed } }
-}));
 
 const exportData = {
   user: { id: 1, email: 'owner@example.com', emailVerifiedAt: null, language: 'en', analyticsConsentStatus: null, createdAt: null },
@@ -58,12 +56,11 @@ describe('Account data export', () => {
       ],
       profile: {
         logoUrl: 'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/business-logos/1/logo.png',
-        logoStorageKey: 'invoicetrackr/business-logos/1/logo',
         signatureUrl: ''
       },
       signatures: []
     });
-    storage.signed.mockReturnValue('https://signed.example/receipt');
+    mockCloudinaryPrivateDownloadUrl.mockReturnValue('https://signed.example/receipt');
     fetchMock.mockImplementation(async (url: string) =>
       new Response(url === 'https://signed.example/receipt' ? '%PDF-receipt' : 'png-logo')
     );
@@ -96,7 +93,7 @@ describe('Account data export', () => {
     });
     expect(strFromU8(zip['README.txt'])).toContain('owner@example.com');
     expect(strFromU8(zip['files/expenses/10/3-receipt.pdf'])).toBe('%PDF-receipt');
-    expect(storage.signed).toHaveBeenCalledWith('docs/receipt', 'pdf', expect.objectContaining({ type: 'authenticated', resource_type: 'image' }));
+    expect(mockCloudinaryPrivateDownloadUrl).toHaveBeenCalledWith('docs/receipt', 'pdf', expect.objectContaining({ type: 'authenticated', resource_type: 'image' }));
     expect(accountExportDb.getAccountExportFromDb).toHaveBeenCalledWith(1);
     expect(mockCreateAuditEvent).toHaveBeenCalledWith(
       expect.objectContaining({ action: 'account.data_exported', userId: 1 })
@@ -117,5 +114,17 @@ describe('Account data export', () => {
     );
 
     await app.close();
+  });
+
+  it('rate-limits exports per account, not per server IP', () => {
+    const { keyGenerator } = (
+      exportAccountDataOptions.config as {
+        rateLimit: { keyGenerator: (_request: unknown) => string };
+      }
+    ).rateLimit;
+
+    expect(keyGenerator({ params: { userId: '1' }, ip: '10.0.0.1' })).not.toBe(
+      keyGenerator({ params: { userId: '2' }, ip: '10.0.0.1' })
+    );
   });
 });

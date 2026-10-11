@@ -25,6 +25,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 
+import SectionHeading from '@/components/ui/section-heading';
 import {
   deleteUserProfilePictureAction,
   resendVerificationEmailAction,
@@ -279,108 +280,115 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
   );
 
   const renderProfilePictureInput = () => (
-    <div className="flex min-h-[72px] flex-col gap-4 pb-1 md:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex min-w-0 items-center gap-3">
-        <Avatar size="lg">
-          <Avatar.Image
-            src={profilePicturePreviewUrl || currentLogoUrl}
-            alt={t('a11y.business_logo')}
-          />
-          <Avatar.Fallback>
-            {(defaultValues?.name || defaultValues?.email || 'U')
-              .slice(0, 2)
-              .toUpperCase()}
-          </Avatar.Fallback>
-        </Avatar>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">
-            {t('business_logo')}
-          </p>
-          <p className="text-muted text-sm">
-            {t('business_logo_description')}
-          </p>
-        </div>
-      </div>
-      {profilePictureFile ? (
-        <div className="flex w-full flex-row items-center gap-3 px-1 sm:w-auto sm:min-w-64">
-          <DocumentIcon
-            className="text-muted size-5 shrink-0"
-            aria-hidden="true"
-          />
+    <Card className="border md:col-span-2">
+      <Card.Content className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
+          <Avatar size="lg">
+            <Avatar.Image
+              src={profilePicturePreviewUrl || currentLogoUrl}
+              alt={t('a11y.business_logo')}
+            />
+            <Avatar.Fallback>
+              {(defaultValues?.name || defaultValues?.email || 'U')
+                .slice(0, 2)
+                .toUpperCase()}
+            </Avatar.Fallback>
+          </Avatar>
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium">
-              {profilePictureFile.name}
+            <p className="truncate text-sm font-semibold">
+              {t('business_logo')}
             </p>
-            <p className="text-muted text-xs">
-              {t('business_logo_ready', {
-                size: formatFileSize(profilePictureFile.size)
-              })}
+            <p className="text-muted text-sm">
+              {t('business_logo_description')}
             </p>
           </div>
-          <Button
-            type="button"
-            isIconOnly
-            size="sm"
-            variant="ghost"
-            aria-label={t('a11y.dismiss_business_logo')}
-            onPress={() => {
-              setProfilePictureFile(undefined);
-              setProfilePicturePreviewUrl(undefined);
-              if (profilePictureInputRef.current)
-                profilePictureInputRef.current.value = '';
-            }}
-          >
-            <XMarkIcon className="size-4" aria-hidden="true" />
-          </Button>
         </div>
-      ) : (
-        <div className="flex w-full gap-2 sm:w-auto">
-          <Button
-            type="button"
-            variant="outline"
-            className="flex-1 sm:flex-none"
-            onPress={() => profilePictureInputRef.current?.click()}
-          >
-            <CameraIcon className="size-4" aria-hidden="true" />
-            {currentLogoUrl
-              ? t('replace_business_logo')
-              : t('upload_business_logo')}
-          </Button>
-          {currentLogoUrl ? (
+        {profilePictureFile ? (
+          <div className="flex w-full flex-row items-center gap-3 px-1 sm:w-auto sm:min-w-64">
+            <DocumentIcon
+              className="text-muted size-5 shrink-0"
+              aria-hidden="true"
+            />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium">
+                {profilePictureFile.name}
+              </p>
+              <p className="text-muted text-xs">
+                {t('business_logo_ready', {
+                  size: formatFileSize(profilePictureFile.size)
+                })}
+              </p>
+            </div>
             <Button
-              isIconOnly
               type="button"
-              variant="danger-soft"
-              aria-label={t('a11y.remove_business_logo')}
-              isPending={isRemovingLogo}
-              onPress={handleRemoveLogo}
+              isIconOnly
+              size="sm"
+              variant="ghost"
+              aria-label={t('a11y.dismiss_business_logo')}
+              onPress={() => {
+                setProfilePictureFile(undefined);
+                setProfilePicturePreviewUrl(undefined);
+                if (profilePictureInputRef.current)
+                  profilePictureInputRef.current.value = '';
+              }}
             >
-              <TrashIcon className="size-4" aria-hidden="true" />
+              <XMarkIcon className="size-4" aria-hidden="true" />
             </Button>
-          ) : null}
-        </div>
-      )}
-      <input
-        ref={profilePictureInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        className="hidden"
-        aria-label={t('a11y.business_logo_input')}
-        onChange={(event) => {
-          const file = event.target.files?.[0];
-          setProfilePictureFile(file);
-          setProfilePicturePreviewUrl(
-            file ? URL.createObjectURL(file) : undefined
-          );
-        }}
-      />
-    </div>
+          </div>
+        ) : (
+          <div className="flex w-full gap-2 sm:w-auto">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1 sm:flex-none"
+              onPress={() => profilePictureInputRef.current?.click()}
+            >
+              <CameraIcon className="size-4" aria-hidden="true" />
+              {currentLogoUrl
+                ? t('replace_business_logo')
+                : t('upload_business_logo')}
+            </Button>
+            {currentLogoUrl ? (
+              <Button
+                isIconOnly
+                type="button"
+                variant="danger-soft"
+                aria-label={t('a11y.remove_business_logo')}
+                isPending={isRemovingLogo}
+                onPress={handleRemoveLogo}
+              >
+                <TrashIcon className="size-4" aria-hidden="true" />
+              </Button>
+            ) : null}
+          </div>
+        )}
+        <input
+          ref={profilePictureInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          aria-label={t('a11y.business_logo_input')}
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            setProfilePictureFile(file);
+            setProfilePicturePreviewUrl(
+              file ? URL.createObjectURL(file) : undefined
+            );
+          }}
+        />
+      </Card.Content>
+    </Card>
   );
 
   const renderCardBodyAndFooter = () => {
     return (
       <>
         <Card.Content className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
+          <SectionHeading
+            title={t('title')}
+            description={t('description')}
+            className="mb-1 md:col-span-2"
+          />
           {renderProfilePictureInput()}
           {renderEmailField()}
 
@@ -484,7 +492,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
           })}
 
           <div className="mt-[-0.25rem] flex flex-col gap-2">
-            <label className="self-start text-sm">{t('signature')}</label>
+            <Label className="self-start">{t('signature')}</Label>
 
             <SignaturePad
               signature={formSignature || defaultValues?.signature}
@@ -516,9 +524,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
       encType="multipart/form-data"
       className="w-full"
     >
-      <Card className="w-full border">
-        {renderCardBodyAndFooter()}
-      </Card>
+      <Card className="w-full border">{renderCardBodyAndFooter()}</Card>
     </form>
   );
 };

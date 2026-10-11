@@ -3,7 +3,7 @@ import type { DashboardAttention } from '@invoicetrackr/types';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 
-import { FREELANCER_PROFILE_PAGE } from '@/lib/constants/pages';
+import { PROFILE_PAGE } from '@/lib/constants/pages';
 import { dashboardLinks, yearRange } from '@/lib/utils/dashboard';
 
 import AttentionReviewMenu from './attention-review-menu';
@@ -41,7 +41,7 @@ const AttentionStrip = async ({ attention, year, isEmailVerified }: Props) => {
       key: 'email_unverified',
       text: t('email_unverified'),
       action: t('actions.email_unverified'),
-      href: FREELANCER_PROFILE_PAGE
+      href: PROFILE_PAGE
     }
   ].filter((item) => item !== false);
 

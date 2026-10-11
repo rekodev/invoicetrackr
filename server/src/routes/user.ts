@@ -20,6 +20,7 @@ import {
   resetUserPasswordOptions,
   updateUserAccountSettingsOptions,
   updateUserAnalyticsConsentOptions,
+  updateUserLanguageOptions,
   updateUserOptions,
   updateUserProfilePictureOptions,
   updateUserSelectedBankAccountOptions,
@@ -69,6 +70,8 @@ const userRoutes = (
     '/api/users/:userId/account-settings',
     updateUserAccountSettingsOptions
   );
+
+  fastify.put('/api/users/:userId/language', updateUserLanguageOptions);
 
   fastify.put(
     '/api/users/:userId/analytics-consent',

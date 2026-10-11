@@ -377,6 +377,7 @@ export default {
       profilePictureUpdated: 'Business logo updated successfully',
       profilePictureRemoved: 'Business logo removed successfully',
       accountSettingsUpdated: 'Account settings updated successfully',
+      languageUpdated: 'Language updated',
       passwordChanged: 'Password changed successfully',
       resetLinkSent: 'Reset link has been sent to the entered email',
       verificationEmailSent: 'Verification email has been sent',

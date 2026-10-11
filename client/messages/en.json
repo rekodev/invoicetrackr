@@ -18,12 +18,12 @@
             "journal": "Journal",
             "taxes": "Taxes",
             "settings": "Settings",
-            "freelancer_profile": "Freelancer Profile",
+            "profile": "Profile",
             "banking_information": "Bank Accounts",
             "payment_methods": "Payment Methods",
-            "account_settings": "Invoice Defaults",
+            "invoice_defaults": "Invoice Defaults",
             "change_password": "Password",
-            "my_profile": "Freelancer Profile",
+            "account": "Account",
             "log_out": "Log Out",
             "signed_in_as": "Signed in as",
             "a11y": {
@@ -43,7 +43,8 @@
         }
     },
     "breadcrumbs": {
-        "account_settings": "Account Settings",
+        "account": "Account",
+        "invoice_defaults": "Invoice Defaults",
         "banking_information": "Banking Information",
         "payment_methods": "Payment Methods",
         "change_password": "Change Password",
@@ -64,7 +65,6 @@
         "login": "Log In",
         "new": "New",
         "onboarding": "Onboarding",
-        "freelancer_profile": "Freelancer Profile",
         "privacy_policy": "Privacy Policy",
         "profile": "Profile",
         "sign_up": "Sign Up",
@@ -1401,13 +1401,13 @@
         "personal_information": {
             "form": {
                 "a11y": {
-                    "form_label": "Freelancer profile form",
+                    "form_label": "Profile form",
                     "business_logo": "Business logo preview",
                     "business_logo_input": "Choose business logo",
                     "dismiss_business_logo": "Remove selected business logo",
                     "remove_business_logo": "Remove current business logo"
                 },
-                "title": "Freelancer Profile",
+                "title": "Profile",
                 "description": "Business details used as defaults for future invoices.",
                 "business_logo": "Business Logo",
                 "business_logo_description": "JPEG, PNG, or WebP up to 5 MB. Saved with future invoices.",
@@ -1443,16 +1443,10 @@
         },
         "account_settings": {
             "a11y": {
-                "form_label": "Account Settings Form"
+                "form_label": "Invoice Defaults Form"
             },
-            "title": "Account Settings",
-            "language": "Language",
             "preferred_invoice_language": "Preferred Invoice Language",
             "preferred_invoice_language_tooltip": "This is the default language for invoice exports and emails. You can change it per invoice.",
-            "general": {
-                "title": "General",
-                "description": "Language and regional preferences for your account."
-            },
             "invoice_defaults": {
                 "title": "Invoice Defaults",
                 "description": "Used when creating new saved invoices. Existing invoices keep their saved values.",
@@ -1465,7 +1459,7 @@
                 "payment_terms_days": "{days} days",
                 "include_logo": "Include Logo on New Invoices",
                 "vat_locked_note": "To choose VAT defaults, mark yourself as a VAT payer in",
-                "personal_information_link": "Freelancer Profile",
+                "personal_information_link": "Profile",
                 "vat_modes": {
                     "no_vat": "No VAT",
                     "standard_21": "Standard 21%",
@@ -1477,56 +1471,13 @@
                 "en": "English",
                 "lt": "Lithuanian"
             },
-            "data": {
-                "title": "Your Data",
-                "description": "Download a copy of your records or delete your account.",
-                "export": {
-                    "title": "Download Your Data",
-                    "description": "A ZIP file with all your records as JSON, plus your expense documents, logo and signature. It is prepared when you ask and is not stored.",
-                    "action": "Download My Data",
-                    "error": "We couldn't prepare your data export. Try again in a few minutes."
-                },
-                "delete": {
-                    "title": "Delete Account",
-                    "description": "Permanently remove your account and all its records. This can't be undone.",
-                    "action": "Delete Account"
-                }
-            },
-            "delete_account": {
-                "dialog": {
-                    "title": "Delete Account",
-                    "description": "Your account is deleted immediately and can't be restored.",
-                    "removed": {
-                        "title": "Removed Right Away",
-                        "account": "Your login, profile and business details",
-                        "records": "Clients, invoices, payments, expenses and tax records",
-                        "files": "Uploaded expense documents, your logo and signatures",
-                        "sessions": "Sign-ins on all your devices"
-                    },
-                    "kept": {
-                        "title": "What Remains",
-                        "audit": "A security log of account actions, with your personal details removed",
-                        "backups": "Database backups, which are overwritten within 30 days"
-                    },
-                    "records_duty": {
-                        "title": "Keep Your Own Copy",
-                        "description": "Lithuanian rules require you to keep invoices and income and expense records for up to 10 years. Download your data before deleting.",
-                        "export": "Download My Data"
-                    },
-                    "confirm_email": {
-                        "label": "Type {email} to confirm"
-                    },
-                    "confirm_button": "Delete My Account",
-                    "cancel_button": "Cancel"
-                }
-            },
             "save_changes": "Save Changes"
         },
         "change_password": {
             "a11y": {
                 "form_label": "Change password form"
             },
-            "title": "Change Password",
+            "title": "Password",
             "current_password": "Current Password",
             "current_password_placeholder": "Enter current password",
             "new_password": "New Password",
@@ -1534,13 +1485,14 @@
             "confirm_new_password": "Confirm New Password",
             "confirm_new_password_placeholder": "Confirm new password",
             "save_changes": "Save Changes",
-            "password_requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
+            "password_requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.",
+            "description": "Change the password you use to log in."
         },
         "banking_information": {
             "a11y": {
                 "form_label": "Banking Information Form"
             },
-            "title": "Bank Accounts",
+            "title": "Payment Methods",
             "description": "Choose the default bank account for future invoices. Existing invoices keep their saved payment details.",
             "actions": {
                 "add": "Add New",
@@ -1609,6 +1561,59 @@
             "bank_accounts": "Bank Accounts",
             "crypto_wallets": "Crypto Wallets",
             "add_new": "Add New"
+        },
+        "account": {
+            "title": "Account",
+            "description": "Your language, a copy of your data, and account deletion.",
+            "language": {
+                "title": "Language",
+                "description": "The language of the app and of emails sent to you.",
+                "label": "Language",
+                "save": "Save"
+            },
+            "data": {
+                "title": "Your Data",
+                "description": "Download a copy of your records or delete your account.",
+                "export": {
+                    "title": "Download Your Data",
+                    "description": "A ZIP file with all your records as JSON, plus your expense documents, logo and signature. It is prepared when you ask and is not stored.",
+                    "action": "Download My Data",
+                    "error": "We couldn't prepare your data export. Try again in a few minutes."
+                },
+                "delete": {
+                    "title": "Delete Account",
+                    "description": "Permanently remove your account and all its records. This can't be undone.",
+                    "action": "Delete Account"
+                }
+            },
+            "delete_account": {
+                "dialog": {
+                    "title": "Delete Account",
+                    "description": "Your account is deleted immediately and can't be restored.",
+                    "removed": {
+                        "title": "Removed Right Away",
+                        "account": "Your login, profile and business details",
+                        "records": "Clients, invoices, payments, expenses and tax records",
+                        "files": "Uploaded expense documents, your logo and signatures",
+                        "sessions": "Sign-ins on all your devices"
+                    },
+                    "kept": {
+                        "title": "What Remains",
+                        "audit": "A security log of account actions, with your personal details removed",
+                        "backups": "Database backups, which are overwritten within 30 days"
+                    },
+                    "records_duty": {
+                        "title": "Keep Your Own Copy",
+                        "description": "Lithuanian rules require you to keep invoices and income and expense records for up to 10 years. Download your data before deleting.",
+                        "export": "Download My Data"
+                    },
+                    "confirm_email": {
+                        "label": "Type {email} to confirm"
+                    },
+                    "confirm_button": "Delete My Account",
+                    "cancel_button": "Cancel"
+                }
+            }
         }
     },
     "forgot_password": {

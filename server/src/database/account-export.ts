@@ -240,7 +240,7 @@ export const getAccountExportFromDb = async (userId: number) => {
 };
 
 export const getAccountFilesFromDb = async (userId: number) => {
-  const [attachments, [profile]] = await Promise.all([
+  const [attachments, [profile], signatures] = await Promise.all([
     db
       .select({
         id: expenseAttachmentsTable.id,
@@ -261,20 +261,18 @@ export const getAccountFilesFromDb = async (userId: number) => {
     db
       .select({
         logoUrl: businessProfilesTable.logoUrl,
-        logoStorageKey: businessProfilesTable.logoStorageKey,
         signatureUrl: businessProfilesTable.signatureUrl
       })
       .from(businessProfilesTable)
-      .where(eq(businessProfilesTable.userId, userId))
+      .where(eq(businessProfilesTable.userId, userId)),
+    db
+      .select({
+        senderSignature: invoicesTable.senderSignature,
+        receiverSignature: invoicesTable.receiverSignature
+      })
+      .from(invoicesTable)
+      .where(ownInvoice(userId))
   ]);
-
-  const signatures = await db
-    .select({
-      senderSignature: invoicesTable.senderSignature,
-      receiverSignature: invoicesTable.receiverSignature
-    })
-    .from(invoicesTable)
-    .where(ownInvoice(userId));
 
   return { attachments, profile: profile ?? null, signatures };
 };

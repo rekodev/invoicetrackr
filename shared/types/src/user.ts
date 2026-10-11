@@ -113,7 +113,6 @@ export const accountSettingsBodySchema = userBodyBaseSchema
   .pick({
     invoiceEmail: true,
     currency: true,
-    language: true,
     preferredInvoiceLanguage: true,
     isVatPayer: true,
     defaultInvoiceVatMode: true,
@@ -124,9 +123,12 @@ export const accountSettingsBodySchema = userBodyBaseSchema
   .extend({
     invoiceEmail: z.email('validation.user.email'),
     preferredInvoiceLanguage: z.string().max(2).min(2).optional(),
-    currency: currencySchema,
-    language: z.string().max(2).min(2)
+    currency: currencySchema
   });
+
+export const userLanguageBodySchema = z.object({
+  language: z.string().max(2, 'validation.user.language').min(2, 'validation.user.language')
+});
 
 export const deleteUserAccountBodySchema = z.object({
   confirmEmail: z.string().trim().min(1, 'validation.user.deleteConfirmEmail')
@@ -142,6 +144,7 @@ export type User = UserBody;
 export type UserProfileUpdateBody = z.infer<typeof userProfileUpdateBodySchema>;
 export type AccountSettingsBody = z.infer<typeof accountSettingsBodySchema>;
 export type DeleteUserAccountBody = z.infer<typeof deleteUserAccountBodySchema>;
+export type UserLanguageBody = z.infer<typeof userLanguageBodySchema>;
 export type DefaultInvoiceVatMode = UserBody['defaultInvoiceVatMode'];
 export type UserWithPassword = UserBody;
 export type ResetPasswordTokenGet = z.infer<typeof resetPasswordTokenGetSchema>;

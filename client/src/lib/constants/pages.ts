@@ -25,13 +25,13 @@ export const REPORT_PAGES = [
   { key: 'taxes', href: REPORTS_TAXES_PAGE }
 ] as const;
 export const SETTINGS_PAGE = '/settings';
-export const FREELANCER_PROFILE_PAGE = '/settings/freelancer-profile';
+export const PROFILE_PAGE = '/settings/profile';
 export const PAYMENT_METHODS_PAGE = '/settings/payment-methods';
-export const ADD_NEW_BANK_ACCOUNT_PAGE = '/settings/payment-methods/new';
 export const ONBOARDING_PAGE = '/onboarding';
 
 export const CHANGE_PASSWORD_PAGE = '/settings/change-password';
-export const ACCOUNT_SETTINGS_PAGE = '/settings/account-settings';
+export const INVOICE_DEFAULTS_PAGE = '/settings/invoice-defaults';
+export const ACCOUNT_PAGE = '/settings/account';
 
 export const PRIVACY_POLICY_PAGE = '/privacy-policy';
 export const TERMS_OF_SERVICE_PAGE = '/terms-of-service';

@@ -14,10 +14,11 @@ import {
   updateUserLogoResponseSchema,
   updateUserResponseSchema,
   userBodySchema,
+  userLanguageBodySchema,
   userProfileUpdateBodySchema,
   verifyEmailTokenResponseSchema
 } from '@invoicetrackr/types';
-import { RouteShorthandOptionsWithHandler } from 'fastify';
+import { FastifyRequest, RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
 import { exportAccountData } from '../controllers/account-data';
@@ -37,6 +38,7 @@ import {
   updateUser,
   updateUserAccountSettings,
   updateUserAnalyticsConsent,
+  updateUserLanguage,
   updateUserProfilePicture,
   updateUserSelectedBankAccount,
   verifyUserEmail
@@ -140,7 +142,9 @@ export const exportAccountDataOptions: RouteShorthandOptionsWithHandler = {
   config: {
     rateLimit: {
       max: 3,
-      timeWindow: '1 hour'
+      timeWindow: '1 hour',
+      keyGenerator: (request: FastifyRequest) =>
+        `account-export:${(request.params as { userId: string }).userId}`
     }
   },
   preHandler: authMiddleware,
@@ -191,6 +195,17 @@ export const updateUserAccountSettingsOptions: RouteShorthandOptionsWithHandler 
     preHandler: authMiddleware,
     handler: updateUserAccountSettings
   };
+
+export const updateUserLanguageOptions: RouteShorthandOptionsWithHandler = {
+  schema: {
+    body: userLanguageBodySchema,
+    response: {
+      200: messageResponseSchema
+    }
+  },
+  preHandler: authMiddleware,
+  handler: updateUserLanguage
+};
 
 export const updateUserAnalyticsConsentOptions: RouteShorthandOptionsWithHandler =
   {

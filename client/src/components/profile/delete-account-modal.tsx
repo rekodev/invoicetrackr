@@ -5,9 +5,9 @@ import {
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import {
-  Alert,
   Button,
   buttonVariants,
+  Card,
   FieldError,
   Input,
   Label,
@@ -18,7 +18,7 @@ import {
 import type { DeleteUserAccountBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
 
 import { logOutAction } from '@/lib/actions';
 import { deleteUserAccountAction } from '@/lib/actions/user';
@@ -38,11 +38,10 @@ const REMOVED_ITEMS = ['account', 'records', 'files', 'sessions'] as const;
 const KEPT_ITEMS = ['audit', 'backups'] as const;
 
 const DeleteAccountModal = ({ userId, email, isOpen, onClose }: Props) => {
-  const t = useTranslations('profile.account_settings.delete_account.dialog');
+  const t = useTranslations('profile.account.delete_account.dialog');
   const {
     control,
     handleSubmit,
-    watch,
     setError,
     reset,
     formState: { errors, isSubmitting }
@@ -52,7 +51,10 @@ const DeleteAccountModal = ({ userId, email, isOpen, onClose }: Props) => {
     if (isOpen) reset({ confirmEmail: '' });
   }, [isOpen, reset]);
 
-  const isConfirmed = matchesAccountEmail(watch('confirmEmail'), email);
+  const isConfirmed = matchesAccountEmail(
+    useWatch({ control, name: 'confirmEmail' }),
+    email
+  );
 
   const onSubmit: SubmitHandler<DeleteUserAccountBody> = async ({
     confirmEmail
@@ -73,23 +75,26 @@ const DeleteAccountModal = ({ userId, email, isOpen, onClose }: Props) => {
   };
 
   const renderList = (
-    title: string,
-    items: readonly string[],
-    prefix: string
+    prefix: 'removed' | 'kept',
+    items: readonly string[]
   ) => (
-    <div className="flex flex-col gap-1">
-      <p className="text-sm font-medium">{title}</p>
-      <ul className="text-muted list-disc pl-5 text-sm">
-        {items.map((item) => (
-          <li key={item}>{t(`${prefix}.${item}`)}</li>
-        ))}
-      </ul>
-    </div>
+    <Card className="border">
+      <Card.Content className="flex flex-col gap-1">
+        <p className="text-foreground text-sm font-medium">
+          {t(`${prefix}.title`)}
+        </p>
+        <ul className="text-muted list-disc pl-5 text-sm">
+          {items.map((item) => (
+            <li key={item}>{t(`${prefix}.${item}`)}</li>
+          ))}
+        </ul>
+      </Card.Content>
+    </Card>
   );
 
   return (
     <Modal.Backdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <Modal.Container>
+      <Modal.Container size="lg">
         <Modal.Dialog>
           <Modal.CloseTrigger />
           <form noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -99,28 +104,28 @@ const DeleteAccountModal = ({ userId, email, isOpen, onClose }: Props) => {
             </Modal.Header>
             <Modal.Body className="flex flex-col gap-4">
               <p className="text-sm">{t('description')}</p>
-              {renderList(t('removed.title'), REMOVED_ITEMS, 'removed')}
-              {renderList(t('kept.title'), KEPT_ITEMS, 'kept')}
-              <Alert status="warning">
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Title>{t('records_duty.title')}</Alert.Title>
-                  <Alert.Description>
+              {renderList('removed', REMOVED_ITEMS)}
+              {renderList('kept', KEPT_ITEMS)}
+              <div className="my-2 flex flex-col items-start gap-3">
+                <div className="flex flex-col gap-1">
+                  <p className="text-foreground text-sm font-medium">
+                    {t('records_duty.title')}
+                  </p>
+                  <p className="text-muted text-sm">
                     {t('records_duty.description')}
-                  </Alert.Description>
-                  <a
-                    href={accountDataExportHref}
-                    className={buttonVariants({
-                      size: 'sm',
-                      variant: 'secondary',
-                      className: 'mt-2 w-fit'
-                    })}
-                  >
-                    <ArrowDownTrayIcon className="size-4" />
-                    {t('records_duty.export')}
-                  </a>
-                </Alert.Content>
-              </Alert>
+                  </p>
+                </div>
+                <a
+                  href={accountDataExportHref}
+                  className={buttonVariants({
+                    size: 'sm',
+                    variant: 'outline'
+                  })}
+                >
+                  <ArrowDownTrayIcon className="size-4" />
+                  {t('records_duty.export')}
+                </a>
+              </div>
               <Controller
                 control={control}
                 name="confirmEmail"

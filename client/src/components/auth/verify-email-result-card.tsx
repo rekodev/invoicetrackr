@@ -12,7 +12,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import IconContainer from '@/components/ui/icon-container';
 import { verifyEmailTokenAction } from '@/lib/actions/user';
-import { ACCOUNT_SETTINGS_PAGE, DASHBOARD_PAGE } from '@/lib/constants/pages';
+import {
+  DASHBOARD_PAGE,
+  PROFILE_PAGE
+} from '@/lib/constants/pages';
 
 type Props = {
   status: 'pending' | 'verified' | 'already_verified' | 'error';
@@ -159,7 +162,7 @@ export default function VerifyEmailResultCard({
 
       <Card.Footer className="flex items-center gap-2 px-8 pb-7 pt-0">
         <Link
-          href={isError ? ACCOUNT_SETTINGS_PAGE : DASHBOARD_PAGE}
+          href={isError ? PROFILE_PAGE : DASHBOARD_PAGE}
           aria-disabled={isPending}
           aria-busy={isPending}
           className={buttonVariants({
