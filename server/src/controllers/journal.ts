@@ -15,7 +15,7 @@ import {
   journalPeriodLabel
 } from '../utils/journal-export';
 
-const loadJournal = async (userId: number, { year, month }: JournalQuery) => {
+export const loadJournal = async (userId: number, { year, month }: JournalQuery) => {
   const period = journalPeriod(year, month);
   const range = { userId, from: period.from, to: period.to };
   const [incomeRows, expenseRows] = await Promise.all([

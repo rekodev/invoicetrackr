@@ -8,6 +8,8 @@ export type Currency = z.infer<typeof currencySchema>;
 
 export const DEFAULT_CURRENCY: Currency = 'eur';
 
+export const yearSchema = z.coerce.number().int().min(2000).max(2100);
+
 export const passwordSchema = z
   .string()
   .min(8, 'validation.password.tooShort')

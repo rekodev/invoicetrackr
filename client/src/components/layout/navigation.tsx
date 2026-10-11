@@ -3,12 +3,15 @@
 import {
   AdjustmentsHorizontalIcon,
   BuildingLibraryIcon,
+  CalculatorIcon,
+  ChartBarSquareIcon,
   Cog6ToothIcon,
   DocumentTextIcon,
   HomeIcon,
   IdentificationIcon,
   KeyIcon,
   ReceiptPercentIcon,
+  TableCellsIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
 import { Accordion, Link } from '@heroui/react';
@@ -26,6 +29,8 @@ import {
   FREELANCER_PROFILE_PAGE,
   INVOICES_PAGE,
   PAYMENT_METHODS_PAGE,
+  REPORT_PAGES,
+  REPORTS_PAGE,
   SETTINGS_PAGE
 } from '@/lib/constants/pages';
 
@@ -36,11 +41,25 @@ type NavLink = {
   children?: Array<NavLink>;
 };
 
+const REPORT_PAGE_ICONS = {
+  journal: TableCellsIcon,
+  taxes: CalculatorIcon
+} satisfies Record<(typeof REPORT_PAGES)[number]['key'], NavLink['icon']>;
+
 const navigation: Array<NavLink> = [
   { key: 'dashboard', href: DASHBOARD_PAGE, icon: HomeIcon },
   { key: 'invoices', href: INVOICES_PAGE, icon: DocumentTextIcon },
   { key: 'clients', href: CLIENTS_PAGE, icon: UserGroupIcon },
   { key: 'expenses', href: EXPENSES_PAGE, icon: ReceiptPercentIcon },
+  {
+    key: 'reports',
+    href: REPORTS_PAGE,
+    icon: ChartBarSquareIcon,
+    children: REPORT_PAGES.map((page) => ({
+      ...page,
+      icon: REPORT_PAGE_ICONS[page.key]
+    }))
+  },
   {
     key: 'settings',
     href: SETTINGS_PAGE,
@@ -127,7 +146,7 @@ export default function Navigation({ isMobile, onCloseMobileSidebar }: Props) {
             </Accordion.Trigger>
           </Accordion.Heading>
           <Accordion.Panel>
-            <Accordion.Body className="flex flex-col gap-1 pl-4 pt-1">
+            <Accordion.Body className="flex flex-col gap-1 pb-0 pl-4 pr-0 pt-1">
               {item.children.map(renderNavItem)}
             </Accordion.Body>
           </Accordion.Panel>

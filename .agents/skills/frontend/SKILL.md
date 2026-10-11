@@ -34,15 +34,20 @@ established pattern exists.
 
 | Need | Existing pattern |
 | --- | --- |
-| Page spacing | Stacked sections `flex flex-col gap-5`; side-by-side cards/columns `grid gap-5` (`invoice-workspace.tsx`, `client-workspace.tsx`, dashboard) — same value both directions |
+| Page spacing | Stacked page sections (page header, panels, card groups) `flex flex-col gap-6` (24px), the same value for the skeleton; side-by-side cards/columns `grid gap-5` (`reports/taxes/page.tsx`, `tax-estimate-workspace.tsx`). Section heading → its content `gap-3` |
 | Stat/metric cards | `MetricCard` (`components/ui/metric-card.tsx`) in `grid gap-5 sm:grid-cols-3`, one-line title (`expense-table.tsx`, `client-workspace.tsx`, dashboard) |
-| Explaining a figure | Info tooltip: ghost/tertiary icon `Button` + `InformationCircleIcon` + `Tooltip` (`expense-workspace.tsx`, `invoice-services-heading.tsx`) |
-| Section card | `Card className="border"`; `Card.Header className="flex-row flex-wrap items-center justify-between gap-4"` with `h2 text-base font-medium` (+ muted `text-sm` line) left and actions right |
+| Explaining a figure | Info tooltip for one or two hover sentences: ghost/tertiary icon `Button` + `InformationCircleIcon` + `Tooltip` (`expense-workspace.tsx`, `invoice-services-heading.tsx`). Anything with a list or a link goes in `InfoPopover` instead, since tooltip content can't be clicked |
+| Section guide or disclaimer | `InfoPopover` (`components/ui/info-popover.tsx`) next to the section title: click-to-open info icon for longer help, lists, or source links. Don't add a separate guide card or page-level `Alert` (`journal-table.tsx`, `tax-method-comparison.tsx`) |
+| Page header | `PageHeader` (`components/ui/page-header.tsx`): left group with `h1 text-xl font-semibold` and an optional one-line muted description, page-level controls (filters, year select) right, vertically centered (`reports/journal/page.tsx`, `reports/taxes/page.tsx`). Provisional until REK-171 |
+| Navigation | No in-page tabs for pages the sidebar already lists. Each sidebar child is its own route, and the group's index route redirects to its first child (`reports/page.tsx` → `/reports/journal`) |
+| Section heading | A single-card section keeps its `h2` and actions in `Card.Header` (`tax-assumptions-card.tsx`); a section with several cards puts the `h2` above the cards (`tax-method-comparison.tsx`). Don't repeat context the page controls already show (e.g. the selected year) |
+| Empty states | `EmptyState` with at most two next actions; each keeps its icon (`PlusIcon` for create/add) and the same casing (`journal-workspace.tsx`) |
+| List count | Small `Chip variant="soft"` after the section title, not ` · {count}` in the title (`journal-table.tsx`) |
+| Section card | `Card className="border"`; `Card.Header className="flex-row flex-wrap items-center justify-between gap-4"` with `h2 text-base font-medium` left and actions right. When the title has a muted `text-sm` line under it, use `items-start` so the actions sit as far from the top edge as from the right (`journal-table.tsx`) |
 | Section actions | Small `Button`/`buttonVariants` (`outline` or `secondary`, `size: 'sm'`) right-aligned in the header; never underlined text links |
-| Data tables | Plain `<table>` with `thead text-muted border-b`, rows `border-b last:border-0`, amounts `text-right tabular-nums` (`client-workspace.tsx`); full lists use HeroUI `Table` (`invoice-table.tsx`) |
+| Data tables | Plain `<table>` with `thead text-muted`, row dividers, amounts `text-right tabular-nums` (`client-workspace.tsx`); full lists use HeroUI `Table` (`invoice-table.tsx`). A total row is a rounded `bg-default` row like the estimated-total block on tax cards: use `border-separate border-spacing-0`, put borders on cells, and round the first/last footer cells (`journal-table.tsx`) |
 | Status / state labels | `Chip variant="soft"` with `color` (`danger` overdue, `success` paid, `accent` neutral), never coloured plain text |
 | Warnings and notices | HeroUI `Alert status=…` (no custom colours): `Alert.Title` (general), `Alert.Description` with a lead-in line and a bulleted `list-disc` list when there are several points, and exactly **one** small action button on the right. When the points lead to different pages, the action is a `Review ▾` menu with one `Dropdown.Item href` per point (`dashboard/attention-strip.tsx`). On mobile the action moves under the text (`sm:hidden` / `hidden sm:block`) |
-| Empty states | `EmptyState` with one clear next action |
 | Key/value details | `dl` with `dt text-muted text-xs font-medium` / `dd text-sm` (`client-workspace.tsx`) |
 | Labels and qualifiers | Casing by text type (Title Case names, sentence-case sentences in English) and inline ` · ` qualifiers instead of extra headings or subtitles. See **i18n** |
 | Money and dates | `formatMoney` (`lib/utils/currency.ts`), `formatLocalizedDate` (`lib/utils/date.ts`) |
@@ -108,8 +113,10 @@ states, and form tests).
   see **forms**).
 - Feedback: `toast(message, { variant })` from `@heroui/react`; inline
   persistent warnings with `Alert`.
-- Loading states use skeletons from `components/ui/skeletons/`; empty
-  states use `EmptyState` with a clear next action. Issue, void, and delete
+- Loading states use skeletons from `components/ui/skeletons/` that mirror
+  the loaded layout at every breakpoint (same stack gaps, same column
+  count, full width); empty states use `EmptyState` with a clear next
+  action. Issue, void, and delete
   get a confirmation modal that says what can't be undone.
 
 ## Styling
@@ -120,6 +127,17 @@ states, and form tests).
   `bg-blue-600`), custom gradients, or ad-hoc backgrounds.
 - Prefer the component's built-in look; add only layout utilities
   (`flex`, `gap-4`, `grid`, responsive breakpoints) via `className`.
+
+## HeroUI version
+
+The installed `@heroui/react` version (see `client/package.json`) can
+differ from the online docs and the **heroui-react** skill. Before using a
+compound component (`Radio`, `Checkbox`, `Select`, `Popover`, `Accordion`),
+copy its anatomy from existing code in this repo, or check the installed
+typings in `node_modules/@heroui/react/dist/components/<name>`. Some slots
+carry default padding (e.g. `Accordion.Body` adds `px-4 pb-4`); override
+it explicitly when the component is used for layout such as sidebar
+submenus.
 
 ## Copy and locale
 
@@ -132,6 +150,20 @@ states, and form tests).
   Money: `Intl.NumberFormat` with the active locale and the invoice
   currency, as in `components/dashboard/latest-invoices.tsx`; never
   `toFixed` for display.
+
+## Check before handoff
+
+Look at the result in a browser before handing UI work back. Most visual
+review comments are things a quick look catches:
+
+- Open every new or moved route. Check the breadcrumb (each path segment
+  needs a `breadcrumbs.<segment>` key) and the active sidebar item.
+- Switch to the other locale: no raw keys, and Lithuanian text fits.
+- Check a narrow width: headers and grids wrap cleanly, and controls stay
+  next to their headings.
+- Throttle or reload to see the skeleton; it should match the loaded layout.
+- Buttons in one row share size, variant, icon style and casing.
+- Exercise every state you touched: empty, error, validation, saving.
 
 ## Accessibility
 

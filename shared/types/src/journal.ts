@@ -1,11 +1,12 @@
 import z from 'zod/v4';
 
+import { yearSchema } from './common';
 import { moneySchema } from './finance';
 
 const signedMoneySchema = z.string().regex(/^-?\d+(?:\.\d{1,2})?$/);
 
 export const journalQuerySchema = z.object({
-  year: z.coerce.number().int().min(2000).max(2100),
+  year: yearSchema,
   month: z.coerce.number().int().min(1).max(12).optional()
 });
 

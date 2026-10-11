@@ -196,6 +196,11 @@ export default {
       addressMax: 'Adresas negali viršyti 1000 simbolių',
       email: 'Turi būti tinkamas el. pašto adresas'
     },
+    taxProfile: {
+      date: 'Įveskite tinkamą datą.',
+      activityDateRange: 'Pabaigos data negali būti ankstesnė už pradžios datą.',
+      otherIncome: 'Įveskite neneigiamą sumą, turinčią ne daugiau kaip du skaitmenis po kablelio.'
+    },
     expense: {
       expenseDate: 'Reikalinga tinkama išlaidų data',
       paymentDate: 'Reikalinga tinkama apmokėjimo data',
@@ -280,6 +285,9 @@ export default {
       updated: 'Klientas atnaujintas sėkmingai',
       deleted: 'Klientas ištrintas sėkmingai',
       archived: 'Klientas sėkmingai pašalintas'
+    },
+    taxProfile: {
+      saved: 'Mokesčių prielaidos išsaugotos'
     },
     expense: {
       created: 'Išlaidų įrašas pridėtas sėkmingai',

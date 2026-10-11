@@ -25,20 +25,6 @@ export const businessProfileSchema = z.object({
   onboardingCompletedAt: z.string().nullish()
 });
 
-export const taxProfileSchema = z.object({
-  id: z.number().optional(),
-  userId: z.number(),
-  taxYear: z.number().int().min(2020),
-  expenseMethod: z.enum(['actual', 'thirty_percent']),
-  isVatRegistered: z.boolean(),
-  hasEmploymentPsdCoverage: z.boolean(),
-  monthlyPsdAmount: moneySchema,
-  additionalPensionRate: moneySchema,
-  activityStartDate: z.string().nullish(),
-  activityEndDate: z.string().nullish(),
-  otherDeclaredIncome: moneySchema
-});
-
 export const paymentSchema = z.object({
   id: z.number().optional(),
   userId: z.number(),
@@ -60,6 +46,5 @@ export const paymentAllocationSchema = z.object({
 });
 
 export type BusinessProfile = z.infer<typeof businessProfileSchema>;
-export type TaxProfile = z.infer<typeof taxProfileSchema>;
 export type Payment = z.infer<typeof paymentSchema>;
 export type PaymentAllocation = z.infer<typeof paymentAllocationSchema>;

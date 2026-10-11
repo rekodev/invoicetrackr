@@ -1,3 +1,4 @@
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { buttonVariants } from '@heroui/react';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
@@ -34,12 +35,14 @@ const MoneyWorkbench = async ({ userId, isEmailVerified }: Props) => {
         action={
           <div className="flex flex-wrap justify-center gap-2">
             <Link href={ADD_NEW_INVOICE_PAGE} className={buttonVariants({ size: 'sm' })}>
+              <PlusIcon className="h-4 w-4" />
               {t('create_invoice')}
             </Link>
             <Link
               href={EXPENSES_PAGE}
               className={buttonVariants({ variant: 'secondary', size: 'sm' })}
             >
+              <PlusIcon className="h-4 w-4" />
               {t('add_expense')}
             </Link>
           </div>

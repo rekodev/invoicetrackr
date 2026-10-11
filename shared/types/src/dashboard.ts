@@ -1,9 +1,10 @@
 import z from 'zod/v4';
 
+import { yearSchema } from './common';
 import { moneySchema } from './finance';
 
 export const dashboardSummaryQuerySchema = z.object({
-  year: z.coerce.number().int().min(2000).max(2100).optional()
+  year: yearSchema.optional()
 });
 
 export const dashboardTotalsSchema = z.object({

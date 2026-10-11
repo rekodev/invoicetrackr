@@ -15,11 +15,13 @@ type Props = {
   rows: JournalRow[];
   totals: JournalTotals;
   actions: ReactNode;
+  info: ReactNode;
 };
 
 const cell = 'px-2 py-1.5';
 const amountCell = `${cell} text-right tabular-nums`;
-const footerAmountCell = 'px-2 py-2 text-right tabular-nums';
+const footerCell = 'bg-default px-2 py-2';
+const footerAmountCell = `${footerCell} text-right tabular-nums`;
 const COLUMNS = [
   ['date', cell],
   ['document', cell],
@@ -30,7 +32,7 @@ const COLUMNS = [
   ['expenses', amountCell]
 ] as const;
 
-const JournalTable = async ({ rows, totals, actions }: Props) => {
+const JournalTable = async ({ rows, totals, actions, info }: Props) => {
   const t = await getTranslations('reports.journal');
   const locale = await getLocale();
   const money = (amount: string) => formatMoney(amount, locale);
@@ -38,21 +40,23 @@ const JournalTable = async ({ rows, totals, actions }: Props) => {
 
   return (
     <Card className="min-w-0 border">
-      <Card.Header className="flex-row flex-wrap items-center justify-between gap-4">
+      <Card.Header className="flex-row flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h2 className="text-base font-medium">
-            {t('table.title', { count: rows.length })}
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-medium">{t('table.title')}</h2>
+            <Chip size="sm" variant="soft">{rows.length}</Chip>
+            {info}
+          </div>
           <p className="text-muted text-sm">{t('table.subtitle')}</p>
         </div>
         {actions}
       </Card.Header>
       <Card.Content className="overflow-x-auto">
-        <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="text-muted border-b">
+        <table className="w-full min-w-[720px] border-separate border-spacing-0 text-left text-sm">
+          <thead className="text-muted">
             <tr>
               {COLUMNS.map(([key, className]) => (
-                <th key={key} scope="col" className={`${className} font-medium`}>
+                <th key={key} scope="col" className={`${className} border-b font-medium`}>
                   {t(`table.columns.${key}`)}
                 </th>
               ))}
@@ -66,7 +70,7 @@ const JournalTable = async ({ rows, totals, actions }: Props) => {
               return (
                 <tr
                   key={isIncome ? `income-${row.paymentId}-${row.invoiceId}` : `expense-${row.expenseId}`}
-                  className="border-b align-top last:border-0"
+                  className="align-top [&>td]:border-b [&:last-child>td]:border-0"
                 >
                   <td className={`${cell} whitespace-nowrap tabular-nums`}>
                     {formatLocalizedDate(row.date, locale)}
@@ -108,12 +112,12 @@ const JournalTable = async ({ rows, totals, actions }: Props) => {
               );
             })}
           </tbody>
-          <tfoot className="bg-default border-t font-semibold">
+          <tfoot className="font-semibold">
             <tr>
-              <th scope="row" colSpan={4} className="px-2 py-2">{t('table.total')}</th>
+              <th scope="row" colSpan={4} className={`${footerCell} rounded-l-xl`}>{t('table.total')}</th>
               <td className={footerAmountCell}>{money(totals.income)}</td>
               <td className={footerAmountCell}>{money(totals.incomeVat)}</td>
-              <td className={footerAmountCell}>{money(totals.expenses)}</td>
+              <td className={`${footerAmountCell} rounded-r-xl`}>{money(totals.expenses)}</td>
             </tr>
           </tfoot>
         </table>

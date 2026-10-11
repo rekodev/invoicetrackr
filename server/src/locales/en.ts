@@ -192,6 +192,11 @@ export default {
       addressMax: 'Address must not exceed 1000 characters',
       email: 'Must be a valid email address'
     },
+    taxProfile: {
+      date: 'Enter a valid date.',
+      activityDateRange: 'End date must not be before start date.',
+      otherIncome: 'Enter a non-negative amount with no more than two decimal places.'
+    },
     expense: {
       expenseDate: 'Valid expense date is required',
       paymentDate: 'Valid payment date is required',
@@ -272,6 +277,9 @@ export default {
       updated: 'Client updated successfully',
       deleted: 'Client deleted successfully',
       archived: 'Client removed successfully'
+    },
+    taxProfile: {
+      saved: 'Tax assumptions saved'
     },
     expense: {
       created: 'Expense added successfully',
