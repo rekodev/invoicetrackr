@@ -37,6 +37,11 @@ established pattern exists.
 | Page spacing | Stacked sections `flex flex-col gap-5`; side-by-side cards/columns `grid gap-5` (`invoice-workspace.tsx`, `client-workspace.tsx`, dashboard) — same value both directions |
 | Stat/metric cards | `MetricCard` (`components/ui/metric-card.tsx`) in `grid gap-5 sm:grid-cols-3`, one-line title (`expense-table.tsx`, `client-workspace.tsx`, dashboard) |
 | Explaining a figure | Info tooltip: ghost/tertiary icon `Button` + `InformationCircleIcon` + `Tooltip` (`expense-workspace.tsx`, `invoice-services-heading.tsx`) |
+| Section guide or disclaimer | `InfoPopover` (`components/ui/info-popover.tsx`) next to the section title: click-to-open info icon for longer help, lists, or source links. Don't add a separate guide card or page-level `Alert` (`journal-table.tsx`, `tax-method-comparison.tsx`) |
+| Page header | `PageHeader` (`components/ui/page-header.tsx`): left group with `h1 text-xl font-semibold` and an optional one-line muted description, page-level controls (filters, year select) right, vertically centered (`reports/journal/page.tsx`, `reports/taxes/page.tsx`). Provisional until REK-171 |
+| Section heading | A single-card section keeps its `h2` and actions in `Card.Header` (`tax-assumptions-card.tsx`); a section with several cards puts the `h2` above the cards (`tax-method-comparison.tsx`). Don't repeat context the page controls already show (e.g. the selected year) |
+| Empty state actions | Buttons/links keep their icon (`PlusIcon` for create/add), as everywhere else |
+| List count | Small `Chip variant="soft"` after the section title, not ` · {count}` in the title (`journal-table.tsx`) |
 | Section card | `Card className="border"`; `Card.Header className="flex-row flex-wrap items-center justify-between gap-4"` with `h2 text-base font-medium` (+ muted `text-sm` line) left and actions right |
 | Section actions | Small `Button`/`buttonVariants` (`outline` or `secondary`, `size: 'sm'`) right-aligned in the header; never underlined text links |
 | Data tables | Plain `<table>` with `thead text-muted border-b`, rows `border-b last:border-0`, amounts `text-right tabular-nums` (`client-workspace.tsx`); full lists use HeroUI `Table` (`invoice-table.tsx`) |

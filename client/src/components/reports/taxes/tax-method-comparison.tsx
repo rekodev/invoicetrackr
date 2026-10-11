@@ -4,6 +4,7 @@ import type {
   TaxMethodEstimate
 } from '@invoicetrackr/types';
 import { getLocale, getTranslations } from 'next-intl/server';
+import type { ReactNode } from 'react';
 
 import { formatMoney } from '@/lib/utils/currency';
 
@@ -11,6 +12,7 @@ type Props = {
   methods: TaxMethodEstimate[];
   selectedMethod: TaxExpenseMethod;
   lowerMethod: TaxExpenseMethod | null;
+  info: ReactNode;
 };
 
 const ROWS = [
@@ -28,7 +30,8 @@ const ROWS = [
 const TaxMethodComparison = async ({
   methods,
   selectedMethod,
-  lowerMethod
+  lowerMethod,
+  info
 }: Props) => {
   const t = await getTranslations('reports.taxes.comparison');
   const tMethods = await getTranslations('reports.taxes.methods');
@@ -37,9 +40,9 @@ const TaxMethodComparison = async ({
 
   return (
     <section className="flex flex-col gap-3">
-      <div>
+      <div className="flex items-center gap-1">
         <h2 className="text-base font-medium">{t('title')}</h2>
-        <p className="text-muted text-sm">{t('subtitle')}</p>
+        {info}
       </div>
       <div className="grid gap-5 md:grid-cols-2">
         {methods.map((estimate) => (

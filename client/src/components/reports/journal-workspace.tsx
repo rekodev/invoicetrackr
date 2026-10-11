@@ -1,3 +1,4 @@
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { buttonVariants } from '@heroui/react';
 import type { JournalQuery } from '@invoicetrackr/types';
 import Link from 'next/link';
@@ -10,6 +11,7 @@ import { isResponseError } from '@/lib/utils/error';
 import { formatJournalPeriod } from '@/lib/utils/journal';
 
 import JournalExportButtons from './journal-export-buttons';
+import JournalGuide from './journal-guide';
 import JournalSummaryCards from './journal-summary-cards';
 import JournalTable from './journal-table';
 
@@ -34,12 +36,14 @@ const JournalWorkspace = async ({ userId, query }: Props) => {
         action={
           <div className="flex flex-wrap justify-center gap-2">
             <Link href={ADD_NEW_INVOICE_PAGE} className={buttonVariants({ size: 'sm' })}>
+              <PlusIcon className="h-4 w-4" />
               {t('empty.create_invoice')}
             </Link>
             <Link
               href={EXPENSES_PAGE}
               className={buttonVariants({ variant: 'secondary', size: 'sm' })}
             >
+              <PlusIcon className="h-4 w-4" />
               {t('empty.add_expense')}
             </Link>
           </div>
@@ -49,12 +53,13 @@ const JournalWorkspace = async ({ userId, query }: Props) => {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
       <JournalSummaryCards totals={totals} period={period} />
       <JournalTable
         rows={rows}
         totals={totals}
         actions={<JournalExportButtons query={query} />}
+        info={<JournalGuide />}
       />
     </div>
   );

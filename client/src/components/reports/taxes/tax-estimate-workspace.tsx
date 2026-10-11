@@ -36,7 +36,7 @@ const TaxEstimateWorkspace = async ({ userId, year }: Props) => {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
       <TaxAssumptionsCard
         userId={userId}
         year={year}
@@ -47,8 +47,8 @@ const TaxEstimateWorkspace = async ({ userId, year }: Props) => {
         methods={[estimate.methods.thirtyPercent, estimate.methods.actual]}
         selectedMethod={estimate.profile.expenseMethod}
         lowerMethod={estimate.lowerMethod}
+        info={<TaxEstimateDisclaimer rules={estimate.rules} />}
       />
-      <TaxEstimateDisclaimer rules={estimate.rules} />
     </div>
   );
 };

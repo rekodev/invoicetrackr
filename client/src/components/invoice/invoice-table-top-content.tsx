@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 
-import { ADD_NEW_INVOICE_PAGE, REPORTS_PAGE } from '@/lib/constants/pages';
+import { ADD_NEW_INVOICE_PAGE, REPORTS_JOURNAL_PAGE } from '@/lib/constants/pages';
 import { capitalize } from '@/lib/utils';
 
 type Props = {
@@ -181,7 +181,7 @@ const InvoiceTableTopContent = ({
             </DropdownPopover>
           </Dropdown>
           <Link
-            href={REPORTS_PAGE}
+            href={REPORTS_JOURNAL_PAGE}
             className={buttonVariants({
               variant: 'secondary',
               className: 'w-full sm:w-auto'

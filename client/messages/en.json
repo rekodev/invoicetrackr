@@ -58,6 +58,7 @@
         "expenses": "Expenses",
         "payments": "Payments",
         "reports": "Reports",
+        "journal": "Journal",
         "taxes": "Taxes",
         "settings": "Settings",
         "login": "Log In",
@@ -79,7 +80,7 @@
     "reports": {
         "journal": {
             "heading": "Income and Expense Journal",
-            "description": "Payments received and deductible expenses for the selected period, ready for year-end records or your accountant.",
+            "description": "Review income received and deductible expenses for the selected period.",
             "filters": {
                 "year": "Year",
                 "month": "Month",
@@ -99,7 +100,7 @@
                 "description": "We couldn't prepare the journal file. Try again, and if it keeps failing, sign in again."
             },
             "table": {
-                "title": "Journal Entries · {count}",
+                "title": "Journal Entries",
                 "subtitle": "Income by payment date, expenses by expense date",
                 "columns": {
                     "date": "Date",
@@ -121,8 +122,8 @@
             "empty": {
                 "title": "No Records for This Period",
                 "description": "Record payments on issued invoices or add expenses, and they will appear in the journal.",
-                "create_invoice": "Create invoice",
-                "add_expense": "Add expense"
+                "create_invoice": "Create Invoice",
+                "add_expense": "Add Expense"
             },
             "guide": {
                 "title": "How to Use the Journal",
@@ -142,12 +143,9 @@
                 "export": "Export options"
             }
         },
-        "tabs": {
-            "a11y_label": "Report pages"
-        },
         "taxes": {
             "heading": "Tax Estimate",
-            "description": "Estimated GPM, VSD and PSD for your individual activity, based on income received and expenses recorded in the selected year.",
+            "description": "Compare estimated taxes under the 30% deduction and actual-expense methods.",
             "year": "Tax Year",
             "setup": {
                 "title": "Confirm Your {year} Assumptions",
@@ -163,7 +161,7 @@
                 "thirty_percent": "30% of income"
             },
             "assumptions": {
-                "title": "Assumptions · {year}",
+                "title": "Assumptions",
                 "edit": "Edit",
                 "expense_method": "Your Expense Method",
                 "psd_coverage": "PSD Through Employment",

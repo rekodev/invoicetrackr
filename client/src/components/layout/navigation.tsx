@@ -38,7 +38,6 @@ type NavLink = {
   key: string;
   href: string;
   icon: ComponentType<SVGProps<SVGSVGElement>>;
-  exact?: boolean;
   children?: Array<NavLink>;
 };
 
@@ -58,8 +57,7 @@ const navigation: Array<NavLink> = [
     icon: ChartBarSquareIcon,
     children: REPORT_PAGES.map((page) => ({
       ...page,
-      icon: REPORT_PAGE_ICONS[page.key],
-      exact: page.href === REPORTS_PAGE
+      icon: REPORT_PAGE_ICONS[page.key]
     }))
   },
   {
@@ -104,9 +102,7 @@ export default function Navigation({ isMobile, onCloseMobileSidebar }: Props) {
   const pathname = usePathname();
 
   const renderNavLink = (item: NavLink): ReactNode => {
-    const isActive = item.exact
-      ? pathname === item.href
-      : isCurrentPath(pathname, item.href);
+    const isActive = isCurrentPath(pathname, item.href);
 
     return (
       <Link

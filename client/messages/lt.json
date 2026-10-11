@@ -58,6 +58,7 @@
         "expenses": "Išlaidos",
         "payments": "Mokėjimai",
         "reports": "Ataskaitos",
+        "journal": "Žurnalas",
         "taxes": "Mokesčiai",
         "settings": "Nustatymai",
         "login": "Prisijungti",
@@ -79,7 +80,7 @@
     "reports": {
         "journal": {
             "heading": "Pajamų ir išlaidų žurnalas",
-            "description": "Pasirinkto laikotarpio gauti mokėjimai ir leidžiamos atskaityti išlaidos, paruošti metinei apskaitai ar buhalteriui.",
+            "description": "Peržiūrėkite gautas pajamas ir atskaitomas išlaidas pasirinktu laikotarpiu.",
             "filters": {
                 "year": "Metai",
                 "month": "Mėnuo",
@@ -99,7 +100,7 @@
                 "description": "Nepavyko paruošti žurnalo failo. Bandykite dar kartą, o jei nepavyks – prisijunkite iš naujo."
             },
             "table": {
-                "title": "Žurnalo įrašai · {count}",
+                "title": "Žurnalo įrašai",
                 "subtitle": "Pajamos pagal apmokėjimo datą, išlaidos pagal išlaidų datą",
                 "columns": {
                     "date": "Data",
@@ -142,12 +143,9 @@
                 "export": "Eksporto parinktys"
             }
         },
-        "tabs": {
-            "a11y_label": "Ataskaitų puslapiai"
-        },
         "taxes": {
             "heading": "Mokesčių įvertis",
-            "description": "Apytikslis individualios veiklos GPM, VSD ir PSD, apskaičiuotas pagal pasirinktais metais gautas pajamas ir užregistruotas išlaidas.",
+            "description": "Palyginkite apskaičiuotus mokesčius taikant 30 % išlaidų atskaitymą ir faktinių išlaidų metodą.",
             "year": "Mokestiniai metai",
             "setup": {
                 "title": "Patvirtinkite {year} m. prielaidas",
@@ -163,7 +161,7 @@
                 "thirty_percent": "30 % pajamų"
             },
             "assumptions": {
-                "title": "Prielaidos · {year}",
+                "title": "Prielaidos",
                 "edit": "Redaguoti",
                 "expense_method": "Jūsų išlaidų metodas",
                 "psd_coverage": "PSD per darbovietę",

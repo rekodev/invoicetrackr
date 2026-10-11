@@ -5,7 +5,7 @@ import {
   JOURNAL_FIRST_YEAR,
   JOURNAL_MIN_YEAR
 } from '@/lib/constants/journal';
-import { REPORTS_PAGE } from '@/lib/constants/pages';
+import { REPORTS_JOURNAL_PAGE } from '@/lib/constants/pages';
 
 import { formatMonthYear, todayInLithuania } from './date';
 
@@ -37,7 +37,7 @@ const journalSearch = ({ year, month }: JournalQuery) =>
   });
 
 export const journalHref = (query: JournalQuery) =>
-  `${REPORTS_PAGE}?${journalSearch(query)}`;
+  `${REPORTS_JOURNAL_PAGE}?${journalSearch(query)}`;
 
 export const journalExportErrorHref = (query: JournalQuery) =>
   `${journalHref(query)}&export_error=1`;
@@ -45,7 +45,7 @@ export const journalExportErrorHref = (query: JournalQuery) =>
 export const journalExportHref = (
   query: JournalQuery,
   format: JournalExportFormat
-) => `${REPORTS_PAGE}/export?${journalSearch(query)}&format=${format}`;
+) => `${REPORTS_JOURNAL_PAGE}/export?${journalSearch(query)}&format=${format}`;
 
 export const journalYears = (currentYear: number, selectedYear: number) => {
   const firstYear = Math.min(JOURNAL_FIRST_YEAR, selectedYear);
