@@ -189,7 +189,8 @@
                     "end": "Veiklos pabaigos data",
                     "dates_help": "Palikite tuščią, jei veikla vyko visus metus.",
                     "other_income": "Kitos metinės apmokestinamosios pajamos (€)",
-                    "other_income_help": "Darbo užmokestis ir kitos 20–32 % apmokestinamos pajamos. Reikia tik tada, kai veiklos pelnas viršija 42 500 €."
+                    "other_income_help": "Darbo užmokestis ir kitos 20–32 % apmokestinamos pajamos. Reikia tik tada, kai veiklos pelnas viršija 42 500 €.",
+                    "help": "Apie: {field}"
                 },
                 "cancel": "Atšaukti",
                 "save": "Išsaugoti prielaidas"

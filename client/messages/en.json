@@ -189,7 +189,8 @@
                     "end": "Activity End Date",
                     "dates_help": "Leave empty if the activity ran for the whole year.",
                     "other_income": "Other Annual Taxable Income (€)",
-                    "other_income_help": "Salary and other income taxed at 20–32%. Only needed when your activity profit exceeds €42,500."
+                    "other_income_help": "Salary and other income taxed at 20–32%. Only needed when your activity profit exceeds €42,500.",
+                    "help": "About {field}"
                 },
                 "cancel": "Cancel",
                 "save": "Save assumptions"

@@ -83,7 +83,9 @@ const TaxAssumptionsDialog = ({
   const labelWithHelp = (label: string, help?: string) => (
     <div className="flex items-center gap-1">
       <Label>{label}</Label>
-      {help ? <InfoTooltip label={label} text={help} /> : null}
+      {help ? (
+        <InfoTooltip label={t('fields.help', { field: label })} text={help} />
+      ) : null}
     </div>
   );
 
@@ -111,7 +113,9 @@ const TaxAssumptionsDialog = ({
           </Checkbox>
         )}
       />
-      {help ? <InfoTooltip label={label} text={help} /> : null}
+      {help ? (
+        <InfoTooltip label={t('fields.help', { field: label })} text={help} />
+      ) : null}
     </div>
   );
 
