@@ -147,9 +147,8 @@ submenus.
   English-only strings or hard-coded text.
 - Dates: use `lib/utils/date.ts` (`formatLocalizedDate`,
   `todayInLithuania` for "today" defaults — not `new Date()` in UTC).
-  Money: `Intl.NumberFormat` with the active locale and the invoice
-  currency, as in `components/dashboard/latest-invoices.tsx`; never
-  `toFixed` for display.
+  Money: `formatMoney` (`lib/utils/currency.ts`); never `toFixed` for
+  display.
 
 ## Check before handoff
 
