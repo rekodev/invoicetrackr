@@ -141,7 +141,7 @@ export default function AuthenticatedShell({
           onClose={closeMobileNavigation}
         />
       )}
-      <div className="min-w-0 flex-1">
+      <div className="flex min-w-0 flex-1 flex-col">
         <header
           className={cn(
             'border-default-200 bg-background/90 sticky top-0 z-40 flex h-16 items-center gap-4 border-b px-4 backdrop-blur md:px-6',
