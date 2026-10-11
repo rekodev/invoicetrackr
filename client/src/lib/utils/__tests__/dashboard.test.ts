@@ -9,7 +9,10 @@ describe('dashboard links and money', () => {
     expect(dashboardLinks.receivedIncome(year)).toBe('/invoices?paidFrom=2026-01-01&paidTo=2026-12-31');
     expect(dashboardLinks.invoiced(year)).toBe('/invoices?issuedFrom=2026-01-01&issuedTo=2026-12-31');
     expect(dashboardLinks.outstanding()).toBe('/invoices?status=open');
+    expect(dashboardLinks.outstanding(year)).toBe('/invoices?status=open&issuedFrom=2026-01-01&issuedTo=2026-12-31');
+    expect(dashboardLinks.drafts(year)).toBe('/invoices?status=draft&issuedFrom=2026-01-01&issuedTo=2026-12-31');
     expect(dashboardLinks.overdue()).toBe('/invoices?overdue=1');
+    expect(dashboardLinks.expensesMissingDocuments(year)).toBe('/expenses?from=2026-01-01&to=2026-12-31&documents=missing');
     expect(dashboardLinks.expenses(monthRange(2024, 2))).toBe('/expenses?from=2024-02-01&to=2024-02-29');
     expect(dashboardLinks.deductibleExpenses(year)).toBe('/expenses?from=2026-01-01&to=2026-12-31&deductible=1');
   });

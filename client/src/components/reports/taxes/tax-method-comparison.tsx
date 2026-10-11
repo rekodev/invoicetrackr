@@ -1,3 +1,4 @@
+import { ArrowTrendingDownIcon } from '@heroicons/react/24/outline';
 import { Card, Chip } from '@heroui/react';
 import type {
   TaxExpenseMethod,
@@ -7,6 +8,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
 
 import { formatMoney } from '@/lib/utils/currency';
+import { subtractMoney } from '@/lib/utils/dashboard';
 
 type Props = {
   methods: TaxMethodEstimate[];
@@ -37,6 +39,15 @@ const TaxMethodComparison = async ({
   const tMethods = await getTranslations('reports.taxes.methods');
   const locale = await getLocale();
   const money = (amount: string) => formatMoney(amount, locale);
+  const lowerBy = (estimate: TaxMethodEstimate) => {
+    const other = methods.find(({ method }) => method !== estimate.method);
+    return estimate.method === lowerMethod && other
+      ? t('lower_by', {
+          amount: money(subtractMoney(other.total, estimate.total)),
+          method: tMethods(other.method)
+        })
+      : null;
+  };
 
   return (
     <section className="flex flex-col gap-3">
@@ -49,14 +60,9 @@ const TaxMethodComparison = async ({
           <Card key={estimate.method} className="border">
             <Card.Header className="flex-row flex-wrap items-center justify-between gap-2">
               <h3 className="text-base font-medium">{tMethods(estimate.method)}</h3>
-              <div className="flex flex-wrap gap-2">
-                {estimate.method === selectedMethod && (
-                  <Chip variant="soft" color="accent">{t('your_method')}</Chip>
-                )}
-                {estimate.method === lowerMethod && (
-                  <Chip variant="soft" color="success">{t('lower')}</Chip>
-                )}
-              </div>
+              {estimate.method === selectedMethod && (
+                <Chip variant="soft" color="accent">{t('your_method')}</Chip>
+              )}
             </Card.Header>
             <Card.Content className="flex flex-col gap-4">
               <dl className="flex flex-col text-sm">
@@ -77,7 +83,15 @@ const TaxMethodComparison = async ({
               </dl>
               <div className="bg-default flex items-end justify-between gap-4 rounded-xl px-3 py-2">
                 <div>
-                  <p className="text-sm font-medium">{t('rows.total')}</p>
+                  <p className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
+                    {t('rows.total')}
+                    {lowerBy(estimate) && (
+                      <span className="text-success flex items-center gap-1 text-xs font-normal">
+                        <ArrowTrendingDownIcon aria-hidden="true" className="size-3.5" />
+                        {lowerBy(estimate)}
+                      </span>
+                    )}
+                  </p>
                   <p className="text-muted text-xs">
                     {t('rows.effective_rate', { rate: estimate.effectiveRate })}
                   </p>

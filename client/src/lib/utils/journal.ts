@@ -20,13 +20,16 @@ const parseInteger = (value: SearchValue, min: number, max: number) => {
 export const currentJournalYear = (now?: Date) =>
   Number(todayInLithuania(now).slice(0, 4));
 
+export const parseJournalYear = (
+  value: SearchValue,
+  currentYear = currentJournalYear()
+) => parseInteger(value, JOURNAL_MIN_YEAR, currentYear);
+
 export const parseJournalQuery = (
   searchParams: { year?: SearchValue; month?: SearchValue },
   currentYear = currentJournalYear()
 ): JournalQuery => ({
-  year:
-    parseInteger(searchParams.year, JOURNAL_MIN_YEAR, currentYear) ??
-    currentYear,
+  year: parseJournalYear(searchParams.year, currentYear) ?? currentYear,
   month: parseInteger(searchParams.month, 1, 12)
 });
 

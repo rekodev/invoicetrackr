@@ -48,7 +48,12 @@ import {
 import { EXPENSE_WORKSPACE_PAGE } from '@/lib/constants/pages';
 import type { SortDescriptor } from '@/lib/types/table';
 import { formatLocalizedDate } from '@/lib/utils/date';
-import { expenseListHref, readExpenseListState } from '@/lib/utils/expense-navigation';
+import {
+  DOCUMENT_FILTER_PARAMS,
+  type ExpenseDocumentsFilter,
+  expenseListHref,
+  readExpenseListState
+} from '@/lib/utils/expense-navigation';
 
 import DeleteExpenseModal from './delete-expense-modal';
 import ExpenseFormDialog from './expense-form-dialog';
@@ -114,7 +119,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
   const searchParams = useSearchParams();
   const listParams = new URLSearchParams(searchParams.toString());
   const listState = readExpenseListState(listParams);
-  const { filterValue, categoryFilter, paymentMethodFilter, hasAttachmentFilter,
+  const { filterValue, categoryFilter, paymentMethodFilter, documentsFilter,
     deductibleOnly, dateFrom, dateTo, rowsPerPage, page: requestedPage, sortDescriptor } = listState;
   const { column: sortColumn, direction: sortDirection } = sortDescriptor;
   const returnTo = expenseListHref(listParams);
@@ -129,7 +134,8 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
   const setFilterValue = (value: string) => updateQuery({ q: value, page: 1 });
   const setCategoryFilter = (value: string) => updateQuery({ category: value, page: 1 });
   const setPaymentMethodFilter = (value: string) => updateQuery({ method: value, page: 1 });
-  const setHasAttachmentFilter = (value: boolean) => updateQuery({ documents: value ? '1' : '', page: 1 });
+  const setDocumentsFilter = (value: ExpenseDocumentsFilter) =>
+    updateQuery({ documents: DOCUMENT_FILTER_PARAMS[value], page: 1 });
   const setDeductibleOnly = (value: boolean) => updateQuery({ deductible: value ? '1' : '', page: 1 });
   const setDateFrom = (value: string) => updateQuery({ from: value, page: 1 });
   const setDateTo = (value: string) => updateQuery({ to: value, page: 1 });
@@ -204,11 +210,15 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
           onClear: () => setPaymentMethodFilter('all')
         }
       : null,
-    hasAttachmentFilter
+    documentsFilter !== 'all'
       ? {
-          key: 'hasAttachment',
-          label: t('filters.has_attachment'),
-          onClear: () => setHasAttachmentFilter(false)
+          key: 'documents',
+          label: t(
+            documentsFilter === 'attached'
+              ? 'filters.has_attachment'
+              : 'filters.missing_document'
+          ),
+          onClear: () => setDocumentsFilter('all')
         }
       : null,
     deductibleOnly
@@ -247,9 +257,10 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
       );
     }
 
-    if (hasAttachmentFilter) {
+    if (documentsFilter !== 'all') {
       filteredExpenses = filteredExpenses.filter(
-        (expense) => (expense.attachmentCount ?? 0) > 0
+        (expense) =>
+          (expense.attachmentCount ?? 0) > 0 === (documentsFilter === 'attached')
       );
     }
 
@@ -279,7 +290,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
     deductibleOnly,
     expenses,
     filterValue,
-    hasAttachmentFilter,
+    documentsFilter,
     hasSearchFilter,
     paymentMethodFilter
   ]);
@@ -615,8 +626,10 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                     variant: 'tertiary',
                     className: 'gap-2'
                   })}
-                  isSelected={hasAttachmentFilter}
-                  onChange={setHasAttachmentFilter}
+                  isSelected={documentsFilter === 'attached'}
+                  onChange={(isSelected) =>
+                    setDocumentsFilter(isSelected ? 'attached' : 'all')
+                  }
                 >
                   <Checkbox.Control>
                     <Checkbox.Indicator className="[&_svg]:h-full [&_svg]:w-full" />

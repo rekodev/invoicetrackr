@@ -1,5 +1,5 @@
 import type { InvoicePaymentBody } from '@invoicetrackr/types';
-import { and, desc, eq, isNull, sql } from 'drizzle-orm';
+import { and, desc, eq, isNull, lte, sql } from 'drizzle-orm';
 
 import { fromCents, toCents } from '../utils/money';
 import { db } from './db';
@@ -23,7 +23,7 @@ export class PaymentExceedsBalanceError extends Error {
   }
 }
 
-export const getPaymentsByInvoiceQuery = (userId: number) => db
+export const getPaymentsByInvoiceQuery = (userId: number, paidUpTo?: string) => db
   .select({
     invoiceId: paymentAllocationsTable.invoiceId,
     paidAmount: sql<string>`coalesce(sum(${paymentAllocationsTable.amount}), 0)::text`.as('paid_amount'),
@@ -33,7 +33,8 @@ export const getPaymentsByInvoiceQuery = (userId: number) => db
   .innerJoin(paymentsTable, and(
     eq(paymentsTable.id, paymentAllocationsTable.paymentId),
     eq(paymentsTable.userId, userId),
-    isNull(paymentsTable.deletedAt)
+    isNull(paymentsTable.deletedAt),
+    paidUpTo ? lte(paymentsTable.paymentDate, paidUpTo) : undefined
   ))
   .where(eq(paymentAllocationsTable.userId, userId))
   .groupBy(paymentAllocationsTable.invoiceId)

@@ -38,7 +38,9 @@ describe('Journal Controller', () => {
         receivedAmount: '60.50',
         paidBefore: '60.50',
         vatAmount: '21.00',
-        totalAmount: '121.00'
+        totalAmount: '121.00',
+        method: 'bank_transfer',
+        bankReference: null
       }
     ]);
     vi.mocked(journalDb.getJournalExpenseRowsFromDb).mockResolvedValue([
@@ -50,7 +52,13 @@ describe('Journal Controller', () => {
         description: 'Internetas',
         eurAmount: '40.00',
         businessUsePercentage: '50.00',
-        deductibleAmount: '20.00'
+        deductibleAmount: '20.00',
+        paymentDate: null,
+        category: 'telecommunications',
+        currency: 'eur',
+        totalAmount: '40.00',
+        vatAmount: null,
+        paymentMethod: 'card'
       }
     ]);
     vi.mocked(journalDb.getJournalOwnerFromDb).mockResolvedValue({

@@ -144,9 +144,10 @@
             }
         },
         "taxes": {
-            "heading": "Tax Estimate",
-            "description": "Compare estimated taxes under the 30% deduction and actual-expense methods.",
+            "heading": "Taxes",
+            "description": "Your tax estimate, the figures for your declaration, and the workbook for your accountant.",
             "year": "Tax Year",
+            "actions": "Year and workbook download",
             "setup": {
                 "title": "Confirm Your {year} Assumptions",
                 "description": "Health insurance coverage, pension accumulation and activity dates change the result, so confirm them before we show an estimate.",
@@ -177,7 +178,7 @@
                 "no": "No"
             },
             "dialog": {
-                "title": "Tax Assumptions · {year}",
+                "title": "Tax Assumptions",
                 "fields": {
                     "expense_method": "Your Expense Method",
                     "expense_method_help": "Labels the method you plan to declare. Both methods are always estimated.",
@@ -188,7 +189,8 @@
                     "end": "Activity End Date",
                     "dates_help": "Leave empty if the activity ran for the whole year.",
                     "other_income": "Other Annual Taxable Income (€)",
-                    "other_income_help": "Salary and other income taxed at 20–32%. Only needed when your activity profit exceeds €42,500."
+                    "other_income_help": "Salary and other income taxed at 20–32%. Only needed when your activity profit exceeds €42,500.",
+                    "help": "About {field}"
                 },
                 "cancel": "Cancel",
                 "save": "Save assumptions"
@@ -196,8 +198,8 @@
             "comparison": {
                 "title": "Expense Method Comparison",
                 "subtitle": "Both methods use the same income. The choice in your declaration stays yours.",
-                "your_method": "Your Method",
-                "lower": "Lower Estimated Total",
+                "your_method": "Chosen Method",
+                "lower_by": "{amount} less than {method}",
                 "rows": {
                     "income": "Income Excl. VAT",
                     "deductions": "Deductions",
@@ -219,6 +221,111 @@
                 "description": "Calculated from your records and assumptions using the {version} rules. It is not a VMI or Sodra liability, and your declaration may differ.",
                 "not_covered": "Not covered: pensioner and disability rules, first-year relief and foreign income.",
                 "sources": "Sources"
+            }
+        },
+        "annual": {
+            "review": "Review",
+            "export_error": {
+                "title": "Export Failed",
+                "description": "We couldn't prepare the annual package. Try again, and if it keeps failing, sign in again.",
+                "invalid_year": "This year can't be exported. Open the annual package and choose a year from the list."
+            },
+            "status": {
+                "blocking": "Not Final",
+                "ready": "Ready"
+            },
+            "alerts": {
+                "ready": {
+                    "title": "Ready for Your Declaration",
+                    "description": "Your {year} records are complete and your tax assumptions are confirmed."
+                },
+                "blocking": {
+                    "title": "Not Final Yet",
+                    "description": "You can still download the workbook, but it will be marked as not final until these are resolved:"
+                },
+                "recommendation": {
+                    "title": "Worth Checking",
+                    "description": "These don't block the package, but they may change your figures:"
+                }
+            },
+            "warnings": {
+                "year_in_progress": {
+                    "text": "{year} isn't over yet, so the figures only cover records to date."
+                },
+                "missing_tax_profile": {
+                    "text": "Your {year} tax assumptions aren't confirmed, so the package has no tax estimate.",
+                    "action": "Confirm Tax Assumptions"
+                },
+                "unsupported_tax_year": {
+                    "text": "Tax estimates don't cover {year} yet, so the package has no tax estimate."
+                },
+                "missing_owner_details": {
+                    "text": "Your legal name or individual activity certificate number is missing from your profile.",
+                    "action": "Complete Profile"
+                },
+                "draft_invoices": {
+                    "text": "{count, plural, one {# draft invoice dated in {year} was never issued.} other {# draft invoices dated in {year} were never issued.}}",
+                    "action": "Review Drafts"
+                },
+                "outstanding_invoices": {
+                    "text": "{count, plural, one {# issued invoice still has an unpaid balance.} other {# issued invoices still have an unpaid balance.}}",
+                    "action": "Review Unpaid Invoices"
+                },
+                "expenses_missing_documents": {
+                    "text": "{count, plural, one {# expense has no attached document.} other {# expenses have no attached document.}}",
+                    "action": "Add Documents"
+                }
+            },
+            "figures": {
+                "title": "Figures for Your Declaration",
+                "info": "Enter these amounts in your income declaration in VMI EDS. InvoiceTrackr doesn't submit anything to VMI. Income is counted when a payment is received.",
+                "rows": {
+                    "income": "Received Income incl. VAT",
+                    "income_vat": "VAT in Received Income",
+                    "income_net": "Income excl. VAT",
+                    "deductions": "Deductions · {method}",
+                    "actual_expenses": "Deductible Expenses · Actual",
+                    "profit": "Profit",
+                    "net": "Net Result"
+                },
+                "copy": "Copy {label}",
+                "copied": "Copied",
+                "copy_failed": "Couldn't copy the amount."
+            },
+            "contents": {
+                "download": "Download Workbook",
+                "info_title": "What's in the Workbook",
+                "disclaimer": "Tax figures are estimates, not a VMI or Sodra liability. The package helps you or your accountant prepare the declaration and doesn't replace professional tax advice.",
+                "sheets": {
+                    "summary": {
+                        "name": "Summary",
+                        "description": "Year totals, invoiced and outstanding amounts, and the estimate under both expense methods."
+                    },
+                    "warnings": {
+                        "name": "Warnings",
+                        "description": "Every issue shown on this page, marked blocking or recommendation."
+                    },
+                    "journal": {
+                        "name": "Journal",
+                        "description": "The income and expense journal in the familiar layout."
+                    },
+                    "monthly": {
+                        "name": "Monthly",
+                        "description": "Income, VAT, expenses and net result for each month."
+                    },
+                    "invoices": {
+                        "name": "Invoices",
+                        "description": "Issued and voided invoices dated in the year, with paid and outstanding amounts."
+                    },
+                    "payments": {
+                        "name": "Payments",
+                        "description": "Payments received in the year, by invoice."
+                    },
+                    "expenses": {
+                        "name": "Expenses",
+                        "description": "Expenses with category, business use, deductible amount and document count."
+                    }
+                }
             }
         }
     },
@@ -967,6 +1074,7 @@
             "all_categories": "All Categories",
             "all_payment_methods": "All Methods",
             "has_attachment": "Has Document",
+            "missing_document": "Missing Document",
             "deductible_only": "Deductible only",
             "clear": "Clear Filters",
             "clear_short": "Clear",

@@ -9,34 +9,55 @@ Use alongside **heroui-react** — that skill documents HeroUI v3 component
 APIs (fetch its docs when unsure of a prop); this one documents how this app
 uses them. Match the closest existing screen before inventing structure.
 Good references: `components/client/client-form-dialog.tsx` (form dialog, see **forms**),
-`components/client/client-workspace.tsx` (cards + metrics),
+`components/client/client-workspace.tsx` (overview: cards + metrics),
+`components/reports/taxes/taxes-workspace.tsx` (task page: open sections, status chip, compact header toolbar),
 `app/(user)/clients/[clientId]/page.tsx` (server page),
 `components/company-lookup/company-lookup-panel.tsx` (interactive widget).
 
-## Reuse existing patterns (required)
+## Consistent building blocks, layout chosen per page
 
-The app should look and behave the same on every page. Before building any
-section, card, table, alert, chip, tooltip, header, or empty state:
+Keep the **building blocks** the same everywhere: the same HeroUI
+components, theme tokens, spacing scale, chips, alerts, tooltips, headers,
+empty states and copy structure. Don't keep the **layout** the same
+everywhere. Choose it for the page's job:
+
+| Page job | Layout |
+| --- | --- |
+| Overview: "how am I doing?" (dashboard, client or expense overview) | A `MetricCard` row is fine, then cards for the details |
+| Task or report: "get something done or read it off" (taxes, journal) | No stat cards. Header controls, a status chip if needed, an Alert only for things with an action, then open sections (cardless lists and tables); cards only where a side-by-side comparison reads better |
+| Detail of one record (client, expense, invoice) | Header with actions, key/value `dl`, then the record's lists |
+| Form or dialog | See **forms** |
+
+A page made only of identical bordered cards is a smell. Before adding a card
+or a stat row, ask whether the content is a figure to watch (card), a list to
+read (open section or table), or a state (chip). Prefer HeroUI's own variants
+over custom styling when you need contrast: `Card variant="transparent"`/
+`secondary`, `Table variant="secondary"`, `Toolbar isAttached`,
+`ButtonGroup`.
+
+Before building any section, chip, table, alert, tooltip, header, or empty
+state:
 
 1. **Find the closest existing instance.** Search with `rg` for the
    component or similar copy. Use the catalog below first.
-2. **Reuse it as-is.** Use the same component, variants, class names,
-   spacing, and copy structure. A new page is not a reason for a new look.
+2. **Reuse its building blocks.** Same component, variants, tokens, spacing
+   and copy structure. Arrange them for this page's job (table above).
 3. **Prefer the shared component.** If the same markup already appears on
    two or more pages, extract it to `components/ui/` and use it from both,
    rather than adding a third copy.
-4. **Introduce a new pattern only when nothing fits.** Say so explicitly
-   in the handoff, and say why the existing patterns didn't work.
+4. **New patterns are allowed when they fit the page better.** Use HeroUI
+   components and tokens, say so in the handoff, and add a row to the
+   catalog below in the same change.
 
-Don't invent page-specific styling: no ad-hoc colours, custom paddings,
-stacked label/subtitle variants, or underlined inline action links when an
-established pattern exists.
+Don't add page-specific styling outside the design system: no ad-hoc
+colours, custom paddings, stacked label/subtitle variants, or underlined
+inline action links when an established pattern exists.
 
 | Need | Existing pattern |
 | --- | --- |
-| Page spacing | Stacked page sections (page header, panels, card groups) `flex flex-col gap-6` (24px), the same value for the skeleton; side-by-side cards/columns `grid gap-5` (`reports/taxes/page.tsx`, `tax-estimate-workspace.tsx`). Section heading → its content `gap-3` |
-| Stat/metric cards | `MetricCard` (`components/ui/metric-card.tsx`) in `grid gap-5 sm:grid-cols-3`, one-line title (`expense-table.tsx`, `client-workspace.tsx`); the dashboard row has four (`sm:grid-cols-2 lg:grid-cols-4`). A figure that needs its calculation keeps the card compact and puts the breakdown in an `InfoPopover` (`safe-to-spend-card.tsx`) |
-| Explaining a figure | Info tooltip for one or two hover sentences: ghost/tertiary icon `Button` + `InformationCircleIcon` + `Tooltip` (`expense-workspace.tsx`, `invoice-services-heading.tsx`). Anything with a list or a link goes in `InfoPopover` instead, since tooltip content can't be clicked |
+| Page spacing | Stacked page sections (page header, panels, card groups) `flex flex-col gap-6` (24px), the same value for the skeleton; side-by-side cards/columns `grid gap-5` (`reports/taxes/page.tsx`, `tax-method-comparison.tsx`); cardless open sections sit `gap-8` apart (`taxes-workspace.tsx`). Section heading → its content `gap-3` |
+| Stat/metric cards | Only on overview pages (dashboard, client and expense overviews), never on report or task pages. `MetricCard` (`components/ui/metric-card.tsx`) in `grid gap-5 sm:grid-cols-3`, one-line title (`expense-table.tsx`, `client-workspace.tsx`); the dashboard row has four (`sm:grid-cols-2 lg:grid-cols-4`). A figure that needs its calculation keeps the card compact and puts the breakdown in an `InfoPopover` (`safe-to-spend-card.tsx`) |
+| Explaining a figure | Info tooltip for one or two hover sentences: `InfoTooltip` (`components/ui/info-tooltip.tsx`), also for long form-field hints next to the `Label` instead of a `Description` (`tax-assumptions-dialog.tsx`). Older inline copies: `expense-workspace.tsx`, `invoice-services-heading.tsx`. Anything with a list or a link goes in `InfoPopover` instead, since tooltip content can't be clicked |
 | Section guide or disclaimer | `InfoPopover` (`components/ui/info-popover.tsx`) next to the section title: click-to-open info icon for longer help, lists, or source links. Don't add a separate guide card or page-level `Alert` (`journal-table.tsx`, `tax-method-comparison.tsx`). Near the right edge pass `placement="bottom end"` so it opens leftwards (`safe-to-spend-card.tsx`) |
 | Page header | `PageHeader` (`components/ui/page-header.tsx`): left group with `h1 text-xl font-semibold` and an optional one-line muted description, page-level controls (filters, year select) right, vertically centered (`reports/journal/page.tsx`, `reports/taxes/page.tsx`). Provisional until REK-171 |
 | Navigation | No in-page tabs for pages the sidebar already lists. Each sidebar child is its own route, and the group's index route redirects to its first child (`reports/page.tsx` → `/reports/journal`) |
@@ -45,9 +66,10 @@ established pattern exists.
 | List count | Small `Chip variant="soft"` after the section title, not ` · {count}` in the title (`journal-table.tsx`) |
 | Section card | `Card className="border"`; `Card.Header className="flex-row flex-wrap items-center justify-between gap-4"` with `h2 text-base font-medium` left and actions right. When the title has a muted `text-sm` line under it, use `items-start` so the actions sit as far from the top edge as from the right (`journal-table.tsx`) |
 | Section actions | Small `Button`/`buttonVariants` (`outline` or `secondary`, `size: 'sm'`) right-aligned in the header; never underlined text links |
+| Open sections | Report and task pages can use cardless sections instead of stacking cards: `h2` (+ `InfoPopover`) above a `dl` with `border-y`, row dividers and `px-3 py-3` rows, sections `gap-8` apart (`annual-package-figures.tsx`, `taxes-workspace.tsx`). Mix them with card sections (e.g. the method comparison cards) so the page doesn't read as one uniform stack. The page's main download sits in the `PageHeader` with its year select in one HeroUI `Toolbar isAttached`: a compact `YearSelect` with an `icon` (no visible label), a vertical `Separator`, then a small primary button; help for that button is a joined icon segment in a HeroUI `ButtonGroup` (`InfoPopover buttonVariant="primary"`), never an icon inside a link (`reports/taxes/page.tsx`, like the language and download bar in `invoice-modal.tsx`) |
 | Data tables | Plain `<table>` with `thead text-muted`, row dividers, amounts `text-right tabular-nums` (`client-workspace.tsx`); full lists use HeroUI `Table` (`invoice-table.tsx`). A total row is a rounded `bg-default` row like the estimated-total block on tax cards: use `border-separate border-spacing-0`, put borders on cells, and round the first/last footer cells (`journal-table.tsx`) |
 | Status / state labels | `Chip variant="soft"` with `color` (`danger` overdue, `success` paid, `accent` neutral), never coloured plain text |
-| Warnings and notices | HeroUI `Alert status=…` (no custom colours): `Alert.Title` (general), `Alert.Description` with a lead-in line and a bulleted `list-disc` list when there are several points, and exactly **one** small action button on the right. When the points lead to different pages, the action is a `Review ▾` menu with one `Dropdown.Item href` per point (`dashboard/attention-strip.tsx`). On mobile the action moves under the text (`sm:hidden` / `hidden sm:block`) |
+| Warnings and notices | HeroUI `Alert status=…` (no custom colours): `Alert.Title` (general), `Alert.Description` with a lead-in line and a bulleted `list-disc` list when there are several points, and exactly **one** small action button on the right. When the points lead to different pages, the action is a `Review ▾` menu with one `Dropdown.Item href` per point (`dashboard/attention-strip.tsx`). On mobile the action moves under the text (`sm:hidden` / `hidden sm:block`). Keep one severity per Alert, and use Alerts only for points with an action (`reports/annual/annual-package-checks.tsx`). A page-level state without its own action (e.g. not final / ready) is a `size="md"` soft `Chip` (`gap-2`) after the page title (`PageHeader titleAddon`) with an `InformationCircleIcon` inside; the chip is the `InfoPopover` `trigger` and the popover explains the state (`reports/annual/annual-package-status-chip.tsx`) |
 | Key/value details | `dl` with `dt text-muted text-xs font-medium` / `dd text-sm` (`client-workspace.tsx`) |
 | Labels and qualifiers | Casing by text type (Title Case names, sentence-case sentences in English) and inline ` · ` qualifiers instead of extra headings or subtitles. See **i18n** |
 | Money and dates | `formatMoney` (`lib/utils/currency.ts`), `formatLocalizedDate` (`lib/utils/date.ts`) |

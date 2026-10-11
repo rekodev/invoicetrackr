@@ -200,3 +200,10 @@ export const estimateTaxes = (
 };
 
 export type TaxEstimate = ReturnType<typeof estimateTaxes>;
+
+export const selectedMethodEstimate = (
+  estimate: Extract<TaxEstimate, { status: 'ready' }>
+) =>
+  estimate.profile.expenseMethod === 'actual'
+    ? estimate.methods.actual
+    : estimate.methods.thirtyPercent;

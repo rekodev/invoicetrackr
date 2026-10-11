@@ -3,7 +3,7 @@
 import {
   Button,
   Checkbox,
-  Description,
+  Chip,
   FieldError,
   Input,
   Label,
@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
+import InfoTooltip from '@/components/ui/info-tooltip';
 import { saveTaxProfileAction } from '@/lib/actions/tax';
 import { TAX_EXPENSE_METHODS } from '@/lib/constants/tax';
 import {
@@ -79,30 +80,43 @@ const TaxAssumptionsDialog = ({
     onClose();
   };
 
+  const labelWithHelp = (label: string, help?: string) => (
+    <div className="flex items-center gap-1">
+      <Label>{label}</Label>
+      {help ? (
+        <InfoTooltip label={t('fields.help', { field: label })} text={help} />
+      ) : null}
+    </div>
+  );
+
   const renderCheckbox = (
     name: 'hasEmploymentPsdCoverage' | 'hasAdditionalPensionAccumulation',
     label: string,
     help?: string
   ) => (
-    <Controller
-      control={control}
-      name={name}
-      render={({ field }) => (
-        <Checkbox
-          variant="secondary"
-          isSelected={field.value}
-          onChange={field.onChange}
-        >
-          <Checkbox.Control>
-            <Checkbox.Indicator />
-          </Checkbox.Control>
-          <Checkbox.Content>
-            <Label>{label}</Label>
-            {help ? <Description>{help}</Description> : null}
-          </Checkbox.Content>
-        </Checkbox>
-      )}
-    />
+    <div className="flex items-center gap-1">
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <Checkbox
+            variant="secondary"
+            isSelected={field.value}
+            onChange={field.onChange}
+          >
+            <Checkbox.Control>
+              <Checkbox.Indicator />
+            </Checkbox.Control>
+            <Checkbox.Content>
+              <Label>{label}</Label>
+            </Checkbox.Content>
+          </Checkbox>
+        )}
+      />
+      {help ? (
+        <InfoTooltip label={t('fields.help', { field: label })} text={help} />
+      ) : null}
+    </div>
   );
 
   const renderTextField = (
@@ -116,7 +130,7 @@ const TaxAssumptionsDialog = ({
       name={name}
       render={({ field }) => (
         <TextField variant="secondary" isInvalid={Boolean(errors[name])}>
-          <Label>{label}</Label>
+          {labelWithHelp(label, help)}
           <Input
             name={field.name}
             type={type}
@@ -127,7 +141,6 @@ const TaxAssumptionsDialog = ({
             onChange={field.onChange}
             onBlur={field.onBlur}
           />
-          {help ? <Description>{help}</Description> : null}
           {errors[name]?.message ? (
             <FieldError>{errors[name]?.message}</FieldError>
           ) : null}
@@ -143,7 +156,12 @@ const TaxAssumptionsDialog = ({
           <Modal.CloseTrigger />
           <form noValidate onSubmit={handleSubmit(onSubmit)}>
             <Modal.Header>
-              <Modal.Heading>{t('title', { year })}</Modal.Heading>
+              <div className="flex items-center gap-2">
+                <Modal.Heading>{t('title')}</Modal.Heading>
+                <Chip size="sm" variant="soft">
+                  {year}
+                </Chip>
+              </div>
             </Modal.Header>
             <Modal.Body className="flex flex-col gap-5">
               <Controller
@@ -156,8 +174,10 @@ const TaxAssumptionsDialog = ({
                     onChange={field.onChange}
                     isInvalid={Boolean(errors.expenseMethod)}
                   >
-                    <Label>{t('fields.expense_method')}</Label>
-                    <Description>{t('fields.expense_method_help')}</Description>
+                    {labelWithHelp(
+                      t('fields.expense_method'),
+                      t('fields.expense_method_help')
+                    )}
                     {TAX_EXPENSE_METHODS.map((method) => (
                       <Radio key={method} value={method}>
                         <Radio.Control>

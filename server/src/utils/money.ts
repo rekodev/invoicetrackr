@@ -10,5 +10,8 @@ export const fromCents = (value: bigint) => {
   return `${value < 0n ? '-' : ''}${absolute / 100n}.${(absolute % 100n).toString().padStart(2, '0')}`;
 };
 
+export const sumMoney = (values: string[]) =>
+  fromCents(values.reduce((sum, value) => sum + toCents(value), 0n));
+
 export const roundPositiveDivision = (value: bigint, divisor: bigint) =>
   (value + divisor / 2n) / divisor;

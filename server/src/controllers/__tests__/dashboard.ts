@@ -65,7 +65,9 @@ describe('Dashboard Controller', () => {
         receivedAmount: '100.00',
         paidBefore: '0',
         vatAmount: '17.36',
-        totalAmount: '100.00'
+        totalAmount: '100.00',
+        method: 'bank_transfer',
+        bankReference: null
       }
     ]);
     vi.mocked(journalDb.getJournalExpenseRowsFromDb).mockResolvedValue([]);

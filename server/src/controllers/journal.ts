@@ -15,7 +15,10 @@ import {
   journalPeriodLabel
 } from '../utils/journal-export';
 
-export const loadJournal = async (userId: number, { year, month }: JournalQuery) => {
+export const loadJournalRecords = async (
+  userId: number,
+  { year, month }: JournalQuery
+) => {
   const period = journalPeriod(year, month);
   const range = { userId, from: period.from, to: period.to };
   const [incomeRows, expenseRows] = await Promise.all([
@@ -23,10 +26,19 @@ export const loadJournal = async (userId: number, { year, month }: JournalQuery)
     getJournalExpenseRowsFromDb(range)
   ]);
 
+  return { period, incomeRows, expenseRows };
+};
+
+export const loadJournal = async (userId: number, query: JournalQuery) => {
+  const { period, incomeRows, expenseRows } = await loadJournalRecords(
+    userId,
+    query
+  );
+
   return { period, ...buildJournal(incomeRows, expenseRows) };
 };
 
-const CONTENT_TYPES = {
+export const CONTENT_TYPES = {
   csv: 'text/csv; charset=utf-8',
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 } as const;

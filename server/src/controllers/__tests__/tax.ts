@@ -50,7 +50,9 @@ describe('Tax Controller', () => {
         receivedAmount: '15000.00',
         paidBefore: '0',
         vatAmount: '0.00',
-        totalAmount: '15000.00'
+        totalAmount: '15000.00',
+        method: 'bank_transfer',
+        bankReference: null
       }
     ]);
     vi.mocked(journalDb.getJournalExpenseRowsFromDb).mockResolvedValue([]);

@@ -46,7 +46,9 @@ export const getJournalIncomeRowsFromDb = async ({
       receivedAmount: paymentAllocationsTable.amount,
       paidBefore: paidBeforeAnyPeriod,
       vatAmount: invoicesTable.vatAmount,
-      totalAmount: invoicesTable.totalAmount
+      totalAmount: invoicesTable.totalAmount,
+      method: paymentsTable.method,
+      bankReference: paymentsTable.bankReference
     })
     .from(paymentsTable)
     .innerJoin(
@@ -88,12 +90,18 @@ export const getJournalExpenseRowsFromDb = async ({
     .select({
       expenseId: expensesTable.id,
       expenseDate: expensesTable.expenseDate,
+      paymentDate: expensesTable.paymentDate,
       documentNumber: expensesTable.documentNumber,
       supplier: expensesTable.supplier,
       description: expensesTable.description,
+      category: expensesTable.category,
+      currency: expensesTable.currency,
+      totalAmount: expensesTable.totalAmount,
       eurAmount: expensesTable.eurAmount,
+      vatAmount: expensesTable.vatAmount,
       businessUsePercentage: expensesTable.businessUsePercentage,
-      deductibleAmount: expensesTable.deductibleAmount
+      deductibleAmount: expensesTable.deductibleAmount,
+      paymentMethod: expensesTable.paymentMethod
     })
     .from(expensesTable)
     .where(

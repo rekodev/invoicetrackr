@@ -98,6 +98,122 @@ export default {
       net: 'Grynasis rezultatas (€)'
     }
   },
+  annualPackage: {
+    filename: 'metine-ataskaita',
+    title: 'METINĖ MOKESČIŲ ATASKAITA — %{year}',
+    preparedOn: 'Parengta',
+    incomplete: 'NEBAIGTA — prieš remdamiesi šiais skaičiais peržiūrėkite lapą „Įspėjimai“.',
+    sheets: {
+      summary: 'Suvestinė',
+      warnings: 'Įspėjimai',
+      journal: 'Žurnalas',
+      monthly: 'Mėnesiai',
+      invoices: 'Sąskaitos',
+      payments: 'Mokėjimai',
+      expenses: 'Išlaidos'
+    },
+    sections: {
+      totals: 'Pajamos ir išlaidos',
+      tax: 'Mokesčių įvertis'
+    },
+    summary: {
+      income: 'Gautos pajamos su PVM (€)',
+      incomeVat: 'PVM gautose pajamose (€)',
+      incomeNet: 'Gautos pajamos be PVM (€)',
+      expenses: 'Atskaitomos išlaidos (€)',
+      net: 'Grynasis rezultatas (€)',
+      invoiced: 'Išrašyta: šių metų datos išrašytos sąskaitos (€)',
+      outstanding: 'Neapmokėta už šias sąskaitas %{date} (€)'
+    },
+    expenseMethod: 'Jūsų išlaidų metodas',
+    methods: {
+      actual: 'Faktinės išlaidos',
+      thirty_percent: '30 % pajamų'
+    },
+    taxRows: {
+      income: 'Pajamos be PVM (€)',
+      deductions: 'Atskaitymai (€)',
+      vsd: 'VSD (€)',
+      psd: 'PSD (€)',
+      gpm: 'GPM (€)',
+      total: 'Apskaičiuota iš viso (€)'
+    },
+    taxUnavailable: {
+      needs_profile: 'Nėra: patvirtinkite šių metų mokesčių prielaidas InvoiceTrackr.',
+      unsupported_year: 'Nėra: mokesčių įvertis šių metų dar nepalaiko.'
+    },
+    disclaimer:
+      'Parengta pagal jūsų InvoiceTrackr įrašus. Mokesčių sumos yra įvertis, o ne VMI ar „Sodros“ prievolė, ir neatstoja profesionalios mokesčių konsultacijos.',
+    total: 'IŠ VISO',
+    columns: {
+      index: 'Eil. Nr.',
+      invoiceNumber: 'Sąskaitos Nr.',
+      date: 'Data',
+      dueDate: 'Apmokėti iki',
+      paymentDate: 'Mokėjimo data',
+      client: 'Klientas',
+      clientCode: 'Kliento kodas',
+      status: 'Būsena',
+      total: 'Suma (€)',
+      vat: 'PVM (€)',
+      paid: 'Apmokėta (€)',
+      outstanding: 'Neapmokėta (€)',
+      amount: 'Suma (€)',
+      method: 'Apmokėjimo būdas',
+      reference: 'Mokėjimo paskirtis',
+      supplier: 'Tiekėjas',
+      documentNumber: 'Dok. Nr.',
+      description: 'Aprašymas',
+      category: 'Kategorija',
+      originalAmount: 'Pradinė suma',
+      currency: 'Valiuta',
+      eurAmount: 'Suma (€)',
+      businessUse: 'Veiklai (%)',
+      deductible: 'Atskaitoma (€)',
+      documents: 'Dokumentai',
+      severity: 'Svarba',
+      issue: 'Problema'
+    },
+    statuses: {
+      pending: 'Neapmokėta',
+      paid: 'Apmokėta',
+      voided: 'Anuliuota (neįskaičiuota)'
+    },
+    paymentMethods: {
+      bank_transfer: 'Bankinis pavedimas',
+      card: 'Kortelė',
+      cash: 'Grynieji',
+      other: 'Kita'
+    },
+    categories: {
+      software: 'Programinė įranga',
+      equipment: 'Įranga',
+      telecommunications: 'Ryšio paslaugos',
+      office: 'Biuras',
+      travel: 'Kelionės',
+      transport: 'Transportas',
+      professional_services: 'Profesinės paslaugos',
+      marketing: 'Rinkodara',
+      education: 'Mokymai',
+      bank_fees: 'Banko mokesčiai',
+      insurance: 'Draudimas',
+      other: 'Kita'
+    },
+    severity: {
+      blocking: 'Blokuojanti',
+      recommendation: 'Rekomendacija'
+    },
+    warnings: {
+      none: 'Problemų nerasta.',
+      year_in_progress: 'Metai dar nesibaigė. Skaičiai apima įrašus iki parengimo datos.',
+      missing_tax_profile: 'Šių metų mokesčių prielaidos nepatvirtintos, todėl ataskaitoje nėra mokesčių įverčio.',
+      unsupported_tax_year: 'Mokesčių įvertis šių metų dar nepalaiko, todėl ataskaitoje jo nėra.',
+      missing_owner_details: 'Profilyje trūksta jūsų vardo ir pavardės arba individualios veiklos pažymos numerio.',
+      draft_invoices: 'Šių metų datos juodraščių, kurie nebuvo išrašyti: %{count}.',
+      outstanding_invoices: 'Išrašytų sąskaitų su neapmokėtu likučiu: %{count}.',
+      expenses_missing_documents: 'Išlaidų be pridėto dokumento: %{count}.'
+    }
+  },
   validation: {
     payment: {
       date: 'Pasirinkite tinkamą mokėjimo datą.',

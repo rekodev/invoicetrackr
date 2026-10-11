@@ -23,19 +23,24 @@ const expenseListHref = (
 ) =>
   `${EXPENSES_PAGE}?${new URLSearchParams({ from: range.from, to: range.to, ...extra })}`;
 
+const issuedIn = (range?: { from: string; to: string }) =>
+  range ? { issuedFrom: range.from, issuedTo: range.to } : {};
+
 export const dashboardLinks = {
   receivedIncome: (range: { from: string; to: string }) =>
     invoiceListHref({ paidFrom: range.from, paidTo: range.to }),
   invoiced: (range: { from: string; to: string }) =>
-    invoiceListHref({ issuedFrom: range.from, issuedTo: range.to }),
-  outstanding: () => invoiceListHref({ status: 'open' }),
+    invoiceListHref(issuedIn(range)),
+  outstanding: (range?: { from: string; to: string }) =>
+    invoiceListHref({ status: 'open', ...issuedIn(range) }),
   overdue: () => invoiceListHref({ overdue: '1' }),
-  drafts: () => invoiceListHref({ status: 'draft' }),
+  drafts: (range?: { from: string; to: string }) =>
+    invoiceListHref({ status: 'draft', ...issuedIn(range) }),
   expenses: (range: { from: string; to: string }) => expenseListHref(range),
   deductibleExpenses: (range: { from: string; to: string }) =>
     expenseListHref(range, { deductible: '1' }),
   expensesMissingDocuments: (range: { from: string; to: string }) =>
-    expenseListHref(range)
+    expenseListHref(range, { documents: 'missing' })
 };
 
 export const subtractMoney = (first: string, second: string) => {

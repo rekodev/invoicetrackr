@@ -1,15 +1,10 @@
-import {
-  BasicCardGridSkeleton,
-  BasicCardSkeleton
-} from './basic-card-skeleton';
+import { BasicCardSkeleton } from './basic-card-skeleton';
 
 export const TaxEstimateSkeleton = () => (
-  <div aria-hidden="true" className="flex flex-col gap-6">
-    <BasicCardSkeleton className="min-h-[140px]" />
-    <BasicCardGridSkeleton
-      count={2}
-      className="gap-5 md:grid-cols-2 lg:grid-cols-2"
-      cardClassName="min-h-[420px]"
-    />
+  <div aria-hidden="true" className="flex flex-col gap-8">
+    <BasicCardSkeleton className="min-h-[96px]" />
+    <BasicCardSkeleton className="min-h-[240px]" />
+    <BasicCardSkeleton className="min-h-[480px]" />
+    <BasicCardSkeleton className="min-h-[120px]" />
   </div>
 );

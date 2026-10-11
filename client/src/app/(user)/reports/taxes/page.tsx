@@ -1,16 +1,25 @@
+import { Alert, Separator, Toolbar } from '@heroui/react';
 import { unauthorized } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 
 import { auth } from '@/auth';
-import TaxEstimateWorkspace from '@/components/reports/taxes/tax-estimate-workspace';
+import AnnualPackageDownload from '@/components/reports/annual/annual-package-download';
+import AnnualPackageStatusChip from '@/components/reports/annual/annual-package-status-chip';
 import TaxYearSelect from '@/components/reports/taxes/tax-year-select';
+import TaxesWorkspace from '@/components/reports/taxes/taxes-workspace';
 import PageHeader from '@/components/ui/page-header';
 import { TaxEstimateSkeleton } from '@/components/ui/skeletons/tax-estimate-skeleton';
-import { currentJournalYear, parseJournalQuery } from '@/lib/utils/journal';
-import { taxYears } from '@/lib/utils/tax';
+import {
+  currentJournalYear,
+  journalYears,
+  parseJournalQuery
+} from '@/lib/utils/journal';
 
-type SearchParams = Promise<{ year?: string | string[] }>;
+type SearchParams = Promise<{
+  year?: string | string[];
+  export_error?: string | string[];
+}>;
 
 export default async function TaxesPage({
   searchParams
@@ -21,16 +30,42 @@ export default async function TaxesPage({
   if (!session?.user?.id) unauthorized();
 
   const t = await getTranslations('reports.taxes');
+  const tExport = await getTranslations('reports.annual.export_error');
   const currentYear = currentJournalYear();
-  const { year } = parseJournalQuery(await searchParams, currentYear);
+  const params = await searchParams;
+  const { year } = parseJournalQuery(params, currentYear);
 
   return (
     <section className="flex flex-col gap-6">
-      <PageHeader title={t('heading')} description={t('description')}>
-        <TaxYearSelect year={year} years={taxYears(year)} />
+      <PageHeader
+        title={t('heading')}
+        description={t('description')}
+        titleAddon={
+          <Suspense key={year} fallback={null}>
+            <AnnualPackageStatusChip
+              userId={Number(session.user.id)}
+              year={year}
+            />
+          </Suspense>
+        }
+      >
+        <Toolbar isAttached aria-label={t('actions')}>
+          <TaxYearSelect year={year} years={journalYears(currentYear, year)} />
+          <Separator orientation="vertical" />
+          <AnnualPackageDownload year={year} />
+        </Toolbar>
       </PageHeader>
+      {params.export_error && (
+        <Alert status="danger">
+          <Alert.Indicator />
+          <Alert.Content>
+            <Alert.Title>{tExport('title')}</Alert.Title>
+            <Alert.Description>{tExport('description')}</Alert.Description>
+          </Alert.Content>
+        </Alert>
+      )}
       <Suspense key={year} fallback={<TaxEstimateSkeleton />}>
-        <TaxEstimateWorkspace userId={Number(session.user.id)} year={year} />
+        <TaxesWorkspace userId={Number(session.user.id)} year={year} />
       </Suspense>
     </section>
   );

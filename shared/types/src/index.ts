@@ -17,3 +17,4 @@ export * from './finance';
 export * from './dashboard';
 export * from './journal';
 export * from './tax';
+export * from './annual-package';
