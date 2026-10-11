@@ -354,6 +354,11 @@
         "description": "Susidūrėme su netikėta klaida. Pabandykite atnaujinti puslapį arba susisiekite su palaikymu, jei problema išlieka.",
         "try_again": "Bandyti dar kartą"
     },
+    "rate_limit": {
+        "title": "Per daug užklausų",
+        "description": "Per trumpą laiką atlikote daug užklausų. Palaukite akimirką ir bandykite dar kartą.",
+        "try_again": "Bandyti dar kartą"
+    },
     "home": {
         "hero": {
             "badge_label": "Nauja",

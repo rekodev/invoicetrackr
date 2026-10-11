@@ -442,6 +442,8 @@ export default {
     }
   },
   error: {
+    rateLimited:
+      'Too many requests. Please wait %{seconds} seconds and try again.',
     companyLookup: {
       unavailable:
         'Company lookup is temporarily unavailable. Enter the details manually or try again.'

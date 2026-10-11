@@ -44,25 +44,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path((?!auth(?:/|$)|webhook/stripe(?:/|$)).*)',
+        source: '/api/:path((?!auth(?:/|$)).*)',
         destination: `http://localhost:${process.env.SERVER_PORT}/api/:path*`
-      }
-    ];
-  },
-  async headers() {
-    return [
-      {
-        source: '/api/:path*',
-        headers: [
-          {
-            key: 'X-Forwarded-For',
-            value: ':x-forwarded-for'
-          },
-          {
-            key: 'X-Real-IP',
-            value: ':x-real-ip'
-          }
-        ]
       }
     ];
   }

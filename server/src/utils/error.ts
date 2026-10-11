@@ -37,6 +37,16 @@ export async function errorHandler(
     });
   }
 
+  if (error.code === 'RATE_LIMITED') {
+    return reply.status(429).send({
+      errors: [],
+      message: i18n.t(error.message, {
+        seconds: reply.getHeader('retry-after') ?? 60
+      }),
+      code: error.code
+    });
+  }
+
   return reply.status(error.statusCode || 500).send({
     errors: [],
     message: error.message,

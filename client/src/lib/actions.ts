@@ -1,6 +1,6 @@
 'use server';
 
-import { cookies } from 'next/headers';
+import { cookies, headers as getIncomingHeaders } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { AuthError, User } from 'next-auth';
 import { getLocale, getTranslations } from 'next-intl/server';
@@ -170,6 +170,13 @@ export const getRequestHeadersAction = async () => {
 
   // Match the locale the UI resolved (cookie, then Accept-Language).
   headers['Accept-Language'] = await getLocale();
+
+  // REK-47: keep the visitor's IP on server-side calls so anonymous rate limits apply per visitor.
+  const incomingHeaders = await getIncomingHeaders();
+  for (const name of ['X-Forwarded-For', 'X-Real-IP']) {
+    const value = incomingHeaders.get(name);
+    if (value) headers[name] = value;
+  }
 
   return headers;
 };

@@ -451,6 +451,8 @@ export default {
     }
   },
   error: {
+    rateLimited:
+      'Per daug užklausų. Palaukite %{seconds} sek. ir bandykite dar kartą.',
     companyLookup: {
       unavailable:
         'Įmonių paieška laikinai nepasiekiama. Įveskite duomenis rankiniu būdu arba bandykite dar kartą.'

@@ -19,7 +19,7 @@ import { updateUserLanguageAction } from '@/lib/actions/user';
 import { availableLanguages } from '@/lib/constants/languages';
 
 type Props = {
-  user?: User;
+  user?: Pick<User, 'id' | 'language'>;
 };
 
 export default function LanguageSwitcher({ user }: Props) {

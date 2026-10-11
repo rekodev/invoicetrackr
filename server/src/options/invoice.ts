@@ -50,8 +50,10 @@ import {
   requireVerifiedEmailWhenSending
 } from '../middleware/auth';
 import { preValidateFileAndFields } from '../utils/multipart';
+import { ipRateLimit } from '../utils/rate-limit';
 
 const authenticatedAccess = [authMiddleware];
+const publicTokenAccess = { rateLimit: ipRateLimit(30, '1 minute') };
 
 export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -171,11 +173,13 @@ export const createRecipientDetailsRequestOptions: RouteShorthandOptionsWithHand
 
 export const getRecipientDetailsRequestOptions: RouteShorthandOptionsWithHandler =
   {
+    config: publicTokenAccess,
     schema: { response: { 200: getRecipientDetailsResponseSchema } },
     handler: getRecipientDetailsRequest
   };
 
 export const submitRecipientDetailsOptions: RouteShorthandOptionsWithHandler = {
+  config: publicTokenAccess,
   schema: {
     body: recipientDetailsBodySchema.safeExtend({ file: z.any().nullish() }),
     response: { 200: submitRecipientDetailsResponseSchema }
@@ -231,6 +235,7 @@ export const regenerateInvoiceSigningOptions: RouteShorthandOptionsWithHandler =
 
 export const getPublicInvoiceSigningOptions: RouteShorthandOptionsWithHandler =
   {
+    config: publicTokenAccess,
     schema: {
       response: {
         200: getPublicInvoiceSigningResponseSchema
@@ -240,6 +245,7 @@ export const getPublicInvoiceSigningOptions: RouteShorthandOptionsWithHandler =
   };
 
 export const getPublicInvoiceOptions: RouteShorthandOptionsWithHandler = {
+  config: publicTokenAccess,
   schema: {
     response: {
       200: getPublicInvoiceResponseSchema
@@ -249,6 +255,7 @@ export const getPublicInvoiceOptions: RouteShorthandOptionsWithHandler = {
 };
 
 export const signPublicInvoiceOptions: RouteShorthandOptionsWithHandler = {
+  config: publicTokenAccess,
   schema: {
     body: z.object({
       file: z.any().nullish()

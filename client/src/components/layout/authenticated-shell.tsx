@@ -31,11 +31,16 @@ import MobileSidebar from './mobile-sidebar';
 import Sidebar from './sidebar';
 import ThemeSwitcher from './theme-switcher';
 
+export type ShellUser = Pick<
+  User,
+  'id' | 'name' | 'email' | 'profilePictureUrl' | 'language'
+>;
+
 export default function AuthenticatedShell({
   user,
   children
 }: {
-  user: User;
+  user: ShellUser;
   children: ReactNode;
 }) {
   const t = useTranslations('header.user');
