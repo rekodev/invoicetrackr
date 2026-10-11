@@ -146,7 +146,7 @@ export default function Navigation({ isMobile, onCloseMobileSidebar }: Props) {
             </Accordion.Trigger>
           </Accordion.Heading>
           <Accordion.Panel>
-            <Accordion.Body className="flex flex-col gap-1 pl-4 pt-1">
+            <Accordion.Body className="flex flex-col gap-1 pb-0 pl-4 pr-0 pt-1">
               {item.children.map(renderNavItem)}
             </Accordion.Body>
           </Accordion.Panel>

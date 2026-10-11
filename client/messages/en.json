@@ -666,8 +666,8 @@
         "empty": {
             "title": "Your Workbench Is Empty",
             "description": "Issue an invoice or record an expense, and income, balances, and overdue payments will appear here.",
-            "create_invoice": "Create invoice",
-            "add_expense": "Add expense"
+            "create_invoice": "Create Invoice",
+            "add_expense": "Add Expense"
         }
     },
     "invoices": {
