@@ -8,12 +8,14 @@ type Props = {
   title: string;
   children: ReactNode;
   placement?: 'bottom start' | 'bottom end';
+  action?: ReactNode;
 };
 
 export default function InfoPopover({
   title,
   children,
-  placement = 'bottom start'
+  placement = 'bottom start',
+  action
 }: Props) {
   return (
     <Popover>
@@ -31,7 +33,10 @@ export default function InfoPopover({
         className="w-[calc(100vw-2rem)] max-w-md"
       >
         <Popover.Dialog className="flex flex-col gap-2 text-sm">
-          <Popover.Heading className="font-medium">{title}</Popover.Heading>
+          <div className="flex items-center justify-between gap-4">
+            <Popover.Heading className="font-medium">{title}</Popover.Heading>
+            {action}
+          </div>
           {children}
         </Popover.Dialog>
       </Popover.Content>

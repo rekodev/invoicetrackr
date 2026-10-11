@@ -61,22 +61,23 @@ const SafeToSpendCard = async ({ safeToSpend, year }: Props) => {
           </IconContainer>
           <h2>{t('title')}</h2>
           <span className="-my-2">
-            <InfoPopover title={t('info.title')} placement="bottom end">
+            <InfoPopover
+              title={t('info.title')}
+              placement="bottom end"
+              action={
+                safeToSpend.status === 'ready' && (
+                  <Link
+                    href={taxHref}
+                    className={buttonVariants({ variant: 'outline', size: 'sm' })}
+                  >
+                    {t('tax_breakdown')}
+                  </Link>
+                )
+              }
+            >
               <SafeToSpendBreakdown safeToSpend={safeToSpend} year={year} />
               <p className="text-muted">{t('info.reserve')}</p>
               <p className="text-muted">{t('info.payments')}</p>
-              {safeToSpend.status === 'ready' && (
-                <Link
-                  href={taxHref}
-                  className={buttonVariants({
-                    variant: 'outline',
-                    size: 'sm',
-                    className: 'self-start'
-                  })}
-                >
-                  {t('tax_breakdown')}
-                </Link>
-              )}
             </InfoPopover>
           </span>
         </div>
