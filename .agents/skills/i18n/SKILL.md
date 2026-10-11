@@ -101,12 +101,16 @@ Lithuanian name with a gloss where users expect it (e.g. "Income journal
     descriptions, helper and body text, list items, toasts, errors,
     confirmations.
   - Lithuanian always uses sentence case, whatever the text type.
-- **Supplementary detail on a label stays inline.** Period, scope, count,
-  unit or status that qualifies a name goes in the same message after a
-  spaced middle dot, and is styled exactly like the label:
-  `"Total Expenses · {year}"`, `"Outstanding · All Open"`,
-  `"Invoices · {count}"`. Don't add a separate heading or subtitle for it,
-  and don't wrap the qualifier in its own span.
+- **Supplementary detail on a label stays inline.** Period, scope, unit or
+  status that qualifies a name goes in the same message after a spaced
+  middle dot, and is styled exactly like the label:
+  `"Total Expenses · {year}"`, `"Outstanding · All Open"`. Don't add a
+  separate heading or subtitle for it, and don't wrap the qualifier in its
+  own span. Two exceptions: a list count is a `Chip` after the title, not
+  `· {count}` in the string; and leave out a qualifier the page controls
+  already show (e.g. the year when a year selector sits above it).
+- **Buttons are names, so they are Title Case in English** ("Create
+  Invoice", "Add Expense"). Buttons shown side by side must match.
 - **Match an existing string first.** Before adding a new label, find the
   closest existing one in `en.json` and copy its casing and separator
   style. Consistency across pages beats local preference.
@@ -118,3 +122,5 @@ Lithuanian name with a gloss where users expect it (e.g. "Income journal
 - [ ] Lithuanian plurals include `few`
 - [ ] Validation keys used in shared schemas exist in both server locales
 - [ ] No hard-coded user-facing strings left in components or controllers
+- [ ] Every new route segment has a `breadcrumbs.<segment>` key in both
+      `en` and `lt` (otherwise the raw key shows in the breadcrumb)
