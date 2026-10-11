@@ -2,6 +2,7 @@ import z from 'zod/v4';
 
 import { yearSchema } from './common';
 import { moneySchema } from './finance';
+import { taxExpenseMethodSchema } from './tax';
 
 export const dashboardSummaryQuerySchema = z.object({
   year: yearSchema.optional()
@@ -40,13 +41,32 @@ export const dashboardAttentionSchema = z.object({
   overdueWithoutEmail: z.number().int()
 });
 
+const dashboardSafeToSpendBaseSchema = z.object({
+  receivedIncome: moneySchema,
+  vatCollected: moneySchema,
+  expenses: moneySchema
+});
+
+export const dashboardSafeToSpendSchema = z.discriminatedUnion('status', [
+  dashboardSafeToSpendBaseSchema.extend({ status: z.literal('unsupported_year') }),
+  dashboardSafeToSpendBaseSchema.extend({ status: z.literal('needs_profile') }),
+  dashboardSafeToSpendBaseSchema.extend({
+    status: z.literal('ready'),
+    expenseMethod: taxExpenseMethodSchema,
+    taxReserve: moneySchema,
+    safeToSpend: moneySchema,
+    shortfall: moneySchema
+  })
+]);
+
 export const getDashboardSummaryResponseSchema = z.object({
   year: z.number().int(),
   totals: dashboardTotalsSchema,
   monthly: z.array(dashboardMonthSchema),
   overdueInvoices: z.array(dashboardOverdueInvoiceSchema),
   overdueCount: z.number().int(),
-  attention: dashboardAttentionSchema
+  attention: dashboardAttentionSchema,
+  safeToSpend: dashboardSafeToSpendSchema
 });
 
 export type DashboardSummaryQuery = z.infer<typeof dashboardSummaryQuerySchema>;
@@ -55,6 +75,7 @@ export type DashboardMonth = z.infer<typeof dashboardMonthSchema>;
 export type DashboardOverdueInvoice = z.infer<
   typeof dashboardOverdueInvoiceSchema
 >;
+export type DashboardSafeToSpend = z.infer<typeof dashboardSafeToSpendSchema>;
 export type DashboardAttention = z.infer<typeof dashboardAttentionSchema>;
 export type DashboardSummaryResponse = z.infer<
   typeof getDashboardSummaryResponseSchema

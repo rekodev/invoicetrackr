@@ -1,15 +1,16 @@
 import { BanknotesIcon, ClockIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import type { DashboardTotals } from '@invoicetrackr/types';
 import { getLocale, getTranslations } from 'next-intl/server';
+import type { ReactNode } from 'react';
 
 import { formatMoney } from '@/lib/utils/currency';
 import { dashboardLinks, yearRange } from '@/lib/utils/dashboard';
 
 import DashboardCard from './dashboard-card';
 
-type Props = { totals: DashboardTotals; year: number };
+type Props = { totals: DashboardTotals; year: number; children?: ReactNode };
 
-const MoneySummaryCards = async ({ totals, year }: Props) => {
+const MoneySummaryCards = async ({ totals, year, children }: Props) => {
   const t = await getTranslations('dashboard.cards');
   const locale = await getLocale();
   const range = yearRange(year);
@@ -42,7 +43,7 @@ const MoneySummaryCards = async ({ totals, year }: Props) => {
   ];
 
   return (
-    <div className="grid gap-5 sm:grid-cols-3">
+    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card) => (
         <DashboardCard
           key={card.key}
@@ -54,6 +55,7 @@ const MoneySummaryCards = async ({ totals, year }: Props) => {
           linkLabel={t('a11y.view_records', { title: card.title })}
         />
       ))}
+      {children}
     </div>
   );
 };

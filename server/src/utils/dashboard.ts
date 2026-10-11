@@ -1,9 +1,11 @@
 import type {
   DashboardMonth,
-  DashboardOverdueInvoice
+  DashboardOverdueInvoice,
+  DashboardSafeToSpend
 } from '@invoicetrackr/types';
 
 import { fromCents, toCents } from './money';
+import type { TaxEstimate } from './tax';
 
 export const OVERDUE_PREVIEW_LIMIT = 5;
 
@@ -60,7 +62,10 @@ export const buildMonthlySummary = (
   };
 };
 
-export const summarizeOpenInvoices = (rows: OpenInvoiceRow[], today: string) => {
+export const summarizeOpenInvoices = (
+  rows: OpenInvoiceRow[],
+  today: string
+) => {
   let outstanding = 0n;
   let overdue = 0n;
   const overdueInvoices: DashboardOverdueInvoice[] = [];
@@ -86,15 +91,55 @@ export const summarizeOpenInvoices = (rows: OpenInvoiceRow[], today: string) => 
   });
 
   overdueInvoices.sort(
-    (first, second) => second.daysOverdue - first.daysOverdue || first.id - second.id
+    (first, second) =>
+      second.daysOverdue - first.daysOverdue || first.id - second.id
   );
 
   return {
     outstanding: fromCents(outstanding),
     overdue: fromCents(overdue),
     overdueCount: overdueInvoices.length,
-    overdueWithoutEmail: overdueInvoices.filter((invoice) => !invoice.clientEmail)
-      .length,
+    overdueWithoutEmail: overdueInvoices.filter(
+      (invoice) => !invoice.clientEmail
+    ).length,
     overdueInvoices: overdueInvoices.slice(0, OVERDUE_PREVIEW_LIMIT)
+  };
+};
+
+type SafeToSpendInputs = {
+  receivedIncome: string;
+  vatCollected: string;
+  expenses: string;
+  estimate: TaxEstimate;
+};
+
+export const calculateSafeToSpend = ({
+  receivedIncome,
+  vatCollected,
+  expenses,
+  estimate
+}: SafeToSpendInputs): DashboardSafeToSpend => {
+  const base = { receivedIncome, vatCollected, expenses };
+
+  if (estimate.status !== 'ready') return { ...base, status: estimate.status };
+
+  const { expenseMethod } = estimate.profile;
+  const taxReserve =
+    expenseMethod === 'actual'
+      ? estimate.methods.actual.total
+      : estimate.methods.thirtyPercent.total;
+  const remaining =
+    toCents(receivedIncome) -
+    toCents(vatCollected) -
+    toCents(expenses) -
+    toCents(taxReserve);
+
+  return {
+    ...base,
+    status: 'ready',
+    expenseMethod,
+    taxReserve,
+    safeToSpend: fromCents(remaining > 0n ? remaining : 0n),
+    shortfall: fromCents(remaining < 0n ? -remaining : 0n)
   };
 };

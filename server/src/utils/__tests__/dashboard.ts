@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildMonthlySummary,
+  calculateSafeToSpend,
   OpenInvoiceRow,
   summarizeOpenInvoices
 } from '../dashboard';
+import type { TaxEstimate } from '../tax';
 
 const openInvoice = (overrides: Partial<OpenInvoiceRow>): OpenInvoiceRow => ({
   id: 1,
@@ -77,5 +79,34 @@ describe('dashboard summary math', () => {
     expect(summary.overdueCount).toBe(7);
     expect(summary.overdue).toBe('700.00');
     expect(summary.overdueInvoices.map((invoice) => invoice.id)).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it('subtracts VAT, expenses and the reserve for the saved method, floored at zero with a shortfall', () => {
+    const ready = (expenseMethod: 'actual' | 'thirty_percent') => ({
+      status: 'ready',
+      profile: { expenseMethod },
+      methods: { actual: { total: '1000.00' }, thirtyPercent: { total: '1500.50' } }
+    }) as unknown as TaxEstimate;
+    const totals = { receivedIncome: '12100.00', vatCollected: '2100.00', expenses: '1500.00' };
+
+    expect(calculateSafeToSpend({ ...totals, estimate: ready('thirty_percent') })).toEqual({
+      ...totals,
+      status: 'ready',
+      expenseMethod: 'thirty_percent',
+      taxReserve: '1500.50',
+      safeToSpend: '6999.50',
+      shortfall: '0.00'
+    });
+    expect(
+      calculateSafeToSpend({
+        receivedIncome: '500.00',
+        vatCollected: '0.00',
+        expenses: '200.01',
+        estimate: ready('actual')
+      })
+    ).toMatchObject({ taxReserve: '1000.00', safeToSpend: '0.00', shortfall: '700.01' });
+    expect(
+      calculateSafeToSpend({ ...totals, estimate: { status: 'needs_profile', year: 2026, supportedYears: [2026] } })
+    ).toEqual({ ...totals, status: 'needs_profile' });
   });
 });

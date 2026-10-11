@@ -116,7 +116,7 @@ enforced by schema refine), `issuedAt`, `paidAt`, `voidedAt`.
 ## Income journal and PDFs
 
 - The income and expense journal (pajamų ir išlaidų žurnalas) on
-  `/reports` is what the freelancer hands to VMI / their accountant:
+  `/reports/journal` is what the freelancer hands to VMI / their accountant:
   `GET /api/:userId/journal` and `/journal/export` (CSV/XLSX), queries in
   `server/src/database/journal.ts`, math in `server/src/utils/journal.ts`,
   files in `server/src/utils/journal-export.ts`. Income is one row per

@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 import { saveTaxProfile } from '@/api/tax';
 
-import { REPORTS_TAXES_PAGE } from '../constants/pages';
+import { DASHBOARD_PAGE, REPORTS_TAXES_PAGE } from '../constants/pages';
 import type { ActionResponseModel } from '../types/action';
 import { isResponseError } from '../utils/error';
 import { mapValidationErrors } from '../utils/validation';
@@ -30,6 +30,7 @@ export const saveTaxProfileAction = async ({
   }
 
   revalidatePath(REPORTS_TAXES_PAGE);
+  revalidatePath(DASHBOARD_PAGE);
 
   return { ok: true, message: response.data.message };
 };

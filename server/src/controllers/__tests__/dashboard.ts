@@ -1,10 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as dashboardDb from '../../database/dashboard';
+import * as journalDb from '../../database/journal';
+import * as taxDb from '../../database/tax';
 import { getDashboardSummaryOptions } from '../../options/dashboard';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 
 vi.mock('../../database/dashboard');
+vi.mock('../../database/journal');
+vi.mock('../../database/tax');
 vi.mock('../../database/invoice-payment', () => ({
   todayInLithuania: () => '2026-10-07'
 }));
@@ -49,6 +53,23 @@ describe('Dashboard Controller', () => {
     ]);
     vi.mocked(dashboardDb.getDraftCountFromDb).mockResolvedValue(2);
     vi.mocked(dashboardDb.getExpensesMissingDocumentsCountFromDb).mockResolvedValue(1);
+    vi.mocked(journalDb.getJournalIncomeRowsFromDb).mockResolvedValue([
+      {
+        paymentId: 1,
+        paymentDate: '2026-05-10',
+        invoiceId: 10,
+        documentNumber: 'SF001',
+        receiverName: 'MB Šaltinis',
+        receiverBusinessNumber: '',
+        descriptions: 'Konsultacijos',
+        receivedAmount: '100.00',
+        paidBefore: '0',
+        vatAmount: '17.36',
+        totalAmount: '100.00'
+      }
+    ]);
+    vi.mocked(journalDb.getJournalExpenseRowsFromDb).mockResolvedValue([]);
+    vi.mocked(taxDb.getTaxProfileFromDb).mockResolvedValue(null);
   });
 
   it('returns the current Vilnius year summary with reconciled totals and overdue actions', async () => {
@@ -80,7 +101,13 @@ describe('Dashboard Controller', () => {
           daysOverdue: 7
         }
       ],
-      attention: { draftCount: 2, expensesMissingDocuments: 1, overdueWithoutEmail: 0 }
+      attention: { draftCount: 2, expensesMissingDocuments: 1, overdueWithoutEmail: 0 },
+      safeToSpend: {
+        status: 'needs_profile',
+        receivedIncome: '100.00',
+        vatCollected: '17.36',
+        expenses: '25.00'
+      }
     });
     expect(body.monthly).toHaveLength(12);
     expect(body.monthly[4]).toEqual({ month: 5, receivedIncome: '40.00', expenses: '0.00', deductibleExpenses: '0.00' });
@@ -95,13 +122,43 @@ describe('Dashboard Controller', () => {
 
     const previousYear = await app.inject({ method: 'GET', url: '/api/1/dashboard/summary?year=2025' });
     expect(previousYear.statusCode).toBe(200);
-    expect(previousYear.json().year).toBe(2025);
+    expect(previousYear.json()).toMatchObject({
+      year: 2025,
+      safeToSpend: { status: 'unsupported_year' }
+    });
     expect(dashboardDb.getExpensesByMonthFromDb).toHaveBeenCalledWith(1, 2025);
 
     vi.mocked(dashboardDb.getInvoicedTotalFromDb).mockClear();
     const invalid = await app.inject({ method: 'GET', url: '/api/1/dashboard/summary?year=last' });
     expect(invalid.statusCode).toBe(400);
     expect(dashboardDb.getInvoicedTotalFromDb).not.toHaveBeenCalled();
+
+    await app.close();
+  });
+
+  it('reserves the saved method\'s tax estimate', async () => {
+    vi.mocked(taxDb.getTaxProfileFromDb).mockResolvedValue({
+      expenseMethod: 'thirty_percent',
+      hasEmploymentPsdCoverage: true,
+      hasAdditionalPensionAccumulation: false,
+      activityStartDate: null,
+      activityEndDate: null,
+      otherDeclaredIncome: '0.00'
+    });
+    const app = await createApp();
+    const response = await app.inject({ method: 'GET', url: '/api/1/dashboard/summary' });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json().safeToSpend).toEqual({
+      status: 'ready',
+      receivedIncome: '100.00',
+      vatCollected: '17.36',
+      expenses: '25.00',
+      expenseMethod: 'thirty_percent',
+      taxReserve: '13.04',
+      safeToSpend: '44.60',
+      shortfall: '0.00'
+    });
 
     await app.close();
   });

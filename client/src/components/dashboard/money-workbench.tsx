@@ -12,6 +12,7 @@ import AttentionStrip from './attention-strip';
 import MoneySummaryCards from './money-summary-cards';
 import MonthlyMoney from './monthly-money';
 import OverdueInvoices from './overdue-invoices';
+import SafeToSpendCard from './safe-to-spend-card';
 
 type Props = { userId: number; isEmailVerified: boolean };
 
@@ -58,7 +59,9 @@ const MoneyWorkbench = async ({ userId, isEmailVerified }: Props) => {
         year={summary.year}
         isEmailVerified={isEmailVerified}
       />
-      <MoneySummaryCards totals={summary.totals} year={summary.year} />
+      <MoneySummaryCards totals={summary.totals} year={summary.year}>
+        <SafeToSpendCard safeToSpend={summary.safeToSpend} year={summary.year} />
+      </MoneySummaryCards>
       <OverdueInvoices
         userId={userId}
         invoices={summary.overdueInvoices}

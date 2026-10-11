@@ -12,14 +12,6 @@ HeroUI v3 is a component library built on **Tailwind CSS v4** and **React Aria C
 
 ---
 
-## Installation
-
-```bash
-curl -fsSL https://heroui.com/install | bash -s heroui-react
-```
-
----
-
 ## CRITICAL: v3 Only - Ignore v2 Knowledge
 
 **This guide is for HeroUI v3 ONLY.** Do NOT apply v2 patterns — the provider, styling, and component API all changed:
@@ -56,8 +48,6 @@ import { Card } from "@heroui/react";
 </Card>;
 ```
 
-**Always fetch v3 docs before implementing.**
-
 ---
 
 ## Core Principles
@@ -71,7 +61,7 @@ import { Card } from "@heroui/react";
 
 ## Accessing Documentation & Component Information
 
-**For component details, examples, props, and implementation patterns, always fetch documentation:**
+Fetch the v3 docs when you need a component's props, anatomy, or examples:
 
 ### Using Scripts
 
@@ -108,79 +98,19 @@ Examples:
 
 Getting started guides: use a concrete topic URL such as `https://heroui.com/docs/react/getting-started/quick-start.mdx`.
 
-**Important:** Always fetch component docs before implementing. The MDX docs include complete examples, props, anatomy, and API references.
-
 ---
 
-## Installation Essentials
+## Setup in this repo
 
-### Quick Install
-
-```bash
-npm i @heroui/styles @heroui/react tailwind-variants
-```
-
-### Framework Setup (Next.js App Router - Recommended)
-
-1. **Install dependencies:**
-
-```bash
-npm i @heroui/styles @heroui/react tailwind-variants tailwindcss @tailwindcss/postcss postcss
-```
-
-2. **Create/update `app/globals.css`:**
-
-```css
-/* Tailwind CSS v4 - Must be first */
-@import "tailwindcss";
-
-/* HeroUI v3 styles - Must be after Tailwind */
-@import "@heroui/styles";
-```
-
-3. **Import in `app/layout.tsx`:**
-
-```tsx
-import "./globals.css";
-
-export default function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
-	return (
-		<html lang="en" suppressHydrationWarning>
-			<body>
-				{/* No Provider needed in HeroUI v3! */}
-				{children}
-			</body>
-		</html>
-	);
-}
-```
-
-4. **Configure PostCSS (`postcss.config.mjs`):**
-
-```js
-export default {
-	plugins: {
-		"@tailwindcss/postcss": {},
-	},
-};
-```
-
-### Critical Setup Requirements
-
-1. **Tailwind CSS v4 is MANDATORY** - HeroUI v3 will NOT work with Tailwind CSS v3
-2. **Use Compound Components** - Components use compound structure (e.g., `Card.Header`, `Card.Content`)
-3. **Use onPress, not onClick** - For better accessibility, use `onPress` event handlers
-4. **Import Order Matters** - Always import Tailwind CSS before HeroUI styles
+HeroUI v3 is already installed in `client/` (pnpm workspace, Tailwind v4,
+`@import "@heroui/styles"` after Tailwind in the global CSS). Don't reinstall
+it. Use `onPress`, not `onClick`, on HeroUI interactive components.
 
 ---
 
 ## Component Patterns
 
-All components use the **compound pattern** shown above (dot-notation subcomponents like `Card.Header`, `Card.Content`). Don't flatten to props — always compose with subcomponents. Fetch component docs for complete anatomy and examples.
+All components use the **compound pattern** shown above (dot-notation subcomponents like `Card.Header`, `Card.Content`). Don't flatten to props — compose with subcomponents.
 
 ---
 

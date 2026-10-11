@@ -1,11 +1,12 @@
 import type {
+  JournalTotals,
   TaxExpenseMethod,
   TaxMethodEstimate,
   TaxProfile
 } from '@invoicetrackr/types';
 
 import { fromCents, roundPositiveDivision, toCents } from './money';
-import type { TaxYearRules } from './tax-rules';
+import { SUPPORTED_TAX_YEARS, TAX_RULES, type TaxYearRules } from './tax-rules';
 
 export type TaxInputs = {
   income: string;
@@ -32,7 +33,8 @@ export const activeMonths = (
   if (startDate && yearOf(startDate) > year) return 0;
   if (endDate && yearOf(endDate) < year) return 0;
 
-  const first = startDate && yearOf(startDate) === year ? monthOf(startDate) : 1;
+  const first =
+    startDate && yearOf(startDate) === year ? monthOf(startDate) : 1;
   const last = endDate && yearOf(endDate) === year ? monthOf(endDate) : 12;
 
   return Math.max(0, last - first + 1);
@@ -47,7 +49,8 @@ export const gpmCredit = (profit: bigint, rules: TaxYearRules) => {
 
   const divisor = toCents(rules.gpm.creditSlopeDivisor);
   const creditRate =
-    rules.gpm.creditRateBp * divisor - BASIS_POINTS * (profit - fullCreditLimit);
+    rules.gpm.creditRateBp * divisor -
+    BASIS_POINTS * (profit - fullCreditLimit);
 
   return creditRate > 0n
     ? roundPositiveDivision(profit * creditRate, BASIS_POINTS * divisor)
@@ -110,10 +113,7 @@ export const calculateMethodEstimate = (
     : BigInt(inputs.activeMonths) * toCents(contributions.monthlyPsdMinimum);
   const psd = max(psdFromIncome, psdMinimum);
 
-  const gpmProfit = max(
-    method === 'actual' ? profit - vsd - psd : profit,
-    0n
-  );
+  const gpmProfit = max(method === 'actual' ? profit - vsd - psd : profit, 0n);
   const usesCombinedIncomeBands = gpmProfit > toCents(rules.gpm.creditLimit);
   const otherIncome = toCents(profile.otherDeclaredIncome);
   const gpmBeforeCredit = usesCombinedIncomeBands
@@ -167,3 +167,36 @@ export const summarizeTaxRules = ({ version, sources }: TaxYearRules) => ({
   version,
   sources
 });
+
+export const estimateTaxes = (
+  year: number,
+  profile: TaxProfile | null,
+  totals: Pick<JournalTotals, 'incomeNet' | 'expenses'> | null
+) => {
+  const rules = TAX_RULES[year];
+  const base = { year, supportedYears: SUPPORTED_TAX_YEARS };
+
+  if (!rules) return { ...base, status: 'unsupported_year' as const };
+  if (!profile || !totals) return { ...base, status: 'needs_profile' as const };
+
+  const inputs = {
+    income: totals.incomeNet,
+    actualExpenses: totals.expenses,
+    activeMonths: activeMonths(
+      year,
+      profile.activityStartDate,
+      profile.activityEndDate
+    )
+  };
+
+  return {
+    ...base,
+    status: 'ready' as const,
+    profile,
+    activeMonths: inputs.activeMonths,
+    ...calculateTaxEstimate(inputs, profile, rules),
+    rules: summarizeTaxRules(rules)
+  };
+};
+
+export type TaxEstimate = ReturnType<typeof estimateTaxes>;

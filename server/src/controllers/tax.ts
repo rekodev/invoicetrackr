@@ -4,12 +4,8 @@ import { useI18n } from 'fastify-i18n';
 
 import { getTaxProfileFromDb, upsertTaxProfileInDb } from '../database/tax';
 import { recordRequestAudit } from '../utils/audit';
-import {
-  activeMonths,
-  calculateTaxEstimate,
-  summarizeTaxRules
-} from '../utils/tax';
-import { SUPPORTED_TAX_YEARS, TAX_RULES } from '../utils/tax-rules';
+import { estimateTaxes } from '../utils/tax';
+import { TAX_RULES } from '../utils/tax-rules';
 import { loadJournal } from './journal';
 
 export const getTaxEstimate = async (
@@ -21,38 +17,12 @@ export const getTaxEstimate = async (
 ) => {
   const userId = Number(req.params.userId);
   const { year } = req.query;
-  const rules = TAX_RULES[year];
-  const base = { year, supportedYears: SUPPORTED_TAX_YEARS };
+  const profile = TAX_RULES[year]
+    ? await getTaxProfileFromDb(userId, year)
+    : null;
+  const journal = profile ? await loadJournal(userId, { year }) : null;
 
-  if (!rules) {
-    return reply.status(200).send({ ...base, status: 'unsupported_year' });
-  }
-
-  const profile = await getTaxProfileFromDb(userId, year);
-
-  if (!profile) {
-    return reply.status(200).send({ ...base, status: 'needs_profile' });
-  }
-
-  const { totals } = await loadJournal(userId, { year });
-  const inputs = {
-    income: totals.incomeNet,
-    actualExpenses: totals.expenses,
-    activeMonths: activeMonths(
-      year,
-      profile.activityStartDate,
-      profile.activityEndDate
-    )
-  };
-
-  reply.status(200).send({
-    ...base,
-    status: 'ready',
-    profile,
-    activeMonths: inputs.activeMonths,
-    ...calculateTaxEstimate(inputs, profile, rules),
-    rules: summarizeTaxRules(rules)
-  });
+  reply.status(200).send(estimateTaxes(year, profile, journal?.totals ?? null));
 };
 
 export const saveTaxProfile = async (
@@ -66,7 +36,11 @@ export const saveTaxProfile = async (
   const { year } = req.params;
   const i18n = await useI18n(req);
   const previous = await getTaxProfileFromDb(userId, year);
-  const profile = await upsertTaxProfileInDb({ userId, year, profile: req.body });
+  const profile = await upsertTaxProfileInDb({
+    userId,
+    year,
+    profile: req.body
+  });
 
   await recordRequestAudit({
     req,
