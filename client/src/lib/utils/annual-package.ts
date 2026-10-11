@@ -22,8 +22,8 @@ const WARNING_LINKS: Partial<
 > = {
   missing_tax_profile: taxEstimateHref,
   missing_owner_details: () => FREELANCER_PROFILE_PAGE,
-  draft_invoices: () => dashboardLinks.drafts(),
-  outstanding_invoices: () => dashboardLinks.outstanding(),
+  draft_invoices: (year) => dashboardLinks.drafts(yearRange(year)),
+  outstanding_invoices: (year) => dashboardLinks.outstanding(yearRange(year)),
   expenses_missing_documents: (year) =>
     dashboardLinks.expensesMissingDocuments(yearRange(year))
 };

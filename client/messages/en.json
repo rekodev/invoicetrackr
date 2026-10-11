@@ -230,7 +230,8 @@
             "review": "Review",
             "export_error": {
                 "title": "Export Failed",
-                "description": "We couldn't prepare the annual package. Try again, and if it keeps failing, sign in again."
+                "description": "We couldn't prepare the annual package. Try again, and if it keeps failing, sign in again.",
+                "invalid_year": "This year can't be exported. Open the annual package and choose a year from the list."
             },
             "alerts": {
                 "blocking": {
@@ -273,7 +274,7 @@
             "cards": {
                 "income": "Received Income · {year}",
                 "expenses": "Deductible Expenses · {year}",
-                "outstanding": "Outstanding",
+                "outstanding": "Outstanding · {year} Invoices",
                 "tax": "Estimated Taxes",
                 "not_available": "Not available"
             },
@@ -1062,6 +1063,7 @@
             "all_categories": "All Categories",
             "all_payment_methods": "All Methods",
             "has_attachment": "Has Document",
+            "missing_document": "Missing Document",
             "deductible_only": "Deductible only",
             "clear": "Clear Filters",
             "clear_short": "Clear",

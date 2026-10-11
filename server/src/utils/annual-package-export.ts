@@ -1,40 +1,37 @@
 import type {
   AnnualPackageSummary,
-  AnnualPackageWarning,
-  JournalPeriod,
-  JournalRow,
-  JournalTotals
+  AnnualPackageWarning
 } from '@invoicetrackr/types';
 import ExcelJS from 'exceljs';
 
-import type {
-  AnnualExpenseDbRow,
-  AnnualPaymentDbRow
-} from '../database/annual-package';
-import type { AnnualInvoice } from './annual-package';
-import { sumMoney } from './annual-package';
+import type { AnnualPaymentDbRow } from '../database/annual-package';
+import type { AnnualExpense, AnnualInvoice } from './annual-package';
+import { isCounted } from './annual-package';
 import {
   addJournalSheet,
   addSummarySheet,
   DATE_FORMAT,
+  type JournalExportInput,
   type JournalTranslate,
   MONEY_FORMAT,
   toExcelDate
 } from './journal-export';
+import { sumMoney } from './money';
 import type { TaxEstimate } from './tax';
 
 export type AnnualPackageExportInput = {
   year: number;
   asOf: string;
+  balanceDate: string;
   isComplete: boolean;
   summary: AnnualPackageSummary;
   warnings: AnnualPackageWarning[];
   estimate: TaxEstimate;
-  journal: { period: JournalPeriod; rows: JournalRow[]; totals: JournalTotals };
-  owner: { legalName: string; activityCertificateNumber: string };
+  journal: Pick<JournalExportInput, 'period' | 'rows' | 'totals'>;
+  owner: JournalExportInput['owner'];
   invoices: AnnualInvoice[];
   payments: AnnualPaymentDbRow[];
-  expenses: AnnualExpenseDbRow[];
+  expenses: AnnualExpense[];
   t: JournalTranslate;
   tJournal: JournalTranslate;
 };
@@ -110,11 +107,11 @@ const index = (_row: unknown, position: number) => position + 1;
 
 const addInvoicesSheet = (
   workbook: ExcelJS.Workbook,
-  { invoices, t }: AnnualPackageExportInput
+  { invoices, summary, t }: AnnualPackageExportInput
 ) => {
-  const counted = invoices.filter((invoice) => !invoice.isVoided);
-  const status = (invoice: AnnualInvoice) =>
-    t(`statuses.${invoice.isVoided ? 'voided' : invoice.status}`);
+  const counted = invoices.filter(isCounted);
+  const counts = (amount: (_invoice: AnnualInvoice) => string) =>
+    (invoice: AnnualInvoice) => (isCounted(invoice) ? amount(invoice) : null);
 
   addTableSheet<AnnualInvoice>(workbook, {
     name: t('sheets.invoices'),
@@ -127,22 +124,41 @@ const addInvoicesSheet = (
       { key: 'dueDate', width: 12, format: 'date', value: (row) => row.dueDate },
       { key: 'client', width: 32, value: (row) => row.clientName },
       { key: 'clientCode', width: 14, value: (row) => row.clientCode },
-      { key: 'status', width: 14, value: status },
-      { key: 'total', width: 14, format: 'money', value: (row) => row.totalAmount },
-      { key: 'vat', width: 12, format: 'money', value: (row) => row.vatAmount },
-      { key: 'paid', width: 14, format: 'money', value: (row) => row.paidAmount },
+      {
+        key: 'status',
+        width: 14,
+        value: (row) => t(`statuses.${row.yearEndStatus}`)
+      },
+      {
+        key: 'total',
+        width: 14,
+        format: 'money',
+        value: counts((row) => row.totalAmount)
+      },
+      {
+        key: 'vat',
+        width: 12,
+        format: 'money',
+        value: counts((row) => row.vatAmount)
+      },
+      {
+        key: 'paid',
+        width: 14,
+        format: 'money',
+        value: counts((row) => row.paidAmount)
+      },
       {
         key: 'outstanding',
         width: 14,
         format: 'money',
-        value: (row) => row.outstandingAmount
+        value: counts((row) => row.outstandingAmount)
       }
     ],
     totals: {
-      total: sumMoney(counted.map((invoice) => invoice.totalAmount)),
+      total: summary.invoiced,
       vat: sumMoney(counted.map((invoice) => invoice.vatAmount)),
       paid: sumMoney(counted.map((invoice) => invoice.paidAmount)),
-      outstanding: sumMoney(counted.map((invoice) => invoice.outstandingAmount))
+      outstanding: summary.outstanding
     }
   });
 };
@@ -163,9 +179,14 @@ const addPaymentsSheet = (
         format: 'date',
         value: (row) => row.paymentDate
       },
-      { key: 'invoiceNumber', width: 14, value: (row) => row.invoiceNumber },
-      { key: 'client', width: 32, value: (row) => row.clientName },
-      { key: 'amount', width: 14, format: 'money', value: (row) => row.amount },
+      { key: 'invoiceNumber', width: 14, value: (row) => row.documentNumber },
+      { key: 'client', width: 32, value: (row) => row.receiverName },
+      {
+        key: 'amount',
+        width: 14,
+        format: 'money',
+        value: (row) => row.receivedAmount
+      },
       {
         key: 'method',
         width: 18,
@@ -173,14 +194,16 @@ const addPaymentsSheet = (
       },
       { key: 'reference', width: 24, value: (row) => row.bankReference }
     ],
-    totals: { amount: sumMoney(payments.map((payment) => payment.amount)) }
+    totals: {
+      amount: sumMoney(payments.map((payment) => payment.receivedAmount))
+    }
   });
 
 const addExpensesSheet = (
   workbook: ExcelJS.Workbook,
   { expenses, t }: AnnualPackageExportInput
 ) =>
-  addTableSheet<AnnualExpenseDbRow>(workbook, {
+  addTableSheet<AnnualExpense>(workbook, {
     name: t('sheets.expenses'),
     t,
     rows: expenses,
@@ -204,7 +227,13 @@ const addExpensesSheet = (
       {
         key: 'originalAmount',
         width: 14,
-        value: (row) => `${row.totalAmount} ${row.currency.toUpperCase()}`
+        format: 'money',
+        value: (row) => row.totalAmount
+      },
+      {
+        key: 'currency',
+        width: 10,
+        value: (row) => row.currency.toUpperCase()
       },
       { key: 'eurAmount', width: 14, format: 'money', value: (row) => row.eurAmount },
       { key: 'vat', width: 12, format: 'money', value: (row) => row.vatAmount },
@@ -237,7 +266,17 @@ const TAX_ROWS = ['income', 'deductions', 'vsd', 'psd', 'gpm', 'total'] as const
 
 const addOverviewSheet = (
   workbook: ExcelJS.Workbook,
-  { year, asOf, isComplete, summary, estimate, owner, t, tJournal }: AnnualPackageExportInput
+  {
+    year,
+    asOf,
+    balanceDate,
+    isComplete,
+    summary,
+    estimate,
+    owner,
+    t,
+    tJournal
+  }: AnnualPackageExportInput
 ) => {
   const sheet = workbook.addWorksheet(t('sheets.summary'));
   sheet.columns = [{ width: 48 }, { width: 20 }, { width: 20 }];
@@ -273,7 +312,7 @@ const addOverviewSheet = (
   addMoneyLine(t('summary.expenses'), summary.expenses);
   addMoneyLine(t('summary.net'), summary.net).font = { bold: true };
   addMoneyLine(t('summary.invoiced'), summary.invoiced);
-  addMoneyLine(t('summary.outstanding', { date: asOf }), summary.outstanding);
+  addMoneyLine(t('summary.outstanding', { date: balanceDate }), summary.outstanding);
 
   addLine([]);
   addLine([t('sections.tax')], { font: { bold: true } });

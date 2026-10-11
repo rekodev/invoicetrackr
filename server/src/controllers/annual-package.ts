@@ -3,11 +3,10 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
 import {
-  getAnnualDraftCountFromDb,
-  getAnnualExpensesFromDb,
   getAnnualInvoicesFromDb,
-  getAnnualPaymentsFromDb
+  getExpenseDocumentCountsFromDb
 } from '../database/annual-package';
+import { getDraftCountFromDb } from '../database/dashboard';
 import { todayInLithuania } from '../database/invoice-payment';
 import { getJournalOwnerFromDb } from '../database/journal';
 import { getTaxProfileFromDb } from '../database/tax';
@@ -19,27 +18,37 @@ import {
 } from '../utils/annual-package';
 import { buildAnnualPackageXlsx } from '../utils/annual-package-export';
 import { recordRequestAudit } from '../utils/audit';
-import { journalPeriod } from '../utils/journal';
+import { buildJournal, journalPeriod } from '../utils/journal';
 import { estimateTaxes } from '../utils/tax';
-import { loadJournal } from './journal';
-
-const XLSX_CONTENT_TYPE =
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+import { CONTENT_TYPES, loadJournalRecords } from './journal';
 
 const loadAnnualPackage = async (userId: number, year: number) => {
   const { from, to } = journalPeriod(year);
-  const range = { userId, from, to };
-  const [journal, owner, profile, invoiceRows, payments, expenses, draftCount] =
-    await Promise.all([
-      loadJournal(userId, { year }),
-      getJournalOwnerFromDb(userId),
-      getTaxProfileFromDb(userId, year),
-      getAnnualInvoicesFromDb(range),
-      getAnnualPaymentsFromDb(range),
-      getAnnualExpensesFromDb(range),
-      getAnnualDraftCountFromDb(range)
-    ]);
+  const [
+    { period, incomeRows, expenseRows },
+    owner,
+    profile,
+    invoiceRows,
+    draftCount,
+    documentCounts
+  ] = await Promise.all([
+    loadJournalRecords(userId, { year }),
+    getJournalOwnerFromDb(userId),
+    getTaxProfileFromDb(userId, year),
+    getAnnualInvoicesFromDb({ userId, from, to }),
+    getDraftCountFromDb(userId, { from, to }),
+    getExpenseDocumentCountsFromDb({ userId, from, to })
+  ]);
+  const documentsByExpense = new Map(
+    documentCounts.map((row) => [row.expenseId, row.documentCount])
+  );
+  const expenses = expenseRows.map((row) => ({
+    ...row,
+    documentCount: documentsByExpense.get(row.expenseId) ?? 0
+  }));
+  const journal = { period, ...buildJournal(incomeRows, expenseRows) };
   const asOf = todayInLithuania();
+  const balanceDate = asOf < to ? asOf : to;
   const estimate = estimateTaxes(year, profile, journal.totals);
   const invoices = buildAnnualInvoices(invoiceRows);
   const warnings = buildAnnualWarnings({
@@ -55,6 +64,7 @@ const loadAnnualPackage = async (userId: number, year: number) => {
   return {
     year,
     asOf,
+    balanceDate,
     isComplete: isAnnualPackageComplete(warnings),
     summary: buildAnnualSummary({ totals: journal.totals, invoices, estimate }),
     warnings,
@@ -62,7 +72,7 @@ const loadAnnualPackage = async (userId: number, year: number) => {
     journal,
     owner,
     invoices,
-    payments,
+    payments: incomeRows,
     expenses
   };
 };
@@ -114,7 +124,7 @@ export const exportAnnualPackage = async (
   });
 
   reply
-    .header('Content-Type', XLSX_CONTENT_TYPE)
+    .header('Content-Type', CONTENT_TYPES.xlsx)
     .header('Content-Disposition', `attachment; filename="${filename}"`)
     .status(200)
     .send(file);

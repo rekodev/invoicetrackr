@@ -166,6 +166,7 @@ export default {
       description: 'Aprašymas',
       category: 'Kategorija',
       originalAmount: 'Pradinė suma',
+      currency: 'Valiuta',
       eurAmount: 'Suma (€)',
       businessUse: 'Veiklai (%)',
       deductible: 'Atskaitoma (€)',
@@ -176,7 +177,6 @@ export default {
     statuses: {
       pending: 'Neapmokėta',
       paid: 'Apmokėta',
-      canceled: 'Atšaukta',
       voided: 'Anuliuota (neįskaičiuota)'
     },
     paymentMethods: {

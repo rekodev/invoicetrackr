@@ -126,14 +126,19 @@ export const getOpenInvoicesFromDb = async (
     );
 };
 
-export const getDraftCountFromDb = async (userId: number) => {
+export const getDraftCountFromDb = async (
+  userId: number,
+  range?: { from: string; to: string }
+) => {
   const [row] = await db
     .select({ count: count(invoicesTable.id) })
     .from(invoicesTable)
     .where(
       and(
         eq(invoicesTable.userId, userId),
-        eq(invoicesTable.lifecycleStatus, 'draft')
+        eq(invoicesTable.lifecycleStatus, 'draft'),
+        range ? gte(invoicesTable.date, range.from) : undefined,
+        range ? lte(invoicesTable.date, range.to) : undefined
       )
     );
 

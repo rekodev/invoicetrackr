@@ -164,6 +164,7 @@ export default {
       description: 'Description',
       category: 'Category',
       originalAmount: 'Original amount',
+      currency: 'Currency',
       eurAmount: 'Amount (€)',
       businessUse: 'Business use (%)',
       deductible: 'Deductible (€)',
@@ -174,7 +175,6 @@ export default {
     statuses: {
       pending: 'Unpaid',
       paid: 'Paid',
-      canceled: 'Canceled',
       voided: 'Voided (not counted)'
     },
     paymentMethods: {

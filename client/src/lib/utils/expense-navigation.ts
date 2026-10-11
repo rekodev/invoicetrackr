@@ -2,6 +2,10 @@ import { EXPENSE_CATEGORIES, EXPENSE_PAYMENT_METHODS } from '@/lib/constants/exp
 import { EXPENSES_PAGE } from '@/lib/constants/pages';
 import type { SortDescriptor } from '@/lib/types/table';
 
+export const DOCUMENT_FILTER_PARAMS = { all: '', attached: '1', missing: 'missing' } as const;
+
+export type ExpenseDocumentsFilter = keyof typeof DOCUMENT_FILTER_PARAMS;
+
 const SORT_COLUMNS = ['expenseDate', 'supplier', 'description', 'category', 'totalAmount', 'deductibleAmount', 'paymentMethod'];
 
 export const readExpenseListState = (params: URLSearchParams) => {
@@ -20,7 +24,9 @@ export const readExpenseListState = (params: URLSearchParams) => {
     filterValue: params.get('q') ?? '',
     categoryFilter: EXPENSE_CATEGORIES.some((item) => item === category) ? category : 'all',
     paymentMethodFilter: EXPENSE_PAYMENT_METHODS.some((item) => item === method) ? method : 'all',
-    hasAttachmentFilter: params.get('documents') === '1',
+    documentsFilter: (Object.keys(DOCUMENT_FILTER_PARAMS) as ExpenseDocumentsFilter[]).find(
+      (filter) => filter !== 'all' && DOCUMENT_FILTER_PARAMS[filter] === params.get('documents')
+    ) ?? 'all',
     deductibleOnly: params.get('deductible') === '1',
     dateFrom: date('from'),
     dateTo: date('to'),

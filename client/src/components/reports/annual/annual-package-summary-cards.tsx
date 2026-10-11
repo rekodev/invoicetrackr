@@ -33,7 +33,7 @@ const AnnualPackageSummaryCards = async ({ summary, year }: Props) => {
       <MetricCard
         icon={<ClockIcon className="h-4 w-4" />}
         iconVariant="warning"
-        title={t('outstanding')}
+        title={t('outstanding', { year })}
         text={formatMoney(summary.outstanding, locale)}
       />
       <MetricCard

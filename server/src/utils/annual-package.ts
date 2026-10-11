@@ -8,33 +8,37 @@ import type {
   AnnualExpenseDbRow,
   AnnualInvoiceDbRow
 } from '../database/annual-package';
-import { fromCents, toCents } from './money';
+import type { JournalExportInput } from './journal-export';
+import { fromCents, sumMoney, toCents } from './money';
 import { selectedMethodEstimate, type TaxEstimate } from './tax';
 
 export type AnnualInvoice = AnnualInvoiceDbRow & {
-  isVoided: boolean;
   outstandingAmount: string;
+  yearEndStatus: 'paid' | 'pending' | 'voided';
+  isOpen: boolean;
 };
 
-type AnnualOwner = { legalName: string; activityCertificateNumber: string };
+export type AnnualExpense = AnnualExpenseDbRow & { documentCount: number };
 
-export const sumMoney = (values: string[]) =>
-  fromCents(values.reduce((sum, value) => sum + toCents(value), 0n));
+export const isCounted = (invoice: AnnualInvoice) =>
+  invoice.yearEndStatus !== 'voided';
 
 export const buildAnnualInvoices = (
   rows: AnnualInvoiceDbRow[]
 ): AnnualInvoice[] =>
   rows.map((row) => {
     const isVoided = row.lifecycleStatus === 'voided';
-    const balance =
-      !isVoided && row.status === 'pending'
-        ? toCents(row.totalAmount) - toCents(row.paidAmount)
-        : 0n;
+    const balance = isVoided
+      ? 0n
+      : toCents(row.totalAmount) - toCents(row.paidAmount);
+    const outstanding = balance > 0n ? balance : 0n;
 
     return {
       ...row,
-      isVoided,
-      outstandingAmount: fromCents(balance > 0n ? balance : 0n)
+      outstandingAmount: fromCents(outstanding),
+      yearEndStatus: isVoided ? 'voided' : outstanding > 0n ? 'pending' : 'paid',
+      isOpen:
+        !isVoided && row.status === 'pending' && toCents(row.totalAmount) > 0n
     };
   });
 
@@ -47,7 +51,7 @@ export const buildAnnualSummary = ({
   invoices: AnnualInvoice[];
   estimate: TaxEstimate;
 }): AnnualPackageSummary => {
-  const counted = invoices.filter((invoice) => !invoice.isVoided);
+  const counted = invoices.filter(isCounted);
   const method =
     estimate.status === 'ready' ? selectedMethodEstimate(estimate) : null;
 
@@ -71,11 +75,11 @@ export const buildAnnualWarnings = ({
 }: {
   year: number;
   today: string;
-  owner: AnnualOwner;
+  owner: JournalExportInput['owner'];
   estimate: TaxEstimate;
   draftCount: number;
   invoices: AnnualInvoice[];
-  expenses: Pick<AnnualExpenseDbRow, 'documentCount'>[];
+  expenses: Pick<AnnualExpense, 'documentCount'>[];
 }): AnnualPackageWarning[] => {
   const warnings: AnnualPackageWarning[] = [];
   const recommend = (code: AnnualPackageWarning['code'], count: number) => {
@@ -98,8 +102,7 @@ export const buildAnnualWarnings = ({
   recommend('draft_invoices', draftCount);
   recommend(
     'outstanding_invoices',
-    invoices.filter((invoice) => toCents(invoice.outstandingAmount) > 0n)
-      .length
+    invoices.filter((invoice) => invoice.isOpen).length
   );
   recommend(
     'expenses_missing_documents',

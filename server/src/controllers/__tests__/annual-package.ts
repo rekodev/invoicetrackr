@@ -2,6 +2,7 @@ import ExcelJS from 'exceljs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as annualDb from '../../database/annual-package';
+import * as dashboardDb from '../../database/dashboard';
 import * as journalDb from '../../database/journal';
 import * as taxDb from '../../database/tax';
 import {
@@ -13,6 +14,7 @@ import { mockLocalizedI18n } from '../../test/i18n';
 import { mockCreateAuditEvent } from '../../test/setup';
 
 vi.mock('../../database/annual-package');
+vi.mock('../../database/dashboard');
 vi.mock('../../database/journal');
 vi.mock('../../database/tax');
 vi.mock('../../database/invoice-payment', () => ({
@@ -49,19 +51,27 @@ describe('Annual Package Controller', () => {
         receivedAmount: '100.00',
         paidBefore: '0',
         vatAmount: '17.36',
-        totalAmount: '100.00'
+        totalAmount: '100.00',
+        method: 'bank_transfer',
+        bankReference: 'SF001'
       }
     ]);
     vi.mocked(journalDb.getJournalExpenseRowsFromDb).mockResolvedValue([
       {
         expenseId: 20,
         expenseDate: '2026-03-05',
+        paymentDate: null,
         documentNumber: null,
         supplier: 'Telia',
         description: 'Internetas',
+        category: 'telecommunications',
+        currency: 'eur',
+        totalAmount: '40.00',
         eurAmount: '40.00',
+        vatAmount: null,
         businessUsePercentage: '50.00',
-        deductibleAmount: '20.00'
+        deductibleAmount: '20.00',
+        paymentMethod: 'card'
       }
     ]);
     vi.mocked(journalDb.getJournalOwnerFromDb).mockResolvedValue({
@@ -104,37 +114,8 @@ describe('Annual Package Controller', () => {
         paidAmount: '0.00'
       }
     ]);
-    vi.mocked(annualDb.getAnnualPaymentsFromDb).mockResolvedValue([
-      {
-        paymentId: 3,
-        paymentDate: '2026-03-10',
-        invoiceNumber: 'SF001',
-        clientName: 'MB Šaltinis',
-        amount: '100.00',
-        method: 'bank_transfer',
-        bankReference: 'SF001'
-      }
-    ]);
-    vi.mocked(annualDb.getAnnualExpensesFromDb).mockResolvedValue([
-      {
-        id: 20,
-        expenseDate: '2026-03-05',
-        paymentDate: null,
-        supplier: 'Telia',
-        documentNumber: null,
-        description: 'Internetas',
-        category: 'telecommunications',
-        currency: 'eur',
-        totalAmount: '40.00',
-        eurAmount: '40.00',
-        vatAmount: null,
-        businessUsePercentage: '50.00',
-        deductibleAmount: '20.00',
-        paymentMethod: 'card',
-        documentCount: 0
-      }
-    ]);
-    vi.mocked(annualDb.getAnnualDraftCountFromDb).mockResolvedValue(1);
+    vi.mocked(annualDb.getExpenseDocumentCountsFromDb).mockResolvedValue([]);
+    vi.mocked(dashboardDb.getDraftCountFromDb).mockResolvedValue(1);
   });
 
   it('returns reconciled totals with blocking problems and recommendations', async () => {
@@ -170,6 +151,12 @@ describe('Annual Package Controller', () => {
       from: '2026-01-01',
       to: '2026-12-31'
     });
+    expect(dashboardDb.getDraftCountFromDb).toHaveBeenCalledWith(1, {
+      from: '2026-01-01',
+      to: '2026-12-31'
+    });
+    expect(journalDb.getJournalIncomeRowsFromDb).toHaveBeenCalledTimes(1);
+    expect(journalDb.getJournalExpenseRowsFromDb).toHaveBeenCalledTimes(1);
     expect(mockCreateAuditEvent).not.toHaveBeenCalled();
 
     const invalid = await app.inject({ method: 'GET', url: '/api/1/annual-package?year=last' });
@@ -215,11 +202,20 @@ describe('Annual Package Controller', () => {
 
     const totalRow = (name: string) => sheetValues(workbook.getWorksheet(name)!).at(-1)!;
     expect(totalRow('Mokėjimai')[5]).toBe(summaryValue('Gautos pajamos su PVM (€)'));
-    expect(totalRow('Išlaidos')[12]).toBe(summaryValue('Atskaitomos išlaidos (€)'));
+    expect(totalRow('Išlaidos')[13]).toBe(summaryValue('Atskaitomos išlaidos (€)'));
+    expect(sheetValues(workbook.getWorksheet('Išlaidos')!)[1].slice(8, 10)).toEqual([40, 'EUR']);
     expect(totalRow('Sąskaitos')[8]).toBe(
       summaryValue('Išrašyta: šių metų datos išrašytos sąskaitos (€)')
     );
     expect(totalRow('Sąskaitos')[11]).toBe(100);
+    const voidedInvoice = sheetValues(workbook.getWorksheet('Sąskaitos')!)[2];
+    expect(voidedInvoice[2]).toBe('SF002');
+    expect([8, 9, 10, 11].map((column) => voidedInvoice[column])).toEqual([
+      undefined,
+      undefined,
+      undefined,
+      undefined
+    ]);
     expect(sheetValues(workbook.getWorksheet('Įspėjimai')!)[1]).toEqual([
       undefined,
       'Blokuojanti',

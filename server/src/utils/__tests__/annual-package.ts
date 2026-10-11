@@ -51,22 +51,26 @@ const needsProfile: TaxEstimate = {
 };
 
 describe('annual package', () => {
-  it('counts outstanding balances on unpaid issued invoices and leaves voided ones out of the summary', () => {
+  it('counts year-end balances from payments up to Dec 31 and leaves voided invoices out of the summary', () => {
     const invoices = buildAnnualInvoices([
       invoiceRow(),
       invoiceRow({ id: 2, status: 'paid', totalAmount: '100.00', vatAmount: '0.00', paidAmount: '100.00' }),
-      invoiceRow({ id: 3, lifecycleStatus: 'voided', status: 'canceled', totalAmount: '50.00', paidAmount: '0.00' })
+      invoiceRow({ id: 3, lifecycleStatus: 'voided', status: 'canceled', totalAmount: '50.00', paidAmount: '0.00' }),
+      invoiceRow({ id: 4, status: 'paid', totalAmount: '80.00', vatAmount: '0.00', paidAmount: '0.00' })
     ]);
 
-    expect(invoices.map(({ isVoided, outstandingAmount }) => ({ isVoided, outstandingAmount }))).toEqual([
-      { isVoided: false, outstandingAmount: '60.50' },
-      { isVoided: false, outstandingAmount: '0.00' },
-      { isVoided: true, outstandingAmount: '0.00' }
+    expect(
+      invoices.map(({ outstandingAmount, yearEndStatus, isOpen }) => ({ outstandingAmount, yearEndStatus, isOpen }))
+    ).toEqual([
+      { outstandingAmount: '60.50', yearEndStatus: 'pending', isOpen: true },
+      { outstandingAmount: '0.00', yearEndStatus: 'paid', isOpen: false },
+      { outstandingAmount: '0.00', yearEndStatus: 'voided', isOpen: false },
+      { outstandingAmount: '80.00', yearEndStatus: 'pending', isOpen: false }
     ]);
     expect(buildAnnualSummary({ totals, invoices, estimate: readyEstimate })).toEqual({
       ...totals,
-      invoiced: '221.00',
-      outstanding: '60.50',
+      invoiced: '301.00',
+      outstanding: '140.50',
       expenseMethod: 'thirty_percent',
       taxTotal: '25.00'
     });
@@ -93,7 +97,11 @@ describe('annual package', () => {
       estimate: needsProfile,
       owner: { legalName: 'Artūras Žemaitis', activityCertificateNumber: ' ' },
       draftCount: 2,
-      invoices: [invoiceRow(), invoiceRow({ id: 2 })],
+      invoices: [
+        invoiceRow(),
+        invoiceRow({ id: 2 }),
+        invoiceRow({ id: 3, status: 'paid', paidAmount: '0.00' })
+      ],
       expenses: [{ documentCount: 0 }, { documentCount: 2 }],
       expected: [
         { code: 'year_in_progress', severity: 'blocking' },

@@ -230,7 +230,8 @@
             "review": "Peržiūrėti",
             "export_error": {
                 "title": "Eksportuoti nepavyko",
-                "description": "Nepavyko paruošti metinės ataskaitos. Bandykite dar kartą, o jei nepavyks – prisijunkite iš naujo."
+                "description": "Nepavyko paruošti metinės ataskaitos. Bandykite dar kartą, o jei nepavyks – prisijunkite iš naujo.",
+                "invalid_year": "Šių metų eksportuoti negalima. Atidarykite metinę ataskaitą ir pasirinkite metus iš sąrašo."
             },
             "alerts": {
                 "blocking": {
@@ -273,7 +274,7 @@
             "cards": {
                 "income": "Gautos pajamos · {year}",
                 "expenses": "Atskaitomos išlaidos · {year}",
-                "outstanding": "Neapmokėta",
+                "outstanding": "Neapmokėta · {year} m. sąskaitos",
                 "tax": "Apskaičiuoti mokesčiai",
                 "not_available": "Nėra"
             },
@@ -1062,6 +1063,7 @@
             "all_categories": "Visos kategorijos",
             "all_payment_methods": "Visi būdai",
             "has_attachment": "Turi dokumentą",
+            "missing_document": "Be dokumento",
             "deductible_only": "Tik atskaitomos",
             "clear": "Išvalyti filtrus",
             "clear_short": "Išvalyti",
