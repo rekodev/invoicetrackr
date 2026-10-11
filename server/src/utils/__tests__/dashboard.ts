@@ -6,6 +6,7 @@ import {
   OpenInvoiceRow,
   summarizeOpenInvoices
 } from '../dashboard';
+import type { TaxEstimate } from '../tax';
 
 const openInvoice = (overrides: Partial<OpenInvoiceRow>): OpenInvoiceRow => ({
   id: 1,
@@ -82,10 +83,10 @@ describe('dashboard summary math', () => {
 
   it('subtracts VAT, expenses and the reserve for the saved method, floored at zero with a shortfall', () => {
     const ready = (expenseMethod: 'actual' | 'thirty_percent') => ({
-      status: 'ready' as const,
+      status: 'ready',
       profile: { expenseMethod },
       methods: { actual: { total: '1000.00' }, thirtyPercent: { total: '1500.50' } }
-    });
+    }) as unknown as TaxEstimate;
     const totals = { receivedIncome: '12100.00', vatCollected: '2100.00', expenses: '1500.00' };
 
     expect(calculateSafeToSpend({ ...totals, estimate: ready('thirty_percent') })).toEqual({
@@ -105,7 +106,7 @@ describe('dashboard summary math', () => {
       })
     ).toMatchObject({ taxReserve: '1000.00', safeToSpend: '0.00', shortfall: '700.01' });
     expect(
-      calculateSafeToSpend({ ...totals, estimate: { status: 'needs_profile' } })
+      calculateSafeToSpend({ ...totals, estimate: { status: 'needs_profile', year: 2026, supportedYears: [2026] } })
     ).toEqual({ ...totals, status: 'needs_profile' });
   });
 });

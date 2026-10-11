@@ -19,39 +19,6 @@ const SafeToSpendCard = async ({ safeToSpend, year }: Props) => {
   const locale = await getLocale();
   const taxHref = taxEstimateHref(year);
 
-  const value = () => {
-    if (safeToSpend.status === 'ready') {
-      return (
-        <div className="flex flex-col items-start gap-1">
-          <p className="text-2xl font-semibold tabular-nums">
-            {formatMoney(safeToSpend.safeToSpend, locale)}
-          </p>
-          {Number(safeToSpend.shortfall) > 0 && (
-            <Chip size="sm" variant="soft" color="danger">
-              {t('shortfall', {
-                amount: formatMoney(safeToSpend.shortfall, locale)
-              })}
-            </Chip>
-          )}
-        </div>
-      );
-    }
-
-    if (safeToSpend.status === 'needs_profile') {
-      return (
-        <Link href={taxHref} className={buttonVariants({ size: 'sm' })}>
-          {t('set_up')}
-        </Link>
-      );
-    }
-
-    return (
-      <p className="text-muted text-sm">
-        {t('unsupported', { years: TAX_SUPPORTED_YEARS.join(', ') })}
-      </p>
-    );
-  };
-
   return (
     <Card className="h-full border">
       <Card.Content className="flex h-full flex-col items-start justify-between gap-5">
@@ -60,28 +27,47 @@ const SafeToSpendCard = async ({ safeToSpend, year }: Props) => {
             <WalletIcon className="h-4 w-4" />
           </IconContainer>
           <h2>{t('title')}</h2>
-          <span className="-my-2">
-            <InfoPopover
-              title={t('info.title')}
-              placement="bottom end"
-              action={
-                safeToSpend.status === 'ready' && (
-                  <Link
-                    href={taxHref}
-                    className={buttonVariants({ variant: 'outline', size: 'sm' })}
-                  >
-                    {t('tax_breakdown')}
-                  </Link>
-                )
-              }
-            >
-              <SafeToSpendBreakdown safeToSpend={safeToSpend} year={year} />
-              <p className="text-muted">{t('info.reserve')}</p>
-              <p className="text-muted">{t('info.payments')}</p>
-            </InfoPopover>
-          </span>
+          <InfoPopover
+            title={t('info.title')}
+            placement="bottom end"
+            action={
+              safeToSpend.status === 'ready' && (
+                <Link
+                  href={taxHref}
+                  className={buttonVariants({ variant: 'outline', size: 'sm' })}
+                >
+                  {t('tax_breakdown')}
+                </Link>
+              )
+            }
+          >
+            <SafeToSpendBreakdown safeToSpend={safeToSpend} year={year} />
+            <p className="text-muted">{t('info.reserve')}</p>
+            <p className="text-muted">{t('info.payments')}</p>
+          </InfoPopover>
         </div>
-        {value()}
+        {safeToSpend.status === 'ready' ? (
+          <div className="flex flex-col items-start gap-1">
+            <p className="text-2xl font-semibold tabular-nums">
+              {formatMoney(safeToSpend.safeToSpend, locale)}
+            </p>
+            {Number(safeToSpend.shortfall) > 0 && (
+              <Chip size="sm" variant="soft" color="danger">
+                {t('shortfall', {
+                  amount: formatMoney(safeToSpend.shortfall, locale)
+                })}
+              </Chip>
+            )}
+          </div>
+        ) : safeToSpend.status === 'needs_profile' ? (
+          <Link href={taxHref} className={buttonVariants({ size: 'sm' })}>
+            {t('set_up')}
+          </Link>
+        ) : (
+          <p className="text-muted text-sm">
+            {t('unsupported', { years: TAX_SUPPORTED_YEARS.join(', ') })}
+          </p>
+        )}
       </Card.Content>
     </Card>
   );

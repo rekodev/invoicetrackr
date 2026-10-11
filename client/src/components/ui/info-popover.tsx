@@ -24,7 +24,7 @@ export default function InfoPopover({
         size="sm"
         variant="ghost"
         aria-label={title}
-        className="text-muted hover:text-foreground"
+        className="text-muted hover:text-foreground -my-2"
       >
         <InformationCircleIcon className="size-4" />
       </Button>

@@ -1,11 +1,11 @@
 import type {
   DashboardMonth,
   DashboardOverdueInvoice,
-  DashboardSafeToSpend,
-  TaxExpenseMethod
+  DashboardSafeToSpend
 } from '@invoicetrackr/types';
 
 import { fromCents, toCents } from './money';
+import type { TaxEstimate } from './tax';
 
 export const OVERDUE_PREVIEW_LIMIT = 5;
 
@@ -62,7 +62,10 @@ export const buildMonthlySummary = (
   };
 };
 
-export const summarizeOpenInvoices = (rows: OpenInvoiceRow[], today: string) => {
+export const summarizeOpenInvoices = (
+  rows: OpenInvoiceRow[],
+  today: string
+) => {
   let outstanding = 0n;
   let overdue = 0n;
   const overdueInvoices: DashboardOverdueInvoice[] = [];
@@ -88,15 +91,17 @@ export const summarizeOpenInvoices = (rows: OpenInvoiceRow[], today: string) => 
   });
 
   overdueInvoices.sort(
-    (first, second) => second.daysOverdue - first.daysOverdue || first.id - second.id
+    (first, second) =>
+      second.daysOverdue - first.daysOverdue || first.id - second.id
   );
 
   return {
     outstanding: fromCents(outstanding),
     overdue: fromCents(overdue),
     overdueCount: overdueInvoices.length,
-    overdueWithoutEmail: overdueInvoices.filter((invoice) => !invoice.clientEmail)
-      .length,
+    overdueWithoutEmail: overdueInvoices.filter(
+      (invoice) => !invoice.clientEmail
+    ).length,
     overdueInvoices: overdueInvoices.slice(0, OVERDUE_PREVIEW_LIMIT)
   };
 };
@@ -105,13 +110,7 @@ type SafeToSpendInputs = {
   receivedIncome: string;
   vatCollected: string;
   expenses: string;
-  estimate:
-    | { status: 'unsupported_year' | 'needs_profile' }
-    | {
-        status: 'ready';
-        profile: { expenseMethod: TaxExpenseMethod };
-        methods: { actual: { total: string }; thirtyPercent: { total: string } };
-      };
+  estimate: TaxEstimate;
 };
 
 export const calculateSafeToSpend = ({

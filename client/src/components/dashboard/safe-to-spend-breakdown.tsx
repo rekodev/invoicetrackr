@@ -8,7 +8,13 @@ import { taxEstimateHref } from '@/lib/utils/tax';
 
 type Props = { safeToSpend: DashboardSafeToSpend; year: number };
 
-type Row = { key: string; hint?: string; amount?: string; href?: string; sign?: string };
+type Row = {
+  key: string;
+  hint?: string;
+  amount?: string;
+  href?: string;
+  subtract?: boolean;
+};
 
 const SafeToSpendBreakdown = async ({ safeToSpend, year }: Props) => {
   const t = await getTranslations('dashboard.safe_to_spend');
@@ -24,13 +30,19 @@ const SafeToSpendBreakdown = async ({ safeToSpend, year }: Props) => {
       href: dashboardLinks.receivedIncome(range)
     },
     ...(Number(safeToSpend.vatCollected) > 0
-      ? [{ key: 'vat_collected', amount: safeToSpend.vatCollected, sign: '−' }]
+      ? [
+          {
+            key: 'vat_collected',
+            amount: safeToSpend.vatCollected,
+            subtract: true
+          }
+        ]
       : []),
     {
       key: 'expenses',
       amount: safeToSpend.expenses,
       href: dashboardLinks.expenses(range),
-      sign: '−'
+      subtract: true
     },
     isReady
       ? {
@@ -38,7 +50,7 @@ const SafeToSpendBreakdown = async ({ safeToSpend, year }: Props) => {
           hint: tMethods(safeToSpend.expenseMethod),
           amount: safeToSpend.taxReserve,
           href: taxEstimateHref(year),
-          sign: '−'
+          subtract: true
         }
       : { key: 'tax_reserve' }
   ];
@@ -47,19 +59,30 @@ const SafeToSpendBreakdown = async ({ safeToSpend, year }: Props) => {
     <dl className="flex flex-col">
       {rows.map((row) => {
         const label = t(`rows.${row.key}`);
-        const formatted = row.amount && `${row.sign ?? ''}${formatMoney(row.amount, locale)}`;
+        const sign = row.subtract && Number(row.amount) > 0 ? '−' : '';
+        const formatted =
+          row.amount === undefined
+            ? undefined
+            : `${sign}${formatMoney(row.amount, locale)}`;
 
         return (
-          <div key={row.key} className="flex justify-between gap-4 border-b py-1.5">
+          <div
+            key={row.key}
+            className="flex justify-between gap-4 border-b py-1.5"
+          >
             <dt className="text-muted">
               {label}
               {row.hint && <span className="block text-xs">{row.hint}</span>}
             </dt>
             <dd className="text-right tabular-nums">
-              {!formatted ? (
+              {formatted === undefined ? (
                 <span className="text-muted">{t('not_set_up')}</span>
               ) : row.href ? (
-                <Link href={row.href} aria-label={`${label}: ${formatted}`} className="hover:underline">
+                <Link
+                  href={row.href}
+                  aria-label={`${label}: ${formatted}`}
+                  className="hover:underline"
+                >
                   {formatted}
                 </Link>
               ) : (
