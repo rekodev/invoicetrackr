@@ -3,7 +3,7 @@ import z from 'zod/v4';
 import { yearSchema } from './common';
 import { moneySchema } from './finance';
 import { journalTotalsSchema } from './journal';
-import { taxExpenseMethodSchema } from './tax';
+import { getTaxEstimateResponseSchema, taxExpenseMethodSchema } from './tax';
 
 export const annualPackageQuerySchema = z.object({ year: yearSchema });
 
@@ -35,7 +35,8 @@ export const getAnnualPackageResponseSchema = z.object({
   asOf: z.string(),
   isComplete: z.boolean(),
   summary: annualPackageSummarySchema,
-  warnings: z.array(annualPackageWarningSchema)
+  warnings: z.array(annualPackageWarningSchema),
+  estimate: getTaxEstimateResponseSchema
 });
 
 export type AnnualPackageQuery = z.infer<typeof annualPackageQuerySchema>;

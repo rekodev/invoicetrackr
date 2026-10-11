@@ -1,5 +1,6 @@
 'use client';
 
+import { CalendarIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -19,6 +20,7 @@ const TaxYearSelect = ({ year, years }: Props) => {
       year={year}
       years={years}
       onChange={(next) => router.push(taxEstimateHref(next))}
+      icon={<CalendarIcon className="size-5 shrink-0" />}
     />
   );
 };

@@ -1,7 +1,7 @@
 'use client';
 
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
-import { Button, Card } from '@heroui/react';
+import { Button } from '@heroui/react';
 import type { TaxProfile } from '@invoicetrackr/types';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -37,29 +37,30 @@ const TaxAssumptionsCard = ({ userId, year, profile, activeMonths }: Props) => {
     [t('expense_method'), tMethods(profile.expenseMethod)],
     [t('psd_coverage'), yesNo(profile.hasEmploymentPsdCoverage)],
     [t('pension'), yesNo(profile.hasAdditionalPensionAccumulation)],
-    [t('activity_period'), `${formatPeriod()} · ${t('months', { count: activeMonths })}`],
+    [
+      t('activity_period'),
+      `${formatPeriod()} · ${t('months', { count: activeMonths })}`
+    ],
     [t('other_income'), formatMoney(profile.otherDeclaredIncome, locale)]
   ];
 
   return (
-    <Card className="border">
-      <Card.Header className="flex-row items-center justify-between gap-4">
+    <section className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-4">
         <h2 className="text-base font-medium">{t('title')}</h2>
         <Button size="sm" variant="outline" onPress={() => setIsOpen(true)}>
           <PencilSquareIcon className="size-4" />
           {t('edit')}
         </Button>
-      </Card.Header>
-      <Card.Content>
-        <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-          {details.map(([label, value]) => (
-            <div key={label} className="min-w-0">
-              <dt className="text-muted text-xs font-medium">{label}</dt>
-              <dd className="text-sm">{value}</dd>
-            </div>
-          ))}
-        </dl>
-      </Card.Content>
+      </div>
+      <dl className="grid gap-x-6 gap-y-4 border-y py-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+        {details.map(([label, value]) => (
+          <div key={label} className="min-w-0">
+            <dt className="text-muted text-xs font-medium">{label}</dt>
+            <dd className="text-sm">{value}</dd>
+          </div>
+        ))}
+      </dl>
       <TaxAssumptionsDialog
         userId={userId}
         year={year}
@@ -67,7 +68,7 @@ const TaxAssumptionsCard = ({ userId, year, profile, activeMonths }: Props) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       />
-    </Card>
+    </section>
   );
 };
 

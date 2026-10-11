@@ -17,7 +17,6 @@
             "reports": "Ataskaitos",
             "journal": "Žurnalas",
             "taxes": "Mokesčiai",
-            "annual": "Metinė ataskaita",
             "settings": "Nustatymai",
             "freelancer_profile": "Veiklos profilis",
             "banking_information": "Banko sąskaitos",
@@ -61,7 +60,6 @@
         "reports": "Ataskaitos",
         "journal": "Žurnalas",
         "taxes": "Mokesčiai",
-        "annual": "Metinė ataskaita",
         "settings": "Nustatymai",
         "login": "Prisijungti",
         "new": "Nauja",
@@ -146,9 +144,10 @@
             }
         },
         "taxes": {
-            "heading": "Mokesčių įvertis",
-            "description": "Palyginkite apskaičiuotus mokesčius taikant 30 % išlaidų atskaitymą ir faktinių išlaidų metodą.",
+            "heading": "Mokesčiai",
+            "description": "Mokesčių įvertis, sumos deklaracijai ir failas buhalteriui.",
             "year": "Mokestiniai metai",
+            "actions": "Metai ir failo atsisiuntimas",
             "setup": {
                 "title": "Patvirtinkite {year} m. prielaidas",
                 "description": "Sveikatos draudimas, pensijų kaupimas ir veiklos datos keičia rezultatą, todėl patvirtinkite jas prieš rodydami įvertį.",
@@ -179,7 +178,7 @@
                 "no": "Ne"
             },
             "dialog": {
-                "title": "Mokesčių prielaidos · {year}",
+                "title": "Mokesčių prielaidos",
                 "fields": {
                     "expense_method": "Jūsų išlaidų metodas",
                     "expense_method_help": "Pažymi metodą, kurį planuojate deklaruoti. Įvertis visada skaičiuojamas abiem metodais.",
@@ -198,8 +197,8 @@
             "comparison": {
                 "title": "Išlaidų metodų palyginimas",
                 "subtitle": "Abu metodai naudoja tas pačias pajamas. Pasirinkimas deklaracijoje lieka jūsų.",
-                "your_method": "Jūsų metodas",
-                "lower": "Mažesnė apytikslė suma",
+                "your_method": "Pasirinktas metodas",
+                "lower_by": "{amount} mažiau nei „{method}“",
                 "rows": {
                     "income": "Pajamos be PVM",
                     "deductions": "Atskaitymai",
@@ -224,22 +223,27 @@
             }
         },
         "annual": {
-            "heading": "Metinė mokesčių ataskaita",
-            "description": "Atsisiųskite vieną failą su metų sumomis, mokesčių įverčiu, žurnalu ir pagrindžiančiais įrašais deklaracijai arba buhalteriui.",
-            "year": "Metai",
             "review": "Peržiūrėti",
             "export_error": {
                 "title": "Eksportuoti nepavyko",
                 "description": "Nepavyko paruošti metinės ataskaitos. Bandykite dar kartą, o jei nepavyks – prisijunkite iš naujo.",
                 "invalid_year": "Šių metų eksportuoti negalima. Atidarykite metinę ataskaitą ir pasirinkite metus iš sąrašo."
             },
+            "status": {
+                "blocking": "Negalutinė",
+                "ready": "Paruošta"
+            },
             "alerts": {
+                "ready": {
+                    "title": "Paruošta deklaracijai",
+                    "description": "{year} m. įrašai užbaigti, o mokesčių prielaidos patvirtintos."
+                },
                 "blocking": {
-                    "title": "Ataskaita bus pažymėta kaip nebaigta",
-                    "description": "Ją vis tiek galite atsisiųsti. Kad skaičiai būtų galutiniai, pirmiau sutvarkykite:"
+                    "title": "Dar negalutinė",
+                    "description": "Failą vis tiek galite atsisiųsti, bet kol to nesutvarkysite, jis bus pažymėtas kaip negalutinis:"
                 },
                 "recommendation": {
-                    "title": "Verta peržiūrėti prieš siunčiant",
+                    "title": "Verta patikrinti",
                     "description": "Tai ataskaitos neblokuoja, bet gali pakeisti jūsų skaičius:"
                 }
             },
@@ -271,19 +275,25 @@
                     "action": "Pridėti dokumentus"
                 }
             },
-            "cards": {
-                "income": "Gautos pajamos · {year}",
-                "expenses": "Atskaitomos išlaidos · {year}",
-                "outstanding": "Neapmokėta · {year} m. sąskaitos",
-                "tax": "Apskaičiuoti mokesčiai",
-                "not_available": "Nėra"
+            "figures": {
+                "title": "Sumos deklaracijai",
+                "info": "Šias sumas įrašykite į pajamų deklaraciją VMI EDS. InvoiceTrackr nieko neteikia VMI. Pajamos įskaitomos gavus mokėjimą.",
+                "rows": {
+                    "income": "Gautos pajamos su PVM",
+                    "income_vat": "PVM gautose pajamose",
+                    "income_net": "Pajamos be PVM",
+                    "deductions": "Atskaitymai · {method}",
+                    "actual_expenses": "Atskaitomos išlaidos · faktinės",
+                    "profit": "Pelnas",
+                    "net": "Grynasis rezultatas"
+                },
+                "copy": "Kopijuoti: {label}",
+                "copied": "Nukopijuota",
+                "copy_failed": "Nepavyko nukopijuoti sumos."
             },
             "contents": {
-                "title": "Failas · {year}",
-                "complete": "Baigta",
-                "incomplete": "Nebaigta",
-                "subtitle": "Parengta pagal jūsų įrašus {date}",
-                "download": "Atsisiųsti XLSX",
+                "download": "Atsisiųsti failą",
+                "info_title": "Kas yra faile",
                 "disclaimer": "Mokesčių sumos yra įvertis, o ne VMI ar „Sodros“ prievolė. Ataskaita padeda jums arba buhalteriui parengti deklaraciją, bet neatstoja profesionalios mokesčių konsultacijos.",
                 "sheets": {
                     "summary": {

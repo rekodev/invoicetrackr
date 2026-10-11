@@ -1,7 +1,6 @@
 import type { TaxProfile, TaxProfileBody } from '@invoicetrackr/types';
 
 import { REPORTS_TAXES_PAGE } from '@/lib/constants/pages';
-import { TAX_SUPPORTED_YEARS } from '@/lib/constants/tax';
 
 export type TaxProfileFormData = Omit<
   TaxProfileBody,
@@ -32,9 +31,6 @@ export const toTaxProfileBody = (data: TaxProfileFormData): TaxProfileBody => ({
   activityEndDate: data.activityEndDate || null,
   otherDeclaredIncome: data.otherDeclaredIncome.trim() || '0'
 });
-
-export const taxYears = (selectedYear: number) =>
-  [...new Set([...TAX_SUPPORTED_YEARS, selectedYear])].sort((a, b) => b - a);
 
 export const taxEstimateHref = (year: number) =>
   `${REPORTS_TAXES_PAGE}?year=${year}`;

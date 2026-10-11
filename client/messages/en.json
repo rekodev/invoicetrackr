@@ -17,7 +17,6 @@
             "reports": "Reports",
             "journal": "Journal",
             "taxes": "Taxes",
-            "annual": "Annual Package",
             "settings": "Settings",
             "freelancer_profile": "Freelancer Profile",
             "banking_information": "Bank Accounts",
@@ -61,7 +60,6 @@
         "reports": "Reports",
         "journal": "Journal",
         "taxes": "Taxes",
-        "annual": "Annual Package",
         "settings": "Settings",
         "login": "Log In",
         "new": "New",
@@ -146,9 +144,10 @@
             }
         },
         "taxes": {
-            "heading": "Tax Estimate",
-            "description": "Compare estimated taxes under the 30% deduction and actual-expense methods.",
+            "heading": "Taxes",
+            "description": "Your tax estimate, the figures for your declaration, and the workbook for your accountant.",
             "year": "Tax Year",
+            "actions": "Year and workbook download",
             "setup": {
                 "title": "Confirm Your {year} Assumptions",
                 "description": "Health insurance coverage, pension accumulation and activity dates change the result, so confirm them before we show an estimate.",
@@ -179,7 +178,7 @@
                 "no": "No"
             },
             "dialog": {
-                "title": "Tax Assumptions · {year}",
+                "title": "Tax Assumptions",
                 "fields": {
                     "expense_method": "Your Expense Method",
                     "expense_method_help": "Labels the method you plan to declare. Both methods are always estimated.",
@@ -198,8 +197,8 @@
             "comparison": {
                 "title": "Expense Method Comparison",
                 "subtitle": "Both methods use the same income. The choice in your declaration stays yours.",
-                "your_method": "Your Method",
-                "lower": "Lower Estimated Total",
+                "your_method": "Chosen Method",
+                "lower_by": "{amount} less than {method}",
                 "rows": {
                     "income": "Income Excl. VAT",
                     "deductions": "Deductions",
@@ -224,22 +223,27 @@
             }
         },
         "annual": {
-            "heading": "Annual Tax Package",
-            "description": "Download one workbook with the year's totals, tax estimate, journal and supporting records for your declaration or accountant.",
-            "year": "Year",
             "review": "Review",
             "export_error": {
                 "title": "Export Failed",
                 "description": "We couldn't prepare the annual package. Try again, and if it keeps failing, sign in again.",
                 "invalid_year": "This year can't be exported. Open the annual package and choose a year from the list."
             },
+            "status": {
+                "blocking": "Not Final",
+                "ready": "Ready"
+            },
             "alerts": {
+                "ready": {
+                    "title": "Ready for Your Declaration",
+                    "description": "Your {year} records are complete and your tax assumptions are confirmed."
+                },
                 "blocking": {
-                    "title": "The Package Will Be Marked Incomplete",
-                    "description": "You can still download it. Resolve these first so the figures are final:"
+                    "title": "Not Final Yet",
+                    "description": "You can still download the workbook, but it will be marked as not final until these are resolved:"
                 },
                 "recommendation": {
-                    "title": "Worth Reviewing Before You Send It",
+                    "title": "Worth Checking",
                     "description": "These don't block the package, but they may change your figures:"
                 }
             },
@@ -271,19 +275,25 @@
                     "action": "Add Documents"
                 }
             },
-            "cards": {
-                "income": "Received Income · {year}",
-                "expenses": "Deductible Expenses · {year}",
-                "outstanding": "Outstanding · {year} Invoices",
-                "tax": "Estimated Taxes",
-                "not_available": "Not available"
+            "figures": {
+                "title": "Figures for Your Declaration",
+                "info": "Enter these amounts in your income declaration in VMI EDS. InvoiceTrackr doesn't submit anything to VMI. Income is counted when a payment is received.",
+                "rows": {
+                    "income": "Received Income incl. VAT",
+                    "income_vat": "VAT in Received Income",
+                    "income_net": "Income excl. VAT",
+                    "deductions": "Deductions · {method}",
+                    "actual_expenses": "Deductible Expenses · Actual",
+                    "profit": "Profit",
+                    "net": "Net Result"
+                },
+                "copy": "Copy {label}",
+                "copied": "Copied",
+                "copy_failed": "Couldn't copy the amount."
             },
             "contents": {
-                "title": "Workbook · {year}",
-                "complete": "Complete",
-                "incomplete": "Incomplete",
-                "subtitle": "Prepared from your records as of {date}",
-                "download": "Download XLSX",
+                "download": "Download Workbook",
+                "info_title": "What's in the Workbook",
                 "disclaimer": "Tax figures are estimates, not a VMI or Sodra liability. The package helps you or your accountant prepare the declaration and doesn't replace professional tax advice.",
                 "sheets": {
                     "summary": {

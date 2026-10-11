@@ -18,3 +18,10 @@ export const formatMoney = (amount: string | number, locale: string) =>
     style: 'currency',
     currency: 'EUR'
   }).format(Number(amount));
+
+export const formatPlainAmount = (amount: string, locale: string) =>
+  new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: false
+  }).format(Number(amount));

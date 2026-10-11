@@ -144,7 +144,15 @@ describe('Annual Package Controller', () => {
         { code: 'draft_invoices', severity: 'recommendation', count: 1 },
         { code: 'outstanding_invoices', severity: 'recommendation', count: 1 },
         { code: 'expenses_missing_documents', severity: 'recommendation', count: 1 }
-      ]
+      ],
+      estimate: expect.objectContaining({
+        status: 'ready',
+        profile: expect.objectContaining({ expenseMethod: 'thirty_percent' }),
+        methods: {
+          actual: expect.objectContaining({ income: '82.64', deductions: '20.00' }),
+          thirtyPercent: expect.objectContaining({ income: '82.64', deductions: '24.79' })
+        }
+      })
     });
     expect(annualDb.getAnnualInvoicesFromDb).toHaveBeenCalledWith({
       userId: 1,

@@ -84,12 +84,10 @@ export const getAnnualPackage = async (
   }>,
   reply: FastifyReply
 ) => {
-  const { year, asOf, isComplete, summary, warnings } = await loadAnnualPackage(
-    Number(req.params.userId),
-    req.query.year
-  );
+  const { year, asOf, isComplete, summary, warnings, estimate } =
+    await loadAnnualPackage(Number(req.params.userId), req.query.year);
 
-  reply.status(200).send({ year, asOf, isComplete, summary, warnings });
+  reply.status(200).send({ year, asOf, isComplete, summary, warnings, estimate });
 };
 
 export const exportAnnualPackage = async (

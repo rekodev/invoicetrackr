@@ -20,11 +20,9 @@ export const PAYMENTS_PAGE = '/payments';
 export const REPORTS_PAGE = '/reports';
 export const REPORTS_JOURNAL_PAGE = '/reports/journal';
 export const REPORTS_TAXES_PAGE = '/reports/taxes';
-export const REPORTS_ANNUAL_PAGE = '/reports/annual';
 export const REPORT_PAGES = [
   { key: 'journal', href: REPORTS_JOURNAL_PAGE },
-  { key: 'taxes', href: REPORTS_TAXES_PAGE },
-  { key: 'annual', href: REPORTS_ANNUAL_PAGE }
+  { key: 'taxes', href: REPORTS_TAXES_PAGE }
 ] as const;
 export const SETTINGS_PAGE = '/settings';
 export const FREELANCER_PROFILE_PAGE = '/settings/freelancer-profile';

@@ -30,7 +30,7 @@ describe('<TaxAssumptionsDialog />', () => {
       )
     );
 
-    expect(screen.getByRole('heading', { name: 'Tax Assumptions · 2026' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Tax Assumptions' })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: '30% of income' })).toBeChecked();
 
     await user.click(screen.getByRole('radio', { name: 'Actual expenses' }));
