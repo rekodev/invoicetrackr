@@ -21,6 +21,7 @@ const environment = {
   E2E_BASE_URL: 'http://localhost:3100',
   NEXT_PUBLIC_BASE_URL: 'http://localhost:3100',
   NODE_ENV: 'development',
+  EMAIL_TRANSPORT: 'capture',
   RESEND_EMAIL_API_KEY: 're_e2e_placeholder',
   SERVER_PORT: '5100'
 };

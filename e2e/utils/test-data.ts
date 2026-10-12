@@ -1,11 +1,3 @@
-export const e2eUser = {
-  email: 'freelancer.e2e@example.com',
-  password: 'Playwright1!',
-  name: 'E2E Freelancer',
-  businessNumber: 'IV-E2E-001',
-  address: 'Gedimino pr. 1, Vilnius'
-};
-
 export type InvoiceTestData = {
   recipientName: string;
   recipientBusinessNumber?: string;

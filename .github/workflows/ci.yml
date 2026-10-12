@@ -36,6 +36,7 @@ jobs:
       DATABASE_DRIVER: pg
       DATABASE_URL: postgresql://invoicetrackr:invoicetrackr@127.0.0.1:5432/invoicetrackr_e2e
       E2E_BASE_URL: http://127.0.0.1:3100
+      EMAIL_TRANSPORT: capture
       NEXT_PUBLIC_BASE_URL: http://127.0.0.1:3100
       NODE_ENV: development
       RESEND_EMAIL_API_KEY: re_e2e_placeholder

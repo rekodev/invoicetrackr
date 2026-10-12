@@ -35,6 +35,13 @@ export class InvoiceFormPage {
         .fill(invoice.recipientEmail);
     }
 
+    await this.fillServicesAndSave(invoice);
+  }
+
+  async fillServicesAndSave(invoice: Omit<InvoiceTestData, 'recipientName'>) {
+    await expect(
+      this.page.getByRole('form', { name: 'Add New Invoice Form' })
+    ).toBeVisible();
     await this.page
       .getByRole('textbox', { name: 'Description', exact: true })
       .first()
