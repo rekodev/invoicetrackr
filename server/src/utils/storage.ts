@@ -10,7 +10,9 @@ type StoredAttachment = {
   mimeType: string;
 };
 
-export const attachmentAsset = (attachment: StoredAttachment): StorageAsset => ({
+export const attachmentAsset = (
+  attachment: StoredAttachment
+): StorageAsset => ({
   publicId: attachment.storageKey,
   resourceType: attachment.resourceType === 'raw' ? 'raw' : 'image',
   type: 'authenticated'
@@ -80,8 +82,19 @@ export const parseCloudinaryUrl = (
   };
 };
 
-export const isStoredSignatureUrl = (value: unknown) =>
-  value === undefined ||
-  value === null ||
-  value === '' ||
-  (typeof value === 'string' && parseCloudinaryUrl(value) !== null);
+// Accepts the user's own folder, or a legacy root-level upload (account
+// deletion keeps legacy assets that other users still reference).
+export const isStoredSignatureUrl = (value: unknown, userId: number) => {
+  if (value === undefined || value === null || value === '') return true;
+  if (typeof value !== 'string') return false;
+
+  const asset = parseCloudinaryUrl(value)?.asset;
+
+  if (!asset || asset.resourceType !== 'image' || asset.type !== 'upload')
+    return false;
+
+  return (
+    asset.publicId.startsWith(`${signatureFolder(userId)}/`) ||
+    !asset.publicId.includes('/')
+  );
+};

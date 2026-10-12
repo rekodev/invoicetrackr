@@ -61,20 +61,23 @@ describe('Webhook Controller', () => {
       expect(response.statusCode).toBe(200);
       expect(mockResendReceivingGet).toHaveBeenCalledWith('eml_received_123');
       expect(fetchMock).toHaveBeenCalledWith('https://inbound.example/raw');
-      expect(mockResendSend).toHaveBeenCalledWith({
-        from: 'support@invoicetrackr.app',
-        to: 'owner@example.com',
-        replyTo: ['Client <client@example.com>'],
-        subject: 'Question about my invoice',
-        text: 'From: Client <client@example.com>\n\nHello, is SF001 paid?',
-        html: '<p><strong>From: Client &lt;client@example.com&gt;</strong></p><hr /><p>Hello, is SF001 paid?</p>',
-        attachments: [
-          {
-            filename: 'original-message.eml',
-            content: Buffer.from('raw-mime').toString('base64')
-          }
-        ]
-      });
+      expect(mockResendSend).toHaveBeenCalledWith(
+        {
+          from: 'support@invoicetrackr.app',
+          to: 'owner@example.com',
+          replyTo: ['Client <client@example.com>'],
+          subject: 'Question about my invoice',
+          text: 'From: Client <client@example.com>\n\nHello, is SF001 paid?',
+          html: '<p><strong>From: Client &lt;client@example.com&gt;</strong></p><hr /><p>Hello, is SF001 paid?</p>',
+          attachments: [
+            {
+              filename: 'original-message.eml',
+              content: Buffer.from('raw-mime').toString('base64')
+            }
+          ]
+        },
+        { idempotencyKey: 'support-forward/eml_received_123' }
+      );
       expect(mockResendWebhookVerify).toHaveBeenCalledWith({
         payload: JSON.stringify({
           type: 'email.received',

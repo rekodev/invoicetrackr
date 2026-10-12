@@ -49,7 +49,7 @@ import {
   verifyUserEmailInDb
 } from '../database/user';
 import { destroyAccountStorage } from '../services/account-storage';
-import { uploadSignatureImage } from '../services/signature';
+import { resolveSignatureUrl } from '../services/signature';
 import {
   accountStorageAssets,
   legacySignaturePublicIds
@@ -60,11 +60,7 @@ import {
   NotFoundError,
   UnauthorizedError
 } from '../utils/error';
-import {
-  businessLogoFolder,
-  isStoredSignatureUrl,
-  signatureFolder
-} from '../utils/storage';
+import { businessLogoFolder, signatureFolder } from '../utils/storage';
 
 const EMAIL_VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const EMAIL_VERIFICATION_RESEND_COOLDOWN_MS = 15 * 60 * 1000;
@@ -338,16 +334,16 @@ export const updateUser = async (
   } = req.body;
   const i18n = await useI18n(req);
 
-  if (!file && !isStoredSignatureUrl(signature))
-    throw new BadRequestError(i18n.t('error.user.signatureInvalid'));
-
   const foundUser = await getUserFromDb(userId);
 
   if (!foundUser) throw new NotFoundError(i18n.t('error.user.notFound'));
 
-  const signatureUrl = file
-    ? await uploadSignatureImage({ file, userId, i18n })
-    : signature;
+  const signatureUrl = await resolveSignatureUrl({
+    file,
+    url: signature,
+    userId,
+    i18n
+  });
   const updatedUser = await updateUserInDb(
     {
       id: userId,

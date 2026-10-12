@@ -4,6 +4,7 @@ import type { useI18n } from 'fastify-i18n';
 
 import { BadRequestError } from '../utils/error';
 import {
+  isStoredSignatureUrl,
   SIGNATURE_MAX_BYTES,
   SIGNATURE_MIME_TYPES,
   signatureFolder
@@ -55,4 +56,25 @@ export const uploadSignatureImage = async ({
     throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
 
   return uploadedSignature.secure_url;
+};
+
+export const resolveSignatureUrl = async <
+  Url extends string | null | undefined
+>({
+  file,
+  url,
+  userId,
+  i18n
+}: {
+  file: MultipartFile | undefined;
+  url: Url;
+  userId: number;
+  i18n: I18n;
+}) => {
+  if (file) return uploadSignatureImage({ file, userId, i18n });
+
+  if (!isStoredSignatureUrl(url, userId))
+    throw new BadRequestError(i18n.t('error.user.signatureInvalid'));
+
+  return url;
 };
