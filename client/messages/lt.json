@@ -1974,7 +1974,7 @@
         "sections": {
             "introduction": {
                 "heading": "1. Įvadas",
-                "content": "Sveiki atvykę į InvoiceTrackr (\"mes\", \"mūsų\" arba \"mus\"). Mes įsipareigoję saugoti jūsų privatumą ir užtikrinti jūsų asmeninės informacijos saugumą. Ši Privatumo politika paaiškina, kaip renkame, naudojame, atskleidžiame ir saugome jūsų informaciją, kai naudojatės mūsų sąskaitų faktūrų sekimo ir valdymo paslauga."
+                "content": "InvoiceTrackr valdo Artūras Tyškevičius, Lietuvoje individualią veiklą vykdantis fizinis asmuo, kuris yra šioje Privatumo politikoje aprašytų asmens duomenų valdytojas (\"mes\", \"mūsų\" arba \"mus\"). Ši Privatumo politika paaiškina, kokią informaciją renkame, kai naudojatės InvoiceTrackr, kodėl ją renkame, kam ją perduodame ir kokias teises turite."
             },
             "information_we_collect": {
                 "heading": "2. Informacija, kurią renkame",
@@ -1987,7 +1987,7 @@
                         "business_type": "Individualios veiklos profilio duomenis",
                         "registration": "Individualios veiklos pažymos numerį",
                         "address": "Verslo adresą",
-                        "profile": "Profilio nuotrauką (neprivaloma)",
+                        "profile": "Veiklos logotipą (neprivaloma)",
                         "signature": "Vizualų parašą (neprivaloma)",
                         "preferences": "Kalbos nuostatas"
                     }
@@ -1998,7 +1998,8 @@
                     "items": {
                         "banking": "Bankinę informaciją (banko pavadinimas, kodas ir sąskaitos numeris)",
                         "invoice": "Sąskaitų faktūrų duomenis, įskaitant sumas, datas ir mokėjimo būsenas",
-                        "client": "Kliento informaciją sąskaitų faktūrų tikslais"
+                        "client": "Kliento informaciją sąskaitų faktūrų tikslais",
+                        "expenses": "Išlaidų įrašus ir jūsų įkeltus pagrindžiančius dokumentus"
                     }
                 },
                 "payment_info": {
@@ -2013,12 +2014,13 @@
                         "browser": "Naršyklės tipą ir versiją",
                         "pages": "Peržiūrėtus puslapius ir naudotas funkcijas",
                         "time": "Apsilankymų laiką ir datą",
-                        "referring": "Nukreipiančių svetainių adresus"
+                        "referring": "Nukreipiančių svetainių adresus",
+                        "errors": "Technines klaidų ataskaitas (klaidos pranešimą, techninį pėdsaką, puslapio ar užklausos tipą ir būsenos kodą)"
                     }
                 },
                 "analytics_data": {
-                    "heading": "2.5 Analitikos duomenys",
-                    "intro": "Gavę jūsų sutikimą, naudojame PostHog, kad suprastume paleidimo piltuvėlius ir pagrindinį produkto naudojimą, pvz., puslapių peržiūras, registracijos žingsnius, sąskaitų kūrimą, PDF atsisiuntimus, siuntimą el. paštu, klientų kūrimą ir banko sąskaitos pridėjimą. Analitikos įvykių savybėse nesiunčiame sąskaitų numerių, sąskaitų teksto, klientų duomenų, banko sąskaitų duomenų, el. pašto adresų, adresų ar sąskaitų sumų."
+                    "heading": "2.5 Analitikos duomenys ir klaidų ataskaitos",
+                    "intro": "Gavę jūsų sutikimą, naudojame PostHog, kad suprastume paleidimo piltuvėlius ir pagrindinį produkto naudojimą, pvz., puslapių peržiūras, registracijos žingsnius, sąskaitų kūrimą, PDF atsisiuntimus, siuntimą el. paštu, klientų kūrimą ir banko sąskaitos pridėjimą. Analitikos įvykių savybėse nesiunčiame sąskaitų numerių, sąskaitų teksto, klientų duomenų, banko sąskaitų duomenų, el. pašto adresų, adresų ar sąskaitų sumų. Kad paslauga veiktų patikimai, technines klaidų ataskaitas taip pat siunčiame į PostHog. Serverio klaidų ataskaitose niekada nėra viso puslapio, kuriame buvote, adreso. Klaidų ataskaitos iš jūsų naršyklės siunčiamos tik tada, jei sutikote su analitika."
                 }
             },
             "how_we_use": {
@@ -2039,29 +2041,60 @@
                     "comply": "Laikytis teisinių įsipareigojimų"
                 }
             },
+            "legal_bases": {
+                "heading": "4. Duomenų tvarkymo teisiniai pagrindai",
+                "intro": "Asmens duomenis tvarkome tik tada, kai tai leidžia BDAR:",
+                "items": {
+                    "contract": "Kad teiktume paslaugą, kuria užsiregistravote: paskyrą, sąskaitas, klientus, mokėjimus, išlaidas ir laiškus (sutarties vykdymas)",
+                    "legal_obligation": "Kad vykdytume teisines prievoles, pvz., atsakytume į teisėtus institucijų prašymus (teisinė prievolė)",
+                    "legitimate_interests": "Kad paslauga būtų saugi ir patikima, užkirstume kelią piktnaudžiavimui, taisytume klaidas ir atsakytume į pagalbos užklausas (teisėtas interesas)",
+                    "consent": "Kad vykdytume neprivalomą produkto analitiką, tik jums sutikus su analitikos slapukais (sutikimas, kurį galite bet kada atšaukti)"
+                }
+            },
             "how_we_share": {
-                "heading": "4. Kaip dalinamės jūsų informacija",
+                "heading": "5. Kaip dalinamės jūsų informacija",
                 "intro": "Mes neparduodame jūsų asmeninės informacijos. Galime dalytis jūsų informacija šiais atvejais:",
                 "service_providers": {
-                    "heading": "4.1 Paslaugų teikėjai",
-                    "intro": "Dalinamės informacija su trečiųjų šalių paslaugų teikėjais, kurie teikia paslaugas mūsų vardu:",
+                    "heading": "5.1 Paslaugų teikėjai",
+                    "intro": "Informaciją perduodame tik paslaugų teikėjams, kurie padeda mums teikti InvoiceTrackr, ir tik tiek, kiek jiems reikia:",
                     "items": {
-                        "cloudinary": "Vaizdų talpinimas profilio nuotraukoms ir kitai medijai",
-                        "analytics": "Sutikimu pagrįsta produkto analitika per PostHog",
-                        "email": "El. pašto paslaugų teikėjai"
+                        "hosting": {
+                            "name": "DigitalOcean",
+                            "description": "Debesijos serveriai, kuriuose veikia InvoiceTrackr programa"
+                        },
+                        "database": {
+                            "name": "Neon",
+                            "description": "Valdoma duomenų bazė, kurioje saugoma jūsų paskyra ir verslo įrašai"
+                        },
+                        "email": {
+                            "name": "Resend",
+                            "description": "Sąskaitų, patvirtinimo ir slaptažodžio laiškų siuntimas bei laiškų, siunčiamų mūsų pagalbos adresu, gavimas"
+                        },
+                        "storage": {
+                            "name": "Cloudinary",
+                            "description": "Jūsų veiklos logotipo, parašų ir išlaidų dokumentų saugojimas"
+                        },
+                        "analytics": {
+                            "name": "PostHog",
+                            "description": "Sutikimu pagrįsta produkto analitika ir techninės klaidų ataskaitos (ES debesija)"
+                        },
+                        "google": {
+                            "name": "Google",
+                            "description": "Prisijungimas su Google, tik jei pasirenkate juo naudotis"
+                        }
                     }
                 },
                 "legal": {
-                    "heading": "4.2 Teisiniai reikalavimai",
+                    "heading": "5.2 Teisiniai reikalavimai",
                     "content": "Galime atskleisti jūsų informaciją, jei to reikalaujama pagal įstatymą arba atsižvelgiant į galiojančius viešųjų valdžios institucijų prašymus (pvz., teismo ar vyriausybės agentūros)."
                 },
                 "business_transfers": {
-                    "heading": "4.3 Verslo perdavimai",
+                    "heading": "5.3 Verslo perdavimai",
                     "content": "Susijungimo, įsigijimo ar viso ar dalies mūsų turto pardavimo atveju jūsų informacija gali būti perduota kaip tos transakcijos dalis."
                 }
             },
             "data_security": {
-                "heading": "5. Duomenų sauga",
+                "heading": "6. Duomenų sauga",
                 "intro": "Mes įgyvendiname atitinkamas technines ir organizacines saugumo priemones, kad apsaugotume jūsų informaciją nuo neteisėtos prieigos, pakeitimo, atskleidimo ar sunaikinimo. Šios priemonės apima:",
                 "items": {
                     "encryption": "Duomenų perdavimo šifravimas naudojant SSL/TLS",
@@ -2072,12 +2105,12 @@
                 "disclaimer": "Tačiau joks perdavimo per internetą ar elektroninio saugojimo metodas nėra 100% saugus. Nors stengiamės apsaugoti jūsų informaciją, negalime garantuoti jos absoliutaus saugumo."
             },
             "data_retention": {
-                "heading": "6. Duomenų saugojimas",
+                "heading": "7. Duomenų saugojimas",
                 "content": "Jūsų asmeninę informaciją saugome, kol paskyra aktyvi, o savo duomenų kopiją bet kada galite atsisiųsti paskyros nustatymuose. Kai ištrinate paskyrą, iš karto ištriname jūsų profilį, veiklos duomenis, klientus, sąskaitas faktūras, mokėjimus, išlaidas, mokesčių įrašus ir įkeltus failus, o jūs atjungiami visuose įrenginiuose. Lieka du dalykai: paskyros veiksmų saugumo žurnalas be jūsų asmens duomenų ir duomenų bazės atsarginės kopijos, kurios perrašomos per 30 dienų. Už savo sąskaitų faktūrų ir apskaitos įrašų kopijų saugojimą tiek, kiek reikalauja Lietuvos teisės aktai, atsakote jūs."
             },
             "your_rights": {
-                "heading": "7. Jūsų teisės ir pasirinkimai",
-                "intro": "Priklausomai nuo jūsų buvimo vietos, galite turėti šias teises dėl savo asmeninės informacijos:",
+                "heading": "8. Jūsų teisės ir pasirinkimai",
+                "intro": "Pagal BDAR turite šias teises, susijusias su jūsų asmens duomenimis:",
                 "items": {
                     "access": {
                         "title": "Prieiga",
@@ -2095,6 +2128,14 @@
                         "title": "Perkeliamumas",
                         "description": "Prašyti savo duomenų kopijos struktūrizuotu formatu"
                     },
+                    "objection": {
+                        "title": "Prieštaravimas",
+                        "description": "Nesutikti, kad duomenys būtų tvarkomi remiantis mūsų teisėtu interesu"
+                    },
+                    "restriction": {
+                        "title": "Apribojimas",
+                        "description": "Prašyti apriboti duomenų tvarkymą, kol nagrinėjamas jūsų prašymas"
+                    },
                     "opt_out": {
                         "title": "Atsisakymas",
                         "description": "Atsisakyti rinkodaros pranešimų"
@@ -2104,32 +2145,32 @@
                         "description": "Atšaukti sutikimą, kai apdorojimas grindžiamas sutikimu"
                     }
                 },
-                "outro": "Norėdami pasinaudoti šiomis teisėmis, susisiekite su mumis naudodami informaciją, pateiktą skyriuje \"Susisiekite su mumis\" žemiau."
+                "outro": "Savo duomenis atsisiųsti ir paskyrą ištrinti galite patys paskyros nustatymuose. Dėl kitų prašymų susisiekite su mumis skyriuje \"Susisiekite su mumis\" nurodytais kontaktais. Taip pat turite teisę pateikti skundą Valstybinei duomenų apsaugos inspekcijai (vdai.lrv.lt)."
             },
             "cookies": {
-                "heading": "8. Slapukai ir stebėjimo technologijos",
+                "heading": "9. Slapukai ir stebėjimo technologijos",
                 "content": "Naudojame būtinus slapukus paslaugai teikti, įskaitant autentifikavimo, kalbos pasirinkimo ir saugumo slapukus. Pasirenkamus analitikos slapukus naudojame tik tada, kai sutinkate su analitika. Analitikos sutikimo pasirinkimas saugomas pirmosios šalies slapuke ir gali būti pakeistas atšaukiant arba atnaujinant sutikimą. Analitikos slapukų atsisakymas netrukdo naudotis InvoiceTrackr."
             },
             "third_party_links": {
-                "heading": "9. Trečiųjų šalių nuorodos",
+                "heading": "10. Trečiųjų šalių nuorodos",
                 "content": "Mūsų paslauga gali turėti nuorodų į trečiųjų šalių svetaines ar paslaugas. Mes neatsakome už šių trečiųjų šalių privatumo praktiką ar turinį. Raginame perskaityti bet kurių jūsų aplankytų trečiųjų šalių svetainių privatumo politiką."
             },
             "children_privacy": {
-                "heading": "10. Vaikų privatumas",
+                "heading": "11. Vaikų privatumas",
                 "content": "Mūsų paslauga nėra skirta asmenims jaunesniems nei 18 metų. Mes sąmoningai nerenkame asmeninės informacijos iš vaikų jaunesnių nei 18 metų. Jei esate tėvas ar globėjas ir manote, kad jūsų vaikas pateikė mums asmeninės informacijos, susisiekite su mumis, kad galėtume ją ištrinti."
             },
             "international_transfers": {
-                "heading": "11. Tarptautiniai duomenų perdavimai",
-                "content": "Jūsų informacija gali būti perduota ir apdorota kitose šalyse nei jūsų gyvenamoji šalis. Šiose šalyse gali būti duomenų apsaugos įstatymai, kurie skiriasi nuo jūsų šalies įstatymų. Imamės atitinkamų priemonių, kad užtikrintume, jog jūsų asmeninė informacija liktų apsaugota pagal šią Privatumo politiką."
+                "heading": "12. Tarptautiniai duomenų perdavimai",
+                "content": "Kai kurie mūsų paslaugų teikėjai (DigitalOcean, Neon, Resend, Cloudinary ir Google) yra įsikūrę Jungtinėse Valstijose ir gali tvarkyti duomenis už Europos ekonominės erdvės ribų. Tokiu atveju duomenų perdavimą apsaugo Europos Komisijos sprendimas dėl tinkamumo, pvz., ES ir JAV duomenų privatumo sistema, arba Komisijos patvirtintos standartinės sutarčių sąlygos."
             },
             "changes": {
-                "heading": "12. Šios Privatumo politikos pakeitimai",
+                "heading": "13. Šios Privatumo politikos pakeitimai",
                 "content": "Galime retkarčiais atnaujinti šią Privatumo politiką, kad atspindėtume mūsų praktikos ar teisinių reikalavimų pokyčius. Apie bet kokius esminius pakeitimus pranešime paskelbdami naują Privatumo politiką šiame puslapyje ir atnaujindami datą \"Paskutinį kartą atnaujinta\". Raginame periodiškai peržiūrėti šią Privatumo politiką, ar nėra pakeitimų."
             },
             "contact": {
-                "heading": "13. Susisiekite su mumis",
+                "heading": "14. Susisiekite su mumis",
                 "intro": "Jei turite klausimų apie šią Privatumo politiką ar mūsų privatumo praktiką, susisiekite su mumis:",
-                "company": "InvoiceTrackr",
+                "company": "Artūras Tyškevičius (InvoiceTrackr)",
                 "email": "El. paštas: {email}"
             }
         }
@@ -2140,7 +2181,7 @@
         "sections": {
             "agreement": {
                 "heading": "1. Sutikimas su sąlygomis",
-                "content": "Prisijungdami ar naudodamiesi InvoiceTrackr (\"Paslauga\", \"mes\", \"mūsų\" arba \"mus\"), sutinkate laikytis šių Paslaugų teikimo sąlygų (\"Sąlygos\"). Jei nesutinkate su šiomis Sąlygomis, negalite prisijungti ar naudotis Paslauga."
+                "content": "InvoiceTrackr (\"Paslauga\") valdo Artūras Tyškevičius, Lietuvoje individualią veiklą vykdantis fizinis asmuo (\"mes\", \"mūsų\" arba \"mus\"). Prisijungdami ar naudodamiesi Paslauga, sutinkate laikytis šių Paslaugų teikimo sąlygų (\"Sąlygos\"). Jei nesutinkate su šiomis Sąlygomis, negalite prisijungti ar naudotis Paslauga."
             },
             "description": {
                 "heading": "2. Paslaugos aprašymas",
@@ -2154,7 +2195,11 @@
                     "email": "Sąskaitų faktūrų pristatymas el. paštu",
                     "multi": "Lietuviškų ir angliškų sąskaitų dokumentus",
                     "banking": "Banko informacijos saugojimas sąskaitų faktūrų tikslais",
-                    "signature": "Neprivalomą vizualų parašą sugeneruotuose dokumentuose"
+                    "signature": "Neprivalomą vizualų parašą sugeneruotuose dokumentuose",
+                    "payments": "Rankinis mokėjimų sekimas su sąskaitų ir klientų likučiais",
+                    "expenses": "Išlaidų įrašai su pagrindžiančiais dokumentais",
+                    "taxes": "Mokesčių įverčiai ir metinė mokesčių suvestinė",
+                    "exports": "Pajamų ir išlaidų žurnalo eksportas bei paskyros duomenų eksportas"
                 }
             },
             "account_registration": {
@@ -2175,6 +2220,10 @@
                     "content": "Turite būti bent 18 metų amžiaus, kad galėtumėte sukurti paskyrą ir naudotis Paslauga. Kurdami paskyrą pareiškiate ir užtikrinat, kad atitinkate šį amžiaus reikalavimą."
                 }
             },
+            "fees": {
+                "heading": "4. Mokesčiai",
+                "content": "Šiuo metu Paslauga teikiama nemokamai. Jei įvesime mokamas funkcijas, apie kainą pranešime prieš jums sumokant, ir galėsite pasirinkti jomis nesinaudoti."
+            },
             "user_content": {
                 "heading": "5. Naudotojo turinys ir duomenys",
                 "your_content": {
@@ -2182,11 +2231,11 @@
                     "content": "Išlaikote visas teises į turinį, kurį sukuriate, įkeliate ar saugote per Paslaugą, įskaitant sąskaitas faktūras, klientų informaciją ir kitus duomenis (\"Jūsų turinys\"). Naudodamiesi Paslauga, suteikiate mums ribotą licenciją naudoti, saugoti ir apdoroti Jūsų turinį tik siekiant teikti ir tobulinti Paslaugą."
                 },
                 "responsibility": {
-                    "heading": "5.2. Turinio atsakomybė",
+                    "heading": "5.2 Turinio atsakomybė",
                     "intro": "Esate vienintelis atsakingas už Jūsų turinį ir jo paskelbimo ar publikavimo pasekmes. Pareiškiate ir užtikrinat, kad:",
                     "items": {
                         "own": "Esate Jūsų turinio savininkas arba turite reikalingas teises",
-                        "rights": "Turite reikalingas teises į Jūsų turinį",
+                        "rights": "Jūsų turinys nepažeidžia kitų asmenų teisių, o Paslaugoje saugomus savo klientų asmens duomenis tvarkote turėdami teisėtą pagrindą",
                         "laws": "Jūsų turinys nepažeidžia jokių galiojančių įstatymų ar taisyklių",
                         "viruses": "Jūsų turinys neturi virusų ar kenkėjiško kodo"
                     }
@@ -2216,7 +2265,7 @@
                 "heading": "7. Intelektinės nuosavybės teisės",
                 "our_rights": {
                     "heading": "7.1 Mūsų teisės",
-                    "content": "Paslauga ir jos originalus turinys, funkcijos ir funkcionalumas priklauso InvoiceTrackr ir yra saugomi tarptautinių autorių teisių, prekių ženklų, patentų, komercinės paslapties ir kitų intelektinės nuosavybės įstatymų. Mūsų prekių ženklai ir prekybos įvaizdis negali būti naudojami be mūsų išankstinio raštiško leidimo."
+                    "content": "Paslauga ir jos originalus turinys, funkcijos bei funkcionalumas priklauso Artūrui Tyškevičiui ir yra saugomi autorių teisių bei kitų intelektinės nuosavybės teisės aktų. InvoiceTrackr pavadinimo ir logotipo negalima naudoti be mūsų išankstinio raštiško leidimo."
                 },
                 "feedback": {
                     "heading": "7.2 Atsiliepimai",
@@ -2225,9 +2274,33 @@
             },
             "third_party": {
                 "heading": "8. Trečiųjų šalių paslaugos",
-                "intro": "Paslauga integruojasi arba remiasi trečiųjų šalių paslaugomis, įskaitant:",
-                "cloudinary": "Vaizdų saugojimas ir valdymas",
-                "analytics": "Sutikimu pagrįsta produkto analitika ir paleidimo piltuvėlio matavimas",
+                "intro": "Paslauga remiasi šiomis trečiųjų šalių paslaugomis:",
+                "items": {
+                    "hosting": {
+                        "name": "DigitalOcean",
+                        "description": "Debesijos serveriai, kuriuose veikia InvoiceTrackr programa"
+                    },
+                    "database": {
+                        "name": "Neon",
+                        "description": "Valdoma duomenų bazė, kurioje saugoma jūsų paskyra ir verslo įrašai"
+                    },
+                    "email": {
+                        "name": "Resend",
+                        "description": "Sąskaitų, patvirtinimo ir slaptažodžio laiškų siuntimas bei laiškų, siunčiamų mūsų pagalbos adresu, gavimas"
+                    },
+                    "storage": {
+                        "name": "Cloudinary",
+                        "description": "Jūsų veiklos logotipo, parašų ir išlaidų dokumentų saugojimas"
+                    },
+                    "analytics": {
+                        "name": "PostHog",
+                        "description": "Sutikimu pagrįsta produkto analitika ir techninės klaidų ataskaitos (ES debesija)"
+                    },
+                    "google": {
+                        "name": "Google",
+                        "description": "Prisijungimas su Google, tik jei pasirenkate juo naudotis"
+                    }
+                },
                 "disclaimer": "Jūsų naudojimasis šiomis trečiųjų šalių paslaugomis yra jų atitinkamų paslaugų teikimo sąlygų ir privatumo politikų objektas. Mes nesame atsakingi už šių trečiųjų šalių paslaugų prieinamumą, funkcionalumą ar praktiką."
             },
             "service_availability": {
@@ -2238,7 +2311,7 @@
                 },
                 "modifications": {
                     "heading": "9.2 Paslaugos modifikacijos",
-                    "content": "Pasiliekame teisę modifikuoti, sustabdyti ar nutraukti bet kurį Paslaugos aspektą bet kuriuo metu be pranešimo. Taip pat galime modifikuoti šias Sąlygas bet kuriuo metu. Jūsų tęstinis Paslaugos naudojimas po tokių modifikacijų reiškia atnaujintų Sąlygų priėmimą."
+                    "content": "Galime keisti, sustabdyti ar nutraukti Paslaugos funkcijas. Taip pat galime atnaujinti šias Sąlygas. Jei pakeitimas jums turi esminės įtakos, apie jį pranešime el. paštu arba Paslaugoje ne vėliau kaip prieš 14 dienų iki jo įsigaliojimo. Jei nesutinkate su atnaujintomis Sąlygomis, iki jų įsigaliojimo galite nustoti naudotis Paslauga ir ištrinti savo paskyrą."
                 }
             },
             "disclaimers": {
@@ -2250,7 +2323,7 @@
                     "uninterrupted": "Garantijos, kad Paslauga bus nepertraukiama ar be klaidų",
                     "defects": "Garantijos, kad defektai bus ištaisyti"
                 },
-                "disclaimer": "Pripažįstate, kad InvoiceTrackr yra sąskaitų faktūrų valdymo įrankis ir kad esate atsakingi už savo sukurtų sąskaitų faktūrų tikslumą ir teisėtumą. Mes neteikiame finansinių, teisinių ar mokesčių konsultacijų."
+                "disclaimer": "Pripažįstate, kad InvoiceTrackr yra sąskaitų faktūrų valdymo įrankis ir kad esate atsakingi už savo sukurtų sąskaitų faktūrų tikslumą ir teisėtumą. Mes neteikiame finansinių, teisinių ar mokesčių konsultacijų. Mokesčių įverčiai, mokesčių rezervas ir metinės suvestinės yra apskaičiuojami pagal jūsų įvestus duomenis ir prielaidas. Tai nėra mokesčių deklaracijos ar mokesčių konsultacijos, o už deklaracijų pateikimą Valstybinei mokesčių inspekcijai (VMI) atsakote jūs."
             },
             "limitation": {
                 "heading": "11. Atsakomybės apribojimas",
@@ -2262,11 +2335,11 @@
                     "use": "Bet kokius nuostolius, kylančius iš jūsų naudojimosi ar nesugebėjimo naudotis Paslauga",
                     "third_party": "Bet kokius nuostolius, kylančius iš trečiųjų šalių paslaugų ar integracijų"
                 },
-                "cap": "JOKIU ATVEJU MŪSŲ BENDRA ATSAKOMYBĖ NEVIRŠYS SUMOS, KURIĄ SUMOKĖJOTE MUMS PER DVYLIKA (12) MĖNESIŲ PRIEŠ ĮVYKĮ, SUKĖLUSĮ ATSAKOMYBĘ, ARBA 100 USD, PRIKLAUSOMAI NUO TO, KURI SUMA DIDESNĖ."
+                "cap": "JOKIU ATVEJU MŪSŲ BENDRA ATSAKOMYBĖ NEVIRŠYS SUMOS, KURIĄ SUMOKĖJOTE MUMS PER DVYLIKA (12) MĖNESIŲ PRIEŠ ĮVYKĮ, SUKĖLUSĮ ATSAKOMYBĘ, ARBA 100 EUR, PRIKLAUSOMAI NUO TO, KURI SUMA DIDESNĖ. ŠIOS SĄLYGOS NERIBOJA ATSAKOMYBĖS, KURIOS PAGAL TAIKOMUS TEISĖS AKTUS RIBOTI NEGALIMA, ĮSKAITANT ATSAKOMYBĘ UŽ TYČINIUS VEIKSMUS AR DIDELĮ NEATSARGUMĄ."
             },
             "indemnification": {
                 "heading": "12. Atlyginimas",
-                "intro": "Sutinkate atlyginti, ginti ir apsaugoti InvoiceTrackr bei jo pareigūnus, direktorius, darbuotojus ir agentus nuo bet kokių pretenzijų, įsipareigojimų, žalos, nuostolių ir išlaidų, įskaitant pagrįstus advokatų honorarus, kylančius iš ar bet kokiu būdu susijusių su:",
+                "intro": "Sutinkate atlyginti mums trečiųjų asmenų pareikštus reikalavimus, įsipareigojimus, žalą, nuostolius ir pagrįstas išlaidas, įskaitant teisines išlaidas, kylančius iš ar susijusius su:",
                 "items": {
                     "access": "Jūsų prieiga ar naudojimasis Paslauga",
                     "violation": "Jūsų šių Sąlygų pažeidimu",
@@ -2278,7 +2351,7 @@
                 "heading": "13. Nutraukimas",
                 "by_you": {
                     "heading": "13.1 Nutraukimas jūsų",
-                    "content": "Galite nutraukti savo paskyrą bet kuriuo metu susisiekdami su mumis arba per savo paskyros nustatymus."
+                    "content": "Savo paskyrą galite bet kada ištrinti paskyros nustatymuose arba susisiekę su mumis."
                 },
                 "by_us": {
                     "heading": "13.2 Nutraukimas mūsų",
@@ -2297,13 +2370,13 @@
             },
             "governing_law": {
                 "heading": "14. Taikoma teisė ir ginčų sprendimas",
-                "content": "Šios Sąlygos turi būti aiškinamos ir taikomos pagal jurisdikcijos, kurioje veikia InvoiceTrackr, įstatymus, neatsižvelgiant į jos įstatymų konfliktą. Bet kokie ginčai, kylantys iš šių Sąlygų ar jūsų naudojimosi Paslauga, turi būti sprendžiami per privalomą arbitražą, išskyrus tai, kad bet kuri šalis gali kreiptis į teismą dėl intelektinės nuosavybės pažeidimo ar šių Sąlygų pažeidimų."
+                "content": "Šioms Sąlygoms taikoma Lietuvos Respublikos teisė. Ginčai sprendžiami kompetentinguose Lietuvos Respublikos teismuose. Jei Paslauga naudojatės kaip vartotojas, jums taip pat taikoma jūsų gyvenamosios šalies imperatyviųjų teisės normų apsauga, o ginčą galite perduoti nagrinėti Valstybinei vartotojų teisių apsaugos tarnybai (vvtat.lt)."
             },
             "general": {
                 "heading": "15. Bendrosios nuostatos",
                 "entire": {
                     "heading": "15.1 Visas susitarimas",
-                    "content": "Šios Sąlygos kartu su mūsų Privatumo politika sudaro visą susitarimą tarp jūsų ir InvoiceTrackr dėl Paslaugos."
+                    "content": "Šios Sąlygos kartu su mūsų Privatumo politika sudaro visą susitarimą tarp jūsų ir Artūro Tyškevičiaus dėl Paslaugos."
                 },
                 "severability": {
                     "heading": "15.2 Atskiriamumas",
@@ -2321,7 +2394,7 @@
             "contact": {
                 "heading": "16. Kontaktinė informacija",
                 "intro": "Jei turite klausimų apie šias Paslaugų teikimo sąlygas, susisiekite su mumis:",
-                "company": "InvoiceTrackr",
+                "company": "Artūras Tyškevičius (InvoiceTrackr)",
                 "email": "El. paštas: {email}"
             }
         }
