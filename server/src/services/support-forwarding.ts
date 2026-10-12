@@ -40,7 +40,11 @@ export const forwardSupportEmail = async (
 
   if (email.raw?.download_url) {
     const raw = await fetch(email.raw.download_url);
-    const rawBytes = raw.ok ? Buffer.from(await raw.arrayBuffer()) : null;
+    const declaredBytes = Number(raw.headers.get('content-length'));
+    const rawBytes =
+      raw.ok && !(declaredBytes > MAX_RAW_ATTACHMENT_BYTES)
+        ? Buffer.from(await raw.arrayBuffer())
+        : null;
 
     if (rawBytes && rawBytes.byteLength <= MAX_RAW_ATTACHMENT_BYTES) {
       attachments.push({

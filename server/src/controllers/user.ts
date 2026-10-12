@@ -20,7 +20,7 @@ import { appEmailFrom, getAppUrl } from '../config/app';
 import { resend } from '../config/resend';
 import {
   getAccountFilesFromDb,
-  getSignatureUrlsOfOtherUsersFromDb
+  getSharedSignaturePublicIdsFromDb
 } from '../database/account-export';
 import {
   getEmailVerificationTokenFromDb,
@@ -52,7 +52,7 @@ import { destroyAccountStorage } from '../services/account-storage';
 import { resolveSignatureUrl } from '../services/signature';
 import {
   accountStorageAssets,
-  legacySignaturePublicIds
+  legacySignatureAssets
 } from '../utils/account-data';
 import { recordRequestAudit } from '../utils/audit';
 import {
@@ -465,13 +465,14 @@ export const deleteUser = async (
     throw new BadRequestError(i18n.t('error.user.deleteConfirmEmailMismatch'));
   }
 
-  const otherUsersSignatureUrls = await getSignatureUrlsOfOtherUsersFromDb(
+  const legacySignatures = legacySignatureAssets(accountFiles);
+  const sharedPublicIds = await getSharedSignaturePublicIdsFromDb(
     userId,
-    legacySignaturePublicIds(accountFiles)
+    legacySignatures.map(({ publicId }) => publicId)
   );
   const storageAssets = accountStorageAssets(
     accountFiles,
-    otherUsersSignatureUrls
+    legacySignatures.filter(({ publicId }) => !sharedPublicIds.has(publicId))
   );
 
   await recordRequestAudit({

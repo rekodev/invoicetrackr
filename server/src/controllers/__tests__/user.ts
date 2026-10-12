@@ -549,8 +549,8 @@ describe('User Controller', () => {
       const otherCloudSignatureUrl =
         'https://res.cloudinary.com/elsewhere/image/upload/v1/signature.png';
       vi.mocked(
-        accountExportDb.getSignatureUrlsOfOtherUsersFromDb
-      ).mockResolvedValue([sharedLegacySignatureUrl]);
+        accountExportDb.getSharedSignaturePublicIdsFromDb
+      ).mockResolvedValue(new Set(['shared']));
       vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
       vi.mocked(userDb.deleteUserFromDb).mockResolvedValue({ id: testUserId });
       vi.mocked(accountExportDb.getAccountFilesFromDb).mockResolvedValue({
@@ -602,7 +602,7 @@ describe('User Controller', () => {
         ['signature', { resource_type: 'image', type: 'upload' }]
       ]);
       expect(
-        accountExportDb.getSignatureUrlsOfOtherUsersFromDb
+        accountExportDb.getSharedSignaturePublicIdsFromDb
       ).toHaveBeenCalledWith(testUserId, ['signature', 'shared']);
       expect(mockCloudinaryDeleteByPrefix.mock.calls).toEqual([
         ['invoicetrackr/business-logos/1/'],
