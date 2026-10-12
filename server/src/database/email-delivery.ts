@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 
 import { db } from './db';
 import { emailDeliveriesTable } from './schema';
@@ -35,13 +35,17 @@ const updatableStatuses: Record<ProviderDeliveryStatus, string[]> = {
   failed: ['queued', 'sent', 'unknown']
 };
 
+// deliveryId comes from the send's Resend tag. It matches attempts whose
+// provider ID was never stored (lost send result, or an event that beat it).
 export const updateDeliveryStatusFromProviderInDb = async ({
   providerMessageId,
+  deliveryId,
   status,
   failureCode,
   occurredAt
 }: {
   providerMessageId: string;
+  deliveryId?: number;
   status: ProviderDeliveryStatus;
   failureCode?: string;
   occurredAt: string;
@@ -50,6 +54,7 @@ export const updateDeliveryStatusFromProviderInDb = async ({
     .update(emailDeliveriesTable)
     .set({
       status,
+      providerMessageId,
       ...(status === 'delivered'
         ? { deliveredAt: occurredAt }
         : { failedAt: occurredAt, failureCode: failureCode || status }),
@@ -58,7 +63,15 @@ export const updateDeliveryStatusFromProviderInDb = async ({
     .where(
       and(
         eq(emailDeliveriesTable.provider, 'resend'),
-        eq(emailDeliveriesTable.providerMessageId, providerMessageId),
+        or(
+          eq(emailDeliveriesTable.providerMessageId, providerMessageId),
+          deliveryId
+            ? and(
+                eq(emailDeliveriesTable.id, deliveryId),
+                isNull(emailDeliveriesTable.providerMessageId)
+              )
+            : undefined
+        ),
         inArray(emailDeliveriesTable.status, updatableStatuses[status])
       )
     )
