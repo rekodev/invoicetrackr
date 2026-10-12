@@ -18,7 +18,11 @@ export const handleResendWebhook = async (
     Body: {
       type: string;
       created_at?: string;
-      data?: { email_id?: string; bounce?: { type?: string } };
+      data?: {
+        email_id?: string;
+        bounce?: { type?: string };
+        tags?: Record<string, string>;
+      };
     };
   }>,
   reply: FastifyReply
@@ -29,6 +33,7 @@ export const handleResendWebhook = async (
   if (deliveryStatus && data?.email_id) {
     await updateDeliveryStatusFromProviderInDb({
       providerMessageId: data.email_id,
+      deliveryId: Number(data.tags?.delivery_id) || undefined,
       status: deliveryStatus,
       failureCode: data.bounce?.type,
       occurredAt: createdAt ?? new Date().toISOString()

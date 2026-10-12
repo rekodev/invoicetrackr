@@ -97,7 +97,8 @@ describe('invoice email routes', () => {
     expect(response.statusCode).toBe(200);
     expect(response.json().delivery.status).toBe('sent');
     expect(emailDb.reserveInvoiceEmailAttemptInDb).toHaveBeenCalledWith({ userId: 2, invoiceId: 7, deliveryId: 9 });
-    expect(mockResendSend).toHaveBeenCalledWith(payload, { idempotencyKey: `invoice-email/2/7/${attempt.attemptKey}` });
+    expect(mockResendSend).toHaveBeenCalledWith({ ...payload, tags: [{ name: 'delivery_id', value: String(attempt.id) }] },
+      { idempotencyKey: `invoice-email/2/7/${attempt.attemptKey}` });
     expect(mockResendSend).toHaveBeenCalledTimes(2);
     expect(mockResendSend.mock.calls[1]).toEqual(mockResendSend.mock.calls[0]);
     expect(renderInvoicePdf).not.toHaveBeenCalled();

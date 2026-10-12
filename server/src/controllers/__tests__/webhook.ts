@@ -61,20 +61,23 @@ describe('Webhook Controller', () => {
       expect(response.statusCode).toBe(200);
       expect(mockResendReceivingGet).toHaveBeenCalledWith('eml_received_123');
       expect(fetchMock).toHaveBeenCalledWith('https://inbound.example/raw');
-      expect(mockResendSend).toHaveBeenCalledWith({
-        from: 'support@invoicetrackr.app',
-        to: 'owner@example.com',
-        replyTo: ['Client <client@example.com>'],
-        subject: 'Question about my invoice',
-        text: 'From: Client <client@example.com>\n\nHello, is SF001 paid?',
-        html: '<p><strong>From: Client &lt;client@example.com&gt;</strong></p><hr /><p>Hello, is SF001 paid?</p>',
-        attachments: [
-          {
-            filename: 'original-message.eml',
-            content: Buffer.from('raw-mime').toString('base64')
-          }
-        ]
-      });
+      expect(mockResendSend).toHaveBeenCalledWith(
+        {
+          from: 'support@invoicetrackr.app',
+          to: 'owner@example.com',
+          replyTo: ['Client <client@example.com>'],
+          subject: 'Question about my invoice',
+          text: 'From: Client <client@example.com>\n\nHello, is SF001 paid?',
+          html: '<p><strong>From: Client &lt;client@example.com&gt;</strong></p><hr /><p>Hello, is SF001 paid?</p>',
+          attachments: [
+            {
+              filename: 'original-message.eml',
+              content: Buffer.from('raw-mime').toString('base64')
+            }
+          ]
+        },
+        { idempotencyKey: 'support-forward/eml_received_123' }
+      );
       expect(mockResendWebhookVerify).toHaveBeenCalledWith({
         payload: JSON.stringify({
           type: 'email.received',
@@ -104,7 +107,7 @@ describe('Webhook Controller', () => {
       const delivered = await send({
         type: 'email.delivered',
         created_at: '2026-10-12T10:00:00.000Z',
-        data: { email_id: 'eml_sent_123' }
+        data: { email_id: 'eml_sent_123', tags: { delivery_id: '42' } }
       });
       const bounced = await send({
         type: 'email.bounced',
@@ -123,6 +126,7 @@ describe('Webhook Controller', () => {
         [
           {
             providerMessageId: 'eml_sent_123',
+            deliveryId: 42,
             status: 'delivered',
             failureCode: undefined,
             occurredAt: '2026-10-12T10:00:00.000Z'
@@ -131,6 +135,7 @@ describe('Webhook Controller', () => {
         [
           {
             providerMessageId: 'eml_sent_456',
+            deliveryId: undefined,
             status: 'bounced',
             failureCode: 'Permanent',
             occurredAt: '2026-10-12T10:05:00.000Z'
