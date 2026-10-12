@@ -21,12 +21,11 @@ vi.mock('next/headers', () => ({
 }));
 
 describe('getRequestHeadersAction', () => {
-  it('forwards the session, locale and visitor IP to the API', async () => {
+  it('forwards the session, locale and visitor IP chain, but not the untrusted X-Real-IP', async () => {
     await expect(getRequestHeadersAction()).resolves.toEqual({
       Cookie: 'authjs.session-token=session-token',
       'Accept-Language': 'lt',
-      'X-Forwarded-For': '203.0.113.7',
-      'X-Real-IP': '203.0.113.7'
+      'X-Forwarded-For': '203.0.113.7'
     });
   });
 });
