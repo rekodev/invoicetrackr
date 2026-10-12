@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
 import StatusMessage from '@/components/ui/status-message';
+import { captureAnalyticsException } from '@/lib/analytics/client';
 
 export default function Error({
   error
@@ -19,6 +20,7 @@ export default function Error({
 
   useEffect(() => {
     console.error(error);
+    captureAnalyticsException(error);
   }, [error]);
 
   return (

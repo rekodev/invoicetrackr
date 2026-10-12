@@ -24,6 +24,7 @@ export const mockResendForward = vi.fn().mockResolvedValue({
   error: null
 });
 export const mockResendWebhookVerify = vi.fn();
+export const mockUpdateDeliveryStatus = vi.fn().mockResolvedValue(undefined);
 export const mockCreateAuditEvent = vi.fn().mockResolvedValue(undefined);
 
 // Mock fastify-i18n
@@ -73,7 +74,8 @@ vi.mock('../database/audit', () => ({
 }));
 
 vi.mock('../database/email-delivery', () => ({
-  getInvoiceDeliveriesFromDb: vi.fn().mockResolvedValue([])
+  getInvoiceDeliveriesFromDb: vi.fn().mockResolvedValue([]),
+  updateDeliveryStatusFromProviderInDb: mockUpdateDeliveryStatus
 }));
 
 beforeEach(() => {

@@ -72,3 +72,11 @@ export const captureAnalyticsEvent = (
 
   posthog.capture(event, properties);
 };
+
+export const captureAnalyticsException = (
+  error: Error & { digest?: string }
+) => {
+  if (!initializeAnalytics() || !posthog.has_opted_in_capturing()) return;
+
+  posthog.captureException(error, { digest: error.digest });
+};

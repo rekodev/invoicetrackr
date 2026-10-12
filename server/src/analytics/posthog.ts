@@ -5,7 +5,7 @@ import type { AnalyticsEvent, AnalyticsProperties } from './events';
 
 let posthog: PostHog | undefined;
 
-const getPostHog = () => {
+export const getPostHog = () => {
   if (process.env.NODE_ENV === 'test') return undefined;
 
   const key = process.env.POSTHOG_KEY;

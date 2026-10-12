@@ -11,6 +11,10 @@ import {
   validatorCompiler
 } from 'fastify-type-provider-zod';
 
+import {
+  captureServerException,
+  captureServerExceptionImmediate
+} from './analytics/errors';
 import { cloudinaryConfig } from './config/cloudinary';
 import { loadEnv } from './config/env';
 import { getPgVersion } from './database/db';
@@ -24,6 +28,7 @@ import contactRoutes from './routes/contact';
 import cryptoWalletRoutes from './routes/crypto-wallet';
 import dashboardRoutes from './routes/dashboard';
 import expenseRoutes from './routes/expense';
+import healthRoutes from './routes/health';
 import invoiceRoutes from './routes/invoice';
 import journalRoutes from './routes/journal';
 import taxRoutes from './routes/tax';
@@ -75,7 +80,7 @@ defineI18n(server, {
   lt: import('./locales/lt')
 });
 server.register(i18n);
-server.register(cors);
+server.register(cors, { origin: process.env.APP_BASE_URL || false });
 server.register(fastifyMultipart);
 server.register(fastifyCookie);
 server.register(fastifyRateLimit, rateLimitPluginOptions);
@@ -88,6 +93,7 @@ server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
 // Register Routes
+server.register(healthRoutes);
 server.register(webhookRoutes);
 server.register(invoiceRoutes);
 server.register(expenseRoutes);
@@ -103,6 +109,19 @@ server.register(contactRoutes);
 server.register(cryptoWalletRoutes);
 
 getPgVersion();
+
+process.on('unhandledRejection', (reason) => {
+  server.log.error({ err: reason }, 'Unhandled promise rejection');
+  captureServerException(reason, { source: 'unhandledRejection' });
+});
+
+process.on('uncaughtException', async (error) => {
+  server.log.fatal({ err: error }, 'Uncaught exception');
+  await captureServerExceptionImmediate(error, {
+    source: 'uncaughtException'
+  }).catch(() => undefined);
+  process.exit(1);
+});
 
 server.listen({ port }, (err, address) => {
   if (err) {

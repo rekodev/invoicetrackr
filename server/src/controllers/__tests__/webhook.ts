@@ -2,7 +2,11 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import webhookRoutes from '../../routes/webhook';
 import { createTestApp } from '../../test/app';
-import { mockResendForward, mockResendWebhookVerify } from '../../test/setup';
+import {
+  mockResendForward,
+  mockResendWebhookVerify,
+  mockUpdateDeliveryStatus
+} from '../../test/setup';
 
 const signatureHeaders = {
   'svix-id': 'msg_123',
@@ -60,22 +64,52 @@ describe('Webhook Controller', () => {
       await app.close();
     });
 
-    it('acknowledges unrelated Resend events without forwarding', async () => {
+    it('records delivery outcomes from Resend without forwarding', async () => {
       const app = await createApp();
+      const send = (payload: object) =>
+        app.inject({
+          method: 'POST',
+          url: '/api/webhook/resend',
+          headers: signatureHeaders,
+          payload
+        });
 
-      const response = await app.inject({
-        method: 'POST',
-        url: '/api/webhook/resend',
-        headers: signatureHeaders,
-        payload: {
-          type: 'email.delivered',
-          data: {
-            email_id: 'eml_sent_123'
-          }
-        }
+      const delivered = await send({
+        type: 'email.delivered',
+        created_at: '2026-10-12T10:00:00.000Z',
+        data: { email_id: 'eml_sent_123' }
+      });
+      const bounced = await send({
+        type: 'email.bounced',
+        created_at: '2026-10-12T10:05:00.000Z',
+        data: { email_id: 'eml_sent_456', bounce: { type: 'Permanent' } }
+      });
+      const opened = await send({
+        type: 'email.opened',
+        data: { email_id: 'eml_sent_123' }
       });
 
-      expect(response.statusCode).toBe(200);
+      expect([delivered, bounced, opened].map((r) => r.statusCode)).toEqual([
+        200, 200, 200
+      ]);
+      expect(mockUpdateDeliveryStatus.mock.calls).toEqual([
+        [
+          {
+            providerMessageId: 'eml_sent_123',
+            status: 'delivered',
+            failureCode: undefined,
+            occurredAt: '2026-10-12T10:00:00.000Z'
+          }
+        ],
+        [
+          {
+            providerMessageId: 'eml_sent_456',
+            status: 'bounced',
+            failureCode: 'Permanent',
+            occurredAt: '2026-10-12T10:05:00.000Z'
+          }
+        ]
+      ]);
       expect(mockResendForward).not.toHaveBeenCalled();
 
       await app.close();

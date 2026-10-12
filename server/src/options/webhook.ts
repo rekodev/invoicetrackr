@@ -8,9 +8,11 @@ export const resendWebhookOptions: RouteShorthandOptionsWithHandler = {
   schema: {
     body: z.object({
       type: z.string(),
+      created_at: z.string().optional(),
       data: z
         .looseObject({
-          email_id: z.string().optional()
+          email_id: z.string().optional(),
+          bounce: z.looseObject({ type: z.string().optional() }).optional()
         })
         .optional()
     }),

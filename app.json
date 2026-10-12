@@ -3,5 +3,17 @@
     "dokku": {
       "predeploy": "sh -c 'cd /app/server && node node_modules/drizzle-kit/bin.cjs migrate --config=drizzle.config.ts'"
     }
+  },
+  "healthchecks": {
+    "web": [
+      {
+        "type": "startup",
+        "name": "API and database reachable",
+        "path": "/api/health",
+        "attempts": 5,
+        "wait": 5,
+        "timeout": 5
+      }
+    ]
   }
 }
