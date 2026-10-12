@@ -1,6 +1,9 @@
 import { resend } from '../config/resend';
 
 const DEFAULT_FORWARD_FROM_EMAIL = 'support@invoicetrackr.app';
+// Resend caps a sent email at 40 MB after base64 encoding (~33% larger), so
+// bigger originals are forwarded without the .eml copy.
+const MAX_RAW_ATTACHMENT_BYTES = 25 * 1024 * 1024;
 
 type ForwardResult = {
   data: unknown;
@@ -37,26 +40,31 @@ export const forwardSupportEmail = async (
 
   if (email.raw?.download_url) {
     const raw = await fetch(email.raw.download_url);
+    const rawBytes = raw.ok ? Buffer.from(await raw.arrayBuffer()) : null;
 
-    if (raw.ok) {
+    if (rawBytes && rawBytes.byteLength <= MAX_RAW_ATTACHMENT_BYTES) {
       attachments.push({
         filename: 'original-message.eml',
-        content: Buffer.from(await raw.arrayBuffer()).toString('base64')
+        content: rawBytes.toString('base64')
       });
     }
   }
 
-  const { data, error } = await resend.emails.send({
-    from,
-    to,
-    replyTo: sender,
-    subject: email.subject || '(no subject)',
-    text: `${senderLine}\n\n${email.text ?? ''}`,
-    html: `<p><strong>${escapeHtml(senderLine)}</strong></p><hr />${
-      email.html ?? `<pre>${escapeHtml(email.text ?? '')}</pre>`
-    }`,
-    attachments: attachments.length ? attachments : undefined
-  });
+  const { data, error } = await resend.emails.send(
+    {
+      from,
+      to,
+      replyTo: sender,
+      subject: email.subject || '(no subject)',
+      text: `${senderLine}\n\n${email.text ?? ''}`,
+      html: `<p><strong>${escapeHtml(senderLine)}</strong></p><hr />${
+        email.html ?? `<pre>${escapeHtml(email.text ?? '')}</pre>`
+      }`,
+      attachments: attachments.length ? attachments : undefined
+    },
+    // Webhook retries reuse the received email ID, so Resend sends it once.
+    { idempotencyKey: `support-forward/${emailId}` }
+  );
 
   return {
     data,

@@ -909,6 +909,21 @@ describe('User Controller', () => {
       expect(foreignUrlResponse.json().message).toBe(
         'error.user.signatureInvalid'
       );
+
+      const otherUserSignatureResponse = await app.inject({
+        method: 'PUT',
+        url: `/api/${testUserId}`,
+        payload: {
+          ...profile,
+          isVatPayer: false,
+          signature: `https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/signatures/${testUserId + 1}/theirs.png`
+        }
+      });
+
+      expect(otherUserSignatureResponse.statusCode).toBe(400);
+      expect(otherUserSignatureResponse.json().message).toBe(
+        'error.user.signatureInvalid'
+      );
       expect(userDb.updateUserInDb).not.toHaveBeenCalled();
 
       const uploadResponse = await upload('image/png');

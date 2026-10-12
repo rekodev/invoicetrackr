@@ -62,7 +62,10 @@ import {
 import { getUserFromDb } from '../database/user';
 import en from '../locales/en';
 import lt from '../locales/lt';
-import { uploadSignatureImage } from '../services/signature';
+import {
+  resolveSignatureUrl,
+  uploadSignatureImage
+} from '../services/signature';
 import { recordRequestAudit } from '../utils/audit';
 import {
   AlreadyExistsError,
@@ -70,7 +73,6 @@ import {
   NotFoundError
 } from '../utils/error';
 import type { InvoiceEmailProviderPayload } from '../utils/invoice-email';
-import { isStoredSignatureUrl } from '../utils/storage';
 
 const locales = { en, lt };
 
@@ -626,17 +628,12 @@ export const postInvoice = async (
       throw new BadRequestError(i18n.t('error.client.notFound'));
   }
 
-  let uploadedSignatureUrl: string | undefined;
-
-  if (signatureFile) {
-    uploadedSignatureUrl = await uploadSignatureImage({
-      file: signatureFile,
-      userId,
-      i18n
-    });
-  } else if (!isStoredSignatureUrl(invoiceData.senderSignature)) {
-    throw new BadRequestError(i18n.t('error.user.signatureInvalid'));
-  }
+  const signatureUrl = await resolveSignatureUrl({
+    file: signatureFile,
+    url: invoiceData.senderSignature,
+    userId,
+    i18n
+  });
 
   const foundInvoice =
     invoiceData.invoiceId && !invoiceData.invoiceSeries
@@ -645,8 +642,6 @@ export const postInvoice = async (
 
   if (foundInvoice)
     throw new AlreadyExistsError(i18n.t('error.invoice.alreadyExists'));
-
-  const signatureUrl = uploadedSignatureUrl || invoiceData.senderSignature;
 
   let insertedInvoice;
   try {
@@ -725,19 +720,12 @@ export const updateInvoice = async (
       throw new AlreadyExistsError(i18n.t('error.invoice.alreadyExists'));
   }
 
-  let uploadedSignatureUrl: string | undefined;
-
-  if (signatureFile) {
-    uploadedSignatureUrl = await uploadSignatureImage({
-      file: signatureFile,
-      userId,
-      i18n
-    });
-  } else if (!isStoredSignatureUrl(invoiceData.senderSignature)) {
-    throw new BadRequestError(i18n.t('error.user.signatureInvalid'));
-  }
-
-  const signatureUrl = uploadedSignatureUrl || invoiceData.senderSignature;
+  const signatureUrl = await resolveSignatureUrl({
+    file: signatureFile,
+    url: invoiceData.senderSignature,
+    userId,
+    i18n
+  });
 
   let updatedInvoice;
   try {
