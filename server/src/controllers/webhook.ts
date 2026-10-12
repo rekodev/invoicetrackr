@@ -1,42 +1,16 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 
-import { resend } from '../config/resend';
 import {
   type ProviderDeliveryStatus,
   updateDeliveryStatusFromProviderInDb
 } from '../database/email-delivery';
+import { forwardSupportEmail } from '../services/support-forwarding';
 import { BadRequestError, InternalServerError } from '../utils/error';
-
-const DEFAULT_FORWARD_FROM_EMAIL = 'support@invoicetrackr.app';
 
 const deliveryStatusByEvent: Record<string, ProviderDeliveryStatus> = {
   'email.delivered': 'delivered',
   'email.bounced': 'bounced',
   'email.failed': 'failed'
-};
-
-type ResendForwardResponse = {
-  data: unknown;
-  error: { message: string } | null;
-};
-
-const forwardReceivedEmail = async (
-  emailId: string
-): Promise<ResendForwardResponse> => {
-  const to = process.env.RESEND_FORWARD_TO_EMAIL!;
-  const from =
-    process.env.RESEND_FORWARD_FROM_EMAIL || DEFAULT_FORWARD_FROM_EMAIL;
-
-  const { data, error } = await resend.emails.receiving.forward({
-    emailId,
-    to,
-    from
-  });
-
-  return {
-    data,
-    error: error ? { message: error.message } : null
-  };
 };
 
 export const handleResendWebhook = async (
@@ -71,7 +45,7 @@ export const handleResendWebhook = async (
     throw new BadRequestError('Received email webhook is missing email_id');
   }
 
-  const { data: forwarded, error } = await forwardReceivedEmail(emailId);
+  const { data: forwarded, error } = await forwardSupportEmail(emailId);
 
   if (error) {
     throw new InternalServerError(error.message);

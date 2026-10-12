@@ -19,9 +19,9 @@ export const mockResendSend = vi.fn().mockResolvedValue({
   data: { id: 'mock-email-id' },
   error: null
 });
-export const mockResendForward = vi.fn().mockResolvedValue({
-  data: { id: 'mock-forwarded-email-id' },
-  error: null
+export const mockResendReceivingGet = vi.fn().mockResolvedValue({
+  data: null,
+  error: { message: 'Not mocked' }
 });
 export const mockResendWebhookVerify = vi.fn();
 export const mockUpdateDeliveryStatus = vi.fn().mockResolvedValue(undefined);
@@ -57,7 +57,7 @@ vi.mock('../config/resend', () => ({
     emails: {
       send: mockResendSend,
       receiving: {
-        forward: mockResendForward
+        get: mockResendReceivingGet
       }
     },
     webhooks: {
