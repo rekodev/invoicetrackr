@@ -10,6 +10,7 @@ import {
   or
 } from 'drizzle-orm';
 
+import { parseCloudinaryUrl } from '../utils/storage';
 import { db } from './db';
 import {
   bankingInformationTable,
@@ -287,11 +288,12 @@ export const getAccountFilesFromDb = async (userId: number) => {
   return { attachments, profile: profile ?? null, signatures };
 };
 
-export const getSignatureUrlsOfOtherUsersFromDb = async (
+// Returns the given public IDs that another user's profile or invoice uses.
+export const getSharedSignaturePublicIdsFromDb = async (
   userId: number,
   publicIds: string[]
 ) => {
-  if (!publicIds.length) return [];
+  if (!publicIds.length) return new Set<string>();
 
   const patterns = publicIds.map((publicId) => `%/${publicId}%`);
   const matchesAny = (column: Column) =>
@@ -324,13 +326,17 @@ export const getSignatureUrlsOfOtherUsersFromDb = async (
       )
   ]);
 
-  return [
-    ...profiles.map(({ url }) => url),
-    ...invoices.flatMap(({ senderSignature, receiverSignature }) => [
-      senderSignature,
-      receiverSignature
-    ])
-  ];
+  const usedPublicIds = new Set(
+    [
+      ...profiles.map(({ url }) => url),
+      ...invoices.flatMap(({ senderSignature, receiverSignature }) => [
+        senderSignature,
+        receiverSignature
+      ])
+    ].map((url) => parseCloudinaryUrl(url)?.asset.publicId)
+  );
+
+  return new Set(publicIds.filter((publicId) => usedPublicIds.has(publicId)));
 };
 
 export type AccountExportData = Awaited<

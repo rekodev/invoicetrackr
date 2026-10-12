@@ -7,6 +7,7 @@ import type {
 import {
   attachmentAsset,
   attachmentFormat,
+  isLegacySignatureAsset,
   parseCloudinaryUrl,
   type StorageAsset
 } from './storage';
@@ -54,46 +55,29 @@ const accountSignatureUrls = ({ profile, signatures }: AccountFiles) => [
   ])
 ];
 
-const isLegacySignatureAsset = (asset: StorageAsset) =>
-  asset.type === 'upload' && !asset.publicId.includes('/');
-
-export const legacySignaturePublicIds = (files: AccountFiles) => [
-  ...new Set(
-    accountSignatureUrls(files).flatMap((url) => {
-      const asset = parseCloudinaryUrl(url)?.asset;
-
-      return asset && isLegacySignatureAsset(asset) ? [asset.publicId] : [];
-    })
-  )
-];
-
-export const accountStorageAssets = (
-  files: AccountFiles,
-  otherUsersSignatureUrls: (string | null)[]
-): StorageAsset[] => {
+export const legacySignatureAssets = (files: AccountFiles) => {
   const assets = new Map<string, StorageAsset>();
-  const add = (asset: StorageAsset) =>
-    assets.set(`${asset.resourceType}:${asset.type}:${asset.publicId}`, asset);
-  const sharedPublicIds = new Set(
-    otherUsersSignatureUrls.flatMap((url) => {
-      const asset = parseCloudinaryUrl(url)?.asset;
-
-      return asset ? [asset.publicId] : [];
-    })
-  );
-
-  files.attachments.forEach((attachment) => add(attachmentAsset(attachment)));
 
   accountSignatureUrls(files).forEach((url) => {
     const asset = parseCloudinaryUrl(url)?.asset;
 
-    if (
-      asset &&
-      isLegacySignatureAsset(asset) &&
-      !sharedPublicIds.has(asset.publicId)
-    )
-      add(asset);
+    if (asset && isLegacySignatureAsset(asset))
+      assets.set(asset.publicId, asset);
   });
+
+  return [...assets.values()];
+};
+
+export const accountStorageAssets = (
+  files: AccountFiles,
+  legacySignatures: StorageAsset[]
+): StorageAsset[] => {
+  const assets = new Map<string, StorageAsset>();
+  const add = (asset: StorageAsset) =>
+    assets.set(`${asset.resourceType}:${asset.type}:${asset.publicId}`, asset);
+
+  files.attachments.forEach((attachment) => add(attachmentAsset(attachment)));
+  legacySignatures.forEach(add);
 
   return [...assets.values()];
 };
