@@ -17,9 +17,9 @@ const capturingResend = {
       headers: null
     }),
     receiving: {
-      forward: async () => ({
+      get: async () => ({
         data: null,
-        error: { message: 'Captured email transport does not forward mail' }
+        error: { message: 'Captured email transport does not receive mail' }
       })
     }
   },
