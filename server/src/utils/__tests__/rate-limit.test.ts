@@ -50,12 +50,20 @@ describe('API rate limiting', () => {
     }
   );
 
-  it('allows the isolated runner to raise both budgets', async () => {
+  it('allows the isolated runner to raise every budget outside production', async () => {
     vi.stubEnv('API_RATE_LIMIT_MAX', '1000');
-    const { rateLimitPluginOptions } = await loadRateLimit();
+    vi.stubEnv('NODE_ENV', 'development');
+    const { ipRateLimit, rateLimitPluginOptions } = await loadRateLimit();
 
     expect(rateLimitPluginOptions.max({} as never, 'ip:1.2.3.4')).toBe(1000);
     expect(rateLimitPluginOptions.max({} as never, 'user:1')).toBe(1000);
+    expect(ipRateLimit(10, '15 minutes').max).toBe(1000);
+
+    vi.resetModules();
+    vi.stubEnv('NODE_ENV', 'production');
+    const production = await loadRateLimit();
+
+    expect(production.ipRateLimit(10, '15 minutes').max).toBe(10);
   });
 
   it('keys signed-in users by account and visitors by the real client IP', async () => {
