@@ -1,6 +1,8 @@
 import type { FastifyRequest } from 'fastify';
 import { beforeEach, vi } from 'vitest';
 
+process.env.CLOUDINARY_CLOUD_NAME = 'demo';
+
 // Reusable mocks for external services
 export const mockT = vi.fn((key: string) => key);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,6 +23,7 @@ export const mockResendForward = vi.fn().mockResolvedValue({
   data: { id: 'mock-forwarded-email-id' },
   error: null
 });
+export const mockResendWebhookVerify = vi.fn();
 export const mockCreateAuditEvent = vi.fn().mockResolvedValue(undefined);
 
 // Mock fastify-i18n
@@ -55,6 +58,9 @@ vi.mock('../config/resend', () => ({
       receiving: {
         forward: mockResendForward
       }
+    },
+    webhooks: {
+      verify: mockResendWebhookVerify
     }
   }
 }));

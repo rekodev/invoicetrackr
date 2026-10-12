@@ -2,6 +2,7 @@ import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
 import { handleResendWebhook } from '../controllers/webhook';
+import { verifyResendWebhook } from '../middleware/webhook';
 
 export const resendWebhookOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -20,5 +21,6 @@ export const resendWebhookOptions: RouteShorthandOptionsWithHandler = {
       })
     }
   },
+  preHandler: verifyResendWebhook,
   handler: handleResendWebhook
 };

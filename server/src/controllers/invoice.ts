@@ -17,7 +17,6 @@ import {
   type RecipientDetailsBody,
   type SendRecipientDetailsRequestBody
 } from '@invoicetrackr/types';
-import { v2 as cloudinary } from 'cloudinary';
 import { randomBytes } from 'crypto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
@@ -63,6 +62,7 @@ import {
 import { getUserFromDb } from '../database/user';
 import en from '../locales/en';
 import lt from '../locales/lt';
+import { uploadSignatureImage } from '../services/signature';
 import { recordRequestAudit } from '../utils/audit';
 import {
   AlreadyExistsError,
@@ -70,6 +70,7 @@ import {
   NotFoundError
 } from '../utils/error';
 import type { InvoiceEmailProviderPayload } from '../utils/invoice-email';
+import { isStoredSignatureUrl } from '../utils/storage';
 
 const locales = { en, lt };
 
@@ -81,21 +82,6 @@ const interpolateTranslation = (
     (value, [key, replacement]) => value.replace(`%{${key}}`, replacement),
     translation
   );
-
-const uploadSignatureFile = async (
-  signatureFile: MultipartFile,
-  unableToUploadMessage: string
-) => {
-  const fileBuffer = await signatureFile.toBuffer();
-
-  const uploadedSignature = await cloudinary.uploader.upload(
-    `data:${signatureFile.mimetype};base64,${fileBuffer.toString('base64')}`
-  );
-
-  if (!uploadedSignature) throw new BadRequestError(unableToUploadMessage);
-
-  return uploadedSignature.url.replace('http://', 'https://');
-};
 
 const UNSIGNED_SIGNING_LINK_VALIDITY_DAYS = 30;
 const SIGNED_SIGNING_LINK_VALIDITY_DAYS = 90;
@@ -386,10 +372,7 @@ export const submitRecipientDetails = async (
   });
 
   const receiverSignature = file
-    ? await uploadSignatureFile(
-        file,
-        i18n.t('error.user.unableToUploadSignature')
-      )
+    ? await uploadSignatureImage({ file, userId: request.userId, i18n })
     : undefined;
   const publicInvoiceToken = randomBytes(32).toString('hex');
   const result = await submitRecipientDetailsInDb({
@@ -646,10 +629,13 @@ export const postInvoice = async (
   let uploadedSignatureUrl: string | undefined;
 
   if (signatureFile) {
-    uploadedSignatureUrl = await uploadSignatureFile(
-      signatureFile,
-      i18n.t('error.user.unableToUploadSignature')
-    );
+    uploadedSignatureUrl = await uploadSignatureImage({
+      file: signatureFile,
+      userId,
+      i18n
+    });
+  } else if (!isStoredSignatureUrl(invoiceData.senderSignature)) {
+    throw new BadRequestError(i18n.t('error.user.signatureInvalid'));
   }
 
   const foundInvoice =
@@ -742,10 +728,13 @@ export const updateInvoice = async (
   let uploadedSignatureUrl: string | undefined;
 
   if (signatureFile) {
-    uploadedSignatureUrl = await uploadSignatureFile(
-      signatureFile,
-      i18n.t('error.user.unableToUploadSignature')
-    );
+    uploadedSignatureUrl = await uploadSignatureImage({
+      file: signatureFile,
+      userId,
+      i18n
+    });
+  } else if (!isStoredSignatureUrl(invoiceData.senderSignature)) {
+    throw new BadRequestError(i18n.t('error.user.signatureInvalid'));
   }
 
   const signatureUrl = uploadedSignatureUrl || invoiceData.senderSignature;
@@ -1226,10 +1215,11 @@ export const signPublicInvoice = async (
   if (signing.invoice.recipientSignedAt)
     throw new BadRequestError(i18n.t('error.invoice.alreadySigned'));
 
-  const signatureUrl = await uploadSignatureFile(
-    signatureFile,
-    i18n.t('error.user.unableToUploadSignature')
-  );
+  const signatureUrl = await uploadSignatureImage({
+    file: signatureFile,
+    userId: signing.userId,
+    i18n
+  });
   const invoice = await signInvoiceByRecipientTokenInDb({
     token: signing.invoice.recipientSigningToken,
     receiverSignature: signatureUrl

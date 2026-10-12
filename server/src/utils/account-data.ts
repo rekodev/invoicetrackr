@@ -7,34 +7,13 @@ import type {
 import {
   attachmentAsset,
   attachmentFormat,
+  parseCloudinaryUrl,
   type StorageAsset
 } from './storage';
 
 export type ExportFile =
   | { path: string; asset: StorageAsset; format: string }
   | { path: string; url: string };
-
-const CLOUDINARY_UPLOAD_PATH =
-  /\/(image|raw)\/(upload|authenticated)\/(?:v\d+\/)?(.+?)(?:\.([a-z0-9]+))?$/i;
-
-export const parseCloudinaryUrl = (url: string | null | undefined) => {
-  if (!url) return null;
-
-  const match = CLOUDINARY_UPLOAD_PATH.exec(url.split('?')[0]);
-
-  if (!match) return null;
-
-  const [, resourceType, type, publicId, format = ''] = match;
-
-  return {
-    asset: {
-      publicId,
-      resourceType,
-      type: type as StorageAsset['type']
-    },
-    format
-  };
-};
 
 const withExtension = (name: string, format: string) =>
   format && !name.toLowerCase().endsWith(`.${format}`)
@@ -67,25 +46,54 @@ export const accountExportFiles = ({
   return [...files, ...publicFiles];
 };
 
-export const accountStorageAssets = ({
-  attachments,
-  profile,
-  signatures
-}: AccountFiles): StorageAsset[] => {
+const accountSignatureUrls = ({ profile, signatures }: AccountFiles) => [
+  profile?.signatureUrl,
+  ...signatures.flatMap(({ senderSignature, receiverSignature }) => [
+    senderSignature,
+    receiverSignature
+  ])
+];
+
+const isLegacySignatureAsset = (asset: StorageAsset) =>
+  asset.type === 'upload' && !asset.publicId.includes('/');
+
+export const legacySignaturePublicIds = (files: AccountFiles) => [
+  ...new Set(
+    accountSignatureUrls(files).flatMap((url) => {
+      const asset = parseCloudinaryUrl(url)?.asset;
+
+      return asset && isLegacySignatureAsset(asset) ? [asset.publicId] : [];
+    })
+  )
+];
+
+export const accountStorageAssets = (
+  files: AccountFiles,
+  otherUsersSignatureUrls: (string | null)[]
+): StorageAsset[] => {
   const assets = new Map<string, StorageAsset>();
-  const add = (asset: StorageAsset | undefined) => {
-    if (asset) assets.set(`${asset.resourceType}:${asset.type}:${asset.publicId}`, asset);
-  };
+  const add = (asset: StorageAsset) =>
+    assets.set(`${asset.resourceType}:${asset.type}:${asset.publicId}`, asset);
+  const sharedPublicIds = new Set(
+    otherUsersSignatureUrls.flatMap((url) => {
+      const asset = parseCloudinaryUrl(url)?.asset;
 
-  attachments.forEach((attachment) => add(attachmentAsset(attachment)));
+      return asset ? [asset.publicId] : [];
+    })
+  );
 
-  [
-    profile?.signatureUrl,
-    ...signatures.flatMap(({ senderSignature, receiverSignature }) => [
-      senderSignature,
-      receiverSignature
-    ])
-  ].forEach((url) => add(parseCloudinaryUrl(url)?.asset));
+  files.attachments.forEach((attachment) => add(attachmentAsset(attachment)));
+
+  accountSignatureUrls(files).forEach((url) => {
+    const asset = parseCloudinaryUrl(url)?.asset;
+
+    if (
+      asset &&
+      isLegacySignatureAsset(asset) &&
+      !sharedPublicIds.has(asset.publicId)
+    )
+      add(asset);
+  });
 
   return [...assets.values()];
 };

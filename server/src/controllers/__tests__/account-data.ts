@@ -56,7 +56,7 @@ describe('Account data export', () => {
       ],
       profile: {
         logoUrl: 'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/business-logos/1/logo.png',
-        signatureUrl: ''
+        signatureUrl: 'http://169.254.169.254/latest/image/upload/signature.png'
       },
       signatures: []
     });
@@ -93,6 +93,9 @@ describe('Account data export', () => {
     });
     expect(strFromU8(zip['README.txt'])).toContain('owner@example.com');
     expect(strFromU8(zip['files/expenses/10/3-receipt.pdf'])).toBe('%PDF-receipt');
+    expect(fetchMock).not.toHaveBeenCalledWith(
+      expect.stringContaining('169.254.169.254')
+    );
     expect(mockCloudinaryPrivateDownloadUrl).toHaveBeenCalledWith('docs/receipt', 'pdf', expect.objectContaining({ type: 'authenticated', resource_type: 'image' }));
     expect(accountExportDb.getAccountExportFromDb).toHaveBeenCalledWith(1);
     expect(mockCreateAuditEvent).toHaveBeenCalledWith(

@@ -480,6 +480,9 @@ export default {
       tokenExpired: 'Token has expired',
       tokenAlreadyUsed: 'Token has already been used',
       unableToUploadSignature: 'Unable to upload signature',
+      signatureInvalid: 'Upload the signature again',
+      signatureInvalidType: 'Use a JPEG, PNG, or WebP signature image',
+      signatureTooLarge: 'Signature image must be 1 MB or smaller',
       unableToUpdateSelectedBankAccount:
         'Unable to update selected bank account',
       onboardingProfileIncomplete:

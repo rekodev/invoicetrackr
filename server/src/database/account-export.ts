@@ -1,4 +1,14 @@
-import { and, asc, eq, getTableColumns, isNull } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  type Column,
+  eq,
+  getTableColumns,
+  isNull,
+  like,
+  ne,
+  or
+} from 'drizzle-orm';
 
 import { db } from './db';
 import {
@@ -275,6 +285,52 @@ export const getAccountFilesFromDb = async (userId: number) => {
   ]);
 
   return { attachments, profile: profile ?? null, signatures };
+};
+
+export const getSignatureUrlsOfOtherUsersFromDb = async (
+  userId: number,
+  publicIds: string[]
+) => {
+  if (!publicIds.length) return [];
+
+  const patterns = publicIds.map((publicId) => `%/${publicId}%`);
+  const matchesAny = (column: Column) =>
+    or(...patterns.map((pattern) => like(column, pattern)));
+
+  const [profiles, invoices] = await Promise.all([
+    db
+      .select({ url: businessProfilesTable.signatureUrl })
+      .from(businessProfilesTable)
+      .where(
+        and(
+          ne(businessProfilesTable.userId, userId),
+          matchesAny(businessProfilesTable.signatureUrl)
+        )
+      ),
+    db
+      .select({
+        senderSignature: invoicesTable.senderSignature,
+        receiverSignature: invoicesTable.receiverSignature
+      })
+      .from(invoicesTable)
+      .where(
+        and(
+          ne(invoicesTable.userId, userId),
+          or(
+            matchesAny(invoicesTable.senderSignature),
+            matchesAny(invoicesTable.receiverSignature)
+          )
+        )
+      )
+  ]);
+
+  return [
+    ...profiles.map(({ url }) => url),
+    ...invoices.flatMap(({ senderSignature, receiverSignature }) => [
+      senderSignature,
+      receiverSignature
+    ])
+  ];
 };
 
 export type AccountExportData = Awaited<

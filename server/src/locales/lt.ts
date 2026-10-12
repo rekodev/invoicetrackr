@@ -490,6 +490,9 @@ export default {
       tokenExpired: 'Rakto galiojimo laikas pasibaigė',
       tokenAlreadyUsed: 'Raktas jau panaudotas',
       unableToUploadSignature: 'Nepavyko įkelti parašo',
+      signatureInvalid: 'Įkelkite parašą iš naujo',
+      signatureInvalidType: 'Parašui naudokite JPEG, PNG arba WebP paveikslėlį',
+      signatureTooLarge: 'Parašo paveikslėlis negali viršyti 1 MB',
       unableToUpdateSelectedBankAccount:
         'Nepavyko atnaujinti pagrindinės banko sąskaitos',
       onboardingProfileIncomplete:

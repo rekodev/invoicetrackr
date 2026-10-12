@@ -65,7 +65,8 @@ const upsertGoogleOAuthUserForSession = async ({
   const response = await fetch(`${getServerBaseUrl()}/api/users/oauth/google`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-Internal-Api-Secret': process.env.INTERNAL_API_SECRET ?? ''
     },
     body: JSON.stringify({
       email,
