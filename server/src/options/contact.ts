@@ -3,8 +3,10 @@ import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
 import { postContactMessage } from '../controllers/contact';
+import { ipRateLimit } from '../utils/rate-limit';
 
 export const postContactMessageOptions: RouteShorthandOptionsWithHandler = {
+  config: { rateLimit: ipRateLimit(5, '1 hour') },
   schema: {
     body: z.object({
       email: z.email('validation.contact.email'),

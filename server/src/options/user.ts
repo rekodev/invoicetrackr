@@ -18,7 +18,7 @@ import {
   userProfileUpdateBodySchema,
   verifyEmailTokenResponseSchema
 } from '@invoicetrackr/types';
-import { FastifyRequest, RouteShorthandOptionsWithHandler } from 'fastify';
+import { RouteShorthandOptionsWithHandler } from 'fastify';
 import z from 'zod/v4';
 
 import { exportAccountData } from '../controllers/account-data';
@@ -45,6 +45,7 @@ import {
 } from '../controllers/user';
 import { authMiddleware } from '../middleware/auth';
 import { preValidateFileAndFields } from '../utils/multipart';
+import { ipRateLimit, userRateLimit } from '../utils/rate-limit';
 
 export const getUserOptions: RouteShorthandOptionsWithHandler = {
   schema: {
@@ -57,6 +58,7 @@ export const getUserOptions: RouteShorthandOptionsWithHandler = {
 };
 
 export const loginUserOptions: RouteShorthandOptionsWithHandler = {
+  config: { rateLimit: ipRateLimit(10, '15 minutes') },
   schema: {
     body: z.object({
       email: z
@@ -139,14 +141,7 @@ export const deleteUserOptions: RouteShorthandOptionsWithHandler = {
 };
 
 export const exportAccountDataOptions: RouteShorthandOptionsWithHandler = {
-  config: {
-    rateLimit: {
-      max: 3,
-      timeWindow: '1 hour',
-      keyGenerator: (request: FastifyRequest) =>
-        `account-export:${(request.params as { userId: string }).userId}`
-    }
-  },
+  config: { rateLimit: userRateLimit(3, '1 hour') },
   preHandler: authMiddleware,
   handler: exportAccountData
 };
@@ -229,6 +224,7 @@ export const updateUserAnalyticsConsentOptions: RouteShorthandOptionsWithHandler
   };
 
 export const changeUserPasswordOptions: RouteShorthandOptionsWithHandler = {
+  config: { rateLimit: userRateLimit(5, '15 minutes') },
   schema: {
     body: z
       .object({
@@ -249,6 +245,7 @@ export const changeUserPasswordOptions: RouteShorthandOptionsWithHandler = {
 };
 
 export const resetUserPasswordOptions: RouteShorthandOptionsWithHandler = {
+  config: { rateLimit: ipRateLimit(5, '1 hour') },
   schema: {
     body: z.object({
       email: z.string().min(1, 'validation.user.email')
@@ -286,6 +283,7 @@ export const createNewUserPasswordOptions: RouteShorthandOptionsWithHandler = {
 };
 
 export const verifyUserEmailOptions: RouteShorthandOptionsWithHandler = {
+  config: { rateLimit: ipRateLimit(10, '1 hour') },
   schema: {
     params: z.object({
       token: z.string().min(1)

@@ -6,9 +6,13 @@ import { ReactNode, Suspense } from 'react';
 
 import { getUser } from '@/api/user';
 import { auth } from '@/auth';
-import AuthenticatedShell from '@/components/layout/authenticated-shell';
+import AuthenticatedShell, {
+  type ShellUser
+} from '@/components/layout/authenticated-shell';
+import RateLimitNotice from '@/components/ui/rate-limit-notice';
 import { LOGIN_PAGE } from '@/lib/constants/pages';
-import { isResponseError } from '@/lib/utils/error';
+import { isRateLimitError, isResponseError } from '@/lib/utils/error';
+import { getShellUserFromSession } from '@/lib/utils/user';
 
 import Loading from '../loading';
 
@@ -20,6 +24,14 @@ export const metadata: Metadata = {
   },
   referrer: 'no-referrer'
 };
+
+const renderShell = (user: ShellUser, content: ReactNode) => (
+  <AuthenticatedShell user={user}>
+    <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col p-6 pb-12">
+      {content}
+    </main>
+  </AuthenticatedShell>
+);
 
 export default async function UserLayout({
   children
@@ -33,13 +45,18 @@ export default async function UserLayout({
   }
 
   const response = await getUser(Number(session.user.id));
+
+  if (isRateLimitError(response)) {
+    return renderShell(
+      getShellUserFromSession(session.user),
+      <RateLimitNotice />
+    );
+  }
+
   if (isResponseError(response)) throw new Error('Failed to load account');
 
-  return (
-    <AuthenticatedShell user={response.data.user}>
-      <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col p-6 pb-12">
-        <Suspense fallback={<Loading />}>{children}</Suspense>
-      </main>
-    </AuthenticatedShell>
+  return renderShell(
+    response.data.user,
+    <Suspense fallback={<Loading />}>{children}</Suspense>
   );
 }

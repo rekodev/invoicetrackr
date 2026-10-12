@@ -8,6 +8,8 @@ import { Button } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
+import StatusMessage from '@/components/ui/status-message';
+
 export default function Error({
   error
 }: {
@@ -20,19 +22,12 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex flex-1 items-center justify-center p-4">
-      <div className="mx-auto flex max-w-md flex-col items-center gap-6 text-center">
-        <div className="bg-danger/10 flex items-center justify-center rounded-full p-4">
-          <ExclamationTriangleIcon className="text-danger size-8" />
-        </div>
-
-        <div className="space-y-4">
-          <h1 className="text-4xl font-semibold tracking-tight">
-            {t('title')}
-          </h1>
-          <p className="text-muted">{t('description')}</p>
-        </div>
-
+    <StatusMessage
+      icon={ExclamationTriangleIcon}
+      tone="danger"
+      title={t('title')}
+      description={t('description')}
+      action={
         <Button
           onPress={() => window.location.reload()}
           variant="ghost"
@@ -41,7 +36,7 @@ export default function Error({
           <ArrowPathIcon className="size-4" />
           {t('try_again')}
         </Button>
-      </div>
-    </div>
+      }
+    />
   );
 }

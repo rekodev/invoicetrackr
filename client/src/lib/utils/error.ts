@@ -11,3 +11,6 @@ export function isResponseError<T>(
     'errors' in response.data
   );
 }
+
+export const isRateLimitError = <T>(response: ApiResponse<T>) =>
+  response.status === 429;

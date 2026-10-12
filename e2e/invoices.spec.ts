@@ -249,6 +249,7 @@ test.describe('invoices', () => {
       .click();
     await page.getByRole('dialog', { name: 'Remove this payment?' })
       .getByRole('button', { name: 'Remove payment', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Remove this payment?' })).toHaveCount(0);
     await expect(page.getByText('Partially paid', { exact: true })).toBeVisible();
     const reopened: InvoiceWorkspaceResponse = await (await page.request.get(`${endpoint}/workspace`)).json();
     expect(reopened.invoice.paidAt).toBeNull();

@@ -354,6 +354,11 @@
         "description": "We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.",
         "try_again": "Try again"
     },
+    "rate_limit": {
+        "title": "Too Many Requests",
+        "description": "You've made a lot of requests in a short time. Please wait a moment and try again.",
+        "try_again": "Try again"
+    },
     "home": {
         "hero": {
             "badge_label": "New",

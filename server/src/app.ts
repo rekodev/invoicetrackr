@@ -30,7 +30,7 @@ import taxRoutes from './routes/tax';
 import userRoutes from './routes/user';
 import webhookRoutes from './routes/webhook';
 import { errorHandler } from './utils/error';
-import { rateLimitPluginOptions } from './utils/rate-limit';
+import { rateLimitPluginOptions, trustedProxies } from './utils/rate-limit';
 
 loadEnv();
 cloudinary.config(cloudinaryConfig);
@@ -56,7 +56,8 @@ const server = fastify({
           xRealIp: req.headers['x-real-ip'],
           xForwardedFor: req.headers['x-forwarded-for']
         },
-        remoteAddress: req.ip,
+        clientIp: req.ip,
+        remoteAddress: req.socket?.remoteAddress,
         remotePort: req.socket?.remotePort
       }),
       res: (res) => ({
@@ -64,7 +65,7 @@ const server = fastify({
       })
     }
   },
-  trustProxy: true,
+  trustProxy: trustedProxies,
   bodyLimit: 10485760
 });
 
