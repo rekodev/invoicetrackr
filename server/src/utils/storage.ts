@@ -82,19 +82,25 @@ export const parseCloudinaryUrl = (
   };
 };
 
-// Accepts the user's own folder, or a legacy root-level upload (account
-// deletion keeps legacy assets that other users still reference).
+// Signatures uploaded before per-user folders sit at the root and have no
+// owner, so account deletion keeps the ones other users still reference.
+export const isLegacySignatureAsset = (asset: StorageAsset) =>
+  asset.resourceType === 'image' &&
+  asset.type === 'upload' &&
+  !asset.publicId.includes('/');
+
 export const isStoredSignatureUrl = (value: unknown, userId: number) => {
   if (value === undefined || value === null || value === '') return true;
   if (typeof value !== 'string') return false;
 
   const asset = parseCloudinaryUrl(value)?.asset;
 
-  if (!asset || asset.resourceType !== 'image' || asset.type !== 'upload')
-    return false;
+  if (!asset) return false;
 
   return (
-    asset.publicId.startsWith(`${signatureFolder(userId)}/`) ||
-    !asset.publicId.includes('/')
+    isLegacySignatureAsset(asset) ||
+    (asset.resourceType === 'image' &&
+      asset.type === 'upload' &&
+      asset.publicId.startsWith(`${signatureFolder(userId)}/`))
   );
 };
