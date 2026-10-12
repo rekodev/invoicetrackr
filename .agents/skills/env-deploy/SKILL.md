@@ -74,8 +74,9 @@ PostHog keys, auth secrets) stay as Dokku/VPS env vars and only need
 ## Operations
 
 Health checks, error tracking, backups, restore steps, rollbacks, and secret
-rotation are documented in `docs/operations.md`. Keep it current when any of
-those change.
+rotation are documented outside the repo, in the owner's Obsidian vault:
+`~/Documents/Obsidian Vault/InvoiceTrackr/InvoiceTrackr Operations.md`.
+Keep it current when any of those change.
 
 ## Local commands
 
