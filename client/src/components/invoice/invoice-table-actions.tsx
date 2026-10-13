@@ -100,7 +100,7 @@ export default function InvoiceTableActions({
 
   return (
     <>
-      <div className="flex items-center gap-2 whitespace-nowrap">
+      <div className="flex items-center justify-end gap-2 whitespace-nowrap">
         <Link
           href={INVOICE_WORKSPACE_PAGE(invoiceId)}
           aria-label={t('tooltip_view')}
