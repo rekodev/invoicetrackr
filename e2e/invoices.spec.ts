@@ -2,6 +2,7 @@ import type { ClientWorkspaceResponse, GetInvoiceResponse, InvoiceWorkspaceRespo
 
 import { expect, test } from './fixtures/test';
 import { RecipientDetailsPage } from './pages/recipient-details.page';
+import { declineAnalytics } from './utils/accounts';
 import { createInvoiceTestData } from './utils/test-data';
 
 test.describe('invoices', () => {
@@ -58,6 +59,7 @@ test.describe('invoices', () => {
     );
 
     const recipientContext = await browser.newContext({ locale: 'en-US' });
+    await declineAnalytics(recipientContext);
     const recipientPage = await recipientContext.newPage();
     const recipientDetails = new RecipientDetailsPage(recipientPage);
 
