@@ -43,7 +43,7 @@ import {
   updateUserSelectedBankAccount,
   verifyUserEmail
 } from '../controllers/user';
-import { authMiddleware } from '../middleware/auth';
+import { authMiddleware, requireInternalApiSecret } from '../middleware/auth';
 import { preValidateFileAndFields } from '../utils/multipart';
 import { ipRateLimit, userRateLimit } from '../utils/rate-limit';
 
@@ -75,6 +75,7 @@ export const loginUserOptions: RouteShorthandOptionsWithHandler = {
 };
 
 export const postUserOptions: RouteShorthandOptionsWithHandler = {
+  config: { rateLimit: ipRateLimit(10, '1 hour') },
   schema: {
     body: z
       .object({
@@ -104,6 +105,7 @@ export const postOAuthUserOptions: RouteShorthandOptionsWithHandler = {
       201: oauthUserResponseSchema
     }
   },
+  preHandler: requireInternalApiSecret,
   handler: postOAuthUser
 };
 

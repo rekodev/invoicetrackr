@@ -1,0 +1,74 @@
+import { resend } from '../config/resend';
+
+const DEFAULT_FORWARD_FROM_EMAIL = 'support@invoicetrackr.app';
+const MAX_RAW_ATTACHMENT_BYTES = 25 * 1024 * 1024;
+
+type ForwardResult = {
+  data: unknown;
+  error: { message: string } | null;
+};
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+export const forwardSupportEmail = async (
+  emailId: string
+): Promise<ForwardResult> => {
+  const to = process.env.RESEND_FORWARD_TO_EMAIL!;
+  const from =
+    process.env.RESEND_FORWARD_FROM_EMAIL || DEFAULT_FORWARD_FROM_EMAIL;
+
+  const { data: email, error: getError } =
+    await resend.emails.receiving.get(emailId);
+
+  if (getError || !email) {
+    return {
+      data: null,
+      error: { message: getError?.message ?? 'Received email not found' }
+    };
+  }
+
+  const sender = email.reply_to?.length ? email.reply_to : [email.from];
+  const senderLine = `From: ${email.from}`;
+  const attachments: { filename: string; content: string }[] = [];
+
+  if (email.raw?.download_url) {
+    const raw = await fetch(email.raw.download_url);
+    const declaredBytes = Number(raw.headers.get('content-length'));
+    const rawBytes =
+      raw.ok && !(declaredBytes > MAX_RAW_ATTACHMENT_BYTES)
+        ? Buffer.from(await raw.arrayBuffer())
+        : null;
+
+    if (rawBytes && rawBytes.byteLength <= MAX_RAW_ATTACHMENT_BYTES) {
+      attachments.push({
+        filename: 'original-message.eml',
+        content: rawBytes.toString('base64')
+      });
+    }
+  }
+
+  const { data, error } = await resend.emails.send(
+    {
+      from,
+      to,
+      replyTo: sender,
+      subject: email.subject || '(no subject)',
+      text: `${senderLine}\n\n${email.text ?? ''}`,
+      html: `<p><strong>${escapeHtml(senderLine)}</strong></p><hr />${
+        email.html ?? `<pre>${escapeHtml(email.text ?? '')}</pre>`
+      }`,
+      attachments: attachments.length ? attachments : undefined
+    },
+    { idempotencyKey: `support-forward/${emailId}` }
+  );
+
+  return {
+    data,
+    error: error ? { message: error.message } : null
+  };
+};

@@ -9,7 +9,9 @@ import * as userDb from '../../database/user';
 import {
   deleteUserOptions,
   deleteUserProfilePictureOptions,
+  postOAuthUserOptions,
   updateUserLanguageOptions,
+  updateUserOptions,
   updateUserProfilePictureOptions
 } from '../../options/user';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
@@ -273,6 +275,44 @@ describe('User Controller', () => {
   });
 
   describe('POST /api/oauth/google', () => {
+    it('only accepts Google profiles from the Next.js server', async () => {
+      vi.stubEnv('INTERNAL_API_SECRET', 'internal-secret');
+      vi.mocked(userDb.getUserByEmailFromDb).mockResolvedValue(
+        mockUserWithPassword
+      );
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
+
+      const app = await createTestApp((fastifyApp) => {
+        fastifyApp.post('/api/users/oauth/google', postOAuthUserOptions);
+      });
+      const payload = {
+        email: 'test@example.com',
+        provider: 'google',
+        emailVerified: true
+      };
+
+      const publicResponse = await app.inject({
+        method: 'POST',
+        url: '/api/users/oauth/google',
+        payload
+      });
+
+      expect(publicResponse.statusCode).toBe(401);
+      expect(userDb.getUserByEmailFromDb).not.toHaveBeenCalled();
+
+      const internalResponse = await app.inject({
+        method: 'POST',
+        url: '/api/users/oauth/google',
+        headers: { 'x-internal-api-secret': 'internal-secret' },
+        payload
+      });
+
+      expect(internalResponse.statusCode).toBe(200);
+      expect(internalResponse.json().user.email).toBe(mockUser.email);
+
+      await app.close();
+    });
+
     it('should create a verified user from a verified Google profile', async () => {
       vi.mocked(userDb.getUserByEmailFromDb).mockResolvedValue(undefined);
       vi.mocked(bcrypt.hash).mockResolvedValue('generatedHash' as never);
@@ -499,9 +539,18 @@ describe('User Controller', () => {
       await app.close();
     });
 
-    it('deletes the account, then removes its stored files', async () => {
+    it('deletes the account, then removes only the stored files it owns', async () => {
       const signatureUrl =
         'https://res.cloudinary.com/demo/image/upload/v1700000000/signature.png';
+      const sharedLegacySignatureUrl =
+        'https://res.cloudinary.com/demo/image/upload/v1700000000/shared.png';
+      const otherUserSignatureUrl =
+        'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/signatures/2/theirs.png';
+      const otherCloudSignatureUrl =
+        'https://res.cloudinary.com/elsewhere/image/upload/v1/signature.png';
+      vi.mocked(
+        accountExportDb.getSharedSignaturePublicIdsFromDb
+      ).mockResolvedValue(new Set(['shared']));
       vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
       vi.mocked(userDb.deleteUserFromDb).mockResolvedValue({ id: testUserId });
       vi.mocked(accountExportDb.getAccountFilesFromDb).mockResolvedValue({
@@ -522,7 +571,17 @@ describe('User Controller', () => {
             'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/business-logos/1/logo.png',
           signatureUrl
         },
-        signatures: [{ senderSignature: signatureUrl, receiverSignature: null }]
+        signatures: [
+          { senderSignature: signatureUrl, receiverSignature: null },
+          {
+            senderSignature: sharedLegacySignatureUrl,
+            receiverSignature: otherUserSignatureUrl
+          },
+          {
+            senderSignature: 'http://169.254.169.254/signature.png',
+            receiverSignature: otherCloudSignatureUrl
+          }
+        ]
       });
       mockCloudinaryDestroy.mockResolvedValue({ result: 'ok' });
 
@@ -542,9 +601,13 @@ describe('User Controller', () => {
         ],
         ['signature', { resource_type: 'image', type: 'upload' }]
       ]);
-      expect(mockCloudinaryDeleteByPrefix).toHaveBeenCalledWith(
-        'invoicetrackr/business-logos/1/'
-      );
+      expect(
+        accountExportDb.getSharedSignaturePublicIdsFromDb
+      ).toHaveBeenCalledWith(testUserId, ['signature', 'shared']);
+      expect(mockCloudinaryDeleteByPrefix.mock.calls).toEqual([
+        ['invoicetrackr/business-logos/1/'],
+        ['invoicetrackr/signatures/1/']
+      ]);
       expect(
         vi.mocked(userDb.deleteUserFromDb).mock.invocationCallOrder[0]
       ).toBeLessThan(mockCloudinaryDestroy.mock.invocationCallOrder[0]);
@@ -769,6 +832,113 @@ describe('User Controller', () => {
         'MB',
         14,
         false
+      );
+
+      await app.close();
+    });
+  });
+
+  describe('PUT /api/:userId business profile signature', () => {
+    const createProfileApp = () =>
+      createTestApp((fastifyApp) => {
+        fastifyApp.register(fastifyMultipart);
+        fastifyApp.put('/api/:userId', {
+          ...updateUserOptions,
+          preHandler: mockAuthMiddleware
+        });
+      });
+    const profile = {
+      name: 'Test User',
+      businessType: 'individual',
+      businessNumber: 'BN1',
+      address: '1 Test Street',
+      email: 'test@example.com',
+      invoiceEmail: 'invoice@example.com',
+      isVatPayer: 'false'
+    };
+    const boundary = 'rek140-boundary';
+    const multipartProfile = (mimeType: string) =>
+      Buffer.from(
+        [
+          ...Object.entries(profile).map(
+            ([name, value]) =>
+              `--${boundary}\r\nContent-Disposition: form-data; name="${name}"\r\n\r\n${value}\r\n`
+          ),
+          `--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="signature"\r\nContent-Type: ${mimeType}\r\n\r\nsignature-bytes\r\n`,
+          `--${boundary}--\r\n`
+        ].join('')
+      );
+
+    it('stores uploaded signatures in the user folder and rejects anything else', async () => {
+      const uploadedUrl =
+        'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/signatures/1/new.png';
+      vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
+      vi.mocked(userDb.updateUserInDb).mockResolvedValue(mockUser);
+      mockCloudinaryUpload.mockResolvedValue({ secure_url: uploadedUrl });
+
+      const app = await createProfileApp();
+      const upload = (mimeType: string) =>
+        app.inject({
+          method: 'PUT',
+          url: `/api/${testUserId}`,
+          headers: {
+            'content-type': `multipart/form-data; boundary=${boundary}`
+          },
+          payload: multipartProfile(mimeType)
+        });
+
+      const wrongTypeResponse = await upload('image/svg+xml');
+
+      expect(wrongTypeResponse.statusCode).toBe(400);
+      expect(wrongTypeResponse.json().message).toBe(
+        'error.user.signatureInvalidType'
+      );
+      expect(mockCloudinaryUpload).not.toHaveBeenCalled();
+
+      const foreignUrlResponse = await app.inject({
+        method: 'PUT',
+        url: `/api/${testUserId}`,
+        payload: {
+          ...profile,
+          isVatPayer: false,
+          signature: 'http://169.254.169.254/latest'
+        }
+      });
+
+      expect(foreignUrlResponse.statusCode).toBe(400);
+      expect(foreignUrlResponse.json().message).toBe(
+        'error.user.signatureInvalid'
+      );
+
+      const otherUserSignatureResponse = await app.inject({
+        method: 'PUT',
+        url: `/api/${testUserId}`,
+        payload: {
+          ...profile,
+          isVatPayer: false,
+          signature: `https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/signatures/${testUserId + 1}/theirs.png`
+        }
+      });
+
+      expect(otherUserSignatureResponse.statusCode).toBe(400);
+      expect(otherUserSignatureResponse.json().message).toBe(
+        'error.user.signatureInvalid'
+      );
+      expect(userDb.updateUserInDb).not.toHaveBeenCalled();
+
+      const uploadResponse = await upload('image/png');
+
+      expect(uploadResponse.statusCode).toBe(200);
+      expect(mockCloudinaryUpload).toHaveBeenCalledWith(
+        expect.stringContaining('data:image/png;base64,'),
+        expect.objectContaining({
+          folder: `invoicetrackr/signatures/${testUserId}`,
+          resource_type: 'image'
+        })
+      );
+      expect(userDb.updateUserInDb).toHaveBeenCalledWith(
+        expect.objectContaining({ id: testUserId }),
+        uploadedUrl
       );
 
       await app.close();

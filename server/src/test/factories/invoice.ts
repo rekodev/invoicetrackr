@@ -28,7 +28,7 @@ export const invoiceFactory = Factory.define<InvoiceBody>(({ sequence }) => ({
     .toISOString()
     .split('T')[0],
   invoiceId: `INV${String(sequence).padStart(3, '0')}`,
-  senderSignature: `signature${sequence}.png`,
+  senderSignature: `https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/signatures/1/signature${sequence}.png`,
   issuedAt: null,
   paidAt: null,
   voidedAt: null,
@@ -58,7 +58,7 @@ export const invoiceFromDbFactory = Factory.define<InvoiceFromDb>(
       .toISOString()
       .split('T')[0],
     invoiceId: `INV${String(sequence).padStart(3, '0')}`,
-    senderSignature: `signature${sequence}.png`,
+    senderSignature: `https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/signatures/1/signature${sequence}.png`,
     issuedAt: null,
     paidAt: null,
     voidedAt: null,

@@ -1,4 +1,5 @@
 import type { SendRecipientDetailsRequestBody } from '@invoicetrackr/types';
+import { createHash, timingSafeEqual } from 'crypto';
 import { FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
@@ -11,6 +12,10 @@ import { ForbiddenError, UnauthorizedError } from '../utils/error';
 import { decodeSessionToken } from '../utils/session';
 
 loadEnv();
+
+export const INTERNAL_API_SECRET_HEADER = 'x-internal-api-secret';
+
+const digest = (value: string) => createHash('sha256').update(value).digest();
 
 export const authMiddleware = async (
   req: FastifyRequest<{ Params: { userId?: string; email?: string } }>
@@ -50,4 +55,17 @@ export const requireVerifiedEmailWhenSending = async (
   if (!req.body.sendEmail) return;
 
   await requireVerifiedEmail(req);
+};
+
+export const requireInternalApiSecret = async (req: FastifyRequest) => {
+  const expected = process.env.INTERNAL_API_SECRET;
+  const provided = req.headers[INTERNAL_API_SECRET_HEADER];
+
+  if (
+    !expected ||
+    typeof provided !== 'string' ||
+    !timingSafeEqual(digest(provided), digest(expected))
+  ) {
+    throw new UnauthorizedError();
+  }
 };

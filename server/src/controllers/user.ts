@@ -18,7 +18,10 @@ import { analyticsEvents } from '../analytics/events';
 import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import { appEmailFrom, getAppUrl } from '../config/app';
 import { resend } from '../config/resend';
-import { getAccountFilesFromDb } from '../database/account-export';
+import {
+  getAccountFilesFromDb,
+  getSharedSignaturePublicIdsFromDb
+} from '../database/account-export';
 import {
   getEmailVerificationTokenFromDb,
   getLatestEmailVerificationTokenForUserFromDb,
@@ -46,14 +49,18 @@ import {
   verifyUserEmailInDb
 } from '../database/user';
 import { destroyAccountStorage } from '../services/account-storage';
-import { accountStorageAssets } from '../utils/account-data';
+import { resolveSignatureUrl } from '../services/signature';
+import {
+  accountStorageAssets,
+  legacySignatureAssets
+} from '../utils/account-data';
 import { recordRequestAudit } from '../utils/audit';
 import {
   BadRequestError,
   NotFoundError,
   UnauthorizedError
 } from '../utils/error';
-import { businessLogoFolder } from '../utils/storage';
+import { businessLogoFolder, signatureFolder } from '../utils/storage';
 
 const EMAIL_VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const EMAIL_VERIFICATION_RESEND_COOLDOWN_MS = 15 * 60 * 1000;
@@ -327,26 +334,16 @@ export const updateUser = async (
   } = req.body;
   const i18n = await useI18n(req);
 
-  let uploadedSignature: UploadApiResponse | undefined;
-
-  if (file) {
-    const fileBuffer = await file.toBuffer();
-
-    uploadedSignature = await cloudinary.uploader.upload(
-      `data:${file.mimetype};base64,${fileBuffer.toString('base64')}`
-    );
-
-    if (!uploadedSignature)
-      throw new BadRequestError(i18n.t('error.user.unableToUploadSignature'));
-  }
-
   const foundUser = await getUserFromDb(userId);
 
   if (!foundUser) throw new NotFoundError(i18n.t('error.user.notFound'));
 
-  const signatureUrl = uploadedSignature?.url
-    ? uploadedSignature.url.replace('http://', 'https://')
-    : signature;
+  const signatureUrl = await resolveSignatureUrl({
+    file,
+    url: signature,
+    userId,
+    i18n
+  });
   const updatedUser = await updateUserInDb(
     {
       id: userId,
@@ -468,7 +465,15 @@ export const deleteUser = async (
     throw new BadRequestError(i18n.t('error.user.deleteConfirmEmailMismatch'));
   }
 
-  const storageAssets = accountStorageAssets(accountFiles);
+  const legacySignatures = legacySignatureAssets(accountFiles);
+  const sharedPublicIds = await getSharedSignaturePublicIdsFromDb(
+    userId,
+    legacySignatures.map(({ publicId }) => publicId)
+  );
+  const storageAssets = accountStorageAssets(
+    accountFiles,
+    legacySignatures.filter(({ publicId }) => !sharedPublicIds.has(publicId))
+  );
 
   await recordRequestAudit({
     req,
@@ -484,7 +489,13 @@ export const deleteUser = async (
     throw new BadRequestError(i18n.t('error.user.unableToDelete'));
 
   await destroyAccountStorage(
-    { assets: storageAssets, folders: [`${businessLogoFolder(userId)}/`] },
+    {
+      assets: storageAssets,
+      folders: [
+        `${businessLogoFolder(userId)}/`,
+        `${signatureFolder(userId)}/`
+      ]
+    },
     req.log
   );
 
