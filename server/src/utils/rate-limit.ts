@@ -25,8 +25,6 @@ export const rateLimitKey = async (request: FastifyRequest) => {
   return session?.sub ? `user:${session.sub}` : ipRateLimitKey(request);
 };
 
-// Outside production a configured API_RATE_LIMIT_MAX also lifts the strict
-// per-IP limits, so E2E runs that log in many accounts from 127.0.0.1 pass.
 const ipRateLimitFloor =
   process.env.NODE_ENV !== 'production' &&
   Number.isSafeInteger(configuredMax) &&
