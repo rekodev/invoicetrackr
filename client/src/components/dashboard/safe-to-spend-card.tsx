@@ -60,7 +60,7 @@ const SafeToSpendCard = async ({ safeToSpend, year }: Props) => {
             )}
           </div>
         ) : safeToSpend.status === 'needs_profile' ? (
-          <Link href={taxHref} className={buttonVariants({ size: 'sm' })}>
+          <Link href={taxHref} className={buttonVariants({ variant: 'outline', size: 'sm' })}>
             {t('set_up')}
           </Link>
         ) : (

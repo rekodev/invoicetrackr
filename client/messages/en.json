@@ -1504,7 +1504,7 @@
                 "business_type": "Activity Type",
                 "business_type_placeholder": "Individual activity by certificate",
                 "business_number": "Individual Activity Certificate No.",
-                "business_number_placeholder": "Enter individual activity certificate number",
+                "business_number_placeholder": "e.g. 123456",
                 "is_vat_payer": "VAT Payer",
                 "is_vat_payer_option": "Registered as a VAT payer",
                 "is_vat_payer_description": "Individual activity freelancers can be VAT payers. Enable only if you are registered with VMI as a VAT payer.",

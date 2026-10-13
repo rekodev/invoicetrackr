@@ -206,6 +206,7 @@ export default function InvoiceTable({ invoices, userId, isEmailVerified = false
                   id={column.uid}
                   isRowHeader={index === 0}
                   allowsSorting={column.sortable}
+                  className={column.uid === 'actions' ? 'text-right' : undefined}
                 >
                   {column.name}
                 </Table.Column>

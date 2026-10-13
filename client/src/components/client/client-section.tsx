@@ -121,7 +121,7 @@ const ClientSection = ({ userId, clients }: Props) => {
         <Button
           isIconOnly
           className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
-          variant="tertiary"
+          variant="outline"
           size="sm"
           aria-label={t('actions.tooltip_edit')}
           onPress={() => handleEditClient(clientData)}
@@ -130,7 +130,7 @@ const ClientSection = ({ userId, clients }: Props) => {
         </Button>
         <Button
           isIconOnly
-          variant="tertiary"
+          variant="danger-soft"
           size="sm"
           className="min-w-unit-8 w-unit-8 h-unit-8 cursor-pointer"
           aria-label={t('actions.tooltip_archive')}
