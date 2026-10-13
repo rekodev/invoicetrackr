@@ -1,18 +1,19 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
+const LOGO_ASPECT_RATIO = 920 / 960;
+
 type Props = {
-  height?: number;
   width?: number;
 };
 
-const AppLogo = ({ height = 40, width = 40 }: Props) => {
+const AppLogo = ({ width = 40 }: Props) => {
   const t = useTranslations('header.a11y');
 
   return (
     <Image
       width={width}
-      height={height}
+      height={Math.round(width * LOGO_ASPECT_RATIO)}
       src="/logo.png"
       alt={t('app_logo_alt')}
       style={{ width, height: 'auto' }}

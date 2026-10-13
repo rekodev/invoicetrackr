@@ -21,7 +21,7 @@ export default function AppBrand({
 }: Props) {
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <AppLogo height={logoSize} width={logoSize} />
+      <AppLogo width={logoSize} />
       {children ? (
         <div className="flex flex-col">
           <AppWordmark

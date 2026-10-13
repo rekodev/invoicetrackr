@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('invoice_signing');
 
   return getNoIndexMetadata({
-    title: t('eyebrow')
+    title: t('invoice')
   });
 }
 

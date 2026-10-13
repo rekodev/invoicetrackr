@@ -1,6 +1,9 @@
+'use client';
+
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { ButtonGroup,buttonVariants } from '@heroui/react';
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
 
 import InfoPopover from '@/components/ui/info-popover';
 import { ANNUAL_PACKAGE_SHEETS } from '@/lib/constants/annual-package';
@@ -8,18 +11,27 @@ import { annualPackageExportHref } from '@/lib/utils/annual-package';
 
 type Props = { year: number };
 
-const AnnualPackageDownload = async ({ year }: Props) => {
-  const t = await getTranslations('reports.annual.contents');
+const DownloadLink = ({
+  href,
+  children
+}: {
+  href: string;
+  children: ReactNode;
+}) => (
+  <a href={href} className={buttonVariants({ size: 'sm' })}>
+    {children}
+  </a>
+);
+
+const AnnualPackageDownload = ({ year }: Props) => {
+  const t = useTranslations('reports.annual.contents');
 
   return (
     <ButtonGroup size="sm">
-      <a
-        href={annualPackageExportHref(year)}
-        className={buttonVariants({ size: 'sm' })}
-      >
+      <DownloadLink href={annualPackageExportHref(year)}>
         <ArrowDownTrayIcon className="size-4" />
         {t('download')}
-      </a>
+      </DownloadLink>
       <InfoPopover
         title={t('info_title')}
         placement="bottom end"

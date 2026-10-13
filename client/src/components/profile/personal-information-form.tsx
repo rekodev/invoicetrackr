@@ -264,7 +264,12 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
         control={control}
         name="email"
         render={({ field }) => (
-          <TextField variant="secondary" isDisabled className="w-full">
+          <TextField
+            aria-label={t('email')}
+            variant="secondary"
+            isDisabled
+            className="w-full"
+          >
             <Input
               id="profile-email"
               name={field.name}

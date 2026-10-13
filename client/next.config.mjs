@@ -21,7 +21,11 @@ if (process.env.NODE_ENV === 'production') {
 const nextConfig = {
   output: 'standalone',
   outputFileTracingRoot: rootDirectory,
-  transpilePackages: ['@invoicetrackr/types', '@invoicetrackr/pdf'],
+  transpilePackages: [
+    '@invoicetrackr/types',
+    '@invoicetrackr/pdf',
+    '@react-pdf/renderer'
+  ],
   experimental: {
     authInterrupts: true,
     serverActions: { bodySizeLimit: '11mb' },

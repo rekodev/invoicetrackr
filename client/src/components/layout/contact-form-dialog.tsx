@@ -71,59 +71,60 @@ export default function ContactFormDialog() {
         {t('title')}
       </Button>
 
-      <Modal isOpen={isOpen} onOpenChange={(open) => !open && handleClose()}>
-        <Modal.Backdrop>
-          <Modal.Container size="lg">
-            <Modal.Dialog>
-              <Modal.CloseTrigger />
-              <Form onSubmit={handleSubmit(onSubmit)}>
-                <Modal.Header>
-                  <Modal.Heading>{t('title')}</Modal.Heading>
-                </Modal.Header>
-                <Modal.Body className="flex w-full flex-col gap-3">
-                  <TextField variant="secondary" isInvalid={!!errors.email}>
-                    <Label>{t('email_label')}</Label>
-                    <Input
-                      {...register('email')}
-                      placeholder={t('email_placeholder')}
-                    />
-                    <FieldError>{errors.email?.message}</FieldError>
-                  </TextField>
-                  <TextField variant="secondary" isInvalid={!!errors.message}>
-                    <Label>{t('message_label')}</Label>
-                    <TextArea
-                      {...register('message')}
-                      placeholder={t('message_placeholder')}
-                      maxLength={5000}
-                    />
-                    <FieldError>{errors.message?.message}</FieldError>
-                  </TextField>
-                </Modal.Body>
-                <Modal.Footer className="w-full">
-                  <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      isDisabled={isPending}
-                      className="w-full sm:w-auto"
-                      onPress={handleClose}
-                    >
-                      {t('cancel')}
-                    </Button>
-                    <Button
-                      isPending={isPending}
-                      type="submit"
-                      className="w-full sm:w-auto"
-                    >
-                      {t('send')}
-                    </Button>
-                  </div>
-                </Modal.Footer>
-              </Form>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      <Modal.Backdrop
+        isOpen={isOpen}
+        onOpenChange={(open) => !open && handleClose()}
+      >
+        <Modal.Container size="lg">
+          <Modal.Dialog>
+            <Modal.CloseTrigger />
+            <Form onSubmit={handleSubmit(onSubmit)}>
+              <Modal.Header>
+                <Modal.Heading>{t('title')}</Modal.Heading>
+              </Modal.Header>
+              <Modal.Body className="flex w-full flex-col gap-3">
+                <TextField variant="secondary" isInvalid={!!errors.email}>
+                  <Label>{t('email_label')}</Label>
+                  <Input
+                    {...register('email')}
+                    placeholder={t('email_placeholder')}
+                  />
+                  <FieldError>{errors.email?.message}</FieldError>
+                </TextField>
+                <TextField variant="secondary" isInvalid={!!errors.message}>
+                  <Label>{t('message_label')}</Label>
+                  <TextArea
+                    {...register('message')}
+                    placeholder={t('message_placeholder')}
+                    maxLength={5000}
+                  />
+                  <FieldError>{errors.message?.message}</FieldError>
+                </TextField>
+              </Modal.Body>
+              <Modal.Footer className="w-full">
+                <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    isDisabled={isPending}
+                    className="w-full sm:w-auto"
+                    onPress={handleClose}
+                  >
+                    {t('cancel')}
+                  </Button>
+                  <Button
+                    isPending={isPending}
+                    type="submit"
+                    className="w-full sm:w-auto"
+                  >
+                    {t('send')}
+                  </Button>
+                </div>
+              </Modal.Footer>
+            </Form>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
     </>
   );
 }

@@ -184,6 +184,7 @@ const BankingInformationForm = ({
 
     return (
       <RadioGroup
+        aria-label={t('a11y.default_account_label')}
         className="w-full"
         variant="primary"
         value={String(selectedBankAccountId)}
