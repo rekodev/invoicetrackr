@@ -18,10 +18,7 @@ import { analyticsEvents } from '../analytics/events';
 import { captureAnalyticsEventForUser } from '../analytics/posthog';
 import { appEmailFrom, getAppUrl } from '../config/app';
 import { resend } from '../config/resend';
-import {
-  getAccountFilesFromDb,
-  getSharedSignaturePublicIdsFromDb
-} from '../database/account-export';
+import { getAccountFilesFromDb } from '../database/account-export';
 import {
   getEmailVerificationTokenFromDb,
   getLatestEmailVerificationTokenForUserFromDb,
@@ -50,10 +47,7 @@ import {
 } from '../database/user';
 import { destroyAccountStorage } from '../services/account-storage';
 import { resolveSignatureUrl } from '../services/signature';
-import {
-  accountStorageAssets,
-  legacySignatureAssets
-} from '../utils/account-data';
+import { accountStorageAssets } from '../utils/account-data';
 import { recordRequestAudit } from '../utils/audit';
 import {
   BadRequestError,
@@ -465,15 +459,7 @@ export const deleteUser = async (
     throw new BadRequestError(i18n.t('error.user.deleteConfirmEmailMismatch'));
   }
 
-  const legacySignatures = legacySignatureAssets(accountFiles);
-  const sharedPublicIds = await getSharedSignaturePublicIdsFromDb(
-    userId,
-    legacySignatures.map(({ publicId }) => publicId)
-  );
-  const storageAssets = accountStorageAssets(
-    accountFiles,
-    legacySignatures.filter(({ publicId }) => !sharedPublicIds.has(publicId))
-  );
+  const storageAssets = accountStorageAssets(accountFiles);
 
   await recordRequestAudit({
     req,

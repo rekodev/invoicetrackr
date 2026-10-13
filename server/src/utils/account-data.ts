@@ -7,7 +7,6 @@ import type {
 import {
   attachmentAsset,
   attachmentFormat,
-  isLegacySignatureAsset,
   parseCloudinaryUrl,
   type StorageAsset
 } from './storage';
@@ -47,37 +46,13 @@ export const accountExportFiles = ({
   return [...files, ...publicFiles];
 };
 
-const accountSignatureUrls = ({ profile, signatures }: AccountFiles) => [
-  profile?.signatureUrl,
-  ...signatures.flatMap(({ senderSignature, receiverSignature }) => [
-    senderSignature,
-    receiverSignature
-  ])
-];
-
-export const legacySignatureAssets = (files: AccountFiles) => {
+export const accountStorageAssets = (files: AccountFiles): StorageAsset[] => {
   const assets = new Map<string, StorageAsset>();
 
-  accountSignatureUrls(files).forEach((url) => {
-    const asset = parseCloudinaryUrl(url)?.asset;
-
-    if (asset && isLegacySignatureAsset(asset))
-      assets.set(asset.publicId, asset);
-  });
-
-  return [...assets.values()];
-};
-
-export const accountStorageAssets = (
-  files: AccountFiles,
-  legacySignatures: StorageAsset[]
-): StorageAsset[] => {
-  const assets = new Map<string, StorageAsset>();
-  const add = (asset: StorageAsset) =>
+  files.attachments.forEach((attachment) => {
+    const asset = attachmentAsset(attachment);
     assets.set(`${asset.resourceType}:${asset.type}:${asset.publicId}`, asset);
-
-  files.attachments.forEach((attachment) => add(attachmentAsset(attachment)));
-  legacySignatures.forEach(add);
+  });
 
   return [...assets.values()];
 };
