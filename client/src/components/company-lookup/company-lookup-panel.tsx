@@ -142,9 +142,7 @@ const CompanyLookupPanel = ({
               <Spinner size="sm" aria-label={t('loading')} />
             </ComboBox.Trigger>
           ) : (
-            <ComboBox.Trigger
-              className={results.length > 0 ? undefined : 'hidden'}
-            />
+            <ComboBox.Trigger hidden={results.length === 0} />
           )}
         </ComboBox.InputGroup>
         {results.length > 0 ? (

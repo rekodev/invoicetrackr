@@ -487,9 +487,9 @@ const InvoiceServicesTable = ({
               ))}
             </TableHeader>
             <TableBody>
-              {fields.map((field, index) => (
+              {fields.map((_field, index) => (
                 <TableRow
-                  key={field.fieldId}
+                  key={index}
                   id={index}
                   dependencies={[index]}
                 >
