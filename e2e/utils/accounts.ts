@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { BrowserContext, Page } from '@playwright/test';
 import bcrypt from 'bcryptjs';
 
 import { ANALYTICS_CONSENT_COOKIE } from '../../client/src/lib/analytics/constants';
@@ -67,12 +67,8 @@ export const createE2eAccount = async (
   return { id: user.id, ...account };
 };
 
-export const signIn = async (
-  page: Page,
-  account: E2eAccount,
-  landingUrl: RegExp = /\/dashboard$/
-) => {
-  await page.context().addCookies([
+export const declineAnalytics = (context: BrowserContext) =>
+  context.addCookies([
     {
       name: ANALYTICS_CONSENT_COOKIE,
       value: 'declined',
@@ -80,5 +76,12 @@ export const signIn = async (
       sameSite: 'Lax'
     }
   ]);
+
+export const signIn = async (
+  page: Page,
+  account: E2eAccount,
+  landingUrl: RegExp = /\/dashboard$/
+) => {
+  await declineAnalytics(page.context());
   await new LoginPage(page).login(account.email, account.password, landingUrl);
 };
