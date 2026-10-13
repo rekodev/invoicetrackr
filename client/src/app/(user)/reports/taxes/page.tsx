@@ -39,7 +39,6 @@ export default async function TaxesPage({
     <section className="flex flex-col gap-6">
       <PageHeader
         title={t('heading')}
-        description={t('description')}
         titleAddon={
           <Suspense key={year} fallback={null}>
             <AnnualPackageStatusChip

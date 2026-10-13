@@ -527,10 +527,6 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                   />
                 )}
               </div>
-              <Button className="w-full sm:w-auto" onPress={openAddDialog}>
-                <PlusIcon className="h-4 w-4" />
-                {t('top_content.add_new')}
-              </Button>
             </div>
             <div className="flex justify-start">
               <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:w-auto lg:items-center">

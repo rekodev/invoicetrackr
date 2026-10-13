@@ -31,7 +31,7 @@ export default async function JournalPage({
 
   return (
     <section className="flex flex-col gap-6">
-      <PageHeader title={t('heading')} description={t('description')}>
+      <PageHeader title={t('heading')}>
         <JournalFilters query={query} currentYear={currentYear} />
       </PageHeader>
       {params.export_error && (

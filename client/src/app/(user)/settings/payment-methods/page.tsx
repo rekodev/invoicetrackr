@@ -1,8 +1,10 @@
 import { unauthorized } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 
 import { getBankingInformationEntries } from '@/api/banking-information';
 import { auth } from '@/auth';
 import BankingInformationForm from '@/components/profile/banking-information-form';
+import PageHeader from '@/components/ui/page-header';
 import { isResponseError } from '@/lib/utils/error';
 
 export default async function PaymentMethodsPage() {
@@ -12,10 +14,14 @@ export default async function PaymentMethodsPage() {
   const banks = await getBankingInformationEntries(userId);
   if (isResponseError(banks))
     throw new Error('Failed to load payment methods');
+  const t = await getTranslations('profile.banking_information');
   return (
-    <BankingInformationForm
-      user={session.user}
-      bankAccounts={banks.data.bankAccounts}
-    />
+    <section className="flex flex-col gap-6">
+      <PageHeader title={t('title')} />
+      <BankingInformationForm
+        user={session.user}
+        bankAccounts={banks.data.bankAccounts}
+      />
+    </section>
   );
 }

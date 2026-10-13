@@ -195,7 +195,6 @@ const ClientSection = ({ userId, clients }: Props) => {
   return (
     <section className="flex flex-col gap-5">
       <ClientSectionTopContent
-        userId={userId}
         clients={filteredItems}
         searchTerm={searchTerm}
         onSearch={handleSearch}

@@ -1,12 +1,7 @@
 'use client';
 
+import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {
-  ChevronDownIcon,
-  MagnifyingGlassIcon,
-  PlusIcon
-} from '@heroicons/react/24/outline';
-import {
-  Button,
   buttonVariants,
   CloseButton,
   Dropdown,
@@ -17,14 +12,11 @@ import {
   Input} from '@heroui/react';
 import { ClientBody, InvoicePartyBusinessType } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
-
-import ClientFormDialog from './client-form-dialog';
+import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 
 const filters = ['business', 'individual'];
 
 type Props = {
-  userId: number;
   clients: Array<ClientBody> | undefined;
   searchTerm: string;
   onSearch: (_event: ChangeEvent<HTMLInputElement>) => void;
@@ -34,7 +26,6 @@ type Props = {
 };
 
 const ClientSectionTopContent = ({
-  userId,
   clients,
   searchTerm,
   onSearch,
@@ -44,15 +35,6 @@ const ClientSectionTopContent = ({
 }: Props) => {
   const t = useTranslations('clients.top_content');
   const tTypes = useTranslations('clients.form_dialog.business_types');
-  const [isAddNewClientModalOpen, setIsAddNewClientModalOpen] = useState(false);
-
-  const handleAddNewClient = () => {
-    setIsAddNewClientModalOpen(true);
-  };
-
-  const handleCloseAddNewClientModal = () => {
-    setIsAddNewClientModalOpen(false);
-  };
 
   const totalClientsText = clients
     ? clients.length === 1
@@ -101,10 +83,9 @@ const ClientSectionTopContent = ({
   );
 
   return (
-    <>
-      <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
         <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-end">
-          <div className="flex w-full items-center gap-2 sm:max-w-[44%]">
+          <div className="flex w-full items-center gap-2">
             <MagnifyingGlassIcon className="h-4 w-4" />
             <Input
               variant="secondary"
@@ -117,23 +98,12 @@ const ClientSectionTopContent = ({
           </div>
           <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:gap-3">
             {renderTypeFilterSelect()}
-            <Button className="w-full sm:w-auto" onPress={handleAddNewClient}>
-              {t('add_new')}
-              <PlusIcon className="h-4 w-4" />
-            </Button>
           </div>
         </div>
         <div className="flex items-center justify-between">
           <span className="section-eyebrow text-muted">{totalClientsText}</span>
         </div>
-      </div>
-
-      <ClientFormDialog
-        userId={userId}
-        isOpen={isAddNewClientModalOpen}
-        onClose={handleCloseAddNewClientModal}
-      />
-    </>
+    </div>
   );
 };
 

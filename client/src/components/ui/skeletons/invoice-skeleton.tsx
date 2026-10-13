@@ -6,11 +6,10 @@ export function InvoiceTableSkeleton() {
   return (
     <section className="flex flex-col gap-4 pt-1">
       <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-end">
-        <Skeleton className="h-10 w-full rounded-2xl sm:max-w-[44%]" />
+        <Skeleton className="h-10 w-full rounded-2xl" />
         <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:gap-3">
           <Skeleton className="h-10 w-full rounded-2xl sm:w-24" />
           <Skeleton className="h-10 w-full rounded-2xl sm:w-28" />
-          <Skeleton className="h-10 w-full rounded-2xl sm:w-32" />
           <Skeleton className="h-10 w-full rounded-2xl sm:w-28" />
         </div>
       </div>

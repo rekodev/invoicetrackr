@@ -1,9 +1,4 @@
-import {
-  ChevronDownIcon,
-  DocumentArrowDownIcon,
-  MagnifyingGlassIcon,
-  PlusIcon
-} from '@heroicons/react/24/outline';
+import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {
   Button,
   buttonVariants,
@@ -15,12 +10,9 @@ import {
   DropdownTrigger,
   Input
 } from '@heroui/react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
 
-import { ADD_NEW_INVOICE_PAGE, REPORTS_JOURNAL_PAGE } from '@/lib/constants/pages';
 import { capitalize } from '@/lib/utils';
 
 type Props = {
@@ -55,17 +47,12 @@ const InvoiceTableTopContent = ({
   invoicesLength
 }: Props) => {
   const t = useTranslations('invoices');
-  const router = useRouter();
 
   const totalInvoicesText = invoicesLength
     ? invoicesLength === 1
       ? t('top_content.total_singular')
       : t('top_content.total_plural', { count: invoicesLength })
     : t('top_content.total_plural', { count: 0 });
-
-  const handleAddNewInvoice = () => {
-    router.push(ADD_NEW_INVOICE_PAGE);
-  };
 
   const onSearchChange = useCallback(
     (value: string) => {
@@ -95,7 +82,7 @@ const InvoiceTableTopContent = ({
   return (
     <div className="flex flex-col gap-4 pt-1">
       <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-end">
-        <div className="flex w-full items-center gap-2 sm:max-w-[44%]">
+        <div className="flex w-full items-center gap-2">
           <MagnifyingGlassIcon className="h-4 w-4" />
           <Input
             className="w-full"
@@ -180,20 +167,6 @@ const InvoiceTableTopContent = ({
               </DropdownMenu>
             </DropdownPopover>
           </Dropdown>
-          <Link
-            href={REPORTS_JOURNAL_PAGE}
-            className={buttonVariants({
-              variant: 'secondary',
-              className: 'w-full sm:w-auto'
-            })}
-          >
-            <DocumentArrowDownIcon className="h-4 w-4" />
-            {t('top_content.journal')}
-          </Link>
-          <Button className="w-full sm:w-auto" onPress={handleAddNewInvoice}>
-            <PlusIcon className="h-4 w-4" />
-            {t('top_content.add_new')}
-          </Button>
         </div>
       </div>
       <div className="flex items-center justify-between">

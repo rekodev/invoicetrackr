@@ -390,7 +390,6 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
       <>
         <Card.Content className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
           <SectionHeading
-            title={t('title')}
             description={t('description')}
             className="mb-1 md:col-span-2"
           />
