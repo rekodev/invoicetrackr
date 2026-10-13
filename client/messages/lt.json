@@ -1504,7 +1504,7 @@
                 "business_type": "Veiklos tipas",
                 "business_type_placeholder": "Individuali veikla pagal pažymą",
                 "business_number": "Individualios veiklos pažymos Nr.",
-                "business_number_placeholder": "Įveskite individualios veiklos pažymos numerį",
+                "business_number_placeholder": "pvz. 123456",
                 "is_vat_payer": "PVM mokėtojas",
                 "is_vat_payer_option": "Esu PVM mokėtojas",
                 "is_vat_payer_description": "Dirbant pagal individualios veiklos pažymą galima būti PVM mokėtoju. Pažymėkite tik jei esate registruotas PVM mokėtoju VMI.",
