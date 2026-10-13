@@ -1,16 +1,23 @@
 import type {
   AuthenticatedInvoiceBody,
   InvoiceBody,
+  InvoiceListQuery,
   PublicInvoiceSigning
 } from '@invoicetrackr/types';
 import {
   and,
+  asc,
+  count,
   desc,
   eq,
   gt,
+  gte,
+  ilike,
   inArray,
   isNull,
+  lte,
   or,
+  type SQL,
   sql
 } from 'drizzle-orm';
 
@@ -19,8 +26,13 @@ import {
   positionInvoiceServices
 } from '../utils/invoice';
 import { jsonAgg } from '../utils/json';
+import { containsPattern } from '../utils/search';
 import { db } from './db';
-import { getPaymentsByInvoiceQuery, summarizeInvoicePayments } from './invoice-payment';
+import {
+  getPaymentsByInvoiceQuery,
+  summarizeInvoicePayments,
+  todayInLithuania
+} from './invoice-payment';
 import {
   bankingInformationTable,
   businessProfilesTable,
@@ -293,10 +305,108 @@ export const findInvoiceByInvoiceId = async (
   return invoices.at(0);
 };
 
-export const getInvoicesFromDb = async (
-  userId: number
-): Promise<Array<InvoiceFromDb & { paidAmount: string | null; outstandingAmount: string | null; paymentDates: string[] }>> => {
+type InvoiceListItemFromDb = InvoiceFromDb & {
+  paidAmount: string | null;
+  outstandingAmount: string | null;
+  paymentDates: string[];
+};
+
+const buildInvoiceListQuery = (userId: number, query: InvoiceListQuery) => {
   const paymentsByInvoice = getPaymentsByInvoiceQuery(userId);
+  const lifecycle = sql`coalesce(${invoicesTable.lifecycleStatus}, 'draft')`;
+  const paid = sql`coalesce(${paymentsByInvoice.paidAmount}, '0')::numeric`;
+  const paymentStatus = sql<string>`case
+    when ${lifecycle} in ('draft', 'voided') then ${lifecycle}
+    when ${invoicesTable.totalAmount} = 0 then 'no_payment_due'
+    when ${paid} >= ${invoicesTable.totalAmount} then 'paid'
+    when ${paid} > 0 then 'partial'
+    else 'pending'
+  end`;
+
+  const statusCondition =
+    query.status === 'canceled'
+      ? sql`${paymentStatus} = 'voided'`
+      : query.status === 'open'
+        ? sql`${paymentStatus} in ('pending', 'partial')`
+        : query.status
+          ? sql`${paymentStatus} = ${query.status}`
+          : undefined;
+  const search = query.q ? containsPattern(query.q) : undefined;
+  const issuedOnly = query.issuedFrom || query.issuedTo;
+  const paidRange = query.paidFrom || query.paidTo;
+
+  const where = and(
+    eq(invoicesTable.userId, userId),
+    search
+      ? or(
+          ilike(invoicesTable.invoiceId, search),
+          ilike(invoiceReceiversTable.name, search)
+        )
+      : undefined,
+    statusCondition,
+    query.overdue
+      ? sql`${lifecycle} = 'issued' and ${invoicesTable.totalAmount} - ${paid} > 0 and ${invoicesTable.dueDate} < ${todayInLithuania()}`
+      : undefined,
+    issuedOnly ? sql`${lifecycle} = 'issued'` : undefined,
+    query.issuedFrom ? gte(invoicesTable.date, query.issuedFrom) : undefined,
+    query.issuedTo ? lte(invoicesTable.date, query.issuedTo) : undefined,
+    paidRange
+      ? sql`exists (select 1 from unnest(${paymentsByInvoice.paymentDates}) as payment_date where ${
+          query.paidFrom ? sql`payment_date >= ${query.paidFrom}` : sql`true`
+        } and ${query.paidTo ? sql`payment_date <= ${query.paidTo}` : sql`true`})`
+      : undefined
+  );
+
+  const sortColumn = {
+    id: invoicesTable.invoiceId,
+    receiver: invoiceReceiversTable.name,
+    totalAmount: invoicesTable.totalAmount,
+    date: invoicesTable.date,
+    lifecycleStatus: invoicesTable.lifecycleStatus,
+    status: paymentStatus
+  }[query.sort];
+  const orderBy = [
+    query.direction === 'ascending' ? asc(sortColumn) : desc(sortColumn),
+    desc(invoicesTable.id)
+  ];
+
+  return { paymentsByInvoice, where, orderBy };
+};
+
+export const getInvoicesFromDb = async (
+  userId: number,
+  query: InvoiceListQuery
+): Promise<{ invoices: Array<InvoiceListItemFromDb>; total: number }> => {
+  const { paymentsByInvoice, where, orderBy } = buildInvoiceListQuery(
+    userId,
+    query
+  );
+
+  const [invoices, [{ total }]] = await Promise.all([
+    getInvoiceListPage(paymentsByInvoice, where, orderBy, query),
+    db
+      .select({ total: count() })
+      .from(invoicesTable)
+      .leftJoin(
+        paymentsByInvoice,
+        eq(paymentsByInvoice.invoiceId, invoicesTable.id)
+      )
+      .leftJoin(
+        invoiceReceiversTable,
+        eq(invoicesTable.receiverId, invoiceReceiversTable.id)
+      )
+      .where(where)
+  ]);
+
+  return { invoices, total };
+};
+
+const getInvoiceListPage = async (
+  paymentsByInvoice: ReturnType<typeof getPaymentsByInvoiceQuery>,
+  where: SQL | undefined,
+  orderBy: Array<SQL>,
+  { page, pageSize }: InvoiceListQuery
+): Promise<Array<InvoiceListItemFromDb>> => {
   const invoices = await db
     .select({
       paidAmount: sql<string>`coalesce(${paymentsByInvoice.paidAmount}, '0.00')`,
@@ -411,7 +521,7 @@ export const getInvoicesFromDb = async (
       invoiceServicesTable,
       eq(invoiceServicesTable.invoiceId, invoicesTable.id)
     )
-    .where(eq(invoicesTable.userId, userId))
+    .where(where)
     .groupBy(
       invoicesTable.id,
       paymentsByInvoice.paidAmount,
@@ -421,7 +531,9 @@ export const getInvoicesFromDb = async (
       invoiceBankingInformationTable.id,
       invoiceCryptoWalletsTable.id
     )
-    .orderBy(desc(invoicesTable.id));
+    .orderBy(...orderBy)
+    .limit(pageSize)
+    .offset((page - 1) * pageSize);
 
   return invoices.map((invoice) => ({
     ...normalizeInvoiceFromDb(invoice),

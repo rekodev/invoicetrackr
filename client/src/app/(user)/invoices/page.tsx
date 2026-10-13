@@ -1,16 +1,27 @@
 import { DocumentArrowDownIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { buttonVariants } from '@heroui/react';
 import Link from 'next/link';
+import { unauthorized } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 
+import { auth } from '@/auth';
 import PageHeader from '@/components/ui/page-header';
 import { InvoiceTableSkeleton } from '@/components/ui/skeletons/invoice-skeleton';
 import { ADD_NEW_INVOICE_PAGE, REPORTS_JOURNAL_PAGE } from '@/lib/constants/pages';
+import { parseInvoiceListQuery } from '@/lib/utils/invoice-navigation';
 
 import InvoicesPageContent from './invoices-page-content';
 
-const InvoicesPage = async () => {
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+const InvoicesPage = async ({ searchParams }: Props) => {
+  const session = await auth();
+  if (!session?.user?.id) unauthorized();
+
+  const query = parseInvoiceListQuery(await searchParams);
   const t = await getTranslations('invoices.top_content');
   const tBreadcrumbs = await getTranslations('breadcrumbs');
 
@@ -30,7 +41,14 @@ const InvoicesPage = async () => {
         </Link>
       </PageHeader>
       <Suspense fallback={<InvoiceTableSkeleton />}>
-        <InvoicesPageContent />
+        <InvoicesPageContent
+          userId={Number(session.user.id)}
+          query={query}
+          isEmailVerified={Boolean(session.user.emailVerifiedAt)}
+          preferredLanguage={
+            session.user.preferredInvoiceLanguage || session.user.language
+          }
+        />
       </Suspense>
     </section>
   );

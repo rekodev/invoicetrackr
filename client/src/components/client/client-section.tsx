@@ -9,6 +9,7 @@ import {
 import {
   Button,
   buttonVariants,
+  cn,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -17,11 +18,16 @@ import {
 } from '@heroui/react';
 import type { ClientBody } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
+import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 import { CLIENT_WORKSPACE_PAGE } from '@/lib/constants/pages';
-import useClientSearchAndFilter from '@/lib/hooks/client/use-client-search-and-filter';
+import useListNavigation from '@/lib/hooks/use-list-navigation';
+import {
+  type ClientListPageQuery,
+  clientListQueryHref
+} from '@/lib/utils/client-navigation';
 
 import ClientCard from '../client-card';
 import ArchiveClientModal from './archive-client-modal';
@@ -29,25 +35,30 @@ import ClientFormDialog from './client-form-dialog';
 import ClientSectionBottomContent from './client-section-bottom-content';
 import ClientSectionTopContent from './client-section-top-content';
 
-const PER_PAGE = 8;
+const SEARCH_DEBOUNCE_MS = 300;
 
 type Props = {
   userId: number;
   clients: Array<ClientBody>;
+  total: number;
+  query: ClientListPageQuery;
 };
 
-const ClientSection = ({ userId, clients }: Props) => {
+const ClientSection = ({ userId, clients, total, query }: Props) => {
   const t = useTranslations('clients');
-  const {
-    page,
-    setPage,
-    filteredItems,
-    searchTerm,
-    typeFilters,
-    setTypeFilters,
-    handleSearch,
-    handleClearSearch
-  } = useClientSearchAndFilter(clients);
+  const { update, isPending } = useListNavigation(query, clientListQueryHref);
+  const [searchTerm, setSearchTerm] = useState(query.q ?? '');
+  const searchTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const hasFilters = Boolean(query.q || query.businessType);
+
+  const onSearch = (value: string) => {
+    setSearchTerm(value);
+    clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(
+      () => update({ q: value.trim() || undefined, page: 1 }),
+      SEARCH_DEBOUNCE_MS
+    );
+  };
 
   const [currentClientData, setCurrentClientData] = useState<ClientBody>();
   const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false);
@@ -142,12 +153,7 @@ const ClientSection = ({ userId, clients }: Props) => {
     </>
   );
 
-  const renderClient = (client: ClientBody, index: number) => {
-    const isItemInCurrentPageRange =
-      index >= (page - 1) * PER_PAGE && index < page * PER_PAGE;
-
-    if (!isItemInCurrentPageRange) return;
-
+  const renderClient = (client: ClientBody) => {
     return (
       <ClientCard
         key={client.id}
@@ -160,47 +166,53 @@ const ClientSection = ({ userId, clients }: Props) => {
   };
 
   const renderSectionContent = () => {
-    if (!clients?.length)
+    if (!clients.length)
       return (
         <EmptyState
           className="min-h-[480px]"
-          title={t('empty_state.title')}
-          description={t('empty_state.description')}
-        />
-      );
-
-    if (!filteredItems?.length)
-      return (
-        <EmptyState
-          className="min-h-[480px]"
-          title={t('empty_state.no_results_title')}
-          description={t('empty_state.no_results_description')}
+          title={t(hasFilters ? 'empty_state.no_results_title' : 'empty_state.title')}
+          description={t(
+            hasFilters
+              ? 'empty_state.no_results_description'
+              : 'empty_state.description'
+          )}
         />
       );
 
     return (
       <>
         <div className="grid grid-cols-1 gap-section md:grid-cols-2 xl:grid-cols-3">
-          {filteredItems?.map((client, index) => renderClient(client, index))}
+          {clients.map(renderClient)}
         </div>
         <ClientSectionBottomContent
-          page={page}
-          setPage={setPage}
-          clientsLength={filteredItems?.length}
+          page={query.page}
+          pages={Math.max(1, Math.ceil(total / query.pageSize))}
+          onPageChange={(page) => update({ page })}
         />
       </>
     );
   };
 
   return (
-    <section className="flex flex-col gap-section">
+    <section
+      className={cn('flex flex-col gap-section transition-opacity', {
+        'opacity-60': isPending
+      })}
+      aria-busy={isPending}
+    >
       <ClientSectionTopContent
-        clients={filteredItems}
+        total={total}
         searchTerm={searchTerm}
-        onSearch={handleSearch}
-        onClear={handleClearSearch}
-        typeFilters={typeFilters}
-        setTypeFilters={setTypeFilters}
+        onSearch={onSearch}
+        typeFilters={
+          new Set(query.businessType ? [query.businessType] : CLIENT_BUSINESS_TYPES)
+        }
+        onTypeFiltersChange={(types) =>
+          update({
+            businessType: types.size === 1 ? Array.from(types)[0] : undefined,
+            page: 1
+          })
+        }
       />
       <div className="min-h-[480px]">{renderSectionContent()}</div>
       {currentClientData && isEditClientModalOpen && (

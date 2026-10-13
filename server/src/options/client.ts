@@ -1,4 +1,5 @@
 import {
+  clientListQuerySchema,
   clientMutationBodySchema,
   clientWorkspaceResponseSchema,
   getClientResponseSchema,
@@ -23,6 +24,7 @@ const authenticatedAccess = [authMiddleware];
 
 export const getClientsOptions: RouteShorthandOptionsWithHandler = {
   schema: {
+    querystring: clientListQuerySchema,
     response: {
       200: getClientsResponseSchema
     }

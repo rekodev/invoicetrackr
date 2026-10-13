@@ -8,6 +8,7 @@ import type {
   GetPublicInvoiceResponse,
   GetPublicInvoiceSigningResponse,
   GetRecipientDetailsResponse,
+  InvoiceListQuery,
   InvoicePaymentBody,
   InvoicePaymentResponse,
   InvoiceWorkspaceResponse,
@@ -112,8 +113,10 @@ export const getPublicInvoiceSigning = async (token: string) =>
 export const getPublicInvoice = async (token: string) =>
   await api.get<GetPublicInvoiceResponse>(`/api/invoices/public/${token}`);
 
-export const getInvoices = async (userId: number) =>
-  await api.get<GetInvoicesResponse>(`/api/${userId}/invoices`);
+export const getInvoices = async (userId: number, query: InvoiceListQuery) =>
+  await api.get<GetInvoicesResponse>(`/api/${userId}/invoices`, {
+    params: query
+  });
 
 export const getNextInvoiceNumber = async (userId: number, series?: string) => {
   const query = series ? `?series=${encodeURIComponent(series)}` : '';

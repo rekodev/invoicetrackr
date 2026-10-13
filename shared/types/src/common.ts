@@ -35,3 +35,22 @@ export type AnalyticsConsentStatus = z.infer<
 export const languageSchema = z.enum(['lt', 'en']);
 
 export type Language = z.infer<typeof languageSchema>;
+
+export const isoDateQuerySchema = z.iso.date();
+
+export const DEFAULT_PAGE_SIZE = 10;
+
+export const pageSizeQuerySchema = z.coerce.number().int().min(1).max(50);
+
+export const paginationQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: pageSizeQuerySchema.default(DEFAULT_PAGE_SIZE)
+});
+
+export const paginationSchema = z.object({
+  page: z.number(),
+  pageSize: z.number(),
+  total: z.number()
+});
+
+export type Pagination = z.infer<typeof paginationSchema>;

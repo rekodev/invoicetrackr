@@ -1,11 +1,14 @@
-import type { InvoiceListItem } from '@invoicetrackr/types';
+import type {
+  InvoiceListQuery,
+  InvoiceListSort,
+  InvoiceListStatus,
+  ListSortDirection
+} from '@invoicetrackr/types';
 
 import { INVOICES_PAGE } from '@/lib/constants/pages';
+import { DEFAULT_LIST_PAGE_SIZE, LIST_PAGE_SIZES } from '@/lib/constants/table';
 
-import { getInvoiceDueStatus, getInvoicePaymentStatus } from './invoice';
-
-export const INVOICE_STATUS_FILTERS = [
-  'all',
+export const INVOICE_STATUS_FILTERS: Array<InvoiceListStatus> = [
   'open',
   'draft',
   'partial',
@@ -13,38 +16,61 @@ export const INVOICE_STATUS_FILTERS = [
   'paid',
   'canceled',
   'pending'
-] as const;
+];
 
-export type InvoiceListFilters = {
-  filterValue: string;
-  statusFilter: string;
-  overdueOnly: boolean;
-  issuedFrom: string;
-  issuedTo: string;
-  paidFrom: string;
-  paidTo: string;
+const INVOICE_SORTS: Array<InvoiceListSort> = [
+  'id',
+  'receiver',
+  'totalAmount',
+  'date',
+  'lifecycleStatus',
+  'status'
+];
+
+const DEFAULT_INVOICE_LIST_QUERY: InvoiceListQuery = {
+  page: 1,
+  pageSize: DEFAULT_LIST_PAGE_SIZE,
+  sort: 'date',
+  direction: 'descending'
 };
 
-const isoDate = (value: string | null) =>
-  value && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value))
-    ? value
-    : '';
+type SearchValue = string | string[] | undefined;
+type SearchParams = Record<string, SearchValue>;
 
-export const readInvoiceListState = (
-  params: URLSearchParams
-): InvoiceListFilters => {
-  const status = params.get('status') ?? '';
+const single = (value: SearchValue) =>
+  typeof value === 'string' ? value : undefined;
+
+const isoDate = (value: SearchValue) => {
+  const date = single(value);
+  return date && /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(Date.parse(date))
+    ? date
+    : undefined;
+};
+
+const oneOf = <T extends string>(options: Array<T>, value: SearchValue) =>
+  options.find((option) => option === single(value));
+
+export const parseInvoiceListQuery = (params: SearchParams): InvoiceListQuery => {
+  const page = Number(single(params.page));
+  const pageSize = Number(single(params.pageSize));
+  const q = single(params.q)?.trim().slice(0, 100);
 
   return {
-    filterValue: params.get('q') ?? '',
-    statusFilter: INVOICE_STATUS_FILTERS.some((item) => item === status)
-      ? status
-      : 'all',
-    overdueOnly: params.get('overdue') === '1',
-    issuedFrom: isoDate(params.get('issuedFrom')),
-    issuedTo: isoDate(params.get('issuedTo')),
-    paidFrom: isoDate(params.get('paidFrom')),
-    paidTo: isoDate(params.get('paidTo'))
+    page: Number.isInteger(page) && page > 0 ? page : 1,
+    pageSize: LIST_PAGE_SIZES.includes(pageSize) ? pageSize : DEFAULT_LIST_PAGE_SIZE,
+    ...(q ? { q } : {}),
+    ...(oneOf(INVOICE_STATUS_FILTERS, params.status) && {
+      status: oneOf(INVOICE_STATUS_FILTERS, params.status)
+    }),
+    ...(single(params.overdue) === '1' ? { overdue: '1' as const } : {}),
+    ...(isoDate(params.issuedFrom) && { issuedFrom: isoDate(params.issuedFrom) }),
+    ...(isoDate(params.issuedTo) && { issuedTo: isoDate(params.issuedTo) }),
+    ...(isoDate(params.paidFrom) && { paidFrom: isoDate(params.paidFrom) }),
+    ...(isoDate(params.paidTo) && { paidTo: isoDate(params.paidTo) }),
+    sort: oneOf(INVOICE_SORTS, params.sort) ?? 'date',
+    direction:
+      oneOf<ListSortDirection>(['ascending', 'descending'], params.direction) ??
+      'descending'
   };
 };
 
@@ -57,46 +83,14 @@ export const invoiceListHref = (values: Partial<Record<string, string>>) => {
   return `${INVOICES_PAGE}${query ? `?${query}` : ''}`;
 };
 
-export const writeInvoiceListState = (filters: InvoiceListFilters) =>
-  invoiceListHref({
-    q: filters.filterValue,
-    status: filters.statusFilter === 'all' ? '' : filters.statusFilter,
-    overdue: filters.overdueOnly ? '1' : '',
-    issuedFrom: filters.issuedFrom,
-    issuedTo: filters.issuedTo,
-    paidFrom: filters.paidFrom,
-    paidTo: filters.paidTo
-  });
-
-const inRange = (value: string, from: string, to: string) =>
-  (!from || value >= from) && (!to || value <= to);
-
-export const matchesInvoiceListFilters = (
-  invoice: InvoiceListItem,
-  filters: InvoiceListFilters
-) => {
-  const { filterValue, statusFilter, overdueOnly, issuedFrom, issuedTo, paidFrom, paidTo } =
-    filters;
-  const paymentStatus = getInvoicePaymentStatus(invoice);
-  const matchesStatus =
-    statusFilter === 'all' ||
-    (statusFilter === 'canceled'
-      ? invoice.lifecycleStatus === 'voided'
-      : statusFilter === 'open'
-        ? paymentStatus === 'pending' || paymentStatus === 'partial'
-        : paymentStatus === statusFilter);
-
-  return (
-    (!filterValue ||
-      `${invoice.invoiceId || ''} ${invoice.receiver.name}`
-        .toLowerCase()
-        .includes(filterValue.toLowerCase())) &&
-    matchesStatus &&
-    (!overdueOnly || getInvoiceDueStatus(invoice).isPastDue) &&
-    (!(issuedFrom || issuedTo) ||
-      (invoice.lifecycleStatus === 'issued' &&
-        inRange(invoice.date, issuedFrom, issuedTo))) &&
-    (!(paidFrom || paidTo) ||
-      (invoice.paymentDates ?? []).some((date) => inRange(date, paidFrom, paidTo)))
+export const invoiceListQueryHref = (query: InvoiceListQuery) =>
+  invoiceListHref(
+    Object.fromEntries(
+      Object.entries(query)
+        .filter(
+          ([key, value]) =>
+            value !== DEFAULT_INVOICE_LIST_QUERY[key as keyof InvoiceListQuery]
+        )
+        .map(([key, value]) => [key, String(value)])
+    )
   );
-};

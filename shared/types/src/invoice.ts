@@ -1,6 +1,11 @@
 import z from 'zod/v4';
 import { bankAccountBodySchema } from './bank-account';
-import { currencySchema, languageSchema } from './common';
+import {
+  currencySchema,
+  isoDateQuerySchema,
+  languageSchema,
+  paginationQuerySchema
+} from './common';
 import { cryptoWalletBodySchema } from './crypto-wallet';
 
 // Enums
@@ -397,6 +402,43 @@ export type SendRecipientDetailsRequestBody = z.infer<
 >;
 export type InvoiceParty = InvoicePartyBody;
 
+export const invoiceListStatusSchema = z.enum([
+  'open',
+  'draft',
+  'partial',
+  'no_payment_due',
+  'paid',
+  'canceled',
+  'pending'
+]);
+
+export const invoiceListSortSchema = z.enum([
+  'id',
+  'receiver',
+  'totalAmount',
+  'date',
+  'lifecycleStatus',
+  'status'
+]);
+
+export const listSortDirectionSchema = z.enum(['ascending', 'descending']);
+
+export const invoiceListQuerySchema = paginationQuerySchema.extend({
+  q: z.string().trim().max(100).optional(),
+  status: invoiceListStatusSchema.optional(),
+  overdue: z.literal('1').optional(),
+  issuedFrom: isoDateQuerySchema.optional(),
+  issuedTo: isoDateQuerySchema.optional(),
+  paidFrom: isoDateQuerySchema.optional(),
+  paidTo: isoDateQuerySchema.optional(),
+  sort: invoiceListSortSchema.default('date'),
+  direction: listSortDirectionSchema.default('descending')
+});
+
+export type InvoiceListStatus = z.infer<typeof invoiceListStatusSchema>;
+export type InvoiceListSort = z.infer<typeof invoiceListSortSchema>;
+export type ListSortDirection = z.infer<typeof listSortDirectionSchema>;
+export type InvoiceListQuery = z.infer<typeof invoiceListQuerySchema>;
 export type InvoiceBody = z.infer<typeof invoiceBodySchema>;
 export type PublicInvoiceSigning = z.infer<typeof publicInvoiceSigningSchema>;
 export type PublicInvoice = z.infer<typeof publicInvoiceSchema>;

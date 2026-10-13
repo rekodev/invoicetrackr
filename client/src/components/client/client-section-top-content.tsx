@@ -10,37 +10,31 @@ import {
   DropdownPopover,
   DropdownTrigger,
   Input} from '@heroui/react';
-import { ClientBody, InvoicePartyBusinessType } from '@invoicetrackr/types';
+import type { InvoicePartyBusinessType } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
-import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 
-const filters = ['business', 'individual'];
+import { CLIENT_BUSINESS_TYPES } from '@/lib/constants/client';
 
 type Props = {
-  clients: Array<ClientBody> | undefined;
+  total: number;
   searchTerm: string;
-  onSearch: (_event: ChangeEvent<HTMLInputElement>) => void;
-  onClear: () => void;
+  onSearch: (_value: string) => void;
   typeFilters: Set<InvoicePartyBusinessType>;
-  setTypeFilters: Dispatch<SetStateAction<Set<InvoicePartyBusinessType>>>;
+  onTypeFiltersChange: (_types: Set<InvoicePartyBusinessType>) => void;
 };
 
 const ClientSectionTopContent = ({
-  clients,
+  total,
   searchTerm,
   onSearch,
-  onClear,
   typeFilters,
-  setTypeFilters
+  onTypeFiltersChange
 }: Props) => {
   const t = useTranslations('clients.top_content');
   const tTypes = useTranslations('clients.form_dialog.business_types');
 
-  const totalClientsText = clients
-    ? clients.length === 1
-      ? t('total_singular')
-      : t('total_plural', { count: clients.length })
-    : t('total_plural', { count: 0 });
+  const totalClientsText =
+    total === 1 ? t('total_singular') : t('total_plural', { count: total });
 
   const renderTypeFilterSelect = () => (
     <Dropdown>
@@ -60,21 +54,21 @@ const ClientSectionTopContent = ({
           selectionMode="multiple"
           selectedKeys={typeFilters}
           onSelectionChange={(keys) =>
-            setTypeFilters(
+            onTypeFiltersChange(
               keys === 'all'
-                ? new Set()
+                ? new Set(CLIENT_BUSINESS_TYPES)
                 : new Set(keys as Set<InvoicePartyBusinessType>)
             )
           }
         >
-          {filters.map((filter) => (
+          {CLIENT_BUSINESS_TYPES.map((filter) => (
             <DropdownItem
               key={filter}
               id={filter}
-              textValue={tTypes(filter as 'business' | 'individual')}
+              textValue={tTypes(filter)}
               className="capitalize"
             >
-              {tTypes(filter as 'business' | 'individual')}
+              {tTypes(filter)}
             </DropdownItem>
           ))}
         </DropdownMenu>
@@ -92,9 +86,11 @@ const ClientSectionTopContent = ({
             className="w-full"
             placeholder={t('search_placeholder')}
             value={searchTerm}
-            onChange={onSearch}
+            onChange={(event) => onSearch(event.target.value)}
           />
-          {searchTerm && <CloseButton aria-label="Clear" onPress={onClear} />}
+          {searchTerm && (
+            <CloseButton aria-label="Clear" onPress={() => onSearch('')} />
+          )}
         </div>
         {renderTypeFilterSelect()}
       </div>

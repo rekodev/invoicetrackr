@@ -27,31 +27,11 @@ describe('<ClientSectionTopContent />', () => {
 
   beforeEach(() => {
     props = {
-      clients: [
-        {
-          id: 1,
-          address: 'Test Client 1',
-          name: 'Test Client 1',
-          businessNumber: '123',
-          businessType: 'business',
-          email: 'client1@test.com',
-          type: 'receiver'
-        },
-        {
-          id: 2,
-          address: 'Test Client 2',
-          name: 'Test Client 2',
-          businessNumber: '456',
-          businessType: 'individual',
-          email: 'client2@test.com',
-          type: 'receiver'
-        }
-      ],
+      total: 2,
       searchTerm: '',
       onSearch: vi.fn(),
-      onClear: vi.fn(),
       typeFilters: new Set(['business', 'individual']),
-      setTypeFilters: vi.fn()
+      onTypeFiltersChange: vi.fn()
     };
     mockAddClientAction.mockClear();
     mockUpdateClientAction.mockClear();
@@ -74,7 +54,7 @@ describe('<ClientSectionTopContent />', () => {
   });
 
   it('displays singular text when there is one client', () => {
-    props.clients = [props.clients![0]];
+    props.total = 1;
     renderHelper(<ClientSectionTopContent {...props} />);
 
     expect(screen.getByText('Total 1 client')).toBeDefined();
@@ -89,23 +69,24 @@ describe('<ClientSectionTopContent />', () => {
     expect(props.onSearch).toHaveBeenCalled();
   });
 
-  it('calls onClear when clearing search input', async () => {
+  it('clears the search through onSearch', async () => {
     props.searchTerm = 'test';
     renderHelper(<ClientSectionTopContent {...props} />);
 
     const clearButton = screen.getByRole('button', { name: /clear/i });
     await userEvent.click(clearButton);
 
-    expect(props.onClear).toHaveBeenCalled();
+    expect(props.onSearch).toHaveBeenCalledWith('');
   });
 
-  it('opens type filter dropdown when clicking Type button', async () => {
+  it('narrows the type filter from the Type dropdown', async () => {
     renderHelper(<ClientSectionTopContent {...props} />);
 
     await userEvent.click(screen.getByText('Type'));
-
     expect(screen.getByText('Business')).toBeDefined();
-    expect(screen.getByText('Individual')).toBeDefined();
+    await userEvent.click(screen.getByText('Individual'));
+
+    expect(props.onTypeFiltersChange).toHaveBeenCalledWith(new Set(['business']));
   });
 });
 

@@ -12,6 +12,7 @@ import {
   type InvoiceBody,
   invoiceBodySchema,
   type InvoiceEmailContent,
+  type InvoiceListQuery,
   issuableInvoiceBodySchema,
   type PublicInvoice,
   type RecipientDetailsBody,
@@ -571,13 +572,17 @@ const buildPublicInvoicePayload = async ({
 };
 
 export const getInvoices = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Querystring: InvoiceListQuery;
+  }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
-  const invoices = await getInvoicesFromDb(userId);
+  const { page, pageSize } = req.query;
+  const { invoices, total } = await getInvoicesFromDb(userId, req.query);
 
-  reply.status(200).send({ invoices });
+  reply.status(200).send({ invoices, pagination: { page, pageSize, total } });
 };
 
 export const getInvoice = async (

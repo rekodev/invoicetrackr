@@ -5,6 +5,7 @@ import {
   getPublicInvoiceResponseSchema,
   getPublicInvoiceSigningResponseSchema,
   getRecipientDetailsResponseSchema,
+  invoiceListQuerySchema,
   invoiceNumberSeriesSchema,
   invoiceWriteBodySchema,
   issueInvoiceResponseSchema,
@@ -57,6 +58,7 @@ const publicTokenAccess = { rateLimit: ipRateLimit(30, '1 minute') };
 
 export const getInvoicesOptions: RouteShorthandOptionsWithHandler = {
   schema: {
+    querystring: invoiceListQuerySchema,
     response: {
       200: getInvoicesResponseSchema
     }

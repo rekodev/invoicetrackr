@@ -1,4 +1,8 @@
-import type { ClientMutationBody } from '@invoicetrackr/types';
+import {
+  type ClientListQuery,
+  type ClientMutationBody,
+  DEFAULT_PAGE_SIZE
+} from '@invoicetrackr/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
@@ -17,14 +21,21 @@ import { recordRequestAudit } from '../utils/audit';
 import { BadRequestError, ConflictError, NotFoundError } from '../utils/error';
 
 export const getClients = async (
-  req: FastifyRequest<{ Params: { userId: string } }>,
+  req: FastifyRequest<{
+    Params: { userId: string };
+    Querystring: ClientListQuery;
+  }>,
   reply: FastifyReply
 ) => {
   const userId = Number(req.params.userId);
+  const { page, pageSize = DEFAULT_PAGE_SIZE } = req.query;
 
-  const clients = await getClientsFromDb(userId);
+  const { clients, total } = await getClientsFromDb(userId, req.query);
 
-  reply.send({ clients });
+  reply.send({
+    clients,
+    ...(page ? { pagination: { page, pageSize, total } } : {})
+  });
 };
 
 export const getClient = async (

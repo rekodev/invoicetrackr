@@ -1,6 +1,8 @@
-import { and, desc, eq, isNull, ne, or, sql } from 'drizzle-orm';
+import { type ClientListQuery, DEFAULT_PAGE_SIZE } from '@invoicetrackr/types';
+import { and, count, desc, eq, ilike, isNull, ne, or, sql } from 'drizzle-orm';
 
 import { summarizeClientInvoices } from '../utils/client-workspace';
+import { containsPattern } from '../utils/search';
 import { db } from './db';
 import { getPaymentsByInvoiceQuery } from './invoice-payment';
 import type { SelectClient } from './schema';
@@ -91,17 +93,42 @@ export const findPotentialDuplicateClientFromDb = async (
 };
 
 export const getClientsFromDb = async (
-  userId: number
-): Promise<Array<Omit<SelectClient, 'createdAt' | 'updatedAt' | 'userId'>>> => {
-  const clients = await db
+  userId: number,
+  { page, pageSize = DEFAULT_PAGE_SIZE, q, businessType }: ClientListQuery = {}
+): Promise<{
+  clients: Array<Omit<SelectClient, 'createdAt' | 'updatedAt' | 'userId'>>;
+  total: number;
+}> => {
+  const search = q ? containsPattern(q) : undefined;
+  const where = and(
+    eq(clientsTable.userId, userId),
+    isNull(clientsTable.archivedAt),
+    search
+      ? or(
+          ilike(clientsTable.name, search),
+          ilike(clientsTable.email, search),
+          ilike(clientsTable.businessNumber, search)
+        )
+      : undefined,
+    businessType ? eq(clientsTable.businessType, businessType) : undefined
+  );
+  const listQuery = db
     .select(clientSelection)
     .from(clientsTable)
-    .where(
-      and(eq(clientsTable.userId, userId), isNull(clientsTable.archivedAt))
-    )
+    .where(where)
     .orderBy(desc(clientsTable.id));
 
-  return clients;
+  if (!page) {
+    const clients = await listQuery;
+    return { clients, total: clients.length };
+  }
+
+  const [clients, [{ total }]] = await Promise.all([
+    listQuery.limit(pageSize).offset((page - 1) * pageSize),
+    db.select({ total: count() }).from(clientsTable).where(where)
+  ]);
+
+  return { clients, total };
 };
 
 export const getClientFromDb = async (

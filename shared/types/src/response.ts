@@ -8,6 +8,7 @@ import {
 import { bankAccountBodySchema } from './bank-account';
 import { cryptoWalletBodySchema } from './crypto-wallet';
 import { clientBodySchema } from './client';
+import { paginationSchema } from './common';
 import {
   authenticatedInvoiceBodySchema,
   invoiceBodySchema,
@@ -89,7 +90,8 @@ export const updateCryptoWalletResponseSchema = postCryptoWalletResponseSchema;
 
 // Client response schemas
 export const getClientsResponseSchema = z.object({
-  clients: z.array(clientBodySchema)
+  clients: z.array(clientBodySchema),
+  pagination: paginationSchema.optional()
 });
 
 export const getClientResponseSchema = z.object({
@@ -132,7 +134,8 @@ export const getInvoicesResponseSchema = z.object({
     paidAmount: z.string().nullable(),
     outstandingAmount: z.string().nullable(),
     paymentDates: z.array(z.string())
-  }))
+  })),
+  pagination: paginationSchema
 });
 
 export const getInvoiceResponseSchema = z.object({
