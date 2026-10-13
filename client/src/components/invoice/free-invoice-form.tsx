@@ -4,6 +4,7 @@ import { EyeIcon } from '@heroicons/react/24/outline';
 import {
   Alert,
   Button,
+  buttonVariants,
   Card,
   Chip,
   FieldError,
@@ -14,16 +15,19 @@ import {
   TextField
 } from '@heroui/react';
 import type { InvoiceBody } from '@invoicetrackr/types';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { type ComponentProps, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
+import { SIGN_UP_PAGE } from '@/lib/constants/pages';
 import { Currency } from '@/lib/types/currency';
 import { calculateInvoiceTotals } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/date';
 
 import PDFDocument from '../pdf/pdf-document';
 import SignaturePad from '../signature-pad';
+import PageHeader from '../ui/page-header';
 import InvoiceModal from './invoice-modal';
 import InvoiceServicesHeading from './invoice-services-heading';
 import InvoiceServicesTable from './invoice-services-table';
@@ -419,17 +423,30 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     </div>
   );
 
-  const renderUpgradeAlert = () => (
-    <Alert status="accent" className="border">
-      <Alert.Indicator />
-      <Alert.Content>
-        <Alert.Title>{t('free_invoice.upgrade_title')}</Alert.Title>
-        <Alert.Description>
-          {t('free_invoice.upgrade_description')}
-        </Alert.Description>
-      </Alert.Content>
-    </Alert>
-  );
+  const renderUpgradeAlert = () => {
+    const action = (
+      <Link
+        href={SIGN_UP_PAGE}
+        className={buttonVariants({ variant: 'outline', size: 'sm' })}
+      >
+        {t('free_invoice.upgrade_cta')}
+      </Link>
+    );
+
+    return (
+      <Alert status="accent" className="border">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>{t('free_invoice.upgrade_title')}</Alert.Title>
+          <Alert.Description>
+            {t('free_invoice.upgrade_description')}
+          </Alert.Description>
+          <div className="mt-2 sm:hidden">{action}</div>
+        </Alert.Content>
+        <div className="hidden shrink-0 sm:block">{action}</div>
+      </Alert>
+    );
+  };
 
   const getInvoicePreviewData = (): InvoiceBody => {
     const invoiceTotals = calculateInvoiceTotals(getValues('services'));
@@ -459,24 +476,19 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
     <>
       <FormProvider {...methods}>
         <div className="mx-auto w-full max-w-7xl px-6 py-8 sm:py-10 md:py-12 lg:py-14">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,520px)] lg:items-end">
-            <div className="flex max-w-3xl flex-col gap-3">
-              <Chip color="accent" variant="soft" className="w-max">
-                {t('free_invoice.eyebrow')}
-              </Chip>
-              <h1 className="text-3xl font-semibold sm:text-4xl">
-                {t('free_invoice.title')}
-              </h1>
-              <p className="text-muted max-w-2xl">
-                {t('free_invoice.description')}
-              </p>
-              <p className="text-muted max-w-2xl text-sm">
-                {t('free_invoice.untracked_notice')}
-              </p>
-            </div>
+          <div className="flex flex-col gap-6">
+            <PageHeader
+              title={t('free_invoice.title')}
+              description={t('free_invoice.description')}
+              titleAddon={
+                <Chip color="accent" variant="soft" className="shrink-0">
+                  {t('free_invoice.eyebrow')}
+                </Chip>
+              }
+            />
             {renderUpgradeAlert()}
           </div>
-          <Card className="mt-8 border p-4 sm:p-8">
+          <Card className="mt-6 border p-4 sm:p-8">
             <form
               aria-label={t('a11y.form_label')}
               className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"

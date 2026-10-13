@@ -1,42 +1,49 @@
 import {
   ArrowDownTrayIcon,
-  BanknotesIcon,
-  ChartBarIcon,
-  EnvelopeIcon,
   GlobeAltIcon,
   LinkIcon,
-  UserGroupIcon
+  ReceiptPercentIcon,
+  ShieldCheckIcon,
+  TableCellsIcon,
+  UserGroupIcon,
+  WalletIcon
 } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
+import { ReactNode } from 'react';
 
 import ClientsPagePreview from '../clients-page-preview';
-import CompactDashboardPreview from '../compact-dashboard-preview';
+import ExpensesPagePreview from '../expenses-page-preview';
+import ExportsPreview from '../exports-preview';
 import { InvoicesPagePreview } from '../invoices-page-preview';
+import InvoicingPoints from '../invoicing-points';
 import SectionHeading from '../section-heading';
+import TaxReservePreview from '../tax-reserve-preview';
 import Tile from '../tile/tile';
 import TileBody from '../tile/tile-body';
 import { IconComponent } from '../tile/types';
 
-const productTiles: Array<{
-  key: 'invoices' | 'dashboard' | 'clients';
-  icon?: IconComponent;
-  className?: string;
+const featureTiles: Array<{
+  key: 'clients' | 'expenses' | 'taxes' | 'reports';
+  icon: IconComponent;
+  preview: ReactNode;
 }> = [
-  { key: 'invoices', className: 'md:col-span-6' },
-  { key: 'dashboard', icon: ChartBarIcon, className: 'md:col-span-6' },
-  { key: 'clients', icon: UserGroupIcon, className: 'md:col-span-6' }
+  { key: 'clients', icon: UserGroupIcon, preview: <ClientsPagePreview /> },
+  {
+    key: 'expenses',
+    icon: ReceiptPercentIcon,
+    preview: <ExpensesPagePreview />
+  },
+  { key: 'taxes', icon: WalletIcon, preview: <TaxReservePreview /> },
+  { key: 'reports', icon: TableCellsIcon, preview: <ExportsPreview /> }
 ];
 
 const capabilityTiles: Array<{
-  key: 'payments' | 'links' | 'email' | 'language' | 'export';
+  key: 'links' | 'language' | 'data';
   icon: IconComponent;
-  className?: string;
 }> = [
-  { key: 'payments', icon: BanknotesIcon },
   { key: 'links', icon: LinkIcon },
-  { key: 'email', icon: EnvelopeIcon },
   { key: 'language', icon: GlobeAltIcon },
-  { key: 'export', icon: ArrowDownTrayIcon }
+  { key: 'data', icon: ShieldCheckIcon }
 ];
 
 export default function ProductSection() {
@@ -54,39 +61,36 @@ export default function ProductSection() {
         body={t('subtitle')}
       />
 
-      <div className="mt-14 grid grid-cols-1 gap-3 md:grid-cols-6">
-        {productTiles.map(({ key, icon, className }) => (
-          <Tile
-            key={key}
-            reveal
-            className={['landing-scroll-reveal', className]
-              .filter(Boolean)
-              .join(' ')}
-          >
+      <div className="mt-14 grid grid-cols-1 gap-3 md:grid-cols-2">
+        <Tile reveal className="landing-scroll-reveal md:col-span-2">
+          <div className="grid gap-8 lg:grid-cols-[2fr_3fr] lg:items-center">
+            <div>
+              <TileBody
+                eyebrow={t('items.invoices.eyebrow')}
+                title={t('items.invoices.title')}
+                body={t('items.invoices.body')}
+              />
+              <InvoicingPoints />
+            </div>
+            <InvoicesPagePreview />
+          </div>
+        </Tile>
+
+        {featureTiles.map(({ key, icon, preview }) => (
+          <Tile key={key} reveal className="landing-scroll-reveal">
             <TileBody
               icon={icon}
-              eyebrow={
-                key === 'invoices' ? t('items.invoices.eyebrow') : undefined
-              }
               title={t(`items.${key}.title`)}
               body={t(`items.${key}.body`)}
             />
-            {key === 'invoices' && <InvoicesPagePreview />}
-            {key === 'dashboard' && <CompactDashboardPreview />}
-            {key === 'clients' && <ClientsPagePreview />}
+            {preview}
           </Tile>
         ))}
       </div>
 
       <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
-        {capabilityTiles.map(({ key, icon, className }) => (
-          <Tile
-            key={key}
-            reveal
-            className={['landing-scroll-reveal', className]
-              .filter(Boolean)
-              .join(' ')}
-          >
+        {capabilityTiles.map(({ key, icon }) => (
+          <Tile key={key} reveal className="landing-scroll-reveal">
             <TileBody
               icon={icon}
               title={t(`capabilities.${key}.title`)}
@@ -104,10 +108,10 @@ export default function ProductSection() {
                 ))}
               </div>
             )}
-            {key === 'export' && (
+            {key === 'data' && (
               <div className="bg-default-50 text-muted mt-5 inline-flex items-center gap-2 rounded-xl border px-3 py-2 font-mono text-[11px]">
                 <ArrowDownTrayIcon className="h-3 w-3" />
-                invoices_2026.csv
+                {t('capabilities.data.file')}
               </div>
             )}
           </Tile>

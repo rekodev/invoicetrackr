@@ -3,7 +3,14 @@ import { useTranslations } from 'next-intl';
 
 import SectionHeading from './section-heading';
 
-const FAQ_ITEMS = ['free', 'export', 'payments', 'languages'] as const;
+export const FAQ_ITEMS = [
+  'who',
+  'free',
+  'taxes',
+  'payments',
+  'export',
+  'languages'
+] as const;
 
 export default function FAQ() {
   const t = useTranslations('home.faq');
