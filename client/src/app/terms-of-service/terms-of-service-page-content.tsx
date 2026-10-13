@@ -2,7 +2,15 @@
 
 import { useTranslations } from 'next-intl';
 
-const LAST_UPDATED = '06/27/2026';
+const LAST_UPDATED = '10/12/2026';
+const THIRD_PARTY_SERVICES = [
+  'hosting',
+  'database',
+  'email',
+  'storage',
+  'analytics',
+  'google'
+] as const;
 const CONTACT_EMAIL = 'support@invoicetrackr.app';
 
 export default function TermsOfServicePageContent() {
@@ -40,6 +48,10 @@ export default function TermsOfServicePageContent() {
             <li>{t('sections.description.items.pdf')}</li>
             <li>{t('sections.description.items.email')}</li>
             <li>{t('sections.description.items.banking')}</li>
+            <li>{t('sections.description.items.payments')}</li>
+            <li>{t('sections.description.items.expenses')}</li>
+            <li>{t('sections.description.items.taxes')}</li>
+            <li>{t('sections.description.items.exports')}</li>
           </ul>
         </section>
 
@@ -75,6 +87,15 @@ export default function TermsOfServicePageContent() {
           </h3>
           <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
             {t('sections.account_registration.eligibility.content')}
+          </p>
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-2xl font-semibold">
+            {t('sections.fees.heading')}
+          </h2>
+          <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
+            {t('sections.fees.content')}
           </p>
         </section>
 
@@ -160,13 +181,14 @@ export default function TermsOfServicePageContent() {
             {t('sections.third_party.intro')}
           </p>
           <ul className="mb-4 ml-6 list-disc space-y-2 text-gray-700 dark:text-gray-300">
-            <li>
-              <strong>Cloudinary:</strong>{' '}
-              {t('sections.third_party.cloudinary')}
-            </li>
-            <li>
-              <strong>PostHog:</strong> {t('sections.third_party.analytics')}
-            </li>
+            {THIRD_PARTY_SERVICES.map((service) => (
+              <li key={service}>
+                <strong>
+                  {t(`sections.third_party.items.${service}.name`)}:
+                </strong>{' '}
+                {t(`sections.third_party.items.${service}.description`)}
+              </li>
+            ))}
           </ul>
           <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
             {t('sections.third_party.disclaimer')}

@@ -2,7 +2,31 @@
 
 import { useTranslations } from 'next-intl';
 
-const LAST_UPDATED = '06/27/2026';
+const LAST_UPDATED = '10/12/2026';
+const SERVICE_PROVIDERS = [
+  'hosting',
+  'database',
+  'email',
+  'storage',
+  'analytics',
+  'google'
+] as const;
+const LEGAL_BASES = [
+  'contract',
+  'legal_obligation',
+  'legitimate_interests',
+  'consent'
+] as const;
+const RIGHTS = [
+  'access',
+  'correction',
+  'deletion',
+  'portability',
+  'objection',
+  'restriction',
+  'opt_out',
+  'withdraw'
+] as const;
 const CONTACT_EMAIL = 'support@invoicetrackr.app';
 
 export default function PrivacyPolicyPageContent() {
@@ -91,6 +115,11 @@ export default function PrivacyPolicyPageContent() {
             <li>
               {t('sections.information_we_collect.financial_info.items.client')}
             </li>
+            <li>
+              {t(
+                'sections.information_we_collect.financial_info.items.expenses'
+              )}
+            </li>
           </ul>
 
           <h3 className="mb-3 text-xl font-medium">
@@ -119,6 +148,9 @@ export default function PrivacyPolicyPageContent() {
             </li>
             <li>
               {t('sections.information_we_collect.usage_info.items.referring')}
+            </li>
+            <li>
+              {t('sections.information_we_collect.usage_info.items.errors')}
             </li>
           </ul>
 
@@ -155,6 +187,20 @@ export default function PrivacyPolicyPageContent() {
 
         <section>
           <h2 className="mb-4 text-2xl font-semibold">
+            {t('sections.legal_bases.heading')}
+          </h2>
+          <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
+            {t('sections.legal_bases.intro')}
+          </p>
+          <ul className="mb-4 ml-6 list-disc space-y-2 text-gray-700 dark:text-gray-300">
+            {LEGAL_BASES.map((basis) => (
+              <li key={basis}>{t(`sections.legal_bases.items.${basis}`)}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="mb-4 text-2xl font-semibold">
             {t('sections.how_we_share.heading')}
           </h2>
           <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
@@ -168,19 +214,19 @@ export default function PrivacyPolicyPageContent() {
             {t('sections.how_we_share.service_providers.intro')}
           </p>
           <ul className="mb-4 ml-6 list-disc space-y-2 text-gray-700 dark:text-gray-300">
-            <li>
-              <strong>Cloudinary:</strong>{' '}
-              {t('sections.how_we_share.service_providers.items.cloudinary')}
-            </li>
-            <li>
-              <strong>PostHog:</strong>{' '}
-              {t('sections.how_we_share.service_providers.items.analytics')}
-            </li>
-            <li>
-              <strong>
-                {t('sections.how_we_share.service_providers.items.email')}
-              </strong>
-            </li>
+            {SERVICE_PROVIDERS.map((provider) => (
+              <li key={provider}>
+                <strong>
+                  {t(
+                    `sections.how_we_share.service_providers.items.${provider}.name`
+                  )}
+                  :
+                </strong>{' '}
+                {t(
+                  `sections.how_we_share.service_providers.items.${provider}.description`
+                )}
+              </li>
+            ))}
           </ul>
 
           <h3 className="mb-3 text-xl font-medium">
@@ -233,34 +279,14 @@ export default function PrivacyPolicyPageContent() {
             {t('sections.your_rights.intro')}
           </p>
           <ul className="mb-4 ml-6 list-disc space-y-2 text-gray-700 dark:text-gray-300">
-            <li>
-              <strong>{t('sections.your_rights.items.access.title')}:</strong>{' '}
-              {t('sections.your_rights.items.access.description')}
-            </li>
-            <li>
-              <strong>
-                {t('sections.your_rights.items.correction.title')}:
-              </strong>{' '}
-              {t('sections.your_rights.items.correction.description')}
-            </li>
-            <li>
-              <strong>{t('sections.your_rights.items.deletion.title')}:</strong>{' '}
-              {t('sections.your_rights.items.deletion.description')}
-            </li>
-            <li>
-              <strong>
-                {t('sections.your_rights.items.portability.title')}:
-              </strong>{' '}
-              {t('sections.your_rights.items.portability.description')}
-            </li>
-            <li>
-              <strong>{t('sections.your_rights.items.opt_out.title')}:</strong>{' '}
-              {t('sections.your_rights.items.opt_out.description')}
-            </li>
-            <li>
-              <strong>{t('sections.your_rights.items.withdraw.title')}:</strong>{' '}
-              {t('sections.your_rights.items.withdraw.description')}
-            </li>
+            {RIGHTS.map((right) => (
+              <li key={right}>
+                <strong>
+                  {t(`sections.your_rights.items.${right}.title`)}:
+                </strong>{' '}
+                {t(`sections.your_rights.items.${right}.description`)}
+              </li>
+            ))}
           </ul>
           <p className="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">
             {t('sections.your_rights.outro')}
