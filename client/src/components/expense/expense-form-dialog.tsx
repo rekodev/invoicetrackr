@@ -141,15 +141,24 @@ const ExpenseFormDialog = ({
     return Math.max(0, (total * percentage) / 100);
   }, [businessUsePercentage, currency, eurAmount, totalAmount]);
 
+  const shouldResetForm = isOpen && (!isEditMode || Boolean(expenseData));
+  const [resetFor, setResetFor] = useState<ExpenseBody | undefined | null>(null);
+  const resetTarget = shouldResetForm ? expenseData : null;
+
+  if (resetTarget !== resetFor) {
+    setResetFor(resetTarget);
+    if (shouldResetForm) {
+      setSavedCreation(null);
+      setSelectedFile(null);
+      setSubmitError('');
+    }
+  }
+
   useEffect(() => {
-    if (!isOpen) return;
-    if (isEditMode && !expenseData) return;
+    if (!shouldResetForm) return;
 
     reset(getInitialExpenseData(expenseData));
-    setSavedCreation(null);
-    setSelectedFile(null);
-    setSubmitError('');
-  }, [expenseData, isEditMode, isOpen, reset]);
+  }, [expenseData, shouldResetForm, reset]);
 
   const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
     if (busy.current) return;
@@ -266,7 +275,7 @@ const ExpenseFormDialog = ({
               id="expense-form"
               noValidate
               className="grid grid-cols-1 gap-4 sm:grid-cols-2"
-              onSubmit={handleSubmit(onSubmit)}
+              onSubmit={(event) => handleSubmit(onSubmit)(event)}
             >
               {!isEditMode ? <fieldset disabled={isSubmitting} className="sm:col-span-2"><FileDropzone
                 className="sm:col-span-2"

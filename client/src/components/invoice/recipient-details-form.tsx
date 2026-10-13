@@ -81,18 +81,18 @@ export default function RecipientDetailsForm({
           onChange={(value) => set('businessType', value)}
         >
           <Radio value="business">
-            <Radio.Control>
-              <Radio.Indicator />
-            </Radio.Control>
             <Radio.Content>
+              <Radio.Control>
+                <Radio.Indicator />
+              </Radio.Control>
               <Label>{t('business')}</Label>
             </Radio.Content>
           </Radio>
           <Radio value="individual">
-            <Radio.Control>
-              <Radio.Indicator />
-            </Radio.Control>
             <Radio.Content>
+              <Radio.Control>
+                <Radio.Indicator />
+              </Radio.Control>
               <Label>{t('individual')}</Label>
             </Radio.Content>
           </Radio>

@@ -123,13 +123,15 @@ const BankingInformationForm = ({
       >
         <CardContent className="flex flex-row items-center gap-3">
           <Radio value={String(id || 0)} className="min-w-0 flex-1">
-            <Radio.Control>
-              <Radio.Indicator />
-            </Radio.Control>
             <Radio.Content>
-              <Label className="text-large font-semibold">{name}</Label>
-              <p className="text-xs font-bold uppercase">{code}</p>
-              <small className="text-muted mt-1">{accountNumber}</small>
+              <Radio.Control>
+                <Radio.Indicator />
+              </Radio.Control>
+              <div className="flex min-w-0 flex-col">
+                <Label className="text-large font-semibold">{name}</Label>
+                <p className="text-xs font-bold uppercase">{code}</p>
+                <small className="text-muted mt-1">{accountNumber}</small>
+              </div>
             </Radio.Content>
           </Radio>
           <div className="pointer-events-none flex gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">

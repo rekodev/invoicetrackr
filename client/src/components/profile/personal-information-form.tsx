@@ -446,10 +446,10 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
                     }
                   }}
                 >
-                  <Checkbox.Control>
-                    <Checkbox.Indicator />
-                  </Checkbox.Control>
                   <Checkbox.Content>
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
                     <Label>{t('is_vat_payer_option')}</Label>
                   </Checkbox.Content>
                 </Checkbox>

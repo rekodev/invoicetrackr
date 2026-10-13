@@ -631,10 +631,10 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                     setDocumentsFilter(isSelected ? 'attached' : 'all')
                   }
                 >
-                  <Checkbox.Control>
-                    <Checkbox.Indicator className="[&_svg]:h-full [&_svg]:w-full" />
-                  </Checkbox.Control>
                   <Checkbox.Content>
+                    <Checkbox.Control>
+                      <Checkbox.Indicator className="[&_svg]:h-full [&_svg]:w-full" />
+                    </Checkbox.Control>
                     {t('filters.has_attachment')}
                   </Checkbox.Content>
                 </Checkbox>

@@ -104,10 +104,10 @@ const TaxAssumptionsDialog = ({
             isSelected={field.value}
             onChange={field.onChange}
           >
-            <Checkbox.Control>
-              <Checkbox.Indicator />
-            </Checkbox.Control>
             <Checkbox.Content>
+              <Checkbox.Control>
+                <Checkbox.Indicator />
+              </Checkbox.Control>
               <Label>{label}</Label>
             </Checkbox.Content>
           </Checkbox>
@@ -180,10 +180,10 @@ const TaxAssumptionsDialog = ({
                     )}
                     {TAX_EXPENSE_METHODS.map((method) => (
                       <Radio key={method} value={method}>
-                        <Radio.Control>
-                          <Radio.Indicator />
-                        </Radio.Control>
                         <Radio.Content>
+                          <Radio.Control>
+                            <Radio.Indicator />
+                          </Radio.Control>
                           <Label>{tMethods(method)}</Label>
                         </Radio.Content>
                       </Radio>

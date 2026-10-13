@@ -160,22 +160,19 @@ export default function SendInvoiceEmailModal({ onClose, userId, invoice, isEmai
                 <Checkbox isSelected={field.value} isDisabled={frozen} onChange={(selected) => {
                   field.onChange(selected); if (!selected) setValue('requestSignature', false);
                 }}>
-                  <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
-                  <Checkbox.Content><Label>{t('include_public_link')}</Label></Checkbox.Content>
+                  <Checkbox.Content><Checkbox.Control><Checkbox.Indicator /></Checkbox.Control><Label>{t('include_public_link')}</Label></Checkbox.Content>
                 </Checkbox>
               )} />
               {kind === 'invoice' ? <Controller control={control} name="requestSignature" render={({ field }) => (
                 <Checkbox isSelected={field.value} isDisabled={frozen || !includePublicLink} onChange={field.onChange}>
-                  <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
-                  <Checkbox.Content><Label>{t('request_signature')}</Label></Checkbox.Content>
+                  <Checkbox.Content><Checkbox.Control><Checkbox.Indicator /></Checkbox.Control><Label>{t('request_signature')}</Label></Checkbox.Content>
                 </Checkbox>
               )} /> : null}
               {expired ? <Checkbox isSelected={confirmedDuplicate} isDisabled={isPending} onChange={(selected) => {
                 setConfirmedDuplicate(selected);
                 requestRef.current = null;
               }}>
-                <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
-                <Checkbox.Content><Label>{t('confirm_duplicate')}</Label></Checkbox.Content>
+                <Checkbox.Content><Checkbox.Control><Checkbox.Indicator /></Checkbox.Control><Label>{t('confirm_duplicate')}</Label></Checkbox.Content>
               </Checkbox> : null}
             </Modal.Body>
             <Modal.Footer>

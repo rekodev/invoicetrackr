@@ -5,7 +5,7 @@ import { Button, Card, Chip, Dropdown, Label, Modal, Separator, toast } from '@h
 import type { ExpenseAttachment } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRef, useState, useTransition } from 'react';
 
 import EmptyState from '@/components/empty-state';
 import FileDropzone from '@/components/ui/file-dropzone';
@@ -20,6 +20,7 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
   const locale = useLocale();
   const router = useRouter();
   const [documents, setDocuments] = useState(attachments);
+  const [syncedAttachments, setSyncedAttachments] = useState(attachments);
   const [dialog, setDialog] = useState<DocumentDialog | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState('');
@@ -28,7 +29,10 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
   const [isLoading, startLoading] = useTransition();
   const busy = useRef(false);
 
-  useEffect(() => { setDocuments(attachments); }, [attachments]);
+  if (attachments !== syncedAttachments) {
+    setSyncedAttachments(attachments);
+    setDocuments(attachments);
+  }
 
   const openDialog = (value: DocumentDialog) => {
     setError(''); setFile(null); setDialog(value);
