@@ -225,6 +225,7 @@ test.describe('invoices', () => {
     await expect(page.getByRole('heading', { name: 'Actual expenses' })).toBeVisible();
     await expect(page.getByText('Estimated Total')).toHaveCount(2);
 
+    await invoiceForm.createDraft(createInvoiceTestData('Dashboard draft'));
     await page.goto('/dashboard');
     await expect(page.getByText('Overdue Invoices', { exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Safe to Spend · Estimate' })).toBeVisible();

@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.E2E_BASE_URL || 'http://127.0.0.1:3100';
 const webServerCommand = process.env.CI
-  ? 'pnpm exec concurrently --kill-others-on-fail --names server,client "pnpm --filter @invoicetrackr/server start" "pnpm --filter @invoicetrackr/client start --port 3100"'
+  ? 'pnpm exec concurrently --kill-others-on-fail --names server,client "NODE_ENV=development pnpm --filter @invoicetrackr/server start" "pnpm --filter @invoicetrackr/client start --port 3100"'
   : 'pnpm exec concurrently --kill-others-on-fail --names server,client "pnpm --filter @invoicetrackr/server dev" "pnpm --filter @invoicetrackr/client dev --port 3100"';
 
 export default defineConfig({

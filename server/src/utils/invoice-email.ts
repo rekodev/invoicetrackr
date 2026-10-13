@@ -39,7 +39,6 @@ export const submitInvoiceEmailAttempt = async (
   let providerMessageId: string | undefined;
   let failureCode: string | undefined;
   try {
-    // The tag lets delivery webhooks find this attempt without a provider ID.
     const result = await resend.emails.send({ ...payload, tags: [{ name: 'delivery_id', value: String(attempt.id) }] }, {
       idempotencyKey: `invoice-email/${attempt.userId}/${attempt.invoiceId}/${attempt.attemptKey}`
     });

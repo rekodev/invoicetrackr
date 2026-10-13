@@ -35,8 +35,6 @@ const updatableStatuses: Record<ProviderDeliveryStatus, string[]> = {
   failed: ['queued', 'sent', 'unknown']
 };
 
-// deliveryId comes from the send's Resend tag. It matches attempts whose
-// provider ID was never stored (lost send result, or an event that beat it).
 export const updateDeliveryStatusFromProviderInDb = async ({
   providerMessageId,
   deliveryId,
