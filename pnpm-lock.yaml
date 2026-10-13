@@ -393,8 +393,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       fastify-type-provider-zod:
-        specifier: ^7.0.0
-        version: 7.0.0(@fastify/swagger@9.6.1(supports-color@10.2.2))(fastify@5.12.5)(openapi-types@12.1.3)(zod@4.6.6)
+        specifier: ^6.1.0
+        version: 6.1.0(@fastify/swagger@9.6.1(supports-color@10.2.2))(fastify@5.12.5)(openapi-types@12.1.3)(zod@4.6.6)
       fflate:
         specifier: ^0.8.3
         version: 0.8.3
@@ -3782,8 +3782,8 @@ packages:
   fastify-plugin@6.0.1:
     resolution: {integrity: sha512-4wW4RxSmvPXLrh5mgQEiu43qU3bw44N2ss4FTkTkQIbprUhE+/s43QX0j/ttcztdWK7PEkHqVthdc5GdEGDvjA==}
 
-  fastify-type-provider-zod@7.0.0:
-    resolution: {integrity: sha512-yUEKMyy+kml+4fzUU9GxVtYVKmPKNFo8OVd2N/RH2I/7JZiKvOqF1BUj3f/JJU3DDQDM7pMv2bf/Y8COPaxUWg==}
+  fastify-type-provider-zod@6.1.0:
+    resolution: {integrity: sha512-Sl19VZFSX4W/+AFl3hkL5YgWk3eDXZ4XYOdrq94HunK+o7GQBCAqgk7+3gPXoWkF0bNxOiIgfnFGJJ3i9a2BtQ==}
     peerDependencies:
       '@fastify/swagger': '>=9.5.1'
       fastify: ^5.5.0
@@ -9109,7 +9109,7 @@ snapshots:
 
   fastify-plugin@6.0.1: {}
 
-  fastify-type-provider-zod@7.0.0(@fastify/swagger@9.6.1(supports-color@10.2.2))(fastify@5.12.5)(openapi-types@12.1.3)(zod@4.6.6):
+  fastify-type-provider-zod@6.1.0(@fastify/swagger@9.6.1(supports-color@10.2.2))(fastify@5.12.5)(openapi-types@12.1.3)(zod@4.6.6):
     dependencies:
       '@fastify/error': 4.2.1
       '@fastify/swagger': 9.6.1(supports-color@10.2.2)
