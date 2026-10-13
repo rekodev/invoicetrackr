@@ -19,7 +19,7 @@ async function FreelancerProfilePage() {
   const t = await getTranslations('profile.personal_information.form');
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader title={t('title')} />
       <PersonalInformationForm defaultValues={userResp.data.user} />
     </section>

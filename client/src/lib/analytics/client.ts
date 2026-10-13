@@ -2,6 +2,7 @@
 
 import posthog from 'posthog-js';
 
+import { POSTHOG_DEFAULT_HOST } from './constants';
 import type { AnalyticsEvent, AnalyticsProperties } from './events';
 
 let isInitialized = false;
@@ -15,7 +16,7 @@ export const initializeAnalytics = () => {
   if (isInitialized) return true;
 
   posthog.init(key, {
-    api_host: host || 'https://eu.i.posthog.com',
+    api_host: host || POSTHOG_DEFAULT_HOST,
     autocapture: false,
     capture_pageview: false,
     capture_performance: false,

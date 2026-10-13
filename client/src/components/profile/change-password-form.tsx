@@ -71,8 +71,10 @@ export default function ChangePasswordForm({ userId }: Props) {
 
     return (
       <>
-        <CardContent className="grid grid-cols-1 gap-5 p-6">
-          <SectionHeading description={t('description')} />
+        <Card.Header>
+          <SectionHeading title={t('section_title')} />
+        </Card.Header>
+        <CardContent className="gap-field grid grid-cols-1">
           <PasswordInput
             autoComplete="new-password"
             placeholder={t('current_password_placeholder')}
@@ -87,10 +89,8 @@ export default function ChangePasswordForm({ userId }: Props) {
             label={t('new_password')}
             isInvalid={!!errors.newPassword}
             errorMessage={errors.newPassword?.message}
+            description={t('password_requirements')}
           />
-          <small className="text-muted -mt-2">
-            {t('password_requirements')}
-          </small>
           <PasswordInput
             placeholder={t('confirm_new_password_placeholder')}
             registeredPassword={registeredConfirmedNewPassword}
@@ -99,8 +99,8 @@ export default function ChangePasswordForm({ userId }: Props) {
             errorMessage={errors.confirmedNewPassword?.message}
           />
         </CardContent>
-        <CardFooter className="relative w-full justify-between px-6 py-4">
-          <div className="flex w-full flex-col gap-2 self-end">
+        <CardFooter className="relative w-full justify-between">
+          <div className="flex w-full flex-col gap-actions self-end">
             <Button
               isPending={isSubmitting}
               isDisabled={!isDirty}

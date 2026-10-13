@@ -68,7 +68,7 @@ const SafeToSpendBreakdown = async ({ safeToSpend, year }: Props) => {
         return (
           <div
             key={row.key}
-            className="flex justify-between gap-4 border-b py-1.5"
+            className="flex justify-between gap-field border-b py-1.5"
           >
             <dt className="text-muted">
               {label}
@@ -93,7 +93,7 @@ const SafeToSpendBreakdown = async ({ safeToSpend, year }: Props) => {
         );
       })}
       {isReady && (
-        <div className="flex justify-between gap-4 py-1.5 font-medium">
+        <div className="flex justify-between gap-field py-1.5 font-medium">
           <dt>{t('rows.safe_to_spend')}</dt>
           <dd className="text-right tabular-nums">
             {formatMoney(safeToSpend.safeToSpend, locale)}

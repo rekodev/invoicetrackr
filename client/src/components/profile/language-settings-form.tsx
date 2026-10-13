@@ -62,15 +62,11 @@ const LanguageSettingsForm = ({ user }: Props) => {
   return (
     <form
       noValidate
-      className="flex flex-col gap-3"
+      className="flex flex-col gap-heading"
       aria-label={t('title')}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <SectionHeading
-        title={t('title')}
-        description={t('description')}
-        as="h4"
-      />
+      <SectionHeading title={t('title')} />
       <Toolbar isAttached aria-label={t('title')} className="w-fit shadow-none">
         <Controller
           control={control}
@@ -84,7 +80,7 @@ const LanguageSettingsForm = ({ user }: Props) => {
               onChange={field.onChange}
               isInvalid={!!errors.language}
             >
-              <Select.Trigger className="w-max items-center gap-2 rounded-full">
+              <Select.Trigger className="w-max items-center gap-actions rounded-full">
                 <LanguageIcon className="size-4 shrink-0" />
                 <Select.Value className="flex-none" />
                 <Select.Indicator />

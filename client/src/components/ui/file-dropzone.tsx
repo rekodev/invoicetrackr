@@ -35,7 +35,7 @@ const FileDropzone = ({
   };
 
   return (
-    <div className={cn('flex flex-col gap-2', className)}>
+    <div className={cn('flex flex-col gap-field-content', className)}>
       {label ? <Label>{label}</Label> : null}
       <Card
         className={cn(
@@ -48,7 +48,7 @@ const FileDropzone = ({
         onDragOver={(event) => event.preventDefault()}
         onDrop={handleDrop}
       >
-        <Card.Content className="flex w-full flex-col items-center justify-center p-4 text-center">
+        <Card.Content className="flex w-full flex-col items-center justify-center text-center">
           <CloudArrowUpIcon className="text-muted h-10 w-10" />
           <span className="text-foreground mt-2 block w-full max-w-full truncate text-sm font-semibold">
             {selectedFile?.name ?? title}

@@ -145,7 +145,7 @@ export default function InvoiceTable({ invoices, userId, isEmailVerified = false
   const items = sorted.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   return (
-    <section className="flex max-w-full flex-col gap-4 overflow-x-hidden">
+    <section className="flex max-w-full flex-col gap-field overflow-x-hidden">
       <InvoiceTableTopContent
         columns={columns}
         statusOptions={statusOptions}
@@ -162,9 +162,9 @@ export default function InvoiceTable({ invoices, userId, isEmailVerified = false
         invoicesLength={invoices.length}
       />
       {rangeFilters.length > 0 ? (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-actions">
           {rangeFilters.map((filter) => (
-            <Chip key={filter.key} color="accent" variant="soft" className="gap-1">
+            <Chip key={filter.key} color="accent" variant="soft" className="gap-field-content">
               <span>{filter.label}</span>
               <button
                 type="button"

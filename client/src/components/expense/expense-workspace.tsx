@@ -50,14 +50,12 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
     [t('updated_at'), timestamp(expense.updatedAt)]
   ];
 
-  return <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
+  return <section className="mx-auto flex w-full max-w-7xl flex-col gap-section pb-10">
     <PageHeader title={expense.supplier} titleAddon={<Chip variant="soft" color="accent">{categories(expense.category)}</Chip>}>
-      <div className="flex flex-wrap gap-2">
-        <Button size="sm" variant="secondary" onPress={() => setEditOpen(true)}><PencilSquareIcon className="size-4" />{t('edit')}</Button>
-        <Button size="sm" variant="danger" onPress={() => setDeleteOpen(true)}><TrashIcon className="size-4" />{t('delete')}</Button>
-      </div>
+      <Button size="md" variant="secondary" onPress={() => setEditOpen(true)}><PencilSquareIcon className="size-4" />{t('edit')}</Button>
+      <Button size="md" variant="danger" onPress={() => setDeleteOpen(true)}><TrashIcon className="size-4" />{t('delete')}</Button>
     </PageHeader>
-    <div className="grid gap-5 sm:grid-cols-3">
+    <div className="grid gap-section sm:grid-cols-3">
       <MetricCard icon={<ReceiptPercentIcon className="size-4" />} iconVariant="accent" title={fields('total_amount')} text={money(expense.totalAmount)} />
       <MetricCard icon={<ChartPieIcon className="size-4" />} iconVariant="accent" title={fields('business_use_percentage')} text={`${percentage}%`} />
       <MetricCard icon={<DocumentTextIcon className="size-4" />} iconVariant="success" title={<>
@@ -66,8 +64,8 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
           <Button size="sm" isIconOnly variant="ghost" aria-label={t('deduction_title')}>
             <InformationCircleIcon className="size-4" />
           </Button>
-          <Tooltip.Content className="max-w-sm space-y-3 break-normal p-4">
-            <div className="bg-default flex items-center gap-2 rounded-lg px-3 py-2">
+          <Tooltip.Content className="max-w-sm space-y-heading break-normal p-card">
+            <div className="bg-default flex items-center gap-actions rounded-lg px-3 py-2">
               <CalculatorIcon className="text-muted size-4 shrink-0" />
               <code className="font-mono text-xs tabular-nums">{t('deduction_formula', { amount: money(expense.eurAmount, 'eur'), percentage, deductible: money(expense.deductibleAmount, 'eur') })}</code>
             </div>
@@ -76,11 +74,11 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
         </Tooltip>
       </>} text={money(expense.deductibleAmount, 'eur')} />
     </div>
-    <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]">
+    <div className="grid items-start gap-section lg:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]">
       <Card className="border">
-        <Card.Header><h2 className="font-medium">{t('details')}</h2></Card.Header>
-        <Card.Content className="p-2">
-        <dl className="grid gap-4 sm:grid-cols-2">
+        <Card.Header><h2 className="text-base font-medium">{t('details')}</h2></Card.Header>
+        <Card.Content>
+        <dl className="grid gap-field sm:grid-cols-2">
           {details.map(([label, value]) => <div key={label} className="min-w-0">
             <dt className="text-muted text-xs font-medium">{label}</dt>
             <dd className="whitespace-pre-wrap break-words text-sm">{value}</dd>

@@ -93,7 +93,7 @@ const ClientSection = ({ userId, clients }: Props) => {
             textValue={t('edit')}
             onAction={() => handleEditClient(clientData)}
           >
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-field-content">
               <PencilIcon className="h-4 w-4" />
               {t('edit')}
             </div>
@@ -104,7 +104,7 @@ const ClientSection = ({ userId, clients }: Props) => {
             textValue={t('archive')}
             onAction={() => handleOpenArchiveClientModal(clientData)}
           >
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-field-content">
               <TrashIcon className="h-4 w-4" />
               {t('archive')}
             </div>
@@ -117,10 +117,10 @@ const ClientSection = ({ userId, clients }: Props) => {
   const renderClientCardActions = (clientData: ClientBody) => (
     <>
       {renderMobileClientCardActions(clientData)}
-      <div className="pointer-events-none absolute right-2 top-2 z-10 hidden gap-2 opacity-0 transition group-has-[:focus-visible]:pointer-events-auto group-has-[:focus-visible]:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100 sm:flex">
+      <div className="pointer-events-none absolute right-2 top-2 z-10 hidden gap-actions opacity-0 transition group-has-[:focus-visible]:pointer-events-auto group-has-[:focus-visible]:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100 sm:flex">
         <Button
           isIconOnly
-          className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer"
+          className="min-w-unit-10 w-unit-16 h-unit-8 cursor-pointer [--button-bg-hover:var(--default-hover)]"
           variant="outline"
           size="sm"
           aria-label={t('actions.tooltip_edit')}
@@ -180,7 +180,7 @@ const ClientSection = ({ userId, clients }: Props) => {
 
     return (
       <>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-section md:grid-cols-2 xl:grid-cols-3">
           {filteredItems?.map((client, index) => renderClient(client, index))}
         </div>
         <ClientSectionBottomContent
@@ -193,7 +193,7 @@ const ClientSection = ({ userId, clients }: Props) => {
   };
 
   return (
-    <section className="flex flex-col gap-5">
+    <section className="flex flex-col gap-section">
       <ClientSectionTopContent
         clients={filteredItems}
         searchTerm={searchTerm}

@@ -22,13 +22,6 @@ export const formatMonthName = (year: number, month: number, locale: string) =>
     firstOfMonth(year, month)
   );
 
-export const formatMonthYear = (year: number, month: number, locale: string) =>
-  new Intl.DateTimeFormat(locale, {
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'UTC'
-  }).format(firstOfMonth(year, month));
-
 export const getDateDifferenceInDays = (date1: string, date2: string) => {
   const d1 = new Date(date1);
   const d2 = new Date(date2);

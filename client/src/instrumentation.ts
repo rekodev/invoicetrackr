@@ -1,6 +1,9 @@
 import type { Instrumentation } from 'next';
 
-import { getRequestErrorProperties } from '@/lib/utils/request-error';
+import {
+  getRequestErrorProperties,
+  redactRequestError
+} from '@/lib/utils/request-error';
 
 export const onRequestError: Instrumentation.onRequestError = async (
   error,
@@ -13,8 +16,8 @@ export const onRequestError: Instrumentation.onRequestError = async (
     '@/lib/analytics/server-errors'
   );
 
-  await captureWebServerException(
-    error,
+  captureWebServerException(
+    redactRequestError(error),
     getRequestErrorProperties(error, request, context)
   );
 };

@@ -123,7 +123,7 @@ export default function BankAccountForm({
 
   const formContent = (
     <>
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-field">
         {renderTextField({
           name: 'name',
           label: t('bank_name'),
@@ -140,8 +140,8 @@ export default function BankAccountForm({
           placeholder: t('bank_account_number_placeholder')
         })}
       </div>
-      <div className="flex justify-end gap-2 pt-4">
-        <div className="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row">
+      <div className="pt-form-actions flex justify-end gap-actions">
+        <div className="flex w-full flex-col-reverse gap-actions sm:w-auto sm:flex-row">
           {!isUserOnboarding && (
             <Button
               variant="danger-soft"

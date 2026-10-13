@@ -235,16 +235,16 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
   };
 
   const renderEmailField = () => (
-    <div className="flex w-full flex-col gap-1.5">
-      <div className="flex min-h-7 flex-wrap items-center gap-2">
+    <div className="gap-field-content flex w-full flex-col">
+      <div className="gap-actions flex flex-wrap items-center">
         <Label htmlFor="profile-email">{t('email')}</Label>
         {isEmailVerified ? (
-          <span className="text-success flex items-center gap-1 text-xs font-medium">
+          <span className="text-success flex items-center gap-field-content text-xs font-medium">
             <CheckCircleIcon className="size-4" aria-hidden="true" />
             {t('email_verification.verified')}
           </span>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-actions">
             <span className="text-warning text-xs font-medium">
               {t('email_verification.not_verified')}
             </span>
@@ -286,8 +286,8 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
 
   const renderProfilePictureInput = () => (
     <Card className="border md:col-span-2">
-      <Card.Content className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 items-center gap-3">
+      <Card.Content className="flex flex-col gap-field sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-heading">
           <Avatar size="lg">
             <Avatar.Image
               src={profilePicturePreviewUrl || currentLogoUrl}
@@ -309,7 +309,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
           </div>
         </div>
         {profilePictureFile ? (
-          <div className="flex w-full flex-row items-center gap-3 px-1 sm:w-auto sm:min-w-64">
+          <div className="flex w-full flex-row items-center gap-heading px-1 sm:w-auto sm:min-w-64">
             <DocumentIcon
               className="text-muted size-5 shrink-0"
               aria-hidden="true"
@@ -341,7 +341,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
             </Button>
           </div>
         ) : (
-          <div className="flex w-full gap-2 sm:w-auto">
+          <div className="flex w-full gap-actions sm:w-auto">
             <Button
               type="button"
               variant="outline"
@@ -388,11 +388,10 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
   const renderCardBodyAndFooter = () => {
     return (
       <>
-        <Card.Content className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2">
-          <SectionHeading
-            description={t('description')}
-            className="mb-1 md:col-span-2"
-          />
+        <Card.Header>
+          <SectionHeading title={t('section_title')} />
+        </Card.Header>
+        <Card.Content className="gap-field grid grid-cols-1 md:grid-cols-2">
           {renderProfilePictureInput()}
           {renderEmailField()}
 
@@ -418,8 +417,8 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
             control={control}
             name="isVatPayer"
             render={({ field }) => (
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1.5">
+              <div className="flex flex-col gap-field-content">
+                <div className="flex items-center gap-actions">
                   <Label>{t('is_vat_payer')}</Label>
                   <Tooltip delay={0}>
                     <Tooltip.Trigger>
@@ -495,7 +494,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
             placeholder: t('address_placeholder')
           })}
 
-          <div className="mt-[-0.25rem] flex flex-col gap-2">
+          <div className="gap-field-content flex flex-col">
             <Label className="self-start">{t('signature')}</Label>
 
             <SignaturePad
@@ -505,7 +504,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
           </div>
         </Card.Content>
 
-        <Card.Footer className="flex w-full flex-col px-6 py-4">
+        <Card.Footer className="flex w-full flex-col">
           <Button
             isDisabled={
               isSubmitting ||

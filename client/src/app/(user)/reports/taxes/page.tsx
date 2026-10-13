@@ -36,7 +36,7 @@ export default async function TaxesPage({
   const { year } = parseJournalQuery(params, currentYear);
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader
         title={t('heading')}
         titleAddon={
@@ -48,7 +48,7 @@ export default async function TaxesPage({
           </Suspense>
         }
       >
-        <Toolbar isAttached aria-label={t('actions')} className="shadow-none">
+        <Toolbar isAttached aria-label={t('actions')} className="p-0 shadow-none">
           <TaxYearSelect year={year} years={journalYears(currentYear, year)} />
           <Separator orientation="vertical" />
           <AnnualPackageDownload year={year} />

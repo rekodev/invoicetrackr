@@ -257,7 +257,7 @@ const InvoiceServicesTable = ({
   };
 
   const renderBottomContent = () => (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div className="flex flex-col gap-field sm:flex-row sm:items-start sm:justify-between">
       <Button
         variant="secondary"
         className="w-full sm:w-auto"
@@ -266,7 +266,7 @@ const InvoiceServicesTable = ({
         <PlusIcon className="h-5 w-5" />
         {t('add_service')}
       </Button>
-      <div className="grid w-full grid-cols-[1fr_auto] gap-x-6 gap-y-1 pr-0 text-sm sm:w-auto sm:min-w-64 sm:self-end sm:pr-3">
+      <div className="grid w-full grid-cols-[1fr_auto] gap-x-section gap-y-field-content pr-0 text-sm sm:w-auto sm:min-w-64 sm:self-end sm:pr-3">
         <p className="text-muted">{t('subtotal')}:</p>
         <p className="text-right">
           {getCurrencySymbol(currency)}
@@ -422,7 +422,7 @@ const InvoiceServicesTable = ({
         return (
           <div
             aria-label={t('a11y.actions_label')}
-            className="relative flex items-center gap-2"
+            className="relative flex items-center gap-actions"
           >
             <Button
               isIconOnly
@@ -507,7 +507,7 @@ const InvoiceServicesTable = ({
       {renderBottomContent()}
       {isInvalid && (
         <Chip
-          className="mt-[-0.75rem]"
+          className="mt-field-content"
           size="sm"
           variant="tertiary"
           color="danger"

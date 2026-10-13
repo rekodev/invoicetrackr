@@ -100,7 +100,7 @@ export default function InvoiceTableActions({
 
   return (
     <>
-      <div className="flex items-center justify-end gap-2 whitespace-nowrap">
+      <div className="flex items-center justify-end gap-actions whitespace-nowrap">
         <Link
           href={INVOICE_WORKSPACE_PAGE(invoiceId)}
           aria-label={t('tooltip_view')}
@@ -161,11 +161,11 @@ export default function InvoiceTableActions({
             </Button>
             <Dropdown.Popover>
               {loading ? (
-                <div className="flex justify-center p-4">
+                <div className="flex justify-center p-card">
                   <Spinner size="sm" />
                 </div>
               ) : error ? (
-                <div className="max-w-xs space-y-2 p-3">
+                <div className="max-w-xs space-y-actions p-3">
                   <p role="alert" className="text-danger text-sm">
                     {error}
                   </p>

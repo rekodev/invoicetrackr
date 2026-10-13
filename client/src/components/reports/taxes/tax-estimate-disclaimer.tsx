@@ -16,7 +16,7 @@ const TaxEstimateDisclaimer = async ({ rules }: Props) => {
       </p>
       <p className="text-muted">{t('disclaimer.not_covered')}</p>
       <p className="font-medium">{t('disclaimer.sources')}</p>
-      <ul className="text-muted list-disc space-y-1 pl-5">
+      <ul className="text-muted list-disc space-y-field-content pl-5">
         {rules.sources.map((source) => (
           <li key={source.url}>
             <a

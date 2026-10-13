@@ -30,7 +30,7 @@ export default async function JournalPage({
   const query = parseJournalQuery(params, currentYear);
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader title={t('heading')}>
         <JournalFilters query={query} currentYear={currentYear} />
       </PageHeader>

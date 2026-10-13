@@ -13,15 +13,16 @@ const ClientsPage = async () => {
   const session = await auth();
   if (!session?.user?.id) unauthorized();
 
+  const userId = Number(session.user.id);
   const t = await getTranslations('breadcrumbs');
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader title={t('clients')}>
-        <AddClientButton userId={Number(session.user.id)} />
+        <AddClientButton userId={userId} />
       </PageHeader>
       <Suspense fallback={<ClientSectionSkeleton />}>
-        <ClientsPageContent />
+        <ClientsPageContent userId={userId} />
       </Suspense>
     </section>
   );

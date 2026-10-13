@@ -92,7 +92,7 @@ export default function InvoiceDefaultsStep({ user, onSuccess }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Card.Content className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2">
+      <Card.Content className="grid grid-cols-1 gap-field sm:grid-cols-2">
         <TextField variant="secondary" isDisabled>
           <Label>{onboardingT('defaults.currency')}</Label>
           <Input value={DEFAULT_CURRENCY.toUpperCase()} readOnly />
@@ -173,7 +173,7 @@ export default function InvoiceDefaultsStep({ user, onSuccess }: Props) {
           )}
         />
       </Card.Content>
-      <Card.Footer className="justify-end px-6 py-4">
+      <Card.Footer className="pt-form-actions justify-end">
         <Button
           type="submit"
           isPending={isSubmitting}

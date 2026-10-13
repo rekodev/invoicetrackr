@@ -43,7 +43,7 @@ const MoneySummaryCards = async ({ totals, year, children }: Props) => {
   ];
 
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-section sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((card) => (
         <DashboardCard
           key={card.key}

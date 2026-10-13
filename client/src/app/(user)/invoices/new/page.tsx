@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import { unauthorized } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
@@ -37,7 +38,7 @@ const AddNewInvoicePage = async ({ searchParams }: { searchParams: SearchParams 
   const t = await getTranslations('invoices.page');
 
   return (
-    <section className="flex w-full flex-col gap-6">
+    <section className="flex w-full flex-col gap-section">
       <PageHeader title={t('new_title')} />
       <InvoiceForm
         initialClient={clientId && /^[1-9]\d*$/.test(clientId)
@@ -47,7 +48,7 @@ const AddNewInvoicePage = async ({ searchParams }: { searchParams: SearchParams 
         bankingInformationEntries={
           bankingInformationEntriesResp.data.bankAccounts
         }
-        currency={session.user.currency}
+        currency={DEFAULT_CURRENCY}
         clients={clientsResp.data.clients}
       />
     </section>

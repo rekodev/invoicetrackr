@@ -79,7 +79,7 @@ const DeleteAccountModal = ({ userId, email, isOpen, onClose }: Props) => {
     items: readonly string[]
   ) => (
     <Card className="border">
-      <Card.Content className="flex flex-col gap-1">
+      <Card.Content className="flex flex-col gap-field-content">
         <p className="text-foreground text-sm font-medium">
           {t(`${prefix}.title`)}
         </p>
@@ -102,16 +102,16 @@ const DeleteAccountModal = ({ userId, email, isOpen, onClose }: Props) => {
             className="flex min-h-0 flex-1 flex-col"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <Modal.Header className="flex-row items-center gap-2">
+            <Modal.Header className="flex-row items-center gap-actions">
               <ExclamationTriangleIcon className="text-danger h-6 w-6" />
               <Modal.Heading>{t('title')}</Modal.Heading>
             </Modal.Header>
-            <Modal.Body className="flex flex-col gap-4">
+            <Modal.Body className="flex flex-col gap-field">
               <p className="text-sm">{t('description')}</p>
               {renderList('removed', REMOVED_ITEMS)}
               {renderList('kept', KEPT_ITEMS)}
-              <div className="my-2 flex flex-col items-start gap-3">
-                <div className="flex flex-col gap-1">
+              <div className="my-2 flex flex-col items-start gap-heading">
+                <div className="flex flex-col gap-field-content">
                   <p className="text-foreground text-sm font-medium">
                     {t('records_duty.title')}
                   </p>
@@ -154,7 +154,7 @@ const DeleteAccountModal = ({ userId, email, isOpen, onClose }: Props) => {
                 )}
               />
             </Modal.Body>
-            <Modal.Footer className="flex flex-col-reverse justify-end gap-2 sm:flex-row">
+            <Modal.Footer className="flex flex-col-reverse justify-end gap-actions sm:flex-row">
               <Button
                 className="w-full sm:w-auto"
                 variant="ghost"

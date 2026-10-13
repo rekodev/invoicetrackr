@@ -99,7 +99,7 @@ const CompanyLookupPanel = ({
   };
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-field-content">
       <ComboBox
         allowsCustomValue
         allowsEmptyCollection
@@ -113,13 +113,13 @@ const CompanyLookupPanel = ({
         onInputChange={handleInputChange}
         onSelectionChange={handleSelectionChange}
       >
-        <div className="flex w-full items-center justify-between gap-3">
+        <div className="flex w-full items-center justify-between gap-heading">
           <Label>{label}</Label>
           <a
             href="https://data.gov.lt/datasets/607/?resource_version=940"
             target="_blank"
             rel="noreferrer"
-            className="text-muted flex items-center gap-1.5 text-xs font-normal hover:underline"
+            className="text-muted flex items-center gap-actions text-xs font-normal hover:underline"
           >
             <Image
               src="/vmi.svg"

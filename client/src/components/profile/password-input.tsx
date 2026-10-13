@@ -1,7 +1,13 @@
 'use client';
 
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { FieldError, Input, Label, TextField } from '@heroui/react';
+import {
+  Description,
+  FieldError,
+  Input,
+  Label,
+  TextField
+} from '@heroui/react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
@@ -14,6 +20,7 @@ type Props = {
   isInvalid: boolean;
   errorMessage?: string;
   autoComplete?: string;
+  description?: string;
 };
 
 export default function PasswordInput({
@@ -23,7 +30,8 @@ export default function PasswordInput({
   placeholder,
   isInvalid,
   errorMessage,
-  autoComplete
+  autoComplete,
+  description
 }: Props) {
   const t = useTranslations('components.password_input');
   const [isVisible, setIsVisible] = useState(false);
@@ -37,7 +45,7 @@ export default function PasswordInput({
       className={`w-full lg:w-1/2 ${className || ''}`}
     >
       <Label>{label}</Label>
-      <div className="flex w-full items-center gap-2">
+      <div className="gap-actions flex w-full items-center">
         <Input
           {...registeredPassword}
           className="w-full"
@@ -58,6 +66,7 @@ export default function PasswordInput({
           )}
         </button>
       </div>
+      {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
     </TextField>
   );

@@ -47,7 +47,7 @@ export default function InvoiceDueDatePreselectionChips({
   }, [dateDiffFromDueDate]);
 
   return (
-    <div className="mb-2 flex flex-wrap justify-start gap-1.5 sm:absolute sm:-top-7 sm:right-0 sm:mb-0 sm:justify-end sm:gap-1">
+    <div className="mb-2 flex flex-wrap justify-start gap-1.5 sm:absolute sm:-top-7 sm:right-0 sm:mb-0 sm:justify-end sm:gap-field-content">
       {DUE_DATE_PRESELECTIONS.map(({ label, value }) => (
         <Chip
           key={value}

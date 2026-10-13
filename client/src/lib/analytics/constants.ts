@@ -1,5 +1,7 @@
 import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
 
+export const POSTHOG_DEFAULT_HOST = 'https://eu.i.posthog.com';
+
 export const ANALYTICS_CONSENT_COOKIE = 'invoiceTrackrAnalyticsConsent';
 export const ANALYTICS_CONSENT_MAX_AGE = 60 * 60 * 24 * 180;
 

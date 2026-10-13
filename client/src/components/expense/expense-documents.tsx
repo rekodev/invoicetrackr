@@ -102,25 +102,25 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
   }).format(new Date(value)) : null;
 
   return <Card className="gap-0 overflow-hidden border p-0">
-    <Card.Header className="flex-row flex-wrap items-center justify-between gap-2 border-b p-4">
-      <div className="flex items-center gap-2">
+    <Card.Header className="flex-row flex-wrap items-center justify-between gap-actions border-b p-card">
+      <div className="flex items-center gap-actions">
         <h2 className="font-medium">{t('title')}</h2>
         {documents ? <Chip size="sm" variant="soft">{documents.length}</Chip> : null}
       </div>
       {documents?.length !== 0 ? <Button size="sm" isIconOnly aria-label={t('add')} isDisabled={isPending} onPress={() => openDialog({ kind: 'add' })}><PlusIcon className="size-4" /></Button> : null}
     </Card.Header>
     <Card.Content className="p-0">
-      {documents === null ? <div className="space-y-2 p-4">
+      {documents === null ? <div className="space-y-actions p-card">
         <p role="alert" className="text-danger text-sm">{listError || t('load_failed')}</p>
         <Button variant="secondary" size="sm" isPending={isLoading} isDisabled={isLoading} onPress={retryList}>{t('retry')}</Button>
       </div> : documents.length === 0 ? <EmptyState
         title={t('missing')}
         description={t('missing_description')}
-        className="min-h-0 px-4 py-6"
+        className="py-section min-h-0 px-card"
         action={<Button size="sm" variant="secondary" isDisabled={isPending} onPress={() => openDialog({ kind: 'add' })}><PlusIcon className="size-4" />{t('add')}</Button>}
       /> : <ul className="divide-y">
-        {documents.map((document) => <li key={document.id} className="flex items-start gap-2 p-4">
-          <div className="min-w-0 flex-1 space-y-1">
+        {documents.map((document) => <li key={document.id} className="flex items-start gap-actions p-card">
+          <div className="min-w-0 flex-1 space-y-field-content">
             <p className="truncate text-sm font-medium" title={document.originalFileName}>{document.originalFileName}</p>
             <p className="text-muted text-xs">{document.mimeType === 'application/pdf' ? 'PDF' : document.mimeType === 'image/png' ? 'PNG' : 'JPEG'} · {new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(document.fileSize / 1024)} KB</p>
             {document.uploadedAt ? <p className="text-muted text-xs">{t('uploaded', { date: date(document.uploadedAt)! })}</p> : null}

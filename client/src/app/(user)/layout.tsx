@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 const renderShell = (user: ShellUser, content: ReactNode) => (
   <AuthenticatedShell user={user}>
-    <main className="mx-auto flex w-full max-w-7xl flex-grow flex-col p-6 pb-12">
+    <main className="p-page mx-auto flex w-full max-w-7xl flex-grow flex-col pb-12">
       {content}
     </main>
   </AuthenticatedShell>

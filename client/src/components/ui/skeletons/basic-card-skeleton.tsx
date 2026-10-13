@@ -31,7 +31,7 @@ export function BasicCardGridSkeleton({
     <div
       aria-hidden="true"
       className={cn(
-        'grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3',
+        'gap-section grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
         className
       )}
     >

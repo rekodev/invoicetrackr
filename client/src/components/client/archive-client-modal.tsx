@@ -41,7 +41,7 @@ const ArchiveClientModal = ({ userId, isOpen, onClose, onArchived, clientData }:
   const renderModalFooter = () => (
     <Modal.Footer>
       <div className="flex w-full items-center justify-between">
-        <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+        <div className="flex w-full flex-col-reverse justify-end gap-actions sm:flex-row">
           <Button
             className="w-full sm:w-auto"
             variant="outline"

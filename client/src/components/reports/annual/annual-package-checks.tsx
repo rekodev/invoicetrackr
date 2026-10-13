@@ -39,7 +39,7 @@ const AnnualPackageChecks = async ({ warnings, year }: Props) => {
         <Alert.Title>{t('alerts.recommendation.title')}</Alert.Title>
         <Alert.Description>
           {t('alerts.recommendation.description')}
-          <ul className="mt-2 list-inside list-disc space-y-1">
+          <ul className="mt-2 list-inside list-disc space-y-field-content">
             {items.map(({ code, count }) => (
               <li key={code}>
                 {t(`warnings.${code}.text`, { count: count ?? 0, year })}

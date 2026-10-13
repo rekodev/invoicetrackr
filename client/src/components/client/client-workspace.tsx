@@ -65,28 +65,26 @@ export default function ClientWorkspace({ userId, data }: Props) {
   };
 
   return (
-    <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
+    <section className="mx-auto flex w-full max-w-7xl flex-col gap-section pb-10">
       <PageHeader
         title={client.name}
         titleAddon={<Chip variant="soft" color="accent">{t(`business_types.${client.businessType}`)}</Chip>}
       >
-        <div className="flex flex-wrap gap-2">
-          <Link href={createHref} className={buttonVariants({ variant: 'primary', size: 'sm' })}>
-            <PlusIcon aria-hidden="true" className="h-4 w-4" />
-            {t('create_invoice')}
-          </Link>
-          <Button size="sm" variant="secondary" onPress={() => setEditOpen(true)}>
-            <PencilIcon aria-hidden="true" className="h-4 w-4" />
-            {t('edit')}
-          </Button>
-          <Button size="sm" variant="danger" onPress={() => setArchiveOpen(true)}>
-            <TrashIcon aria-hidden="true" className="h-4 w-4" />
-            {t('archive')}
-          </Button>
-        </div>
+        <Link href={createHref} className={buttonVariants({ variant: 'primary', size: 'md' })}>
+          <PlusIcon aria-hidden="true" className="h-4 w-4" />
+          {t('create_invoice')}
+        </Link>
+        <Button size="md" variant="secondary" onPress={() => setEditOpen(true)}>
+          <PencilIcon aria-hidden="true" className="h-4 w-4" />
+          {t('edit')}
+        </Button>
+        <Button size="md" variant="danger" onPress={() => setArchiveOpen(true)}>
+          <TrashIcon aria-hidden="true" className="h-4 w-4" />
+          {t('archive')}
+        </Button>
       </PageHeader>
 
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div className="grid gap-section sm:grid-cols-3">
         {metrics.map(({ key, icon: Icon, iconVariant }) => (
           <MetricCard
             key={key}
@@ -99,15 +97,15 @@ export default function ClientWorkspace({ userId, data }: Props) {
       </div>
 
       <Card className="border">
-        <Card.Header className="flex-row flex-wrap items-center justify-between gap-4">
+        <Card.Header className="flex-row flex-wrap items-center justify-between gap-field">
           <h2 className="text-base font-medium">{t('details')}</h2>
           <Button variant="secondary" onPress={copyDetails}>
             <ClipboardDocumentIcon aria-hidden="true" className="h-4 w-4" />
             {t('copy_details')}
           </Button>
         </Card.Header>
-        <Card.Content className="p-2">
-          <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+        <Card.Content>
+          <dl className="grid gap-x-section gap-y-heading sm:grid-cols-2">
             <div>
               <dt className="text-muted text-xs font-medium">{fieldLabel('business_number')}</dt>
               <dd className="text-sm break-words">{client.businessNumber}</dd>
@@ -174,7 +172,7 @@ export default function ClientWorkspace({ userId, data }: Props) {
                           <td className="p-2 tabular-nums">€{invoice.totalAmount}</td>
                           <td className="p-2 tabular-nums">{invoice.paidAmount === null ? '—' : `€${invoice.paidAmount}`}</td>
                           <td className="p-2 tabular-nums">{invoice.outstandingAmount === null ? '—' : `€${invoice.outstandingAmount}`}</td>
-                          <td className="p-2"><div className="flex flex-wrap gap-1">
+                          <td className="p-2"><div className="flex flex-wrap gap-field-content">
                             <Chip variant="soft" color={state === 'voided' ? 'danger' : state === 'paid' ? 'success' : 'accent'}>{t(`states.${state}`)}</Chip>
                             {overdue ? <Chip variant="soft" color="danger">{t('states.overdue')}</Chip> : null}
                           </div></td>
@@ -194,9 +192,9 @@ export default function ClientWorkspace({ userId, data }: Props) {
                 </table>
               </div>
               {pages > 1 ? (
-                <div className="mt-4 flex items-center justify-between gap-3">
+                <div className="mt-4 flex items-center justify-between gap-heading">
                   <span className="text-muted text-sm">{t('page', { page, pages })}</span>
-                  <div className="flex gap-2">
+                  <div className="flex gap-actions">
                     <Button size="sm" variant="secondary" isDisabled={page === 1} onPress={() => setPage((value) => value - 1)}>{t('previous')}</Button>
                     <Button size="sm" variant="secondary" isDisabled={page === pages} onPress={() => setPage((value) => value + 1)}>{t('next')}</Button>
                   </div>

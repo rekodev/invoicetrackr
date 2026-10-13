@@ -1,6 +1,6 @@
 'use client';
 
-import { Label, ListBox, ListBoxItem, Select } from '@heroui/react';
+import { cn, ListBox, ListBoxItem, Select } from '@heroui/react';
 import type { ReactNode } from 'react';
 
 type Props = {
@@ -15,12 +15,15 @@ const YearSelect = ({ label, year, years, onChange, icon }: Props) => (
   <Select
     className={icon ? 'w-max' : 'sm:w-32'}
     variant="secondary"
-    aria-label={icon ? label : undefined}
+    aria-label={label}
     value={String(year)}
     onChange={(value) => onChange(Number(value))}
   >
-    {!icon && <Label>{label}</Label>}
-    <Select.Trigger className={icon ? 'w-max items-center gap-2 rounded-full' : undefined}>
+    <Select.Trigger
+      className={cn('h-10 min-h-10 items-center py-0 md:h-9 md:min-h-9', {
+        'w-max gap-actions rounded-full': icon
+      })}
+    >
       {icon}
       <Select.Value className={icon ? 'flex-none' : undefined} />
       <Select.Indicator />

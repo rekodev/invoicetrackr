@@ -107,7 +107,7 @@ export default function SendInvoiceEmailModal({ onClose, userId, invoice, isEmai
               <Modal.Heading>{kind === 'reminder' ? t('reminder_title') : t('invoice_title')} · {invoice.invoiceId}</Modal.Heading>
               <p className="text-muted text-sm">{invoice.receiver.name}</p>
             </Modal.Header>
-            <Modal.Body className="flex flex-col gap-4">
+            <Modal.Body className="flex flex-col gap-field">
               {!isEmailVerified ? <Alert status="warning"><Alert.Indicator /><Alert.Content>
                 <Alert.Description>{t('email_verification_required')}</Alert.Description>
               </Alert.Content></Alert> : null}
@@ -123,7 +123,7 @@ export default function SendInvoiceEmailModal({ onClose, userId, invoice, isEmai
               {result?.failureCode === 'reminder-no-longer-payable' ? <p role="status" className="text-muted text-sm">
                 {t('reminder_paid')}
               </p> : null}
-              <div role="group" aria-label={t('language')} className="flex items-center gap-2">
+              <div role="group" aria-label={t('language')} className="flex items-center gap-actions">
                 <span className="text-sm">{t('language')}</span>
                 {(['lt', 'en'] as const).map((value) => <Button key={value} size="sm" type="button"
                   variant={value === language ? 'primary' : 'secondary'} aria-pressed={value === language}

@@ -110,8 +110,8 @@ const EditBankingInformationDialog = ({
             })}
           </Modal.Body>
           <Modal.Footer>
-            <div className="flex w-full flex-col items-start justify-between gap-5 overflow-x-hidden">
-              <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+            <div className="flex w-full flex-col items-start justify-between gap-field overflow-x-hidden">
+              <div className="flex w-full flex-col-reverse justify-end gap-actions sm:flex-row">
                 <Button
                   variant="danger-soft"
                   className="w-full sm:w-auto"

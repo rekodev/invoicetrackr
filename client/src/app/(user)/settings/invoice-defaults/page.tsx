@@ -18,7 +18,7 @@ const InvoiceDefaultsPage = async () => {
   const t = await getTranslations('profile.account_settings.invoice_defaults');
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader title={t('title')} />
       <InvoiceDefaultsForm
         key={`${session.user.language}-${session.user.isVatPayer}`}

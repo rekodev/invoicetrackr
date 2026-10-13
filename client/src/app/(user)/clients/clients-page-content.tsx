@@ -1,23 +1,15 @@
 import { getClients } from '@/api/client';
-import { auth } from '@/auth';
 import ClientSection from '@/components/client/client-section';
 import { isResponseError } from '@/lib/utils/error';
 
-const ClientsPageContent = async () => {
-  const session = await auth();
+type Props = { userId: number };
 
-  if (!session?.user?.id) return null;
-
-  const response = await getClients(Number(session.user.id));
+const ClientsPageContent = async ({ userId }: Props) => {
+  const response = await getClients(userId);
 
   if (isResponseError(response)) throw new Error('Failed to fetch clients');
 
-  return (
-    <ClientSection
-      userId={Number(session.user.id)}
-      clients={response.data.clients}
-    />
-  );
+  return <ClientSection userId={userId} clients={response.data.clients} />;
 };
 
 export default ClientsPageContent;

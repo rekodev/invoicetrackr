@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import { redirect, unauthorized } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
@@ -48,12 +49,12 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
   const t = await getTranslations('invoices.page');
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader title={t('edit_title')} />
       <InvoiceForm
         user={userResponse.data.user}
         clients={clientsResp.data.clients}
-        currency={session.user.currency}
+        currency={DEFAULT_CURRENCY}
         invoiceData={invoiceResp.data.invoice}
         bankingInformationEntries={
           bankingInformationEntriesResp.data.bankAccounts

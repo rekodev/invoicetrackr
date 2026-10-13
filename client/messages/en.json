@@ -82,16 +82,15 @@
     "reports": {
         "journal": {
             "heading": "Income and Expense Journal",
-            "description": "Review income received and deductible expenses for the selected period.",
             "filters": {
                 "year": "Year",
                 "month": "Month",
                 "all_months": "All Months"
             },
             "cards": {
-                "income": "Received Income · {period}",
-                "expenses": "Deductible Expenses · {period}",
-                "net": "Net Result · {period}"
+                "income": "Received Income",
+                "expenses": "Deductible Expenses",
+                "net": "Net Result"
             },
             "export": {
                 "csv": "Export CSV",
@@ -103,7 +102,6 @@
             },
             "table": {
                 "title": "Journal Entries",
-                "subtitle": "Income by payment date, expenses by expense date",
                 "columns": {
                     "date": "Date",
                     "document": "Document",
@@ -133,7 +131,7 @@
                 "items": {
                     "income": "Income is recorded on the date a payment was received, not the invoice date. Partial payments appear as separate entries.",
                     "vat": "VAT is the share of the invoice's VAT included in each payment. It is always zero if you are not a VAT payer. The net result uses income excluding VAT, as in the annual declaration.",
-                    "expenses": "Expenses show the deductible amount in euros: the EUR amount multiplied by the business-use percentage. When only part is deductible, the full amount is shown next to it.",
+                    "expenses": "Expenses are recorded on the expense date. Expenses show the deductible amount in euros: the EUR amount multiplied by the business-use percentage. When only part is deductible, the full amount is shown next to it.",
                     "declaration": "Use the income and expense totals for your annual income declaration (GPM311) or hand the export to your accountant. InvoiceTrackr does not submit anything to VMI.",
                     "formats": "The XLSX workbook follows the familiar journal layout and includes a monthly summary sheet. The CSV has the same columns for importing into other tools.",
                     "sources": "Keep your invoices and expense documents. Each entry links to the record it comes from."
@@ -147,7 +145,6 @@
         },
         "taxes": {
             "heading": "Taxes",
-            "description": "Your tax estimate, the figures for your declaration, and the workbook for your accountant.",
             "year": "Tax Year",
             "actions": "Year and workbook download",
             "setup": {
@@ -825,7 +822,7 @@
         },
         "overdue": {
             "title": "Overdue Invoices",
-            "summary": "{count, plural, one {# invoice} other {# invoices}} · {amount} overdue",
+            "amount_overdue": "{amount} overdue",
             "view_all": "View all overdue",
             "columns": {
                 "invoice": "Invoice",
@@ -848,7 +845,6 @@
         },
         "monthly": {
             "title": "Money by Month",
-            "subtitle": "Received income and recorded expenses in {year}",
             "summary": {
                 "expenses": "Expenses",
                 "deductible_expenses": "Deductible Expenses"
@@ -1492,7 +1488,7 @@
                     "remove_business_logo": "Remove current business logo"
                 },
                 "title": "Profile",
-                "description": "Business details used as defaults for future invoices.",
+                "section_title": "Business Details",
                 "business_logo": "Business Logo",
                 "business_logo_description": "JPEG, PNG, or WebP up to 5 MB. Saved with future invoices.",
                 "upload_business_logo": "Upload Logo",
@@ -1533,7 +1529,7 @@
             "preferred_invoice_language_tooltip": "This is the default language for invoice exports and emails. You can change it per invoice.",
             "invoice_defaults": {
                 "title": "Invoice Defaults",
-                "description": "Used when creating new saved invoices. Existing invoices keep their saved values.",
+                "section_title": "New Invoice Settings",
                 "invoice_email": "Invoice Email",
                 "invoice_email_placeholder": "invoices@example.com",
                 "invoice_email_description": "Used as the sender and reply-to address on new invoices.",
@@ -1562,6 +1558,7 @@
                 "form_label": "Change password form"
             },
             "title": "Password",
+            "section_title": "Change Password",
             "current_password": "Current Password",
             "current_password_placeholder": "Enter current password",
             "new_password": "New Password",
@@ -1569,8 +1566,7 @@
             "confirm_new_password": "Confirm New Password",
             "confirm_new_password_placeholder": "Confirm new password",
             "save_changes": "Save Changes",
-            "password_requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.",
-            "description": "Change the password you use to log in."
+            "password_requirements": "Password must be at least 8 characters and include uppercase, lowercase, number, and special character."
         },
         "banking_information": {
             "a11y": {
@@ -1578,7 +1574,7 @@
                 "default_account_label": "Default Bank Account"
             },
             "title": "Payment Methods",
-            "description": "Choose the default bank account for future invoices. Existing invoices keep their saved payment details.",
+            "section_title": "Default Bank Account",
             "actions": {
                 "add": "Add New",
                 "save": "Save"
@@ -1649,16 +1645,13 @@
         },
         "account": {
             "title": "Account",
-            "description": "Your language, a copy of your data, and account deletion.",
             "language": {
                 "title": "Language",
-                "description": "The language of the app and of emails sent to you.",
                 "label": "Language",
                 "save": "Save"
             },
             "data": {
                 "title": "Your Data",
-                "description": "Download a copy of your records or delete your account.",
                 "export": {
                     "title": "Download Your Data",
                     "description": "A ZIP file with all your records as JSON, plus your expense documents, logo and signature. It is prepared when you ask and is not stored.",

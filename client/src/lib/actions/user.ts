@@ -143,11 +143,7 @@ export async function updateUserAccountSettingsAction({
   }
 
   await updateSessionAction({
-    newSession: {
-      preferredInvoiceLanguage,
-      currency: DEFAULT_CURRENCY,
-      isVatPayer
-    }
+    newSession: { preferredInvoiceLanguage, isVatPayer }
   });
 
   revalidatePath(INVOICE_DEFAULTS_PAGE);

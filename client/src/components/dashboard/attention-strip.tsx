@@ -66,7 +66,7 @@ const AttentionStrip = async ({ attention, year, isEmailVerified }: Props) => {
         <Alert.Title>{t('title')}</Alert.Title>
         <Alert.Description>
           {t('description')}
-          <ul className="mt-2 list-inside list-disc space-y-1">
+          <ul className="mt-2 list-inside list-disc space-y-field-content">
             {items.map((item) => (
               <li key={item.key}>{item.text}</li>
             ))}

@@ -63,9 +63,9 @@ const ClientCard = ({
       })}
     >
       {renderSelectedIcon()}
-      <Card.Content className="flex min-h-[70px] flex-row items-start justify-between gap-4">
+      <Card.Content className="flex min-h-[70px] flex-row items-start justify-between gap-field">
         <div
-          className={cn('flex max-w-full items-start gap-3', {
+          className={cn('flex max-w-full items-start gap-heading', {
             'max-w-2/3': truncate
           })}
         >
@@ -84,7 +84,7 @@ const ClientCard = ({
             >
               {client.name}
             </div>
-            <div className="text-muted flex flex-col gap-1 text-xs">
+            <div className="text-muted flex flex-col gap-field-content text-xs">
               {client.address && <span>{client.address}</span>}
               <span className={cn('', { 'max-w-40 truncate': truncate })}>
                 {client.email}
@@ -108,14 +108,16 @@ const ClientCard = ({
         'relative h-full w-full overflow-hidden border transition hover:shadow-md',
         {
           'cursor-pointer': !!onClick,
+          'group-hover:bg-surface-hover group-has-[:focus-visible]:bg-surface-hover':
+            (!!href || !!onClick) && !isSelected,
           'border-secondary-600 bg-secondary/10': isSelected
         }
       )}
     >
       {renderSelectedIcon()}
-      <Card.Content className="flex h-full flex-col gap-4 px-2 py-1">
-        <div className="flex items-start gap-4 pr-20 sm:pr-24">
-          <div className="min-w-0 flex-1">
+      <Card.Content className="flex h-full flex-col gap-field">
+        <div className="min-w-0">
+          <div className="min-w-0 pr-20 sm:pr-24">
             {client.businessType && (
               <Chip
                 size="sm"
@@ -126,7 +128,7 @@ const ClientCard = ({
                 {tTypes(client.businessType)}
               </Chip>
             )}
-            <div className="flex items-start gap-2">
+            <div className="flex items-start gap-actions">
               <Card.Title
                 className={cn('truncate text-base font-semibold', {
                   'lg:truncate': truncate
@@ -135,28 +137,25 @@ const ClientCard = ({
                 {client.name}
               </Card.Title>
             </div>
-            <div className="text-muted mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-medium uppercase tracking-wide">
-              {client.businessNumber && (
-                <span className="inline-flex min-w-0 items-center gap-1">
-                  <BuildingOffice2Icon className="h-3 w-3 shrink-0" />
-                  <span className="truncate">{client.businessNumber}</span>
-                </span>
-              )}
-              {client.vatNumber && (
-                <>
-                  <span aria-hidden="true">·</span>
-                  <span className="truncate">
-                    {t('vat_number_label')} {client.vatNumber}
-                  </span>
-                </>
-              )}
-            </div>
+          </div>
+          <div className="text-muted mt-1 flex flex-wrap items-center gap-x-heading gap-y-field-content text-[11px] font-medium uppercase tracking-wide">
+            {client.businessNumber && (
+              <span className="inline-flex min-w-0 items-center gap-field-content">
+                <BuildingOffice2Icon className="h-3 w-3 shrink-0" />
+                <span className="truncate">{client.businessNumber}</span>
+              </span>
+            )}
+            {client.vatNumber && (
+              <span className="truncate">
+                {t('vat_number_label')} {client.vatNumber}
+              </span>
+            )}
           </div>
         </div>
 
-        <div className="text-muted flex flex-col gap-2 text-sm">
+        <div className="text-muted flex flex-col gap-actions text-sm">
           {client.address && (
-            <div className="flex items-start gap-2">
+            <div className="flex items-start gap-actions">
               <MapPinIcon className="mt-0.5 h-4 w-4 shrink-0" />
               <span className="text-foreground/80 truncate">
                 {client.address}
@@ -164,7 +163,7 @@ const ClientCard = ({
             </div>
           )}
           {client.email && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-actions">
               <EnvelopeIcon className="h-4 w-4 shrink-0" />
               <span className="text-foreground/80 truncate">
                 {client.email}

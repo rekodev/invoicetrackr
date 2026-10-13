@@ -34,7 +34,7 @@ const MoneyWorkbench = async ({ userId, isEmailVerified }: Props) => {
         title={t('title')}
         description={t('description')}
         action={
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex flex-wrap justify-center gap-actions">
             <Link href={ADD_NEW_INVOICE_PAGE} className={buttonVariants({ size: 'sm' })}>
               <PlusIcon className="h-4 w-4" />
               {t('create_invoice')}
@@ -53,7 +53,7 @@ const MoneyWorkbench = async ({ userId, isEmailVerified }: Props) => {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-section">
       <AttentionStrip
         attention={summary.attention}
         year={summary.year}

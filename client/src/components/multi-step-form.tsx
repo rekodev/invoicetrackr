@@ -82,8 +82,8 @@ export default function MultiStepForm({ existingUserData }: Props) {
         );
       case 1:
         return (
-          <Card.Content className="p-6">
-            <p className="text-muted mb-4 text-sm">
+          <Card.Content className="gap-field">
+            <p className="text-muted text-sm">
               {t('banking.optional_note')}
             </p>
             <BankAccountForm

@@ -82,16 +82,15 @@
     "reports": {
         "journal": {
             "heading": "Pajamų ir išlaidų žurnalas",
-            "description": "Peržiūrėkite gautas pajamas ir atskaitomas išlaidas pasirinktu laikotarpiu.",
             "filters": {
                 "year": "Metai",
                 "month": "Mėnuo",
                 "all_months": "Visi mėnesiai"
             },
             "cards": {
-                "income": "Gautos pajamos · {period}",
-                "expenses": "Atskaitomos išlaidos · {period}",
-                "net": "Grynasis rezultatas · {period}"
+                "income": "Gautos pajamos",
+                "expenses": "Atskaitomos išlaidos",
+                "net": "Grynasis rezultatas"
             },
             "export": {
                 "csv": "Eksportuoti CSV",
@@ -103,7 +102,6 @@
             },
             "table": {
                 "title": "Žurnalo įrašai",
-                "subtitle": "Pajamos pagal apmokėjimo datą, išlaidos pagal išlaidų datą",
                 "columns": {
                     "date": "Data",
                     "document": "Dokumentas",
@@ -133,7 +131,7 @@
                 "items": {
                     "income": "Pajamos registruojamos mokėjimo gavimo dieną, o ne sąskaitos datą. Daliniai mokėjimai rodomi kaip atskiri įrašai.",
                     "vat": "PVM – tai sąskaitos PVM dalis, tenkanti kiekvienam mokėjimui. Jei nesate PVM mokėtojas, ji visada lygi nuliui. Grynasis rezultatas skaičiuojamas nuo pajamų be PVM, kaip ir metinėje deklaracijoje.",
-                    "expenses": "Išlaidos rodomos atskaitoma suma eurais: suma eurais, padauginta iš veiklai tenkančios dalies. Kai atskaitoma tik dalis, šalia nurodoma visa suma.",
+                    "expenses": "Išlaidos registruojamos pagal išlaidų datą. Išlaidos rodomos atskaitoma suma eurais: suma eurais, padauginta iš veiklai tenkančios dalies. Kai atskaitoma tik dalis, šalia nurodoma visa suma.",
                     "declaration": "Pajamų ir išlaidų sumas naudokite metinei pajamų deklaracijai (GPM311) arba perduokite eksportą buhalteriui. InvoiceTrackr nieko neteikia VMI.",
                     "formats": "XLSX failas atitinka įprastą žurnalo formą ir turi mėnesių suvestinės lapą. CSV faile tie patys stulpeliai, tinkami importuoti į kitas programas.",
                     "sources": "Saugokite sąskaitas ir išlaidų dokumentus. Kiekvienas įrašas veda į įrašą, iš kurio jis sudarytas."
@@ -147,7 +145,6 @@
         },
         "taxes": {
             "heading": "Mokesčiai",
-            "description": "Mokesčių įvertis, sumos deklaracijai ir failas buhalteriui.",
             "year": "Mokestiniai metai",
             "actions": "Metai ir failo atsisiuntimas",
             "setup": {
@@ -825,7 +822,7 @@
         },
         "overdue": {
             "title": "Pradelstos sąskaitos",
-            "summary": "{count, plural, one {# sąskaita} few {# sąskaitos} other {# sąskaitų}} · pradelsta {amount}",
+            "amount_overdue": "Pradelsta suma: {amount}",
             "view_all": "Visos pradelstos",
             "columns": {
                 "invoice": "Sąskaita",
@@ -848,7 +845,6 @@
         },
         "monthly": {
             "title": "Pinigai pagal mėnesius",
-            "subtitle": "Gautos pajamos ir užregistruotos išlaidos {year} m.",
             "summary": {
                 "expenses": "Išlaidos",
                 "deductible_expenses": "Atskaitomos išlaidos"
@@ -1492,7 +1488,7 @@
                     "remove_business_logo": "Pašalinti esamą veiklos logotipą"
                 },
                 "title": "Profilis",
-                "description": "Veiklos duomenys, naudojami kaip numatytosios reikšmės būsimose sąskaitose.",
+                "section_title": "Veiklos duomenys",
                 "business_logo": "Veiklos logotipas",
                 "business_logo_description": "JPEG, PNG arba WebP iki 5 MB. Išsaugomas su būsimomis sąskaitomis.",
                 "upload_business_logo": "Įkelti logotipą",
@@ -1533,7 +1529,7 @@
             "preferred_invoice_language_tooltip": "Tai numatytoji sąskaitų eksporto ir el. laiškų kalba. Galite keisti kiekvienai sąskaitai atskirai.",
             "invoice_defaults": {
                 "title": "Sąskaitų numatytieji nustatymai",
-                "description": "Naudojama kuriant naujas išsaugotas sąskaitas. Esamos sąskaitos išlaiko savo reikšmes.",
+                "section_title": "Naujų sąskaitų nustatymai",
                 "invoice_email": "Sąskaitų el. paštas",
                 "invoice_email_placeholder": "saskaitos@example.com",
                 "invoice_email_description": "Naudojamas kaip siuntėjo ir atsakymo adresas naujose sąskaitose.",
@@ -1562,6 +1558,7 @@
                 "form_label": "Slaptažodžio keitimo forma"
             },
             "title": "Slaptažodis",
+            "section_title": "Keisti slaptažodį",
             "current_password": "Dabartinis Slaptažodis",
             "current_password_placeholder": "Įveskite dabartinį slaptažodį",
             "new_password": "Naujas Slaptažodis",
@@ -1569,8 +1566,7 @@
             "confirm_new_password": "Patvirtinti Naują Slaptažodį",
             "confirm_new_password_placeholder": "Patvirtinkite naują slaptažodį",
             "save_changes": "Išsaugoti pakeitimus",
-            "password_requirements": "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną skaičių, didžiąją raidę, mažąją raidę ir specialų simbolį.",
-            "description": "Pakeiskite slaptažodį, kuriuo prisijungiate."
+            "password_requirements": "Slaptažodis turi būti bent 8 simbolių ilgio, turėti bent vieną skaičių, didžiąją raidę, mažąją raidę ir specialų simbolį."
         },
         "banking_information": {
             "a11y": {
@@ -1578,7 +1574,7 @@
                 "default_account_label": "Numatytoji banko sąskaita"
             },
             "title": "Mokėjimo būdai",
-            "description": "Pasirinkite numatytąją banko sąskaitą būsimoms sąskaitoms faktūroms. Esamos sąskaitos išlaiko išsaugotus mokėjimo duomenis.",
+            "section_title": "Numatytoji banko sąskaita",
             "actions": {
                 "add": "Pridėti naują",
                 "save": "Išsaugoti"
@@ -1649,16 +1645,13 @@
         },
         "account": {
             "title": "Paskyra",
-            "description": "Jūsų kalba, duomenų kopija ir paskyros ištrynimas.",
             "language": {
                 "title": "Kalba",
-                "description": "Programėlės ir jums siunčiamų el. laiškų kalba.",
                 "label": "Kalba",
                 "save": "Išsaugoti"
             },
             "data": {
                 "title": "Jūsų duomenys",
-                "description": "Atsisiųskite savo įrašų kopiją arba ištrinkite paskyrą.",
                 "export": {
                     "title": "Atsisiųsti duomenis",
                     "description": "ZIP failas su visais jūsų įrašais JSON formatu, išlaidų dokumentais, logotipu ir parašu. Jis paruošiamas jūsų prašymu ir nesaugomas.",
