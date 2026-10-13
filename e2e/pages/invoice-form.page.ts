@@ -11,7 +11,9 @@ export class InvoiceFormPage {
       this.page.getByRole('form', { name: 'Add New Invoice Form' })
     ).toBeVisible();
 
-    await this.page.getByLabel("Receiver's Name").fill(invoice.recipientName);
+    const receiverName = this.page.getByLabel("Receiver's Name");
+    await receiverName.fill(invoice.recipientName);
+    await receiverName.press('Tab');
 
     if (invoice.serviceDate) {
       await this.page.getByLabel('Service date').fill(invoice.serviceDate);
