@@ -13,9 +13,11 @@ import {
   Button,
   Card,
   Checkbox,
+  Chip,
   FieldError,
   Input,
   Label,
+  Separator,
   TextField,
   toast,
   Tooltip
@@ -244,20 +246,25 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
             {t('email_verification.verified')}
           </span>
         ) : (
-          <div className="flex items-center gap-actions">
-            <span className="text-warning text-xs font-medium">
-              {t('email_verification.not_verified')}
-            </span>
+          <Chip
+            size="sm"
+            color="warning"
+            variant="soft"
+            className="gap-field-content py-0 pe-0.5"
+          >
+            {t('email_verification.not_verified')}
+            <Separator orientation="vertical" className="h-3 bg-current opacity-30" />
             <Button
               size="sm"
               type="button"
-              variant="secondary"
+              variant="ghost"
+              className="h-5 min-w-0 rounded-full px-2 text-xs"
               isPending={isResendingVerificationEmail}
               onPress={handleResendVerificationEmail}
             >
               {t('email_verification.verify')}
             </Button>
-          </div>
+          </Chip>
         )}
       </div>
       <Controller

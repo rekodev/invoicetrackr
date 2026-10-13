@@ -31,7 +31,7 @@ const InvoiceTableBottomContent = ({
   return (
     <Pagination size="sm" className="w-full justify-between">
       <Pagination.Summary>
-        {start} to {end} of {total} results
+        {t('summary', { start, end, total })}
       </Pagination.Summary>
 
       <Pagination.Content>

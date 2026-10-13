@@ -1023,6 +1023,7 @@
             "edit_title": "Redaguoti sąskaitą faktūrą"
         },
         "bottom_content": {
+            "summary": "{start}–{end} iš {total}",
             "previous": "Ankstesnis",
             "next": "Kitas"
         },
@@ -1199,6 +1200,7 @@
             "no_results_description": "Pakeiskite paiešką, datų intervalą, kategoriją arba apmokėjimo būdą."
         },
         "bottom_content": {
+            "summary": "{start}–{end} iš {total}",
             "previous": "Ankstesnis",
             "next": "Kitas"
         },
@@ -1424,7 +1426,8 @@
             "no_results_description": "Pabandykite pakeisti paiešką arba kliento tipo filtrą."
         },
         "a11y": {
-            "actions_label": "Veiksmai"
+            "actions_label": "Veiksmai",
+            "pagination_label": "Klientų puslapiai"
         },
         "top_content": {
             "search_placeholder": "Ieškoti pagal pavadinimą arba kodą...",
@@ -2012,8 +2015,7 @@
             "due_date_preselection_chips": {
                 "seven_days": "7d",
                 "fourteen_days": "14d",
-                "thirty_days": "30d",
-                "custom": "Pasirinktinis"
+                "thirty_days": "30d"
             }
         }
     },

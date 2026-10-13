@@ -3,9 +3,10 @@
 import { Chip } from '@heroui/react';
 import type { InvoiceListItem } from '@invoicetrackr/types';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { INVOICE_WORKSPACE_PAGE } from '@/lib/constants/pages';
+import { formatMoney } from '@/lib/utils/currency';
 import { formatDate } from '@/lib/utils/date';
 import {
   getInvoiceDueStatus,
@@ -30,6 +31,7 @@ export default function InvoiceTableCell({
   preferredLanguage
 }: Props) {
   const t = useTranslations('invoices.table');
+  const locale = useLocale();
   const actions = useTranslations('invoices.cell.actions');
   const href = INVOICE_WORKSPACE_PAGE(Number(invoice.id));
   const lifecycle = invoice.lifecycleStatus || 'draft';
@@ -44,15 +46,12 @@ export default function InvoiceTableCell({
       );
     case 'receiver':
       return <span>{invoice.receiver.name}</span>;
-    case 'totalAmount': {
-      const symbol = (invoice.currency || 'eur') === 'eur' ? '€' : '$';
+    case 'totalAmount':
       return (
         <span className="tabular-nums">
-          {symbol}
-          {Number(invoice.totalAmount).toFixed(2)}
+          {formatMoney(invoice.totalAmount, locale, invoice.currency)}
         </span>
       );
-    }
     case 'date':
       return <span>{formatDate(invoice.date)}</span>;
     case 'lifecycleStatus':

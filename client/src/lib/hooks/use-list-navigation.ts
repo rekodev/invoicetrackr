@@ -10,9 +10,12 @@ export default function useListNavigation<Query extends object>(
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const update = (patch: Partial<Query>) =>
+  const update = (
+    patch: Partial<Query>,
+    history: 'push' | 'replace' = 'push'
+  ) =>
     startTransition(() => {
-      router.replace(toHref({ ...query, ...patch }), { scroll: false });
+      router[history](toHref({ ...query, ...patch }), { scroll: false });
     });
 
   return { update, isPending };

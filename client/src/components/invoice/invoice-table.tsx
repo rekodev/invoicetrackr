@@ -106,7 +106,7 @@ export default function InvoiceTable({
     setSearchValue(value);
     clearTimeout(searchTimer.current);
     searchTimer.current = setTimeout(
-      () => update({ q: value.trim() || undefined, page: 1 }),
+      () => update({ q: value.trim() || undefined, page: 1 }, 'replace'),
       SEARCH_DEBOUNCE_MS
     );
   };
