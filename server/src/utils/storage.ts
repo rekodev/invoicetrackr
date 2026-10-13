@@ -82,8 +82,6 @@ export const parseCloudinaryUrl = (
   };
 };
 
-// Signatures uploaded before per-user folders sit at the root and have no
-// owner, so account deletion keeps the ones other users still reference.
 export const isLegacySignatureAsset = (asset: StorageAsset) =>
   asset.resourceType === 'image' &&
   asset.type === 'upload' &&

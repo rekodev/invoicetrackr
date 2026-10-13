@@ -288,7 +288,6 @@ export const getAccountFilesFromDb = async (userId: number) => {
   return { attachments, profile: profile ?? null, signatures };
 };
 
-// Returns the given public IDs that another user's profile or invoice uses.
 export const getSharedSignaturePublicIdsFromDb = async (
   userId: number,
   publicIds: string[]
