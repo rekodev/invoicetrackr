@@ -73,7 +73,7 @@ test('a new freelancer sets up, invoices a client, gets paid, logs an expense, a
   await expect(
     page.getByRole('heading', { name: 'Email history' })
   ).toBeVisible();
-  await expect(page.getByText('Accepted for sending')).toBeVisible();
+  await expect(page.getByText(/^Accepted for sending ·/)).toBeVisible();
   const [delivery] = await getInvoiceDeliveriesFromDb(freelancer.id, invoiceId);
   expect(delivery).toMatchObject({ recipient: clientEmail, status: 'sent' });
   expect(delivery.providerMessageId).toMatch(/^captured_/);

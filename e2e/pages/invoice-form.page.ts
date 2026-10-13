@@ -11,7 +11,9 @@ export class InvoiceFormPage {
       this.page.getByRole('form', { name: 'Add New Invoice Form' })
     ).toBeVisible();
 
-    const receiverName = this.page.getByLabel("Receiver's Name");
+    const receiverName = this.page.getByRole('combobox', {
+      name: "Receiver's Name"
+    });
     await receiverName.fill(invoice.recipientName);
     await receiverName.press('Tab');
 
