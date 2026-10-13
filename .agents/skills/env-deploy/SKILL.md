@@ -66,7 +66,17 @@ PostHog keys, auth secrets) stay as Dokku/VPS env vars and only need
    `/app/server`. A failing migration blocks the deploy (see the
    **drizzle-migration** skill).
 4. The container starts `prod.sh`: Next.js standalone server and the
-   Fastify `dist/app.js` side by side.
+   Fastify `dist/app.js` side by side. If either exits, the container exits
+   so Docker restarts it.
+5. Dokku waits for the `app.json` startup healthcheck (`/api/health`) before
+   switching traffic to the new container.
+
+## Operations
+
+Health checks, error tracking, backups, restore steps, rollbacks, and secret
+rotation are documented outside the repo, in the owner's Obsidian vault:
+`~/Documents/Obsidian Vault/InvoiceTrackr/InvoiceTrackr Operations.md`.
+Keep it current when any of those change.
 
 ## Local commands
 

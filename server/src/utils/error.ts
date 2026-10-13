@@ -2,6 +2,8 @@ import createError, { FastifyError } from '@fastify/error';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { useI18n } from 'fastify-i18n';
 
+import { captureServerException } from '../analytics/errors';
+
 export const BadRequestError = createError('BAD_REQUEST', '%s', 400);
 export const UnauthorizedError = createError('UNAUTHORIZED', '%s', 401);
 export const ForbiddenError = createError('FORBIDDEN', '%s', 403);
@@ -47,7 +49,19 @@ export async function errorHandler(
     });
   }
 
-  return reply.status(error.statusCode || 500).send({
+  const statusCode = error.statusCode || 500;
+
+  if (statusCode >= 500) {
+    request.log.error({ err: error }, 'Request failed');
+    captureServerException(error, {
+      method: request.method,
+      route: request.routeOptions.url,
+      statusCode,
+      source: 'request'
+    });
+  }
+
+  return reply.status(statusCode).send({
     errors: [],
     message: error.message,
     code: error.code

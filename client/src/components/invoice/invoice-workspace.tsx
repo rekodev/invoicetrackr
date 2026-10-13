@@ -465,9 +465,12 @@ export default function InvoiceWorkspace({
                       · {t('recipient', { recipient: delivery.recipient })}
                     </p>
                     <p className="text-muted">
-                      {delivery.status === 'failed' ||
-                      delivery.status === 'bounced'
+                      {delivery.status === 'failed'
                         ? t('email_failed')
+                        : delivery.status === 'bounced'
+                          ? t('email_bounced')
+                        : delivery.status === 'delivered'
+                          ? t('email_delivered')
                         : delivery.status === 'unknown'
                           ? t('email_unknown')
                         : delivery.status === 'queued'

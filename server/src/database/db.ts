@@ -32,3 +32,7 @@ export const getPgVersion = async () => {
   const result = await db.execute('SELECT version()');
   console.log(result.rows[0]);
 };
+
+export const pingDb = async () => {
+  await db.execute('SELECT 1');
+};

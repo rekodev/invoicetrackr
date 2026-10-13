@@ -39,7 +39,7 @@ export const submitInvoiceEmailAttempt = async (
   let providerMessageId: string | undefined;
   let failureCode: string | undefined;
   try {
-    const result = await resend.emails.send(payload, {
+    const result = await resend.emails.send({ ...payload, tags: [{ name: 'delivery_id', value: String(attempt.id) }] }, {
       idempotencyKey: `invoice-email/${attempt.userId}/${attempt.invoiceId}/${attempt.attemptKey}`
     });
     if (result.data?.id && !result.error) {

@@ -11,6 +11,8 @@ import {
   validatorCompiler
 } from 'fastify-type-provider-zod';
 
+import { captureServerExceptionImmediate } from './analytics/errors';
+import { getAppBaseUrl } from './config/app';
 import { cloudinaryConfig } from './config/cloudinary';
 import { loadEnv } from './config/env';
 import { getPgVersion } from './database/db';
@@ -24,6 +26,7 @@ import contactRoutes from './routes/contact';
 import cryptoWalletRoutes from './routes/crypto-wallet';
 import dashboardRoutes from './routes/dashboard';
 import expenseRoutes from './routes/expense';
+import healthRoutes from './routes/health';
 import invoiceRoutes from './routes/invoice';
 import journalRoutes from './routes/journal';
 import taxRoutes from './routes/tax';
@@ -75,7 +78,7 @@ defineI18n(server, {
   lt: import('./locales/lt')
 });
 server.register(i18n);
-server.register(cors);
+server.register(cors, { origin: getAppBaseUrl() });
 server.register(fastifyMultipart);
 server.register(fastifyCookie);
 server.register(fastifyRateLimit, rateLimitPluginOptions);
@@ -88,6 +91,7 @@ server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
 // Register Routes
+server.register(healthRoutes);
 server.register(webhookRoutes);
 server.register(invoiceRoutes);
 server.register(expenseRoutes);
@@ -103,6 +107,30 @@ server.register(contactRoutes);
 server.register(cryptoWalletRoutes);
 
 getPgVersion();
+
+const FATAL_ERROR_FLUSH_TIMEOUT_MS = 3000;
+let exitingAfterFatalError = false;
+
+const exitAfterFatalError = (
+  error: unknown,
+  source: 'unhandledRejection' | 'uncaughtException'
+) => {
+  server.log.fatal({ err: error }, source);
+  if (exitingAfterFatalError) return;
+  exitingAfterFatalError = true;
+
+  Promise.race([
+    captureServerExceptionImmediate(error, { source }).catch(() => undefined),
+    new Promise((resolve) => setTimeout(resolve, FATAL_ERROR_FLUSH_TIMEOUT_MS))
+  ]).finally(() => process.exit(1));
+};
+
+process.on('unhandledRejection', (reason) =>
+  exitAfterFatalError(reason, 'unhandledRejection')
+);
+process.on('uncaughtException', (error) =>
+  exitAfterFatalError(error, 'uncaughtException')
+);
 
 server.listen({ port }, (err, address) => {
   if (err) {

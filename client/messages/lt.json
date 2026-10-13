@@ -832,6 +832,8 @@
             "reminder_email": "Priminimas",
             "email_sent": "Priimta siųsti",
             "email_failed": "Nepavyko išsiųsti",
+            "email_delivered": "Pristatyta",
+            "email_bounced": "Atmesta — patikrinkite el. pašto adresą",
             "email_queued": "Laukia siuntimo",
             "email_unknown": "Rezultatas nežinomas — laiškas galėjo pasiekti gavėją",
             "email_reminder_paid": "Sąskaita visiškai apmokėta. Priminimo siuntimas nebebus kartojamas.",

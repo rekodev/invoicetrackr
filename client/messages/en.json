@@ -832,6 +832,8 @@
             "reminder_email": "Reminder",
             "email_sent": "Accepted for sending",
             "email_failed": "Failed",
+            "email_delivered": "Delivered",
+            "email_bounced": "Bounced — check the email address",
             "email_queued": "Queued",
             "email_unknown": "Result unknown — the email may have arrived",
             "email_reminder_paid": "The invoice is fully paid. No further reminder sends will be attempted.",
