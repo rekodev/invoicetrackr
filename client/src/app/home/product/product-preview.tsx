@@ -1,21 +1,25 @@
 import {
-  ChartBarIcon,
+  ChartBarSquareIcon,
   DocumentTextIcon,
+  HomeIcon,
+  ReceiptPercentIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
-import { Card, Chip, cn } from '@heroui/react';
+import { Card, cn } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
 import DashboardPagePreview from '../dashboard-page-preview';
 
+const navItems = [
+  { icon: HomeIcon, key: 'dashboard', active: true },
+  { icon: DocumentTextIcon, key: 'invoices', active: false },
+  { icon: UserGroupIcon, key: 'clients', active: false },
+  { icon: ReceiptPercentIcon, key: 'expenses', active: false },
+  { icon: ChartBarSquareIcon, key: 'reports', active: false }
+] as const;
+
 export default function ProductPreview() {
   const t = useTranslations('home.preview');
-
-  const navItems = [
-    { icon: ChartBarIcon, key: 'dashboard', active: true, disabled: false },
-    { icon: DocumentTextIcon, key: 'invoices', active: false, disabled: false },
-    { icon: UserGroupIcon, key: 'clients', active: false, disabled: false }
-  ] as const;
 
   return (
     <div className="relative mx-auto mt-20 max-w-6xl">
@@ -37,26 +41,18 @@ export default function ProductPreview() {
             <div className="section-eyebrow text-muted mb-4">
               {t('sidebar.eyebrow')}
             </div>
-            {navItems.map(({ icon: Icon, key, active, disabled }) => (
+            {navItems.map(({ icon: Icon, key, active }) => (
               <div
                 key={key}
                 className={cn(
-                  'rounded-medium mb-1 flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs',
+                  'rounded-medium mb-1 flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs',
                   active
                     ? 'bg-accent/15 text-foreground ring-accent/20 ring-1'
-                    : 'text-muted',
-                  disabled && 'opacity-60'
+                    : 'text-muted'
                 )}
               >
-                <span className="flex items-center gap-2">
-                  <Icon className="h-3.5 w-3.5" />
-                  {t(`sidebar.${key}`)}
-                </span>
-                {disabled && (
-                  <Chip size="sm" variant="soft" color="warning">
-                    {t('sidebar.soon')}
-                  </Chip>
-                )}
+                <Icon className="h-3.5 w-3.5" />
+                {t(`sidebar.${key}`)}
               </div>
             ))}
           </aside>

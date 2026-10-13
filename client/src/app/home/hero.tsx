@@ -60,10 +60,6 @@ export default function Hero() {
         </Link>
       </div>
 
-      <p className="text-muted landing-reveal landing-delay-4 mt-5 text-xs">
-        {t('note')}
-      </p>
-
       <div className="landing-reveal landing-delay-5">
         <ProductPreview />
       </div>

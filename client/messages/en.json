@@ -364,13 +364,12 @@
     "home": {
         "hero": {
             "badge_label": "New",
-            "badge_text": "Upload Expense Documents",
-            "title": "Invoice clients.",
-            "title_accent": "Know what to set aside.",
-            "subtitle": "A focused finance workspace for Lithuanian freelancers operating under individuali veikla pagal pažymą: invoices, clients, bank-transfer payment tracking, and income-journal exports.",
+            "badge_text": "Expenses, tax estimates and exports",
+            "title": "Your freelance work,",
+            "title_accent": "in one place.",
+            "subtitle": "Invoice clients, track bank-transfer payments, keep expenses with their documents, and see what's safe to spend. Built for Lithuanian freelancers working under individuali veikla pagal pažymą.",
             "cta_primary": "Create a Free Invoice",
-            "cta_secondary": "Create Account",
-            "note": "For Lithuanian individual activity freelancers · not MB/UAB accounting"
+            "cta_secondary": "Create Account"
         },
         "preview": {
             "sidebar": {
@@ -378,29 +377,32 @@
                 "dashboard": "Dashboard",
                 "invoices": "Invoices",
                 "clients": "Clients",
-                "soon": "Soon"
+                "expenses": "Expenses",
+                "reports": "Reports"
             },
             "dashboard": {
                 "cards": {
-                    "paid": {
-                        "label": "Paid Invoices",
+                    "received_income": {
+                        "label": "Received Income · This Year",
                         "value": "€18,420.00"
                     },
-                    "pending": {
-                        "label": "Pending Invoices",
+                    "invoiced": {
+                        "label": "Invoiced · This Year",
+                        "value": "€23,240.00"
+                    },
+                    "outstanding": {
+                        "label": "Outstanding · All Open",
                         "value": "€4,820.00"
                     },
-                    "invoices": {
-                        "label": "Total Invoices",
-                        "value": "24"
-                    },
-                    "clients": {
-                        "label": "Total Clients",
-                        "value": "12"
+                    "safe_to_spend": {
+                        "label": "Safe to Spend · Estimate",
+                        "value": "€12,320.00"
                     }
                 },
-                "revenue": {
-                    "title": "Invoice Revenue by Month"
+                "monthly": {
+                    "title": "Money by Month",
+                    "income": "Received",
+                    "expenses": "Expenses"
                 },
                 "latest": {
                     "title": "Latest Invoices",
@@ -434,22 +436,36 @@
         },
         "product": {
             "eyebrow": "The product",
-            "title": "A Small Set of Tools",
-            "title_accent": "that actually fit together.",
-            "subtitle": "Invoices, clients, bank-transfer payments, reminders, and exports follow the workflow a solo freelancer actually uses.",
+            "title": "One Workspace",
+            "title_accent": "for the whole freelance year.",
+            "subtitle": "Invoices, clients, expenses, taxes, and exports share the same records, so nothing gets typed twice.",
             "items": {
                 "invoices": {
-                    "eyebrow": "Invoices",
-                    "title": "The Table That Runs Your Invoicing.",
-                    "body": "Search, filter, export the income journal, and open each invoice for preview, sending, editing, or status updates."
-                },
-                "dashboard": {
-                    "title": "A Dashboard, Not a Chore.",
-                    "body": "Paid revenue, pending invoices, client count, monthly revenue, and latest invoices at a glance."
+                    "eyebrow": "Invoicing",
+                    "title": "Invoicing That Handles the Careful Parts.",
+                    "body": "Draft freely, then issue. InvoiceTrackr assigns the number, locks the document, and keeps every payment and email in its history.",
+                    "points": {
+                        "numbering": "Numbering series, with the number assigned when you issue",
+                        "locked": "Issued invoices stay locked; void one instead of editing it",
+                        "sending": "Email sending with delivery status and overdue reminders",
+                        "payments": "Full or partial bank-transfer payments, with the balance kept for you"
+                    }
                 },
                 "clients": {
-                    "title": "Clients in One Tidy Place.",
-                    "body": "Client names, addresses, email, payment terms, and optional registration details ready to reuse on every invoice."
+                    "title": "Clients Filled In from Company Records.",
+                    "body": "Look up Lithuanian companies by name or code in VMI open data, then reuse their details and payment terms on every invoice."
+                },
+                "expenses": {
+                    "title": "Expenses with Their Documents.",
+                    "body": "Record purchases by category, attach receipts and supplier invoices, and see which ones still miss a document."
+                },
+                "taxes": {
+                    "title": "Know What's Safe to Spend.",
+                    "body": "Received income, open balances, and an estimated GPM, VSD, and PSD reserve on one dashboard, so you know what is actually yours."
+                },
+                "reports": {
+                    "title": "Records Ready for Year-End.",
+                    "body": "Export the income and expense journal to CSV or XLSX, and download an annual package with the figures for your declaration."
                 }
             },
             "invoice_table": {
@@ -512,27 +528,71 @@
                     }
                 }
             },
+            "expenses_preview": {
+                "total": "Total Expenses · This Year",
+                "total_value": "€2,140.00",
+                "missing_document": "No Document",
+                "rows": {
+                    "software": {
+                        "supplier": "Figma",
+                        "category": "Software",
+                        "amount": "€15.00",
+                        "document": "invoice.pdf"
+                    },
+                    "equipment": {
+                        "supplier": "Varle.lt",
+                        "category": "Equipment",
+                        "amount": "€1,249.00",
+                        "document": "receipt.pdf"
+                    },
+                    "telecom": {
+                        "supplier": "Telia",
+                        "category": "Telecommunications",
+                        "amount": "€19.99"
+                    }
+                }
+            },
+            "tax_preview": {
+                "title": "Safe to Spend · Estimate",
+                "rows": {
+                    "received_income": {
+                        "label": "Received Income",
+                        "value": "€18,420.00"
+                    },
+                    "expenses": {
+                        "label": "Expenses",
+                        "value": "−€2,140.00"
+                    },
+                    "tax_reserve": {
+                        "label": "Tax Reserve",
+                        "value": "−€3,960.00"
+                    },
+                    "safe_to_spend": {
+                        "label": "Safe to Spend",
+                        "value": "€12,320.00"
+                    }
+                }
+            },
+            "exports_preview": {
+                "files": {
+                    "journal_csv": "income-expense-journal-2026.csv",
+                    "journal_xlsx": "income-expense-journal-2026.xlsx",
+                    "annual": "annual-tax-package-2026.xlsx"
+                }
+            },
             "capabilities": {
-                "payments": {
-                    "badge": "MVP",
-                    "title": "Manual Bank-Transfer Tracking.",
-                    "body": "Record full or partial payments when money lands, without pretending the invoice was paid on issue date."
-                },
                 "links": {
                     "title": "Invoice Links Without Client Accounts.",
                     "body": "Share the finalized invoice and payment instructions while keeping your own workflow private."
-                },
-                "email": {
-                    "title": "Email Delivery and Reminders.",
-                    "body": "Send the invoice and nudge overdue ones from the same screen."
                 },
                 "language": {
                     "title": "English and Lithuanian, One Click.",
                     "body": "Issue Lithuanian or English documents from the same reusable client and profile data."
                 },
-                "export": {
-                    "title": "Income-journal exports.",
-                    "body": "Pull the records you need for pajamų žurnalas review and accountant handoff."
+                "data": {
+                    "title": "Your Data, Your Call.",
+                    "body": "Download all your records and files in one archive, or delete your account whenever you choose.",
+                    "file": "invoicetrackr-data.zip"
                 }
             }
         },
@@ -540,17 +600,25 @@
             "eyebrow": "FAQ",
             "title": "Straight answers.",
             "items": {
+                "who": {
+                    "question": "Who is InvoiceTrackr for?",
+                    "answer": "Lithuanian freelancers working under individuali veikla pagal pažymą: designers, developers, consultants, and other solo specialists who invoice clients and track their own income, expenses, and taxes."
+                },
                 "free": {
                     "question": "Can I generate an invoice without an account?",
                     "answer": "You can generate an invoice and download the PDF for free without an account. The logged-in app is for saved freelancer workflows: clients, invoices, reminders, payments, expenses, and exports."
                 },
-                "export": {
-                    "question": "Can I export my data?",
-                    "answer": "Yes. Export your income journal to CSV whenever you want."
+                "taxes": {
+                    "question": "Does it calculate my taxes?",
+                    "answer": "It estimates GPM, VSD, and PSD for individual activity from your received income and expenses, and keeps a tax reserve on your dashboard. It's an estimate to plan with; InvoiceTrackr doesn't file anything with VMI or Sodra."
                 },
                 "payments": {
                     "question": "How do payments work?",
-                    "answer": "The MVP assumes clients pay by bank transfer. You record full or partial payments manually, and the invoice status updates from those records."
+                    "answer": "Clients pay you by bank transfer. Online payments aren't supported yet, so you record full or partial payments yourself when the money arrives, and the invoice status and balance update from those records."
+                },
+                "export": {
+                    "question": "Can I export my data?",
+                    "answer": "Yes. Export the income and expense journal to CSV or XLSX, download the annual package, or take all your records in one archive from your account settings."
                 },
                 "languages": {
                     "question": "Which languages are supported?",
@@ -577,7 +645,7 @@
     "seo": {
         "home": {
             "title": "Invoice Software for Lithuanian Freelancers",
-            "description": "Create invoices, manage clients, record bank-transfer payments, track expenses, and prepare income-journal exports for Lithuanian individual-activity work.",
+            "description": "Invoices, clients, bank-transfer payments, expenses, tax estimates, and income-journal exports in one place for Lithuanian individual-activity freelancers.",
             "keywords": [
                 "invoice software Lithuania",
                 "individuali veikla invoice",
@@ -587,11 +655,14 @@
                 "invoice generator Lithuania"
             ],
             "features": [
-                "Invoice creation",
-                "Client management",
+                "Invoice creation and numbering",
+                "Client management with company lookup",
                 "Manual payment tracking",
-                "Invoice email sending",
-                "Income journal export"
+                "Invoice email sending and reminders",
+                "Expense tracking with documents",
+                "Individual activity tax estimate",
+                "Income and expense journal export",
+                "Annual tax package"
             ]
         },
         "createInvoice": {
@@ -618,11 +689,11 @@
         },
         "terms": {
             "title": "Terms of Service",
-            "description": "InvoiceTrackr terms for account usage, invoice creation, MVP access, payment records, and service responsibilities.",
+            "description": "InvoiceTrackr terms for account usage, invoice creation, payment records, and service responsibilities.",
             "keywords": [
                 "InvoiceTrackr terms of service",
                 "terms",
-                "MVP access",
+                "service access",
                 "invoice records",
                 "account usage"
             ]
@@ -1926,8 +1997,7 @@
             "free_invoice": {
                 "eyebrow": "Free Invoice Generator",
                 "title": "Create a Polished PDF Invoice Without Signing Up",
-                "description": "Build a real invoice, preview the PDF, and download it for free. When you need the full freelancer workflow, create an account to save clients, send invoices, record payments, and prepare exports.",
-                "untracked_notice": "This download is not stored or marked as issued by InvoiceTrackr. Keep your own numbering and records, or create an account for managed drafts and issuance.",
+                "description": "Build an invoice, preview the PDF, and download it for free. Nothing is saved here, so keep your own numbering and records.",
                 "upgrade_title": "Need more than a PDF?",
                 "upgrade_description": "Create an account to save invoices, reuse clients and bank accounts, send invoice links, and track payment status.",
                 "upgrade_cta": "Create Account",
@@ -2007,7 +2077,7 @@
                 },
                 "payment_info": {
                     "heading": "2.3 Payment Information",
-                    "content": "InvoiceTrackr lets you record invoice payment status and bank-transfer details you enter yourself. The MVP does not process client payments or store payment card data."
+                    "content": "InvoiceTrackr lets you record invoice payment status and bank-transfer details you enter yourself. InvoiceTrackr does not process client payments or store payment card data."
                 },
                 "usage_info": {
                     "heading": "2.4 Usage Information",

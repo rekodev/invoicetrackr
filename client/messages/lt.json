@@ -364,43 +364,45 @@
     "home": {
         "hero": {
             "badge_label": "Nauja",
-            "badge_text": "Įkelkite išlaidų dokumentus",
-            "title": "Sąskaitos klientams.",
-            "title_accent": "Aišku, kiek atsidėti.",
-            "subtitle": "Finansų valdymo įrankis Lietuvos specialistams, dirbantiems pagal individualios veiklos pažymą: sąskaitoms, klientams, bankiniams pavedimams ir pajamų žurnalo eksportui vienoje vietoje.",
+            "badge_text": "Išlaidos, mokesčių įvertis ir eksportai",
+            "title": "Visa jūsų veikla",
+            "title_accent": "vienoje vietoje.",
+            "subtitle": "Išrašykite sąskaitas, sekite bankinius pavedimus, kaupkite išlaidas su dokumentais ir matykite, kiek galite išleisti. Sukurta Lietuvos specialistams, dirbantiems pagal individualios veiklos pažymą.",
             "cta_primary": "Sukurti nemokamą sąskaitą",
-            "cta_secondary": "Sukurti paskyrą",
-            "note": "Lietuvos individualiai veiklai · ne MB ar UAB apskaita"
+            "cta_secondary": "Sukurti paskyrą"
         },
         "preview": {
             "sidebar": {
                 "eyebrow": "Darbo erdvė",
-                "dashboard": "Suvestinė",
-                "invoices": "Sąskaitos",
+                "dashboard": "Skydelis",
+                "invoices": "Sąskaitos faktūros",
                 "clients": "Klientai",
-                "soon": "Netrukus"
+                "expenses": "Išlaidos",
+                "reports": "Ataskaitos"
             },
             "dashboard": {
                 "cards": {
-                    "paid": {
-                        "label": "Apmokėtos sąskaitos",
-                        "value": "€18,420.00"
+                    "received_income": {
+                        "label": "Gautos pajamos · šiais metais",
+                        "value": "18 420,00 €"
                     },
-                    "pending": {
-                        "label": "Laukia apmokėjimo",
-                        "value": "€4,820.00"
+                    "invoiced": {
+                        "label": "Išrašyta sąskaitų · šiais metais",
+                        "value": "23 240,00 €"
                     },
-                    "invoices": {
-                        "label": "Visos sąskaitos",
-                        "value": "24"
+                    "outstanding": {
+                        "label": "Neapmokėta · visos atviros",
+                        "value": "4 820,00 €"
                     },
-                    "clients": {
-                        "label": "Visi klientai",
-                        "value": "12"
+                    "safe_to_spend": {
+                        "label": "Galima išleisti · įvertis",
+                        "value": "12 320,00 €"
                     }
                 },
-                "revenue": {
-                    "title": "Sąskaitų pajamos pagal mėnesį"
+                "monthly": {
+                    "title": "Pinigai pagal mėnesius",
+                    "income": "Gauta",
+                    "expenses": "Išlaidos"
                 },
                 "latest": {
                     "title": "Naujausios sąskaitos",
@@ -411,21 +413,21 @@
                             "client": "Northstar Studio",
                             "id": "SF-0242",
                             "date": "Bir 18",
-                            "amount": "€1,440.00",
+                            "amount": "1 440,00 €",
                             "status": "Apmokėta"
                         },
                         "pending": {
                             "client": "Baltic Design Co.",
                             "id": "SF-0241",
                             "date": "Bir 12",
-                            "amount": "€5,832.20",
+                            "amount": "5 832,20 €",
                             "status": "Laukia"
                         },
                         "overdue": {
                             "client": "Aurora Labs",
                             "id": "SF-0240",
                             "date": "Geg 28",
-                            "amount": "€820.00",
+                            "amount": "820,00 €",
                             "status": "Vėluoja"
                         }
                     }
@@ -434,22 +436,36 @@
         },
         "product": {
             "eyebrow": "Produktas",
-            "title": "Nedidelis įrankių rinkinys",
-            "title_accent": "kuris veikia kartu.",
-            "subtitle": "Sąskaitos, klientai, bankiniai pavedimai, priminimai ir eksportai sudėti į eigą, kuri tinka solo freelanceriui.",
+            "title": "Viena darbo erdvė",
+            "title_accent": "visiems veiklos metams.",
+            "subtitle": "Sąskaitos, klientai, išlaidos, mokesčiai ir eksportai naudoja tuos pačius įrašus, todėl nieko nereikia vesti du kartus.",
             "items": {
                 "invoices": {
                     "eyebrow": "Sąskaitos",
-                    "title": "Lentelė, kuri valdo jūsų sąskaitas.",
-                    "body": "Ieškokite, filtruokite, eksportuokite pajamų žurnalą ir atsidarykite sąskaitas peržiūrai, siuntimui, redagavimui ar būsenos keitimui."
-                },
-                "dashboard": {
-                    "title": "Suvestinė be vargo.",
-                    "body": "Apmokėtos pajamos, laukiančios sąskaitos, klientų skaičius, mėnesio pajamos ir naujausios sąskaitos vienoje vietoje."
+                    "title": "Sąskaitos, kurios pasirūpina svarbiausiomis smulkmenomis.",
+                    "body": "Ruoškite juodraštį laisvai, o tada išrašykite. InvoiceTrackr suteikia numerį, užrakina dokumentą ir saugo kiekvieno mokėjimo bei laiško istoriją.",
+                    "points": {
+                        "numbering": "Numeracijos serijos, numeris suteikiamas išrašant",
+                        "locked": "Išrašytos sąskaitos lieka užrakintos; vietoj taisymo jas anuliuokite",
+                        "sending": "Siuntimas el. paštu su pristatymo būsena ir priminimais vėluojantiems",
+                        "payments": "Pilni ar daliniai bankiniai pavedimai, likutis skaičiuojamas automatiškai"
+                    }
                 },
                 "clients": {
-                    "title": "Klientai tvarkingai vienoje vietoje.",
-                    "body": "Kliento pavadinimas, adresas, el. paštas, mokėjimo terminas ir neprivalomi registracijos duomenys pakartotiniam naudojimui."
+                    "title": "Klientų duomenys iš įmonių registro.",
+                    "body": "Raskite Lietuvos įmones pagal pavadinimą ar kodą VMI atviruose duomenyse ir naudokite jų rekvizitus bei apmokėjimo terminus kiekvienoje sąskaitoje."
+                },
+                "expenses": {
+                    "title": "Išlaidos kartu su dokumentais.",
+                    "body": "Registruokite pirkimus pagal kategorijas, prisekite kvitus ir tiekėjų sąskaitas ir matykite, kurioms dar trūksta dokumento."
+                },
+                "taxes": {
+                    "title": "Žinokite, kiek galite išleisti.",
+                    "body": "Gautos pajamos, neapmokėtos sąskaitos ir numatomas GPM, VSD ir PSD rezervas viename skydelyje, kad matytumėte, kas iš tiesų jūsų."
+                },
+                "reports": {
+                    "title": "Įrašai, paruošti metų pabaigai.",
+                    "body": "Eksportuokite pajamų ir išlaidų žurnalą į CSV ar XLSX ir atsisiųskite metinę ataskaitą su deklaracijai reikalingais skaičiais."
                 }
             },
             "invoice_table": {
@@ -469,21 +485,21 @@
                     "paid": {
                         "id": "SF-0242",
                         "client": "Northstar Studio",
-                        "amount": "€1,440.00",
+                        "amount": "1 440,00 €",
                         "date": "Bir 18",
                         "status": "Apmokėta"
                     },
                     "pending": {
                         "id": "SF-0241",
                         "client": "Baltic Design Co.",
-                        "amount": "€5,832.20",
+                        "amount": "5 832,20 €",
                         "date": "Bir 12",
                         "status": "Laukia"
                     },
                     "canceled": {
                         "id": "SF-0239",
                         "client": "Aurora Labs",
-                        "amount": "€3,200.00",
+                        "amount": "3 200,00 €",
                         "date": "Bir 02",
                         "status": "Atšaukta"
                     }
@@ -512,27 +528,71 @@
                     }
                 }
             },
+            "expenses_preview": {
+                "total": "Visos išlaidos · šiais metais",
+                "total_value": "2 140,00 €",
+                "missing_document": "Be dokumento",
+                "rows": {
+                    "software": {
+                        "supplier": "Figma",
+                        "category": "Programinė įranga",
+                        "amount": "15,00 €",
+                        "document": "saskaita.pdf"
+                    },
+                    "equipment": {
+                        "supplier": "Varle.lt",
+                        "category": "Įranga",
+                        "amount": "1 249,00 €",
+                        "document": "kvitas.pdf"
+                    },
+                    "telecom": {
+                        "supplier": "Telia",
+                        "category": "Ryšio paslaugos",
+                        "amount": "19,99 €"
+                    }
+                }
+            },
+            "tax_preview": {
+                "title": "Galima išleisti · įvertis",
+                "rows": {
+                    "received_income": {
+                        "label": "Gautos pajamos",
+                        "value": "18 420,00 €"
+                    },
+                    "expenses": {
+                        "label": "Išlaidos",
+                        "value": "−2 140,00 €"
+                    },
+                    "tax_reserve": {
+                        "label": "Mokesčių rezervas",
+                        "value": "−3 960,00 €"
+                    },
+                    "safe_to_spend": {
+                        "label": "Galima išleisti",
+                        "value": "12 320,00 €"
+                    }
+                }
+            },
+            "exports_preview": {
+                "files": {
+                    "journal_csv": "pajamu-islaidu-zurnalas-2026.csv",
+                    "journal_xlsx": "pajamu-islaidu-zurnalas-2026.xlsx",
+                    "annual": "metine-ataskaita-2026.xlsx"
+                }
+            },
             "capabilities": {
-                "payments": {
-                    "badge": "MVP",
-                    "title": "Rankinis bankinių pavedimų sekimas.",
-                    "body": "Užregistruokite pilną ar dalinį apmokėjimą tada, kai pinigai realiai ateina į sąskaitą."
-                },
                 "links": {
                     "title": "Sąskaitos nuorodos be kliento paskyros.",
                     "body": "Pasidalinkite galutine sąskaita ir mokėjimo instrukcijomis neatskleisdami savo darbo vietos."
-                },
-                "email": {
-                    "title": "Siuntimas el. paštu ir priminimai.",
-                    "body": "Išsiųskite sąskaitą ir priminkite vėluojantiems klientams iš tos pačios vietos."
                 },
                 "language": {
                     "title": "Anglų ir lietuvių kalba vienu paspaudimu.",
                     "body": "Išrašykite lietuviškus ar angliškus dokumentus iš tų pačių kliento ir profilio duomenų."
                 },
-                "export": {
-                    "title": "Pajamų žurnalo eksportai.",
-                    "body": "Atsisiųskite įrašus, kurių reikia pajamų žurnalui ar perdavimui buhalteriui."
+                "data": {
+                    "title": "Jūsų duomenys, jūsų sprendimas.",
+                    "body": "Atsisiųskite visus įrašus ir failus viename archyve arba bet kada ištrinkite paskyrą.",
+                    "file": "invoicetrackr-duomenys.zip"
                 }
             }
         },
@@ -540,17 +600,25 @@
             "eyebrow": "DUK",
             "title": "Trumpi atsakymai.",
             "items": {
+                "who": {
+                    "question": "Kam skirta InvoiceTrackr?",
+                    "answer": "Lietuvos specialistams, dirbantiems pagal individualios veiklos pažymą: dizaineriams, programuotojams, konsultantams ir kitiems savarankiškai dirbantiems, kurie išrašo sąskaitas klientams ir patys seka pajamas, išlaidas bei mokesčius."
+                },
                 "free": {
                     "question": "Ar galiu sugeneruoti sąskaitą be paskyros?",
                     "answer": "Galite nemokamai sugeneruoti sąskaitą ir atsisiųsti PDF be paskyros. Prisijungusi programos dalis skirta išsaugotai freelancerio eigai: klientams, sąskaitoms, priminimams, mokėjimams, išlaidoms ir eksportams."
                 },
-                "export": {
-                    "question": "Ar galiu eksportuoti duomenis?",
-                    "answer": "Taip. Pajamų žurnalą į CSV galite eksportuoti kada tik norite."
+                "taxes": {
+                    "question": "Ar programa apskaičiuoja mokesčius?",
+                    "answer": "Ji įvertina individualios veiklos GPM, VSD ir PSD pagal gautas pajamas ir išlaidas, o mokesčių rezervą rodo skydelyje. Tai įvertis planavimui; InvoiceTrackr nieko neteikia VMI ar Sodrai."
                 },
                 "payments": {
                     "question": "Kaip veikia mokėjimai?",
-                    "answer": "MVP daro prielaidą, kad klientai moka bankiniu pavedimu. Pilnus ar dalinius apmokėjimus įvedate rankiniu būdu, o sąskaitos būsena atsinaujina pagal tuos įrašus."
+                    "answer": "Klientai jums moka bankiniu pavedimu. Internetiniai mokėjimai kol kas nepalaikomi, todėl pilnus ar dalinius apmokėjimus įvedate patys, kai pinigai gaunami, o sąskaitos būsena ir likutis atsinaujina pagal tuos įrašus."
+                },
+                "export": {
+                    "question": "Ar galiu eksportuoti duomenis?",
+                    "answer": "Taip. Eksportuokite pajamų ir išlaidų žurnalą į CSV ar XLSX, atsisiųskite metinę ataskaitą arba paskyros nustatymuose gaukite visus įrašus viename archyve."
                 },
                 "languages": {
                     "question": "Kokios kalbos palaikomos?",
@@ -577,7 +645,7 @@
     "seo": {
         "home": {
             "title": "Sąskaitų faktūrų programa Lietuvos freelanceriams",
-            "description": "Kurkite sąskaitas, valdykite klientus, registruokite bankinius pavedimus, sekite išlaidas ir ruoškite pajamų žurnalo eksportus individualiai veiklai.",
+            "description": "Sąskaitos, klientai, bankiniai pavedimai, išlaidos, mokesčių įvertis ir pajamų žurnalo eksportai vienoje vietoje individualiai veiklai Lietuvoje.",
             "keywords": [
                 "sąskaitų faktūrų programa",
                 "individualios veiklos sąskaita",
@@ -587,11 +655,14 @@
                 "freelanceriai Lietuvoje"
             ],
             "features": [
-                "Sąskaitų faktūrų kūrimas",
-                "Klientų valdymas",
+                "Sąskaitų faktūrų kūrimas ir numeracija",
+                "Klientų valdymas su įmonių paieška",
                 "Rankinis apmokėjimų sekimas",
-                "Sąskaitų siuntimas el. paštu",
-                "Pajamų žurnalo eksportas"
+                "Sąskaitų siuntimas el. paštu ir priminimai",
+                "Išlaidų apskaita su dokumentais",
+                "Individualios veiklos mokesčių įvertis",
+                "Pajamų ir išlaidų žurnalo eksportas",
+                "Metinė mokesčių ataskaita"
             ]
         },
         "createInvoice": {
@@ -618,11 +689,11 @@
         },
         "terms": {
             "title": "Naudojimosi sąlygos",
-            "description": "InvoiceTrackr naudojimosi sąlygos paskyrai, sąskaitų kūrimui, MVP prieigai, apmokėjimų įrašams ir atsakomybei.",
+            "description": "InvoiceTrackr naudojimosi sąlygos paskyrai, sąskaitų kūrimui, apmokėjimų įrašams ir atsakomybei.",
             "keywords": [
                 "InvoiceTrackr naudojimosi sąlygos",
                 "sąlygos",
-                "MVP prieiga",
+                "paslaugos prieiga",
                 "sąskaitų įrašai",
                 "paskyros naudojimas"
             ]
@@ -1926,8 +1997,7 @@
             "free_invoice": {
                 "eyebrow": "Nemokamas sąskaitos generatorius",
                 "title": "Sukurkite tvarkingą PDF sąskaitą be registracijos",
-                "description": "Paruoškite tikrą sąskaitą, peržiūrėkite PDF ir atsisiųskite nemokamai. Kai reikės pilnos freelancerio eigos, susikurkite paskyrą klientams, siuntimui, apmokėjimų sekimui ir eksportams.",
-                "untracked_notice": "Šis PDF nėra išsaugomas ir InvoiceTrackr nepažymi jo kaip išrašyto. Numeraciją ir apskaitą tvarkykite patys arba susikurkite paskyrą juodraščiams ir išrašymui valdyti.",
+                "description": "Paruoškite sąskaitą, peržiūrėkite PDF ir atsisiųskite nemokamai. Čia niekas neišsaugoma, todėl numeraciją ir apskaitą tvarkykite patys.",
                 "upgrade_title": "Reikia daugiau nei PDF?",
                 "upgrade_description": "Sukurkite paskyrą, kad galėtumėte išsaugoti sąskaitas, naudoti klientus ir banko sąskaitas pakartotinai, siųsti sąskaitų nuorodas ir sekti apmokėjimą.",
                 "upgrade_cta": "Sukurti paskyrą",
@@ -2007,7 +2077,7 @@
                 },
                 "payment_info": {
                     "heading": "2.3 Mokėjimo informacija",
-                    "content": "InvoiceTrackr leidžia įrašyti sąskaitų apmokėjimo būseną ir jūsų pačių įvestus bankinio pavedimo duomenis. MVP neapdoroja klientų mokėjimų ir nesaugo klientų mokėjimo priemonių duomenų."
+                    "content": "InvoiceTrackr leidžia įrašyti sąskaitų apmokėjimo būseną ir jūsų pačių įvestus bankinio pavedimo duomenis. InvoiceTrackr neapdoroja klientų mokėjimų ir nesaugo klientų mokėjimo priemonių duomenų."
                 },
                 "usage_info": {
                     "heading": "2.4 Naudojimo informacija",
