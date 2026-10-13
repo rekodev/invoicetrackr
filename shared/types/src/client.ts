@@ -1,4 +1,5 @@
 import z from 'zod/v4';
+import { pageSizeQuerySchema } from './common';
 import {
   invoicePartyBusinessTypeSchema,
   invoicePartyTypeSchema
@@ -41,7 +42,15 @@ export const clientMutationBodySchema = clientBodySchema
   .omit({ archivedAt: true })
   .extend({ duplicateAcknowledged: z.boolean().optional() });
 
+export const clientListQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).optional(),
+  pageSize: pageSizeQuerySchema.optional(),
+  q: z.string().trim().max(100).optional(),
+  businessType: invoicePartyBusinessTypeSchema.optional()
+});
+
 // Types
+export type ClientListQuery = z.infer<typeof clientListQuerySchema>;
 export type ClientBody = z.infer<typeof clientBodySchema>;
 export type ClientMutationBody = z.infer<typeof clientMutationBodySchema>;
 export type Client = ClientBody;

@@ -11,73 +11,48 @@ import {
   Input
 } from '@heroui/react';
 import { useTranslations } from 'next-intl';
-import { ChangeEvent, Dispatch, SetStateAction, useCallback } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
+import { LIST_PAGE_SIZES } from '@/lib/constants/table';
 import { capitalize } from '@/lib/utils';
 
 type Props = {
   columns: Array<{ name: string; uid: string; sortable?: boolean }>;
   statusOptions: Array<{ name: string; uid: string }>;
-  filterValue: string;
-  setFilterValue: Dispatch<SetStateAction<string>>;
+  searchValue: string;
+  onSearchChange: (_value: string) => void;
   overdueOnly: boolean;
-  setOverdueOnly: Dispatch<SetStateAction<boolean>>;
+  onOverdueToggle: () => void;
   statusFilter: string;
-  setStatusFilter: Dispatch<SetStateAction<string>>;
+  onStatusChange: (_status: string) => void;
   visibleColumns: Set<string> | 'all';
   setVisibleColumns: Dispatch<SetStateAction<Set<string> | 'all'>>;
-  setPage: Dispatch<SetStateAction<number>>;
-  setRowsPerPage: Dispatch<SetStateAction<number>>;
-  invoicesLength: number | undefined;
+  rowsPerPage: number;
+  onRowsPerPageChange: (_rowsPerPage: number) => void;
+  total: number;
 };
 
 const InvoiceTableTopContent = ({
   columns,
   statusOptions,
-  filterValue,
-  setFilterValue,
+  searchValue,
+  onSearchChange,
   visibleColumns,
   setVisibleColumns,
   overdueOnly,
-  setOverdueOnly,
+  onOverdueToggle,
   statusFilter,
-  setStatusFilter,
-  setPage,
-  setRowsPerPage,
-  invoicesLength
+  onStatusChange,
+  rowsPerPage,
+  onRowsPerPageChange,
+  total
 }: Props) => {
   const t = useTranslations('invoices');
 
-  const totalInvoicesText = invoicesLength
-    ? invoicesLength === 1
+  const totalInvoicesText =
+    total === 1
       ? t('top_content.total_singular')
-      : t('top_content.total_plural', { count: invoicesLength })
-    : t('top_content.total_plural', { count: 0 });
-
-  const onSearchChange = useCallback(
-    (value: string) => {
-      if (value) {
-        setFilterValue(value);
-        setPage(1);
-      } else {
-        setFilterValue('');
-      }
-    },
-    [setPage, setFilterValue]
-  );
-
-  const onClear = useCallback(() => {
-    setFilterValue('');
-    setPage(1);
-  }, [setPage, setFilterValue]);
-
-  const onRowsPerPageChange = useCallback(
-    (event: ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(event.target.value));
-      setPage(1);
-    },
-    [setPage, setRowsPerPage]
-  );
+      : t('top_content.total_plural', { count: total });
 
   return (
     <div className="flex flex-col gap-field pt-1">
@@ -88,10 +63,12 @@ const InvoiceTableTopContent = ({
             className="w-full"
             variant="secondary"
             placeholder={t('top_content.search_placeholder')}
-            value={filterValue}
+            value={searchValue}
             onChange={(event) => onSearchChange(event.target.value)}
           />
-          {filterValue && <CloseButton aria-label="Clear" onPress={onClear} />}
+          {searchValue && (
+            <CloseButton aria-label="Clear" onPress={() => onSearchChange('')} />
+          )}
         </div>
         <div className="grid w-full grid-cols-1 gap-actions sm:flex sm:w-auto sm:gap-heading">
           <Dropdown>
@@ -111,10 +88,9 @@ const InvoiceTableTopContent = ({
                 aria-label={t('table.filters.a11y.status_label')}
                 selectedKeys={new Set([statusFilter])}
                 selectionMode="single"
-                onSelectionChange={(keys) => {
-                  setStatusFilter(keys === 'all' ? 'all' : String(Array.from(keys)[0] || 'all'));
-                  setPage(1);
-                }}
+                onSelectionChange={(keys) =>
+                  onStatusChange(keys === 'all' ? 'all' : String(Array.from(keys)[0] || 'all'))
+                }
               >
                 {statusOptions.map((status) => (
                   <DropdownItem
@@ -131,7 +107,7 @@ const InvoiceTableTopContent = ({
             </DropdownPopover>
           </Dropdown>
           <Button variant={overdueOnly ? 'secondary' : 'tertiary'} aria-pressed={overdueOnly}
-            onPress={() => { setOverdueOnly((value) => !value); setPage(1); }}>
+            onPress={onOverdueToggle}>
             {t('table.filters.overdue_only')}
           </Button>
           <Dropdown>
@@ -175,12 +151,14 @@ const InvoiceTableTopContent = ({
           {t('table.rows_per_page')}
           <select
             className="section-eyebrow text-muted bg-transparent outline-none"
-            onChange={onRowsPerPageChange}
-            defaultValue={10}
+            onChange={(event) => onRowsPerPageChange(Number(event.target.value))}
+            value={rowsPerPage}
           >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
+            {LIST_PAGE_SIZES.map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
           </select>
         </label>
       </div>

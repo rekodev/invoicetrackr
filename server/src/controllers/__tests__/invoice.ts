@@ -12,7 +12,11 @@ import * as invoiceDb from '../../database/invoice';
 import * as paymentDb from '../../database/invoice-payment';
 import * as userDb from '../../database/user';
 import en from '../../locales/en';
-import { postInvoiceOptions, updateInvoiceOptions } from '../../options/invoice';
+import {
+  getInvoicesOptions,
+  postInvoiceOptions,
+  updateInvoiceOptions
+} from '../../options/invoice';
 import { createTestApp, mockAuthMiddleware } from '../../test/app';
 import { clientFactory } from '../../test/factories/client';
 import {
@@ -62,22 +66,20 @@ describe('Invoice Controller', () => {
   });
 
   describe('GET /api/:userId/invoices', () => {
-    it('should return all invoices for a user', async () => {
-      vi.mocked(invoiceDb.getInvoicesFromDb).mockResolvedValue([
-        { ...mockInvoiceForDb, paidAmount: '0.00', outstandingAmount: mockInvoiceForDb.totalAmount, paymentDates: [] },
-        { ...mockInvoiceForDb2, paidAmount: '40.00', outstandingAmount: mockInvoiceForDb2.totalAmount, paymentDates: ['2026-04-02'] }
-      ]);
-
-      const { getInvoices } = invoiceController;
+    it('returns a page of invoices with defaults, parsed filters and pagination metadata', async () => {
+      vi.mocked(invoiceDb.getInvoicesFromDb).mockResolvedValue({
+        invoices: [
+          { ...mockInvoiceForDb, paidAmount: '0.00', outstandingAmount: mockInvoiceForDb.totalAmount, paymentDates: [] },
+          { ...mockInvoiceForDb2, paidAmount: '40.00', outstandingAmount: mockInvoiceForDb2.totalAmount, paymentDates: ['2026-04-02'] }
+        ],
+        total: 12
+      });
 
       const app = await createTestApp((fastifyApp) => {
-        fastifyApp.get(
-          '/api/:userId/invoices',
-          {
-            preHandler: mockAuthMiddleware
-          },
-          getInvoices
-        );
+        fastifyApp.get('/api/:userId/invoices', {
+          ...getInvoicesOptions,
+          preHandler: mockAuthMiddleware
+        });
       });
 
       const response = await app.inject({
@@ -86,12 +88,40 @@ describe('Invoice Controller', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      const body = JSON.parse(response.body);
-      expect(body.invoices).toBeDefined();
-      expect(Array.isArray(body.invoices)).toBe(true);
-      expect(body.invoices.length).toBe(2);
+      const body = response.json();
+      expect(body.invoices).toHaveLength(2);
       expect(body.invoices[1].paymentDates).toEqual(['2026-04-02']);
-      expect(invoiceDb.getInvoicesFromDb).toHaveBeenCalledWith(testUserId);
+      expect(body.pagination).toEqual({ page: 1, pageSize: 10, total: 12 });
+      expect(invoiceDb.getInvoicesFromDb).toHaveBeenCalledWith(testUserId, {
+        page: 1,
+        pageSize: 10,
+        sort: 'date',
+        direction: 'descending'
+      });
+
+      const filtered = await app.inject({
+        method: 'GET',
+        url: `/api/${testUserId}/invoices?page=2&pageSize=5&q=SF&status=open&overdue=1&paidFrom=2026-01-01&paidTo=2026-03-31&sort=receiver&direction=ascending`
+      });
+
+      expect(filtered.json().pagination).toEqual({ page: 2, pageSize: 5, total: 12 });
+      expect(invoiceDb.getInvoicesFromDb).toHaveBeenLastCalledWith(testUserId, {
+        page: 2,
+        pageSize: 5,
+        q: 'SF',
+        status: 'open',
+        overdue: '1',
+        paidFrom: '2026-01-01',
+        paidTo: '2026-03-31',
+        sort: 'receiver',
+        direction: 'ascending'
+      });
+
+      const invalid = await app.inject({
+        method: 'GET',
+        url: `/api/${testUserId}/invoices?status=unknown&issuedFrom=2026-13-40`
+      });
+      expect(invalid.statusCode).toBe(400);
 
       await app.close();
     });

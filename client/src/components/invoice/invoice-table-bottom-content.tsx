@@ -1,21 +1,21 @@
 import { Pagination } from '@heroui/react';
 import { useTranslations } from 'next-intl';
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { useMemo } from 'react';
 
 type Props = {
   page: number;
-  setPage: Dispatch<SetStateAction<number>>;
   pages: number;
   rowsPerPage: number;
-  filteredItemsLength: number | undefined;
+  total: number;
+  onPageChange: (_page: number) => void;
 };
 
 const InvoiceTableBottomContent = ({
   page,
-  setPage,
   pages,
   rowsPerPage,
-  filteredItemsLength = 0
+  total,
+  onPageChange
 }: Props) => {
   const t = useTranslations('invoices.bottom_content');
 
@@ -24,23 +24,21 @@ const InvoiceTableBottomContent = ({
     [pages]
   );
 
-  const start = filteredItemsLength === 0 ? 0 : (page - 1) * rowsPerPage + 1;
+  const start = total === 0 ? 0 : (page - 1) * rowsPerPage + 1;
 
-  const end = Math.min(page * rowsPerPage, filteredItemsLength);
+  const end = Math.min(page * rowsPerPage, total);
 
   return (
     <Pagination size="sm" className="w-full justify-between">
       <Pagination.Summary>
-        {start} to {end} of {filteredItemsLength} results
+        {start} to {end} of {total} results
       </Pagination.Summary>
 
       <Pagination.Content>
         <Pagination.Item>
           <Pagination.Previous
-            isDisabled={page === 1 || filteredItemsLength === 0}
-            onPress={() =>
-              setPage((currentPage) => Math.max(1, currentPage - 1))
-            }
+            isDisabled={page === 1 || total === 0}
+            onPress={() => onPageChange(Math.max(1, page - 1))}
           >
             <Pagination.PreviousIcon />
             {t('previous')}
@@ -51,8 +49,8 @@ const InvoiceTableBottomContent = ({
           <Pagination.Item key={pageNumber}>
             <Pagination.Link
               isActive={pageNumber === page}
-              isDisabled={filteredItemsLength === 0}
-              onPress={() => setPage(pageNumber)}
+              isDisabled={total === 0}
+              onPress={() => onPageChange(pageNumber)}
             >
               {pageNumber}
             </Pagination.Link>
@@ -61,10 +59,8 @@ const InvoiceTableBottomContent = ({
 
         <Pagination.Item>
           <Pagination.Next
-            isDisabled={page === pages || filteredItemsLength === 0}
-            onPress={() =>
-              setPage((currentPage) => Math.min(pages, currentPage + 1))
-            }
+            isDisabled={page >= pages || total === 0}
+            onPress={() => onPageChange(Math.min(pages, page + 1))}
           >
             {t('next')}
             <Pagination.NextIcon />

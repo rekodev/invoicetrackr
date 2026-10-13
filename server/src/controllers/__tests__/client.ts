@@ -33,11 +33,11 @@ describe('Client Controller', () => {
     vi.clearAllMocks();
   });
 
-  it('returns active clients for a user', async () => {
-    vi.mocked(clientDb.getClientsFromDb).mockResolvedValue([
-      mockClient,
-      mockClient2
-    ]);
+  it('returns all active clients, or a filtered page when a page is requested', async () => {
+    vi.mocked(clientDb.getClientsFromDb).mockResolvedValue({
+      clients: [mockClient, mockClient2],
+      total: 2
+    });
     const app = await createTestApp((fastifyApp) => {
       fastifyApp.get('/api/:userId/clients', {
         ...getClientsOptions,
@@ -51,8 +51,38 @@ describe('Client Controller', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(response.json().clients).toHaveLength(2);
-    expect(clientDb.getClientsFromDb).toHaveBeenCalledWith(testUserId);
+    expect(response.json()).toEqual({
+      clients: expect.arrayContaining([expect.objectContaining({ id: 2 })])
+    });
+    expect(clientDb.getClientsFromDb).toHaveBeenCalledWith(testUserId, {});
+
+    vi.mocked(clientDb.getClientsFromDb).mockResolvedValue({
+      clients: [mockClient2],
+      total: 9
+    });
+    const pageResponse = await app.inject({
+      method: 'GET',
+      url: `/api/${testUserId}/clients?page=2&pageSize=8&q=%20mb%20&businessType=business`
+    });
+
+    expect(pageResponse.statusCode).toBe(200);
+    expect(pageResponse.json().pagination).toEqual({
+      page: 2,
+      pageSize: 8,
+      total: 9
+    });
+    expect(clientDb.getClientsFromDb).toHaveBeenLastCalledWith(testUserId, {
+      page: 2,
+      pageSize: 8,
+      q: 'mb',
+      businessType: 'business'
+    });
+
+    const invalidResponse = await app.inject({
+      method: 'GET',
+      url: `/api/${testUserId}/clients?pageSize=500`
+    });
+    expect(invalidResponse.statusCode).toBe(400);
     await app.close();
   });
 

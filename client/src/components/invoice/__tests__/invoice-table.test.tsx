@@ -1,9 +1,11 @@
 import type {
   InvoiceListItem,
+  InvoiceListQuery,
   InvoiceWorkspaceResponse
 } from '@invoicetrackr/types';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { ComponentProps } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { getInvoiceWorkspaceAction } from '@/lib/actions/invoice';
@@ -11,11 +13,12 @@ import { withIntl } from '@/test/with-intl';
 
 import InvoiceTable from '../invoice-table';
 
+const mockReplace = vi.fn();
+
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
-  useSearchParams: () => new URLSearchParams(window.location.search)
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn(), replace: mockReplace })
 }));
-afterEach(() => window.history.replaceState(null, '', '/'));
+afterEach(() => mockReplace.mockClear());
 vi.mock('@/lib/actions/invoice', () => ({
   getInvoiceWorkspaceAction: vi.fn(),
   updateInvoiceStatusAction: vi.fn(),
@@ -42,9 +45,32 @@ const invoice = {
   paymentDates: ['2026-09-25']
 } as InvoiceListItem;
 
+const defaultQuery: InvoiceListQuery = {
+  page: 1,
+  pageSize: 10,
+  sort: 'date',
+  direction: 'descending'
+};
+
+const renderTable = ({
+  invoices = [invoice],
+  ...props
+}: Partial<ComponentProps<typeof InvoiceTable>> = {}) =>
+  render(
+    withIntl(
+      <InvoiceTable
+        invoices={invoices}
+        pagination={{ page: 1, pageSize: 10, total: invoices.length }}
+        query={defaultQuery}
+        userId={1}
+        {...props}
+      />
+    )
+  );
+
 describe('invoice list', () => {
   it('links a saved invoice to its workspace', () => {
-    render(withIntl(<InvoiceTable invoices={[invoice]} userId={1} />));
+    renderTable();
 
     expect(screen.getByRole('link', { name: 'SF007' })).toHaveAttribute(
       'href',
@@ -64,39 +90,22 @@ describe('invoice list', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('restores dashboard filters from the URL, shows them as chips, and keeps the URL in sync', async () => {
-    const paidLastYear = {
-      ...invoice,
-      id: 10,
-      invoiceId: 'SF010',
-      paymentDates: ['2025-12-30']
-    };
-    const draft: InvoiceListItem = {
-      ...invoice,
-      id: 11,
-      invoiceId: 'SF011',
-      lifecycleStatus: 'draft',
-      paidAmount: null,
-      outstandingAmount: null,
-      paymentDates: []
-    };
-    window.history.replaceState(
-      null,
-      '',
-      '/invoices?status=open&paidFrom=2026-01-01&paidTo=2026-12-31'
-    );
-    render(
-      withIntl(<InvoiceTable invoices={[invoice, paidLastYear, draft]} userId={1} />)
-    );
+  it('shows URL filters as chips and moves every filter change into the URL', async () => {
+    renderTable({
+      query: {
+        ...defaultQuery,
+        status: 'open',
+        paidFrom: '2026-01-01',
+        paidTo: '2026-12-31'
+      }
+    });
 
-    expect(screen.getByRole('link', { name: 'SF007' })).toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: 'SF010' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: 'SF011' })).not.toBeInTheDocument();
     expect(screen.getByText('Paid: Jan 1, 2026 – Dec 31, 2026')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Overdue only' }));
-    expect(window.location.search).toBe(
-      '?status=open&overdue=1&paidFrom=2026-01-01&paidTo=2026-12-31'
+    expect(mockReplace).toHaveBeenLastCalledWith(
+      '/invoices?status=open&paidFrom=2026-01-01&paidTo=2026-12-31&overdue=1',
+      { scroll: false }
     );
 
     await userEvent.click(
@@ -104,7 +113,16 @@ describe('invoice list', () => {
         name: 'Remove Paid: Jan 1, 2026 – Dec 31, 2026 filter'
       })
     );
-    expect(window.location.search).toBe('?status=open&overdue=1');
+    expect(mockReplace).toHaveBeenLastCalledWith('/invoices?status=open', {
+      scroll: false
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Status' }));
+    await userEvent.click(screen.getByRole('menuitemradio', { name: 'Unpaid' }));
+    expect(mockReplace).toHaveBeenLastCalledWith(
+      '/invoices?status=pending&paidFrom=2026-01-01&paidTo=2026-12-31',
+      { scroll: false }
+    );
   });
 
   it('loads issued actions on demand and hides cancel when receipts exist', async () => {
@@ -116,9 +134,7 @@ describe('invoice list', () => {
       canCopyPublicLink: true
     } as unknown as InvoiceWorkspaceResponse;
     vi.mocked(getInvoiceWorkspaceAction).mockResolvedValue({ ok: true, data });
-    render(
-      withIntl(<InvoiceTable invoices={[invoice]} userId={1} isEmailVerified />)
-    );
+    renderTable({ isEmailVerified: true });
     expect(
       screen.getByRole('button', { name: 'Download' })
     ).toBeInTheDocument();
@@ -161,7 +177,7 @@ describe('invoice list', () => {
         canCopyPublicLink: false
       } as InvoiceWorkspaceResponse
     });
-    render(withIntl(<InvoiceTable invoices={[draft]} userId={1} />));
+    renderTable({ invoices: [draft] });
     await userEvent.click(screen.getByRole('button', { name: 'More Actions' }));
     expect(
       await screen.findByRole('menuitem', { name: 'Issue Invoice' })
@@ -200,7 +216,7 @@ describe('invoice list', () => {
         canCopyPublicLink: false
       } as InvoiceWorkspaceResponse
     });
-    render(withIntl(<InvoiceTable invoices={[draft]} userId={1} />));
+    renderTable({ invoices: [draft] });
     await userEvent.click(screen.getByRole('button', { name: 'More Actions' }));
     expect(
       await screen.findByRole('menuitem', { name: 'Edit draft' })
@@ -224,7 +240,7 @@ describe('invoice list', () => {
         canCopyPublicLink: false
       } as InvoiceWorkspaceResponse
     });
-    render(withIntl(<InvoiceTable invoices={[invoice]} userId={1} />));
+    renderTable();
     await userEvent.click(screen.getByRole('button', { name: 'More Actions' }));
     expect(
       await screen.findByRole('menuitem', { name: 'Send invoice' })
@@ -237,40 +253,30 @@ describe('invoice list', () => {
     ).toBeInTheDocument();
   });
 
-  it('filters unpaid invoices independently of the overdue condition', async () => {
-    const unpaid = {
-      ...invoice,
-      id: 8,
-      invoiceId: 'SF008',
-      receiver: { ...invoice.receiver, name: 'Unpaid client' },
-      paidAmount: '0.00',
-      outstandingAmount: '120.00',
-      dueDate: '2000-01-01'
-    };
-    const partial = { ...invoice, dueDate: '2000-01-01' };
-    const zero = {
-      ...invoice,
-      id: 9,
-      invoiceId: 'SF009',
-      totalAmount: '0.00',
-      paidAmount: '0.00',
-      outstandingAmount: '0.00',
-      dueDate: '2000-01-01'
-    };
-    render(
-      withIntl(<InvoiceTable invoices={[partial, unpaid, zero]} userId={1} />)
+  it('pages and searches through the server, and shows the no-results state for filtered empty pages', async () => {
+    const { unmount } = renderTable({
+      pagination: { page: 1, pageSize: 10, total: 25 }
+    });
+
+    expect(screen.getByText('1 to 10 of 25 results')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: '2' }));
+    expect(mockReplace).toHaveBeenLastCalledWith('/invoices?page=2', {
+      scroll: false
+    });
+
+    await userEvent.type(screen.getByPlaceholderText('Search by invoice ID...'), ' SF ');
+    await waitFor(() =>
+      expect(mockReplace).toHaveBeenLastCalledWith('/invoices?q=SF', {
+        scroll: false
+      })
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Overdue only' }));
-    expect(
-      screen.queryByRole('link', { name: 'SF009' })
-    ).not.toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Status' }));
-    await userEvent.click(
-      screen.getByRole('menuitemradio', { name: 'Unpaid' })
-    );
-    expect(screen.getByRole('link', { name: 'SF008' })).toBeInTheDocument();
-    expect(
-      screen.queryByRole('link', { name: 'SF007' })
-    ).not.toBeInTheDocument();
+    unmount();
+
+    renderTable({
+      invoices: [],
+      query: { ...defaultQuery, q: 'missing' }
+    });
+    expect(screen.getByText('0 to 0 of 0 results')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'SF007' })).not.toBeInTheDocument();
   });
 });

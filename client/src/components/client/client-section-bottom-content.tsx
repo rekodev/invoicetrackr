@@ -5,38 +5,23 @@ import {
   PaginationItem,
   PaginationLink
 } from '@heroui/react';
-import { Dispatch, SetStateAction } from 'react';
-
-const PER_PAGE = 8;
-const INITIAL_PAGE = 1;
 
 type Props = {
-  clientsLength: number | undefined;
   page: number;
-  setPage: Dispatch<SetStateAction<number>>;
+  pages: number;
+  onPageChange: (_page: number) => void;
 };
 
-const ClientSectionBottomContent = ({
-  clientsLength,
-  page,
-  setPage
-}: Props) => {
-  const pages = clientsLength
-    ? Math.ceil(clientsLength / PER_PAGE)
-    : INITIAL_PAGE;
-  const prevButtonDisabled = page === 1;
-  const nextButtonDisabled = page === pages;
+const ClientSectionBottomContent = ({ page, pages, onPageChange }: Props) => {
+  const prevButtonDisabled = page <= 1;
+  const nextButtonDisabled = page >= pages;
 
   const onNextPage = () => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
+    if (page < pages) onPageChange(page + 1);
   };
 
   const onPreviousPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
+    if (page > 1) onPageChange(page - 1);
   };
 
   return (
@@ -51,8 +36,7 @@ const ClientSectionBottomContent = ({
                 <PaginationItem key={pageNumber}>
                   <PaginationLink
                     isActive={pageNumber === page}
-                    isDisabled={!clientsLength}
-                    onPress={() => setPage(pageNumber)}
+                    onPress={() => onPageChange(pageNumber)}
                   >
                     {pageNumber}
                   </PaginationLink>

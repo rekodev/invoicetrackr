@@ -1,6 +1,7 @@
 import type {
   AddClientResponse,
   ArchiveClientResponse,
+  ClientListQuery,
   ClientMutationBody,
   ClientWorkspaceResponse,
   GetClientsResponse,
@@ -9,8 +10,10 @@ import type {
 
 import api from './api-instance';
 
-export const getClients = async (userId: number) =>
-  await api.get<GetClientsResponse>(`/api/${userId}/clients`);
+export const getClients = async (userId: number, query: ClientListQuery = {}) =>
+  await api.get<GetClientsResponse>(`/api/${userId}/clients`, {
+    params: query
+  });
 
 export const getClientWorkspace = (userId: number, clientId: number) =>
   api.get<ClientWorkspaceResponse>(`/api/${userId}/clients/${clientId}/workspace`);
