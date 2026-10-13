@@ -102,7 +102,7 @@ export default function SendInvoiceEmailModal({ onClose, userId, invoice, isEmai
       <Modal.Container size="lg" scroll="outside">
         <Modal.Dialog>
           {!isPending ? <Modal.CloseTrigger /> : null}
-          <form onSubmit={handleSubmit(submit)}>
+          <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleSubmit(submit)}>
             <Modal.Header>
               <Modal.Heading>{kind === 'reminder' ? t('reminder_title') : t('invoice_title')} · {invoice.invoiceId}</Modal.Heading>
               <p className="text-muted text-sm">{invoice.receiver.name}</p>

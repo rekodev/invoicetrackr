@@ -154,7 +154,11 @@ const TaxAssumptionsDialog = ({
       <Modal.Container>
         <Modal.Dialog>
           <Modal.CloseTrigger />
-          <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <form
+            noValidate
+            className="flex min-h-0 flex-1 flex-col"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <Modal.Header>
               <div className="flex items-center gap-2">
                 <Modal.Heading>{t('title')}</Modal.Heading>

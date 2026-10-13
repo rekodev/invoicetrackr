@@ -97,7 +97,11 @@ const DeleteAccountModal = ({ userId, email, isOpen, onClose }: Props) => {
       <Modal.Container size="lg">
         <Modal.Dialog>
           <Modal.CloseTrigger />
-          <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <form
+            noValidate
+            className="flex min-h-0 flex-1 flex-col"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <Modal.Header className="flex-row items-center gap-2">
               <ExclamationTriangleIcon className="text-danger h-6 w-6" />
               <Modal.Heading>{t('title')}</Modal.Heading>

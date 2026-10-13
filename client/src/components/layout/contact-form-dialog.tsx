@@ -78,7 +78,10 @@ export default function ContactFormDialog() {
         <Modal.Container size="lg">
           <Modal.Dialog>
             <Modal.CloseTrigger />
-            <Form onSubmit={handleSubmit(onSubmit)}>
+            <Form
+              className="flex min-h-0 flex-1 flex-col"
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <Modal.Header>
                 <Modal.Heading>{t('title')}</Modal.Heading>
               </Modal.Header>

@@ -76,7 +76,7 @@ export default function InvoicePaymentDialog({ userId, invoiceId, outstandingAmo
           <Modal.Header>
             <Modal.Heading>{payment ? t('edit_payment') : t('record_payment')}</Modal.Heading>
           </Modal.Header>
-          <form noValidate onSubmit={(event) => handleSubmit(save)(event)}>
+          <form noValidate className="flex min-h-0 flex-1 flex-col" onSubmit={(event) => handleSubmit(save)(event)}>
             <Modal.Body className="space-y-3">
               <p className="text-muted text-sm">{t('bank_transfer')}</p>
               <Alert status="accent" className="border border-accent/20 bg-accent-soft shadow-none">
