@@ -1,10 +1,12 @@
 import { unauthorized } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 
 import { getBankingInformationEntries } from '@/api/banking-information';
 import { getClients } from '@/api/client';
 import { getUser } from '@/api/user';
 import { auth } from '@/auth';
 import InvoiceForm from '@/components/invoice/invoice-form';
+import PageHeader from '@/components/ui/page-header';
 import { isResponseError } from '@/lib/utils/error';
 
 type SearchParams = Promise<{ clientId?: string }>;
@@ -32,8 +34,11 @@ const AddNewInvoicePage = async ({ searchParams }: { searchParams: SearchParams 
   )
     throw new Error('Failed to load data');
 
+  const t = await getTranslations('invoices.page');
+
   return (
-    <section className="w-full">
+    <section className="flex w-full flex-col gap-6">
+      <PageHeader title={t('new_title')} />
       <InvoiceForm
         initialClient={clientId && /^[1-9]\d*$/.test(clientId)
           ? clientsResp.data.clients.find((client) => client.id === Number(clientId))

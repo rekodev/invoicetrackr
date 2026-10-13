@@ -6,6 +6,7 @@ import { getUser } from '@/api/user';
 import { auth } from '@/auth';
 import AccountDataSection from '@/components/profile/account-data-section';
 import LanguageSettingsForm from '@/components/profile/language-settings-form';
+import PageHeader from '@/components/ui/page-header';
 import SectionHeading from '@/components/ui/section-heading';
 import { isResponseError } from '@/lib/utils/error';
 
@@ -26,18 +27,21 @@ const AccountPage = async ({ searchParams }: Props) => {
   const t = await getTranslations('profile.account');
 
   return (
-    <Card className="w-full border">
-      <Card.Content className="flex flex-col gap-6 p-6">
-        <SectionHeading title={t('title')} description={t('description')} />
-        <LanguageSettingsForm key={session.user.language} user={user} />
-        <div className="border-t" />
-        <AccountDataSection
-          userId={Number(user.id)}
-          email={user.email ?? ''}
-          hasExportError={exportError === '1'}
-        />
-      </Card.Content>
-    </Card>
+    <section className="flex flex-col gap-6">
+      <PageHeader title={t('title')} />
+      <Card className="w-full border">
+        <Card.Content className="flex flex-col gap-6 p-6">
+          <SectionHeading description={t('description')} />
+          <LanguageSettingsForm key={session.user.language} user={user} />
+          <div className="border-t" />
+          <AccountDataSection
+            userId={Number(user.id)}
+            email={user.email ?? ''}
+            hasExportError={exportError === '1'}
+          />
+        </Card.Content>
+      </Card>
+    </section>
   );
 };
 

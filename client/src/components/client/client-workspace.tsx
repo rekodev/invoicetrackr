@@ -19,6 +19,7 @@ import { useState } from 'react';
 
 import EmptyState from '@/components/empty-state';
 import MetricCard from '@/components/ui/metric-card';
+import PageHeader from '@/components/ui/page-header';
 import { CLIENTS_PAGE, INVOICE_WORKSPACE_PAGE } from '@/lib/constants/pages';
 import { formatLocalizedDate } from '@/lib/utils/date';
 import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
@@ -65,26 +66,25 @@ export default function ClientWorkspace({ userId, data }: Props) {
 
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-semibold">{client.name}</h1>
-          <Chip variant="soft" color="accent">{t(`business_types.${client.businessType}`)}</Chip>
-        </div>
+      <PageHeader
+        title={client.name}
+        titleAddon={<Chip variant="soft" color="accent">{t(`business_types.${client.businessType}`)}</Chip>}
+      >
         <div className="flex flex-wrap gap-2">
-          <Link href={createHref} className={buttonVariants({ variant: 'primary' })}>
+          <Link href={createHref} className={buttonVariants({ variant: 'primary', size: 'sm' })}>
             <PlusIcon aria-hidden="true" className="h-4 w-4" />
             {t('create_invoice')}
           </Link>
-          <Button variant="secondary" onPress={() => setEditOpen(true)}>
+          <Button size="sm" variant="secondary" onPress={() => setEditOpen(true)}>
             <PencilIcon aria-hidden="true" className="h-4 w-4" />
             {t('edit')}
           </Button>
-          <Button variant="danger" onPress={() => setArchiveOpen(true)}>
+          <Button size="sm" variant="danger" onPress={() => setArchiveOpen(true)}>
             <TrashIcon aria-hidden="true" className="h-4 w-4" />
             {t('archive')}
           </Button>
         </div>
-      </header>
+      </PageHeader>
 
       <div className="grid gap-5 sm:grid-cols-3">
         {metrics.map(({ key, icon: Icon, iconVariant }) => (

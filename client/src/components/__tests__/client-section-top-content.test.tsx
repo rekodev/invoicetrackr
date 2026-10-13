@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { withIntl } from '@/test/with-intl';
 
+import AddClientButton from '../client/add-client-button';
 import ClientSectionTopContent from '../client/client-section-top-content';
 
 const mockAddClientAction = vi.fn();
@@ -26,7 +27,6 @@ describe('<ClientSectionTopContent />', () => {
 
   beforeEach(() => {
     props = {
-      userId: 1,
       clients: [
         {
           id: 1,
@@ -63,7 +63,7 @@ describe('<ClientSectionTopContent />', () => {
     expect(
       screen.getByPlaceholderText('Search by name or code...')
     ).toBeDefined();
-    expect(screen.getByText('Add New')).toBeDefined();
+    expect(screen.queryByText('Add New')).toBeNull();
     expect(screen.getByText('Type')).toBeDefined();
   });
 
@@ -99,14 +99,6 @@ describe('<ClientSectionTopContent />', () => {
     expect(props.onClear).toHaveBeenCalled();
   });
 
-  it('opens client form dialog when clicking Add New button', async () => {
-    renderHelper(<ClientSectionTopContent {...props} />);
-
-    await userEvent.click(screen.getByText('Add New'));
-
-    expect(screen.getByText('Add')).toBeDefined();
-  });
-
   it('opens type filter dropdown when clicking Type button', async () => {
     renderHelper(<ClientSectionTopContent {...props} />);
 
@@ -114,5 +106,15 @@ describe('<ClientSectionTopContent />', () => {
 
     expect(screen.getByText('Business')).toBeDefined();
     expect(screen.getByText('Individual')).toBeDefined();
+  });
+});
+
+describe('<AddClientButton />', () => {
+  it('opens the client form dialog from the page header button', async () => {
+    render(withIntl(<AddClientButton userId={1} />));
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add New' }));
+
+    expect(screen.getByText('Add')).toBeDefined();
   });
 });

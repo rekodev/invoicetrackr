@@ -1022,6 +1022,10 @@
             "total_plural": "Total {count} invoices",
             "journal": "Income Journal"
         },
+        "page": {
+            "new_title": "New Invoice",
+            "edit_title": "Edit Invoice"
+        },
         "bottom_content": {
             "previous": "Previous",
             "next": "Next"

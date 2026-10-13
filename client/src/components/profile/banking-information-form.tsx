@@ -210,7 +210,7 @@ const BankingInformationForm = ({
     <>
       <Card className="w-full border">
         <div className="flex flex-col gap-4 px-6 pt-6 sm:flex-row sm:items-start sm:justify-between">
-          <SectionHeading title={t('title')} description={t('description')} />
+          <SectionHeading description={t('description')} />
           <Button
             variant="secondary"
             className="w-full shrink-0 sm:w-auto"

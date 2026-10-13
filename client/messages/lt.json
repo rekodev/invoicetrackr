@@ -1022,6 +1022,10 @@
             "total_plural": "Viso {count} sąskaitų faktūrų",
             "journal": "Pajamų žurnalas"
         },
+        "page": {
+            "new_title": "Nauja sąskaita faktūra",
+            "edit_title": "Redaguoti sąskaitą faktūrą"
+        },
         "bottom_content": {
             "previous": "Ankstesnis",
             "next": "Kitas"

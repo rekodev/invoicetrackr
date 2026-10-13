@@ -72,7 +72,7 @@ export default function ChangePasswordForm({ userId }: Props) {
     return (
       <>
         <CardContent className="grid grid-cols-1 gap-5 p-6">
-          <SectionHeading title={t('title')} description={t('description')} />
+          <SectionHeading description={t('description')} />
           <PasswordInput
             autoComplete="new-password"
             placeholder={t('current_password_placeholder')}

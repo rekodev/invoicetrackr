@@ -43,6 +43,7 @@ import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
 
 import PdfViewerWrapper from '../pdf/pdf-viewer-wrapper';
+import PageHeader from '../ui/page-header';
 import InvoicePaymentDialog from './invoice-payment-dialog';
 import IssueInvoiceModal from './issue-invoice-modal';
 import RecipientDetailsRequestModal from './recipient-details-request-modal';
@@ -198,11 +199,9 @@ export default function InvoiceWorkspace({
 
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
-      <header className="space-y-2">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-semibold">
-            {invoice.invoiceId || t('draft')}
-          </h1>
+      <PageHeader
+        title={invoice.invoiceId || t('draft')}
+        titleAddon={
           <div className="flex flex-wrap gap-2">
             <Chip
               variant="soft"
@@ -218,15 +217,15 @@ export default function InvoiceWorkspace({
               </Chip>
             ) : null}
           </div>
-        </div>
-        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-          <span>{invoice.receiver.name}</span>
-          <span className="text-muted" aria-hidden="true">
-            ·
-          </span>
-          <span className="text-muted">{t('due', { date: invoice.dueDate })}</span>
-        </p>
-      </header>
+        }
+        description={
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="text-foreground">{invoice.receiver.name}</span>
+            <span aria-hidden="true">·</span>
+            <span>{t('due', { date: invoice.dueDate })}</span>
+          </p>
+        }
+      />
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <Card className="min-w-0 overflow-hidden border p-0">
           {isPdfDocumentLoading ? (

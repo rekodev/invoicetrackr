@@ -94,7 +94,6 @@ const InvoiceDefaultsForm = ({ user }: Props) => {
     <>
       <CardContent className="grid grid-cols-1 gap-4 px-6 pb-6 pt-6 md:grid-cols-2">
         <SectionHeading
-          title={t('invoice_defaults.title')}
           description={t('invoice_defaults.description')}
           className="mb-1 md:col-span-2"
         />

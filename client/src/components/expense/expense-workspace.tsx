@@ -8,6 +8,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import MetricCard from '@/components/ui/metric-card';
+import PageHeader from '@/components/ui/page-header';
 import { formatLocalizedDate } from '@/lib/utils/date';
 
 import DeleteExpenseModal from './delete-expense-modal';
@@ -50,16 +51,12 @@ export default function ExpenseWorkspace({ userId, expense, attachments, returnT
   ];
 
   return <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
-    <header className="flex flex-wrap items-start justify-between gap-4">
-      <div className="flex min-w-0 flex-wrap items-center gap-2">
-        <h1 className="break-words text-2xl font-semibold">{expense.supplier}</h1>
-        <Chip variant="soft" color="accent">{categories(expense.category)}</Chip>
-      </div>
+    <PageHeader title={expense.supplier} titleAddon={<Chip variant="soft" color="accent">{categories(expense.category)}</Chip>}>
       <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" onPress={() => setEditOpen(true)}><PencilSquareIcon className="size-4" />{t('edit')}</Button>
-        <Button variant="danger" onPress={() => setDeleteOpen(true)}><TrashIcon className="size-4" />{t('delete')}</Button>
+        <Button size="sm" variant="secondary" onPress={() => setEditOpen(true)}><PencilSquareIcon className="size-4" />{t('edit')}</Button>
+        <Button size="sm" variant="danger" onPress={() => setDeleteOpen(true)}><TrashIcon className="size-4" />{t('delete')}</Button>
       </div>
-    </header>
+    </PageHeader>
     <div className="grid gap-5 sm:grid-cols-3">
       <MetricCard icon={<ReceiptPercentIcon className="size-4" />} iconVariant="accent" title={fields('total_amount')} text={money(expense.totalAmount)} />
       <MetricCard icon={<ChartPieIcon className="size-4" />} iconVariant="accent" title={fields('business_use_percentage')} text={`${percentage}%`} />
