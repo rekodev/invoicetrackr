@@ -82,7 +82,6 @@
     "reports": {
         "journal": {
             "heading": "Pajamų ir išlaidų žurnalas",
-            "description": "Peržiūrėkite gautas pajamas ir atskaitomas išlaidas pasirinktu laikotarpiu.",
             "filters": {
                 "year": "Metai",
                 "month": "Mėnuo",
@@ -146,7 +145,6 @@
         },
         "taxes": {
             "heading": "Mokesčiai",
-            "description": "Mokesčių įvertis, sumos deklaracijai ir failas buhalteriui.",
             "year": "Mokestiniai metai",
             "actions": "Metai ir failo atsisiuntimas",
             "setup": {

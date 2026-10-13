@@ -28,7 +28,6 @@ const JournalFilters = ({ query, currentYear }: Props) => {
   return (
     <div className="grid grid-cols-2 gap-heading sm:flex">
       <YearSelect
-        hideLabel
         label={t('year')}
         year={query.year}
         years={journalYears(currentYear, query.year)}

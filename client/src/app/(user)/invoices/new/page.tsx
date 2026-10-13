@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import { unauthorized } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
@@ -47,7 +48,7 @@ const AddNewInvoicePage = async ({ searchParams }: { searchParams: SearchParams 
         bankingInformationEntries={
           bankingInformationEntriesResp.data.bankAccounts
         }
-        currency={session.user.currency}
+        currency={DEFAULT_CURRENCY}
         clients={clientsResp.data.clients}
       />
     </section>

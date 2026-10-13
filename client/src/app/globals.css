@@ -51,19 +51,6 @@
       gap: var(--spacing-actions);
     }
 
-    :is(
-      .textfield,
-      .select,
-      .combo-box,
-      .number-field,
-      .date-field,
-      .date-picker,
-      .time-field,
-      .search-field
-    ) {
-      gap: var(--spacing-field-content);
-    }
-
     .field-error:empty {
       display: none;
     }
@@ -84,11 +71,6 @@
     .modal__body + .modal__footer,
     .modal__header + .modal__footer {
       margin-block-start: var(--spacing-form-actions);
-      gap: var(--spacing-actions);
-    }
-
-    .popover__dialog {
-      padding: var(--spacing-card);
     }
   }
 

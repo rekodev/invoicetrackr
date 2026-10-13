@@ -1,8 +1,6 @@
 import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
 import { DefaultSession } from 'next-auth';
 
-import { Currency } from './currency';
-
 declare module 'next-auth' {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
@@ -14,7 +12,6 @@ declare module 'next-auth' {
     language: string;
     preferredInvoiceLanguage: string;
     isVatPayer: boolean;
-    currency: Currency;
     selectedBankAccountId: number;
     emailVerifiedAt?: string | null;
     isOnboarded?: boolean;

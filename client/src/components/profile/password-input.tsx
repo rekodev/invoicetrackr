@@ -67,7 +67,7 @@ export default function PasswordInput({
         </button>
       </div>
       {description && <Description>{description}</Description>}
-      {errorMessage && <FieldError>{errorMessage}</FieldError>}
+      <FieldError>{errorMessage}</FieldError>
     </TextField>
   );
 }

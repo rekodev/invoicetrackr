@@ -16,7 +16,7 @@ export const onRequestError: Instrumentation.onRequestError = async (
     '@/lib/analytics/server-errors'
   );
 
-  await captureWebServerException(
+  captureWebServerException(
     redactRequestError(error),
     getRequestErrorProperties(error, request, context)
   );

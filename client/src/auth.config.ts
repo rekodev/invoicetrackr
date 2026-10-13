@@ -1,7 +1,4 @@
-import {
-  DEFAULT_CURRENCY,
-  type User as InvoiceTrackrUser
-} from '@invoicetrackr/types';
+import type { User as InvoiceTrackrUser } from '@invoicetrackr/types';
 import type { NextAuthConfig, User as AuthUser } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import { type GoogleProfile } from 'next-auth/providers/google';
@@ -34,7 +31,6 @@ export const mapUserToSessionUser = (user: InvoiceTrackrUser): AuthUser => {
     language: user.language,
     preferredInvoiceLanguage: user.preferredInvoiceLanguage || user.language,
     isVatPayer: user.isVatPayer,
-    currency: DEFAULT_CURRENCY,
     selectedBankAccountId: user.selectedBankAccountId || 0,
     isOnboarded: !!user.onboardingCompletedAt,
     analyticsConsentStatus: user.analyticsConsentStatus
@@ -48,7 +44,6 @@ const setUserTokenFields = (token: JWT, user: AuthUser) => {
   token.emailVerifiedAt = user.emailVerifiedAt;
   token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
   token.isVatPayer = user.isVatPayer;
-  token.currency = DEFAULT_CURRENCY;
   token.isOnboarded = !!user.isOnboarded;
   token.analyticsConsentStatus = user.analyticsConsentStatus;
   token.selectedBankAccountId = user.selectedBankAccountId;
@@ -184,7 +179,6 @@ export const authConfig = {
           language: session.user.language,
           preferredInvoiceLanguage: session.user.preferredInvoiceLanguage,
           isVatPayer: session.user.isVatPayer,
-          currency: DEFAULT_CURRENCY,
           analyticsConsentStatus: session.user.analyticsConsentStatus,
           selectedBankAccountId: session.user.selectedBankAccountId
         };
@@ -200,7 +194,6 @@ export const authConfig = {
       session.user.preferredInvoiceLanguage =
         token.preferredInvoiceLanguage as string;
       session.user.isVatPayer = Boolean(token.isVatPayer);
-      session.user.currency = DEFAULT_CURRENCY;
       session.user.isOnboarded = Boolean(token.isOnboarded);
       session.user.analyticsConsentStatus =
         token.analyticsConsentStatus as AuthUser['analyticsConsentStatus'];

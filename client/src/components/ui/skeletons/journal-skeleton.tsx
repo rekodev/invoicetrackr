@@ -7,7 +7,7 @@ export const JournalSkeleton = () => (
   <div aria-hidden="true" className="flex flex-col gap-section">
     <BasicCardGridSkeleton
       count={3}
-      className="gap-section sm:grid-cols-3"
+      className="sm:grid-cols-3"
       cardClassName="min-h-[122px]"
     />
     <BasicCardSkeleton className="min-h-[448px]" />

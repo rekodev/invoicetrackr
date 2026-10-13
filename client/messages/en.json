@@ -82,7 +82,6 @@
     "reports": {
         "journal": {
             "heading": "Income and Expense Journal",
-            "description": "Review income received and deductible expenses for the selected period.",
             "filters": {
                 "year": "Year",
                 "month": "Month",
@@ -146,7 +145,6 @@
         },
         "taxes": {
             "heading": "Taxes",
-            "description": "Your tax estimate, the figures for your declaration, and the workbook for your accountant.",
             "year": "Tax Year",
             "actions": "Year and workbook download",
             "setup": {

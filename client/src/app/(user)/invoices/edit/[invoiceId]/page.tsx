@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY } from '@invoicetrackr/types';
 import { redirect, unauthorized } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 
@@ -53,7 +54,7 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
       <InvoiceForm
         user={userResponse.data.user}
         clients={clientsResp.data.clients}
-        currency={session.user.currency}
+        currency={DEFAULT_CURRENCY}
         invoiceData={invoiceResp.data.invoice}
         bankingInformationEntries={
           bankingInformationEntriesResp.data.bankAccounts
