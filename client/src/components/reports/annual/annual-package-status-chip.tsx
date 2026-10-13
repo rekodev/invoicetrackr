@@ -28,7 +28,7 @@ const AnnualPackageStatusChip = async ({ userId, year }: Props) => {
         <Chip
           size="md"
           variant="soft"
-          className="gap-2"
+          className="gap-actions"
           color={state === 'blocking' ? 'danger' : 'success'}
         >
           {t(`status.${state}`)}
@@ -39,7 +39,7 @@ const AnnualPackageStatusChip = async ({ userId, year }: Props) => {
       {state === 'blocking' ? (
         <>
           <p className="text-muted">{t('alerts.blocking.description')}</p>
-          <ul className="text-muted list-disc space-y-1 pl-5">
+          <ul className="text-muted list-disc space-y-field-content pl-5">
             {blocking.map(({ code, count }) => {
               const href = annualPackageWarningHref(code, year);
 

@@ -4,7 +4,6 @@ import {
   BuildingLibraryIcon,
   LockClosedIcon,
   PencilSquareIcon,
-  PlusIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
@@ -33,7 +32,6 @@ import { isResponseError } from '@/lib/utils/error';
 
 import EmptyState from '../ui/empty-state';
 import IconContainer from '../ui/icon-container';
-import AddBankAccountDialog from './add-bank-account-dialog';
 import DeleteBankAccountDialog from './delete-bank-account-dialog';
 import EditBankingInformationDialog from './edit-banking-information-dialog';
 
@@ -56,7 +54,6 @@ const BankingInformationForm = ({
     close: onEditClose,
     open: onEditOpen
   } = useOverlayState();
-  const addDialog = useOverlayState();
 
   const [selectedBankAccountId, setSelectedBankAccountId] = useState(
     String(user.selectedBankAccountId || bankAccounts?.at(0)?.id || '')
@@ -117,11 +114,11 @@ const BankingInformationForm = ({
       <Card
         key={id}
         variant="secondary"
-        className={cn('group col-span-2 border pt-0 lg:col-span-1', {
+        className={cn('group col-span-2 border lg:col-span-1', {
           'border-accent border-2': isSelected
         })}
       >
-        <CardContent className="flex flex-row items-center gap-3">
+        <CardContent className="flex flex-row items-center gap-heading">
           <Radio value={String(id || 0)} className="min-w-0 flex-1">
             <Radio.Content>
               <Radio.Control>
@@ -190,7 +187,7 @@ const BankingInformationForm = ({
         value={String(selectedBankAccountId)}
         onChange={setSelectedBankAccountId}
       >
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-field">
           {bankAccounts?.map((account) => {
             const { id, name, code, accountNumber } = account;
 
@@ -209,19 +206,13 @@ const BankingInformationForm = ({
   return (
     <>
       <Card className="w-full border">
-        <div className="flex flex-col gap-4 px-6 pt-6 sm:flex-row sm:items-start sm:justify-between">
-          <SectionHeading description={t('description')} />
-          <Button
-            variant="secondary"
-            className="w-full shrink-0 sm:w-auto"
-            onPress={addDialog.open}
-          >
-            <PlusIcon className="h-4 w-4" />
-            {t('actions.add')}
-          </Button>
-        </div>
-        <CardContent className="px-6 pb-6 pt-5">{renderCardBody()}</CardContent>
-        <CardFooter className="flex w-full items-center justify-between px-6 py-4">
+        <Card.Header>
+          <SectionHeading title={t('section_title')} />
+        </Card.Header>
+        <CardContent>
+          {renderCardBody()}
+        </CardContent>
+        <CardFooter className="flex w-full items-center justify-between">
           <div className="flex w-full flex-col items-center">
             <Button
               isDisabled={
@@ -238,12 +229,6 @@ const BankingInformationForm = ({
         </CardFooter>
       </Card>
 
-      <AddBankAccountDialog
-        userId={Number(user.id)}
-        selectedBankAccountId={user.selectedBankAccountId}
-        isOpen={addDialog.isOpen}
-        onClose={addDialog.close}
-      />
       {currentBankingInformation && isOpen && (
         <DeleteBankAccountDialog
           userId={Number(user.id)}

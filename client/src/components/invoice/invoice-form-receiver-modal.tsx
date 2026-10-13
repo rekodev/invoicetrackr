@@ -33,7 +33,7 @@ const InvoiceFormPartyModal = ({
     }
 
     return (
-      <div className="flex max-h-[60vh] flex-col gap-3 overflow-y-auto pr-1">
+      <div className="flex max-h-[60vh] flex-col gap-heading overflow-y-auto pr-1">
         {clients?.map((client) => (
           <ClientCard
             key={client.id}

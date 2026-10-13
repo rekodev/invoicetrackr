@@ -50,12 +50,9 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
 
   return (
     <Card className="min-w-0 border">
-      <Card.Header className="flex-row flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0">
-          <h2 className="text-base font-medium">{t('title')}</h2>
-          <p className="text-muted text-sm">{t('subtitle', { year })}</p>
-        </div>
-        <dl className="flex flex-wrap gap-x-6 gap-y-2">
+      <Card.Header className="flex-row flex-wrap items-center justify-between gap-field">
+        <h2 className="text-base font-medium">{t('title')}</h2>
+        <dl className="flex flex-wrap gap-x-section gap-y-actions">
           {figures.map((figure) => (
             <div key={figure.key} className="min-w-0">
               <dt className="text-muted text-xs font-medium">{t(`summary.${figure.key}`)}</dt>
@@ -78,7 +75,7 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
           {t('journal')}
         </Link>
       </Card.Header>
-      <Card.Content className="flex flex-col gap-6">
+      <Card.Content className="flex flex-col gap-section">
         <MonthlyMoneyChart
           labels={rows.map((row) => row.name)}
           income={rows.map((row) => row.receivedIncome)}

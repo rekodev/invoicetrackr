@@ -48,7 +48,7 @@ const EditInvoicePage = async ({ params }: { params: Params }) => {
   const t = await getTranslations('invoices.page');
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader title={t('edit_title')} />
       <InvoiceForm
         user={userResponse.data.user}

@@ -152,7 +152,7 @@ const InvoiceModal = ({
     return (
       <div
         className={cn(
-          'hidden items-center gap-2 text-xs font-medium sm:flex',
+          'hidden items-center gap-actions text-xs font-medium sm:flex',
           statusClasses.text
         )}
       >
@@ -183,9 +183,9 @@ const InvoiceModal = ({
               : 'grid-rows-[auto_minmax(0,1fr)_auto]'
           )}
         >
-          <Modal.Header className="border-default-200 bg-overlay/95 flex flex-col items-start gap-2 border-b px-5 py-3 backdrop-blur-xl sm:px-6">
-            <div className="flex w-full items-center justify-between gap-4">
-              <div className="flex min-w-0 items-center gap-3">
+          <Modal.Header className="border-default-200 bg-overlay/95 p-card flex flex-col items-start gap-actions border-b backdrop-blur-xl">
+            <div className="flex w-full items-center justify-between gap-field">
+              <div className="flex min-w-0 items-center gap-heading">
                 <div className="min-w-0">
                   <span className="block truncate text-sm font-semibold">
                     {invoiceId ||
@@ -201,7 +201,7 @@ const InvoiceModal = ({
                 </div>
               </div>
               <div
-                className={cn('flex shrink-0 items-center gap-1.5', {
+                className={cn('flex shrink-0 items-center gap-actions', {
                   'p-0': !userPreferredInvoiceLanguage
                 })}
               >
@@ -219,7 +219,7 @@ const InvoiceModal = ({
                         setIsIFrameLoading(true);
                       }}
                     >
-                      <Select.Trigger className="w-max items-center gap-2">
+                      <Select.Trigger className="w-max items-center gap-actions">
                         <LanguageIcon className="size-5 shrink-0" />
                         <Select.Value className="flex-none" />
                         <Select.Indicator />
@@ -302,24 +302,24 @@ const InvoiceModal = ({
             </div>
           </Modal.Header>
           {pastDueAlert && (
-            <div className="border-danger-soft bg-danger/5 flex border-b px-5 py-2 sm:px-6">
+            <div className="border-danger-soft bg-danger/5 px-card flex border-b py-2">
               {pastDueAlert}
             </div>
           )}
           <div className="bg-default-100 scrollbar min-h-0 overflow-y-auto overscroll-contain">
-            <div className="flex min-h-full justify-center px-4 py-8 sm:px-10 sm:py-10">
+            <div className="flex min-h-full justify-center px-card py-8 sm:px-10 sm:py-10">
               <div className="w-full max-w-[794px] rounded-sm bg-white shadow-[0_24px_60px_-20px_rgba(0,0,0,0.18),0_4px_12px_-4px_rgba(0,0,0,0.08)]">
                 {renderModalBody()}
               </div>
             </div>
           </div>
-          <footer className="border-default-200 bg-overlay grid grid-cols-1 items-center gap-4 border-t px-5 py-3 sm:px-6 lg:grid-cols-[minmax(0,1fr)_auto]">
-            <div className="flex min-w-0 flex-col gap-3">
-              <div className="text-muted flex min-w-0 items-center gap-2 text-xs">
+          <footer className="border-default-200 bg-overlay p-card grid grid-cols-1 items-center gap-field border-t lg:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="flex min-w-0 flex-col gap-heading">
+              <div className="text-muted flex min-w-0 items-center gap-actions text-xs">
                 {renderFooterStatus()}
               </div>
             </div>
-            <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center lg:w-auto">
+            <div className="flex w-full flex-col gap-actions sm:flex-row sm:items-center lg:w-auto">
               {isDocumentBuilder && pdfDocument ? (
                 <PdfPrintButton
                   document={pdfDocument}

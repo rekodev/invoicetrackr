@@ -75,7 +75,7 @@ function WorkspaceSection({
       <Card.Header>
         <h2 className="text-base font-medium">{title}</h2>
       </Card.Header>
-      <Card.Content className="p-2">
+      <Card.Content>
         <div className={contentClassName}>{children}</div>
       </Card.Content>
     </Card>
@@ -198,11 +198,11 @@ export default function InvoiceWorkspace({
         : t('remove_description');
 
   return (
-    <section className="mx-auto flex w-full max-w-7xl flex-col gap-5 pb-10">
+    <section className="mx-auto flex w-full max-w-7xl flex-col gap-section pb-10">
       <PageHeader
         title={invoice.invoiceId || t('draft')}
         titleAddon={
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-actions">
             <Chip
               variant="soft"
               color={
@@ -219,14 +219,14 @@ export default function InvoiceWorkspace({
           </div>
         }
         description={
-          <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <p className="flex flex-wrap items-center gap-x-actions gap-y-field-content">
             <span className="text-foreground">{invoice.receiver.name}</span>
             <span aria-hidden="true">·</span>
             <span>{t('due', { date: invoice.dueDate })}</span>
           </p>
         }
       />
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid gap-section lg:grid-cols-[minmax(0,1fr)_320px]">
         <Card className="min-w-0 overflow-hidden border p-0">
           {isPdfDocumentLoading ? (
             <div className="flex aspect-[794/1123] items-center justify-center">
@@ -241,16 +241,16 @@ export default function InvoiceWorkspace({
             />
           )}
         </Card>
-        <div className="flex min-w-0 flex-col gap-5">
+        <div className="flex min-w-0 flex-col gap-section">
           <WorkspaceSection
             title={t('invoice_total')}
-            contentClassName="mt-2 flex flex-col gap-2"
+            contentClassName="flex flex-col gap-field"
           >
-            <div className="flex justify-between gap-3">
+            <div className="flex justify-between gap-heading">
               <p className="text-muted text-sm">{t('paid')}</p>
               <p className="font-medium tabular-nums">{currencySymbol}{balance.paidAmount}</p>
             </div>
-            <div className="flex justify-between gap-3">
+            <div className="flex justify-between gap-heading">
               <p className="text-muted text-sm">{t('outstanding')}</p>
               <p className="font-medium tabular-nums">
                 {currencySymbol}{balance.outstandingAmount}
@@ -260,7 +260,7 @@ export default function InvoiceWorkspace({
           </WorkspaceSection>
           <WorkspaceSection
             title={t('actions')}
-            contentClassName="mt-2 flex flex-col gap-2"
+            contentClassName="flex flex-col gap-field"
           >
             {isDraft ? (
               <>
@@ -381,9 +381,9 @@ export default function InvoiceWorkspace({
           </WorkspaceSection>
           {isIssued || payments.length > 0 ? (
             <Card className="gap-0 overflow-hidden border p-0" role="region" aria-labelledby={`invoice-payments-${invoiceId}`}>
-              <Card.Header className="flex-row items-center justify-between gap-2 border-b p-4">
-                <div className="flex items-center gap-2">
-                  <h2 id={`invoice-payments-${invoiceId}`} className="text-lg font-semibold">{t('payment_history')}</h2>
+              <Card.Header className="flex-row items-center justify-between gap-actions border-b p-card">
+                <div className="flex items-center gap-actions">
+                  <h2 id={`invoice-payments-${invoiceId}`} className="text-base font-medium">{t('payment_history')}</h2>
                   <Chip size="sm" variant="soft" aria-label={t('payment_count', { count: payments.length })}>{payments.length}</Chip>
                 </div>
                 {isIssued && supportsPayments && Number(balance.outstandingAmount) > 0 ? (
@@ -396,13 +396,13 @@ export default function InvoiceWorkspace({
               {payments.length > 0 ? (
                 <ul className="divide-y">
                   {payments.map((payment) => (
-                    <li key={payment.id} className="space-y-3 p-5">
-                      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                    <li key={payment.id} className="space-y-heading p-card">
+                      <div className="flex flex-wrap items-baseline justify-between gap-x-field gap-y-field-content">
                         <p className="text-xl font-semibold tabular-nums">{currencySymbol}{payment.amount}</p>
                         <time className="text-muted text-xs tabular-nums" dateTime={payment.paymentDate}>{payment.paymentDate}</time>
                       </div>
                       {payment.bankReference || payment.notes ? (
-                        <div className="space-y-1">
+                        <div className="space-y-field-content">
                           {payment.bankReference ? (
                             <p className="text-sm font-medium break-words">{payment.bankReference}</p>
                           ) : null}
@@ -412,7 +412,7 @@ export default function InvoiceWorkspace({
                         </div>
                       ) : null}
                       {isIssued && supportsPayments ? (
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-actions">
                           <Button
                             aria-label={t('edit_payment')}
                             size="sm"
@@ -443,7 +443,7 @@ export default function InvoiceWorkspace({
                   ))}
                 </ul>
               ) : (
-                <Card.Content className="p-5">
+                <Card.Content className="p-card">
                   <p className="text-muted text-sm">{t('no_payments')}</p>
                 </Card.Content>
               )}
@@ -454,7 +454,7 @@ export default function InvoiceWorkspace({
               title={t('delivery_history')}
               contentClassName="mt-2"
             >
-              <ul className="space-y-3 text-sm">
+              <ul className="space-y-heading text-sm">
                 {deliveries.map((delivery) => (
                   <li key={delivery.id}>
                     <p>

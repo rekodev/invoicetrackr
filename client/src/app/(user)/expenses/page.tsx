@@ -13,15 +13,16 @@ const ExpensesPage = async () => {
   const session = await auth();
   if (!session?.user?.id) unauthorized();
 
+  const userId = Number(session.user.id);
   const t = await getTranslations('breadcrumbs');
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader title={t('expenses')}>
-        <AddExpenseButton userId={Number(session.user.id)} />
+        <AddExpenseButton userId={userId} />
       </PageHeader>
       <Suspense fallback={<ExpenseTableSkeleton />}>
-        <ExpensesPageContent />
+        <ExpensesPageContent userId={userId} />
       </Suspense>
     </section>
   );

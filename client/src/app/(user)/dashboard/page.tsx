@@ -14,7 +14,7 @@ const DashboardPage = async () => {
   const t = await getTranslations('breadcrumbs');
 
   return (
-    <main className="flex flex-col gap-6">
+    <main className="flex flex-col gap-section">
       <PageHeader title={t('dashboard')} />
       <Suspense fallback={<MoneyWorkbenchSkeleton />}>
         <MoneyWorkbench

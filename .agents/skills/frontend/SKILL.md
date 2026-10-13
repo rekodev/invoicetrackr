@@ -14,6 +14,79 @@ Good references: `components/client/client-form-dialog.tsx` (form dialog, see **
 `app/(user)/clients/[clientId]/page.tsx` (server page),
 `components/company-lookup/company-lookup-panel.tsx` (interactive widget).
 
+## Spacing tokens
+
+`client/src/app/globals.css` owns the semantic Tailwind v4 `@theme` spacing
+tokens. Use these utilities for their stated purpose instead of repeating
+numeric gaps or adding local spacing workarounds. The same values apply on
+mobile; columns and action rows stack or wrap when needed.
+
+| Purpose | Utility | Value |
+| --- | --- | --- |
+| Page gutter and heading-to-first-content gap | `p-page`, `gap-section` | 24px |
+| Reserved page heading row | `min-h-page-heading` | 40px |
+| Between sections, panels, or cards in a grid | `gap-section` | 24px |
+| Section heading to its content | `gap-heading` | 12px |
+| Between form fields | `gap-field` | 16px |
+| Label, control, helper/error, or short related text | `gap-field-content` | 4px |
+| Card, dialog, and informational-popover content gutter | `p-card` | 16px |
+| Last field to form action row | `gap-form-actions`, `pt-form-actions` | 16px |
+| Between buttons or an inline icon and label | `gap-actions` | 8px |
+
+The `workspace-ui` shell class activates scoped HeroUI spacing defaults,
+including dialogs and popovers rendered through portals. Keep all padding on
+the card itself: `Card.Header`, `Card.Content`, and `Card.Footer` normally
+have no additional padding. Use `Card.Header` for a settings section title,
+`Card.Content className="gap-field"` for its fields, and `Card.Footer` for
+actions. The scoped card footer rule produces a 16px action gap; modal
+header/body and body/footer spacing use the heading and form-action tokens.
+
+Render helper and validation messages only when present. Do not reserve an
+empty message line or use negative margins to position helper text. Put
+field descriptions inside their owning field so the 4px gap applies.
+
+Deliberate exceptions: edge-to-edge PDF/document viewers and divided record
+lists may use `p-0` on the outer surface, with one `p-card` gutter on their
+header/content/rows. Table cells, icon hit areas, focus-ring clearance,
+scroll containers, and embedded chart/PDF dimensions retain their component
+spacing; they are not section or field gaps. Match loading placeholders to
+the corresponding loaded layout, including the reserved heading row.
+
+## Logged-in heading hierarchy
+
+- **Page title:** one `PageHeader` with `h1 text-lg font-semibold` — 18px.
+- **Page spacing:** the shared logged-in layout has 24px top padding
+  (`p-page`). Every page stacks its heading and first content with `gap-section`
+  (24px). `PageHeader` reserves a 40px row (`min-h-page-heading`) and vertically
+  centers the title and actions, including on pages without actions.
+  With the 28px title line height, this leaves 30px of visible space above
+  and below the text on a single-row header. Content panels keep their
+  24px gaps. Page-level buttons and button-like links use `size="md"`;
+  header filters use compact controls with accessible labels and fit within
+  that row.
+  On narrow screens controls can wrap into additional 40px rows. Record
+  metadata follows the heading row as content. Loading skeletons reserve
+  the same heading height and gap (`PageHeaderSkeleton`).
+- **Section title:** `h2 text-base font-medium` — 16px. Nested `h3`/`h4`
+  headings keep the same 16px size. `SectionHeading` defaults to `h2` and
+  enforces this size for each supported heading level.
+- **Section header layout:** title, optional small soft count `Chip`, then
+  an optional concise statistic in one wrapping, vertically centered row.
+  Actions sit on the right. Example: Overdue Invoices → count chip → amount
+  overdue. Explanatory content belongs in an `InfoPopover` beside the title;
+  section headings have no description underneath. Omit redundant context
+  such as a year already selected in the page controls.
+- **Settings cards:** begin with a meaningful 16px section heading that
+  names the task or details, without repeating the page title or adding an
+  introductory description: Profile → Business Details; Payment Methods →
+  Default Bank Account; Invoice Defaults → New Invoice Settings; Password →
+  Change Password. Account keeps Language and Your Data as distinct sections.
+  Page-level actions such as Add New belong in `PageHeader`.
+
+This rule governs content headings across the logged-in app, including
+dashboard, reports, record workspaces, and settings. Field help, empty-state
+guidance, alerts, confirmations, and record metadata retain their own purpose.
+
 ## Consistent building blocks, layout chosen per page
 
 Keep the **building blocks** the same everywhere: the same HeroUI
@@ -55,20 +128,22 @@ inline action links when an established pattern exists.
 
 | Need | Existing pattern |
 | --- | --- |
-| Page spacing | Stacked page sections (page header, panels, card groups) `flex flex-col gap-6` (24px), the same value for the skeleton; side-by-side cards/columns `grid gap-5` (`reports/taxes/page.tsx`, `tax-method-comparison.tsx`); cardless open sections sit `gap-8` apart (`taxes-workspace.tsx`). Section heading → its content `gap-3` |
-| Stat/metric cards | Only on overview pages (dashboard, client and expense overviews), never on report or task pages. `MetricCard` (`components/ui/metric-card.tsx`) in `grid gap-5 sm:grid-cols-3`, one-line title (`expense-table.tsx`, `client-workspace.tsx`); the dashboard row has four (`sm:grid-cols-2 lg:grid-cols-4`). A figure that needs its calculation keeps the card compact and puts the breakdown in an `InfoPopover` (`safe-to-spend-card.tsx`) |
+| Page spacing | Layout `p-page` (24px) → shared 40px `PageHeader` row → `gap-section` (24px) → first content. Centered 28px title text has 30px visible space above and below on a single-row header. Skeletons use `PageHeaderSkeleton`. Stacked sections and card grids use `gap-section`; section heading → content uses `gap-heading` (12px) |
+| Stat/metric cards | `MetricCard` (`components/ui/metric-card.tsx`) in `grid gap-section sm:grid-cols-3`, one-line title; the dashboard row has four (`sm:grid-cols-2 lg:grid-cols-4`). Its label/value gap is `gap-heading`, without extra margins. A figure that needs its calculation keeps the card compact and puts the breakdown in an `InfoPopover` (`safe-to-spend-card.tsx`) |
 | Explaining a figure | Info tooltip for one or two hover sentences: `InfoTooltip` (`components/ui/info-tooltip.tsx`), also for long form-field hints next to the `Label` instead of a `Description` (`tax-assumptions-dialog.tsx`). Older inline copies: `expense-workspace.tsx`, `invoice-services-heading.tsx`. Anything with a list or a link goes in `InfoPopover` instead, since tooltip content can't be clicked |
 | Section guide or disclaimer | `InfoPopover` (`components/ui/info-popover.tsx`) next to the section title: click-to-open info icon for longer help, lists, or source links. Don't add a separate guide card or page-level `Alert` (`journal-table.tsx`, `tax-method-comparison.tsx`). Near the right edge pass `placement="bottom end"` so it opens leftwards (`safe-to-spend-card.tsx`) |
-| Page header | Every logged-in page (not onboarding or verify-email) starts with one compact `PageHeader` row (`components/ui/page-header.tsx`): `h1 text-lg font-semibold` left, page-level actions right as `size="sm"` buttons. No descriptions, except record metadata on detail pages (`invoice-workspace.tsx`). Render it in the server page outside `Suspense` so the title doesn't wait on data. List pages put their primary actions (Add New, Income Journal) here, not in the table toolbar, which keeps only search and filters (`invoices/page.tsx`, `clients/page.tsx`). An action that opens a dialog gets a small client button that owns the dialog (`add-client-button.tsx`). Titles reuse the `breadcrumbs.*` label or the form's existing title key |
+| Page header | Every logged-in page (not onboarding or verify-email) starts with the shared `PageHeader` (`components/ui/page-header.tsx`): a reserved 40px row, `h1 text-lg font-semibold` left, medium (`size="md"`) page-level actions right. Header toolbars fit within 40px (`p-0` on the attached taxes toolbar). Record metadata follows the row as content (`invoice-workspace.tsx`). Render it in the server page outside `Suspense` so the title doesn't wait on data. List pages put their primary actions (Add New, Income Journal) here; table toolbars keep search and filters. A dialog action uses a small client component that owns the dialog (`add-client-button.tsx`). Titles reuse the `breadcrumbs.*` label or the form's existing title key |
 | Navigation | No in-page tabs for pages the sidebar already lists. Each sidebar child is its own route, and the group's index route redirects to its first child (`reports/page.tsx` → `/reports/journal`) |
-| Section heading | A single-card section keeps its `h2` and actions in `Card.Header` (`tax-assumptions-card.tsx`); a section with several cards puts the `h2` above the cards (`tax-method-comparison.tsx`). Don't repeat context the page controls already show (e.g. the selected year) |
-| Settings page heading | The page title is the `PageHeader`; the card opens with `SectionHeading` (`components/ui/section-heading.tsx`) carrying only the muted description. Sub-sections inside one card use `SectionHeading as="h4"` with a title (Account page). One card per settings page (`settings/account/page.tsx`) |
+| Section heading | `h2 text-base font-medium` (16px); `SectionHeading` provides the same style for `h2`/`h3`/`h4`. A single-card section keeps its heading and actions in `Card.Header` (`tax-assumptions-card.tsx`); a section with several cards puts the heading above the cards (`tax-method-comparison.tsx`). Help goes in an `InfoPopover`, with no description below the heading |
+| Settings page heading | `PageHeader` supplies the 18px page title and medium page-level actions (`settings/payment-methods/page.tsx`). Cards begin with a 16px `SectionHeading` that names their task or details, such as Business Details, Default Bank Account, New Invoice Settings, or Change Password. Account keeps Language and Your Data as distinct sections. One card per settings page, with no introductory description or repeated page title |
 | Full-page status | `StatusMessage` (`components/ui/status-message.tsx`): tinted icon, `h1`, muted description, one ghost action. Used by `error.tsx`, `unauthorized.tsx` and the in-shell `RateLimitNotice` |
 | Empty states | `EmptyState` with at most two next actions; each keeps its icon (`PlusIcon` for create/add) and the same casing (`journal-workspace.tsx`) |
-| List count | Small `Chip variant="soft"` after the section title, not ` · {count}` in the title (`journal-table.tsx`) |
-| Section card | `Card className="border"`; `Card.Header className="flex-row flex-wrap items-center justify-between gap-4"` with `h2 text-base font-medium` left and actions right. When the title has a muted `text-sm` line under it, use `items-start` so the actions sit as far from the top edge as from the right (`journal-table.tsx`) |
+| List count | Small `Chip variant="soft"` after the section title, followed by an optional inline statistic; title, count and statistic wrap together (`journal-table.tsx`, `dashboard/overdue-invoices.tsx`) |
+| Interactive client cards | Use the surface hover token for card hover/focus, with a transition. Nested edit actions must remain visibly distinct on the hovered card (`client/client-section.tsx` uses the button hover variable with `--default-hover`). Keep business and VAT identifiers in the full-width metadata row; group any separator with the following identifier so wrapping never leaves a dangling dot (`client-card.tsx`) |
+| Compact header filters | Give filters accessible labels without an extra visible label row; vertically center trigger contents with `items-center py-0` and keep their height within the reserved 40px page heading row (`reports/journal-filters.tsx`, `reports/year-select.tsx`) |
+| Section card | `Card className="border"` owns the 16px padding and 12px header/content gap. `Card.Header className="flex-row flex-wrap items-center justify-between gap-field"` keeps `h2 text-base font-medium` left and actions right. Title, count chip, inline statistic and info trigger use `flex flex-wrap items-center gap-actions`; no stacked description (`journal-table.tsx`) |
 | Section actions | Small `Button`/`buttonVariants` (`outline` or `secondary`, `size: 'sm'`) right-aligned in the header; never underlined text links |
-| Open sections | Report and task pages can use cardless sections instead of stacking cards: `h2` (+ `InfoPopover`) above a `dl` with `border-y`, row dividers and `px-3 py-3` rows, sections `gap-8` apart (`annual-package-figures.tsx`, `taxes-workspace.tsx`). Mix them with card sections (e.g. the method comparison cards) so the page doesn't read as one uniform stack. The page's main download sits in the `PageHeader` with its year select in one HeroUI `Toolbar isAttached className="shadow-none"`: a compact `YearSelect` with an `icon` (no visible label), a vertical `Separator`, then a small primary button; help for that button is a joined icon segment in a HeroUI `ButtonGroup` (`InfoPopover buttonVariant="primary"`), never an icon inside a link (`reports/taxes/page.tsx`, like the language and download bar in `invoice-modal.tsx`) |
+| Open sections | Report and task pages can use cardless sections: `h2` (+ `InfoPopover`) above a `dl` with `border-y` and row dividers. Use `gap-heading` within a section and `gap-section` between sections (`annual-package-figures.tsx`, `taxes-workspace.tsx`). The page's main download sits in `PageHeader` with a compact year select in `Toolbar isAttached className="p-0 shadow-none"`, a vertical `Separator`, and a medium primary button. Help uses a joined icon segment in `ButtonGroup` (`InfoPopover buttonVariant="primary" buttonSize="md"`) |
 | Data tables | Plain `<table>` with `thead text-muted`, row dividers, amounts `text-right tabular-nums` (`client-workspace.tsx`); full lists use HeroUI `Table` (`invoice-table.tsx`). A total row is a rounded `bg-default` row like the estimated-total block on tax cards: use `border-separate border-spacing-0`, put borders on cells, and round the first/last footer cells (`journal-table.tsx`) |
 | Status / state labels | `Chip variant="soft"` with `color` (`danger` overdue, `success` paid, `accent` neutral), never coloured plain text |
 | Warnings and notices | HeroUI `Alert status=…` (no custom colours): `Alert.Title` (general), `Alert.Description` with a lead-in line and a bulleted `list-disc` list when there are several points, and exactly **one** small action button on the right. When the points lead to different pages, the action is a `Review ▾` menu with one `Dropdown.Item href` per point (`dashboard/attention-strip.tsx`). On mobile the action moves under the text (`sm:hidden` / `hidden sm:block`). Keep one severity per Alert, and use Alerts only for points with an action (`reports/annual/annual-package-checks.tsx`). A page-level state without its own action (e.g. not final / ready) is a `size="md"` soft `Chip` (`gap-2`) after the page title (`PageHeader titleAddon`) with an `InformationCircleIcon` inside; the chip is the `InfoPopover` `trigger` and the popover explains the state (`reports/annual/annual-package-status-chip.tsx`) |

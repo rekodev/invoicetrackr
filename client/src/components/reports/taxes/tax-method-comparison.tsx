@@ -50,24 +50,24 @@ const TaxMethodComparison = async ({
   };
 
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-center gap-1">
+    <section className="flex flex-col gap-heading">
+      <div className="flex items-center gap-field-content">
         <h2 className="text-base font-medium">{t('title')}</h2>
         {info}
       </div>
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-section md:grid-cols-2">
         {methods.map((estimate) => (
           <Card key={estimate.method} className="border">
-            <Card.Header className="flex-row flex-wrap items-center justify-between gap-2">
+            <Card.Header className="flex-row flex-wrap items-center justify-between gap-actions">
               <h3 className="text-base font-medium">{tMethods(estimate.method)}</h3>
               {estimate.method === selectedMethod && (
                 <Chip variant="soft" color="accent">{t('your_method')}</Chip>
               )}
             </Card.Header>
-            <Card.Content className="flex flex-col gap-4">
+            <Card.Content className="flex flex-col gap-field">
               <dl className="flex flex-col text-sm">
                 {ROWS.map(({ key, field }) => (
-                  <div key={key} className="flex justify-between gap-4 border-b py-1.5 last:border-0">
+                  <div key={key} className="flex justify-between gap-field border-b py-1.5 last:border-0">
                     <dt className="text-muted">
                       {t(`rows.${key}`)}
                       {key === 'psd' && estimate.psdMinimumApplied && (
@@ -81,12 +81,12 @@ const TaxMethodComparison = async ({
                   </div>
                 ))}
               </dl>
-              <div className="bg-default flex items-end justify-between gap-4 rounded-xl px-3 py-2">
+              <div className="bg-default flex items-end justify-between gap-field rounded-xl px-3 py-2">
                 <div>
-                  <p className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
+                  <p className="flex flex-wrap items-center gap-x-actions text-sm font-medium">
                     {t('rows.total')}
                     {lowerBy(estimate) && (
-                      <span className="text-success flex items-center gap-1 text-xs font-normal">
+                      <span className="text-success flex items-center gap-field-content text-xs font-normal">
                         <ArrowTrendingDownIcon aria-hidden="true" className="size-3.5" />
                         {lowerBy(estimate)}
                       </span>

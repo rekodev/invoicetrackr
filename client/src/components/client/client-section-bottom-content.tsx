@@ -62,7 +62,7 @@ const ClientSectionBottomContent = ({
           </PaginationContent>
         </Pagination>
       </div>
-      <div className="hidden w-full justify-end gap-2 sm:flex">
+      <div className="hidden w-full justify-end gap-actions sm:flex">
         <Button
           isDisabled={prevButtonDisabled}
           size="sm"

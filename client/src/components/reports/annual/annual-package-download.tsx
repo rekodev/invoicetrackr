@@ -18,7 +18,7 @@ const DownloadLink = ({
   href: string;
   children: ReactNode;
 }) => (
-  <a href={href} className={buttonVariants({ size: 'sm' })}>
+  <a href={href} className={buttonVariants({ size: 'md' })}>
     {children}
   </a>
 );
@@ -27,7 +27,7 @@ const AnnualPackageDownload = ({ year }: Props) => {
   const t = useTranslations('reports.annual.contents');
 
   return (
-    <ButtonGroup size="sm">
+    <ButtonGroup size="md">
       <DownloadLink href={annualPackageExportHref(year)}>
         <ArrowDownTrayIcon className="size-4" />
         {t('download')}
@@ -36,9 +36,10 @@ const AnnualPackageDownload = ({ year }: Props) => {
         title={t('info_title')}
         placement="bottom end"
         buttonVariant="primary"
+        buttonSize="md"
         buttonPrefix={<ButtonGroup.Separator className="opacity-40" />}
       >
-        <ul className="list-disc space-y-2 pl-5">
+        <ul className="list-disc space-y-actions pl-5">
           {ANNUAL_PACKAGE_SHEETS.map((sheet) => (
             <li key={sheet}>
               <p className="font-medium">{t(`sheets.${sheet}.name`)}</p>

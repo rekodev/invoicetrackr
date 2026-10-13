@@ -37,7 +37,7 @@ const AddNewInvoicePage = async ({ searchParams }: { searchParams: SearchParams 
   const t = await getTranslations('invoices.page');
 
   return (
-    <section className="flex w-full flex-col gap-6">
+    <section className="flex w-full flex-col gap-section">
       <PageHeader title={t('new_title')} />
       <InvoiceForm
         initialClient={clientId && /^[1-9]\d*$/.test(clientId)

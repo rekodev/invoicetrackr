@@ -15,24 +15,19 @@ const InvoicesPage = async () => {
   const tBreadcrumbs = await getTranslations('breadcrumbs');
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader title={tBreadcrumbs('invoices')}>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href={REPORTS_JOURNAL_PAGE}
-            className={buttonVariants({ variant: 'secondary', size: 'sm' })}
-          >
-            <DocumentArrowDownIcon className="h-4 w-4" />
-            {t('journal')}
-          </Link>
-          <Link
-            href={ADD_NEW_INVOICE_PAGE}
-            className={buttonVariants({ size: 'sm' })}
-          >
-            <PlusIcon className="h-4 w-4" />
-            {t('add_new')}
-          </Link>
-        </div>
+        <Link
+          href={REPORTS_JOURNAL_PAGE}
+          className={buttonVariants({ variant: 'secondary', size: 'md' })}
+        >
+          <DocumentArrowDownIcon className="h-4 w-4" />
+          {t('journal')}
+        </Link>
+        <Link href={ADD_NEW_INVOICE_PAGE} className={buttonVariants({ size: 'md' })}>
+          <PlusIcon className="h-4 w-4" />
+          {t('add_new')}
+        </Link>
       </PageHeader>
       <Suspense fallback={<InvoiceTableSkeleton />}>
         <InvoicesPageContent />

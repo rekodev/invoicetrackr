@@ -80,9 +80,9 @@ const InvoiceTableTopContent = ({
   );
 
   return (
-    <div className="flex flex-col gap-4 pt-1">
-      <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-end">
-        <div className="flex w-full items-center gap-2">
+    <div className="flex flex-col gap-field pt-1">
+      <div className="flex flex-col items-stretch justify-between gap-heading sm:flex-row sm:items-end">
+        <div className="flex w-full items-center gap-actions">
           <MagnifyingGlassIcon className="h-4 w-4" />
           <Input
             className="w-full"
@@ -93,13 +93,13 @@ const InvoiceTableTopContent = ({
           />
           {filterValue && <CloseButton aria-label="Clear" onPress={onClear} />}
         </div>
-        <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:gap-3">
+        <div className="grid w-full grid-cols-1 gap-actions sm:flex sm:w-auto sm:gap-heading">
           <Dropdown>
             <DropdownTrigger
               className={buttonVariants({
                 variant: 'tertiary',
                 className:
-                  'flex w-full items-center justify-center gap-2 sm:w-auto'
+                  'flex w-full items-center justify-center gap-actions sm:w-auto'
               })}
             >
               {t('table.filters.status')}
@@ -139,7 +139,7 @@ const InvoiceTableTopContent = ({
               className={buttonVariants({
                 variant: 'tertiary',
                 className:
-                  'flex w-full items-center justify-center gap-2 sm:w-auto'
+                  'flex w-full items-center justify-center gap-actions sm:w-auto'
               })}
             >
               <span>{t('table.filters.columns')}</span>

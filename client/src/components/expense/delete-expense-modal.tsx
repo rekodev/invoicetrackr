@@ -66,7 +66,7 @@ const DeleteExpenseModal = ({
             {error ? <p role="alert" className="text-danger mt-2 text-sm">{error}</p> : null}
           </Modal.Body>
           <Modal.Footer>
-            <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+            <div className="flex w-full flex-col-reverse justify-end gap-actions sm:flex-row">
               <Button
                 className="w-full sm:w-auto"
                 isDisabled={isPending}

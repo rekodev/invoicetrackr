@@ -1,14 +1,28 @@
 import { Skeleton } from '@heroui/react';
 
-import { BasicCardGridSkeleton } from './basic-card-skeleton';
+import { BasicCardGridSkeleton, BasicCardSkeleton } from './basic-card-skeleton';
+
+export function ClientWorkspaceSkeleton() {
+  return (
+    <div className="flex flex-col gap-section">
+      <BasicCardGridSkeleton
+        count={3}
+        className="gap-section sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3"
+        cardClassName="min-h-[122px]"
+      />
+      <BasicCardSkeleton className="min-h-[220px]" />
+      <BasicCardSkeleton className="min-h-[320px]" />
+    </div>
+  );
+}
 
 export function ClientSectionSkeleton() {
   return (
-    <section className="flex flex-col gap-5">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-end">
+    <section className="flex flex-col gap-section">
+      <div className="flex flex-col gap-field">
+        <div className="flex flex-col items-stretch justify-between gap-heading sm:flex-row sm:items-end">
           <Skeleton className="h-10 w-full rounded-2xl" />
-          <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:gap-3">
+          <div className="grid w-full grid-cols-1 gap-actions sm:flex sm:w-auto sm:gap-heading">
             <Skeleton className="h-10 w-full rounded-2xl sm:w-28" />
           </div>
         </div>
@@ -16,7 +30,7 @@ export function ClientSectionSkeleton() {
       </div>
       <BasicCardGridSkeleton
         count={6}
-        className="gap-5 xl:grid-cols-3"
+        className="gap-section xl:grid-cols-3"
         cardClassName="min-h-[182px]"
       />
     </section>

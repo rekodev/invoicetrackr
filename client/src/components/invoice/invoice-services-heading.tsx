@@ -15,7 +15,7 @@ export default function InvoiceServicesHeading({
   formula
 }: Props) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-actions">
       <h4>{label}</h4>
       <Tooltip delay={0}>
         <Button

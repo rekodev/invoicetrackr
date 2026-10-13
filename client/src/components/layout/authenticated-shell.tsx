@@ -133,7 +133,7 @@ export default function AuthenticatedShell({
   );
 
   return (
-    <div className="flex min-h-[calc(100vh-1px)] w-full">
+    <div className="workspace-ui flex min-h-[calc(100vh-1px)] w-full">
       {!isOnboarding ? <Sidebar /> : null}
       {isMobileNavigationOpen && (
         <MobileSidebar

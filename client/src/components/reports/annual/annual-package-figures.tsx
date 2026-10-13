@@ -18,8 +18,8 @@ const AnnualPackageFigures = async ({ summary, estimate }: Props) => {
   const locale = await getLocale();
 
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-center gap-1">
+    <section className="flex flex-col gap-heading">
+      <div className="flex items-center gap-field-content">
         <h2 className="text-base font-medium">{t('title')}</h2>
         <InfoPopover title={t('title')}>
           <p className="text-muted">{t('info')}</p>
@@ -36,12 +36,12 @@ const AnnualPackageFigures = async ({ summary, estimate }: Props) => {
             return (
               <div
                 key={key}
-                className="flex items-center justify-between gap-4 border-b px-3 py-3 last:border-0"
+                className="flex items-center justify-between gap-field border-b px-3 py-3 last:border-0"
               >
                 <dt className={isResult ? 'font-medium' : 'text-muted'}>
                   {label}
                 </dt>
-                <dd className="flex items-center gap-1">
+                <dd className="flex items-center gap-field-content">
                   <span
                     className={`text-right tabular-nums ${isResult ? 'font-medium' : ''}`}
                   >

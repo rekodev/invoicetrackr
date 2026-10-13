@@ -24,8 +24,8 @@ const AccountDataSection = ({ userId, email, hasExportError }: Props) => {
     key: 'export' | 'delete',
     action: React.ReactNode
   ) => (
-    <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-field py-card first:pt-0 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-field-content">
         <p className="text-sm font-medium">{t(`${key}.title`)}</p>
         <p className="text-muted text-sm">{t(`${key}.description`)}</p>
       </div>
@@ -34,14 +34,10 @@ const AccountDataSection = ({ userId, email, hasExportError }: Props) => {
   );
 
   return (
-    <section className="flex flex-col">
-      <SectionHeading
-        title={t('title')}
-        description={t('description')}
-        as="h4"
-      />
+    <section className="gap-heading flex flex-col">
+      <SectionHeading title={t('title')} />
       {hasExportError ? (
-        <Alert status="danger" className="mt-3">
+        <Alert status="danger">
           <Alert.Indicator />
           <Alert.Content>
             <Alert.Title>{t('export.error')}</Alert.Title>

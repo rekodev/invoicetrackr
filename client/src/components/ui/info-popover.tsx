@@ -11,6 +11,7 @@ type Props = {
   action?: ReactNode;
   trigger?: ReactNode;
   buttonVariant?: ButtonProps['variant'];
+  buttonSize?: ButtonProps['size'];
   buttonPrefix?: ReactNode;
 };
 
@@ -21,6 +22,7 @@ export default function InfoPopover({
   action,
   trigger,
   buttonVariant = 'ghost',
+  buttonSize = 'sm',
   buttonPrefix
 }: Props) {
   return (
@@ -36,7 +38,7 @@ export default function InfoPopover({
       ) : (
         <Button
           isIconOnly
-          size="sm"
+          size={buttonSize}
           variant={buttonVariant}
           aria-label={title}
           className={
@@ -53,8 +55,8 @@ export default function InfoPopover({
         placement={placement}
         className="w-[calc(100vw-2rem)] max-w-md"
       >
-        <Popover.Dialog className="flex flex-col gap-2 text-sm">
-          <div className="flex items-center justify-between gap-4">
+        <Popover.Dialog className="gap-heading flex flex-col text-sm">
+          <div className="flex items-center justify-between gap-field">
             <Popover.Heading className="font-medium">{title}</Popover.Heading>
             {action}
           </div>

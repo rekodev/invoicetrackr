@@ -73,7 +73,7 @@ export default function InvoiceTableCell({
     case 'status':
       if (lifecycle !== 'issued') return <span className="text-muted">—</span>;
       return (
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-field-content">
           <Chip
             variant="soft"
             color={paymentStatus === 'paid' ? 'success' : 'warning'}

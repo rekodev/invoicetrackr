@@ -146,8 +146,7 @@ const InvoiceForm = ({
       ? {
           ...invoiceData,
           services: [...invoiceData.services].sort(
-            (first, second) =>
-              (first.position ?? 0) - (second.position ?? 0)
+            (first, second) => (first.position ?? 0) - (second.position ?? 0)
           ),
           invoiceSeries:
             invoiceData.invoiceSeries ||
@@ -172,10 +171,12 @@ const InvoiceForm = ({
             type: 'sender',
             vatNumber: user.vatNumber || ''
           },
-          receiver: initialClient ? {
-            ...initialClient,
-            type: 'receiver'
-          } : INITIAL_RECEIVER_DATA,
+          receiver: initialClient
+            ? {
+                ...initialClient,
+                type: 'receiver'
+              }
+            : INITIAL_RECEIVER_DATA,
           clientId: initialClient?.id,
           services: [
             {
@@ -222,8 +223,8 @@ const InvoiceForm = ({
   const isDueDateManuallyOverriddenRef = useRef(
     Boolean(
       invoiceData &&
-        getDateDifferenceInDays(invoiceData.date, invoiceData.dueDate) !==
-          defaultPaymentTermsDays
+      getDateDifferenceInDays(invoiceData.date, invoiceData.dueDate) !==
+        defaultPaymentTermsDays
     )
   );
   const isServiceDateManuallyOverriddenRef = useRef(
@@ -372,7 +373,7 @@ const InvoiceForm = ({
       isDisabled={isDisabled}
       isInvalid={isInvalid}
     >
-      <div className="flex items-center gap-1">
+      <div className="gap-field-content flex items-center">
         <Label>{label}</Label>
         {tooltip && (
           <Tooltip delay={0}>
@@ -417,14 +418,11 @@ const InvoiceForm = ({
   );
 
   const renderSenderAndReceiverFields = () => (
-    <div className="col-span-4 flex w-full flex-col gap-4">
+    <div className="gap-heading col-span-4 flex w-full flex-col">
       <h4>{t('headings.sender_receiver_data')}</h4>
-      <div className="col-span-4 flex w-full flex-col justify-between gap-4 md:flex-row">
-        <Card
-          variant="secondary"
-          className="flex w-full flex-col gap-4 border p-4 pb-6"
-        >
-          <div className="flex min-h-8 items-center justify-between gap-4">
+      <div className="gap-section col-span-4 flex w-full flex-col justify-between md:flex-row">
+        <Card variant="secondary" className="w-full border">
+          <Card.Header className="gap-actions min-h-8 flex-row items-center justify-between">
             <p className="text-muted section-eyebrow">{t('headings.from')}</p>
             {availableSenderLogoUrl && (
               <Controller
@@ -449,128 +447,127 @@ const InvoiceForm = ({
                 )}
               />
             )}
-          </div>
-          <Controller
-            name="sender.businessType"
-            control={control}
-            render={({ field }) => (
-              <RadioGroup
-                aria-label={t('a11y.sender_business_type_label')}
-                variant="primary"
-                orientation="horizontal"
-                {...field}
-              >
-                {renderBusinessTypeOptions()}
-              </RadioGroup>
-            )}
-          />
-          <Controller
-            name="sender.name"
-            control={control}
-            render={({ field }) =>
-              renderTextField({
-                label: t('labels.sender_name'),
-                isInvalid: !!errors.sender?.name,
-                errorMessage: errors.sender?.name?.message,
-                variant: 'primary',
-                inputProps: {
-                  ...field,
-                  value: field.value || '',
-                  'aria-label': t('a11y.sender_name_label'),
-                  placeholder: t('placeholders.sender_name'),
-                  maxLength: 255
-                }
-              })
-            }
-          />
-          <Controller
-            name="sender.businessNumber"
-            control={control}
-            render={({ field }) =>
-              renderTextField({
-                label: t(
-                  `labels.sender_business_number_${isSenderBusiness ? 'business' : 'individual'}`
-                ),
-                isInvalid: !!errors.sender?.businessNumber,
-                errorMessage: errors.sender?.businessNumber?.message,
-                variant: 'primary',
-                inputProps: {
-                  ...field,
-                  value: field.value || '',
-                  'aria-label': t(
-                    `a11y.sender_business_number_label_${isSenderBusiness ? 'business' : 'individual'}`
-                  ),
-                  placeholder: t('placeholders.sender_business_number'),
-                  maxLength: 255
-                }
-              })
-            }
-          />
-          {shouldShowSenderVatNumber && (
+          </Card.Header>
+          <Card.Content className="gap-field">
             <Controller
-              name="sender.vatNumber"
+              name="sender.businessType"
+              control={control}
+              render={({ field }) => (
+                <RadioGroup
+                  aria-label={t('a11y.sender_business_type_label')}
+                  variant="primary"
+                  orientation="horizontal"
+                  {...field}
+                >
+                  {renderBusinessTypeOptions()}
+                </RadioGroup>
+              )}
+            />
+            <Controller
+              name="sender.name"
               control={control}
               render={({ field }) =>
                 renderTextField({
-                  label: t('labels.sender_vat_number'),
-                  isInvalid: !!errors.sender?.vatNumber,
-                  errorMessage: errors.sender?.vatNumber?.message,
+                  label: t('labels.sender_name'),
+                  isInvalid: !!errors.sender?.name,
+                  errorMessage: errors.sender?.name?.message,
                   variant: 'primary',
                   inputProps: {
                     ...field,
                     value: field.value || '',
-                    'aria-label': t('a11y.sender_vat_number_label'),
-                    placeholder: t('placeholders.sender_vat_number'),
+                    'aria-label': t('a11y.sender_name_label'),
+                    placeholder: t('placeholders.sender_name'),
                     maxLength: 255
                   }
                 })
               }
             />
-          )}
-          <Controller
-            name="sender.address"
-            control={control}
-            render={({ field }) =>
-              renderTextField({
-                label: t('labels.sender_address'),
-                isInvalid: !!errors.sender?.address,
-                errorMessage: errors.sender?.address?.message,
-                variant: 'primary',
-                inputProps: {
-                  ...field,
-                  value: field.value || '',
-                  'aria-label': t('a11y.sender_address_label'),
-                  placeholder: t('placeholders.sender_address'),
-                  maxLength: 1000
+            <Controller
+              name="sender.businessNumber"
+              control={control}
+              render={({ field }) =>
+                renderTextField({
+                  label: t(
+                    `labels.sender_business_number_${isSenderBusiness ? 'business' : 'individual'}`
+                  ),
+                  isInvalid: !!errors.sender?.businessNumber,
+                  errorMessage: errors.sender?.businessNumber?.message,
+                  variant: 'primary',
+                  inputProps: {
+                    ...field,
+                    value: field.value || '',
+                    'aria-label': t(
+                      `a11y.sender_business_number_label_${isSenderBusiness ? 'business' : 'individual'}`
+                    ),
+                    placeholder: t('placeholders.sender_business_number'),
+                    maxLength: 255
+                  }
+                })
+              }
+            />
+            {shouldShowSenderVatNumber && (
+              <Controller
+                name="sender.vatNumber"
+                control={control}
+                render={({ field }) =>
+                  renderTextField({
+                    label: t('labels.sender_vat_number'),
+                    isInvalid: !!errors.sender?.vatNumber,
+                    errorMessage: errors.sender?.vatNumber?.message,
+                    variant: 'primary',
+                    inputProps: {
+                      ...field,
+                      value: field.value || '',
+                      'aria-label': t('a11y.sender_vat_number_label'),
+                      placeholder: t('placeholders.sender_vat_number'),
+                      maxLength: 255
+                    }
+                  })
                 }
-              })
-            }
-          />
-          <Controller
-            name="sender.email"
-            control={control}
-            render={({ field }) =>
-              renderTextField({
-                label: t('labels.sender_email'),
-                isInvalid: !!errors.sender?.email,
-                errorMessage: errors.sender?.email?.message,
-                variant: 'primary',
-                inputProps: {
-                  ...field,
-                  value: field.value || '',
-                  'aria-label': t('a11y.sender_email_label'),
-                  placeholder: t('placeholders.sender_email'),
-                  maxLength: 255
-                }
-              })
-            }
-          />
+              />
+            )}
+            <Controller
+              name="sender.address"
+              control={control}
+              render={({ field }) =>
+                renderTextField({
+                  label: t('labels.sender_address'),
+                  isInvalid: !!errors.sender?.address,
+                  errorMessage: errors.sender?.address?.message,
+                  variant: 'primary',
+                  inputProps: {
+                    ...field,
+                    value: field.value || '',
+                    'aria-label': t('a11y.sender_address_label'),
+                    placeholder: t('placeholders.sender_address'),
+                    maxLength: 1000
+                  }
+                })
+              }
+            />
+            <Controller
+              name="sender.email"
+              control={control}
+              render={({ field }) =>
+                renderTextField({
+                  label: t('labels.sender_email'),
+                  isInvalid: !!errors.sender?.email,
+                  errorMessage: errors.sender?.email?.message,
+                  variant: 'primary',
+                  inputProps: {
+                    ...field,
+                    value: field.value || '',
+                    'aria-label': t('a11y.sender_email_label'),
+                    placeholder: t('placeholders.sender_email'),
+                    maxLength: 255
+                  }
+                })
+              }
+            />
+          </Card.Content>
         </Card>
-        <Card
-          variant="secondary"
-          className="flex w-full flex-col gap-4 border p-4 pb-6"
-        >
-          <div className="flex items-center justify-between">
+        <Card variant="secondary" className="w-full border">
+          <Card.Header className="gap-actions flex-row items-center justify-between">
             <p className="text-muted section-eyebrow">{t('headings.to')}</p>
             <Button
               size="sm"
@@ -581,140 +578,142 @@ const InvoiceForm = ({
               <UserGroupIcon className="h-4 w-4" />
               {t('modals.select_client')}
             </Button>
-          </div>
-          <Controller
-            name="receiver.businessType"
-            control={control}
-            render={({ field }) => (
-              <RadioGroup
-                aria-label={t('a11y.receiver_business_type_label')}
-                variant="primary"
-                orientation="horizontal"
-                {...field}
-              >
-                {renderBusinessTypeOptions()}
-              </RadioGroup>
-            )}
-          />
-          <Controller
-            name="receiver.name"
-            control={control}
-            render={({ field }) =>
-              isReceiverBusiness ? (
-                <CompanyLookupPanel
-                  userId={user.id || 0}
-                  value={field.value || ''}
-                  label={t('labels.receiver_name')}
-                  placeholder={t('placeholders.receiver_name')}
-                  variant="primary"
-                  isInvalid={Boolean(errors.receiver?.name)}
-                  errorMessage={errors.receiver?.name?.message}
-                  onInputChange={field.onChange}
-                  onApply={handleApplyReceiverLookup}
-                />
-              ) : (
-                renderTextField({
-                  label: t('labels.receiver_name'),
-                  isInvalid: !!errors.receiver?.name,
-                  errorMessage: errors.receiver?.name?.message,
-                  variant: 'primary',
-                  inputProps: {
-                    ...field,
-                    'aria-label': t('a11y.receiver_name_label'),
-                    placeholder: t('placeholders.receiver_name'),
-                    type: 'text',
-                    maxLength: 255
-                  }
-                })
-              )
-            }
-          />
-          <Controller
-            name="receiver.businessNumber"
-            control={control}
-            render={({ field }) =>
-              renderTextField({
-                label: t(
-                  `labels.receiver_business_number_${isReceiverBusiness ? 'business' : 'individual'}`
-                ),
-                isInvalid: !!errors.receiver?.businessNumber,
-                errorMessage: errors.receiver?.businessNumber?.message,
-                variant: 'primary',
-                inputProps: {
-                  ...field,
-                  'aria-label': t(
-                    `a11y.receiver_business_number_label_${isReceiverBusiness ? 'business' : 'individual'}`
-                  ),
-                  placeholder: t('placeholders.receiver_business_number'),
-                  type: 'text'
-                }
-              })
-            }
-          />
-          {isVatEnabled && isReceiverBusiness && (
+          </Card.Header>
+          <Card.Content className="gap-field">
             <Controller
-              name="receiver.vatNumber"
+              name="receiver.businessType"
+              control={control}
+              render={({ field }) => (
+                <RadioGroup
+                  aria-label={t('a11y.receiver_business_type_label')}
+                  variant="primary"
+                  orientation="horizontal"
+                  {...field}
+                >
+                  {renderBusinessTypeOptions()}
+                </RadioGroup>
+              )}
+            />
+            <Controller
+              name="receiver.name"
+              control={control}
+              render={({ field }) =>
+                isReceiverBusiness ? (
+                  <CompanyLookupPanel
+                    userId={user.id || 0}
+                    value={field.value || ''}
+                    label={t('labels.receiver_name')}
+                    placeholder={t('placeholders.receiver_name')}
+                    variant="primary"
+                    isInvalid={Boolean(errors.receiver?.name)}
+                    errorMessage={errors.receiver?.name?.message}
+                    onInputChange={field.onChange}
+                    onApply={handleApplyReceiverLookup}
+                  />
+                ) : (
+                  renderTextField({
+                    label: t('labels.receiver_name'),
+                    isInvalid: !!errors.receiver?.name,
+                    errorMessage: errors.receiver?.name?.message,
+                    variant: 'primary',
+                    inputProps: {
+                      ...field,
+                      'aria-label': t('a11y.receiver_name_label'),
+                      placeholder: t('placeholders.receiver_name'),
+                      type: 'text',
+                      maxLength: 255
+                    }
+                  })
+                )
+              }
+            />
+            <Controller
+              name="receiver.businessNumber"
               control={control}
               render={({ field }) =>
                 renderTextField({
-                  label: t('labels.receiver_vat_number'),
-                  isInvalid: !!errors.receiver?.vatNumber,
-                  errorMessage: errors.receiver?.vatNumber?.message,
+                  label: t(
+                    `labels.receiver_business_number_${isReceiverBusiness ? 'business' : 'individual'}`
+                  ),
+                  isInvalid: !!errors.receiver?.businessNumber,
+                  errorMessage: errors.receiver?.businessNumber?.message,
                   variant: 'primary',
                   inputProps: {
                     ...field,
-                    value: field.value || '',
-                    'aria-label': t('a11y.receiver_vat_number_label'),
-                    placeholder: t('placeholders.receiver_vat_number'),
+                    'aria-label': t(
+                      `a11y.receiver_business_number_label_${isReceiverBusiness ? 'business' : 'individual'}`
+                    ),
+                    placeholder: t('placeholders.receiver_business_number'),
                     type: 'text'
                   }
                 })
               }
             />
-          )}
-          <Controller
-            name="receiver.address"
-            control={control}
-            render={({ field }) =>
-              renderTextField({
-                label: t('labels.receiver_address'),
-                isInvalid: !!errors.receiver?.address,
-                errorMessage: errors.receiver?.address?.message,
-                variant: 'primary',
-                inputProps: {
-                  ...field,
-                  'aria-label': t('a11y.receiver_address_label'),
-                  placeholder: t('placeholders.receiver_address'),
-                  type: 'text'
+            {isVatEnabled && isReceiverBusiness && (
+              <Controller
+                name="receiver.vatNumber"
+                control={control}
+                render={({ field }) =>
+                  renderTextField({
+                    label: t('labels.receiver_vat_number'),
+                    isInvalid: !!errors.receiver?.vatNumber,
+                    errorMessage: errors.receiver?.vatNumber?.message,
+                    variant: 'primary',
+                    inputProps: {
+                      ...field,
+                      value: field.value || '',
+                      'aria-label': t('a11y.receiver_vat_number_label'),
+                      placeholder: t('placeholders.receiver_vat_number'),
+                      type: 'text'
+                    }
+                  })
                 }
-              })
-            }
-          />
-          <Controller
-            name="receiver.email"
-            control={control}
-            render={({ field }) =>
-              renderTextField({
-                label: t('labels.receiver_email'),
-                isInvalid: !!errors.receiver?.email,
-                errorMessage: errors.receiver?.email?.message,
-                variant: 'primary',
-                inputProps: {
-                  ...field,
-                  'aria-label': t('a11y.receiver_email_label'),
-                  placeholder: t('placeholders.receiver_email'),
-                  type: 'text'
-                }
-              })
-            }
-          />
+              />
+            )}
+            <Controller
+              name="receiver.address"
+              control={control}
+              render={({ field }) =>
+                renderTextField({
+                  label: t('labels.receiver_address'),
+                  isInvalid: !!errors.receiver?.address,
+                  errorMessage: errors.receiver?.address?.message,
+                  variant: 'primary',
+                  inputProps: {
+                    ...field,
+                    'aria-label': t('a11y.receiver_address_label'),
+                    placeholder: t('placeholders.receiver_address'),
+                    type: 'text'
+                  }
+                })
+              }
+            />
+            <Controller
+              name="receiver.email"
+              control={control}
+              render={({ field }) =>
+                renderTextField({
+                  label: t('labels.receiver_email'),
+                  isInvalid: !!errors.receiver?.email,
+                  errorMessage: errors.receiver?.email?.message,
+                  variant: 'primary',
+                  inputProps: {
+                    ...field,
+                    'aria-label': t('a11y.receiver_email_label'),
+                    placeholder: t('placeholders.receiver_email'),
+                    type: 'text'
+                  }
+                })
+              }
+            />
+          </Card.Content>
         </Card>
       </div>
     </div>
   );
 
   const renderInvoiceServices = () => (
-    <div className="col-span-4 flex flex-col gap-4">
+    <div className="gap-heading col-span-4 flex flex-col">
       <InvoiceServicesHeading
         label={t('services_heading')}
         explanation={t('services_explanation')}
@@ -795,8 +794,8 @@ const InvoiceForm = ({
   );
 
   const renderPaymentSettings = () => (
-    <div className="col-span-4 flex flex-col gap-3">
-      <div className="flex min-h-8 flex-col justify-between gap-2 sm:flex-row sm:items-end">
+    <div className="gap-heading col-span-4 flex flex-col">
+      <div className="gap-actions flex min-h-8 flex-col justify-between sm:flex-row sm:items-end">
         <h4>{t('payment_settings.title')}</h4>
         <Button
           size="sm"
@@ -809,55 +808,59 @@ const InvoiceForm = ({
           {t('modals.use_saved_payment_details')}
         </Button>
       </div>
-      <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
-        <Controller
-          name="paymentMode"
-          control={control}
-          render={({ field }) => (
-            <RadioGroup
-              className="md:col-span-3"
-              aria-label={t('a11y.payment_mode_label')}
-              orientation="horizontal"
-              variant="secondary"
-              value={getMvpPaymentMode(field.value)}
-              onChange={(value) => {
-                const selectedPaymentMode = getMvpPaymentMode(
-                  value as InvoiceBody['paymentMode']
-                );
+      <div className="gap-field grid w-full grid-cols-1 md:grid-cols-3">
+        <div className="gap-field-content flex flex-col md:col-span-3">
+          <Controller
+            name="paymentMode"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                aria-label={t('a11y.payment_mode_label')}
+                orientation="horizontal"
+                variant="secondary"
+                value={getMvpPaymentMode(field.value)}
+                onChange={(value) => {
+                  const selectedPaymentMode = getMvpPaymentMode(
+                    value as InvoiceBody['paymentMode']
+                  );
 
-                field.onChange(selectedPaymentMode);
-                setValue('cryptoWallet', null, { shouldDirty: true });
-                clearErrors('paymentMode');
-                if (selectedPaymentMode === 'disabled') {
-                  setValue('manualPaymentReference', '', {
-                    shouldDirty: true
-                  });
-                  clearErrors(['manualPaymentReference', 'bankingInformation']);
-                } else if (selectedPaymentMode === 'manual') {
-                  applyDefaultBankAccount();
-                }
-              }}
-              isInvalid={!!errors.paymentMode}
-            >
-              {paymentModeOptions.map((option) => (
-                <Radio key={option} value={option}>
-                  <Radio.Content>
-                    <Radio.Control>
-                      <Radio.Indicator />
-                    </Radio.Control>
-                    <Label>{t(`payment_settings.modes.${option}`)}</Label>
-                  </Radio.Content>
-                </Radio>
-              ))}
-              <FieldError>{errors.paymentMode?.message}</FieldError>
-            </RadioGroup>
+                  field.onChange(selectedPaymentMode);
+                  setValue('cryptoWallet', null, { shouldDirty: true });
+                  clearErrors('paymentMode');
+                  if (selectedPaymentMode === 'disabled') {
+                    setValue('manualPaymentReference', '', {
+                      shouldDirty: true
+                    });
+                    clearErrors([
+                      'manualPaymentReference',
+                      'bankingInformation'
+                    ]);
+                  } else if (selectedPaymentMode === 'manual') {
+                    applyDefaultBankAccount();
+                  }
+                }}
+                isInvalid={!!errors.paymentMode}
+              >
+                {paymentModeOptions.map((option) => (
+                  <Radio key={option} value={option}>
+                    <Radio.Content>
+                      <Radio.Control>
+                        <Radio.Indicator />
+                      </Radio.Control>
+                      <Label>{t(`payment_settings.modes.${option}`)}</Label>
+                    </Radio.Content>
+                  </Radio>
+                ))}
+                <FieldError>{errors.paymentMode?.message}</FieldError>
+              </RadioGroup>
+            )}
+          />
+          {paymentMode === 'disabled' && (
+            <p className="text-muted text-xs leading-5">
+              {t('payment_settings.disabled_note')}
+            </p>
           )}
-        />
-        {paymentMode === 'disabled' && (
-          <p className="text-muted text-xs leading-5 md:col-span-3">
-            {t('payment_settings.disabled_note')}
-          </p>
-        )}
+        </div>
         {paymentMode === 'manual' && (
           <Controller
             name="manualPaymentReference"
@@ -886,7 +889,7 @@ const InvoiceForm = ({
   );
 
   const renderInvoiceSignature = () => (
-    <div className="col-span-4 flex flex-col gap-4 sm:col-span-1">
+    <div className="gap-heading col-span-4 flex flex-col sm:col-span-1">
       <h4>{t('signature_heading')}</h4>
       <SignaturePad
         signature={senderSignature}
@@ -900,8 +903,8 @@ const InvoiceForm = ({
   );
 
   const renderActions = () => (
-    <div className="col-span-4 flex w-full items-center justify-between gap-5">
-      <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+    <div className="gap-actions flex w-full items-center justify-between">
+      <div className="gap-actions flex w-full flex-col-reverse justify-end sm:flex-row">
         <Button
           variant="ghost"
           className="w-full sm:w-auto"
@@ -941,195 +944,197 @@ const InvoiceForm = ({
   return (
     <>
       <FormProvider {...methods}>
-        <Card className="border p-4 sm:p-8">
+        <Card className="border">
           <form
             aria-label={t('a11y.form_label')}
-            className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
+            className="gap-form-actions flex w-full flex-col"
             onSubmit={handleSubmit(onSubmit)}
             encType="multipart/form-data"
           >
-            <div className="col-span-4 flex flex-col gap-4">
-              <h4>{t('invoice_details')}</h4>
-              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-4">
+            <div className="gap-section grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+              <div className="gap-heading col-span-4 flex flex-col">
+                <h4>{t('invoice_details')}</h4>
+                <div className="gap-field grid w-full grid-cols-1 md:grid-cols-4">
+                  <Controller
+                    name="invoiceSeries"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        className="w-full"
+                        variant="secondary"
+                        isInvalid={!!errors.invoiceSeries}
+                      >
+                        <Label>{t('labels.invoice_series')}</Label>
+                        <Input
+                          {...field}
+                          value={field.value || ''}
+                          onChange={(event) =>
+                            field.onChange(event.target.value.toUpperCase())
+                          }
+                          aria-label={t('a11y.invoice_series_label')}
+                          placeholder={t('placeholders.invoice_series')}
+                          maxLength={8}
+                        />
+                        <FieldError>{errors.invoiceSeries?.message}</FieldError>
+                        <p className="text-muted text-xs leading-5">
+                          {invoiceData?.invoiceId
+                            ? t('numbering.reserved_number', {
+                                number: invoiceData.invoiceId
+                              })
+                            : t('numbering.assigned_on_issue')}
+                        </p>
+                      </TextField>
+                    )}
+                  />
+                  <Controller
+                    name="date"
+                    control={control}
+                    render={({ field }) =>
+                      renderTextField({
+                        label: t('labels.date'),
+                        isInvalid: !!errors.date,
+                        errorMessage: errors.date?.message,
+                        inputProps: {
+                          ...field,
+                          value: field.value || today,
+                          onChange: (event) => {
+                            field.onChange(event);
+                            if (!isServiceDateManuallyOverriddenRef.current) {
+                              setValue('serviceDate', event.target.value, {
+                                shouldDirty: true
+                              });
+                            }
+                            setValue(
+                              'dueDate',
+                              getDueDateAfterIssueDateChange({
+                                issueDate: event.target.value,
+                                currentDueDate: getValues('dueDate'),
+                                paymentTermsDays: defaultPaymentTermsDays,
+                                isManuallyOverridden:
+                                  isDueDateManuallyOverriddenRef.current
+                              }),
+                              { shouldDirty: true }
+                            );
+                          },
+                          'aria-label': t('a11y.date_label'),
+                          type: 'date'
+                        }
+                      })
+                    }
+                  />
+                  <Controller
+                    name="serviceDate"
+                    control={control}
+                    render={({ field }) =>
+                      renderTextField({
+                        label: t('labels.service_date'),
+                        isInvalid: !!errors.serviceDate,
+                        errorMessage: errors.serviceDate?.message,
+                        inputProps: {
+                          ...field,
+                          value: field.value || currentDate || today,
+                          onChange: (event) => {
+                            isServiceDateManuallyOverriddenRef.current = true;
+                            field.onChange(event);
+                          },
+                          'aria-label': t('a11y.service_date_label'),
+                          type: 'date'
+                        }
+                      })
+                    }
+                  />
+                  <div className="relative w-full">
+                    <Controller
+                      name="dueDate"
+                      control={control}
+                      render={({ field }) => (
+                        <>
+                          <InvoiceDueDatePreselectionChips
+                            dateDiffFromDueDate={getDateDifferenceInDays(
+                              currentDate,
+                              field.value
+                            )}
+                            onDueDatePreselectionChange={(
+                              dueDatePreselection
+                            ) => {
+                              isDueDateManuallyOverriddenRef.current = true;
+                              const currentDatePlusDays = new Date(currentDate);
+
+                              if (dueDatePreselection === 'custom') {
+                                field.onChange('');
+                                dueDateInputRef.current?.showPicker();
+
+                                return;
+                              }
+
+                              currentDatePlusDays.setDate(
+                                currentDatePlusDays.getDate() +
+                                  Number(dueDatePreselection)
+                              );
+
+                              const formattedDate = formatDate(
+                                currentDatePlusDays.toISOString()
+                              );
+
+                              field.onChange(formattedDate);
+                            }}
+                          />
+                          <TextField
+                            className="w-full"
+                            variant="secondary"
+                            isInvalid={!!errors.dueDate}
+                          >
+                            <Label>{t('labels.due_date')}</Label>
+                            <Input
+                              {...field}
+                              ref={dueDateInputRef}
+                              value={field.value || ''}
+                              onChange={(event) => {
+                                isDueDateManuallyOverriddenRef.current = true;
+                                field.onChange(event);
+                              }}
+                              aria-label={t('a11y.due_date_label')}
+                              type="date"
+                            />
+                            <FieldError>{errors.dueDate?.message}</FieldError>
+                          </TextField>
+                        </>
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+              {renderSenderAndReceiverFields()}
+              {renderInvoiceServices()}
+              <div className="col-span-4">
                 <Controller
-                  name="invoiceSeries"
+                  name="notes"
                   control={control}
                   render={({ field }) => (
                     <TextField
                       className="w-full"
                       variant="secondary"
-                      isInvalid={!!errors.invoiceSeries}
+                      isInvalid={!!errors.notes}
                     >
-                      <Label>{t('labels.invoice_series')}</Label>
-                      <Input
-                        {...field}
+                      <Label>{t('labels.notes')}</Label>
+                      <TextArea
+                        name={field.name}
                         value={field.value || ''}
-                        onChange={(event) =>
-                          field.onChange(event.target.value.toUpperCase())
-                        }
-                        aria-label={t('a11y.invoice_series_label')}
-                        placeholder={t('placeholders.invoice_series')}
-                        maxLength={8}
+                        rows={4}
+                        maxLength={2000}
+                        aria-label={t('a11y.notes_label')}
+                        placeholder={t('placeholders.notes')}
+                        onBlur={field.onBlur}
+                        onChange={field.onChange}
                       />
-                      <FieldError>{errors.invoiceSeries?.message}</FieldError>
-                      <p className="text-muted text-xs leading-5">
-                        {invoiceData?.invoiceId
-                          ? t('numbering.reserved_number', {
-                              number: invoiceData.invoiceId
-                            })
-                          : t('numbering.assigned_on_issue')}
-                      </p>
+                      <FieldError>{errors.notes?.message}</FieldError>
                     </TextField>
                   )}
                 />
-                <Controller
-                  name="date"
-                  control={control}
-                  render={({ field }) =>
-                    renderTextField({
-                      label: t('labels.date'),
-                      isInvalid: !!errors.date,
-                      errorMessage: errors.date?.message,
-                      inputProps: {
-                        ...field,
-                        value: field.value || today,
-                        onChange: (event) => {
-                          field.onChange(event);
-                          if (!isServiceDateManuallyOverriddenRef.current) {
-                            setValue('serviceDate', event.target.value, {
-                              shouldDirty: true
-                            });
-                          }
-                          setValue(
-                            'dueDate',
-                            getDueDateAfterIssueDateChange({
-                              issueDate: event.target.value,
-                              currentDueDate: getValues('dueDate'),
-                              paymentTermsDays: defaultPaymentTermsDays,
-                              isManuallyOverridden:
-                                isDueDateManuallyOverriddenRef.current
-                            }),
-                            { shouldDirty: true }
-                          );
-                        },
-                        'aria-label': t('a11y.date_label'),
-                        type: 'date'
-                      }
-                    })
-                  }
-                />
-                <Controller
-                  name="serviceDate"
-                  control={control}
-                  render={({ field }) =>
-                    renderTextField({
-                      label: t('labels.service_date'),
-                      isInvalid: !!errors.serviceDate,
-                      errorMessage: errors.serviceDate?.message,
-                      inputProps: {
-                        ...field,
-                        value: field.value || currentDate || today,
-                        onChange: (event) => {
-                          isServiceDateManuallyOverriddenRef.current = true;
-                          field.onChange(event);
-                        },
-                        'aria-label': t('a11y.service_date_label'),
-                        type: 'date'
-                      }
-                    })
-                  }
-                />
-                <div className="relative w-full">
-                  <Controller
-                    name="dueDate"
-                    control={control}
-                    render={({ field }) => (
-                      <>
-                        <InvoiceDueDatePreselectionChips
-                          dateDiffFromDueDate={getDateDifferenceInDays(
-                            currentDate,
-                            field.value
-                          )}
-                          onDueDatePreselectionChange={(
-                            dueDatePreselection
-                          ) => {
-                            isDueDateManuallyOverriddenRef.current = true;
-                            const currentDatePlusDays = new Date(currentDate);
-
-                            if (dueDatePreselection === 'custom') {
-                              field.onChange('');
-                              dueDateInputRef.current?.showPicker();
-
-                              return;
-                            }
-
-                            currentDatePlusDays.setDate(
-                              currentDatePlusDays.getDate() +
-                                Number(dueDatePreselection)
-                            );
-
-                            const formattedDate = formatDate(
-                              currentDatePlusDays.toISOString()
-                            );
-
-                            field.onChange(formattedDate);
-                          }}
-                        />
-                        <TextField
-                          className="w-full"
-                          variant="secondary"
-                          isInvalid={!!errors.dueDate}
-                        >
-                          <Label>{t('labels.due_date')}</Label>
-                          <Input
-                            {...field}
-                            ref={dueDateInputRef}
-                            value={field.value || ''}
-                            onChange={(event) => {
-                              isDueDateManuallyOverriddenRef.current = true;
-                              field.onChange(event);
-                            }}
-                            aria-label={t('a11y.due_date_label')}
-                            type="date"
-                          />
-                          <FieldError>{errors.dueDate?.message}</FieldError>
-                        </TextField>
-                      </>
-                    )}
-                  />
-                </div>
               </div>
+              {renderPaymentSettings()}
+              {renderInvoiceSignature()}
             </div>
-            {renderSenderAndReceiverFields()}
-            {renderInvoiceServices()}
-            <div className="col-span-4">
-              <Controller
-                name="notes"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    className="w-full"
-                    variant="secondary"
-                    isInvalid={!!errors.notes}
-                  >
-                    <Label>{t('labels.notes')}</Label>
-                    <TextArea
-                      name={field.name}
-                      value={field.value || ''}
-                      rows={4}
-                      maxLength={2000}
-                      aria-label={t('a11y.notes_label')}
-                      placeholder={t('placeholders.notes')}
-                      onBlur={field.onBlur}
-                      onChange={field.onChange}
-                    />
-                    <FieldError>{errors.notes?.message}</FieldError>
-                  </TextField>
-                )}
-              />
-            </div>
-            {renderPaymentSettings()}
-            {renderInvoiceSignature()}
             {renderActions()}
           </form>
         </Card>

@@ -34,16 +34,16 @@ const OverdueInvoices = async ({
 
   return (
     <Card className="min-w-0 border">
-      <Card.Header className="flex-row flex-wrap items-center justify-between gap-4">
-        <div className="min-w-0">
+      <Card.Header className="flex-row flex-wrap items-center justify-between gap-field">
+        <div className="flex min-w-0 flex-wrap items-center gap-actions">
           <h2 className="text-base font-medium">{t('title')}</h2>
+          <Chip size="sm" variant="soft">{overdueCount}</Chip>
           {overdueCount > 0 ? (
-            <p className="text-muted text-sm">
-              {t('summary', {
-                count: overdueCount,
+            <span className="text-muted text-sm tabular-nums">
+              {t('amount_overdue', {
                 amount: formatMoney(overdueTotal, locale)
               })}
-            </p>
+            </span>
           ) : null}
         </div>
         {overdueCount > 0 ? (

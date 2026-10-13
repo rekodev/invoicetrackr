@@ -22,7 +22,7 @@ const TaxesWorkspace = async ({ userId, year }: Props) => {
   const { summary, warnings, estimate } = response.data;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-section">
       <AnnualPackageChecks warnings={warnings} year={year} />
       {estimate.status === 'ready' && (
         <TaxAssumptionsCard

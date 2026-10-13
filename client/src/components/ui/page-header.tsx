@@ -14,15 +14,19 @@ export default function PageHeader({
   children
 }: Props) {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-2">
+    <div className="gap-field-content flex flex-col">
+      <header className="min-h-page-heading gap-x-field gap-y-heading flex flex-wrap items-center justify-between">
+        <div className="min-h-page-heading gap-actions flex min-w-0 flex-wrap items-center">
           <h1 className="break-words text-lg font-semibold">{title}</h1>
           {titleAddon}
         </div>
-        {description && <div className="text-muted mt-1 text-sm">{description}</div>}
-      </div>
-      {children}
-    </header>
+        {children && (
+          <div className="min-h-page-heading gap-actions flex min-w-0 flex-wrap items-center">
+            {children}
+          </div>
+        )}
+      </header>
+      {description && <div className="text-muted text-sm">{description}</div>}
+    </div>
   );
 }

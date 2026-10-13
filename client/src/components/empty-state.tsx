@@ -24,14 +24,14 @@ export default function EmptyState({
   return (
     <div
       className={cn(
-        'flex min-h-[280px] flex-col items-center justify-center gap-3 px-4 py-10 text-center',
+        'py-section flex min-h-[280px] flex-col items-center justify-center gap-field px-card text-center',
         className
       )}
     >
       <div className="max-w-sm">
         <p className="text-foreground text-base font-semibold">{title}</p>
         {description && (
-          <p className="text-muted mt-1 text-sm">{description}</p>
+          <p className="text-muted mt-field-content text-sm">{description}</p>
         )}
       </div>
 

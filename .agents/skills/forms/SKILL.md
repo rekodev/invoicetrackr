@@ -155,6 +155,24 @@ Wrap every HeroUI field in `Controller`. Validation state and props go on the
 
 ## Layout
 
+- Shared spacing values live in `client/src/app/globals.css` under `@theme`.
+  Use `gap-field` (16px) between fields, `gap-field-content` (4px) inside a
+  field, `gap-heading` (12px) from a section title to its content, and
+  `gap-section` (24px) between distinct form sections. These values remain
+  the same on mobile.
+- Cards own one `p-card` (16px) gutter. Put section titles in `Card.Header`,
+  fields in `Card.Content className="gap-field"`, and actions in
+  `Card.Footer`; do not add a second gutter to those slots. The logged-in
+  shell's scoped HeroUI rules also give dialog/popover surfaces 16px padding.
+- Leave 16px from the final field to Save/Cancel, using `gap-form-actions`
+  or `pt-form-actions` for a custom footer. Standard `Card.Footer` and
+  `Modal.Footer` receive this spacing from the scoped styles. Use
+  `gap-actions` (8px) between buttons.
+- Helper and error messages render only when present, without a reserved
+  blank line or minimum height. Descriptions belong inside the owning
+  `TextField`/`Select` or field wrapper so the 4px gap applies. Use a
+  conditional `FieldError` when there is no message to render; avoid
+  negative margins to move helper text or errors into place.
 - Dialog forms use the compound `Modal` API: `Modal.Backdrop` (owns
   `isOpen` / `onOpenChange`) → `Modal.Container` → `Modal.Dialog` →
   `<form>` wrapping `Modal.Header` / `Modal.Body` / `Modal.Footer`, plus

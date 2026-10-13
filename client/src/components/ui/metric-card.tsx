@@ -13,14 +13,14 @@ type Props = {
 const MetricCard = ({ icon, title, text, iconVariant }: Props) => {
   return (
     <Card className="border">
-      <Card.Content className="flex h-full flex-col justify-between">
-        <div className="text-muted flex items-center gap-2 text-sm font-medium">
+      <Card.Content className="gap-heading flex h-full flex-col justify-between">
+        <div className="text-muted flex items-center gap-actions text-sm font-medium">
           <IconContainer size="sm" variant={iconVariant}>
             {icon}
           </IconContainer>
           {title}
         </div>
-        <p className="mt-5 text-2xl font-semibold tabular-nums">{text}</p>
+        <p className="text-2xl font-semibold tabular-nums">{text}</p>
       </Card.Content>
     </Card>
   );

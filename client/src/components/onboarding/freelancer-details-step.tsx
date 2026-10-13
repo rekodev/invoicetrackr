@@ -99,7 +99,7 @@ export default function FreelancerDetailsStep({ user, onSuccess }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Card.Content className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2">
+      <Card.Content className="grid grid-cols-1 gap-field sm:grid-cols-2">
         {renderField({
           name: 'name',
           label: onboardingT('details.legal_name'),
@@ -128,7 +128,7 @@ export default function FreelancerDetailsStep({ user, onSuccess }: Props) {
           })}
         </div>
       </Card.Content>
-      <Card.Footer className="justify-end px-6 py-4">
+      <Card.Footer className="pt-form-actions justify-end">
         <Button
           type="submit"
           isPending={isSubmitting}

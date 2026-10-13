@@ -1,6 +1,6 @@
 'use client';
 
-import { Label, ListBox, ListBoxItem, Select } from '@heroui/react';
+import { ListBox, ListBoxItem, Select } from '@heroui/react';
 import type { JournalQuery } from '@invoicetrackr/types';
 import { useRouter } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
@@ -26,8 +26,9 @@ const JournalFilters = ({ query, currentYear }: Props) => {
   const navigate = (next: JournalQuery) => router.push(journalHref(next));
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:flex">
+    <div className="grid grid-cols-2 gap-heading sm:flex">
       <YearSelect
+        hideLabel
         label={t('year')}
         year={query.year}
         years={journalYears(currentYear, query.year)}
@@ -36,6 +37,7 @@ const JournalFilters = ({ query, currentYear }: Props) => {
       <Select
         className="sm:w-44"
         variant="secondary"
+        aria-label={t('month')}
         value={query.month ? String(query.month) : ALL_MONTHS}
         onChange={(value) =>
           navigate({
@@ -44,8 +46,7 @@ const JournalFilters = ({ query, currentYear }: Props) => {
           })
         }
       >
-        <Label>{t('month')}</Label>
-        <Select.Trigger>
+        <Select.Trigger className="h-10 min-h-10 items-center py-0 md:h-9 md:min-h-9">
           <Select.Value />
           <Select.Indicator />
         </Select.Trigger>

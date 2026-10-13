@@ -1,8 +1,22 @@
 import { describe, expect, it } from 'vitest';
 
-import { getRequestErrorProperties } from '../request-error';
+import { getRequestErrorProperties, redactRequestError } from '../request-error';
 
 describe('request error utils', () => {
+  it('redacts email addresses from the reported message and stack', () => {
+    const error = new TypeError('No client for jonas@example.com');
+
+    const redacted = redactRequestError(error);
+
+    expect(redacted).toBeInstanceOf(Error);
+    expect(redacted.name).toBe('TypeError');
+    expect(redacted.message).toBe('No client for [email]');
+    expect(redacted.stack).not.toContain('jonas@example.com');
+    expect(redactRequestError('secret jonas@example.com').message).toBe(
+      'Non-Error value thrown'
+    );
+  });
+
   it('reports the route pattern and digest without the request path or headers', () => {
     const error = Object.assign(new Error('Boom'), { digest: '12345' });
 

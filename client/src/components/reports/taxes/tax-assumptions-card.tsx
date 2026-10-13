@@ -45,15 +45,15 @@ const TaxAssumptionsCard = ({ userId, year, profile, activeMonths }: Props) => {
   ];
 
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-4">
+    <section className="flex flex-col gap-heading">
+      <div className="flex items-center justify-between gap-field">
         <h2 className="text-base font-medium">{t('title')}</h2>
         <Button size="sm" variant="outline" onPress={() => setIsOpen(true)}>
           <PencilSquareIcon className="size-4" />
           {t('edit')}
         </Button>
       </div>
-      <dl className="grid gap-x-6 gap-y-4 border-y py-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+      <dl className="grid gap-x-section gap-y-field border-y py-card sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {details.map(([label, value]) => (
           <div key={label} className="min-w-0">
             <dt className="text-muted text-xs font-medium">{label}</dt>

@@ -267,14 +267,14 @@ const ExpenseFormDialog = ({
             </div>
           </Modal.Header>
           <Modal.Body>
-            {savedCreation?.id ? <div className="space-y-2 text-sm">
+            {savedCreation?.id ? <div className="space-y-actions text-sm">
               <p>{t('created_upload_pending')}</p>
               <Link className="underline" href={`${EXPENSE_WORKSPACE_PAGE(savedCreation.id)}${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ''}`}>{t('open_saved')}</Link>
             </div> : null}
             <form
               id="expense-form"
               noValidate
-              className="grid grid-cols-1 gap-4 sm:grid-cols-2"
+              className="grid grid-cols-1 gap-field sm:grid-cols-2"
               onSubmit={(event) => handleSubmit(onSubmit)(event)}
             >
               {!isEditMode ? <fieldset disabled={isSubmitting} className="sm:col-span-2"><FileDropzone
@@ -464,9 +464,9 @@ const ExpenseFormDialog = ({
             </form>
           </Modal.Body>
           <Modal.Footer>
-            <div className="flex w-full flex-col gap-3">
+            <div className="flex w-full flex-col gap-heading">
               {submitError ? <p role="alert" className="text-danger text-sm">{submitError}</p> : null}
-              <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+              <div className="flex w-full flex-col-reverse justify-end gap-actions sm:flex-row">
                 <Button
                   variant="ghost"
                   isDisabled={isSubmitting}

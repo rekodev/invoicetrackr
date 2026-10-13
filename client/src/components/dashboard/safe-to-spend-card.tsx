@@ -21,12 +21,12 @@ const SafeToSpendCard = async ({ safeToSpend, year }: Props) => {
 
   return (
     <Card className="h-full border">
-      <Card.Content className="flex h-full flex-col items-start justify-between gap-5">
-        <div className="text-muted flex items-center gap-2 text-sm font-medium">
+      <Card.Content className="flex h-full flex-col items-start justify-between gap-heading">
+        <div className="text-muted flex items-center gap-actions text-sm font-medium">
           <IconContainer size="sm" variant="success">
             <WalletIcon className="h-4 w-4" />
           </IconContainer>
-          <h2>{t('title')}</h2>
+          <h2 className="text-base font-medium">{t('title')}</h2>
           <InfoPopover
             title={t('info.title')}
             placement="bottom end"
@@ -47,7 +47,7 @@ const SafeToSpendCard = async ({ safeToSpend, year }: Props) => {
           </InfoPopover>
         </div>
         {safeToSpend.status === 'ready' ? (
-          <div className="flex flex-col items-start gap-1">
+          <div className="flex flex-col items-start gap-field-content">
             <p className="text-2xl font-semibold tabular-nums">
               {formatMoney(safeToSpend.safeToSpend, locale)}
             </p>

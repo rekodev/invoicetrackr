@@ -81,7 +81,7 @@ const TaxAssumptionsDialog = ({
   };
 
   const labelWithHelp = (label: string, help?: string) => (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-field-content">
       <Label>{label}</Label>
       {help ? (
         <InfoTooltip label={t('fields.help', { field: label })} text={help} />
@@ -94,7 +94,7 @@ const TaxAssumptionsDialog = ({
     label: string,
     help?: string
   ) => (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-field-content">
       <Controller
         control={control}
         name={name}
@@ -160,14 +160,14 @@ const TaxAssumptionsDialog = ({
             onSubmit={handleSubmit(onSubmit)}
           >
             <Modal.Header>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-actions">
                 <Modal.Heading>{t('title')}</Modal.Heading>
                 <Chip size="sm" variant="soft">
                   {year}
                 </Chip>
               </div>
             </Modal.Header>
-            <Modal.Body className="flex flex-col gap-5">
+            <Modal.Body className="flex flex-col gap-field">
               <Controller
                 control={control}
                 name="expenseMethod"
@@ -205,10 +205,12 @@ const TaxAssumptionsDialog = ({
                 'hasAdditionalPensionAccumulation',
                 t('fields.pension')
               )}
-              <div className="grid gap-3 sm:grid-cols-2">
-                {renderTextField('activityStartDate', t('fields.start'), 'date')}
-                {renderTextField('activityEndDate', t('fields.end'), 'date')}
-                <p className="text-muted text-xs sm:col-span-2">
+              <div className="gap-field-content flex flex-col">
+                <div className="gap-field grid sm:grid-cols-2">
+                  {renderTextField('activityStartDate', t('fields.start'), 'date')}
+                  {renderTextField('activityEndDate', t('fields.end'), 'date')}
+                </div>
+                <p className="text-muted text-xs">
                   {t('fields.dates_help')}
                 </p>
               </div>
@@ -220,7 +222,7 @@ const TaxAssumptionsDialog = ({
               )}
             </Modal.Body>
             <Modal.Footer>
-              <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+              <div className="flex w-full flex-col-reverse justify-end gap-actions sm:flex-row">
                 <Button variant="ghost" className="w-full sm:w-auto" onPress={onClose}>
                   {t('cancel')}
                 </Button>

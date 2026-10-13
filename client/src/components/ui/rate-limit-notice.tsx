@@ -19,7 +19,7 @@ export default function RateLimitNotice() {
         <Button
           onPress={() => window.location.reload()}
           variant="ghost"
-          className="gap-2"
+          className="gap-actions"
         >
           <ArrowPathIcon className="size-4" />
           {t('try_again')}

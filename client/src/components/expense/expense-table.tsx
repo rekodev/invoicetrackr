@@ -361,7 +361,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
         return formatLocalizedDate(expense.expenseDate, locale);
       case 'supplier':
         return (
-          <div className="flex max-w-64 items-center gap-2">
+          <div className="flex max-w-64 items-center gap-actions">
             <Link className="min-w-0 truncate text-sm font-medium hover:underline" title={expense.supplier} href={`${EXPENSE_WORKSPACE_PAGE(expense.id!)}?returnTo=${encodeURIComponent(returnTo)}`}>{expense.supplier}</Link>
             {expense.documentNumber ? (
               <Chip size="sm" variant="soft" className="max-w-24 shrink-0 px-2" title={expense.documentNumber}>
@@ -405,19 +405,19 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
           : t('payment_methods.not_set');
       case 'attachments':
         return attachmentCount > 0 ? (
-          <span className="text-foreground flex items-center gap-1 text-sm" aria-label={t('documents.attached', { count: attachmentCount })}>
+          <span className="text-foreground flex items-center gap-field-content text-sm" aria-label={t('documents.attached', { count: attachmentCount })}>
             <PaperClipIcon className="h-4 w-4" />
             {attachmentCount}
           </span>
         ) : (
-          <span className="text-warning flex items-center gap-1 text-xs font-medium">
+          <span className="text-warning flex items-center gap-field-content text-xs font-medium">
             <ExclamationCircleIcon className="h-4 w-4" />
             {t('documents.missing')}
           </span>
         );
       case 'actions':
         return (
-          <div className="relative flex items-center justify-end gap-2">
+          <div className="relative flex items-center justify-end gap-actions">
             <Link aria-label={t('actions.view')} className="text-muted hover:text-foreground"
               href={`${EXPENSE_WORKSPACE_PAGE(expense.id!)}?returnTo=${encodeURIComponent(returnTo)}`}>
               <EyeIcon className="h-5 w-5" />
@@ -483,8 +483,8 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
   };
 
   return (
-    <section className="flex max-w-full flex-col gap-5 overflow-x-hidden">
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+    <section className="flex max-w-full flex-col gap-section overflow-x-hidden">
+      <div className="grid grid-cols-1 gap-section md:grid-cols-3">
         <MetricCard
           icon={<ReceiptPercentIcon className="h-4 w-4" />}
           iconVariant="accent"
@@ -505,11 +505,11 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
         />
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-field">
         <Card className="border">
-          <Card.Content className="flex flex-col gap-3 p-3 sm:p-4">
-            <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-              <div className="flex w-full min-w-0 flex-1 items-center gap-2">
+          <Card.Content className="flex flex-col gap-heading">
+            <div className="flex flex-col items-stretch gap-actions sm:flex-row sm:items-center">
+              <div className="flex w-full min-w-0 flex-1 items-center gap-actions">
                 <div className="relative w-full">
                   <MagnifyingGlassIcon className="text-muted pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2" />
                   <Input
@@ -529,9 +529,9 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
               </div>
             </div>
             <div className="flex justify-start">
-              <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:w-auto lg:items-center">
-                <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
-                  <TextField variant="secondary" className="flex-row items-center gap-2">
+              <div className="grid w-full grid-cols-1 gap-actions sm:grid-cols-2 lg:flex lg:w-auto lg:items-center">
+                <div className="flex flex-wrap items-center gap-actions sm:col-span-2">
+                  <TextField variant="secondary" className="flex-row items-center gap-field-content">
                     <Label className="shrink-0 whitespace-nowrap">{t('filters.from')}</Label>
                     <Input
                       className="w-36"
@@ -540,7 +540,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                       onChange={(event) => setDateFrom(event.target.value)}
                     />
                   </TextField>
-                  <TextField variant="secondary" className="flex-row items-center gap-2">
+                  <TextField variant="secondary" className="flex-row items-center gap-field-content">
                     <Label className="shrink-0 whitespace-nowrap">{t('filters.to')}</Label>
                     <Input
                       className="w-36"
@@ -555,7 +555,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                     className={buttonVariants({
                       variant: 'tertiary',
                       className:
-                        'flex w-full items-center justify-center gap-2 lg:w-auto'
+                        'flex w-full items-center justify-center gap-actions lg:w-auto'
                     })}
                   >
                     <TagIcon className="h-4 w-4" />
@@ -586,7 +586,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                     className={buttonVariants({
                       variant: 'tertiary',
                       className:
-                        'flex w-full items-center justify-center gap-2 lg:w-auto'
+                        'flex w-full items-center justify-center gap-actions lg:w-auto'
                     })}
                   >
                     <CreditCardIcon className="h-4 w-4" />
@@ -620,7 +620,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                   variant="primary"
                   className={buttonVariants({
                     variant: 'tertiary',
-                    className: 'gap-2'
+                    className: 'gap-actions'
                   })}
                   isSelected={documentsFilter === 'attached'}
                   onChange={(isSelected) =>
@@ -637,13 +637,13 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
               </div>
             </div>
             {activeFilters.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-actions">
                 {activeFilters.map((filter) => (
                   <Chip
                     key={filter.key}
                     color="accent"
                     variant="soft"
-                    className="gap-1"
+                    className="gap-field-content"
                   >
                     <span>{filter.label}</span>
                     <button

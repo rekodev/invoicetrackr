@@ -12,7 +12,7 @@ const ChangePasswordPage = async () => {
   const t = await getTranslations('profile.change_password');
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader title={t('title')} />
       <ChangePasswordForm userId={Number(session.user.id)} />
     </section>

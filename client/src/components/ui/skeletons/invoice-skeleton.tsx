@@ -4,10 +4,10 @@ import { BasicCardSkeleton } from './basic-card-skeleton';
 
 export function InvoiceTableSkeleton() {
   return (
-    <section className="flex flex-col gap-4 pt-1">
-      <div className="flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-end">
+    <section className="flex flex-col gap-field">
+      <div className="flex flex-col items-stretch justify-between gap-heading sm:flex-row sm:items-end">
         <Skeleton className="h-10 w-full rounded-2xl" />
-        <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:gap-3">
+        <div className="grid w-full grid-cols-1 gap-actions sm:flex sm:w-auto sm:gap-heading">
           <Skeleton className="h-10 w-full rounded-2xl sm:w-24" />
           <Skeleton className="h-10 w-full rounded-2xl sm:w-28" />
           <Skeleton className="h-10 w-full rounded-2xl sm:w-28" />

@@ -76,7 +76,7 @@ export default function RecipientDetailsRequestModal({
             <Modal.Heading>{t('request_details_title')}</Modal.Heading>
           </Modal.Header>
           <Modal.Body>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-field">
               <p className="text-muted text-sm">
                 {t('request_details_description')}
               </p>
@@ -92,7 +92,7 @@ export default function RecipientDetailsRequestModal({
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <div className="flex w-full flex-col-reverse gap-actions sm:flex-row sm:justify-end">
               <Button
                 variant="tertiary"
                 className="w-full sm:w-auto"

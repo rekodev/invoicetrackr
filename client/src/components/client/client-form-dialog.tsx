@@ -202,7 +202,7 @@ const ClientFormDialog = ({
                 {isEditMode ? t('title_edit') : t('title_add')}
               </Modal.Heading>
             </Modal.Header>
-            <Modal.Body className="flex flex-col gap-2">
+            <Modal.Body className="flex flex-col gap-field">
               <Controller
                 control={control}
                 name="businessType"
@@ -280,7 +280,7 @@ const ClientFormDialog = ({
               })}
             </Modal.Body>
             <Modal.Footer>
-              <div className="flex w-full flex-col gap-3">
+              <div className="flex w-full flex-col gap-heading">
                 {duplicateWarning ? (
                   <Alert status="warning" className="bg-warning-soft shadow-none">
                     <Alert.Indicator />
@@ -292,7 +292,7 @@ const ClientFormDialog = ({
                     </Alert.Content>
                   </Alert>
                 ) : null}
-                <div className="flex w-full flex-col-reverse justify-end gap-2 sm:flex-row">
+                <div className="flex w-full flex-col-reverse justify-end gap-actions sm:flex-row">
                   <Button
                     variant="ghost"
                     className="w-full sm:w-auto"

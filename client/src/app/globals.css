@@ -1,6 +1,18 @@
 @import 'tailwindcss';
 @import '@heroui/styles';
 
+@theme {
+  --spacing-page: 1.5rem;
+  --spacing-page-heading: 2.5rem;
+  --spacing-section: 1.5rem;
+  --spacing-heading: 0.75rem;
+  --spacing-field: 1rem;
+  --spacing-field-content: 0.25rem;
+  --spacing-card: 1rem;
+  --spacing-form-actions: 1rem;
+  --spacing-actions: 0.5rem;
+}
+
 @utility section-eyebrow {
   font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
@@ -31,6 +43,55 @@
 }
 
 @layer components {
+  body:has(.workspace-ui) {
+    .card > .card__footer {
+      margin-block-start: calc(
+        var(--spacing-form-actions) - var(--spacing-heading)
+      );
+      gap: var(--spacing-actions);
+    }
+
+    :is(
+      .textfield,
+      .select,
+      .combo-box,
+      .number-field,
+      .date-field,
+      .date-picker,
+      .time-field,
+      .search-field
+    ) {
+      gap: var(--spacing-field-content);
+    }
+
+    .field-error:empty {
+      display: none;
+    }
+
+    .modal__dialog {
+      padding: var(--spacing-card);
+    }
+
+    .modal__header {
+      gap: var(--spacing-field-content);
+    }
+
+    .modal__header + .modal__body,
+    .modal__header + form > .modal__body:first-child {
+      margin-block-start: var(--spacing-heading);
+    }
+
+    .modal__body + .modal__footer,
+    .modal__header + .modal__footer {
+      margin-block-start: var(--spacing-form-actions);
+      gap: var(--spacing-actions);
+    }
+
+    .popover__dialog {
+      padding: var(--spacing-card);
+    }
+  }
+
   html {
     scroll-behavior: smooth;
   }

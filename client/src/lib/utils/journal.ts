@@ -7,7 +7,7 @@ import {
 } from '@/lib/constants/journal';
 import { REPORTS_JOURNAL_PAGE } from '@/lib/constants/pages';
 
-import { formatMonthYear, todayInLithuania } from './date';
+import { todayInLithuania } from './date';
 
 type SearchValue = string | string[] | undefined;
 
@@ -63,6 +63,3 @@ export const isJournalExportFormat = (
   value: string | null
 ): value is JournalExportFormat =>
   JOURNAL_EXPORT_FORMATS.includes(value as JournalExportFormat);
-
-export const formatJournalPeriod = ({ year, month }: JournalQuery, locale: string) =>
-  month ? formatMonthYear(year, month, locale) : String(year);

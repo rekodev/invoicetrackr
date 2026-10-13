@@ -7,7 +7,6 @@ import { auth } from '@/auth';
 import AccountDataSection from '@/components/profile/account-data-section';
 import LanguageSettingsForm from '@/components/profile/language-settings-form';
 import PageHeader from '@/components/ui/page-header';
-import SectionHeading from '@/components/ui/section-heading';
 import { isResponseError } from '@/lib/utils/error';
 
 type Props = {
@@ -27,11 +26,10 @@ const AccountPage = async ({ searchParams }: Props) => {
   const t = await getTranslations('profile.account');
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-section">
       <PageHeader title={t('title')} />
       <Card className="w-full border">
-        <Card.Content className="flex flex-col gap-6 p-6">
-          <SectionHeading description={t('description')} />
+        <Card.Content className="gap-section flex flex-col">
           <LanguageSettingsForm key={session.user.language} user={user} />
           <div className="border-t" />
           <AccountDataSection

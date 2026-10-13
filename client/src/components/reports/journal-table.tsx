@@ -40,14 +40,11 @@ const JournalTable = async ({ rows, totals, actions, info }: Props) => {
 
   return (
     <Card className="min-w-0 border">
-      <Card.Header className="flex-row flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h2 className="text-base font-medium">{t('table.title')}</h2>
-            <Chip size="sm" variant="soft">{rows.length}</Chip>
-            {info}
-          </div>
-          <p className="text-muted text-sm">{t('table.subtitle')}</p>
+      <Card.Header className="flex-row flex-wrap items-center justify-between gap-field">
+        <div className="flex min-w-0 flex-wrap items-center gap-actions">
+          <h2 className="text-base font-medium">{t('table.title')}</h2>
+          <Chip size="sm" variant="soft">{rows.length}</Chip>
+          {info}
         </div>
         {actions}
       </Card.Header>

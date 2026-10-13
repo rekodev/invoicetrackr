@@ -20,15 +20,15 @@ const CompleteProfile = ({ title }: Props) => {
   const t = useTranslations('components.complete_profile');
 
   return (
-    <Card className="mx-auto max-w-lg gap-4 bg-transparent">
-      <CardHeader className="text-foreground flex-col justify-center gap-4 p-6 pb-0 text-center text-3xl font-bold">
+    <Card className="mx-auto max-w-lg bg-transparent">
+      <CardHeader className="text-foreground flex-col justify-center gap-heading text-center text-3xl font-bold">
         <UserIcon className="text-secondary-500 size-12" />
         {t('title')}
       </CardHeader>
-      <CardContent className="px-6 pt-0 text-center">
+      <CardContent className="text-center">
         <p className="text-muted-foreground">{t('description', { title })}</p>
       </CardContent>
-      <CardFooter className="justify-center p-6 pt-0 text-center">
+      <CardFooter className="justify-center text-center">
         <NextLink
           href={PROFILE_PAGE}
           className={buttonVariants({ variant: 'primary' })}

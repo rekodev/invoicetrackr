@@ -1,14 +1,10 @@
 import { getExpenses } from '@/api/expense';
-import { auth } from '@/auth';
 import ExpenseTable from '@/components/expense/expense-table';
 import { isResponseError } from '@/lib/utils/error';
 
-export default async function ExpensesPageContent() {
-  const session = await auth();
+type Props = { userId: number };
 
-  if (!session?.user?.id) return null;
-
-  const userId = Number(session.user.id);
+export default async function ExpensesPageContent({ userId }: Props) {
   const expensesResponse = await getExpenses(userId);
 
   if (isResponseError(expensesResponse)) {

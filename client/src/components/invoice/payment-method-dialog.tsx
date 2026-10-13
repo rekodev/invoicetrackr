@@ -38,7 +38,7 @@ export default function PaymentMethodDialog({
       return <p className="text-muted">{t('modals.no_payment_methods')}</p>;
 
     return (
-      <div className="flex max-h-[60vh] flex-col items-stretch justify-start gap-2 overflow-y-auto pr-1">
+      <div className="flex max-h-[60vh] flex-col items-stretch justify-start gap-actions overflow-y-auto pr-1">
         {bankAccounts.map((bankAccount) => (
           <button
             key={`bank-${bankAccount.id}`}
@@ -47,14 +47,14 @@ export default function PaymentMethodDialog({
             onClick={() => onSelect(bankAccount)}
           >
             <Card className="hover:bg-muted/5 h-auto shrink-0 border hover:cursor-pointer">
-              <CardContent className="flex w-full flex-row items-start justify-between gap-4 text-left">
-                <div className="flex min-w-0 flex-row items-start gap-3 text-left">
+              <CardContent className="flex w-full flex-row items-start justify-between gap-field text-left">
+                <div className="flex min-w-0 flex-row items-start gap-heading text-left">
                   <div className="border-default-200 bg-muted/5 flex shrink-0 rounded-md border p-2">
                     <BuildingLibraryIcon className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 text-left">
                     <p className="truncate text-sm font-bold">{bankAccount.name}</p>
-                    <div className="text-muted flex min-w-0 flex-wrap gap-x-2 gap-y-0.5 text-xs">
+                    <div className="text-muted flex min-w-0 flex-wrap gap-x-actions gap-y-0.5 text-xs">
                       <span>{bankAccount.code}</span>
                       <span className="break-all">{bankAccount.accountNumber}</span>
                     </div>
