@@ -487,10 +487,10 @@ const InvoiceServicesTable = ({
               ))}
             </TableHeader>
             <TableBody>
-              {fields.map((field, index) => (
+              {fields.map((_field, index) => (
                 <TableRow
-                  key={field.fieldId}
-                  id={field.fieldId}
+                  key={index}
+                  id={index}
                   dependencies={[index]}
                 >
                   {visibleColumns.map((column) => (

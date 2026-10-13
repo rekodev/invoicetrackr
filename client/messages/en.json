@@ -67,6 +67,8 @@
         "onboarding": "Onboarding",
         "privacy_policy": "Privacy Policy",
         "profile": "Profile",
+        "personal_information": "Personal Information",
+        "freelancer_profile": "Freelancer Profile",
         "sign_up": "Sign Up",
         "terms_of_service": "Terms of Service"
     },
@@ -1568,7 +1570,8 @@
         },
         "banking_information": {
             "a11y": {
-                "form_label": "Banking Information Form"
+                "form_label": "Banking Information Form",
+                "default_account_label": "Default Bank Account"
             },
             "title": "Payment Methods",
             "description": "Choose the default bank account for future invoices. Existing invoices keep their saved payment details.",

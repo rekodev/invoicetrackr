@@ -398,18 +398,18 @@ const InvoiceForm = ({
   const renderBusinessTypeOptions = () => (
     <>
       <Radio value="business">
-        <Radio.Control>
-          <Radio.Indicator />
-        </Radio.Control>
         <Radio.Content>
+          <Radio.Control>
+            <Radio.Indicator />
+          </Radio.Control>
           <Label>{t('labels.business_type_business')}</Label>
         </Radio.Content>
       </Radio>
       <Radio value="individual">
-        <Radio.Control>
-          <Radio.Indicator />
-        </Radio.Control>
         <Radio.Content>
+          <Radio.Control>
+            <Radio.Indicator />
+          </Radio.Control>
           <Label>{t('labels.business_type_individual')}</Label>
         </Radio.Content>
       </Radio>
@@ -439,10 +439,10 @@ const InvoiceForm = ({
                       field.onChange(isSelected ? availableSenderLogoUrl : '')
                     }
                   >
-                    <Checkbox.Control>
-                      <Checkbox.Indicator />
-                    </Checkbox.Control>
                     <Checkbox.Content>
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
                       <Label>{t('labels.include_logo')}</Label>
                     </Checkbox.Content>
                   </Checkbox>
@@ -841,10 +841,10 @@ const InvoiceForm = ({
             >
               {paymentModeOptions.map((option) => (
                 <Radio key={option} value={option}>
-                  <Radio.Control>
-                    <Radio.Indicator />
-                  </Radio.Control>
                   <Radio.Content>
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
                     <Label>{t(`payment_settings.modes.${option}`)}</Label>
                   </Radio.Content>
                 </Radio>

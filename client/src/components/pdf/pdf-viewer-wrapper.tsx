@@ -84,6 +84,7 @@ export default function PdfViewerWrapper({
         pdfComponents && containerWidth ? (
           <pdfComponents.Document
             file={pdfUrl}
+            suspense={false}
             loading={<PdfPreviewLoader />}
             onLoadSuccess={() => setIsIFrameLoading(false)}
             onLoadError={() => setIsIFrameLoading(false)}
@@ -114,6 +115,7 @@ export default function PdfViewerWrapper({
                 return (
                   <Document
                     file={url}
+                    suspense={false}
                     loading={<PdfPreviewLoader />}
                     onLoadSuccess={() => setIsIFrameLoading(false)}
                     onLoadError={() => setIsIFrameLoading(false)}

@@ -141,9 +141,9 @@ const CompanyLookupPanel = ({
             <ComboBox.Trigger isDisabled>
               <Spinner size="sm" aria-label={t('loading')} />
             </ComboBox.Trigger>
-          ) : results.length > 0 ? (
-            <ComboBox.Trigger />
-          ) : null}
+          ) : (
+            <ComboBox.Trigger hidden={results.length === 0} />
+          )}
         </ComboBox.InputGroup>
         {results.length > 0 ? (
           <ComboBox.Popover className="w-(--trigger-width) max-w-(--trigger-width)">

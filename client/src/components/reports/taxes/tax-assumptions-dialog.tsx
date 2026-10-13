@@ -104,10 +104,10 @@ const TaxAssumptionsDialog = ({
             isSelected={field.value}
             onChange={field.onChange}
           >
-            <Checkbox.Control>
-              <Checkbox.Indicator />
-            </Checkbox.Control>
             <Checkbox.Content>
+              <Checkbox.Control>
+                <Checkbox.Indicator />
+              </Checkbox.Control>
               <Label>{label}</Label>
             </Checkbox.Content>
           </Checkbox>
@@ -154,7 +154,11 @@ const TaxAssumptionsDialog = ({
       <Modal.Container>
         <Modal.Dialog>
           <Modal.CloseTrigger />
-          <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <form
+            noValidate
+            className="flex min-h-0 flex-1 flex-col"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <Modal.Header>
               <div className="flex items-center gap-2">
                 <Modal.Heading>{t('title')}</Modal.Heading>
@@ -180,10 +184,10 @@ const TaxAssumptionsDialog = ({
                     )}
                     {TAX_EXPENSE_METHODS.map((method) => (
                       <Radio key={method} value={method}>
-                        <Radio.Control>
-                          <Radio.Indicator />
-                        </Radio.Control>
                         <Radio.Content>
+                          <Radio.Control>
+                            <Radio.Indicator />
+                          </Radio.Control>
                           <Label>{tMethods(method)}</Label>
                         </Radio.Content>
                       </Radio>

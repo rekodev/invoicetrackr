@@ -33,7 +33,9 @@ test('a new freelancer sets up, invoices a client, gets paid, logs an expense, a
   await page.goto('/clients');
   await page.getByRole('button', { name: 'Add New' }).click();
   const clientDialog = page.getByRole('dialog', { name: 'Add New Client' });
-  await clientDialog.getByLabel('Company name').fill(clientName);
+  await clientDialog
+    .getByRole('combobox', { name: 'Company name' })
+    .fill(clientName);
   await clientDialog.getByLabel('Business Number').fill('305000100');
   await clientDialog.getByLabel('Address').fill('Konstitucijos pr. 7, Vilnius');
   await clientDialog.getByLabel('Email').fill(clientEmail);

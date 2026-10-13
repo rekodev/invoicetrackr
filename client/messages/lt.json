@@ -67,6 +67,8 @@
         "onboarding": "Įvedimas",
         "privacy_policy": "Privatumo politika",
         "profile": "Profilis",
+        "personal_information": "Asmeninė informacija",
+        "freelancer_profile": "Laisvai samdomo specialisto profilis",
         "sign_up": "Registruotis",
         "terms_of_service": "Paslaugų teikimo sąlygos"
     },
@@ -1568,7 +1570,8 @@
         },
         "banking_information": {
             "a11y": {
-                "form_label": "Bankinės informacijos forma"
+                "form_label": "Bankinės informacijos forma",
+                "default_account_label": "Numatytoji banko sąskaita"
             },
             "title": "Mokėjimo būdai",
             "description": "Pasirinkite numatytąją banko sąskaitą būsimoms sąskaitoms faktūroms. Esamos sąskaitos išlaiko išsaugotus mokėjimo duomenis.",

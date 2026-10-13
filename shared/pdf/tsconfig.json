@@ -5,8 +5,11 @@
     "outDir": "dist",
     "rootDir": "src",
     "declaration": true,
-    "module": "commonjs",
-    "moduleResolution": "node"
+    "module": "node20",
+    "moduleResolution": "nodenext",
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "src/**/*"

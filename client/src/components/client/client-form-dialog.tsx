@@ -192,7 +192,11 @@ const ClientFormDialog = ({
       <Modal.Container>
         <Modal.Dialog>
           <Modal.CloseTrigger />
-          <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <form
+            noValidate
+            className="flex min-h-0 flex-1 flex-col"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <Modal.Header>
               <Modal.Heading>
                 {isEditMode ? t('title_edit') : t('title_add')}

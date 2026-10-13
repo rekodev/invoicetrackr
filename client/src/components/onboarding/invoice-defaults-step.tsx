@@ -163,10 +163,10 @@ export default function InvoiceDefaultsStep({ user, onSuccess }: Props) {
               isSelected={field.value}
               onChange={field.onChange}
             >
-              <Checkbox.Control>
-                <Checkbox.Indicator />
-              </Checkbox.Control>
               <Checkbox.Content>
+                <Checkbox.Control>
+                  <Checkbox.Indicator />
+                </Checkbox.Control>
                 <Label>{t('include_logo')}</Label>
               </Checkbox.Content>
             </Checkbox>

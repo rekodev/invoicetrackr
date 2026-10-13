@@ -282,10 +282,10 @@ const InvoiceDefaultsForm = ({ user }: Props) => {
               isSelected={field.value}
               onChange={field.onChange}
             >
-              <Checkbox.Control>
-                <Checkbox.Indicator />
-              </Checkbox.Control>
               <Checkbox.Content>
+                <Checkbox.Control>
+                  <Checkbox.Indicator />
+                </Checkbox.Control>
                 <Label>{t('invoice_defaults.include_logo')}</Label>
               </Checkbox.Content>
             </Checkbox>

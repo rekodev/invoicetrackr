@@ -38,20 +38,20 @@
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
-    "next-auth": "5.0.0-beta.30",
-    "zod": "^4.1.12"
+    "next-auth": "5.0.0-beta.32",
+    "zod": "^4.6.6"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
-    "@types/node": "^22.13.14",
-    "@typescript-eslint/eslint-plugin": "^8.46.4",
-    "@typescript-eslint/parser": "^8.46.4",
-    "concurrently": "^9.1.0",
-    "eslint": "^9.23.0",
-    "eslint-plugin-simple-import-sort": "^13.0.0",
-    "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.14",
-    "typescript": "^5.8.2"
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^22.20.5",
+    "@typescript-eslint/eslint-plugin": "^8.71.1",
+    "@typescript-eslint/parser": "^8.71.1",
+    "concurrently": "^10.0.6",
+    "eslint": "^9.39.5",
+    "eslint-plugin-simple-import-sort": "^14.0.0",
+    "prettier": "^3.9.10",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "typescript": "^6.0.3"
   },
-  "packageManager": "pnpm@11.9.0+sha512.bd682d5d03fe525ef7c9fd6780c6884d1e756ac4c9c9fe00c538782824310dcf90e3ddc4f53835f06dfaebd5085e41855e0bcbb3b60de2ac5bbab89e5036f03b"
+  "packageManager": "pnpm@12.11.2+sha512.25a51652a196785af5f28bda6dfe8dc582ebefa4ac1d180221ce1390231c5fb76637822ea4b6e4633ce74acdcb0a77f725af11bad38177fdeddaee818a955cb9"
 }

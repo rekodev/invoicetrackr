@@ -145,18 +145,18 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
                 onChange={field.onChange}
               >
                 <Radio value="business">
-                  <Radio.Control>
-                    <Radio.Indicator />
-                  </Radio.Control>
                   <Radio.Content>
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
                     <Label>{t('labels.business_type_business')}</Label>
                   </Radio.Content>
                 </Radio>
                 <Radio value="individual">
-                  <Radio.Control>
-                    <Radio.Indicator />
-                  </Radio.Control>
                   <Radio.Content>
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
                     <Label>{t('labels.business_type_individual')}</Label>
                   </Radio.Content>
                 </Radio>
@@ -247,18 +247,18 @@ const FreeInvoiceForm = ({ language, currency }: Props) => {
                 onChange={field.onChange}
               >
                 <Radio value="business">
-                  <Radio.Control>
-                    <Radio.Indicator />
-                  </Radio.Control>
                   <Radio.Content>
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
                     <Label>{t('labels.business_type_business')}</Label>
                   </Radio.Content>
                 </Radio>
                 <Radio value="individual">
-                  <Radio.Control>
-                    <Radio.Indicator />
-                  </Radio.Control>
                   <Radio.Content>
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
                     <Label>{t('labels.business_type_individual')}</Label>
                   </Radio.Content>
                 </Radio>

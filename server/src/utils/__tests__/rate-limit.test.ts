@@ -9,7 +9,7 @@ import { errorHandler } from '../error';
 
 const AUTH_COOKIE = 'authjs.session-token';
 
-const loadRateLimit = () => import('../rate-limit');
+const loadRateLimit = () => import('../rate-limit.js');
 
 const createApp = async () => {
   const { ipRateLimit, rateLimitPluginOptions, rateLimitKey, trustedProxies } =

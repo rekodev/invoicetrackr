@@ -5,7 +5,11 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "typesVersions": {
-    "*": { "content": ["dist/emails/invoice-email-content.d.ts"] }
+    "*": {
+      "content": [
+        "dist/emails/invoice-email-content.d.ts"
+      ]
+    }
   },
   "exports": {
     ".": {
@@ -23,16 +27,16 @@
     "dev:watch": "tsc --watch"
   },
   "dependencies": {
-    "@react-email/render": "2.0.9",
-    "react-email": "^6.6.3",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "@invoicetrackr/types": "workspace:*"
+    "@invoicetrackr/types": "workspace:*",
+    "@react-email/render": "2.1.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-email": "^6.11.1"
   },
   "devDependencies": {
-    "@react-email/ui": "6.6.3",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.5",
-    "typescript": "^5.7.3"
+    "@react-email/ui": "6.11.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "^6.0.3"
   }
 }

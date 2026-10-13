@@ -264,7 +264,12 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
         control={control}
         name="email"
         render={({ field }) => (
-          <TextField variant="secondary" isDisabled className="w-full">
+          <TextField
+            aria-label={t('email')}
+            variant="secondary"
+            isDisabled
+            className="w-full"
+          >
             <Input
               id="profile-email"
               name={field.name}
@@ -446,10 +451,10 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
                     }
                   }}
                 >
-                  <Checkbox.Control>
-                    <Checkbox.Indicator />
-                  </Checkbox.Control>
                   <Checkbox.Content>
+                    <Checkbox.Control>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
                     <Label>{t('is_vat_payer_option')}</Label>
                   </Checkbox.Content>
                 </Checkbox>
