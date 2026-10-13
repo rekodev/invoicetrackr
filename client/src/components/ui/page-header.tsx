@@ -16,7 +16,7 @@ export default function PageHeader({
   return (
     <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
       <div className="min-w-0">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-xl font-semibold">{title}</h1>
           {titleAddon}
         </div>

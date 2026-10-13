@@ -11,6 +11,7 @@ import {
   getWebsiteJsonLd
 } from '@/lib/seo/structured-data';
 
+import { FAQ_ITEMS } from './home/faq';
 import HomePageContent from './home/home-page-content';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -23,7 +24,7 @@ export default async function Home() {
   const locale = getSeoLocale(await getLocale());
   const t = await getTranslations('home.faq.items');
   const seoT = await getTranslations('seo.home');
-  const faqItems = ['free', 'export', 'payments', 'languages'].map((key) => ({
+  const faqItems = FAQ_ITEMS.map((key) => ({
     question: t(`${key}.question`),
     answer: t(`${key}.answer`)
   }));
