@@ -71,7 +71,7 @@ const LanguageSettingsForm = ({ user }: Props) => {
         description={t('description')}
         as="h4"
       />
-      <Toolbar isAttached aria-label={t('title')} className="w-fit">
+      <Toolbar isAttached aria-label={t('title')} className="w-fit shadow-none">
         <Controller
           control={control}
           name="language"
