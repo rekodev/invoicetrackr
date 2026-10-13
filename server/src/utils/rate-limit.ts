@@ -25,10 +25,21 @@ export const rateLimitKey = async (request: FastifyRequest) => {
   return session?.sub ? `user:${session.sub}` : ipRateLimitKey(request);
 };
 
+const ipRateLimitFloor =
+  process.env.NODE_ENV !== 'production' &&
+  Number.isSafeInteger(configuredMax) &&
+  configuredMax > 0
+    ? configuredMax
+    : 0;
+
 export const ipRateLimit = (
   max: number,
   timeWindow: string
-): RateLimitOptions => ({ max, timeWindow, keyGenerator: ipRateLimitKey });
+): RateLimitOptions => ({
+  max: Math.max(max, ipRateLimitFloor),
+  timeWindow,
+  keyGenerator: ipRateLimitKey
+});
 
 export const userRateLimit = (
   max: number,

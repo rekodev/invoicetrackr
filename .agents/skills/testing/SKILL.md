@@ -112,22 +112,26 @@ pages); keep edge cases in Vitest. Setup is expensive, so extending an
 existing journey is almost always better than a new test.
 
 ```
-playwright.config.ts        # projects: setup → chromium; baseURL :3100; workers 1
+playwright.config.ts        # project: chromium; baseURL :3100; workers 1
 e2e/
-  setup/auth.setup.ts       # recreates + logs in the E2E freelancer, saves storage state
-  fixtures/test.ts          # `test` extended with page-object fixtures; re-exports expect
+  fixtures/test.ts          # `test` with an auto `freelancer` account + page objects; re-exports expect
   pages/*.page.ts           # page objects (InvoiceFormPage, InvoicesPage, …)
-  utils/test-data.ts        # e2eUser, create<Thing>TestData factories
-  invoices.spec.ts          # specs at e2e/*.spec.ts
+  utils/accounts.ts         # createE2eAccount, signIn
+  utils/test-data.ts        # create<Thing>TestData factories
+  journey.spec.ts           # full freelancer journey; other specs at e2e/*.spec.ts
   scripts/run-local.mjs     # docker DB → build shared pkgs → drizzle push → playwright
 ```
 
-- Import `test`/`expect` from `./fixtures/test`. Every test starts logged in
-  as the seeded freelancer.
-- One shared database and user, serial workers: **isolate by data**. Create
-  records with a unique-suffix factory (`createInvoiceTestData('Scenario', …)`)
-  and find rows by that text (`rowFor(recipientName)`); never rely on counts
-  or "the first row".
+- Import `test`/`expect` from `./fixtures/test`. Every test gets its own
+  freshly created, verified, onboarded account (`freelancer` fixture: `id`,
+  `email`, profile fields) and starts logged in on the dashboard.
+  `test.use({ onboarded: false })` starts on `/onboarding` instead.
+- Accounts are isolated, but the database is shared across the run: still
+  create records with a unique-suffix factory
+  (`createInvoiceTestData('Scenario', …)`) and find rows by that text
+  (`rowFor(recipientName)`).
+- A second account (e.g. cross-user checks) comes from
+  `createE2eAccount(label)` + `signIn(page, account)` in its own context.
 - Reusable multi-step flows belong in page-object methods (existing page
   object first; a new `e2e/pages/<name>.page.ts` registered in
   `fixtures/test.ts` only when a new screen needs one). One-off steps can
@@ -135,7 +139,7 @@ e2e/
 - Select by role and accessible name (`getByRole('button', { name: 'Copy Link' })`,
   `getByLabel(…)`, `exact: true` when names overlap). A missing label is
   usually an accessibility bug worth fixing in the UI.
-- Browser locale is `en-US` and the seeded user's language is `en`: assert
+- Browser locale is `en-US` and test accounts use `en`: assert
   copy from `client/messages/en.json`.
 - Web-first assertions (`toBeVisible`, `toHaveURL`, `toContainText`,
   `expect.poll`); no `waitForTimeout`.
@@ -143,9 +147,12 @@ e2e/
   `browser.newContext({ locale: 'en-US' })`, closed in `finally`.
 - Specs may import server DB helpers for setup/verification the UI can't
   reach; drive the UI for the behaviour under test.
-- Seed changes: `auth.setup.ts` recreates the freelancer each run (profile,
-  onboarding, analytics consent declined). Extend it or create state per
-  test with unique data — never rely on leftovers.
+- Account seeding lives in `e2e/utils/accounts.ts` (profile, onboarding,
+  analytics consent declined). Never rely on data from another test.
+- E2E runs with `EMAIL_TRANSPORT=capture`: emails are accepted without
+  calling Resend, get a `captured_…` provider id, and can be asserted through
+  `email_deliveries` (`getInvoiceDeliveriesFromDb`). Uploads still need real
+  Cloudinary, so keep attachment coverage in Vitest.
 
 ## Running
 

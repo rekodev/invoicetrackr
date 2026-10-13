@@ -11,7 +11,11 @@ export class InvoiceFormPage {
       this.page.getByRole('form', { name: 'Add New Invoice Form' })
     ).toBeVisible();
 
-    await this.page.getByLabel("Receiver's Name").fill(invoice.recipientName);
+    const receiverName = this.page.getByRole('combobox', {
+      name: "Receiver's Name"
+    });
+    await receiverName.fill(invoice.recipientName);
+    await receiverName.press('Tab');
 
     if (invoice.serviceDate) {
       await this.page.getByLabel('Service date').fill(invoice.serviceDate);
@@ -35,6 +39,13 @@ export class InvoiceFormPage {
         .fill(invoice.recipientEmail);
     }
 
+    await this.fillServicesAndSave(invoice);
+  }
+
+  async fillServicesAndSave(invoice: Omit<InvoiceTestData, 'recipientName'>) {
+    await expect(
+      this.page.getByRole('form', { name: 'Add New Invoice Form' })
+    ).toBeVisible();
     await this.page
       .getByRole('textbox', { name: 'Description', exact: true })
       .first()

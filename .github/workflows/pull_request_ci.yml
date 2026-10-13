@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      RESEND_EMAIL_API_KEY: ${{ secrets.RESEND_EMAIL_API_KEY }}
+      RESEND_EMAIL_API_KEY: re_ci_placeholder
       SERVER_PORT: ${{ secrets.SERVER_PORT }}
       NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
 

@@ -1,9 +1,9 @@
 import type { ClientWorkspaceResponse, GetInvoiceResponse, InvoiceWorkspaceResponse, JournalResponse } from '../shared/types/src';
 
-import { getUserByEmailFromDb } from '../server/src/database/user';
 import { expect, test } from './fixtures/test';
 import { RecipientDetailsPage } from './pages/recipient-details.page';
-import { createInvoiceTestData, e2eUser } from './utils/test-data';
+import { declineAnalytics } from './utils/accounts';
+import { createInvoiceTestData } from './utils/test-data';
 
 test.describe('invoices', () => {
   test('creates a draft invoice', async ({
@@ -59,6 +59,7 @@ test.describe('invoices', () => {
     );
 
     const recipientContext = await browser.newContext({ locale: 'en-US' });
+    await declineAnalytics(recipientContext);
     const recipientPage = await recipientContext.newPage();
     const recipientDetails = new RecipientDetailsPage(recipientPage);
 
@@ -79,6 +80,7 @@ test.describe('invoices', () => {
   });
 
   test('records, settles, edits, and removes receipts with matching client balances and cash-basis reports', async ({
+    freelancer,
     invoiceForm,
     invoicesPage,
     page
@@ -107,8 +109,7 @@ test.describe('invoices', () => {
 
     const workspaceUrl = page.url();
     const invoiceId = Number(new URL(workspaceUrl).pathname.split('/').at(-1));
-    const user = await getUserByEmailFromDb(e2eUser.email);
-    if (!user) throw new Error('Missing authenticated test user');
+    const user = freelancer;
     const endpoint = `/api/${user.id}/invoices/${invoiceId}`;
     const clientResponse = await page.request.post(`/api/${user.id}/clients`, {
       data: {
@@ -226,6 +227,7 @@ test.describe('invoices', () => {
     await expect(page.getByRole('heading', { name: 'Actual expenses' })).toBeVisible();
     await expect(page.getByText('Estimated Total')).toHaveCount(2);
 
+    await invoiceForm.createDraft(createInvoiceTestData('Dashboard draft'));
     await page.goto('/dashboard');
     await expect(page.getByText('Overdue Invoices', { exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Safe to Spend · Estimate' })).toBeVisible();
@@ -266,7 +268,7 @@ test.describe('invoices', () => {
     expect([...await journalAmounts(2000), ...await journalAmounts(2001)]).toEqual([]);
   });
 
-  test('serializes competing payments and refuses another owner’s payment IDs', async ({ invoiceForm, invoicesPage, page }) => {
+  test('serializes competing payments and refuses another owner’s payment IDs', async ({ freelancer, invoiceForm, invoicesPage, page }) => {
     const invoice = createInvoiceTestData('Concurrent payments', {
       recipientBusinessNumber: '305000004', recipientAddress: 'Vilnius'
     });
@@ -276,8 +278,7 @@ test.describe('invoices', () => {
     await page.getByRole('dialog', { name: 'Issue Invoice' }).getByRole('button', { name: 'Issue Invoice' }).click();
     await expect(page.getByRole('button', { name: 'Record payment' })).toBeVisible();
     const invoiceId = Number(new URL(page.url()).pathname.split('/').at(-1));
-    const user = await getUserByEmailFromDb(e2eUser.email);
-    if (!user) throw new Error('Missing authenticated test user');
+    const user = freelancer;
     const endpoint = `/api/${user.id}/invoices/${invoiceId}`;
     const data = { paymentDate: '2000-01-01', amount: '200.00' };
     const results = await Promise.all([
@@ -295,7 +296,7 @@ test.describe('invoices', () => {
     expect((await page.request.delete(`${endpoint}/payments/2147483647`)).status()).toBe(404);
   });
 
-  test('keeps a zero-total invoice unpaid without accepting receipts', async ({ invoiceForm, invoicesPage, page }) => {
+  test('keeps a zero-total invoice unpaid without accepting receipts', async ({ freelancer, invoiceForm, invoicesPage, page }) => {
     const invoice = createInvoiceTestData('No payment due', {
       recipientBusinessNumber: '305000005', recipientAddress: 'Vilnius',
       quantity: '0.0001', unitPrice: '0.01'
@@ -304,8 +305,7 @@ test.describe('invoices', () => {
     await invoicesPage.rowFor(invoice.recipientName).getByRole('link', { name: 'View invoice' }).click();
     await expect(page).toHaveURL(/\/invoices\/\d+$/);
     const invoiceId = Number(new URL(page.url()).pathname.split('/').at(-1));
-    const user = await getUserByEmailFromDb(e2eUser.email);
-    if (!user) throw new Error('Missing authenticated test user');
+    const user = freelancer;
     const endpoint = `/api/${user.id}/invoices/${invoiceId}`;
     const data = { paymentDate: '2000-01-01', amount: '0.01' };
     expect((await page.request.post(`${endpoint}/payments`, { data })).status()).toBe(400);
