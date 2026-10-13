@@ -1,7 +1,4 @@
-import type {
-  AnalyticsConsentStatus,
-  DefaultInvoiceVatMode
-} from '@invoicetrackr/types';
+import type { AnalyticsConsentStatus } from '@invoicetrackr/types';
 import { DefaultSession } from 'next-auth';
 
 import { Currency } from './currency';
@@ -14,26 +11,14 @@ declare module 'next-auth' {
     id: string;
     name: string;
     email: string;
-    invoiceEmail: string;
     language: string;
     preferredInvoiceLanguage: string;
     isVatPayer: boolean;
-    defaultInvoiceVatMode: DefaultInvoiceVatMode;
-    defaultInvoiceSeries: string;
-    defaultPaymentTermsDays: 7 | 14 | 30;
-    defaultInvoiceIncludeLogo: boolean;
     currency: Currency;
-    type: string;
-    businessType: string;
-    businessNumber: string;
-    vatNumber: string | null | undefined;
     selectedBankAccountId: number;
-    address: string;
     emailVerifiedAt?: string | null;
     isOnboarded?: boolean;
-    onboardingCompletedAt?: string | null;
     analyticsConsentStatus?: AnalyticsConsentStatus | null;
-    analyticsConsentUpdatedAt?: string | null;
   }
 
   // eslint-disable-next-line no-unused-vars

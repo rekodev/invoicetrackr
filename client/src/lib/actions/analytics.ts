@@ -46,10 +46,7 @@ export async function updateAnalyticsConsentAction(
   }
 
   await updateSessionAction({
-    newSession: {
-      analyticsConsentStatus,
-      analyticsConsentUpdatedAt: new Date().toISOString()
-    }
+    newSession: { analyticsConsentStatus }
   });
 
   return { ok: true, analyticsConsentStatus };

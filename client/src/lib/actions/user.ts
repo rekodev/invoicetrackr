@@ -65,11 +65,7 @@ export async function updateUserAction({
   }
 
   await updateSessionAction({
-    newSession: {
-      isVatPayer: user.isVatPayer,
-      vatNumber: user.isVatPayer ? user.vatNumber : null,
-      ...(user.isVatPayer ? {} : { defaultInvoiceVatMode: 'no_vat' })
-    }
+    newSession: { isVatPayer: user.isVatPayer }
   });
 
   revalidatePath(PROFILE_PAGE);
@@ -93,10 +89,7 @@ export async function completeUserOnboardingAction({
   }
 
   await updateSessionAction({
-    newSession: {
-      isOnboarded: true,
-      onboardingCompletedAt: response.data.user.onboardingCompletedAt
-    }
+    newSession: { isOnboarded: true }
   });
 
   revalidatePath(ONBOARDING_PAGE);
@@ -151,14 +144,9 @@ export async function updateUserAccountSettingsAction({
 
   await updateSessionAction({
     newSession: {
-      invoiceEmail,
       preferredInvoiceLanguage,
       currency: DEFAULT_CURRENCY,
-      isVatPayer,
-      defaultInvoiceVatMode: normalizedDefaultInvoiceVatMode,
-      defaultInvoiceSeries,
-      defaultPaymentTermsDays,
-      defaultInvoiceIncludeLogo
+      isVatPayer
     }
   });
 

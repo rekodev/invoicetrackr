@@ -92,10 +92,7 @@ describe('user actions', () => {
 
     expect(response.ok).toBe(true);
     expect(updateSessionAction).toHaveBeenCalledWith({
-      newSession: {
-        isOnboarded: true,
-        onboardingCompletedAt: '2026-07-13T10:00:00.000Z'
-      }
+      newSession: { isOnboarded: true }
     });
   });
 
@@ -114,11 +111,7 @@ describe('user actions', () => {
 
     expect(response.ok).toBe(true);
     expect(updateSessionAction).toHaveBeenCalledWith({
-      newSession: {
-        isVatPayer: false,
-        vatNumber: null,
-        defaultInvoiceVatMode: 'no_vat'
-      }
+      newSession: { isVatPayer: false }
     });
     expect(updateSessionAction).not.toHaveBeenCalledWith(
       expect.objectContaining({
