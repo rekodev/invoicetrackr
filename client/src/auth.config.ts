@@ -21,30 +21,37 @@ import {
 
 const getServerBaseUrl = () => `http://localhost:${process.env.SERVER_PORT}`;
 
-type TokenUser = InvoiceTrackrUser | AuthUser;
+export const mapUserToSessionUser = (user: InvoiceTrackrUser): AuthUser => {
+  if (!user.email) throw new Error('User email is required');
+  if (!user.id) throw new Error('User id is required');
 
-const setUserTokenFields = (token: JWT, user: TokenUser) => {
-  const isOnboarded = !!user.onboardingCompletedAt;
+  return {
+    id: String(user.id),
+    name: user.name,
+    email: user.email,
+    image: user.profilePictureUrl || null,
+    emailVerifiedAt: user.emailVerifiedAt,
+    language: user.language,
+    preferredInvoiceLanguage: user.preferredInvoiceLanguage || user.language,
+    isVatPayer: user.isVatPayer,
+    currency: DEFAULT_CURRENCY,
+    selectedBankAccountId: user.selectedBankAccountId || 0,
+    isOnboarded: !!user.onboardingCompletedAt,
+    analyticsConsentStatus: user.analyticsConsentStatus
+  };
+};
 
+const setUserTokenFields = (token: JWT, user: AuthUser) => {
   token.sub = String(user.id);
-  token.picture =
-    ('profilePictureUrl' in user ? user.profilePictureUrl : user.image) || null;
+  token.picture = user.image || null;
   token.language = user.language;
-  token.invoiceEmail = user.invoiceEmail || user.email;
   token.emailVerifiedAt = user.emailVerifiedAt;
   token.preferredInvoiceLanguage = user.preferredInvoiceLanguage;
   token.isVatPayer = user.isVatPayer;
-  token.defaultInvoiceVatMode = user.defaultInvoiceVatMode;
-  token.defaultInvoiceSeries = user.defaultInvoiceSeries;
-  token.defaultPaymentTermsDays = user.defaultPaymentTermsDays;
-  token.defaultInvoiceIncludeLogo = user.defaultInvoiceIncludeLogo ?? true;
   token.currency = DEFAULT_CURRENCY;
-  token.isOnboarded = isOnboarded;
-  token.onboardingCompletedAt = user.onboardingCompletedAt;
+  token.isOnboarded = !!user.isOnboarded;
   token.analyticsConsentStatus = user.analyticsConsentStatus;
-  token.analyticsConsentUpdatedAt = user.analyticsConsentUpdatedAt;
   token.selectedBankAccountId = user.selectedBankAccountId;
-  token.vatNumber = user.vatNumber;
 };
 
 const upsertGoogleOAuthUserForSession = async ({
@@ -162,7 +169,7 @@ export const authConfig = {
           token
         });
 
-        setUserTokenFields(token, oauthUser);
+        setUserTokenFields(token, mapUserToSessionUser(oauthUser));
       } else if (user) {
         setUserTokenFields(token, user);
       }
@@ -177,17 +184,9 @@ export const authConfig = {
           language: session.user.language,
           preferredInvoiceLanguage: session.user.preferredInvoiceLanguage,
           isVatPayer: session.user.isVatPayer,
-          defaultInvoiceVatMode: session.user.defaultInvoiceVatMode,
-          defaultInvoiceSeries: session.user.defaultInvoiceSeries,
-          defaultPaymentTermsDays: session.user.defaultPaymentTermsDays,
-          defaultInvoiceIncludeLogo: session.user.defaultInvoiceIncludeLogo,
           currency: DEFAULT_CURRENCY,
-          onboardingCompletedAt: session.user.onboardingCompletedAt,
           analyticsConsentStatus: session.user.analyticsConsentStatus,
-          analyticsConsentUpdatedAt: session.user.analyticsConsentUpdatedAt,
-          selectedBankAccountId: session.user.selectedBankAccountId,
-          vatNumber: session.user.vatNumber,
-          invoiceEmail: session.user.invoiceEmail
+          selectedBankAccountId: session.user.selectedBankAccountId
         };
       }
 
@@ -197,33 +196,16 @@ export const authConfig = {
       session.user.id = token.sub!;
       session.user.image = token.picture || null;
       session.user.language = token.language as string;
-      session.user.invoiceEmail = token.invoiceEmail as string;
       session.user.emailVerifiedAt = token.emailVerifiedAt as string | null;
       session.user.preferredInvoiceLanguage =
         token.preferredInvoiceLanguage as string;
       session.user.isVatPayer = Boolean(token.isVatPayer);
-      session.user.defaultInvoiceVatMode =
-        (token.defaultInvoiceVatMode as AuthUser['defaultInvoiceVatMode']) ||
-        'no_vat';
-      session.user.defaultInvoiceSeries =
-        (token.defaultInvoiceSeries as string) || 'SF';
-      session.user.defaultPaymentTermsDays =
-        (token.defaultPaymentTermsDays as AuthUser['defaultPaymentTermsDays']) ||
-        30;
-      session.user.defaultInvoiceIncludeLogo =
-        (token.defaultInvoiceIncludeLogo as boolean | undefined) ?? true;
       session.user.currency = DEFAULT_CURRENCY;
       session.user.isOnboarded = Boolean(token.isOnboarded);
-      session.user.onboardingCompletedAt = token.onboardingCompletedAt as
-        | string
-        | null;
       session.user.analyticsConsentStatus =
         token.analyticsConsentStatus as AuthUser['analyticsConsentStatus'];
-      session.user.analyticsConsentUpdatedAt =
-        token.analyticsConsentUpdatedAt as string | null;
       session.user.selectedBankAccountId =
         token.selectedBankAccountId as number;
-      session.user.vatNumber = token.vatNumber as string | null | undefined;
 
       return session;
     }
