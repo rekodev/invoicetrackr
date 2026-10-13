@@ -6,8 +6,8 @@
     "rootDir": ".",
     "declaration": true,
     "declarationMap": true,
-    "module": "commonjs",
-    "moduleResolution": "node"
+    "module": "node20",
+    "moduleResolution": "nodenext"
   },
   "include": [
     "emails/**/*.ts",

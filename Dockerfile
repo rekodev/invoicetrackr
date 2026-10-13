@@ -16,6 +16,7 @@ ENV AUTH_URL=${NEXT_PUBLIC_BASE_URL}
 # Stage 1: Install dependencies
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY patches ./patches
 COPY client/package.json ./client/package.json
 COPY server/package.json ./server/package.json
 COPY shared/types/package.json ./shared/types/package.json

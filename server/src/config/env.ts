@@ -29,13 +29,13 @@ export const loadEnv = (options: LoadEnvOptions = {}) => {
   const nodeEnv = options.nodeEnv ?? process.env.NODE_ENV;
 
   if (nodeEnv === 'production') {
-    config({ path: join(workspaceRoot, '.env') });
+    config({ path: join(workspaceRoot, '.env'), quiet: true });
     isLoaded = true;
     return;
   }
 
-  config({ path: join(workspaceRoot, '.env.local') });
-  config({ path: join(workspaceRoot, '.env') });
+  config({ path: join(workspaceRoot, '.env.local'), quiet: true });
+  config({ path: join(workspaceRoot, '.env'), quiet: true });
 
   isLoaded = true;
 };

@@ -74,8 +74,8 @@ const server = fastify({
 
 // Register Plugins
 defineI18n(server, {
-  en: import('./locales/en'),
-  lt: import('./locales/lt')
+  en: import('./locales/en.js'),
+  lt: import('./locales/lt.js')
 });
 server.register(i18n);
 server.register(cors, { origin: getAppBaseUrl() });

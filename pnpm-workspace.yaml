@@ -5,6 +5,8 @@ packages:
   - shared/emails
   - shared/pdf
 allowBuilds:
+  '@parcel/watcher': false
+  '@swc/core': false
   '@tailwindcss/oxide': true
   better-sqlite3: true
   bufferutil: true
@@ -12,10 +14,12 @@ allowBuilds:
   esbuild: true
   sharp: true
 overrides:
-  '@types/react': 19.2.18
-  '@types/react-dom': 19.2.5
-  next: 16.3.2
+  '@types/react': 19.3.0
+  '@types/react-dom': 19.3.0
+  next: 16.4.0
 publicHoistPattern:
   - '*@heroui/*'
 verifyDepsBeforeRun: false
 forceLegacyDeploy: true
+patchedDependencies:
+  '@react-pdf/hyphenate@0.1.0': patches/@react-pdf__hyphenate@0.1.0.patch
