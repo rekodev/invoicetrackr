@@ -22,6 +22,8 @@ type Props = {
 };
 
 const cell = 'px-2 py-1.5';
+const footerCell = 'bg-default px-2 py-2';
+const footerAmountCell = `${footerCell} text-right tabular-nums`;
 
 const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
   const t = await getTranslations('dashboard.monthly');
@@ -83,8 +85,8 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
           expenses={rows.map((row) => row.expenses)}
         />
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[480px] text-left text-sm">
-            <thead className="text-muted border-b">
+          <table className="w-full min-w-[480px] border-separate border-spacing-0 text-left text-sm">
+            <thead className="text-muted [&_th]:border-b">
               <tr>
                 <th scope="col" className={`${cell} font-medium`}>{t('columns.month')}</th>
                 <th scope="col" className={`${cell} text-right font-medium`}>{t('columns.income')}</th>
@@ -94,7 +96,7 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.month} className="border-b last:border-0">
+                <tr key={row.month} className="[&>*]:border-b [&:last-child>*]:border-0">
                   <th scope="row" className={`${cell} font-normal capitalize`}>
                     <Link
                       href={journalHref({ year, month: row.month })}
@@ -126,12 +128,12 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
                 </tr>
               ))}
             </tbody>
-            <tfoot className="bg-default border-t font-semibold">
+            <tfoot className="font-semibold">
               <tr>
-                <th scope="row" className="px-2 py-2">{t('total')}</th>
-                <td className="px-2 py-2 text-right tabular-nums">{formatMoney(totals.receivedIncome, locale)}</td>
-                <td className="px-2 py-2 text-right tabular-nums">{formatMoney(totals.expenses, locale)}</td>
-                <td className="px-2 py-2 text-right tabular-nums">
+                <th scope="row" className={`${footerCell} rounded-l-xl`}>{t('total')}</th>
+                <td className={footerAmountCell}>{formatMoney(totals.receivedIncome, locale)}</td>
+                <td className={footerAmountCell}>{formatMoney(totals.expenses, locale)}</td>
+                <td className={`${footerAmountCell} rounded-r-xl`}>
                   {formatMoney(subtractMoney(totals.receivedIncome, totals.expenses), locale)}
                 </td>
               </tr>
