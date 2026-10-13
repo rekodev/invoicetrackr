@@ -243,7 +243,6 @@ const InvoiceForm = ({
     onSuccess: disableGuard
   });
 
-  const dueDateInputRef = useRef<HTMLInputElement | null>(null);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const isReceiverBusiness = watch('receiver.businessType') === 'business';
@@ -1060,13 +1059,6 @@ const InvoiceForm = ({
                               isDueDateManuallyOverriddenRef.current = true;
                               const currentDatePlusDays = new Date(currentDate);
 
-                              if (dueDatePreselection === 'custom') {
-                                field.onChange('');
-                                dueDateInputRef.current?.showPicker();
-
-                                return;
-                              }
-
                               currentDatePlusDays.setDate(
                                 currentDatePlusDays.getDate() +
                                   Number(dueDatePreselection)
@@ -1087,7 +1079,6 @@ const InvoiceForm = ({
                             <Label>{t('labels.due_date')}</Label>
                             <Input
                               {...field}
-                              ref={dueDateInputRef}
                               value={field.value || ''}
                               onChange={(event) => {
                                 isDueDateManuallyOverriddenRef.current = true;

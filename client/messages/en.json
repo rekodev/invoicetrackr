@@ -1023,6 +1023,7 @@
             "edit_title": "Edit Invoice"
         },
         "bottom_content": {
+            "summary": "{start} to {end} of {total} results",
             "previous": "Previous",
             "next": "Next"
         },
@@ -1199,6 +1200,7 @@
             "no_results_description": "Try changing the search term, date range, category, or payment method."
         },
         "bottom_content": {
+            "summary": "{start} to {end} of {total} results",
             "previous": "Previous",
             "next": "Next"
         },
@@ -1424,7 +1426,8 @@
             "no_results_description": "Try changing the search term or client type filter."
         },
         "a11y": {
-            "actions_label": "Actions"
+            "actions_label": "Actions",
+            "pagination_label": "Client pages"
         },
         "top_content": {
             "search_placeholder": "Search by name or code...",
@@ -2012,8 +2015,7 @@
             "due_date_preselection_chips": {
                 "seven_days": "7d",
                 "fourteen_days": "14d",
-                "thirty_days": "30d",
-                "custom": "Custom"
+                "thirty_days": "30d"
             }
         }
     },

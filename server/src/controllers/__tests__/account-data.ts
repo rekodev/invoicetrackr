@@ -57,8 +57,7 @@ describe('Account data export', () => {
       profile: {
         logoUrl: 'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/business-logos/1/logo.png',
         signatureUrl: 'http://169.254.169.254/latest/image/upload/signature.png'
-      },
-      signatures: []
+      }
     });
     mockCloudinaryPrivateDownloadUrl.mockReturnValue('https://signed.example/receipt');
     fetchMock.mockImplementation(async (url: string) =>

@@ -106,8 +106,12 @@ const InvoiceTableTopContent = ({
               </DropdownMenu>
             </DropdownPopover>
           </Dropdown>
-          <Button variant={overdueOnly ? 'secondary' : 'tertiary'} aria-pressed={overdueOnly}
-            onPress={onOverdueToggle}>
+          <Button
+            variant={overdueOnly ? 'secondary' : 'tertiary'}
+            aria-pressed={overdueOnly}
+            className="w-full sm:w-auto"
+            onPress={onOverdueToggle}
+          >
             {t('table.filters.overdue_only')}
           </Button>
           <Dropdown>

@@ -1,16 +1,5 @@
-import {
-  and,
-  asc,
-  type Column,
-  eq,
-  getTableColumns,
-  isNull,
-  like,
-  ne,
-  or
-} from 'drizzle-orm';
+import { and, asc, eq, getTableColumns, isNull } from 'drizzle-orm';
 
-import { parseCloudinaryUrl } from '../utils/storage';
 import { db } from './db';
 import {
   bankingInformationTable,
@@ -251,7 +240,7 @@ export const getAccountExportFromDb = async (userId: number) => {
 };
 
 export const getAccountFilesFromDb = async (userId: number) => {
-  const [attachments, [profile], signatures] = await Promise.all([
+  const [attachments, [profile]] = await Promise.all([
     db
       .select({
         id: expenseAttachmentsTable.id,
@@ -275,67 +264,10 @@ export const getAccountFilesFromDb = async (userId: number) => {
         signatureUrl: businessProfilesTable.signatureUrl
       })
       .from(businessProfilesTable)
-      .where(eq(businessProfilesTable.userId, userId)),
-    db
-      .select({
-        senderSignature: invoicesTable.senderSignature,
-        receiverSignature: invoicesTable.receiverSignature
-      })
-      .from(invoicesTable)
-      .where(ownInvoice(userId))
+      .where(eq(businessProfilesTable.userId, userId))
   ]);
 
-  return { attachments, profile: profile ?? null, signatures };
-};
-
-export const getSharedSignaturePublicIdsFromDb = async (
-  userId: number,
-  publicIds: string[]
-) => {
-  if (!publicIds.length) return new Set<string>();
-
-  const patterns = publicIds.map((publicId) => `%/${publicId}%`);
-  const matchesAny = (column: Column) =>
-    or(...patterns.map((pattern) => like(column, pattern)));
-
-  const [profiles, invoices] = await Promise.all([
-    db
-      .select({ url: businessProfilesTable.signatureUrl })
-      .from(businessProfilesTable)
-      .where(
-        and(
-          ne(businessProfilesTable.userId, userId),
-          matchesAny(businessProfilesTable.signatureUrl)
-        )
-      ),
-    db
-      .select({
-        senderSignature: invoicesTable.senderSignature,
-        receiverSignature: invoicesTable.receiverSignature
-      })
-      .from(invoicesTable)
-      .where(
-        and(
-          ne(invoicesTable.userId, userId),
-          or(
-            matchesAny(invoicesTable.senderSignature),
-            matchesAny(invoicesTable.receiverSignature)
-          )
-        )
-      )
-  ]);
-
-  const usedPublicIds = new Set(
-    [
-      ...profiles.map(({ url }) => url),
-      ...invoices.flatMap(({ senderSignature, receiverSignature }) => [
-        senderSignature,
-        receiverSignature
-      ])
-    ].map((url) => parseCloudinaryUrl(url)?.asset.publicId)
-  );
-
-  return new Set(publicIds.filter((publicId) => usedPublicIds.has(publicId)));
+  return { attachments, profile: profile ?? null };
 };
 
 export type AccountExportData = Awaited<

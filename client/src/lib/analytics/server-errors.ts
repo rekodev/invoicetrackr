@@ -15,9 +15,7 @@ const getPostHog = () => {
   if (!posthog) {
     posthog = new PostHog(key, {
       host: process.env.POSTHOG_HOST || POSTHOG_DEFAULT_HOST,
-      flushAt: 1,
-      requestTimeout: 2000,
-      fetchRetryCount: 0
+      flushAt: 1
     });
   }
 

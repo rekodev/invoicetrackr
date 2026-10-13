@@ -5,6 +5,7 @@ import {
   PaginationItem,
   PaginationLink
 } from '@heroui/react';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   page: number;
@@ -13,6 +14,7 @@ type Props = {
 };
 
 const ClientSectionBottomContent = ({ page, pages, onPageChange }: Props) => {
+  const t = useTranslations('clients');
   const prevButtonDisabled = page <= 1;
   const nextButtonDisabled = page >= pages;
 
@@ -27,7 +29,7 @@ const ClientSectionBottomContent = ({ page, pages, onPageChange }: Props) => {
   return (
     <div className="relative mt-4 flex items-center justify-center py-2">
       <div className="absolute flex w-full items-center justify-center">
-        <Pagination className="flex justify-center" aria-label="Clients pages">
+        <Pagination className="flex justify-center" aria-label={t('a11y.pagination_label')}>
           <PaginationContent>
             {Array.from({ length: pages }, (_, index) => {
               const pageNumber = index + 1;
@@ -53,7 +55,7 @@ const ClientSectionBottomContent = ({ page, pages, onPageChange }: Props) => {
           variant="secondary"
           onPress={onPreviousPage}
         >
-          Previous
+          {t('bottom_content.previous')}
         </Button>
         <Button
           isDisabled={nextButtonDisabled}
@@ -61,7 +63,7 @@ const ClientSectionBottomContent = ({ page, pages, onPageChange }: Props) => {
           variant="secondary"
           onPress={onNextPage}
         >
-          Next
+          {t('bottom_content.next')}
         </Button>
       </div>
     </div>

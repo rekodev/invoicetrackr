@@ -13,12 +13,16 @@ import { withIntl } from '@/test/with-intl';
 
 import InvoiceTable from '../invoice-table';
 
+const mockPush = vi.fn();
 const mockReplace = vi.fn();
 
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn(), refresh: vi.fn(), replace: mockReplace })
+  useRouter: () => ({ push: mockPush, refresh: vi.fn(), replace: mockReplace })
 }));
-afterEach(() => mockReplace.mockClear());
+afterEach(() => {
+  mockPush.mockClear();
+  mockReplace.mockClear();
+});
 vi.mock('@/lib/actions/invoice', () => ({
   getInvoiceWorkspaceAction: vi.fn(),
   updateInvoiceStatusAction: vi.fn(),
@@ -103,7 +107,7 @@ describe('invoice list', () => {
     expect(screen.getByText('Paid: Jan 1, 2026 – Dec 31, 2026')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Overdue only' }));
-    expect(mockReplace).toHaveBeenLastCalledWith(
+    expect(mockPush).toHaveBeenLastCalledWith(
       '/invoices?status=open&paidFrom=2026-01-01&paidTo=2026-12-31&overdue=1',
       { scroll: false }
     );
@@ -113,13 +117,13 @@ describe('invoice list', () => {
         name: 'Remove Paid: Jan 1, 2026 – Dec 31, 2026 filter'
       })
     );
-    expect(mockReplace).toHaveBeenLastCalledWith('/invoices?status=open', {
+    expect(mockPush).toHaveBeenLastCalledWith('/invoices?status=open', {
       scroll: false
     });
 
     await userEvent.click(screen.getByRole('button', { name: 'Status' }));
     await userEvent.click(screen.getByRole('menuitemradio', { name: 'Unpaid' }));
-    expect(mockReplace).toHaveBeenLastCalledWith(
+    expect(mockPush).toHaveBeenLastCalledWith(
       '/invoices?status=pending&paidFrom=2026-01-01&paidTo=2026-12-31',
       { scroll: false }
     );
@@ -260,7 +264,7 @@ describe('invoice list', () => {
 
     expect(screen.getByText('1 to 10 of 25 results')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: '2' }));
-    expect(mockReplace).toHaveBeenLastCalledWith('/invoices?page=2', {
+    expect(mockPush).toHaveBeenLastCalledWith('/invoices?page=2', {
       scroll: false
     });
 

@@ -539,18 +539,7 @@ describe('User Controller', () => {
       await app.close();
     });
 
-    it('deletes the account, then removes only the stored files it owns', async () => {
-      const signatureUrl =
-        'https://res.cloudinary.com/demo/image/upload/v1700000000/signature.png';
-      const sharedLegacySignatureUrl =
-        'https://res.cloudinary.com/demo/image/upload/v1700000000/shared.png';
-      const otherUserSignatureUrl =
-        'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/signatures/2/theirs.png';
-      const otherCloudSignatureUrl =
-        'https://res.cloudinary.com/elsewhere/image/upload/v1/signature.png';
-      vi.mocked(
-        accountExportDb.getSharedSignaturePublicIdsFromDb
-      ).mockResolvedValue(new Set(['shared']));
+    it('deletes the account, then removes its attachments and per-user folders', async () => {
       vi.mocked(userDb.getUserFromDb).mockResolvedValue(mockUser);
       vi.mocked(userDb.deleteUserFromDb).mockResolvedValue({ id: testUserId });
       vi.mocked(accountExportDb.getAccountFilesFromDb).mockResolvedValue({
@@ -569,19 +558,9 @@ describe('User Controller', () => {
         profile: {
           logoUrl:
             'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/business-logos/1/logo.png',
-          signatureUrl
-        },
-        signatures: [
-          { senderSignature: signatureUrl, receiverSignature: null },
-          {
-            senderSignature: sharedLegacySignatureUrl,
-            receiverSignature: otherUserSignatureUrl
-          },
-          {
-            senderSignature: 'http://169.254.169.254/signature.png',
-            receiverSignature: otherCloudSignatureUrl
-          }
-        ]
+          signatureUrl:
+            'https://res.cloudinary.com/demo/image/upload/v1/invoicetrackr/signatures/1/mine.png'
+        }
       });
       mockCloudinaryDestroy.mockResolvedValue({ result: 'ok' });
 
@@ -598,12 +577,8 @@ describe('User Controller', () => {
         [
           'invoicetrackr/expense-documents/1/10/receipt.pdf',
           { resource_type: 'raw', type: 'authenticated' }
-        ],
-        ['signature', { resource_type: 'image', type: 'upload' }]
+        ]
       ]);
-      expect(
-        accountExportDb.getSharedSignaturePublicIdsFromDb
-      ).toHaveBeenCalledWith(testUserId, ['signature', 'shared']);
       expect(mockCloudinaryDeleteByPrefix.mock.calls).toEqual([
         ['invoicetrackr/business-logos/1/'],
         ['invoicetrackr/signatures/1/']

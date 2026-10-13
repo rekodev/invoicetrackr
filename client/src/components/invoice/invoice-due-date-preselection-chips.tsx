@@ -7,8 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 const DUE_DATE_PRESELECTIONS = [
   { label: 'seven_days', value: '7' },
   { label: 'fourteen_days', value: '14' },
-  { label: 'thirty_days', value: '30' },
-  { label: 'custom', value: 'custom' }
+  { label: 'thirty_days', value: '30' }
 ];
 
 type Props = {
@@ -38,16 +37,12 @@ export default function InvoiceDueDatePreselectionChips({
       (preselection) => Number(preselection.value) === dateDiffFromDueDate
     );
 
-    if (matchingPreselection) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCurrentlyActiveChip(matchingPreselection.value);
-    } else {
-      setCurrentlyActiveChip('custom');
-    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentlyActiveChip(matchingPreselection?.value);
   }, [dateDiffFromDueDate]);
 
   return (
-    <div className="mb-2 flex flex-wrap justify-start gap-1.5 sm:absolute sm:-top-7 sm:right-0 sm:mb-0 sm:justify-end sm:gap-field-content">
+    <div className="mb-2 flex justify-start gap-1.5 sm:absolute sm:-top-7 sm:right-0 sm:mb-0 sm:justify-end sm:gap-field-content">
       {DUE_DATE_PRESELECTIONS.map(({ label, value }) => (
         <Chip
           key={value}

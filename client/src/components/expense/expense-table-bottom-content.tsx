@@ -30,7 +30,7 @@ const ExpenseTableBottomContent = ({
   return (
     <Pagination size="sm" className="w-full justify-between">
       <Pagination.Summary>
-        {start} to {end} of {filteredItemsLength} results
+        {t('summary', { start, end, total: filteredItemsLength })}
       </Pagination.Summary>
 
       <Pagination.Content>

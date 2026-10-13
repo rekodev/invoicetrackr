@@ -82,11 +82,6 @@ export const parseCloudinaryUrl = (
   };
 };
 
-export const isLegacySignatureAsset = (asset: StorageAsset) =>
-  asset.resourceType === 'image' &&
-  asset.type === 'upload' &&
-  !asset.publicId.includes('/');
-
 export const isStoredSignatureUrl = (value: unknown, userId: number) => {
   if (value === undefined || value === null || value === '') return true;
   if (typeof value !== 'string') return false;
@@ -96,9 +91,8 @@ export const isStoredSignatureUrl = (value: unknown, userId: number) => {
   if (!asset) return false;
 
   return (
-    isLegacySignatureAsset(asset) ||
-    (asset.resourceType === 'image' &&
-      asset.type === 'upload' &&
-      asset.publicId.startsWith(`${signatureFolder(userId)}/`))
+    asset.resourceType === 'image' &&
+    asset.type === 'upload' &&
+    asset.publicId.startsWith(`${signatureFolder(userId)}/`)
   );
 };

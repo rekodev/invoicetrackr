@@ -40,6 +40,7 @@ import { analyticsEvents } from '@/lib/analytics/events';
 import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '@/lib/constants/pages';
 import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
+import { formatMoney } from '@/lib/utils/currency';
 import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
 
 import PdfViewerWrapper from '../pdf/pdf-viewer-wrapper';
@@ -105,7 +106,8 @@ export default function InvoiceWorkspace({
   const isPaid = paymentStatus === 'paid';
   const supportsPayments = (invoice.currency || 'eur') === 'eur';
   const latestPaymentDate = payments.reduce((latest, payment) => payment.paymentDate > latest ? payment.paymentDate : latest, '');
-  const currencySymbol = (invoice.currency || 'eur') === 'eur' ? '€' : '$';
+  const formatAmount = (amount: string) =>
+    formatMoney(amount, locale, invoice.currency);
   const needsPaymentReplacement = isDraft && invoice.paymentMode === 'crypto';
   const status = isDraft || lifecycle === 'voided'
     ? table(`lifecycle_status.${lifecycle}`)
@@ -248,12 +250,12 @@ export default function InvoiceWorkspace({
           >
             <div className="flex justify-between gap-heading">
               <p className="text-muted text-sm">{t('paid')}</p>
-              <p className="font-medium tabular-nums">{currencySymbol}{balance.paidAmount}</p>
+              <p className="font-medium tabular-nums">{formatAmount(balance.paidAmount)}</p>
             </div>
             <div className="flex justify-between gap-heading">
               <p className="text-muted text-sm">{t('outstanding')}</p>
               <p className="font-medium tabular-nums">
-                {currencySymbol}{balance.outstandingAmount}
+                {formatAmount(balance.outstandingAmount)}
               </p>
             </div>
             {isPaid && latestPaymentDate ? <p className="text-muted text-sm">{t('paid_date', { date: latestPaymentDate })}</p> : null}
@@ -398,7 +400,7 @@ export default function InvoiceWorkspace({
                   {payments.map((payment) => (
                     <li key={payment.id} className="space-y-heading p-card">
                       <div className="flex flex-wrap items-baseline justify-between gap-x-field gap-y-field-content">
-                        <p className="text-xl font-semibold tabular-nums">{currencySymbol}{payment.amount}</p>
+                        <p className="text-xl font-semibold tabular-nums">{formatAmount(payment.amount)}</p>
                         <time className="text-muted text-xs tabular-nums" dateTime={payment.paymentDate}>{payment.paymentDate}</time>
                       </div>
                       {payment.bankReference || payment.notes ? (
