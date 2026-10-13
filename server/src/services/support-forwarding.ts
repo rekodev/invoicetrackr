@@ -1,8 +1,6 @@
 import { resend } from '../config/resend';
 
 const DEFAULT_FORWARD_FROM_EMAIL = 'support@invoicetrackr.app';
-// Resend caps a sent email at 40 MB after base64 encoding (~33% larger), so
-// bigger originals are forwarded without the .eml copy.
 const MAX_RAW_ATTACHMENT_BYTES = 25 * 1024 * 1024;
 
 type ForwardResult = {
@@ -66,7 +64,6 @@ export const forwardSupportEmail = async (
       }`,
       attachments: attachments.length ? attachments : undefined
     },
-    // Webhook retries reuse the received email ID, so Resend sends it once.
     { idempotencyKey: `support-forward/${emailId}` }
   );
 

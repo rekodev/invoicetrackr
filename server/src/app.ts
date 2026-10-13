@@ -111,7 +111,6 @@ getPgVersion();
 const FATAL_ERROR_FLUSH_TIMEOUT_MS = 3000;
 let exitingAfterFatalError = false;
 
-// Keep Node's crash-and-restart behaviour; only wait briefly for PostHog.
 const exitAfterFatalError = (
   error: unknown,
   source: 'unhandledRejection' | 'uncaughtException'
