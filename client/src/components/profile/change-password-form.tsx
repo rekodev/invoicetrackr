@@ -74,7 +74,7 @@ export default function ChangePasswordForm({ userId }: Props) {
         <Card.Header>
           <SectionHeading title={t('section_title')} />
         </Card.Header>
-        <CardContent className="px-form-inset gap-field grid grid-cols-1">
+        <CardContent className="card-form-fields gap-field grid grid-cols-1">
           <PasswordInput
             autoComplete="new-password"
             placeholder={t('current_password_placeholder')}

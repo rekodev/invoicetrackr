@@ -95,7 +95,7 @@ const InvoiceDefaultsForm = ({ user }: Props) => {
       <Card.Header>
         <SectionHeading title={t('invoice_defaults.section_title')} />
       </Card.Header>
-      <CardContent className="px-form-inset gap-field grid grid-cols-1 md:grid-cols-2">
+      <CardContent className="card-form-fields gap-field grid grid-cols-1 md:grid-cols-2">
         <Controller
           control={control}
           name="invoiceEmail"

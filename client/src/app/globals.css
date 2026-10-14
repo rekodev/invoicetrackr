@@ -14,6 +14,11 @@
   --spacing-actions: 0.5rem;
 }
 
+@utility card-form-fields {
+  padding-inline: var(--spacing-form-inset);
+  margin-block-start: calc(var(--spacing-card) - var(--spacing-heading));
+}
+
 @utility section-eyebrow {
   font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);

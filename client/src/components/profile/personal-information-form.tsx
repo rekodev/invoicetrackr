@@ -398,7 +398,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
         <Card.Header>
           <SectionHeading title={t('section_title')} />
         </Card.Header>
-        <Card.Content className="px-form-inset gap-field grid grid-cols-1 md:grid-cols-2">
+        <Card.Content className="card-form-fields gap-field grid grid-cols-1 md:grid-cols-2">
           {renderProfilePictureInput()}
           {renderEmailField()}
 

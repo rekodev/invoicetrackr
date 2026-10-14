@@ -209,7 +209,7 @@ const BankingInformationForm = ({
         <Card.Header>
           <SectionHeading title={t('section_title')} />
         </Card.Header>
-        <CardContent className="px-form-inset">
+        <CardContent className="card-form-fields">
           {renderCardBody()}
         </CardContent>
         <CardFooter className="px-form-inset flex w-full items-center justify-between">
