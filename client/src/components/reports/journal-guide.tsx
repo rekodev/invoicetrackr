@@ -8,7 +8,7 @@ const JournalGuide = async () => {
 
   return (
     <InfoPopover title={t('title')}>
-      <p className="text-muted">{t('subtitle')}</p>
+      <p>{t('subtitle')}</p>
       <ul className="list-disc space-y-actions pl-5">
         {JOURNAL_GUIDE_ITEMS.map((item) => (
           <li key={item}>{t(`items.${item}`)}</li>

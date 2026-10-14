@@ -10,7 +10,7 @@ const TaxEstimateDisclaimer = async ({ rules }: Props) => {
 
   return (
     <InfoPopover title={t('disclaimer.title')}>
-      <p className="text-muted">{t('comparison.subtitle')}</p>
+      <p>{t('comparison.subtitle')}</p>
       <p>{t('disclaimer.description', { version: rules.version })}</p>
       <p>{t('disclaimer.not_covered')}</p>
       <p className="font-medium">{t('disclaimer.sources')}</p>
