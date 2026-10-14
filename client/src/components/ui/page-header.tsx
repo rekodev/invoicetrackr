@@ -1,3 +1,4 @@
+import { cn } from '@heroui/react';
 import type { ReactNode } from 'react';
 
 type Props = {
@@ -15,8 +16,13 @@ export default function PageHeader({
 }: Props) {
   return (
     <div className="gap-field-content flex flex-col">
-      <header className="min-h-page-heading gap-x-field gap-y-heading flex flex-wrap items-center justify-between">
-        <div className="min-h-page-heading gap-actions flex min-w-0 flex-wrap items-center">
+      <header
+        className={cn(
+          'gap-x-field gap-y-heading flex flex-wrap items-center justify-between',
+          children && 'min-h-page-heading'
+        )}
+      >
+        <div className="gap-actions flex min-w-0 flex-wrap items-center">
           <h1 className="break-words text-lg font-semibold">{title}</h1>
           {titleAddon}
         </div>

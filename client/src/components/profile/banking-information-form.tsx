@@ -119,7 +119,7 @@ const BankingInformationForm = ({
         })}
       >
         <CardContent className="flex flex-row items-center gap-heading">
-          <Radio value={String(id || 0)} className="min-w-0 flex-1">
+          <Radio value={String(id || 0)} className="mt-0 min-w-0 flex-1">
             <Radio.Content>
               <Radio.Control>
                 <Radio.Indicator />
@@ -209,10 +209,10 @@ const BankingInformationForm = ({
         <Card.Header>
           <SectionHeading title={t('section_title')} />
         </Card.Header>
-        <CardContent>
+        <CardContent className="px-form-inset">
           {renderCardBody()}
         </CardContent>
-        <CardFooter className="flex w-full items-center justify-between">
+        <CardFooter className="px-form-inset flex w-full items-center justify-between">
           <div className="flex w-full flex-col items-center">
             <Button
               isDisabled={

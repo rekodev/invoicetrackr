@@ -18,7 +18,7 @@ export function ClientWorkspaceSkeleton() {
 
 export function ClientSectionSkeleton() {
   return (
-    <section className="flex flex-col gap-section">
+    <section className="flex flex-col gap-field">
       <div className="flex flex-col gap-field">
         <div className="flex flex-col items-stretch justify-between gap-heading sm:flex-row sm:items-end">
           <Skeleton className="h-10 w-full rounded-2xl" />

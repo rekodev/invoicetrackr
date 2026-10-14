@@ -95,7 +95,7 @@ const InvoiceDefaultsForm = ({ user }: Props) => {
       <Card.Header>
         <SectionHeading title={t('invoice_defaults.section_title')} />
       </Card.Header>
-      <CardContent className="gap-field grid grid-cols-1 md:grid-cols-2">
+      <CardContent className="px-form-inset gap-field grid grid-cols-1 md:grid-cols-2">
         <Controller
           control={control}
           name="invoiceEmail"
@@ -290,7 +290,7 @@ const InvoiceDefaultsForm = ({ user }: Props) => {
           )}
         />
       </CardContent>
-      <CardFooter className="w-full flex-col justify-between">
+      <CardFooter className="px-form-inset w-full flex-col justify-between">
         <div className="flex w-full flex-col-reverse gap-actions self-end sm:w-auto sm:flex-row">
           <Button
             isDisabled={!isDirty}

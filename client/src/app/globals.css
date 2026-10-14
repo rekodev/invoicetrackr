@@ -8,7 +8,8 @@
   --spacing-heading: 0.75rem;
   --spacing-field: 1rem;
   --spacing-field-content: 0.25rem;
-  --spacing-card: 1rem;
+  --spacing-card: 1.25rem;
+  --spacing-form-inset: 0.75rem;
   --spacing-form-actions: 1rem;
   --spacing-actions: 0.5rem;
 }
@@ -44,6 +45,10 @@
 
 @layer components {
   body:has(.workspace-ui) {
+    .card:not(.card--transparent) {
+      padding: var(--spacing-card);
+    }
+
     .card > .card__footer {
       margin-block-start: calc(
         var(--spacing-form-actions) - var(--spacing-heading)

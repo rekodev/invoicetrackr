@@ -398,7 +398,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
         <Card.Header>
           <SectionHeading title={t('section_title')} />
         </Card.Header>
-        <Card.Content className="gap-field grid grid-cols-1 md:grid-cols-2">
+        <Card.Content className="px-form-inset gap-field grid grid-cols-1 md:grid-cols-2">
           {renderProfilePictureInput()}
           {renderEmailField()}
 
@@ -511,7 +511,7 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
           </div>
         </Card.Content>
 
-        <Card.Footer className="flex w-full flex-col">
+        <Card.Footer className="px-form-inset flex w-full flex-col">
           <Button
             isDisabled={
               isSubmitting ||

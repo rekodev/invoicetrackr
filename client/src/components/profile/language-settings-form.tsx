@@ -67,7 +67,11 @@ const LanguageSettingsForm = ({ user }: Props) => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <SectionHeading title={t('title')} />
-      <Toolbar isAttached aria-label={t('title')} className="w-fit shadow-none">
+      <Toolbar
+        isAttached
+        aria-label={t('title')}
+        className="ms-form-inset w-fit shadow-none"
+      >
         <Controller
           control={control}
           name="language"
