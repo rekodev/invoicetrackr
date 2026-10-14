@@ -106,7 +106,7 @@ describe('invoice list', () => {
 
     expect(screen.getByText('Paid: Jan 1, 2026 – Dec 31, 2026')).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Overdue only' }));
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Overdue Only' }));
     expect(mockPush).toHaveBeenLastCalledWith(
       '/invoices?status=open&paidFrom=2026-01-01&paidTo=2026-12-31&overdue=1',
       { scroll: false }
@@ -125,6 +125,13 @@ describe('invoice list', () => {
     await userEvent.click(screen.getByRole('menuitemradio', { name: 'Unpaid' }));
     expect(mockPush).toHaveBeenLastCalledWith(
       '/invoices?status=pending&paidFrom=2026-01-01&paidTo=2026-12-31',
+      { scroll: false }
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Lifecycle' }));
+    await userEvent.click(screen.getByRole('menuitemradio', { name: 'Voided' }));
+    expect(mockPush).toHaveBeenLastCalledWith(
+      '/invoices?status=open&paidFrom=2026-01-01&paidTo=2026-12-31&lifecycle=voided',
       { scroll: false }
     );
   });

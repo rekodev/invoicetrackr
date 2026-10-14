@@ -10,7 +10,9 @@ import { formatMoney } from '@/lib/utils/currency';
 import { formatDate } from '@/lib/utils/date';
 import {
   getInvoiceDueStatus,
-  getInvoicePaymentStatus
+  getInvoicePaymentStatus,
+  invoiceLifecycleColor,
+  invoicePaymentStatusColor
 } from '@/lib/utils/invoice';
 
 import InvoiceTableActions from './invoice-table-actions';
@@ -56,16 +58,7 @@ export default function InvoiceTableCell({
       return <span>{formatDate(invoice.date)}</span>;
     case 'lifecycleStatus':
       return (
-        <Chip
-          variant="soft"
-          color={
-            lifecycle === 'voided'
-              ? 'danger'
-              : lifecycle === 'issued'
-                ? 'accent'
-                : 'default'
-          }
-        >
+        <Chip variant="soft" color={invoiceLifecycleColor(lifecycle)}>
           {t(`lifecycle_status.${lifecycle}`)}
         </Chip>
       );
@@ -75,7 +68,7 @@ export default function InvoiceTableCell({
         <div className="flex flex-wrap gap-field-content">
           <Chip
             variant="soft"
-            color={paymentStatus === 'paid' ? 'success' : 'warning'}
+            color={invoicePaymentStatusColor(paymentStatus)}
           >
             {t(`status.${paymentStatus}`)}
           </Chip>

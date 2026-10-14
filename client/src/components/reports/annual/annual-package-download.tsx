@@ -47,7 +47,7 @@ const AnnualPackageDownload = ({ year }: Props) => {
             </li>
           ))}
         </ul>
-        <p className="bg-default text-muted rounded-xl px-3 py-2">
+        <p className="bg-default rounded-xl px-3 py-2">
           {t('disclaimer')}
         </p>
       </InfoPopover>

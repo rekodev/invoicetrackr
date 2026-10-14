@@ -176,7 +176,7 @@ export default function SendInvoiceEmailModal({ onClose, userId, invoice, isEmai
               </Checkbox> : null}
             </Modal.Body>
             <Modal.Footer>
-              <Button type="button" variant="tertiary" isDisabled={isPending} onPress={onClose}>{t('cancel')}</Button>
+              <Button type="button" variant="ghost" isDisabled={isPending} onPress={onClose}>{t('cancel')}</Button>
               <Button type="submit" isPending={isPending} isDisabled={!isEmailVerified || isPending
                 || (expired && !confirmedDuplicate) || (kind === 'reminder' && Number(outstandingAmount) <= 0 && !recovering)}>
                 <PaperAirplaneIcon className="size-4" />

@@ -12,7 +12,7 @@ const JournalExportButtons = async ({ query }: Props) => {
   const t = await getTranslations('reports.journal');
 
   return (
-    <div role="group" aria-label={t('a11y.export')} className="flex flex-wrap gap-actions">
+    <div role="group" aria-label={t('a11y.export')} className="-my-1 flex flex-wrap gap-actions">
       {JOURNAL_EXPORT_FORMATS.map((format) => (
         <a
           key={format}

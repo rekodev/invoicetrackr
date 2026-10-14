@@ -392,7 +392,7 @@
                         "value": "4 820,00 €"
                     },
                     "safe_to_spend": {
-                        "label": "Galima išleisti · įvertis",
+                        "label": "Galima išleisti",
                         "value": "12 320,00 €"
                     }
                 },
@@ -786,9 +786,9 @@
             }
         },
         "safe_to_spend": {
-            "title": "Galima išleisti · įvertis",
+            "title": "Galima išleisti",
             "tax_breakdown": "Mokesčių skaičiavimas",
-            "set_up": "Nustatyti mokesčių įvertį",
+            "set_up": "Nustatyti mokesčius",
             "not_set_up": "Nenustatyta",
             "unsupported": "Įvertis skaičiuojamas tik {years} m.",
             "shortfall": "Trūksta {amount}",
@@ -885,7 +885,6 @@
             "edit": "Redaguoti juodraštį",
             "send": "Siųsti sąskaitą",
             "send_reminder": "Siųsti priminimą",
-            "verify_email_to_send": "Prieš siųsdami sąskaitas patvirtinkite el. pašto adresą.",
             "record_payment": "Įrašyti mokėjimą",
             "cancel_invoice": "Anuliuoti sąskaitą",
             "cancel_title": "Anuliuoti šią sąskaitą?",
@@ -979,13 +978,16 @@
             },
             "filters": {
                 "status": "Būsena",
+                "lifecycle": "Gyvavimo ciklas",
                 "columns": "Stulpeliai",
                 "clear": "Išvalyti filtrus",
                 "a11y": {
                     "status_label": "Būsena",
+                    "lifecycle_label": "Gyvavimo ciklas",
                     "columns_label": "Lentelės stulpeliai"
                 },
                 "all": "Visos būsenos",
+                "all_lifecycles": "Visi etapai",
                 "overdue_only": "Tik pradelstos",
                 "issued_range": "Išrašyta: {range}",
                 "paid_range": "Apmokėta: {range}",
@@ -1402,17 +1404,12 @@
                 "total": "Suma",
                 "received": "Gauta",
                 "outstanding": "Neapmokėta",
-                "state": "Būsena",
+                "lifecycle": "Gyvavimo ciklas",
+                "status": "Būsena",
                 "action": ""
             },
             "states": {
-                "draft": "Juodraštis",
-                "voided": "Anuliuota",
-                "paid": "Apmokėta",
-                "overdue": "Pradelsta",
-                "partial": "Iš dalies apmokėta",
-                "pending": "Neapmokėta",
-                "no_payment_due": "Mokėti nereikia"
+                "draft": "Juodraštis"
             }
         },
         "page_title": "Klientai",
@@ -1574,7 +1571,10 @@
         "banking_information": {
             "a11y": {
                 "form_label": "Bankinės informacijos forma",
-                "default_account_label": "Numatytoji banko sąskaita"
+                "default_account_label": "Numatytoji banko sąskaita",
+                "edit_account": "Redaguoti {name}",
+                "delete_account": "Ištrinti {name}",
+                "default_account_locked": "{name} yra numatytoji sąskaita, jos ištrinti negalima"
             },
             "title": "Mokėjimo būdai",
             "section_title": "Numatytoji banko sąskaita",

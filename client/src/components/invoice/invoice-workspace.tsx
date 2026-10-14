@@ -41,7 +41,11 @@ import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '@/lib/constants/pages';
 import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 import { formatMoney } from '@/lib/utils/currency';
-import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
+import {
+  getInvoiceDueStatus,
+  getInvoicePaymentStatus,
+  invoicePaymentStatusColor
+} from '@/lib/utils/invoice';
 
 import PdfViewerWrapper from '../pdf/pdf-viewer-wrapper';
 import PageHeader from '../ui/page-header';
@@ -205,12 +209,7 @@ export default function InvoiceWorkspace({
         title={invoice.invoiceId || t('draft')}
         titleAddon={
           <div className="flex flex-wrap gap-actions">
-            <Chip
-              variant="soft"
-              color={
-                lifecycle === 'voided' ? 'danger' : !isIssued ? 'accent' : isPaid ? 'success' : 'warning'
-              }
-            >
+            <Chip variant="soft" color={invoicePaymentStatusColor(paymentStatus)}>
               {status}
             </Chip>
             {due.isPastDue ? (
@@ -262,7 +261,7 @@ export default function InvoiceWorkspace({
           </WorkspaceSection>
           <WorkspaceSection
             title={t('actions')}
-            contentClassName="flex flex-col gap-field"
+            contentClassName="flex flex-col gap-actions"
           >
             {isDraft ? (
               <>
@@ -304,11 +303,6 @@ export default function InvoiceWorkspace({
                   <PaperAirplaneIcon className="size-4" />
                   {t('send')}
                 </Button>
-                {!isEmailVerified ? (
-                  <p className="text-muted text-sm">
-                    {t('verify_email_to_send')}
-                  </p>
-                ) : null}
                 {Number(balance.outstandingAmount) > 0 ? (
                   <Button className="w-full justify-center" variant="secondary"
                     isDisabled={!isEmailVerified} onPress={() => openEmail('reminder')}>
@@ -383,13 +377,13 @@ export default function InvoiceWorkspace({
           </WorkspaceSection>
           {isIssued || payments.length > 0 ? (
             <Card className="gap-0 overflow-hidden border p-0" role="region" aria-labelledby={`invoice-payments-${invoiceId}`}>
-              <Card.Header className="flex-row items-center justify-between gap-actions border-b p-card">
+              <Card.Header className="flex-row items-start justify-between gap-actions border-b p-card">
                 <div className="flex items-center gap-actions">
                   <h2 id={`invoice-payments-${invoiceId}`} className="text-base font-medium">{t('payment_history')}</h2>
                   <Chip size="sm" variant="soft" aria-label={t('payment_count', { count: payments.length })}>{payments.length}</Chip>
                 </div>
                 {isIssued && supportsPayments && Number(balance.outstandingAmount) > 0 ? (
-                  <Button size="sm" variant="secondary" onPress={() => openPayment()}>
+                  <Button size="sm" variant="secondary" className="-my-1" onPress={() => openPayment()}>
                     <BanknotesIcon className="size-4" />
                     {t('record_payment')}
                   </Button>
@@ -559,7 +553,7 @@ export default function InvoiceWorkspace({
               {confirmError ? <p role="alert" className="text-danger text-sm">{confirmError}</p> : null}
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="tertiary" isDisabled={isPending} onPress={() => { setConfirmError(''); setConfirmAction(null); }}>
+              <Button variant="outline" isDisabled={isPending} onPress={() => { setConfirmError(''); setConfirmAction(null); }}>
                 {t('close')}
               </Button>
               <Button variant="danger" isPending={isPending} isDisabled={isPending} onPress={confirm}>

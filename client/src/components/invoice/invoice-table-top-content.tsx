@@ -1,7 +1,7 @@
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import {
-  Button,
   buttonVariants,
+  Checkbox,
   CloseButton,
   Dropdown,
   DropdownItem,
@@ -16,6 +16,8 @@ import { Dispatch, SetStateAction } from 'react';
 import { LIST_PAGE_SIZES } from '@/lib/constants/table';
 import { capitalize } from '@/lib/utils';
 
+import InvoiceTableFilterDropdown from './invoice-table-filter-dropdown';
+
 type Props = {
   columns: Array<{ name: string; uid: string; sortable?: boolean }>;
   statusOptions: Array<{ name: string; uid: string }>;
@@ -25,6 +27,9 @@ type Props = {
   onOverdueToggle: () => void;
   statusFilter: string;
   onStatusChange: (_status: string) => void;
+  lifecycleOptions: Array<{ name: string; uid: string }>;
+  lifecycleFilter: string;
+  onLifecycleChange: (_lifecycle: string) => void;
   visibleColumns: Set<string> | 'all';
   setVisibleColumns: Dispatch<SetStateAction<Set<string> | 'all'>>;
   rowsPerPage: number;
@@ -43,6 +48,9 @@ const InvoiceTableTopContent = ({
   onOverdueToggle,
   statusFilter,
   onStatusChange,
+  lifecycleOptions,
+  lifecycleFilter,
+  onLifecycleChange,
   rowsPerPage,
   onRowsPerPageChange,
   total
@@ -71,49 +79,36 @@ const InvoiceTableTopContent = ({
           )}
         </div>
         <div className="grid w-full grid-cols-1 gap-actions sm:flex sm:w-auto sm:gap-heading">
-          <Dropdown>
-            <DropdownTrigger
-              className={buttonVariants({
-                variant: 'tertiary',
-                className:
-                  'flex w-full items-center justify-center gap-actions sm:w-auto'
-              })}
-            >
-              {t('table.filters.status')}
-              <ChevronDownIcon className="h-4 w-4 text-sm" />
-            </DropdownTrigger>
-            <DropdownPopover>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label={t('table.filters.a11y.status_label')}
-                selectedKeys={new Set([statusFilter])}
-                selectionMode="single"
-                onSelectionChange={(keys) =>
-                  onStatusChange(keys === 'all' ? 'all' : String(Array.from(keys)[0] || 'all'))
-                }
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem
-                    key={status.uid}
-                    id={status.uid}
-                    textValue={capitalize(status.name)}
-                    className="capitalize"
-                  >
-                    {capitalize(status.name)}
-                    <Dropdown.ItemIndicator />
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </DropdownPopover>
-          </Dropdown>
-          <Button
-            variant={overdueOnly ? 'secondary' : 'tertiary'}
-            aria-pressed={overdueOnly}
-            className="w-full sm:w-auto"
-            onPress={onOverdueToggle}
+          <InvoiceTableFilterDropdown
+            label={t('table.filters.status')}
+            ariaLabel={t('table.filters.a11y.status_label')}
+            options={statusOptions}
+            value={statusFilter}
+            onChange={onStatusChange}
+          />
+          <InvoiceTableFilterDropdown
+            label={t('table.filters.lifecycle')}
+            ariaLabel={t('table.filters.a11y.lifecycle_label')}
+            options={lifecycleOptions}
+            value={lifecycleFilter}
+            onChange={onLifecycleChange}
+          />
+          <Checkbox
+            variant="primary"
+            className={buttonVariants({
+              variant: 'tertiary',
+              className: 'w-full gap-actions sm:w-auto'
+            })}
+            isSelected={overdueOnly}
+            onChange={onOverdueToggle}
           >
-            {t('table.filters.overdue_only')}
-          </Button>
+            <Checkbox.Content>
+              <Checkbox.Control>
+                <Checkbox.Indicator className="[&_svg]:h-full [&_svg]:w-full" />
+              </Checkbox.Control>
+              {t('table.filters.overdue_only')}
+            </Checkbox.Content>
+          </Checkbox>
           <Dropdown>
             <DropdownTrigger
               className={buttonVariants({

@@ -94,7 +94,7 @@ export default function RecipientDetailsRequestModal({
           <Modal.Footer>
             <div className="flex w-full flex-col-reverse gap-actions sm:flex-row sm:justify-end">
               <Button
-                variant="tertiary"
+                variant="ghost"
                 className="w-full sm:w-auto"
                 isDisabled={isPending}
                 onPress={() => onOpenChange(false)}

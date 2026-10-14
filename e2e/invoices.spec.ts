@@ -230,7 +230,9 @@ test.describe('invoices', () => {
     await invoiceForm.createDraft(createInvoiceTestData('Dashboard draft'));
     await page.goto('/dashboard');
     await expect(page.getByText('Overdue Invoices', { exact: true })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Safe to Spend · Estimate' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Safe to Spend', exact: true })
+    ).toBeVisible();
     await page.getByRole('button', { name: 'How This Is Calculated' }).click();
     const breakdown = page.getByRole('dialog');
     await expect(breakdown.getByRole('term').filter({ hasText: 'Tax Reserve' })).toBeVisible();

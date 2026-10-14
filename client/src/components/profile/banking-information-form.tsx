@@ -119,7 +119,7 @@ const BankingInformationForm = ({
         })}
       >
         <CardContent className="flex flex-row items-center gap-heading">
-          <Radio value={String(id || 0)} className="min-w-0 flex-1">
+          <Radio value={String(id || 0)} className="mt-0 min-w-0 flex-1">
             <Radio.Content>
               <Radio.Control>
                 <Radio.Indicator />
@@ -131,11 +131,12 @@ const BankingInformationForm = ({
               </div>
             </Radio.Content>
           </Radio>
-          <div className="pointer-events-none flex gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
+          <div className="pointer-events-none flex gap-0.5 opacity-0 transition group-has-[:focus-visible]:pointer-events-auto group-has-[:focus-visible]:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
             <Button
               isIconOnly
               size="sm"
               variant="tertiary"
+              aria-label={t('a11y.edit_account', { name })}
               onPress={() => handleEdit({ id, name, code, accountNumber })}
             >
               <PencilSquareIcon className="h-4 w-4" />
@@ -143,6 +144,11 @@ const BankingInformationForm = ({
             <Button
               isIconOnly
               size="sm"
+              aria-label={
+                id === user.selectedBankAccountId
+                  ? t('a11y.default_account_locked', { name })
+                  : t('a11y.delete_account', { name })
+              }
               isDisabled={id === user.selectedBankAccountId}
               variant={
                 id === user.selectedBankAccountId ? 'tertiary' : 'danger-soft'
@@ -209,10 +215,10 @@ const BankingInformationForm = ({
         <Card.Header>
           <SectionHeading title={t('section_title')} />
         </Card.Header>
-        <CardContent>
+        <CardContent className="card-form-fields">
           {renderCardBody()}
         </CardContent>
-        <CardFooter className="flex w-full items-center justify-between">
+        <CardFooter className="px-form-inset flex w-full items-center justify-between">
           <div className="flex w-full flex-col items-center">
             <Button
               isDisabled={

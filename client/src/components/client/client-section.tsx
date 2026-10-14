@@ -195,7 +195,7 @@ const ClientSection = ({ userId, clients, total, query }: Props) => {
 
   return (
     <section
-      className={cn('flex flex-col gap-section transition-opacity', {
+      className={cn('flex flex-col gap-field transition-opacity', {
         'opacity-60': isPending
       })}
       aria-busy={isPending}

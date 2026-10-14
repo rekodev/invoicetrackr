@@ -684,61 +684,61 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
             </select>
           </label>
         </div>
-      </div>
 
-      <Table variant="secondary">
-        <Table.ScrollContainer className="w-full max-w-full overflow-x-auto">
-          <Table.Content
-            className="min-w-full"
-            aria-label={t('table.a11y.table_label')}
-            sortDescriptor={sortDescriptor as any}
-            onSortChange={setSortDescriptor}
-          >
-            <Table.Header>
-              {headerColumns.map((column, index) => (
-                <Table.Column
-                  isRowHeader={index === 0}
-                  key={column.uid}
-                  id={column.uid}
-                  allowsSorting={column.sortable}
-                  className={cn({
-                    'text-center': column.uid === 'actions'
-                  })}
-                >
-                  {column.name}
-                </Table.Column>
-              ))}
-            </Table.Header>
-            <Table.Body>
-              {sortedItems.length ? (
-                sortedItems.map((expense) => (
-                  <Table.Row key={expense.id} id={String(expense.id)}>
-                    {headerColumns.map((column) => (
-                      <Table.Cell key={column.uid} className="whitespace-nowrap py-2">
-                        {renderCell(expense, column.uid)}
-                      </Table.Cell>
-                    ))}
+        <Table variant="secondary">
+          <Table.ScrollContainer className="w-full max-w-full overflow-x-auto">
+            <Table.Content
+              className="min-w-full"
+              aria-label={t('table.a11y.table_label')}
+              sortDescriptor={sortDescriptor as any}
+              onSortChange={setSortDescriptor}
+            >
+              <Table.Header>
+                {headerColumns.map((column, index) => (
+                  <Table.Column
+                    isRowHeader={index === 0}
+                    key={column.uid}
+                    id={column.uid}
+                    allowsSorting={column.sortable}
+                    className={cn({
+                      'text-center': column.uid === 'actions'
+                    })}
+                  >
+                    {column.name}
+                  </Table.Column>
+                ))}
+              </Table.Header>
+              <Table.Body>
+                {sortedItems.length ? (
+                  sortedItems.map((expense) => (
+                    <Table.Row key={expense.id} id={String(expense.id)}>
+                      {headerColumns.map((column) => (
+                        <Table.Cell key={column.uid} className="whitespace-nowrap">
+                          {renderCell(expense, column.uid)}
+                        </Table.Cell>
+                      ))}
+                    </Table.Row>
+                  ))
+                ) : (
+                  <Table.Row id="empty">
+                    <Table.Cell colSpan={headerColumns.length}>
+                      {renderEmptyContent()}
+                    </Table.Cell>
                   </Table.Row>
-                ))
-              ) : (
-                <Table.Row id="empty">
-                  <Table.Cell colSpan={headerColumns.length}>
-                    {renderEmptyContent()}
-                  </Table.Cell>
-                </Table.Row>
-              )}
-            </Table.Body>
-          </Table.Content>
-        </Table.ScrollContainer>
-      </Table>
+                )}
+              </Table.Body>
+            </Table.Content>
+          </Table.ScrollContainer>
+        </Table>
 
-      <ExpenseTableBottomContent
-        page={page}
-        setPage={setPage}
-        pages={pages}
-        rowsPerPage={rowsPerPage}
-        filteredItemsLength={filteredItems.length}
-      />
+        <ExpenseTableBottomContent
+          page={page}
+          setPage={setPage}
+          pages={pages}
+          rowsPerPage={rowsPerPage}
+          filteredItemsLength={filteredItems.length}
+        />
+      </div>
 
       <ExpenseFormDialog
         userId={userId}

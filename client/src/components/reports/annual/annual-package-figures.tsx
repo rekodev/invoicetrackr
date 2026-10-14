@@ -22,7 +22,7 @@ const AnnualPackageFigures = async ({ summary, estimate }: Props) => {
       <div className="flex items-center gap-field-content">
         <h2 className="text-base font-medium">{t('title')}</h2>
         <InfoPopover title={t('title')}>
-          <p className="text-muted">{t('info')}</p>
+          <p>{t('info')}</p>
         </InfoPopover>
       </div>
       <dl className="flex flex-col border-y text-sm">

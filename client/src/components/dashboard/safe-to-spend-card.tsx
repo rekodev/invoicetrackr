@@ -26,7 +26,7 @@ const SafeToSpendCard = async ({ safeToSpend, year }: Props) => {
           <IconContainer size="sm" variant="success">
             <WalletIcon className="h-4 w-4" />
           </IconContainer>
-          <h2 className="text-base font-medium">{t('title')}</h2>
+          <h2>{t('title')}</h2>
           <InfoPopover
             title={t('info.title')}
             placement="bottom end"
@@ -42,8 +42,8 @@ const SafeToSpendCard = async ({ safeToSpend, year }: Props) => {
             }
           >
             <SafeToSpendBreakdown safeToSpend={safeToSpend} year={year} />
-            <p className="text-muted">{t('info.reserve')}</p>
-            <p className="text-muted">{t('info.payments')}</p>
+            <p>{t('info.reserve')}</p>
+            <p>{t('info.payments')}</p>
           </InfoPopover>
         </div>
         {safeToSpend.status === 'ready' ? (

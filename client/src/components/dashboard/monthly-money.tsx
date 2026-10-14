@@ -50,7 +50,7 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
 
   return (
     <Card className="min-w-0 border">
-      <Card.Header className="flex-row flex-wrap items-center justify-between gap-field">
+      <Card.Header className="flex-row flex-wrap items-start justify-between gap-field">
         <h2 className="text-base font-medium">{t('title')}</h2>
         <dl className="flex flex-wrap gap-x-section gap-y-actions">
           {figures.map((figure) => (

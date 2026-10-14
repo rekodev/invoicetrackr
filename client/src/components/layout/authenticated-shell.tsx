@@ -105,14 +105,12 @@ export default function AuthenticatedShell({
         </Avatar>
       </DropdownTrigger>
       <DropdownPopover>
+        <p className="text-muted max-w-60 truncate px-4 pt-3 pb-2 text-sm">
+          {user.email}
+        </p>
+        <Separator />
         <form action={logOutAction}>
           <DropdownMenu aria-label={t('a11y.profile_actions_label')}>
-            <DropdownItem key="email" textValue={user.email || ''}>
-              <span className="text-muted block max-w-56 truncate text-sm">
-                {user.email}
-              </span>
-            </DropdownItem>
-            <Separator className="-ms-1.5 w-[calc(100%+0.75rem)]" />
             <DropdownItem key="profile" href={PROFILE_PAGE}>
               {t('profile')}
             </DropdownItem>

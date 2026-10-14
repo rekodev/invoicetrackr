@@ -44,7 +44,7 @@ const AccountDataSection = ({ userId, email, hasExportError }: Props) => {
           </Alert.Content>
         </Alert>
       ) : null}
-      <div className="divide-y">
+      <div className="px-form-inset divide-y">
         {renderRow(
           'export',
           <a

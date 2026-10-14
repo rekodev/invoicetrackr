@@ -144,7 +144,7 @@ export default function BankAccountForm({
         <div className="flex w-full flex-col-reverse gap-actions sm:w-auto sm:flex-row">
           {!isUserOnboarding && (
             <Button
-              variant="danger-soft"
+              variant="ghost"
               className="w-full sm:w-auto"
               onPress={onCancel}
             >

@@ -17,6 +17,7 @@ describe('invoice list navigation', () => {
     const query = parseInvoiceListQuery({
       q: '  sf ',
       status: 'open',
+      lifecycle: 'issued',
       overdue: '1',
       issuedFrom: '2026-01-01',
       issuedTo: '2026-12-31',
@@ -31,6 +32,7 @@ describe('invoice list navigation', () => {
     expect(query).toEqual({
       q: 'sf',
       status: 'open',
+      lifecycle: 'issued',
       overdue: '1',
       issuedFrom: '2026-01-01',
       issuedTo: '2026-12-31',
@@ -41,13 +43,13 @@ describe('invoice list navigation', () => {
       direction: 'ascending'
     });
     expect(invoiceListQueryHref(query)).toBe(
-      '/invoices?page=2&pageSize=15&q=sf&status=open&overdue=1&issuedFrom=2026-01-01&issuedTo=2026-12-31&paidFrom=2026-04-01&sort=receiver&direction=ascending'
+      '/invoices?page=2&pageSize=15&q=sf&status=open&lifecycle=issued&overdue=1&issuedFrom=2026-01-01&issuedTo=2026-12-31&paidFrom=2026-04-01&sort=receiver&direction=ascending'
     );
   });
 
   it.each([
     [{}],
-    [{ status: 'unknown', page: '0', pageSize: '500', sort: 'secret', direction: 'up' }],
+    [{ status: 'unknown', lifecycle: 'sent', page: '0', pageSize: '500', sort: 'secret', direction: 'up' }],
     [{ status: ['open', 'paid'], page: '1.5', overdue: 'yes' }]
   ])('falls back to defaults for %j', (params) => {
     const query = parseInvoiceListQuery(params);

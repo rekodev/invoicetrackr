@@ -160,10 +160,13 @@ Wrap every HeroUI field in `Controller`. Validation state and props go on the
   field, `gap-heading` (12px) from a section title to its content, and
   `gap-section` (24px) between distinct form sections. These values remain
   the same on mobile.
-- Cards own one `p-card` (16px) gutter. Put section titles in `Card.Header`,
-  fields in `Card.Content className="gap-field"`, and actions in
-  `Card.Footer`; do not add a second gutter to those slots. The logged-in
-  shell's scoped HeroUI rules also give dialog/popover surfaces 16px padding.
+- Cards own one `p-card` (20px) gutter. Put section titles in `Card.Header`,
+  fields in `Card.Content className="card-form-fields gap-field"`, and
+  actions in `Card.Footer className="px-form-inset"`; do not add a second
+  gutter to those slots. The logged-in shell's scoped HeroUI rules also give
+  dialog surfaces the same `p-card` padding.
+- Dialog fields stack with `Modal.Body className="flex flex-col gap-field"`
+  (`client-form-dialog.tsx`); `Modal.Body` has no gap of its own.
 - Leave 16px from the final field to Save/Cancel, using `gap-form-actions`
   or `pt-form-actions` for a custom footer. Standard `Card.Footer` and
   `Modal.Footer` receive this spacing from the scoped styles. Use
@@ -178,7 +181,10 @@ Wrap every HeroUI field in `Controller`. Validation state and props go on the
   `<form>` wrapping `Modal.Header` / `Modal.Body` / `Modal.Footer`, plus
   `Modal.CloseTrigger`.
 - Footer buttons: a cancel `ghost` button and the primary submit, stacked on
-  mobile (`flex-col-reverse … sm:flex-row`).
+  mobile (`flex-col-reverse … sm:flex-row`). Cancel is never red; only the
+  destructive confirm button uses `danger`. Confirmation dialogs (delete,
+  archive, issue, void) pair an `outline` cancel with the confirm button
+  (`delete-invoice-modal.tsx`).
 - All copy goes in `client/messages/{en,lt}.json` under the component's
   namespace (`things.form_dialog.fields.*`).
 

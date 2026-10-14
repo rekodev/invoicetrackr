@@ -102,12 +102,12 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
   }).format(new Date(value)) : null;
 
   return <Card className="gap-0 overflow-hidden border p-0">
-    <Card.Header className="flex-row flex-wrap items-center justify-between gap-actions border-b p-card">
+    <Card.Header className="flex-row flex-wrap items-start justify-between gap-actions border-b p-card">
       <div className="flex items-center gap-actions">
         <h2 className="font-medium">{t('title')}</h2>
         {documents ? <Chip size="sm" variant="soft">{documents.length}</Chip> : null}
       </div>
-      {documents?.length !== 0 ? <Button size="sm" isIconOnly aria-label={t('add')} isDisabled={isPending} onPress={() => openDialog({ kind: 'add' })}><PlusIcon className="size-4" /></Button> : null}
+      {documents?.length !== 0 ? <Button size="sm" isIconOnly className="-my-1" aria-label={t('add')} isDisabled={isPending} onPress={() => openDialog({ kind: 'add' })}><PlusIcon className="size-4" /></Button> : null}
     </Card.Header>
     <Card.Content className="p-0">
       {documents === null ? <div className="space-y-actions p-card">
@@ -158,7 +158,7 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
           {error ? <p role="alert" className="text-danger text-sm">{error}</p> : null}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="tertiary" isDisabled={isPending} onPress={closeDialog}>{t('cancel')}</Button>
+          <Button variant={dialog?.kind === 'remove' ? 'outline' : 'ghost'} isDisabled={isPending} onPress={closeDialog}>{t('cancel')}</Button>
           <Button variant={dialog?.kind === 'remove' ? 'danger' : 'primary'} isPending={isPending} isDisabled={isPending}
             onPress={save}>{dialog ? t(dialog.kind === 'add' ? 'upload' : dialog.kind) : t('upload')}</Button>
         </Modal.Footer>
