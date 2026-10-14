@@ -1576,7 +1576,10 @@
         "banking_information": {
             "a11y": {
                 "form_label": "Bankinės informacijos forma",
-                "default_account_label": "Numatytoji banko sąskaita"
+                "default_account_label": "Numatytoji banko sąskaita",
+                "edit_account": "Redaguoti {name}",
+                "delete_account": "Ištrinti {name}",
+                "default_account_locked": "{name} yra numatytoji sąskaita, jos ištrinti negalima"
             },
             "title": "Mokėjimo būdai",
             "section_title": "Numatytoji banko sąskaita",

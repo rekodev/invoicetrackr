@@ -131,11 +131,12 @@ const BankingInformationForm = ({
               </div>
             </Radio.Content>
           </Radio>
-          <div className="pointer-events-none flex gap-0.5 opacity-0 transition group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
+          <div className="pointer-events-none flex gap-0.5 opacity-0 transition group-has-[:focus-visible]:pointer-events-auto group-has-[:focus-visible]:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
             <Button
               isIconOnly
               size="sm"
               variant="tertiary"
+              aria-label={t('a11y.edit_account', { name })}
               onPress={() => handleEdit({ id, name, code, accountNumber })}
             >
               <PencilSquareIcon className="h-4 w-4" />
@@ -143,6 +144,11 @@ const BankingInformationForm = ({
             <Button
               isIconOnly
               size="sm"
+              aria-label={
+                id === user.selectedBankAccountId
+                  ? t('a11y.default_account_locked', { name })
+                  : t('a11y.delete_account', { name })
+              }
               isDisabled={id === user.selectedBankAccountId}
               variant={
                 id === user.selectedBankAccountId ? 'tertiary' : 'danger-soft'

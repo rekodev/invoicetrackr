@@ -1576,7 +1576,10 @@
         "banking_information": {
             "a11y": {
                 "form_label": "Banking Information Form",
-                "default_account_label": "Default Bank Account"
+                "default_account_label": "Default Bank Account",
+                "edit_account": "Edit {name}",
+                "delete_account": "Delete {name}",
+                "default_account_locked": "{name} is the default account and can't be deleted"
             },
             "title": "Payment Methods",
             "section_title": "Default Bank Account",
