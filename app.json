@@ -10,6 +10,7 @@
         "type": "startup",
         "name": "API and database reachable",
         "path": "/api/health",
+        "initialDelay": 10,
         "attempts": 5,
         "wait": 5,
         "timeout": 5
