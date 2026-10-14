@@ -1404,17 +1404,12 @@
                 "total": "Total",
                 "received": "Received",
                 "outstanding": "Outstanding",
-                "state": "State",
+                "lifecycle": "Lifecycle",
+                "status": "Status",
                 "action": ""
             },
             "states": {
-                "draft": "Draft",
-                "voided": "Voided",
-                "paid": "Paid",
-                "overdue": "Overdue",
-                "partial": "Partially paid",
-                "pending": "Unpaid",
-                "no_payment_due": "No payment due"
+                "draft": "Draft"
             }
         },
         "page_title": "Clients",

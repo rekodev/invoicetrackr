@@ -1404,17 +1404,12 @@
                 "total": "Suma",
                 "received": "Gauta",
                 "outstanding": "Neapmokėta",
-                "state": "Būsena",
+                "lifecycle": "Gyvavimo ciklas",
+                "status": "Būsena",
                 "action": ""
             },
             "states": {
-                "draft": "Juodraštis",
-                "voided": "Anuliuota",
-                "paid": "Apmokėta",
-                "overdue": "Pradelsta",
-                "partial": "Iš dalies apmokėta",
-                "pending": "Neapmokėta",
-                "no_payment_due": "Mokėti nereikia"
+                "draft": "Juodraštis"
             }
         },
         "page_title": "Klientai",

@@ -41,7 +41,11 @@ import { EDIT_INVOICE_PAGE, INVOICES_PAGE } from '@/lib/constants/pages';
 import useDynamicPdf from '@/lib/hooks/pdf/use-dynamic-pdf';
 import useCookieConsent from '@/lib/hooks/use-cookie-consent';
 import { formatMoney } from '@/lib/utils/currency';
-import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
+import {
+  getInvoiceDueStatus,
+  getInvoicePaymentStatus,
+  invoicePaymentStatusColor
+} from '@/lib/utils/invoice';
 
 import PdfViewerWrapper from '../pdf/pdf-viewer-wrapper';
 import PageHeader from '../ui/page-header';
@@ -205,12 +209,7 @@ export default function InvoiceWorkspace({
         title={invoice.invoiceId || t('draft')}
         titleAddon={
           <div className="flex flex-wrap gap-actions">
-            <Chip
-              variant="soft"
-              color={
-                lifecycle === 'voided' ? 'danger' : !isIssued ? 'accent' : isPaid ? 'success' : 'warning'
-              }
-            >
+            <Chip variant="soft" color={invoicePaymentStatusColor(paymentStatus)}>
               {status}
             </Chip>
             {due.isPastDue ? (

@@ -21,8 +21,14 @@ import EmptyState from '@/components/empty-state';
 import MetricCard from '@/components/ui/metric-card';
 import PageHeader from '@/components/ui/page-header';
 import { CLIENTS_PAGE, INVOICE_WORKSPACE_PAGE } from '@/lib/constants/pages';
+import { formatMoney } from '@/lib/utils/currency';
 import { formatLocalizedDate } from '@/lib/utils/date';
-import { getInvoiceDueStatus, getInvoicePaymentStatus } from '@/lib/utils/invoice';
+import {
+  getInvoiceDueStatus,
+  getInvoicePaymentStatus,
+  invoiceLifecycleColor,
+  invoicePaymentStatusColor
+} from '@/lib/utils/invoice';
 
 import ArchiveClientModal from './archive-client-modal';
 import ClientFormDialog from './client-form-dialog';
@@ -38,6 +44,8 @@ const metrics = [
 export default function ClientWorkspace({ userId, data }: Props) {
   const t = useTranslations('clients.workspace');
   const fieldLabel = useTranslations('clients.form_dialog.fields');
+  const invoiceTable = useTranslations('invoices.table');
+  const invoiceActions = useTranslations('invoices.cell.actions');
   const locale = useLocale();
   const router = useRouter();
   const { client, totals, invoices } = data;
@@ -91,7 +99,7 @@ export default function ClientWorkspace({ userId, data }: Props) {
             icon={<Icon className="h-4 w-4" />}
             iconVariant={iconVariant}
             title={t(`totals.${key}`)}
-            text={`€${totals[key]}`}
+            text={formatMoney(totals[key], locale)}
           />
         ))}
       </div>
@@ -157,25 +165,36 @@ export default function ClientWorkspace({ userId, data }: Props) {
                       <th scope="col" className="p-2 font-medium">{t('columns.total')}</th>
                       <th scope="col" className="p-2 font-medium">{t('columns.received')}</th>
                       <th scope="col" className="p-2 font-medium">{t('columns.outstanding')}</th>
-                      <th scope="col" className="p-2 font-medium">{t('columns.state')}</th>
+                      <th scope="col" className="p-2 font-medium">{t('columns.lifecycle')}</th>
+                      <th scope="col" className="p-2 font-medium">{t('columns.status')}</th>
                       <th scope="col" className="p-2 font-medium">{t('columns.action')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {visible.map((invoice) => {
-                      const state = getInvoicePaymentStatus(invoice);
-                      const overdue = getInvoiceDueStatus(invoice).isPastDue;
+                      const lifecycle = invoice.lifecycleStatus || 'draft';
+                      const paymentStatus = getInvoicePaymentStatus(invoice);
+                      const due = getInvoiceDueStatus(invoice);
                       return (
                         <tr key={invoice.id} className="border-b last:border-0">
                           <td className="p-2 font-medium">{invoice.invoiceId || t('states.draft')}</td>
                           <td className="p-2">{formatLocalizedDate(invoice.date, locale)}</td>
-                          <td className="p-2 tabular-nums">€{invoice.totalAmount}</td>
-                          <td className="p-2 tabular-nums">{invoice.paidAmount === null ? '—' : `€${invoice.paidAmount}`}</td>
-                          <td className="p-2 tabular-nums">{invoice.outstandingAmount === null ? '—' : `€${invoice.outstandingAmount}`}</td>
-                          <td className="p-2"><div className="flex flex-wrap gap-field-content">
-                            <Chip variant="soft" color={state === 'voided' ? 'danger' : state === 'paid' ? 'success' : 'accent'}>{t(`states.${state}`)}</Chip>
-                            {overdue ? <Chip variant="soft" color="danger">{t('states.overdue')}</Chip> : null}
-                          </div></td>
+                          <td className="p-2 tabular-nums">{formatMoney(invoice.totalAmount, locale)}</td>
+                          <td className="p-2 tabular-nums">{invoice.paidAmount === null ? '—' : formatMoney(invoice.paidAmount, locale)}</td>
+                          <td className="p-2 tabular-nums">{invoice.outstandingAmount === null ? '—' : formatMoney(invoice.outstandingAmount, locale)}</td>
+                          <td className="p-2">
+                            <Chip variant="soft" color={invoiceLifecycleColor(lifecycle)}>{invoiceTable(`lifecycle_status.${lifecycle}`)}</Chip>
+                          </td>
+                          <td className="p-2">
+                            {lifecycle === 'issued' ? (
+                              <div className="flex flex-wrap gap-field-content">
+                                <Chip variant="soft" color={invoicePaymentStatusColor(paymentStatus)}>{invoiceTable(`status.${paymentStatus}`)}</Chip>
+                                {due.isPastDue ? <Chip variant="soft" color="danger">{invoiceActions('past_due', { days: due.daysPastDue })}</Chip> : null}
+                              </div>
+                            ) : (
+                              <span className="text-muted">—</span>
+                            )}
+                          </td>
                           <td className="p-2 text-right">
                             <Link
                               href={INVOICE_WORKSPACE_PAGE(invoice.id)}

@@ -16,6 +16,21 @@ export const getInvoicePaymentStatus = (invoice: PaymentStateInput) => {
   return 'pending';
 };
 
+export const invoiceLifecycleColor = (lifecycle: string | null | undefined) =>
+  lifecycle === 'voided' ? 'danger' : lifecycle === 'issued' ? 'accent' : 'default';
+
+export const invoicePaymentStatusColor = (
+  status: ReturnType<typeof getInvoicePaymentStatus>
+) =>
+  ({
+    draft: 'default',
+    no_payment_due: 'default',
+    pending: 'warning',
+    partial: 'warning',
+    paid: 'success',
+    voided: 'danger'
+  } as const)[status];
+
 export function getInvoiceDueStatus(invoice: {
   lifecycleStatus?: string;
   dueDate: string;
