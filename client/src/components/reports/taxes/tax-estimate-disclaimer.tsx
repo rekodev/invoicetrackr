@@ -11,19 +11,17 @@ const TaxEstimateDisclaimer = async ({ rules }: Props) => {
   return (
     <InfoPopover title={t('disclaimer.title')}>
       <p className="text-muted">{t('comparison.subtitle')}</p>
-      <p className="text-muted">
-        {t('disclaimer.description', { version: rules.version })}
-      </p>
-      <p className="text-muted">{t('disclaimer.not_covered')}</p>
+      <p>{t('disclaimer.description', { version: rules.version })}</p>
+      <p>{t('disclaimer.not_covered')}</p>
       <p className="font-medium">{t('disclaimer.sources')}</p>
-      <ul className="text-muted list-disc space-y-field-content pl-5">
+      <ul className="list-disc space-y-field-content pl-5">
         {rules.sources.map((source) => (
           <li key={source.url}>
             <a
               href={source.url}
               target="_blank"
               rel="noreferrer"
-              className="hover:text-foreground underline"
+              className="underline hover:no-underline"
             >
               {source.label}
             </a>

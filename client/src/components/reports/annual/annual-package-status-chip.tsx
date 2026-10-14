@@ -38,8 +38,8 @@ const AnnualPackageStatusChip = async ({ userId, year }: Props) => {
     >
       {state === 'blocking' ? (
         <>
-          <p className="text-muted">{t('alerts.blocking.description')}</p>
-          <ul className="text-muted list-disc space-y-field-content pl-5">
+          <p>{t('alerts.blocking.description')}</p>
+          <ul className="list-disc space-y-field-content pl-5">
             {blocking.map(({ code, count }) => {
               const href = annualPackageWarningHref(code, year);
 
@@ -49,7 +49,7 @@ const AnnualPackageStatusChip = async ({ userId, year }: Props) => {
                   {href && (
                     <>
                       {' '}
-                      <Link href={href} className="text-foreground underline">
+                      <Link href={href} className="underline">
                         {t(`warnings.${code}.action`)}
                       </Link>
                     </>
@@ -60,7 +60,7 @@ const AnnualPackageStatusChip = async ({ userId, year }: Props) => {
           </ul>
         </>
       ) : (
-        <p className="text-muted">{t('alerts.ready.description', { year })}</p>
+        <p>{t('alerts.ready.description', { year })}</p>
       )}
     </InfoPopover>
   );

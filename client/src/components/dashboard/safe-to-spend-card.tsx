@@ -42,8 +42,8 @@ const SafeToSpendCard = async ({ safeToSpend, year }: Props) => {
             }
           >
             <SafeToSpendBreakdown safeToSpend={safeToSpend} year={year} />
-            <p className="text-muted">{t('info.reserve')}</p>
-            <p className="text-muted">{t('info.payments')}</p>
+            <p>{t('info.reserve')}</p>
+            <p>{t('info.payments')}</p>
           </InfoPopover>
         </div>
         {safeToSpend.status === 'ready' ? (
