@@ -15,7 +15,10 @@ import EmptyState from '@/components/empty-state';
 import useListNavigation from '@/lib/hooks/use-list-navigation';
 import type { SortDescriptor } from '@/lib/types/table';
 import { formatLocalizedDate } from '@/lib/utils/date';
-import { invoiceListQueryHref } from '@/lib/utils/invoice-navigation';
+import {
+  INVOICE_LIFECYCLE_FILTERS,
+  invoiceListQueryHref
+} from '@/lib/utils/invoice-navigation';
 
 import InvoiceTableBottomContent from './invoice-table-bottom-content';
 import InvoiceTableCell from './invoice-table-cell';
@@ -77,8 +80,14 @@ export default function InvoiceTable({
     { name: t('status.partial'), uid: 'partial' },
     { name: t('status.no_payment_due'), uid: 'no_payment_due' },
     { name: t('status.paid'), uid: 'paid' },
-    { name: t('status.canceled'), uid: 'canceled' },
     { name: t('status.pending'), uid: 'pending' }
+  ];
+  const lifecycleOptions = [
+    { name: t('filters.all_lifecycles'), uid: 'all' },
+    ...INVOICE_LIFECYCLE_FILTERS.map((lifecycle) => ({
+      name: t(`lifecycle_status.${lifecycle}`),
+      uid: lifecycle
+    }))
   ];
   const [visibleColumns, setVisibleColumns] = useState<Set<string> | 'all'>(
     new Set(INITIAL_VISIBLE_COLUMNS)
@@ -95,6 +104,7 @@ export default function InvoiceTable({
   const hasFilters = Boolean(
     query.q ||
       query.status ||
+      query.lifecycle ||
       query.overdue ||
       query.issuedFrom ||
       query.issuedTo ||
@@ -153,6 +163,17 @@ export default function InvoiceTable({
         onStatusChange={(status) =>
           update({
             status: status === 'all' ? undefined : (status as InvoiceListQuery['status']),
+            page: 1
+          })
+        }
+        lifecycleOptions={lifecycleOptions}
+        lifecycleFilter={query.lifecycle ?? 'all'}
+        onLifecycleChange={(lifecycle) =>
+          update({
+            lifecycle:
+              lifecycle === 'all'
+                ? undefined
+                : (lifecycle as InvoiceListQuery['lifecycle']),
             page: 1
           })
         }

@@ -26,7 +26,7 @@ const SafeToSpendCard = async ({ safeToSpend, year }: Props) => {
           <IconContainer size="sm" variant="success">
             <WalletIcon className="h-4 w-4" />
           </IconContainer>
-          <h2 className="text-base font-medium">{t('title')}</h2>
+          <h2>{t('title')}</h2>
           <InfoPopover
             title={t('info.title')}
             placement="bottom end"

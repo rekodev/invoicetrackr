@@ -262,7 +262,7 @@ export default function InvoiceWorkspace({
           </WorkspaceSection>
           <WorkspaceSection
             title={t('actions')}
-            contentClassName="flex flex-col gap-field"
+            contentClassName="flex flex-col gap-actions"
           >
             {isDraft ? (
               <>
@@ -304,11 +304,6 @@ export default function InvoiceWorkspace({
                   <PaperAirplaneIcon className="size-4" />
                   {t('send')}
                 </Button>
-                {!isEmailVerified ? (
-                  <p className="text-muted text-sm">
-                    {t('verify_email_to_send')}
-                  </p>
-                ) : null}
                 {Number(balance.outstandingAmount) > 0 ? (
                   <Button className="w-full justify-center" variant="secondary"
                     isDisabled={!isEmailVerified} onPress={() => openEmail('reminder')}>

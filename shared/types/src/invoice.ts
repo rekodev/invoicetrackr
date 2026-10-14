@@ -426,6 +426,7 @@ export const listSortDirectionSchema = z.enum(['ascending', 'descending']);
 export const invoiceListQuerySchema = paginationQuerySchema.extend({
   q: z.string().trim().max(100).optional(),
   status: invoiceListStatusSchema.optional(),
+  lifecycle: invoiceLifecycleStatusSchema.optional(),
   overdue: z.literal('1').optional(),
   issuedFrom: isoDateQuerySchema.optional(),
   issuedTo: isoDateQuerySchema.optional(),

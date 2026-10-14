@@ -35,7 +35,7 @@ export const dashboardLinks = {
     invoiceListHref({ status: 'open', ...issuedIn(range) }),
   overdue: () => invoiceListHref({ overdue: '1' }),
   drafts: (range?: { from: string; to: string }) =>
-    invoiceListHref({ status: 'draft', ...issuedIn(range) }),
+    invoiceListHref({ lifecycle: 'draft', ...issuedIn(range) }),
   expenses: (range: { from: string; to: string }) => expenseListHref(range),
   deductibleExpenses: (range: { from: string; to: string }) =>
     expenseListHref(range, { deductible: '1' }),

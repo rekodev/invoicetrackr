@@ -392,7 +392,7 @@
                         "value": "€4,820.00"
                     },
                     "safe_to_spend": {
-                        "label": "Safe to Spend · Estimate",
+                        "label": "Safe to Spend",
                         "value": "€12,320.00"
                     }
                 },
@@ -786,7 +786,7 @@
             }
         },
         "safe_to_spend": {
-            "title": "Safe to Spend · Estimate",
+            "title": "Safe to Spend",
             "tax_breakdown": "Tax Breakdown",
             "set_up": "Set Up Tax Estimate",
             "not_set_up": "Not set up",
@@ -885,7 +885,6 @@
             "edit": "Edit draft",
             "send": "Send invoice",
             "send_reminder": "Send reminder",
-            "verify_email_to_send": "Verify your email address before sending invoices.",
             "record_payment": "Record payment",
             "cancel_invoice": "Cancel invoice",
             "cancel_title": "Cancel this invoice?",
@@ -979,14 +978,17 @@
             },
             "filters": {
                 "status": "Status",
+                "lifecycle": "Lifecycle",
                 "columns": "Columns",
                 "clear": "Clear Filters",
                 "a11y": {
                     "status_label": "Status",
+                    "lifecycle_label": "Lifecycle",
                     "columns_label": "Table Columns"
                 },
                 "all": "All statuses",
-                "overdue_only": "Overdue only",
+                "all_lifecycles": "All stages",
+                "overdue_only": "Overdue Only",
                 "issued_range": "Issued: {range}",
                 "paid_range": "Paid: {range}",
                 "remove_filter": "Remove {filter} filter",

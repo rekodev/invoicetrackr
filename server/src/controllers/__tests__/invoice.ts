@@ -101,7 +101,7 @@ describe('Invoice Controller', () => {
 
       const filtered = await app.inject({
         method: 'GET',
-        url: `/api/${testUserId}/invoices?page=2&pageSize=5&q=SF&status=open&overdue=1&paidFrom=2026-01-01&paidTo=2026-03-31&sort=receiver&direction=ascending`
+        url: `/api/${testUserId}/invoices?page=2&pageSize=5&q=SF&status=open&lifecycle=issued&overdue=1&paidFrom=2026-01-01&paidTo=2026-03-31&sort=receiver&direction=ascending`
       });
 
       expect(filtered.json().pagination).toEqual({ page: 2, pageSize: 5, total: 12 });
@@ -110,6 +110,7 @@ describe('Invoice Controller', () => {
         pageSize: 5,
         q: 'SF',
         status: 'open',
+        lifecycle: 'issued',
         overdue: '1',
         paidFrom: '2026-01-01',
         paidTo: '2026-03-31',

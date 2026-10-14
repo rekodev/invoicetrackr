@@ -1,4 +1,5 @@
 import type {
+  InvoiceLifecycleStatus,
   InvoiceListQuery,
   InvoiceListSort,
   InvoiceListStatus,
@@ -16,6 +17,12 @@ export const INVOICE_STATUS_FILTERS: Array<InvoiceListStatus> = [
   'paid',
   'canceled',
   'pending'
+];
+
+export const INVOICE_LIFECYCLE_FILTERS: Array<InvoiceLifecycleStatus> = [
+  'draft',
+  'issued',
+  'voided'
 ];
 
 const INVOICE_SORTS: Array<InvoiceListSort> = [
@@ -61,6 +68,9 @@ export const parseInvoiceListQuery = (params: SearchParams): InvoiceListQuery =>
     ...(q ? { q } : {}),
     ...(oneOf(INVOICE_STATUS_FILTERS, params.status) && {
       status: oneOf(INVOICE_STATUS_FILTERS, params.status)
+    }),
+    ...(oneOf(INVOICE_LIFECYCLE_FILTERS, params.lifecycle) && {
+      lifecycle: oneOf(INVOICE_LIFECYCLE_FILTERS, params.lifecycle)
     }),
     ...(single(params.overdue) === '1' ? { overdue: '1' as const } : {}),
     ...(isoDate(params.issuedFrom) && { issuedFrom: isoDate(params.issuedFrom) }),

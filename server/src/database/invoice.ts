@@ -344,10 +344,11 @@ const buildInvoiceListQuery = (userId: number, query: InvoiceListQuery) => {
         )
       : undefined,
     statusCondition,
+    query.lifecycle ? sql`${lifecycle} = ${query.lifecycle}` : undefined,
     query.overdue
       ? sql`${lifecycle} = 'issued' and ${invoicesTable.totalAmount} - ${paid} > 0 and ${invoicesTable.dueDate} < ${todayInLithuania()}`
       : undefined,
-    issuedOnly ? sql`${lifecycle} = 'issued'` : undefined,
+    issuedOnly && !query.lifecycle ? sql`${lifecycle} = 'issued'` : undefined,
     query.issuedFrom ? gte(invoicesTable.date, query.issuedFrom) : undefined,
     query.issuedTo ? lte(invoicesTable.date, query.issuedTo) : undefined,
     paidRange
