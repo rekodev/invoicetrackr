@@ -97,9 +97,9 @@ export default function ClientWorkspace({ userId, data }: Props) {
       </div>
 
       <Card className="border">
-        <Card.Header className="flex-row flex-wrap items-center justify-between gap-field">
+        <Card.Header className="flex-row flex-wrap items-start justify-between gap-field">
           <h2 className="text-base font-medium">{t('details')}</h2>
-          <Button variant="secondary" onPress={copyDetails}>
+          <Button size="sm" variant="secondary" className="-my-1" onPress={copyDetails}>
             <ClipboardDocumentIcon aria-hidden="true" className="h-4 w-4" />
             {t('copy_details')}
           </Button>

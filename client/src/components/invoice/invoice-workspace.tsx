@@ -378,13 +378,13 @@ export default function InvoiceWorkspace({
           </WorkspaceSection>
           {isIssued || payments.length > 0 ? (
             <Card className="gap-0 overflow-hidden border p-0" role="region" aria-labelledby={`invoice-payments-${invoiceId}`}>
-              <Card.Header className="flex-row items-center justify-between gap-actions border-b p-card">
+              <Card.Header className="flex-row items-start justify-between gap-actions border-b p-card">
                 <div className="flex items-center gap-actions">
                   <h2 id={`invoice-payments-${invoiceId}`} className="text-base font-medium">{t('payment_history')}</h2>
                   <Chip size="sm" variant="soft" aria-label={t('payment_count', { count: payments.length })}>{payments.length}</Chip>
                 </div>
                 {isIssued && supportsPayments && Number(balance.outstandingAmount) > 0 ? (
-                  <Button size="sm" variant="secondary" onPress={() => openPayment()}>
+                  <Button size="sm" variant="secondary" className="-my-1" onPress={() => openPayment()}>
                     <BanknotesIcon className="size-4" />
                     {t('record_payment')}
                   </Button>

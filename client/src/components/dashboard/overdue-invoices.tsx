@@ -34,7 +34,7 @@ const OverdueInvoices = async ({
 
   return (
     <Card className="min-w-0 border">
-      <Card.Header className="flex-row flex-wrap items-center justify-between gap-field">
+      <Card.Header className="flex-row flex-wrap items-start justify-between gap-field">
         <div className="flex min-w-0 flex-wrap items-center gap-actions">
           <h2 className="text-base font-medium">{t('title')}</h2>
           <Chip size="sm" variant="soft">{overdueCount}</Chip>
@@ -49,7 +49,11 @@ const OverdueInvoices = async ({
         {overdueCount > 0 ? (
           <Link
             href={dashboardLinks.overdue()}
-            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+            className={buttonVariants({
+              variant: 'outline',
+              size: 'sm',
+              className: '-my-1'
+            })}
           >
             {t('view_all')}
           </Link>

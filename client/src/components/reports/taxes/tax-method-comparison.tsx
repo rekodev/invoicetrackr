@@ -58,7 +58,7 @@ const TaxMethodComparison = async ({
       <div className="grid gap-section md:grid-cols-2">
         {methods.map((estimate) => (
           <Card key={estimate.method} className="border">
-            <Card.Header className="flex-row flex-wrap items-center justify-between gap-actions">
+            <Card.Header className="flex-row flex-wrap items-start justify-between gap-actions">
               <h3 className="text-base font-medium">{tMethods(estimate.method)}</h3>
               {estimate.method === selectedMethod && (
                 <Chip variant="soft" color="accent">{t('your_method')}</Chip>
