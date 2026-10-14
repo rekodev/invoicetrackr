@@ -29,6 +29,7 @@
     "@invoicetrackr/types": "workspace:*",
     "@neondatabase/serverless": "^1.2.0",
     "ajv-errors": "^3.0.0",
+    "bcryptjs": "^3.0.3",
     "cloudinary": "^2.11.0",
     "dotenv": "^18.0.7",
     "drizzle-kit": "^0.31.11",
@@ -39,10 +40,12 @@
     "fastify-plugin": "^6.0.1",
     "fastify-type-provider-zod": "^6.1.0",
     "fflate": "^0.8.3",
+    "next-auth": "5.0.0-beta.32",
     "pg": "^8.23.1",
     "posthog-node": "^5.55.2",
     "resend": "^6.32.1",
-    "ws": "^8.22.0"
+    "ws": "^8.22.0",
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/pg": "^8.23.1",
