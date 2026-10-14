@@ -88,6 +88,10 @@
     scroll-behavior: smooth;
   }
 
+  .alert__description {
+    @apply text-foreground;
+  }
+
   .link {
     @apply no-underline;
   }
