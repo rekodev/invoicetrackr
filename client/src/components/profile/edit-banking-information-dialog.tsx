@@ -92,7 +92,7 @@ const EditBankingInformationDialog = ({
           <Modal.Header>
             <Modal.Heading>{t('title.edit')}</Modal.Heading>
           </Modal.Header>
-          <Modal.Body>
+          <Modal.Body className="flex flex-col gap-field">
             {renderTextField({
               name: 'name',
               label: t('bank_name'),
@@ -113,7 +113,7 @@ const EditBankingInformationDialog = ({
             <div className="flex w-full flex-col items-start justify-between gap-field overflow-x-hidden">
               <div className="flex w-full flex-col-reverse justify-end gap-actions sm:flex-row">
                 <Button
-                  variant="danger-soft"
+                  variant="ghost"
                   className="w-full sm:w-auto"
                   onPress={onClose}
                 >

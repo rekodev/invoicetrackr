@@ -554,7 +554,7 @@ export default function InvoiceWorkspace({
               {confirmError ? <p role="alert" className="text-danger text-sm">{confirmError}</p> : null}
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="tertiary" isDisabled={isPending} onPress={() => { setConfirmError(''); setConfirmAction(null); }}>
+              <Button variant="outline" isDisabled={isPending} onPress={() => { setConfirmError(''); setConfirmAction(null); }}>
                 {t('close')}
               </Button>
               <Button variant="danger" isPending={isPending} isDisabled={isPending} onPress={confirm}>

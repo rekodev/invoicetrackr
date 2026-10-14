@@ -158,7 +158,7 @@ export default function ExpenseDocuments({ userId, expenseId, attachments }: {
           {error ? <p role="alert" className="text-danger text-sm">{error}</p> : null}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="tertiary" isDisabled={isPending} onPress={closeDialog}>{t('cancel')}</Button>
+          <Button variant={dialog?.kind === 'remove' ? 'outline' : 'ghost'} isDisabled={isPending} onPress={closeDialog}>{t('cancel')}</Button>
           <Button variant={dialog?.kind === 'remove' ? 'danger' : 'primary'} isPending={isPending} isDisabled={isPending}
             onPress={save}>{dialog ? t(dialog.kind === 'add' ? 'upload' : dialog.kind) : t('upload')}</Button>
         </Modal.Footer>

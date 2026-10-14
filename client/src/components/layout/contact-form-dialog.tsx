@@ -85,7 +85,7 @@ export default function ContactFormDialog() {
               <Modal.Header>
                 <Modal.Heading>{t('title')}</Modal.Heading>
               </Modal.Header>
-              <Modal.Body className="flex w-full flex-col gap-3">
+              <Modal.Body className="flex w-full flex-col gap-field">
                 <TextField variant="secondary" isInvalid={!!errors.email}>
                   <Label>{t('email_label')}</Label>
                   <Input
