@@ -713,7 +713,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                   sortedItems.map((expense) => (
                     <Table.Row key={expense.id} id={String(expense.id)}>
                       {headerColumns.map((column) => (
-                        <Table.Cell key={column.uid} className="whitespace-nowrap py-2">
+                        <Table.Cell key={column.uid} className="whitespace-nowrap">
                           {renderCell(expense, column.uid)}
                         </Table.Cell>
                       ))}
