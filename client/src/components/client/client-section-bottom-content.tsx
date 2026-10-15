@@ -1,72 +1,72 @@
-import {
-  Button,
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink
-} from '@heroui/react';
+import { Pagination } from '@heroui/react';
 import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 
 type Props = {
   page: number;
   pages: number;
+  pageSize: number;
+  total: number;
   onPageChange: (_page: number) => void;
 };
 
-const ClientSectionBottomContent = ({ page, pages, onPageChange }: Props) => {
-  const t = useTranslations('clients');
-  const prevButtonDisabled = page <= 1;
-  const nextButtonDisabled = page >= pages;
+const ClientSectionBottomContent = ({
+  page,
+  pages,
+  pageSize,
+  total,
+  onPageChange
+}: Props) => {
+  const t = useTranslations('clients.bottom_content');
 
-  const onNextPage = () => {
-    if (page < pages) onPageChange(page + 1);
-  };
+  const pageNumbers = useMemo(
+    () => Array.from({ length: pages }, (_, index) => index + 1),
+    [pages]
+  );
 
-  const onPreviousPage = () => {
-    if (page > 1) onPageChange(page - 1);
-  };
+  const start = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const end = Math.min(page * pageSize, total);
 
   return (
-    <div className="relative mt-4 flex items-center justify-center py-2">
-      <div className="absolute flex w-full items-center justify-center">
-        <Pagination className="flex justify-center" aria-label={t('a11y.pagination_label')}>
-          <PaginationContent>
-            {Array.from({ length: pages }, (_, index) => {
-              const pageNumber = index + 1;
+    <Pagination size="sm" className="w-full justify-between">
+      <Pagination.Summary>
+        {t('summary', { start, end, total })}
+      </Pagination.Summary>
 
-              return (
-                <PaginationItem key={pageNumber}>
-                  <PaginationLink
-                    isActive={pageNumber === page}
-                    onPress={() => onPageChange(pageNumber)}
-                  >
-                    {pageNumber}
-                  </PaginationLink>
-                </PaginationItem>
-              );
-            })}
-          </PaginationContent>
-        </Pagination>
-      </div>
-      <div className="hidden w-full justify-end gap-actions sm:flex">
-        <Button
-          isDisabled={prevButtonDisabled}
-          size="sm"
-          variant="secondary"
-          onPress={onPreviousPage}
-        >
-          {t('bottom_content.previous')}
-        </Button>
-        <Button
-          isDisabled={nextButtonDisabled}
-          size="sm"
-          variant="secondary"
-          onPress={onNextPage}
-        >
-          {t('bottom_content.next')}
-        </Button>
-      </div>
-    </div>
+      <Pagination.Content>
+        <Pagination.Item>
+          <Pagination.Previous
+            isDisabled={page === 1 || total === 0}
+            onPress={() => onPageChange(Math.max(1, page - 1))}
+          >
+            <Pagination.PreviousIcon />
+            {t('previous')}
+          </Pagination.Previous>
+        </Pagination.Item>
+
+        {pageNumbers.map((pageNumber) => (
+          <Pagination.Item key={pageNumber}>
+            <Pagination.Link
+              isActive={pageNumber === page}
+              isDisabled={total === 0}
+              onPress={() => onPageChange(pageNumber)}
+            >
+              {pageNumber}
+            </Pagination.Link>
+          </Pagination.Item>
+        ))}
+
+        <Pagination.Item>
+          <Pagination.Next
+            isDisabled={page >= pages || total === 0}
+            onPress={() => onPageChange(Math.min(pages, page + 1))}
+          >
+            {t('next')}
+            <Pagination.NextIcon />
+          </Pagination.Next>
+        </Pagination.Item>
+      </Pagination.Content>
+    </Pagination>
   );
 };
 

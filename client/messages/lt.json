@@ -1124,8 +1124,8 @@
             "search_placeholder": "Ieškoti tiekėjo arba aprašymo...",
             "clear_search": "Išvalyti paiešką",
             "add_new": "Pridėti išlaidą",
-            "total_singular": "Iš viso 1 išlaida",
-            "total_plural": "Iš viso {count} išlaidų"
+            "total_singular": "Viso 1 išlaida",
+            "total_plural": "Viso {count} išlaidų"
         },
         "summary": {
             "total_label": "Išlaidos · {year}",
@@ -1423,8 +1423,7 @@
             "no_results_description": "Pabandykite pakeisti paiešką arba kliento tipo filtrą."
         },
         "a11y": {
-            "actions_label": "Veiksmai",
-            "pagination_label": "Klientų puslapiai"
+            "actions_label": "Veiksmai"
         },
         "top_content": {
             "search_placeholder": "Ieškoti pagal pavadinimą arba kodą...",
@@ -1437,6 +1436,7 @@
             }
         },
         "bottom_content": {
+            "summary": "{start}–{end} iš {total}",
             "previous": "Ankstesnis",
             "next": "Kitas"
         },

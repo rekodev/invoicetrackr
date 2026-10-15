@@ -40,6 +40,7 @@ const SignaturePad = ({
     setOpen: onOpenChange
   } = useOverlayState();
   const [signatureImage, setSignatureImage] = useState('');
+  const [isCanvasEmpty, setIsCanvasEmpty] = useState(true);
   const [canvasSize, setCanvasSize] = useState({
     width: SIGNATURE_CANVAS_FALLBACK_WIDTH,
     height: Math.round(
@@ -119,7 +120,19 @@ const SignaturePad = ({
     return () => resizeObserver.disconnect();
   }, [isOpen]);
 
+  const openSignaturePad = () => {
+    setIsCanvasEmpty(!signatureImage);
+    onOpen();
+  };
+
+  const clearSignature = () => {
+    signatureRef.current?.clear();
+    setIsCanvasEmpty(true);
+  };
+
   const saveSignature = () => {
+    if (isCanvasEmpty) return;
+
     const trimmedDataURL = signatureRef.current
       ?.getCanvas()
       .toDataURL('image/png');
@@ -161,7 +174,7 @@ const SignaturePad = ({
               'p-0 hover:border-none': !!signatureImgUrl && !isReadOnly
             }
           )}
-          onPress={isReadOnly ? undefined : onOpen}
+          onPress={isReadOnly ? undefined : openSignaturePad}
         >
           <div className="group relative flex h-full w-full flex-col items-center justify-center gap-2 overflow-visible p-0">
             {signatureImgUrl ? (
@@ -231,6 +244,7 @@ const SignaturePad = ({
                   clearOnResize={false}
                   throttle={0}
                   minDistance={1}
+                  onEnd={() => setIsCanvasEmpty(false)}
                   canvasProps={{
                     width: canvasSize.width,
                     height: canvasSize.height,
@@ -251,11 +265,15 @@ const SignaturePad = ({
               <Button
                 variant="danger"
                 className="w-full sm:w-auto"
-                onPress={() => signatureRef.current?.clear()}
+                onPress={clearSignature}
               >
                 {t('clear')}
               </Button>
-              <Button className="w-full sm:w-auto" onPress={saveSignature}>
+              <Button
+                className="w-full sm:w-auto"
+                isDisabled={isCanvasEmpty}
+                onPress={saveSignature}
+              >
                 {t('save')}
               </Button>
             </Modal.Footer>
