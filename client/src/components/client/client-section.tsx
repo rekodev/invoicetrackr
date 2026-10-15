@@ -187,6 +187,8 @@ const ClientSection = ({ userId, clients, total, query }: Props) => {
         <ClientSectionBottomContent
           page={query.page}
           pages={Math.max(1, Math.ceil(total / query.pageSize))}
+          pageSize={query.pageSize}
+          total={total}
           onPageChange={(page) => update({ page })}
         />
       </>

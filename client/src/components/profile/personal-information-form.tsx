@@ -4,7 +4,6 @@ import {
   CameraIcon,
   CheckCircleIcon,
   DocumentIcon,
-  InformationCircleIcon,
   TrashIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
@@ -19,14 +18,14 @@ import {
   Label,
   Separator,
   TextField,
-  toast,
-  Tooltip
+  toast
 } from '@heroui/react';
 import type { User } from '@invoicetrackr/types';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 
+import InfoTooltip from '@/components/ui/info-tooltip';
 import SectionHeading from '@/components/ui/section-heading';
 import {
   deleteUserProfilePictureAction,
@@ -427,20 +426,10 @@ const PersonalInformationForm = ({ defaultValues }: Props) => {
               <div className="flex flex-col gap-field-content">
                 <div className="flex items-center gap-actions">
                   <Label>{t('is_vat_payer')}</Label>
-                  <Tooltip delay={0}>
-                    <Tooltip.Trigger>
-                      <button
-                        type="button"
-                        aria-label={t('is_vat_payer_description')}
-                        className="text-muted hover:text-foreground focus-visible:ring-accent rounded-full outline-none focus-visible:ring-2"
-                      >
-                        <InformationCircleIcon className="size-4" />
-                      </button>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      {t('is_vat_payer_description')}
-                    </Tooltip.Content>
-                  </Tooltip>
+                  <InfoTooltip
+                    label={t('is_vat_payer_description')}
+                    text={t('is_vat_payer_description')}
+                  />
                 </div>
                 <Checkbox
                   variant="secondary"

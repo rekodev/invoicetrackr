@@ -17,7 +17,6 @@ import {
 import {
   Button,
   buttonVariants,
-  Card,
   Checkbox,
   Chip,
   CloseButton,
@@ -506,8 +505,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
       </div>
 
       <div className="flex flex-col gap-field">
-        <Card className="border">
-          <Card.Content className="flex flex-col gap-heading">
+        <div className="flex flex-col gap-heading">
             <div className="flex flex-col items-stretch gap-actions sm:flex-row sm:items-center">
               <div className="flex w-full min-w-0 flex-1 items-center gap-actions">
                 <div className="relative w-full">
@@ -663,8 +661,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                 </Button>
               </div>
             )}
-          </Card.Content>
-        </Card>
+        </div>
         <div className="flex items-center justify-between">
           <span className="section-eyebrow text-muted">
             {expenses.length === 1
