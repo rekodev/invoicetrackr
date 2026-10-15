@@ -12,12 +12,14 @@ type Props = { userId: number; year: number };
 
 const TaxSetupPrompt = ({ userId, year }: Props) => {
   const t = useTranslations('reports.taxes.setup');
+  const tAssumptions = useTranslations('reports.taxes.assumptions');
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <>
+    <section className="flex flex-col gap-heading">
+      <h2 className="text-base font-medium">{tAssumptions('title')}</h2>
       <EmptyState
-        className="rounded-3xl border"
+        className="border-y"
         title={t('title', { year })}
         description={t('description')}
         action={
@@ -33,7 +35,7 @@ const TaxSetupPrompt = ({ userId, year }: Props) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       />
-    </>
+    </section>
   );
 };
 

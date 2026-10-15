@@ -48,7 +48,7 @@ export default async function TaxesPage({
           </Suspense>
         }
       >
-        <Toolbar isAttached aria-label={t('actions')} className="p-0 shadow-none">
+        <Toolbar isAttached aria-label={t('actions')} className="bg-transparent p-0 shadow-none">
           <TaxYearSelect year={year} years={journalYears(currentYear, year)} />
           <Separator orientation="vertical" />
           <AnnualPackageDownload year={year} />

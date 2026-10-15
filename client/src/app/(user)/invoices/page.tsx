@@ -1,4 +1,4 @@
-import { DocumentArrowDownIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { buttonVariants } from '@heroui/react';
 import Link from 'next/link';
 import { unauthorized } from 'next/navigation';
@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 import { auth } from '@/auth';
 import PageHeader from '@/components/ui/page-header';
 import { InvoiceTableSkeleton } from '@/components/ui/skeletons/invoice-skeleton';
-import { ADD_NEW_INVOICE_PAGE, REPORTS_JOURNAL_PAGE } from '@/lib/constants/pages';
+import { ADD_NEW_INVOICE_PAGE } from '@/lib/constants/pages';
 import { parseInvoiceListQuery } from '@/lib/utils/invoice-navigation';
 
 import InvoicesPageContent from './invoices-page-content';
@@ -28,13 +28,6 @@ const InvoicesPage = async ({ searchParams }: Props) => {
   return (
     <section className="flex flex-col gap-section">
       <PageHeader title={tBreadcrumbs('invoices')}>
-        <Link
-          href={REPORTS_JOURNAL_PAGE}
-          className={buttonVariants({ variant: 'secondary', size: 'md' })}
-        >
-          <DocumentArrowDownIcon className="h-4 w-4" />
-          {t('journal')}
-        </Link>
         <Link href={ADD_NEW_INVOICE_PAGE} className={buttonVariants({ size: 'md' })}>
           <PlusIcon className="h-4 w-4" />
           {t('add_new')}

@@ -26,6 +26,7 @@ const COLUMNS = [
   ['date', cell],
   ['document', cell],
   ['type', cell],
+  ['counterparty', cell],
   ['description', cell],
   ['income', amountCell],
   ['vat', amountCell],
@@ -48,8 +49,8 @@ const JournalTable = async ({ rows, totals, actions, info }: Props) => {
         </div>
         {actions}
       </Card.Header>
-      <Card.Content className="overflow-x-auto">
-        <table className="w-full min-w-[720px] border-separate border-spacing-0 text-left text-sm">
+      <Card.Content className="overflow-x-auto pt-1">
+        <table className="w-full min-w-[840px] border-separate border-spacing-0 text-left text-sm">
           <thead className="text-muted">
             <tr>
               {COLUMNS.map(([key, className]) => (
@@ -90,9 +91,9 @@ const JournalTable = async ({ rows, totals, actions, info }: Props) => {
                       {t(`table.type.${row.kind}`)}
                     </Chip>
                   </td>
+                  <td className={cell}>{row.counterparty}</td>
                   <td className={cell}>
-                    <p className="font-medium">{row.counterparty}</p>
-                    <p className="text-muted">{row.description}</p>
+                    <p>{row.description}</p>
                     {!isIncome && Number(row.businessUsePercentage) < 100 && (
                       <p className="text-muted text-xs">
                         {t('table.business_use', {
@@ -111,7 +112,7 @@ const JournalTable = async ({ rows, totals, actions, info }: Props) => {
           </tbody>
           <tfoot className="font-semibold">
             <tr>
-              <th scope="row" colSpan={4} className={`${footerCell} rounded-l-xl`}>{t('table.total')}</th>
+              <th scope="row" colSpan={5} className={`${footerCell} rounded-l-xl`}>{t('table.total')}</th>
               <td className={footerAmountCell}>{money(totals.income)}</td>
               <td className={footerAmountCell}>{money(totals.incomeVat)}</td>
               <td className={`${footerAmountCell} rounded-r-xl`}>{money(totals.expenses)}</td>

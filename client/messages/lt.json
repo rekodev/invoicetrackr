@@ -106,6 +106,7 @@
                     "date": "Data",
                     "document": "Dokumentas",
                     "type": "Tipas",
+                    "counterparty": "Klientas / tiekėjas",
                     "description": "Aprašymas",
                     "income": "Pajamos",
                     "vat": "PVM",
@@ -1017,8 +1018,7 @@
             "search_placeholder": "Ieškoti pagal sąskaitos faktūros ID...",
             "add_new": "Pridėti naują",
             "total_singular": "Viso 1 sąskaita faktūra",
-            "total_plural": "Viso {count} sąskaitų faktūrų",
-            "journal": "Pajamų žurnalas"
+            "total_plural": "Viso {count} sąskaitų faktūrų"
         },
         "page": {
             "new_title": "Nauja sąskaita faktūra",

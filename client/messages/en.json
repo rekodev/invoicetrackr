@@ -106,6 +106,7 @@
                     "date": "Date",
                     "document": "Document",
                     "type": "Type",
+                    "counterparty": "Client / Supplier",
                     "description": "Description",
                     "income": "Income",
                     "vat": "VAT",
@@ -1017,8 +1018,7 @@
             "search_placeholder": "Search by invoice ID...",
             "add_new": "Add New",
             "total_singular": "Total 1 invoice",
-            "total_plural": "Total {count} invoices",
-            "journal": "Income Journal"
+            "total_plural": "Total {count} invoices"
         },
         "page": {
             "new_title": "New Invoice",

@@ -22,6 +22,7 @@ type Props = {
 };
 
 const cell = 'px-2 py-1.5';
+const rowCell = 'px-2 py-2.5';
 const footerCell = 'bg-default px-2 py-2';
 const footerAmountCell = `${footerCell} text-right tabular-nums`;
 
@@ -94,7 +95,7 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
             <tbody>
               {rows.map((row) => (
                 <tr key={row.month} className="[&>*]:border-b [&:last-child>*]:border-0">
-                  <th scope="row" className={`${cell} font-normal capitalize`}>
+                  <th scope="row" className={`${rowCell} font-normal capitalize`}>
                     <Link
                       href={journalHref({ year, month: row.month })}
                       aria-label={t('a11y.journal_link', { month: row.name })}
@@ -103,7 +104,7 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
                       {row.name}
                     </Link>
                   </th>
-                  <td className={`${cell} text-right tabular-nums`}>
+                  <td className={`${rowCell} text-right tabular-nums`}>
                     <Link
                       href={dashboardLinks.receivedIncome(row.range)}
                       aria-label={`${t('a11y.income_link', { month: row.name })}: ${formatMoney(row.receivedIncome, locale)}`}
@@ -112,7 +113,7 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
                       {formatMoney(row.receivedIncome, locale)}
                     </Link>
                   </td>
-                  <td className={`${cell} text-right tabular-nums`}>
+                  <td className={`${rowCell} text-right tabular-nums`}>
                     <Link
                       href={dashboardLinks.expenses(row.range)}
                       aria-label={`${t('a11y.expenses_link', { month: row.name })}: ${formatMoney(row.expenses, locale)}`}
@@ -121,7 +122,7 @@ const MonthlyMoney = async ({ year, monthly, totals }: Props) => {
                       {formatMoney(row.expenses, locale)}
                     </Link>
                   </td>
-                  <td className={`${cell} text-right tabular-nums`}>{formatMoney(row.net, locale)}</td>
+                  <td className={`${rowCell} text-right tabular-nums`}>{formatMoney(row.net, locale)}</td>
                 </tr>
               ))}
             </tbody>
