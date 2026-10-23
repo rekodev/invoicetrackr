@@ -66,14 +66,16 @@ const InvoiceTableTopContent = ({
     <div className="flex flex-col gap-field pt-1">
       <div className="flex flex-col items-stretch justify-between gap-heading sm:flex-row sm:items-end">
         <div className="flex w-full items-center gap-actions">
-          <MagnifyingGlassIcon className="h-4 w-4" />
-          <Input
-            className="w-full"
-            variant="secondary"
-            placeholder={t('top_content.search_placeholder')}
-            value={searchValue}
-            onChange={(event) => onSearchChange(event.target.value)}
-          />
+          <div className="relative w-full">
+            <MagnifyingGlassIcon className="text-muted pointer-events-none absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2" />
+            <Input
+              className="w-full pl-10"
+              variant="secondary"
+              placeholder={t('top_content.search_placeholder')}
+              value={searchValue}
+              onChange={(event) => onSearchChange(event.target.value)}
+            />
+          </div>
           {searchValue && (
             <CloseButton aria-label="Clear" onPress={() => onSearchChange('')} />
           )}
