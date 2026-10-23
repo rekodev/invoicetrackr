@@ -16,7 +16,7 @@ allowBuilds:
 overrides:
   '@types/react': 19.3.0
   '@types/react-dom': 19.3.0
-  next: 16.4.0
+  next: 16.4.2
 publicHoistPattern:
   - '*@heroui/*'
 verifyDepsBeforeRun: false
