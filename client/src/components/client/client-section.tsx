@@ -180,16 +180,18 @@ const ClientSection = ({ userId, clients, total, query }: Props) => {
       );
 
     return (
-      <>
+      <div className="flex flex-col gap-section">
         <div className="grid grid-cols-1 gap-section md:grid-cols-2 xl:grid-cols-3">
           {clients.map(renderClient)}
         </div>
         <ClientSectionBottomContent
           page={query.page}
           pages={Math.max(1, Math.ceil(total / query.pageSize))}
+          pageSize={query.pageSize}
+          total={total}
           onPageChange={(page) => update({ page })}
         />
-      </>
+      </div>
     );
   };
 

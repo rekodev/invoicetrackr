@@ -1423,8 +1423,7 @@
             "no_results_description": "Try changing the search term or client type filter."
         },
         "a11y": {
-            "actions_label": "Actions",
-            "pagination_label": "Client pages"
+            "actions_label": "Actions"
         },
         "top_content": {
             "search_placeholder": "Search by name or code...",
@@ -1437,6 +1436,7 @@
             }
         },
         "bottom_content": {
+            "summary": "{start} to {end} of {total} results",
             "previous": "Previous",
             "next": "Next"
         },

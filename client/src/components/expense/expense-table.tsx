@@ -17,7 +17,6 @@ import {
 import {
   Button,
   buttonVariants,
-  Card,
   Checkbox,
   Chip,
   CloseButton,
@@ -28,7 +27,7 @@ import {
   DropdownPopover,
   DropdownTrigger,
   Input,
-  Label,
+  InputGroup,
   Table,
   TextField,
   Tooltip
@@ -506,8 +505,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
       </div>
 
       <div className="flex flex-col gap-field">
-        <Card className="border">
-          <Card.Content className="flex flex-col gap-heading">
+        <div className="flex flex-col gap-heading">
             <div className="flex flex-col items-stretch gap-actions sm:flex-row sm:items-center">
               <div className="flex w-full min-w-0 flex-1 items-center gap-actions">
                 <div className="relative w-full">
@@ -531,23 +529,31 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
             <div className="flex justify-start">
               <div className="grid w-full grid-cols-1 gap-actions sm:grid-cols-2 lg:flex lg:w-auto lg:items-center">
                 <div className="flex flex-wrap items-center gap-actions sm:col-span-2">
-                  <TextField variant="secondary" className="flex-row items-center gap-field-content">
-                    <Label className="shrink-0 whitespace-nowrap">{t('filters.from')}</Label>
-                    <Input
-                      className="w-36"
-                      type="date"
-                      value={dateFrom}
-                      onChange={(event) => setDateFrom(event.target.value)}
-                    />
+                  <TextField variant="secondary" aria-label={t('filters.from')}>
+                    <InputGroup>
+                      <InputGroup.Prefix className="text-foreground">
+                        {t('filters.from')}
+                      </InputGroup.Prefix>
+                      <InputGroup.Input
+                        className="w-36"
+                        type="date"
+                        value={dateFrom}
+                        onChange={(event) => setDateFrom(event.target.value)}
+                      />
+                    </InputGroup>
                   </TextField>
-                  <TextField variant="secondary" className="flex-row items-center gap-field-content">
-                    <Label className="shrink-0 whitespace-nowrap">{t('filters.to')}</Label>
-                    <Input
-                      className="w-36"
-                      type="date"
-                      value={dateTo}
-                      onChange={(event) => setDateTo(event.target.value)}
-                    />
+                  <TextField variant="secondary" aria-label={t('filters.to')}>
+                    <InputGroup>
+                      <InputGroup.Prefix className="text-foreground">
+                        {t('filters.to')}
+                      </InputGroup.Prefix>
+                      <InputGroup.Input
+                        className="w-36"
+                        type="date"
+                        value={dateTo}
+                        onChange={(event) => setDateTo(event.target.value)}
+                      />
+                    </InputGroup>
                   </TextField>
                 </div>
                 <Dropdown>
@@ -663,8 +669,7 @@ const ExpenseTable = ({ userId, expenses }: Props) => {
                 </Button>
               </div>
             )}
-          </Card.Content>
-        </Card>
+        </div>
         <div className="flex items-center justify-between">
           <span className="section-eyebrow text-muted">
             {expenses.length === 1
