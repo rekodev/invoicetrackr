@@ -125,6 +125,6 @@ startup before serving traffic.
 
 ## License
 
-Copyright (c) 2024–2026 Artūras Tyškevičius. All rights reserved.
+Copyright (c) 2024–present Artūras Tyškevičius. All rights reserved.
 
 This project is proprietary. See [LICENSE](LICENSE) for details.
