@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-const LAST_UPDATED = '10/12/2026';
+const LAST_UPDATED = '11/03/2026';
 const SERVICE_PROVIDERS = [
   'hosting',
   'database',

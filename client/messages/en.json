@@ -2131,7 +2131,7 @@
                     "intro": "We share information only with service providers that help us run InvoiceTrackr, and only as much as they need:",
                     "items": {
                         "hosting": {
-                            "name": "DigitalOcean",
+                            "name": "Render",
                             "description": "Cloud servers that run the InvoiceTrackr application"
                         },
                         "database": {
@@ -2233,7 +2233,7 @@
             },
             "international_transfers": {
                 "heading": "12. International Data Transfers",
-                "content": "Some of our service providers (DigitalOcean, Neon, Resend, Cloudinary and Google) are based in the United States and may process data outside the European Economic Area. Where that happens, the transfer is protected by an adequacy decision of the European Commission, such as the EU–US Data Privacy Framework, or by the Commission's Standard Contractual Clauses."
+                "content": "Some of our service providers (Render, Neon, Resend, Cloudinary and Google) are based in the United States and may process data outside the European Economic Area. Where that happens, the transfer is protected by an adequacy decision of the European Commission, such as the EU–US Data Privacy Framework, or by the Commission's Standard Contractual Clauses."
             },
             "changes": {
                 "heading": "13. Changes to This Privacy Policy",
@@ -2349,7 +2349,7 @@
                 "intro": "The Service relies on the following third-party services:",
                 "items": {
                     "hosting": {
-                        "name": "DigitalOcean",
+                        "name": "Render",
                         "description": "Cloud servers that run the InvoiceTrackr application"
                     },
                     "database": {

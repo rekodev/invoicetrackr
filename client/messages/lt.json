@@ -2131,7 +2131,7 @@
                     "intro": "Informaciją perduodame tik paslaugų teikėjams, kurie padeda mums teikti InvoiceTrackr, ir tik tiek, kiek jiems reikia:",
                     "items": {
                         "hosting": {
-                            "name": "DigitalOcean",
+                            "name": "Render",
                             "description": "Debesijos serveriai, kuriuose veikia InvoiceTrackr programa"
                         },
                         "database": {
@@ -2233,7 +2233,7 @@
             },
             "international_transfers": {
                 "heading": "12. Tarptautiniai duomenų perdavimai",
-                "content": "Kai kurie mūsų paslaugų teikėjai (DigitalOcean, Neon, Resend, Cloudinary ir Google) yra įsikūrę Jungtinėse Valstijose ir gali tvarkyti duomenis už Europos ekonominės erdvės ribų. Tokiu atveju duomenų perdavimą apsaugo Europos Komisijos sprendimas dėl tinkamumo, pvz., ES ir JAV duomenų privatumo sistema, arba Komisijos patvirtintos standartinės sutarčių sąlygos."
+                "content": "Kai kurie mūsų paslaugų teikėjai (Render, Neon, Resend, Cloudinary ir Google) yra įsikūrę Jungtinėse Valstijose ir gali tvarkyti duomenis už Europos ekonominės erdvės ribų. Tokiu atveju duomenų perdavimą apsaugo Europos Komisijos sprendimas dėl tinkamumo, pvz., ES ir JAV duomenų privatumo sistema, arba Komisijos patvirtintos standartinės sutarčių sąlygos."
             },
             "changes": {
                 "heading": "13. Šios Privatumo politikos pakeitimai",
@@ -2349,7 +2349,7 @@
                 "intro": "Paslauga remiasi šiomis trečiųjų šalių paslaugomis:",
                 "items": {
                     "hosting": {
-                        "name": "DigitalOcean",
+                        "name": "Render",
                         "description": "Debesijos serveriai, kuriuose veikia InvoiceTrackr programa"
                     },
                     "database": {
