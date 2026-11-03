@@ -1,5 +1,7 @@
 #!/bin/bash
 
+(cd server && node node_modules/drizzle-kit/bin.cjs migrate --config=drizzle.config.ts) || exit 1
+
 (cd server && exec node dist/app.js) &
 server_pid=$!
 

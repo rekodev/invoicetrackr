@@ -42,8 +42,7 @@ invoicetrackr/
 │   └── pdf/         Invoice PDF document
 ├── e2e/             Playwright tests and disposable test database setup
 ├── Dockerfile       Production image (web app and API in one container)
-├── prod.sh          Starts both processes in the container
-└── app.json         Dokku predeploy migrations and health check
+└── prod.sh          Applies migrations, then starts both processes
 ```
 
 Zod schemas in `shared/types` are the single source of truth. The API
@@ -120,9 +119,9 @@ and runs the Playwright suite on pull requests and on `main`.
 
 ## Deployment
 
-Pushes to `main` run the Playwright suite, then build the Docker image and
-deploy it to a Dokku host. Dokku applies database migrations before each
-release (`app.json`) and checks `/api/health` before switching traffic.
+Render builds the Docker image from `main` and deploys it once the Playwright
+suite passes on that commit. The container applies database migrations on
+startup before serving traffic.
 
 ## License
 

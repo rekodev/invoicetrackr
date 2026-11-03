@@ -13,11 +13,11 @@ description: "Change the InvoiceTrackr database schema with a hand-written Drizz
 - **Migrations are hand-written.** Drizzle snapshots stop at `0028`, so
   `pnpm run server generate` (drizzle-kit generate) would diff against a stale
   snapshot and emit wrong SQL. Don't run it, and don't add snapshot files.
-- Production applies pending migrations automatically in the Dokku
-  **predeploy** hook (`app.json` → `drizzle-kit migrate`), before the new
-  container takes traffic. The old container keeps running against the
-  migrated database for a short window, and a failed migration blocks the
-  deploy.
+- Production applies pending migrations automatically when the container
+  starts (`prod.sh` → `drizzle-kit migrate`), before the app processes
+  start. A failed migration exits the container and fails the deploy, and
+  the previous app version may still be running against the migrated
+  database during a deploy.
 - E2E builds its disposable DB with `drizzle-kit push` straight from
   `schema.ts`, not from the SQL files. So `schema.ts` and the SQL must
   describe the same end state, or E2E and production will diverge silently.
@@ -100,4 +100,4 @@ Never run `migrate:prod` or point drizzle-kit at production from a laptop.
 
 Tell the user the migration filename, whether it backfills or adds
 constraints that could fail on real data, and that it will run
-automatically on the next Dokku deploy.
+automatically on the next Render deploy.
