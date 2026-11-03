@@ -89,34 +89,3 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 14
-
-  deploy:
-    name: Build and deploy
-    needs: e2e
-    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_call' }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Clone Repository
-        # TODO: Upgrade to actions/checkout@v5 once the Node 24-backed release is available.
-        uses: actions/checkout@v4
-
-      - name: Build Docker image
-        run: |
-          docker image build \
-          --build-arg SERVER_PORT=${{ secrets.SERVER_PORT }} \
-          --build-arg NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }} \
-          --build-arg NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }} \
-          --build-arg NEXT_PUBLIC_POSTHOG_HOST=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }} \
-          -t invoicetrackr:${{ github.sha }} .
-
-      - name: Save SSH key
-        run: |
-          mkdir -p ~/.ssh/
-          touch ~/.ssh/key
-          echo "${{ secrets.INVOICETRACKR_SECRET }}" > ~/.ssh/key
-          chmod 400 ~/.ssh/key
-          ssh-keyscan ${{ secrets.PROD_IP_ADDRESS }} >> ~/.ssh/known_hosts
-
-      - name: Push Docker image to Production
-        run: docker image save invoicetrackr:${{ github.sha }} | ssh dokku@${{ secrets.PROD_IP_ADDRESS }} -i ~/.ssh/key git:load-image invoice-app invoicetrackr:${{ github.sha }}

@@ -37,5 +37,5 @@ MVP non-goals: MB/UAB/company workflows, verslo liudijimas, payroll, inventory, 
 | Schema change or migration | `drizzle-migration` |
 | Any user-facing copy or locale behaviour | `i18n` |
 | Writing or extending tests (Vitest, Playwright) | `testing` |
-| Env vars, Docker, CI, Dokku deploys | `env-deploy` |
+| Env vars, Docker, CI, Render deploys | `env-deploy` |
 | Branches, commits, PRs, issue IDs | `linear-git` |
